@@ -202,9 +202,6 @@ export class Unit {
 
                 const pos = this.getPositionForGrid(lerpX, lerpZ);
 
-                // Add hop
-                // pos.y += Math.sin(progress * Math.PI) * 0.2; // Removed hop
-
                 this.mesh.position.copy(pos);
 
                 // Animate limbs
@@ -303,25 +300,147 @@ export class Unit {
     }
 
     tryBuildStructure() {
-        const cell = this.terrain.grid[this.gridX][this.gridZ];
-        if (!cell.hasBuilding) {
-            // Check flatness
-            const h00 = this.terrain.getTileHeight(this.gridX, this.gridZ);
-            const h10 = this.terrain.getTileHeight(this.gridX + 1, this.gridZ);
-            const h01 = this.terrain.getTileHeight(this.gridX, this.gridZ + 1);
-            const h11 = this.terrain.getTileHeight(this.gridX + 1, this.gridZ + 1);
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
 
-            if (h00 === h10 && h00 === h01 && h00 === h11) {
-                // Simple rule: 10% chance to build if no building
-                if (Math.random() < 0.1) {
-                    if (Math.random() < 0.5) {
-                        this.buildHouse();
-                    } else {
-                        this.buildFarm();
-                    }
-                }
+        const x = this.gridX;
+        const z = this.gridZ;
+        const cell = this.terrain.grid[x][z];
+
+        if (cell.hasBuilding) return;
+
+        // Check for Castle (Large House)
+        // Condition: Total Population > 2000
+        if (window.game && window.game.totalPopulation > 2000) {
+            // Check 2x2 area: (x,z), (x+1,z), (x,z+1), (x+1,z+1)
+            const x1 = (x + 1) % logicalW;
+            const z1 = (z + 1) % logicalD;
+
+            const cells = [
+                this.terrain.grid[x][z],
+                this.terrain.grid[x1][z],
+                this.terrain.grid[x][z1],
+                this.terrain.grid[x1][z1]
+            ];
+
+            const h = cell.height;
+            const allFlat = cells.every(c => c.height === h && !c.hasBuilding);
+
+            if (allFlat) {
+                this.buildCastle(x, z, x1, z1);
+                return;
             }
         }
+
+        // Check for House (Flat land)
+        // Check 3x3 area for flatness
+        let isFlat = true;
+        const height = cell.height;
+
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dz = -1; dz <= 1; dz++) {
+                const tx = (x + dx + logicalW) % logicalW;
+                const tz = (z + dz + logicalD) % logicalD;
+                if (this.terrain.grid[tx][tz].height !== height) {
+                    isFlat = false;
+                    break;
+                }
+            }
+            if (!isFlat) break;
+        }
+
+        if (isFlat) {
+            // Simple rule: 10% chance to build if no building
+            if (Math.random() < 0.1) {
+                this.buildHouse();
+            }
+        } else {
+            // Check for Farm (Not flat)
+            if (Math.random() < 0.1) {
+                this.buildFarm();
+            }
+        }
+    }
+
+    buildCastle(x0, z0, x1, z1) {
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        // Create Castle Mesh (2x2 size)
+        const castleGroup = new THREE.Group();
+
+        // Main Keep
+        const keepGeo = new THREE.BoxGeometry(1.6, 1.5, 1.6);
+        const keepMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 }); // SaddleBrown
+        const keep = new THREE.Mesh(keepGeo, keepMat);
+        keep.position.y = 0.75;
+        castleGroup.add(keep);
+
+        // Windows for Castle
+        const windowMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const windowGeo = new THREE.PlaneGeometry(0.3, 0.4);
+        const windows = [];
+
+        // 4 Windows on sides
+        for (let i = 0; i < 4; i++) {
+            const win = new THREE.Mesh(windowGeo, windowMat.clone());
+            win.position.y = 1.0;
+            // Position based on rotation
+            if (i === 0) { win.position.z = 0.81; win.position.x = 0; } // Front
+            if (i === 1) { win.position.z = -0.81; win.position.x = 0; win.rotation.y = Math.PI; } // Back
+            if (i === 2) { win.position.x = 0.81; win.position.z = 0; win.rotation.y = Math.PI / 2; } // Right
+            if (i === 3) { win.position.x = -0.81; win.position.z = 0; win.rotation.y = -Math.PI / 2; } // Left
+
+            castleGroup.add(win);
+            windows.push(win);
+        }
+
+        // Roof
+        const roofGeo = new THREE.ConeGeometry(1.2, 1, 4);
+        const roofMat = new THREE.MeshLambertMaterial({ color: 0x800000 }); // Maroon
+        const roof = new THREE.Mesh(roofGeo, roofMat);
+        roof.position.y = 1.5 + 0.5;
+        roof.rotation.y = Math.PI / 4;
+        castleGroup.add(roof);
+
+        const height = this.terrain.getTileHeight(x0, z0);
+
+        // Position at center of 2x2 area (approx)
+        castleGroup.position.set(
+            x0 - logicalW / 2 + 1.0,
+            height,
+            z0 - logicalD / 2 + 1.0
+        );
+
+        this.scene.add(castleGroup);
+
+        // Mark all 4 cells
+        const cells = [
+            this.terrain.grid[x0][z0],
+            this.terrain.grid[x1][z0],
+            this.terrain.grid[x0][z1],
+            this.terrain.grid[x1][z1]
+        ];
+
+        cells.forEach(c => {
+            c.hasBuilding = true;
+            c.building = castleGroup;
+        });
+
+        // UserData
+        castleGroup.userData.type = 'castle';
+        castleGroup.userData.population = 0;
+        castleGroup.userData.gridX = x0;
+        castleGroup.userData.gridZ = z0;
+        castleGroup.userData.windows = windows; // Store windows
+
+        this.terrain.buildings.push(castleGroup);
+
+        // Unit enters castle
+        this.isFinished = true;
+        this.isDead = true;
+        this.mesh.visible = false;
+        console.log("Castle built at", x0, z0);
     }
 
     buildHouse() {
@@ -346,6 +465,21 @@ export class Unit {
         const walls = new THREE.Mesh(wallGeo, wallMaterial);
         walls.position.y = 0.2;
         houseGroup.add(walls);
+
+        // Windows for House
+        const windowMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const windowGeo = new THREE.PlaneGeometry(0.15, 0.15);
+        const windows = [];
+
+        // 2 Windows (Front and Back?)
+        for (let i = 0; i < 2; i++) {
+            const win = new THREE.Mesh(windowGeo, windowMat.clone());
+            win.position.y = 0.2;
+            if (i === 0) { win.position.z = 0.31; win.position.x = 0; } // Front
+            if (i === 1) { win.position.z = -0.31; win.position.x = 0; win.rotation.y = Math.PI; } // Back
+            houseGroup.add(win);
+            windows.push(win);
+        }
 
         // Roof
         const roofGeo = new THREE.ConeGeometry(0.5, 0.4, 4);
@@ -385,6 +519,7 @@ export class Unit {
         houseGroup.userData.population = 0;
         houseGroup.userData.gridX = this.gridX;
         houseGroup.userData.gridZ = this.gridZ;
+        houseGroup.userData.windows = windows; // Store windows
 
         cell.building = houseGroup;
         this.terrain.buildings.push(houseGroup);

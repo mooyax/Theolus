@@ -382,9 +382,6 @@ export class Terrain {
 
     updatePopulation(deltaTime, spawnCallback) {
         // 1 real second = 12 game seconds
-        // Let's say base growth is 10 pop / game-hour
-        // 1 game-hour = 1/12 real minutes = 5 real seconds?
-        // No, let's just tune it.
         // Base growth: 5 per real second.
         // Farm bonus: +5 per farm per real second.
 
@@ -392,7 +389,9 @@ export class Terrain {
         const farmBonus = 0.2;
 
         this.buildings.forEach(building => {
-            if (building.userData.type === 'house') {
+            const type = building.userData.type;
+
+            if (type === 'house' || type === 'castle') {
                 const bx = building.userData.gridX;
                 const bz = building.userData.gridZ;
 
@@ -411,7 +410,13 @@ export class Terrain {
                     }
                 }
 
-                const rate = baseRate + (farmCount * farmBonus);
+                let rate = baseRate + (farmCount * farmBonus);
+
+                // Castle Bonus: 2x Growth
+                if (type === 'castle') {
+                    rate *= 2;
+                }
+
                 building.userData.population += rate * deltaTime;
 
                 if (building.userData.population >= 100) {
@@ -421,6 +426,29 @@ export class Terrain {
             }
         });
     }
+
+    updateLights(time) {
+        // Night: 19-24, 0-5. Dusk/Dawn transition?
+        // Simple on/off for now.
+        // On between 18:00 and 6:00?
+        const isNight = (time >= 18 || time < 6);
+
+        const colorHex = isNight ? 0xFFFF00 : 0x000000;
+
+        // console.log("Updating lights. Time:", time, "IsNight:", isNight, "Color:", colorHex.toString(16));
+
+        this.buildings.forEach(building => {
+            if (building.userData.windows) {
+                building.userData.windows.forEach(win => {
+                    if (win.material) {
+                        win.material.color.setHex(colorHex);
+                        win.material.needsUpdate = true;
+                    }
+                });
+            }
+        });
+    }
+
     serialize() {
         const data = {
             logicalWidth: this.logicalWidth,

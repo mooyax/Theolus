@@ -107,6 +107,9 @@
 
 <script>console.log("Index.html inline script running");</script>
 <div id="app"></div>
+<div id="tooltip"
+  style="display: none; position: absolute; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 5px; pointer-events: none; font-size: 14px; z-index: 1000;">
+</div>
 
 <div id="ui">
   <button id="btn-raise" class="active">Raise</button>
@@ -119,6 +122,12 @@
 <div id="time-display"
   style="position: absolute; top: 10px; left: 10px; font-size: 24px; color: white; font-weight: bold; text-shadow: 2px 2px 2px black; font-family: monospace;">
   08:00</div>
+<div id="stats-display"
+  style="position: absolute; top: 40px; left: 10px; font-size: 16px; color: white; font-weight: bold; text-shadow: 1px 1px 1px black; font-family: monospace; line-height: 1.5;">
+  Population: 0<br>
+  Houses: 0<br>
+  Farms: 0
+</div>
 
 <!-- Save/Load Modal -->
 <div id="save-modal">

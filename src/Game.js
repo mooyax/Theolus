@@ -55,15 +55,14 @@ export class Game {
         // No Fog as requested
         // this.scene.fog = new THREE.Fog(0x87CEEB, 20, 50);
 
-        this.setupLights();
-
         this.terrain = new Terrain(this.scene);
-        this.inputManager = new InputManager(this.scene, this.camera, this.terrain, this.spawnUnit.bind(this));
+        this.units = []; // Initialize units BEFORE InputManager
+        this.inputManager = new InputManager(this.scene, this.camera, this.terrain, this.spawnUnit.bind(this), this.units);
         this.cloudManager = new CloudManager(this.scene, this.terrain.width, this.terrain.depth);
-
-        this.units = [];
         // Spawn initial unit
         this.spawnUnit(10, 10);
+
+        this.statsDisplay = document.getElementById('stats-display');
 
         window.addEventListener('resize', this.onWindowResize.bind(this));
 
@@ -198,16 +197,9 @@ export class Game {
         }
 
         // Update Clipping Planes to follow camera
-        // We want a 40x40 box centered on the camera's X/Z position
         const cx = this.camera.position.x;
         const cz = this.camera.position.z;
         const halfSize = 40; // 80 / 2
-
-        // Planes: Left, Right, Top, Bottom
-        // Normal (1,0,0) -> Constant = -minX
-        // Normal (-1,0,0) -> Constant = maxX
-        // Normal (0,0,1) -> Constant = -minZ
-        // Normal (0,0,-1) -> Constant = maxZ
 
         if (this.clippingPlanes) {
             this.clippingPlanes[0].constant = -(cx - halfSize);
@@ -216,7 +208,43 @@ export class Game {
             this.clippingPlanes[3].constant = (cz + halfSize);
         }
 
+        this.updateStats();
+
         this.renderer.render(this.scene, this.camera);
+    }
+
+    updateStats() {
+        if (!this.statsDisplay) {
+            this.statsDisplay = document.getElementById('stats-display');
+        }
+        if (!this.statsDisplay) return;
+
+        let houseCount = 0;
+        let castleCount = 0;
+        let farmCount = 0;
+        let housePop = 0;
+
+        this.terrain.buildings.forEach(b => {
+            if (b.userData.type === 'house') {
+                houseCount++;
+                housePop += Math.floor(b.userData.population);
+            } else if (b.userData.type === 'castle') {
+                castleCount++;
+                housePop += Math.floor(b.userData.population);
+            } else if (b.userData.type === 'farm') {
+                farmCount++;
+            }
+        });
+
+        const unitCount = this.units.length;
+        const totalPop = unitCount + housePop;
+        this.totalPopulation = window.debugPopulation || totalPop; // Expose for Unit.js with debug support
+
+        this.statsDisplay.innerHTML = `
+            Population: ${this.totalPopulation} (Units: ${unitCount}, Houses: ${housePop})<br>
+            Houses: ${houseCount}, Castles: ${castleCount}<br>
+            Farms: ${farmCount}
+        `;
     }
 
     updateEnvironment(deltaTime) {
@@ -238,29 +266,34 @@ export class Game {
         }
 
         // Calculate lighting based on time
-        const time = this.gameTime;
+        const currentTime = this.gameTime;
+
+        // Update Building Lights
+        if (this.terrain) {
+            this.terrain.updateLights(currentTime);
+        }
 
         let skyColor, ambientColor, sunColor, sunIntensity;
 
         // Simple keyframes
         // Night: 0-5, Dawn: 5-7, Day: 7-17, Dusk: 17-19, Night: 19-24
 
-        if (time >= 5 && time < 7) {
+        if (currentTime >= 5 && currentTime < 7) {
             // Dawn
-            const t = (time - 5) / 2;
+            const t = (currentTime - 5) / 2;
             skyColor = new THREE.Color(0x000022).lerp(new THREE.Color(0x87CEEB), t);
             ambientColor = new THREE.Color(0x111111).lerp(new THREE.Color(0x666666), t);
             sunColor = new THREE.Color(0xFF8800).lerp(new THREE.Color(0xFFFFFF), t);
             sunIntensity = 0.1 + t * 0.9;
-        } else if (time >= 7 && time < 17) {
+        } else if (currentTime >= 7 && currentTime < 17) {
             // Day
             skyColor = new THREE.Color(0x87CEEB);
             ambientColor = new THREE.Color(0x666666);
             sunColor = new THREE.Color(0xFFFFFF);
             sunIntensity = 1.0;
-        } else if (time >= 17 && time < 19) {
+        } else if (currentTime >= 17 && currentTime < 19) {
             // Dusk
-            const t = (time - 17) / 2;
+            const t = (currentTime - 17) / 2;
             skyColor = new THREE.Color(0x87CEEB).lerp(new THREE.Color(0x000022), t); // To Night Blue
             // Actually Dusk usually goes Orange/Red first
             const duskSky = new THREE.Color(0xFF4500);
@@ -287,19 +320,10 @@ export class Game {
         this.directionalLight.intensity = sunIntensity;
 
         // Rotate Sun
-        // 0 = -Z (Midnight), 6 = +X (Rise), 12 = +Z (Noon), 18 = -X (Set)
-        // Simple rotation around X axis? No, usually rises East sets West.
-        // Let's say X is East-West.
-        // Angle from -PI to PI
-        const angle = ((time - 12) / 12) * Math.PI; // Noon = 0
-        // this.directionalLight.position.set(Math.sin(angle) * 20, Math.cos(angle) * 20, 10);
-        // Keep it simple for isometric shadows
-        // Just vary Y and X
-        const sunX = Math.sin(time / 24 * Math.PI * 2) * 30;
-        const sunY = Math.cos((time - 12) / 12 * Math.PI) * 30; // High at noon
+        const sunX = Math.sin(currentTime / 24 * Math.PI * 2) * 30;
+        const sunY = Math.cos((currentTime - 12) / 12 * Math.PI) * 30; // High at noon
         if (sunY < 0) {
             // Night sun (Moon?)
-            // this.directionalLight.position.set(sunX, -sunY, 10);
         } else {
             this.directionalLight.position.set(sunX, sunY, 10);
         }

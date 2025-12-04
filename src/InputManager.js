@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 
 export class InputManager {
-    constructor(scene, camera, terrain, spawnCallback) {
+    constructor(scene, camera, terrain, spawnCallback, units) {
         this.scene = scene;
         this.camera = camera;
         this.terrain = terrain;
         this.spawnCallback = spawnCallback;
+        this.units = units || [];
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
         this.mode = 'raise'; // 'raise', 'lower', 'spawn'
@@ -15,6 +16,8 @@ export class InputManager {
         const cursorMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
         this.cursor = new THREE.Mesh(cursorGeo, cursorMat);
         this.scene.add(this.cursor);
+
+        this.tooltip = document.getElementById('tooltip');
 
         this.setupUI();
 
@@ -70,6 +73,77 @@ export class InputManager {
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         this.updateCursor();
+        this.updateTooltip(event.clientX, event.clientY);
+    }
+
+    updateTooltip(clientX, clientY) {
+        if (!this.tooltip) return;
+
+        let text = '';
+        let found = false;
+
+        // 1. Check Units (Raycast)
+        // We need to raycast against unit meshes.
+        // Units have a `mesh` property which is a Group.
+        const unitMeshes = this.units.map(u => u.mesh).filter(m => m);
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const unitIntersects = this.raycaster.intersectObjects(unitMeshes, true); // Recursive for children
+
+        if (unitIntersects.length > 0) {
+            // Find which unit belongs to this mesh
+            // The intersect object might be a child mesh (arm, leg, etc.)
+            // We need to traverse up to find the root group that matches a unit.mesh
+            let hitObj = unitIntersects[0].object;
+            while (hitObj.parent && !this.units.find(u => u.mesh === hitObj)) {
+                hitObj = hitObj.parent;
+            }
+
+            const unit = this.units.find(u => u.mesh === hitObj);
+            if (unit) {
+                text = `Age: ${Math.floor(unit.age)}`;
+                found = true;
+            }
+        }
+
+        // 2. Check Buildings (Grid)
+        if (!found) {
+            const intersects = this.raycaster.intersectObjects(this.terrain.meshes);
+            if (intersects.length > 0) {
+                const intersect = intersects[0];
+                const point = intersect.point;
+
+                const logicalW = this.terrain.logicalWidth || 80;
+                const logicalD = this.terrain.logicalDepth || 80;
+
+                let gridX = Math.round(point.x + logicalW / 2);
+                let gridZ = Math.round(point.z + logicalD / 2);
+
+                gridX = ((gridX % logicalW) + logicalW) % logicalW;
+                gridZ = ((gridZ % logicalD) + logicalD) % logicalD;
+
+                const cell = this.terrain.grid[gridX][gridZ];
+                if (cell && cell.hasBuilding && cell.building) {
+                    const type = cell.building.userData.type;
+                    if (type === 'house') {
+                        const pop = Math.floor(cell.building.userData.population);
+                        text = `House Pop: ${pop}/100`;
+                        found = true;
+                    } else if (type === 'farm') {
+                        text = `Farm`;
+                        found = true;
+                    }
+                }
+            }
+        }
+
+        if (found) {
+            this.tooltip.textContent = text;
+            this.tooltip.style.display = 'block';
+            this.tooltip.style.left = (clientX + 15) + 'px';
+            this.tooltip.style.top = (clientY + 15) + 'px';
+        } else {
+            this.tooltip.style.display = 'none';
+        }
     }
 
     updateCursor() {
