@@ -3,11 +3,15 @@ import { Terrain } from './Terrain.js';
 import { InputManager } from './InputManager.js';
 import { Unit } from './Unit.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { SaveManager } from './SaveManager.js';
 import { CloudManager } from './CloudManager.js';
 
 export class Game {
     constructor() {
         console.log("Game constructor called");
+        this.saveManager = new SaveManager();
+        window.game = this; // Expose for UI
+
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x87CEEB); // Sky blue
 
@@ -54,7 +58,7 @@ export class Game {
         this.setupLights();
 
         this.terrain = new Terrain(this.scene);
-        this.inputManager = new InputManager(this.scene, this.camera, this.terrain);
+        this.inputManager = new InputManager(this.scene, this.camera, this.terrain, this.spawnUnit.bind(this));
         this.cloudManager = new CloudManager(this.scene, this.terrain.width, this.terrain.depth);
 
         this.units = [];
@@ -70,6 +74,49 @@ export class Game {
         this.timeScale = 1;
 
         this.animate();
+    }
+
+    saveGame(slotId) {
+        const data = {
+            gameTime: this.gameTime,
+            terrain: this.terrain.serialize(),
+            units: this.units.map(u => u.serialize())
+        };
+        return this.saveManager.save(slotId, data);
+    }
+
+    loadGame(slotId) {
+        const data = this.saveManager.load(slotId);
+        if (!data || !data.data) {
+            console.error("No save data found for slot", slotId);
+            return false;
+        }
+
+        const saveData = data.data;
+
+        // Restore Game Time
+        this.gameTime = saveData.gameTime;
+
+        // Restore Terrain
+        this.terrain.deserialize(saveData.terrain);
+
+        // Restore Units
+        // Clear existing
+        this.units.forEach(u => {
+            this.scene.remove(u.mesh);
+            if (u.clones) u.clones.forEach(c => this.scene.remove(c.mesh));
+            if (u.crossMesh) this.scene.remove(u.crossMesh);
+        });
+        this.units = [];
+
+        // Recreate units
+        saveData.units.forEach(unitData => {
+            const unit = Unit.deserialize(unitData, this.scene, this.terrain);
+            this.units.push(unit);
+        });
+
+        console.log("Game loaded from slot", slotId);
+        return true;
     }
 
     spawnUnit(x, z) {
@@ -107,8 +154,23 @@ export class Game {
         this.lastTime = time;
 
         this.updateEnvironment(deltaTime);
-        this.units.forEach(unit => unit.update(time));
+
+        // Update Units and remove dead ones
+        for (let i = this.units.length - 1; i >= 0; i--) {
+            const unit = this.units[i];
+            unit.update(time, deltaTime);
+            if (unit.isDead && unit.isFinished) {
+                this.units.splice(i, 1);
+            }
+        }
+
         this.cloudManager.update(deltaTime);
+
+        // Update Population
+        this.terrain.updatePopulation(deltaTime, (x, z) => {
+            this.spawnUnit(x, z);
+            console.log("New unit spawned at", x, z);
+        });
 
         this.controls.update();
 

@@ -7,6 +7,13 @@ export class Unit {
         this.gridX = x || 20;
         this.gridZ = z || 20;
 
+        // Lifespan
+        this.age = 0;
+        this.lifespan = 50 + Math.random() * 30; // 50-80 seconds
+        this.isDead = false;
+        this.isFinished = false; // True when death animation is done
+        this.crossMesh = null;
+
         // Character Group
         this.mesh = new THREE.Group();
 
@@ -144,7 +151,19 @@ export class Unit {
         return new THREE.CanvasTexture(canvas);
     }
 
-    update(time) {
+    update(time, deltaTime) {
+        if (this.isDead) {
+            this.updateDeathAnimation(deltaTime);
+            return;
+        }
+
+        // Aging
+        this.age += deltaTime;
+        if (this.age >= this.lifespan) {
+            this.die();
+            return;
+        }
+
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
@@ -164,7 +183,7 @@ export class Unit {
                 this.leftLeg.rotation.x = 0;
                 this.rightLeg.rotation.x = 0;
 
-                this.tryBuildHouse();
+                this.tryBuildStructure();
             } else {
                 // Interpolate position
                 // Handle wrapping interpolation
@@ -283,12 +302,24 @@ export class Unit {
         );
     }
 
-    tryBuildHouse() {
+    tryBuildStructure() {
         const cell = this.terrain.grid[this.gridX][this.gridZ];
         if (!cell.hasBuilding) {
-            // Simple rule: 10% chance to build if no building
-            if (Math.random() < 0.1) {
-                this.buildHouse();
+            // Check flatness
+            const h00 = this.terrain.getTileHeight(this.gridX, this.gridZ);
+            const h10 = this.terrain.getTileHeight(this.gridX + 1, this.gridZ);
+            const h01 = this.terrain.getTileHeight(this.gridX, this.gridZ + 1);
+            const h11 = this.terrain.getTileHeight(this.gridX + 1, this.gridZ + 1);
+
+            if (h00 === h10 && h00 === h01 && h00 === h11) {
+                // Simple rule: 10% chance to build if no building
+                if (Math.random() < 0.1) {
+                    if (Math.random() < 0.5) {
+                        this.buildHouse();
+                    } else {
+                        this.buildFarm();
+                    }
+                }
             }
         }
     }
@@ -340,14 +371,160 @@ export class Unit {
             { x: -1, z: 1 }, { x: -1, z: -1 }
         ];
 
+        const clones = [];
         offsets.forEach(offset => {
             const clone = houseGroup.clone();
             clone.position.x += offset.x * logicalW;
             clone.position.z += offset.z * logicalD;
             this.scene.add(clone);
+            clones.push(clone);
         });
 
+        houseGroup.userData.clones = clones;
+        houseGroup.userData.type = 'house';
+        houseGroup.userData.population = 0;
+        houseGroup.userData.gridX = this.gridX;
+        houseGroup.userData.gridZ = this.gridZ;
+
+        cell.building = houseGroup;
+        this.terrain.buildings.push(houseGroup);
+
         console.log("House built at", this.gridX, this.gridZ);
+    }
+
+    buildFarm() {
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        const cell = this.terrain.grid[this.gridX][this.gridZ];
+        cell.hasBuilding = true;
+
+        // Farm Group
+        const farmGroup = new THREE.Group();
+
+        // Wheat Texture
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#DAA520'; // GoldenRod
+        ctx.fillRect(0, 0, 64, 64);
+        ctx.fillStyle = '#B8860B'; // Darker GoldenRod
+        for (let i = 0; i < 10; i++) {
+            ctx.fillRect(i * 6, 0, 2, 64); // Vertical lines
+        }
+        const wheatTexture = new THREE.CanvasTexture(canvas);
+
+        const material = new THREE.MeshLambertMaterial({ map: wheatTexture });
+        const geometry = new THREE.PlaneGeometry(0.8, 0.8);
+        geometry.rotateX(-Math.PI / 2);
+
+        const farm = new THREE.Mesh(geometry, material);
+        farm.position.y = 0.05; // Slightly above ground
+        farmGroup.add(farm);
+
+        const height = this.terrain.getTileHeight(this.gridX, this.gridZ);
+        farmGroup.position.set(
+            this.gridX - logicalW / 2 + 0.5,
+            height,
+            this.gridZ - logicalD / 2 + 0.5
+        );
+
+        this.scene.add(farmGroup);
+
+        // Create clones
+        const offsets = [
+            { x: 1, z: 0 }, { x: -1, z: 0 },
+            { x: 0, z: 1 }, { x: 0, z: -1 },
+            { x: 1, z: 1 }, { x: 1, z: -1 },
+            { x: -1, z: 1 }, { x: -1, z: -1 }
+        ];
+
+        const clones = [];
+        offsets.forEach(offset => {
+            const clone = farmGroup.clone();
+            clone.position.x += offset.x * logicalW;
+            clone.position.z += offset.z * logicalD;
+            this.scene.add(clone);
+            clones.push(clone);
+        });
+
+        farmGroup.userData.clones = clones;
+        farmGroup.userData.type = 'farm';
+        farmGroup.userData.gridX = this.gridX;
+        farmGroup.userData.gridZ = this.gridZ;
+
+        cell.building = farmGroup;
+        this.terrain.buildings.push(farmGroup);
+
+        console.log("Farm built at", this.gridX, this.gridZ);
+    }
+
+    die() {
+        this.isDead = true;
+
+        // Remove unit mesh
+        if (this.mesh) {
+            this.scene.remove(this.mesh);
+        }
+        if (this.clones) {
+            this.clones.forEach(cloneObj => this.scene.remove(cloneObj.mesh));
+        }
+
+        // Create Cross
+        this.createCross();
+        console.log("Unit died at", this.gridX, this.gridZ);
+    }
+
+    createCross() {
+        const group = new THREE.Group();
+
+        const material = new THREE.MeshLambertMaterial({
+            color: 0xFFFFFF,
+            transparent: true,
+            opacity: 1.0
+        });
+
+        // Vertical part
+        const vGeo = new THREE.BoxGeometry(0.2, 1.0, 0.2);
+        const vMesh = new THREE.Mesh(vGeo, material);
+        vMesh.position.y = 0.5;
+        group.add(vMesh);
+
+        // Horizontal part
+        const hGeo = new THREE.BoxGeometry(0.8, 0.2, 0.2);
+        const hMesh = new THREE.Mesh(hGeo, material);
+        hMesh.position.y = 0.7;
+        group.add(hMesh);
+
+        // Position
+        const pos = this.getPositionForGrid(this.gridX, this.gridZ);
+        group.position.copy(pos);
+
+        this.scene.add(group);
+        this.crossMesh = group;
+        this.deathTimer = 0;
+    }
+
+    updateDeathAnimation(deltaTime) {
+        if (!this.crossMesh) return;
+
+        this.deathTimer += deltaTime;
+        const duration = 3.0; // 3 seconds animation
+
+        if (this.deathTimer >= duration) {
+            this.scene.remove(this.crossMesh);
+            this.isFinished = true;
+        } else {
+            // Rise up
+            this.crossMesh.position.y += deltaTime * 1.0;
+
+            // Fade out
+            const progress = this.deathTimer / duration;
+            this.crossMesh.children.forEach(child => {
+                child.material.opacity = 1.0 - progress;
+            });
+        }
     }
 
     createWoodTexture() {
@@ -392,5 +569,59 @@ export class Unit {
         }
 
         return new THREE.CanvasTexture(canvas);
+    }
+    serialize() {
+        return {
+            gridX: this.gridX,
+            gridZ: this.gridZ,
+            age: this.age,
+            lifespan: this.lifespan,
+            isDead: this.isDead,
+            isFinished: this.isFinished,
+            // Animation state
+            isMoving: this.isMoving,
+            targetX: this.targetX,
+            targetZ: this.targetZ,
+            moveStartTime: this.moveStartTime,
+            startGridX: this.startGridX,
+            startGridZ: this.startGridZ,
+            targetGridX: this.targetGridX,
+            targetGridZ: this.targetGridZ
+        };
+    }
+
+    static deserialize(data, scene, terrain) {
+        const unit = new Unit(scene, terrain, data.gridX, data.gridZ);
+        unit.age = data.age;
+        unit.lifespan = data.lifespan;
+        unit.isDead = data.isDead;
+        unit.isFinished = data.isFinished;
+
+        // Restore animation state if moving
+        if (data.isMoving) {
+            unit.isMoving = true;
+            unit.targetX = data.targetX;
+            unit.targetZ = data.targetZ;
+            // We can't easily restore exact animation time relative to performance.now()
+            // So we might just snap to target or reset movement?
+            // Let's just snap to target to avoid complexity with time sync.
+            unit.isMoving = false;
+            unit.gridX = data.targetGridX;
+            unit.gridZ = data.targetGridZ;
+            unit.updatePosition();
+        }
+
+        if (unit.isDead) {
+            // If dead, ensure cross is created if not finished
+            if (!unit.isFinished) {
+                unit.createCross();
+            } else {
+                // If finished, maybe don't even spawn? 
+                // But Game loop filters finished units.
+                // If we spawn it as finished, it will be removed immediately.
+            }
+        }
+
+        return unit;
     }
 }

@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 
 export class InputManager {
-    constructor(scene, camera, terrain) {
+    constructor(scene, camera, terrain, spawnCallback) {
         this.scene = scene;
         this.camera = camera;
         this.terrain = terrain;
+        this.spawnCallback = spawnCallback;
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
-        this.mode = 'raise'; // 'raise', 'lower'
+        this.mode = 'raise'; // 'raise', 'lower', 'spawn'
 
         // Visual Cursor
         const cursorGeo = new THREE.BoxGeometry(1, 1, 1);
@@ -29,19 +30,23 @@ export class InputManager {
     setupUI() {
         const btnRaise = document.getElementById('btn-raise');
         const btnLower = document.getElementById('btn-lower');
+        const btnSpawn = document.getElementById('btn-spawn');
 
-        if (btnRaise && btnLower) {
-            btnRaise.addEventListener('click', () => {
-                this.mode = 'raise';
-                btnRaise.classList.add('active');
-                btnLower.classList.remove('active');
-            });
+        const updateActive = (mode) => {
+            this.mode = mode;
+            if (btnRaise) btnRaise.classList.toggle('active', mode === 'raise');
+            if (btnLower) btnLower.classList.toggle('active', mode === 'lower');
+            if (btnSpawn) btnSpawn.classList.toggle('active', mode === 'spawn');
+        };
 
-            btnLower.addEventListener('click', () => {
-                this.mode = 'lower';
-                btnLower.classList.add('active');
-                btnRaise.classList.remove('active');
-            });
+        if (btnRaise) {
+            btnRaise.addEventListener('click', () => updateActive('raise'));
+        }
+        if (btnLower) {
+            btnLower.addEventListener('click', () => updateActive('lower'));
+        }
+        if (btnSpawn) {
+            btnSpawn.addEventListener('click', () => updateActive('spawn'));
         }
     }
 
@@ -96,6 +101,13 @@ export class InputManager {
 
             this.cursor.position.set(snapX, height + 0.5, snapZ);
             this.cursor.visible = true;
+
+            // Change cursor color based on mode
+            if (this.mode === 'spawn') {
+                this.cursor.material.color.setHex(0x0000ff); // Blue for spawn
+            } else {
+                this.cursor.material.color.setHex(0xff0000); // Red for terrain
+            }
         } else {
             this.cursor.visible = false;
         }
@@ -130,6 +142,10 @@ export class InputManager {
                     this.terrain.raise(gridX, gridZ);
                 } else if (this.mode === 'lower') {
                     this.terrain.lower(gridX, gridZ);
+                } else if (this.mode === 'spawn') {
+                    if (this.spawnCallback) {
+                        this.spawnCallback(gridX, gridZ);
+                    }
                 }
             } else if (event.button === 2) { // Right click
                 this.terrain.lower(gridX, gridZ);
