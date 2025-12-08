@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="./vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Populous Clone</title>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+      user-select: none;
+      /* Prevent text selection on mobile */
+      -webkit-user-select: none;
+    }
+
+    #ui {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      /* Increased gap */
+      background: rgba(0, 0, 0, 0.5);
+      /* Background for visibility */
+      padding: 10px;
+      border-radius: 20px;
+    }
+
+    button {
+      width: 50px;
+      /* Fixed size for icons */
+      height: 50px;
+      padding: 0;
+      font-size: 24px;
+      /* Icon size */
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 50%;
+      /* Circular buttons */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.1s, background 0.2s;
+    }
+
+    button:active {
+      transform: scale(0.9);
+    }
+
+    button.active {
+      background: #4CAF50;
+      color: white;
+      border: 2px solid #fff;
+    }
+
+    .material-symbols-outlined {
+      font-size: 28px;
+    }
+
+    /* Stats Display Optimization */
+    #stats-container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      pointer-events: none;
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 5px 10px;
+      border-radius: 15px;
+      color: white;
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 16px;
+      text-shadow: 1px 1px 1px black;
+      width: fit-content;
+    }
+
+    .stat-row span.material-symbols-outlined {
+      font-size: 20px;
+      margin-right: 8px;
+    }
+
+    #time-display {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    /* Modal Styles */
+    #save-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      /* Ensure on top of everything */
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 400px;
+      max-width: 90%;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .slot-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .slot-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .slot-info {
+      font-size: 14px;
+    }
+
+    .slot-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .slot-actions button {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    /* Start Screen */
+    #start-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      /* Dark overlay */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+      color: white;
+    }
+
+    #start-screen h1 {
+      font-size: 3rem;
+      margin-bottom: 2rem;
+      text-shadow: 0 0 10px #4CAF50;
+    }
+
+    .start-btn {
+      width: auto;
+      height: auto;
+      padding: 15px 40px;
+      font-size: 1.5rem;
+      margin: 10px;
+      border: 2px solid #4CAF50;
+      background: transparent;
+      color: #4CAF50;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .start-btn:hover {
+      background: #4CAF50;
+      color: white;
+      box-shadow: 0 0 20px #4CAF50;
+    }
+
+    #start-load-btn {
+      display: none;
+      /* Hidden by default */
+      border-color: #2196F3;
+      color: #2196F3;
+    }
+
+    #start-load-btn:hover {
+      background: #2196F3;
+      color: white;
+      box-shadow: 0 0 20px #2196F3;
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/index-BdbiD4Ut.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-Bqp-OHo3.css">
+</head>
+
+<body>
+  <script>console.log("Index.html inline script running");</script>
+  <div id="app"></div>
+  <div id="tooltip"
+    style="display: none; position: absolute; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 5px; pointer-events: none; font-size: 14px; z-index: 1000;">
+  </div>
+
+  <div id="start-screen">
+    <h1>God Game</h1>
+    <button id="start-new-btn" class="start-btn">NEW</button>
+    <button id="start-load-btn" class="start-btn">LOAD</button>
+  </div>
+
+  <div id="ui">
+    <button id="btn-raise" class="active" title="Raise Land"><span
+        class="material-symbols-outlined">stat_3</span></button>
+    <button id="btn-lower" title="Lower Land"><span class="material-symbols-outlined">stat_minus_3</span></button>
+    <button id="btn-spawn" title="Spawn Unit"><span class="material-symbols-outlined">person_add</span></button>
+    <button id="save-load-btn" title="Save/Load"><span class="material-symbols-outlined">save</span></button>
+  </div>
+
+  <div id="stats-container">
+    <div id="time-display" class="stat-row">
+      <span class="material-symbols-outlined">schedule</span>
+      <span id="time-val">08:00</span>
+    </div>
+    <div class="stat-row">
+      <span class="material-symbols-outlined">groups</span>
+      <span id="pop-val">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="material-symbols-outlined">house</span>
+      <span id="house-val">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="material-symbols-outlined">grain</span>
+      <span id="grain-val">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="material-symbols-outlined">set_meal</span>
+      <span id="fish-val">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="material-symbols-outlined">kebab_dining</span>
+      <span id="meat-val">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="material-symbols-outlined">cloud</span>
+      <span id="weather-val">Clear</span>
+    </div>
+  </div>
+
+  <canvas id="minimap" width="160" height="160"
+    style="position: absolute; top: 10px; right: 10px; border: 2px solid white; background: black; z-index: 1000;"></canvas>
+
+  <!-- Save/Load Modal -->
+  <!-- Save/Load Modal -->
+  <div id="save-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Save / Load</h2>
+        <button id="close-modal">X</button>
+      </div>
+      <div class="slot-list" id="slot-list">
+        <!-- Slots will be injected here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Start Screen Logic
+      const startScreen = document.getElementById('start-screen');
+      const startNewBtn = document.getElementById('start-new-btn');
+      const startLoadBtn = document.getElementById('start-load-btn');
+
+      // Check for saved games
+      // We can peek at localStorage without Game.js being fully ready if naming convention is known ('god_game_save_')
+      let hasSaves = false;
+      for (let i = 1; i <= 5; i++) {
+        if (localStorage.getItem('god_game_save_' + i)) {
+          hasSaves = true;
+          break;
+        }
+      }
+
+      if (hasSaves) {
+        startLoadBtn.style.display = 'block';
+      }
+
+      // Audio Unlock & Start
+      const unlockAndStart = () => {
+        if (window.game && window.game.soundManager) {
+          window.game.soundManager.init(window.game.camera);
+        }
+        startScreen.style.display = 'none';
+      };
+
+      startNewBtn.addEventListener('click', () => {
+        unlockAndStart();
+        // Reset Game? For now just start as is (fresh reload usually)
+      });
+
+      startLoadBtn.addEventListener('click', () => {
+        unlockAndStart();
+        // Open Load Modal
+        const modal = document.getElementById('save-modal');
+        updateSlots('load');
+        modal.style.display = 'flex';
+      });
+
+
+      // In-Game UI Logic
+      const modal = document.getElementById('save-modal');
+      const btn = document.getElementById('save-load-btn');
+      const closeBtn = document.getElementById('close-modal');
+      const slotList = document.getElementById('slot-list');
+
+      btn.addEventListener('click', () => {
+        updateSlots();
+        modal.style.display = 'flex';
+      });
+
+      closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+
+      window.updateSlots = function (mode = 'both') { // mode: 'both' or 'load'
+        if (!window.game || !window.game.saveManager) return;
+
+        const slots = window.game.saveManager.getSlots();
+        slotList.innerHTML = '';
+
+        slots.forEach(slot => {
+          const div = document.createElement('div');
+          div.className = 'slot-item';
+
+          let infoText = `Slot ${slot.id}: Empty`;
+          if (!slot.empty) {
+            const date = new Date(slot.timestamp);
+            infoText = `Slot ${slot.id}: ${date.toLocaleString()}`;
+          }
+
+          const saveStyle = mode === 'load' ? 'display:none;' : '';
+
+          div.innerHTML = `
+            <div class="slot-info">${infoText}</div>
+            <div class="slot-actions">
+              <button onclick="saveGame(${slot.id})" style="${saveStyle}">Save</button>
+              <button onclick="loadGame(${slot.id})" ${slot.empty ? 'disabled' : ''}>Load</button>
+            </div>
+          `;
+          slotList.appendChild(div);
+        });
+      }
+
+      window.saveGame = (id) => {
+        if (window.game) {
+          if (window.game.saveGame(id)) {
+            alert('Game Saved!');
+            updateSlots();
+          }
+        }
+      };
+
+      window.loadGame = (id) => {
+        if (window.game) {
+          if (window.game.loadGame(id)) {
+            alert('Game Loaded!');
+            modal.style.display = 'none';
+          }
+        }
+      };
+    });
+  </script>
+
+</body>
+
+</html>
