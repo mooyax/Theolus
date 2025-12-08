@@ -11,7 +11,7 @@ export class SaveManager {
                 data: data
             };
             localStorage.setItem(key, JSON.stringify(saveData));
-            console.log(`Saved to slot ${slotId}`);
+            console.log(`Saved to slot ${slotId}. Verify:`, JSON.parse(localStorage.getItem(key)));
             return true;
         } catch (e) {
             console.error('Save failed:', e);
@@ -23,8 +23,11 @@ export class SaveManager {
         try {
             const key = this.prefix + slotId;
             const json = localStorage.getItem(key);
+            console.log(`Loading slot ${slotId}, Raw JSON:`, json ? json.substring(0, 50) + "..." : "null");
             if (!json) return null;
-            return JSON.parse(json);
+            const parsed = JSON.parse(json);
+            console.log(`Parsed Data for slot ${slotId}:`, parsed);
+            return parsed.data; // Note: save() wraps data in {timestamp, data}, so we must return parsed.data!
         } catch (e) {
             console.error('Load failed:', e);
             return null;

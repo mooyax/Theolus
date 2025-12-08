@@ -54,12 +54,12 @@ export class InputManager {
     }
 
     onPointerDown(event) {
-        if (event.target.tagName === 'BUTTON') return;
+        if (event.target.tagName === 'BUTTON' || event.target.id === 'minimap') return;
         this.downPosition.set(event.clientX, event.clientY);
     }
 
     onPointerUp(event) {
-        if (event.target.tagName === 'BUTTON') return;
+        if (event.target.tagName === 'BUTTON' || event.target.id === 'minimap') return;
 
         const upPosition = new THREE.Vector2(event.clientX, event.clientY);
         if (this.downPosition.distanceTo(upPosition) > this.dragThreshold) {
@@ -148,7 +148,20 @@ export class InputManager {
 
     updateCursor() {
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        const intersects = this.raycaster.intersectObjects(this.terrain.meshes);
+
+        // Optimizing Raycast: Raycast against mathematical plane y=0 instead of high-poly mesh.
+        // This is O(1) vs O(N).
+        // Raymarch against terrain heightmap
+        const hitPoint = this.terrain.raycast(this.raycaster.ray.origin, this.raycaster.ray.direction);
+        const intersects = hitPoint ? [{ point: hitPoint }] : [];
+
+        /* Plane Optimization (Replaced due to parallax)
+        const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+        const target = new THREE.Vector3();
+        const hit = this.raycaster.ray.intersectPlane(plane, target);
+        const intersects = hit ? [{ point: target }] : [];
+        */
+        // const intersects = this.raycaster.intersectObjects(this.terrain.meshes);
 
         if (intersects.length > 0) {
             const intersect = intersects[0];
@@ -194,8 +207,18 @@ export class InputManager {
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
 
-        // Intersect with all terrain meshes (now just one super-mesh)
-        const intersects = this.raycaster.intersectObjects(this.terrain.meshes);
+        // Optimization: Plane intersection
+        // Raymarch against terrain heightmap
+        const hitPoint = this.terrain.raycast(this.raycaster.ray.origin, this.raycaster.ray.direction);
+        const intersects = hitPoint ? [{ point: hitPoint }] : [];
+
+        /* Plane Optimization (Replaced due to parallax)
+        const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+        const target = new THREE.Vector3();
+        const hit = this.raycaster.ray.intersectPlane(plane, target);
+        const intersects = hit ? [{ point: target }] : [];
+        */
+        // const intersects = this.raycaster.intersectObjects(this.terrain.meshes);
 
         if (intersects.length > 0) {
             const intersect = intersects[0];
@@ -218,7 +241,7 @@ export class InputManager {
                     this.terrain.lower(gridX, gridZ);
                 } else if (this.mode === 'spawn') {
                     if (this.spawnCallback) {
-                        this.spawnCallback(gridX, gridZ);
+                        this.spawnCallback(gridX, gridZ, true); // Manual spawn is Special
                     }
                 }
             } else if (event.button === 2) { // Right click
@@ -228,5 +251,9 @@ export class InputManager {
             // Update cursor immediately to reflect height change
             this.updateCursor();
         }
+    }
+    update(deltaTime) {
+        // Update cursor every frame to handle camera movement even if mouse is static
+        this.updateCursor();
     }
 }

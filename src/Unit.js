@@ -1,83 +1,118 @@
 import * as THREE from 'three';
 
 export class Unit {
-    constructor(scene, terrain, x, z) {
+    // Static Cache
+    static assets = {
+        geometries: {},
+        materials: {},
+        textures: {}
+    };
+
+    static initAssets() {
+        if (Unit.assets.initialized) return;
+
+        // --- Geometries ---
+        Unit.assets.geometries.torso = new THREE.BoxGeometry(0.3, 0.4, 0.2);
+        Unit.assets.geometries.head = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+        Unit.assets.geometries.arm = new THREE.BoxGeometry(0.1, 0.3, 0.1);
+        Unit.assets.geometries.leg = new THREE.BoxGeometry(0.12, 0.3, 0.12);
+
+        // --- Textures ---
+        Unit.assets.textures.face = Unit.createFaceTexture();
+        Unit.assets.textures.hair = Unit.createHairTexture();
+
+        // --- Materials ---
+        Unit.assets.materials.limb = new THREE.MeshLambertMaterial({ color: 0xFFCCAA });
+        Unit.assets.materials.clothesNormal = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+        Unit.assets.materials.clothesSpecial = new THREE.MeshLambertMaterial({ color: 0x0000FF });
+
+        Unit.assets.materials.heads = [
+            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair }), // Right
+            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair }), // Left
+            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair }), // Top
+            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair }), // Bottom
+            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.face }), // Front
+            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair })  // Back
+        ];
+
+        Unit.assets.initialized = true;
+    }
+
+    static createFaceTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFCCAA'; ctx.fillRect(0, 0, 64, 64);
+        ctx.fillStyle = '#4A3000'; ctx.fillRect(0, 0, 64, 15);
+        ctx.fillStyle = '#000000'; ctx.fillRect(15, 25, 8, 8); ctx.fillRect(41, 25, 8, 8);
+        ctx.fillStyle = '#A0522D'; ctx.fillRect(20, 45, 24, 4);
+        return new THREE.CanvasTexture(canvas);
+    }
+
+    static createHairTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#4A3000'; ctx.fillRect(0, 0, 64, 64);
+        ctx.fillStyle = '#3A2000';
+        for (let i = 0; i < 20; i++) {
+            ctx.fillRect(Math.random() * 60, Math.random() * 60, 4, 4);
+        }
+        return new THREE.CanvasTexture(canvas);
+    }
+
+    constructor(scene, terrain, x, z, isSpecial = false) {
+        Unit.initAssets();
+
         this.scene = scene;
         this.terrain = terrain;
         this.gridX = x || 20;
         this.gridZ = z || 20;
 
+        this.lastGridX = this.gridX;
+        this.lastGridZ = this.gridZ;
+        this.stagnationTimer = 0;
+        this.lastGatherTime = -Math.random() * 30; // Stagger gathering
+
+        // Position & Rotation Data (No Mesh)
+        this.position = new THREE.Vector3();
+        this.rotationY = 0;
+        this.limbs = {
+            leftArm: { x: 0 },
+            rightArm: { x: 0 },
+            leftLeg: { x: 0 },
+            rightLeg: { x: 0 }
+        };
+
         // Lifespan
+        this.isSpecial = isSpecial || false;
+        const baseLifespan = 50 + Math.random() * 30; // 50-80 seconds
+        this.lifespan = this.isSpecial ? baseLifespan * 3 : baseLifespan;
+
         this.age = 0;
-        this.lifespan = 50 + Math.random() * 30; // 50-80 seconds
         this.isDead = false;
         this.isFinished = false; // True when death animation is done
         this.crossMesh = null;
 
-        // Character Group
-        this.mesh = new THREE.Group();
-
-        // Materials
-        const clothesMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 }); // Brown fur/clothes
-        const limbMaterial = new THREE.MeshLambertMaterial({ color: 0xFFCCAA }); // Plain skin for limbs
-
-        // Head Materials (Array for 6 faces)
-        // Right, Left, Top, Bottom, Front, Back
-        const faceTexture = this.createFaceTexture();
-        const hairTexture = this.createHairTexture();
-
-        const headMaterials = [
-            new THREE.MeshLambertMaterial({ map: hairTexture }), // Right
-            new THREE.MeshLambertMaterial({ map: hairTexture }), // Left
-            new THREE.MeshLambertMaterial({ map: hairTexture }), // Top
-            new THREE.MeshLambertMaterial({ map: hairTexture }), // Bottom
-            new THREE.MeshLambertMaterial({ map: faceTexture }), // Front
-            new THREE.MeshLambertMaterial({ map: hairTexture })  // Back
-        ];
-
-        // Torso
-        const torsoGeo = new THREE.BoxGeometry(0.3, 0.4, 0.2);
-        this.torso = new THREE.Mesh(torsoGeo, clothesMaterial);
-        this.torso.position.y = 0.4;
-        this.mesh.add(this.torso);
-
-        // Head
-        const headGeo = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-        this.head = new THREE.Mesh(headGeo, headMaterials);
-        this.head.position.y = 0.7;
-        this.mesh.add(this.head);
-
-        // Arms
-        const armGeo = new THREE.BoxGeometry(0.1, 0.3, 0.1);
-
-        this.leftArm = new THREE.Mesh(armGeo, limbMaterial);
-        this.leftArm.position.set(0.2, 0.4, 0);
-        this.mesh.add(this.leftArm);
-
-        this.rightArm = new THREE.Mesh(armGeo, limbMaterial);
-        this.rightArm.position.set(-0.2, 0.4, 0);
-        this.mesh.add(this.rightArm);
-
-        // Legs
-        const legGeo = new THREE.BoxGeometry(0.12, 0.3, 0.12);
-
-        this.leftLeg = new THREE.Mesh(legGeo, clothesMaterial);
-        this.leftLeg.position.set(0.1, 0.15, 0);
-        this.mesh.add(this.leftLeg);
-
-        this.rightLeg = new THREE.Mesh(legGeo, clothesMaterial);
-        this.rightLeg.position.set(-0.1, 0.15, 0);
-        this.mesh.add(this.rightLeg);
+        // Combat Stats
+        this.hp = 30 + Math.floor(Math.random() * 20); // 30-50 HP
+        this.maxHp = this.hp;
+        this.attackCooldown = 0;
+        this.attackRate = 1.0;
+        this.damage = 6;
+        this.targetGoblin = null;
 
         this.updatePosition();
-        this.scene.add(this.mesh);
+        // this.scene.add(this.mesh); // Removed
 
-        // Create 8 visual clones for infinite wrapping
-        this.clones = [];
-        this.createClones();
+        // Clones Logic Removed (Handled by Renderer)
+        // this.clones = [];
+        // this.createClones();
 
         this.moveTimer = 0;
-        this.moveInterval = 1000; // Move every 1 second
+        this.moveInterval = 100;
         this.lastTime = performance.now();
 
         // Animation state
@@ -85,73 +120,62 @@ export class Unit {
         this.targetX = 0;
         this.targetZ = 0;
         this.moveStartTime = 0;
-        this.moveDuration = 500; // ms to move between tiles
+        this.moveDuration = 500;
+
+        // Register in Spatial Grid
+        this.terrain.registerEntity(this, this.gridX, this.gridZ, 'unit');
     }
 
-    createClones() {
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
+    // createClones removed
 
-        const offsets = [
-            { x: 1, z: 0 }, { x: -1, z: 0 },
-            { x: 0, z: 1 }, { x: 0, z: -1 },
-            { x: 1, z: 1 }, { x: 1, z: -1 },
-            { x: -1, z: 1 }, { x: -1, z: -1 }
-        ];
-
-        offsets.forEach(offset => {
-            const clone = this.mesh.clone();
-            this.scene.add(clone);
-            this.clones.push({ mesh: clone, offset: offset });
-        });
-    }
-
-    createFaceTexture() {
-        const canvas = document.createElement('canvas');
-        canvas.width = 64;
-        canvas.height = 64;
-        const ctx = canvas.getContext('2d');
-
-        // Skin
-        ctx.fillStyle = '#FFCCAA';
-        ctx.fillRect(0, 0, 64, 64);
-
-        // Hair (Top fringe)
-        ctx.fillStyle = '#4A3000';
-        ctx.fillRect(0, 0, 64, 15);
-
-        // Eyes
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(15, 25, 8, 8);
-        ctx.fillRect(41, 25, 8, 8);
-
-        // Mouth
-        ctx.fillStyle = '#A0522D';
-        ctx.fillRect(20, 45, 24, 4);
-
-        return new THREE.CanvasTexture(canvas);
-    }
-
-    createHairTexture() {
-        const canvas = document.createElement('canvas');
-        canvas.width = 64;
-        canvas.height = 64;
-        const ctx = canvas.getContext('2d');
-
-        // Hair color
-        ctx.fillStyle = '#4A3000';
-        ctx.fillRect(0, 0, 64, 64);
-
-        // Noise/Texture
-        ctx.fillStyle = '#3A2000';
-        for (let i = 0; i < 20; i++) {
-            ctx.fillRect(Math.random() * 60, Math.random() * 60, 4, 4);
+    takeDamage(amount) {
+        this.hp -= amount;
+        // console.log(`Unit ${this.id || ''} took ${amount} damage. HP: ${this.hp}`);
+        if (this.hp <= 0) {
+            this.die();
+        } else {
+            // Flash red removed to protect shared static materials
+            // TODO: Implement emissive flash or sprite flash if visual feedback needed
         }
-
-        return new THREE.CanvasTexture(canvas);
     }
 
-    update(time, deltaTime) {
+    die() {
+        if (this.isDead) return;
+        this.isDead = true;
+        this.terrain.unregisterEntity(this);
+        // Remove mesh handled by renderer? No, we remove it here to stop rendering or let renderer handle it?
+        // UnitRenderer iterates units. If we remove from scene, UnitRenderer might re-add it if it controls visibility.
+        // But previously we removed it.
+        // Let's check UnitRenderer usage in Game.js later. For now standard remove.
+        // Actually, UnitRenderer uses InstancedMesh maybe?
+        // If UnitRenderer is used, we shouldn't modify scene directly for unit mesh if it's instanced.
+        // But comments said "Clones Logic Removed". And `this.scene.add(this.mesh)` was commented out in constructor.
+        // So UnitRenderer handles it.
+        // If UnitRenderer handles it, we don't need to scene.remove(this.mesh).
+        // But we DO need to set isDead = true, which UnitRenderer likely checks.
+
+        this.createCross();
+        console.log(`Unit died.`);
+    }
+
+
+
+    attackGoblin(goblin) {
+        if (this.attackCooldown > 0) return;
+
+        // Attack anim (Visual only)
+        this.limbs.rightArm.x = -Math.PI / 2;
+        setTimeout(() => {
+            if (!this.isDead) this.limbs.rightArm.x = 0;
+        }, 200);
+
+        goblin.takeDamage(this.damage);
+        this.attackCooldown = this.attackRate;
+    }
+
+    update(time, deltaTime, isNight, goblins, fishes, sheeps) {
+        // Debug Entry
+        // if (Math.random() < 0.001) console.log(`Unit ${this.id || '?'} update. Dead:${this.isDead} Sleep:${this.isSleeping} Moving:${this.isMoving}`);
         if (this.isDead) {
             this.updateDeathAnimation(deltaTime);
             return;
@@ -167,7 +191,41 @@ export class Unit {
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
-        // Animation
+
+        if (this.lastGridX === this.gridX && this.lastGridZ === this.gridZ && !this.isSleeping) {
+            this.stagnationTimer += deltaTime;
+        } else {
+            this.lastGridX = this.gridX;
+            this.lastGridZ = this.gridZ;
+            this.stagnationTimer = 0;
+        }
+
+        if (this.stagnationTimer > 10.0) {
+            // Force Move if stuck for 10s
+            // Try normal random move first
+            this.moveRandomly();
+
+            // Critical Stuck Check: If stuck for > 20s, TELEPORT.
+            if (this.stagnationTimer > 20.0) {
+                console.warn("Unit critically stuck. Teleporting to safety.");
+                this.forceUnstuck();
+                this.stagnationTimer = 0;
+            }
+        }
+
+        // Safety: Stuck in "isMoving" state?
+        if (this.isMoving && (time - this.moveStartTime) > 2000) {
+            // If moving for > 2 seconds (duration is 500ms), something is wrong.
+            // Force finish.
+            console.warn("Unit stuck in moving state. Forcing finish.");
+            this.isMoving = false;
+            this.gridX = this.targetGridX;
+            this.gridZ = this.targetGridZ;
+            this.updatePosition();
+            this.tryBuildStructure();
+        }
+
+        // 1. EXECUTION PHASE: Movement & Animation
         if (this.isMoving) {
             const progress = (time - this.moveStartTime) / this.moveDuration;
 
@@ -178,15 +236,14 @@ export class Unit {
                 this.updatePosition(); // Snap to final position
 
                 // Reset limbs
-                this.leftArm.rotation.x = 0;
-                this.rightArm.rotation.x = 0;
-                this.leftLeg.rotation.x = 0;
-                this.rightLeg.rotation.x = 0;
+                this.limbs.leftArm.x = 0;
+                this.limbs.rightArm.x = 0;
+                this.limbs.leftLeg.x = 0;
+                this.limbs.rightLeg.x = 0;
 
                 this.tryBuildStructure();
             } else {
                 // Interpolate position
-                // Handle wrapping interpolation
                 let sx = this.startGridX;
                 let sz = this.startGridZ;
                 let tx = this.targetGridX;
@@ -201,48 +258,250 @@ export class Unit {
                 const lerpZ = sz + (tz - sz) * progress;
 
                 const pos = this.getPositionForGrid(lerpX, lerpZ);
-
-                this.mesh.position.copy(pos);
+                this.position.copy(pos);
 
                 // Animate limbs
                 const limbAngle = Math.sin(progress * Math.PI * 4) * 0.5;
-                this.leftArm.rotation.x = limbAngle;
-                this.rightArm.rotation.x = -limbAngle;
-                this.leftLeg.rotation.x = -limbAngle;
-                this.rightLeg.rotation.x = limbAngle;
+                this.limbs.leftArm.x = limbAngle;
+                this.limbs.rightArm.x = -limbAngle;
+                this.limbs.leftLeg.x = -limbAngle;
+                this.limbs.rightLeg.x = limbAngle;
+            }
+        }
+
+        // Day/Night Behavior
+        if (isNight) {
+            const cell = this.terrain.grid[this.gridX][this.gridZ];
+            if (cell.hasBuilding) {
+                // Hide inside house
+                if (!this.isSleeping) {
+                    this.isSleeping = true;
+                    // Visibility handled by renderer
+                }
+                return; // Stop moving
+            } else {
+                // Not in house.
+                if (this.isSleeping) this.isSleeping = false; // Safety reset if left house logic fails
+
+                // Seek Shelter?
+                if (!this.isMoving && !this.targetGoblin && !this.targetFood) {
+                    // Find nearest building
+                    let nearest = null;
+                    let minD = 30.0; // Scan range
+
+                    if (this.terrain.buildings) {
+                        this.terrain.buildings.forEach(b => {
+                            const dx = b.userData.gridX - this.gridX;
+                            const dz = b.userData.gridZ - this.gridZ;
+                            const d = Math.sqrt(dx * dx + dz * dz);
+                            if (d < minD) {
+                                minD = d;
+                                nearest = b;
+                            }
+                        });
+                    }
+
+                    if (nearest) {
+                        // Go to house
+                        this.triggerMove(nearest.userData.gridX, nearest.userData.gridZ, time);
+                        return;
+                    }
+                }
+                // If no house found, fall through to Normal Behavior (Wander/Fight)
             }
         } else {
+            // Morning - Wake up
+            if (this.isSleeping) {
+                this.isSleeping = false;
+                // mesh visibility handled by renderer
+                // Eject to neighbor cell to avoid immediate re-entry? 
+                // Currently just wakes up and can move out via moveRandomly
+            }
+        }
+
+        this.attackCooldown -= deltaTime;
+
+        // Check Cooldown for Hunting/Combat
+        if (this.huntingCooldown && time < this.huntingCooldown) {
+            // Cooldown active, ignore targets, just wander.
+        } else {
+            // Combat Logic
+            if (goblins) {
+                this.findTargetGoblin(goblins);
+                if (this.targetGoblin) {
+                    const dist = this.getDistance(this.targetGoblin.gridX, this.targetGoblin.gridZ);
+                    if (dist <= 1.5) {
+                        this.attackGoblin(this.targetGoblin);
+                    } else {
+                        // Chase Goblin logic reuse
+                        if (!this.isMoving && time - this.lastTime > this.moveInterval) {
+                            const tx = this.targetGoblin.gridX;
+                            const tz = this.targetGoblin.gridZ;
+                            this.triggerMove(tx, tz, time);
+                        }
+                    }
+                }
+                // return; // Don't return, just don't wander
+            }
+        }
+
+        // Passive Resource Gathering
+        // Only if not built or fighting? Or always?
+        // Let's do it if idle or moving (basically always while alive and outside)
+        this.gatherResources(time);
+
+        // Hunting Logic - REMOVED for Simplification
+        // No longer seek fishes or sheeps.
+        /*
+        if (!this.targetFood && (fishes || sheeps)) { ... }
+        if (this.targetFood) { ... }
+        */
+
+        // 2. DECISION PHASE: Wandering
+        // Only if not moving, not fighting (hunting removed)
+        if (!this.isMoving && !this.targetGoblin) {
             if (time - this.lastTime > this.moveInterval) {
                 this.moveRandomly();
                 this.lastTime = time;
             }
         }
 
-        // Sync Clones
-        this.updateClones();
+        // Sync Clones: Handled by renderer
     }
 
-    updateClones() {
+    triggerMove(tx, tz, time) {
+        const dx = tx - this.gridX;
+        const dz = tz - this.gridZ;
+
+        let nextX = this.gridX;
+        let nextZ = this.gridZ;
+
+        if (Math.abs(dx) > Math.abs(dz)) {
+            nextX += Math.sign(dx);
+        } else {
+            nextZ += Math.sign(dz);
+        }
+
+        // Wrap check
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
+        if (nextX < 0) nextX = logicalW - 1;
+        if (nextX >= logicalW) nextX = 0;
+        if (nextZ < 0) nextZ = logicalD - 1;
+        if (nextZ >= logicalD) nextZ = 0;
 
-        // Sync position, rotation, and limb rotations
-        this.clones.forEach(cloneObj => {
-            const clone = cloneObj.mesh;
-            const offset = cloneObj.offset;
+        // Check Sea Level (Unless target is fish, then we might walk to shore)
+        // If target is fish, next step might be water. We stop at shore.
+        const currentHeight = this.terrain.getTileHeight(this.gridX, this.gridZ);
+        const targetHeight = this.terrain.getTileHeight(nextX, nextZ);
 
-            clone.position.copy(this.mesh.position);
-            clone.position.x += offset.x * logicalW;
-            clone.position.z += offset.z * logicalD;
+        // Simple walk check: Match moveRandomly limit (2.0)
+        if (Math.abs(targetHeight - currentHeight) <= 2.0 && targetHeight > 0) {
+            this.isMoving = true;
+            this.moveStartTime = performance.now();
+            this.startGridX = this.gridX;
+            this.startGridZ = this.gridZ;
+            this.targetGridX = nextX;
+            this.targetGridZ = nextZ;
 
-            clone.rotation.copy(this.mesh.rotation);
+            // Rotate towards target
+            const angle = Math.atan2(Math.sign(dx), Math.sign(dz));
+            this.rotationY = angle;
 
-            for (let i = 0; i < this.mesh.children.length; i++) {
-                clone.children[i].rotation.copy(this.mesh.children[i].rotation);
-                clone.children[i].position.copy(this.mesh.children[i].position);
+            this.lastTime = time;
+            this.stuckCount = 0; // Reset stuck counter
+        } else {
+            // Cannot reach?
+            this.lastTime = time; // Set cooldown even if fail!
+            this.stuckCount = (this.stuckCount || 0) + 1;
+
+            // If stuck too long, abandon target
+            if (this.stuckCount > 5) {
+                console.log("Unit stuck chasing target. Abandoning and cooling down.");
+                this.targetGoblin = null;
+                this.targetFood = null;
+                this.stuckCount = 0;
+                this.huntingCooldown = performance.now() + 5000; // 5 seconds ignore targets
+                this.moveRandomly();
             }
-        });
+
+            // If hunting fish, we might be blocked by water. If dist is close, collect.
+            // (Handled elsewhere)
+        }
     }
+
+    gatherResources(time) {
+        // Gather every 30 seconds (Slowed down from 10s)
+        if (time - this.lastGatherTime < 30) return;
+        this.lastGatherTime = time;
+
+        const range = 2; // Check 5x5 area
+        let foundWater = false;
+        let foundForest = false;
+
+        const minX = Math.max(0, this.gridX - range);
+        const maxX = Math.min(this.terrain.logicalWidth - 1, this.gridX + range);
+        const minZ = Math.max(0, this.gridZ - range);
+        const maxZ = Math.min(this.terrain.logicalDepth - 1, this.gridZ + range);
+
+        for (let x = minX; x <= maxX; x++) {
+            for (let z = minZ; z <= maxZ; z++) {
+                const height = this.terrain.getTileHeight(x, z);
+
+                // Water (<= 0)
+                if (height <= 0) {
+                    foundWater = true;
+                }
+                // Forest (> 4 and <= 8)
+                else if (height > 4 && height <= 8) {
+                    foundForest = true;
+                }
+
+                if (foundWater && foundForest) break;
+            }
+            if (foundWater && foundForest) break;
+        }
+
+        if (foundWater) {
+            if (window.game && window.game.resources) {
+                window.game.resources.fish++;
+                // Optional: Show effect?
+            }
+        }
+        if (foundForest) {
+            if (window.game && window.game.resources) {
+                window.game.resources.meat++;
+            }
+        }
+    }
+
+    findTargetGoblin(goblins) {
+        if (!goblins || goblins.length === 0) return;
+
+        let nearest = null;
+        let minDistSq = 10.0 * 10.0; // Range 10, squared
+
+        // Linear scan - optimized with squared distance
+        for (const goblin of goblins) {
+            const dx = this.gridX - goblin.gridX;
+            const dz = this.gridZ - goblin.gridZ;
+            const distSq = dx * dx + dz * dz;
+
+            if (distSq < minDistSq) {
+                minDistSq = distSq;
+                nearest = goblin;
+            }
+        }
+        this.targetGoblin = nearest;
+    }
+
+    getDistance(tx, tz) {
+        const dx = Math.abs(this.gridX - tx);
+        const dz = Math.abs(this.gridZ - tz);
+        return Math.sqrt(dx * dx + dz * dz);
+    }
+
+
 
     moveRandomly() {
         const logicalW = this.terrain.logicalWidth || 80;
@@ -253,38 +512,59 @@ export class Unit {
             { x: 0, z: 1 }, { x: 0, z: -1 }
         ];
 
-        const dir = directions[Math.floor(Math.random() * directions.length)];
-
-        let targetX = this.gridX + dir.x;
-        let targetZ = this.gridZ + dir.z;
-
-        // Wrap logic
-        if (targetX < 0) targetX = logicalW - 1;
-        if (targetX >= logicalW) targetX = 0;
-        if (targetZ < 0) targetZ = logicalD - 1;
-        if (targetZ >= logicalD) targetZ = 0;
+        // Shuffle directions to avoid bias
+        for (let i = directions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [directions[i], directions[j]] = [directions[j], directions[i]];
+        }
 
         const currentHeight = this.terrain.getTileHeight(this.gridX, this.gridZ);
-        const targetHeight = this.terrain.getTileHeight(targetX, targetZ);
 
-        if (Math.abs(targetHeight - currentHeight) <= 1) {
-            if (targetHeight > 0.5) {
-                this.isMoving = true;
-                this.moveStartTime = performance.now();
-                this.startGridX = this.gridX;
-                this.startGridZ = this.gridZ;
-                this.targetGridX = targetX;
-                this.targetGridZ = targetZ;
+        for (const dir of directions) {
+            let targetX = this.gridX + dir.x;
+            let targetZ = this.gridZ + dir.z;
 
-                const angle = Math.atan2(dir.x, dir.z);
-                this.mesh.rotation.y = angle;
+            // Wrap logic
+            if (targetX < 0) targetX = logicalW - 1;
+            if (targetX >= logicalW) targetX = 0;
+            if (targetZ < 0) targetZ = logicalD - 1;
+            if (targetZ >= logicalD) targetZ = 0;
+
+            const targetHeight = this.terrain.getTileHeight(targetX, targetZ);
+
+            // Allow climbing up to 2.0 units
+            if (Math.abs(targetHeight - currentHeight) <= 2.0) {
+                // Check Sea Level (Must be land > 0)
+                if (targetHeight > 0) {
+                    this.isMoving = true;
+                    console.log(`Unit moving from ${this.gridX},${this.gridZ} (${currentHeight.toFixed(2)}) to ${targetX},${targetZ} (${targetHeight.toFixed(2)})`);
+                    this.moveStartTime = performance.now();
+                    this.startGridX = this.gridX;
+                    this.startGridZ = this.gridZ;
+                    this.targetGridX = targetX;
+                    this.targetGridZ = targetZ;
+
+                    const angle = Math.atan2(dir.x, dir.z); // Wait, atan2(x, y). z is y.
+                    // Actually dx=dir.x, dz=dir.z. atan2(dx, dz).
+                    this.rotationY = Math.atan2(dir.x, dir.z);
+
+                    return; // Found a valid move!
+                } else {
+                    console.log(`Unit failed move: Target is water (${targetHeight})`);
+                }
+            } else {
+                console.log(`Unit failed move: Too steep (${currentHeight} -> ${targetHeight})`);
             }
         }
+        // If no valid move found, stay idle.
+        console.log(`Unit idle: No valid neighbors`);
+        this.lastTime = performance.now(); // Reset timer so we don't spam checks
     }
 
     updatePosition() {
+
         const pos = this.getPositionForGrid(this.gridX, this.gridZ);
-        this.mesh.position.copy(pos);
+        this.position.copy(pos);
     }
 
     getPositionForGrid(x, z) {
@@ -299,321 +579,251 @@ export class Unit {
         );
     }
 
+    forceUnstuck() {
+        // Teleport to a random safe spot nearby
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        let found = false;
+        let attempts = 0;
+        while (!found && attempts < 10) {
+            // Try range +/- 3
+            const rx = Math.floor(Math.random() * 7) - 3;
+            const rz = Math.floor(Math.random() * 7) - 3;
+            if (rx === 0 && rz === 0) continue;
+
+            let tx = this.gridX + rx;
+            let tz = this.gridZ + rz;
+
+            if (tx < 0) tx = logicalW - 1;
+            if (tx >= logicalW) tx = 0;
+            if (tz < 0) tz = logicalD - 1;
+            if (tz >= logicalD) tz = 0;
+
+            const h = this.terrain.getTileHeight(tx, tz);
+            if (h > 0) { // Land only
+                // Teleport!
+                const oldX = this.gridX;
+                const oldZ = this.gridZ;
+                this.gridX = tx;
+                this.gridZ = tz;
+                this.updatePosition();
+                this.terrain.moveEntity(this, oldX, oldZ, tx, tz, 'unit');
+                console.log(`Unit warped from ${oldX},${oldX} to ${tx},${tz}`);
+                found = true;
+            }
+            attempts++;
+        }
+    }
+
     tryBuildStructure() {
+        // Performance Optimization: Moved logical width/depth fetch
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
         const x = this.gridX;
         const z = this.gridZ;
+        // Optimization: Direct access to grid
         const cell = this.terrain.grid[x][z];
 
+        // 1. Fast Exit: If already occupied, abort immediately
         if (cell.hasBuilding) return;
 
-        // Check for Castle (Large House)
-        // Condition: Total Population > 2000
-        if (window.game && window.game.totalPopulation > 2000) {
-            // Check 2x2 area: (x,z), (x+1,z), (x,z+1), (x+1,z+1)
-            const x1 = (x + 1) % logicalW;
-            const z1 = (z + 1) % logicalD;
+        // 2. Castle Check Setup
+        const totalPop = window.game ? window.game.totalPopulation : 0;
+        // Debug Log for Pop
+        // if (Math.random() < 0.005) console.log("Total Pop:", totalPop);
 
-            const cells = [
-                this.terrain.grid[x][z],
-                this.terrain.grid[x1][z],
-                this.terrain.grid[x][z1],
-                this.terrain.grid[x1][z1]
-            ];
+        // Ensure we are visible when building!
+        this.isSleeping = false;
 
-            const h = cell.height;
-            const allFlat = cells.every(c => c.height === h && !c.hasBuilding);
+        // 3. Check 2x2 Area (Quad)
+        const x1 = (x + 1) % logicalW;
+        const z1 = (z + 1) % logicalD;
 
-            if (allFlat) {
-                this.buildCastle(x, z, x1, z1);
-                return;
+        const c00 = cell;
+        const c10 = this.terrain.grid[x1][z];
+        const c01 = this.terrain.grid[x][z1];
+        const c11 = this.terrain.grid[x1][z1];
+
+        // Obstruction Check
+        if (c00.hasBuilding || c10.hasBuilding || c01.hasBuilding || c11.hasBuilding) {
+            return; // Obstructed
+        }
+
+        const h00 = c00.height;
+        const h10 = c10.height;
+        const h01 = c01.height;
+        const h11 = c11.height;
+
+        // 1x1 Flatness (For House/Farm)
+        const is1x1Flat = (h00 === h10 && h00 === h01 && h00 === h11 && h00 > 0);
+
+        // 2x2 Flatness (For Castle)
+        let is2x2Flat = false;
+
+
+        if (is1x1Flat) {
+            // Only verify 3x3 if 1x1 is already flat (optimization)
+            const x2 = (x + 2) % logicalW;
+            const z2 = (z + 2) % logicalD;
+
+            // Check remaining 5 vertices for 2x2 area
+            // (x+2, z), (x+2, z+1), (x+2, z+2)
+            // (x, z+2), (x+1, z+2)
+
+            const h20 = this.terrain.grid[x2][z].height;
+            const h21 = this.terrain.grid[x2][z1].height;
+            const h22 = this.terrain.grid[x2][z2].height;
+            const h02 = this.terrain.grid[x][z2].height;
+            const h12 = this.terrain.grid[x1][z2].height;
+
+            if (h00 === h20 && h00 === h21 && h00 === h22 && h00 === h02 && h00 === h12) {
+                is2x2Flat = true;
             }
         }
 
-        // Check for House (Flat land)
-        // Check 3x3 area for flatness
-        let isFlat = true;
-        const height = cell.height;
+        // 4. Build Decision
 
-        for (let dx = -1; dx <= 1; dx++) {
-            for (let dz = -1; dz <= 1; dz++) {
-                const tx = (x + dx + logicalW) % logicalW;
-                const tz = (z + dz + logicalD) % logicalD;
-                if (this.terrain.grid[tx][tz].height !== height) {
-                    isFlat = false;
-                    break;
+        // Strategy: 
+        // If 2x2 Flat -> Attempt Castle.
+        // If Castle fails or not 2x2 -> Attempt House/Farm (needs 1x1 flat).
+
+        if (is2x2Flat) {
+            // Castle Opportunity Check
+            let castleCount = 0;
+            if (this.terrain.buildings.length > 0) {
+                this.terrain.buildings.forEach(b => {
+                    if (b.userData.type === 'castle') castleCount++;
+                });
+            }
+
+            const castleThreshold = 1000 * (castleCount + 1);
+
+            if (totalPop >= castleThreshold) {
+                console.log(`Castle Construction Attempt: Pop ${totalPop} >= ${castleThreshold}. Flatness verified (3x3).`);
+                if (Math.random() < 0.2) { // 20% chance
+                    this.buildCastle(x, z, x1, z1);
+                    return;
                 }
             }
-            if (!isFlat) break;
         }
 
-        if (isFlat) {
-            // Simple rule: 10% chance to build if no building
-            if (Math.random() < 0.1) {
+        // House/Farm Logic (Requires 1x1 Flatness)
+        if (is1x1Flat) {
+            let houseCount = 0;
+            let farmCount = 0;
+
+            this.terrain.buildings.forEach(b => {
+                if (b.type === 'house' || (b.userData && b.userData.type === 'house')) houseCount++;
+                else if (b.type === 'farm' || (b.userData && b.userData.type === 'farm')) farmCount++;
+            });
+
+            // Strict Balancer Logic
+            let shouldBuildFarm = false;
+
+            // If we have fewer farms than half of houses, we MUST build a farm.
+            if (farmCount < Math.ceil(houseCount / 2)) {
+                shouldBuildFarm = true;
+            }
+
+            // Random factor: small chance to build farm anyway if low
+            if (Math.random() < 0.2) shouldBuildFarm = true;
+
+            if (shouldBuildFarm) {
+                this.buildFarm();
+            } else {
                 this.buildHouse();
             }
+
+            this.lastTime = performance.now();
+            this.stagnationTimer = 0;
+            setTimeout(() => {
+                if (!this.isDead) this.moveRandomly();
+            }, 500);
         } else {
-            // Check for Farm (Not flat)
-            if (Math.random() < 0.1) {
-                this.buildFarm();
-            }
+            // Not flat enough to build anything
+            this.moveRandomly();
         }
     }
 
-    buildCastle(x0, z0, x1, z1) {
+    buildCastle() {
+        // Center of 2x2
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
-        // Create Castle Mesh (2x2 size)
-        const castleGroup = new THREE.Group();
+        const x0 = this.gridX;
+        const z0 = this.gridZ;
 
-        // Main Keep
-        const keepGeo = new THREE.BoxGeometry(1.6, 1.5, 1.6);
-        const keepMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 }); // SaddleBrown
-        const keep = new THREE.Mesh(keepGeo, keepMat);
-        keep.position.y = 0.75;
-        castleGroup.add(keep);
-
-        // Windows for Castle
-        const windowMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-        const windowGeo = new THREE.PlaneGeometry(0.3, 0.4);
-        const windows = [];
-
-        // 4 Windows on sides
-        for (let i = 0; i < 4; i++) {
-            const win = new THREE.Mesh(windowGeo, windowMat.clone());
-            win.position.y = 1.0;
-            // Position based on rotation
-            if (i === 0) { win.position.z = 0.81; win.position.x = 0; } // Front
-            if (i === 1) { win.position.z = -0.81; win.position.x = 0; win.rotation.y = Math.PI; } // Back
-            if (i === 2) { win.position.x = 0.81; win.position.z = 0; win.rotation.y = Math.PI / 2; } // Right
-            if (i === 3) { win.position.x = -0.81; win.position.z = 0; win.rotation.y = -Math.PI / 2; } // Left
-
-            castleGroup.add(win);
-            windows.push(win);
-        }
-
-        // Roof
-        const roofGeo = new THREE.ConeGeometry(1.2, 1, 4);
-        const roofMat = new THREE.MeshLambertMaterial({ color: 0x800000 }); // Maroon
-        const roof = new THREE.Mesh(roofGeo, roofMat);
-        roof.position.y = 1.5 + 0.5;
-        roof.rotation.y = Math.PI / 4;
-        castleGroup.add(roof);
-
-        const height = this.terrain.getTileHeight(x0, z0);
-
-        // Position at center of 2x2 area (approx)
-        castleGroup.position.set(
-            x0 - logicalW / 2 + 1.0,
-            height,
-            z0 - logicalD / 2 + 1.0
-        );
-
-        this.scene.add(castleGroup);
-
-        // Mark all 4 cells
-        const cells = [
-            this.terrain.grid[x0][z0],
-            this.terrain.grid[x1][z0],
-            this.terrain.grid[x0][z1],
-            this.terrain.grid[x1][z1]
-        ];
-
-        cells.forEach(c => {
-            c.hasBuilding = true;
-            c.building = castleGroup;
-        });
-
-        // UserData
-        castleGroup.userData.type = 'castle';
-        castleGroup.userData.population = 0;
-        castleGroup.userData.gridX = x0;
-        castleGroup.userData.gridZ = z0;
-        castleGroup.userData.windows = windows; // Store windows
-
-        this.terrain.buildings.push(castleGroup);
+        // Add via Terrain logic
+        this.terrain.addBuilding('castle', x0, z0);
 
         // Unit enters castle
         this.isFinished = true;
         this.isDead = true;
-        this.mesh.visible = false;
-        console.log("Castle built at", x0, z0);
+        console.log(`Unit entered castle at ${x0}, ${z0} and became a citizen.`);
+    }
+
+    static getBuildingAssets() {
+        if (!Unit.assets.buildings) {
+            Unit.assets.buildings = {};
+
+            // HOUSE
+            Unit.assets.buildings.woodTexture = Unit.createWoodTexture();
+            Unit.assets.buildings.roofTexture = Unit.createRoofTexture();
+            Unit.assets.buildings.wallMat = new THREE.MeshLambertMaterial({ map: Unit.assets.buildings.woodTexture });
+            Unit.assets.buildings.roofMat = new THREE.MeshLambertMaterial({ map: Unit.assets.buildings.roofTexture });
+            Unit.assets.buildings.wallGeo = new THREE.BoxGeometry(0.6, 0.4, 0.6);
+            Unit.assets.buildings.roofGeo = new THREE.ConeGeometry(0.5, 0.4, 4);
+            Unit.assets.buildings.windowGeo = new THREE.PlaneGeometry(0.15, 0.15);
+            Unit.assets.buildings.windowMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+
+            // FARM
+            const canvas = document.createElement('canvas');
+            canvas.width = 64; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#DAA520'; ctx.fillRect(0, 0, 64, 64);
+            ctx.fillStyle = '#B8860B';
+            for (let i = 0; i < 10; i++) ctx.fillRect(i * 6, 0, 2, 64);
+            Unit.assets.buildings.wheatTexture = new THREE.CanvasTexture(canvas);
+            Unit.assets.buildings.farmMat = new THREE.MeshLambertMaterial({ map: Unit.assets.buildings.wheatTexture });
+            const farmGeo = new THREE.PlaneGeometry(0.8, 0.8);
+            farmGeo.rotateX(-Math.PI / 2);
+            Unit.assets.buildings.farmGeo = farmGeo;
+        }
+        return Unit.assets.buildings;
     }
 
     buildHouse() {
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
-
-        const cell = this.terrain.grid[this.gridX][this.gridZ];
-        cell.hasBuilding = true;
-
-        // House Group
-        const houseGroup = new THREE.Group();
-
-        // Materials
-        const woodTexture = this.createWoodTexture();
-        const roofTexture = this.createRoofTexture();
-
-        const wallMaterial = new THREE.MeshLambertMaterial({ map: woodTexture });
-        const roofMaterial = new THREE.MeshLambertMaterial({ map: roofTexture });
-
-        // Walls
-        const wallGeo = new THREE.BoxGeometry(0.6, 0.4, 0.6);
-        const walls = new THREE.Mesh(wallGeo, wallMaterial);
-        walls.position.y = 0.2;
-        houseGroup.add(walls);
-
-        // Windows for House
-        const windowMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-        const windowGeo = new THREE.PlaneGeometry(0.15, 0.15);
-        const windows = [];
-
-        // 2 Windows (Front and Back?)
-        for (let i = 0; i < 2; i++) {
-            const win = new THREE.Mesh(windowGeo, windowMat.clone());
-            win.position.y = 0.2;
-            if (i === 0) { win.position.z = 0.31; win.position.x = 0; } // Front
-            if (i === 1) { win.position.z = -0.31; win.position.x = 0; win.rotation.y = Math.PI; } // Back
-            houseGroup.add(win);
-            windows.push(win);
-        }
-
-        // Roof
-        const roofGeo = new THREE.ConeGeometry(0.5, 0.4, 4);
-        const roof = new THREE.Mesh(roofGeo, roofMaterial);
-        roof.position.y = 0.6;
-        roof.rotation.y = Math.PI / 4; // Align with walls
-        houseGroup.add(roof);
-
-        const height = this.terrain.getTileHeight(this.gridX, this.gridZ);
-        houseGroup.position.set(
-            this.gridX - logicalW / 2 + 0.5,
-            height,
-            this.gridZ - logicalD / 2 + 0.5
-        );
-
-        this.scene.add(houseGroup);
-
-        // Create clones for the house
-        const offsets = [
-            { x: 1, z: 0 }, { x: -1, z: 0 },
-            { x: 0, z: 1 }, { x: 0, z: -1 },
-            { x: 1, z: 1 }, { x: 1, z: -1 },
-            { x: -1, z: 1 }, { x: -1, z: -1 }
-        ];
-
-        const clones = [];
-        offsets.forEach(offset => {
-            const clone = houseGroup.clone();
-            clone.position.x += offset.x * logicalW;
-            clone.position.z += offset.z * logicalD;
-            this.scene.add(clone);
-            clones.push(clone);
-        });
-
-        houseGroup.userData.clones = clones;
-        houseGroup.userData.type = 'house';
-        houseGroup.userData.population = 0;
-        houseGroup.userData.gridX = this.gridX;
-        houseGroup.userData.gridZ = this.gridZ;
-        houseGroup.userData.windows = windows; // Store windows
-
-        cell.building = houseGroup;
-        this.terrain.buildings.push(houseGroup);
-
+        // Use Terrain logic for consistent data structure
+        this.terrain.addBuilding('house', this.gridX, this.gridZ);
         console.log("House built at", this.gridX, this.gridZ);
+
+        // Eject unit to avoid being stuck inside
+        this.moveRandomly();
     }
 
     buildFarm() {
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
+        // Use Terrain logic
+        this.terrain.addBuilding('farm', this.gridX, this.gridZ);
 
-        const cell = this.terrain.grid[this.gridX][this.gridZ];
-        cell.hasBuilding = true;
-
-        // Farm Group
-        const farmGroup = new THREE.Group();
-
-        // Wheat Texture
-        const canvas = document.createElement('canvas');
-        canvas.width = 64;
-        canvas.height = 64;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#DAA520'; // GoldenRod
-        ctx.fillRect(0, 0, 64, 64);
-        ctx.fillStyle = '#B8860B'; // Darker GoldenRod
-        for (let i = 0; i < 10; i++) {
-            ctx.fillRect(i * 6, 0, 2, 64); // Vertical lines
-        }
-        const wheatTexture = new THREE.CanvasTexture(canvas);
-
-        const material = new THREE.MeshLambertMaterial({ map: wheatTexture });
-        const geometry = new THREE.PlaneGeometry(0.8, 0.8);
-        geometry.rotateX(-Math.PI / 2);
-
-        const farm = new THREE.Mesh(geometry, material);
-        farm.position.y = 0.05; // Slightly above ground
-        farmGroup.add(farm);
-
-        const height = this.terrain.getTileHeight(this.gridX, this.gridZ);
-        farmGroup.position.set(
-            this.gridX - logicalW / 2 + 0.5,
-            height,
-            this.gridZ - logicalD / 2 + 0.5
-        );
-
-        this.scene.add(farmGroup);
-
-        // Create clones
-        const offsets = [
-            { x: 1, z: 0 }, { x: -1, z: 0 },
-            { x: 0, z: 1 }, { x: 0, z: -1 },
-            { x: 1, z: 1 }, { x: 1, z: -1 },
-            { x: -1, z: 1 }, { x: -1, z: -1 }
-        ];
-
-        const clones = [];
-        offsets.forEach(offset => {
-            const clone = farmGroup.clone();
-            clone.position.x += offset.x * logicalW;
-            clone.position.z += offset.z * logicalD;
-            this.scene.add(clone);
-            clones.push(clone);
-        });
-
-        farmGroup.userData.clones = clones;
-        farmGroup.userData.type = 'farm';
-        farmGroup.userData.gridX = this.gridX;
-        farmGroup.userData.gridZ = this.gridZ;
-
-        cell.building = farmGroup;
-        this.terrain.buildings.push(farmGroup);
-
-        console.log("Farm built at", this.gridX, this.gridZ);
+        // Eject unit
+        this.moveRandomly();
     }
 
-    die() {
-        this.isDead = true;
-
-        // Remove unit mesh
-        if (this.mesh) {
-            this.scene.remove(this.mesh);
+    static getCrossAssets() {
+        if (!Unit.assets.geometries.crossV) {
+            Unit.assets.geometries.crossV = new THREE.BoxGeometry(0.2, 1.0, 0.2);
+            Unit.assets.geometries.crossH = new THREE.BoxGeometry(0.8, 0.2, 0.2);
         }
-        if (this.clones) {
-            this.clones.forEach(cloneObj => this.scene.remove(cloneObj.mesh));
-        }
-
-        // Create Cross
-        this.createCross();
-        console.log("Unit died at", this.gridX, this.gridZ);
+        return Unit.assets.geometries;
     }
 
     createCross() {
         const group = new THREE.Group();
+        const GEO = Unit.getCrossAssets();
 
+        // Material must be unique per cross to allow individual fading
         const material = new THREE.MeshLambertMaterial({
             color: 0xFFFFFF,
             transparent: true,
@@ -621,14 +831,12 @@ export class Unit {
         });
 
         // Vertical part
-        const vGeo = new THREE.BoxGeometry(0.2, 1.0, 0.2);
-        const vMesh = new THREE.Mesh(vGeo, material);
+        const vMesh = new THREE.Mesh(GEO.crossV, material);
         vMesh.position.y = 0.5;
         group.add(vMesh);
 
         // Horizontal part
-        const hGeo = new THREE.BoxGeometry(0.8, 0.2, 0.2);
-        const hMesh = new THREE.Mesh(hGeo, material);
+        const hMesh = new THREE.Mesh(GEO.crossH, material);
         hMesh.position.y = 0.7;
         group.add(hMesh);
 
@@ -648,7 +856,15 @@ export class Unit {
         const duration = 3.0; // 3 seconds animation
 
         if (this.deathTimer >= duration) {
+            // Clean up
             this.scene.remove(this.crossMesh);
+
+            // CRITICAL: Dispose of materials to prevent memory leak
+            this.crossMesh.children.forEach(child => {
+                if (child.material) child.material.dispose();
+            });
+            this.crossMesh = null;
+
             this.isFinished = true;
         } else {
             // Rise up
@@ -662,7 +878,7 @@ export class Unit {
         }
     }
 
-    createWoodTexture() {
+    static createWoodTexture() {
         const canvas = document.createElement('canvas');
         canvas.width = 64;
         canvas.height = 64;
@@ -685,7 +901,7 @@ export class Unit {
         return new THREE.CanvasTexture(canvas);
     }
 
-    createRoofTexture() {
+    static createRoofTexture() {
         const canvas = document.createElement('canvas');
         canvas.width = 64;
         canvas.height = 64;
@@ -721,12 +937,13 @@ export class Unit {
             startGridX: this.startGridX,
             startGridZ: this.startGridZ,
             targetGridX: this.targetGridX,
-            targetGridZ: this.targetGridZ
+            targetGridZ: this.targetGridZ,
+            isSpecial: this.isSpecial
         };
     }
 
     static deserialize(data, scene, terrain) {
-        const unit = new Unit(scene, terrain, data.gridX, data.gridZ);
+        const unit = new Unit(scene, terrain, data.gridX, data.gridZ, data.isSpecial);
         unit.age = data.age;
         unit.lifespan = data.lifespan;
         unit.isDead = data.isDead;
