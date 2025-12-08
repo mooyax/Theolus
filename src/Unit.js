@@ -188,6 +188,17 @@ export class Unit {
             return;
         }
 
+        // WATER DEATH CHECK (Level <= 0)
+        // Note: Fish logic is separate, so this Unit class (Humans/Goblins) should always die in water.
+        {
+            const h = this.terrain.getTileHeight(this.gridX, this.gridZ);
+            if (h <= 0) {
+                console.log(`Unit drowned at ${this.gridX},${this.gridZ} (Height: ${h})`);
+                this.die();
+                return;
+            }
+        }
+
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 

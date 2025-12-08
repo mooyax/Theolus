@@ -172,6 +172,13 @@ export class Goblin {
             return;
         }
 
+        // Water Death Check
+        const currentH = this.terrain.getTileHeight(this.gridX, this.gridZ);
+        if (currentH <= 0) {
+            this.die();
+            return;
+        }
+
         this.attackCooldown -= deltaTime;
 
         // AI Logic
@@ -532,6 +539,7 @@ export class Goblin {
         if (this.isDead) return; // Prevent double death
         this.isDead = true;
         this.terrain.unregisterEntity(this);
+        this.mesh.visible = false;
         this.scene.remove(this.mesh);
         this.createCross();
         // console.log("Goblin died");

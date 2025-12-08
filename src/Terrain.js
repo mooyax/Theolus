@@ -469,9 +469,16 @@ export class Terrain {
             checkTiles.forEach(t => {
                 const cell = this.grid[t.x][t.z];
                 if (cell.hasBuilding && cell.building) {
-                    // Verify flatness
+                    // Verify flatness AND Water Level
                     const b = cell.building;
                     let isValid = true;
+
+                    // 1. Water Check: If base is <= 0, destroy immediately
+                    const baseHeight = this.grid[t.x][t.z].height;
+                    if (baseHeight <= 0) {
+                        isValid = false;
+                        console.log("Building drowned!");
+                    }
 
                     if (b.userData.type === 'house' || b.userData.type === 'farm') {
                         // Check 4 corners of this tile

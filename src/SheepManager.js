@@ -137,8 +137,16 @@ export class SheepManager {
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
-        this.sheeps.forEach(sheepData => {
+        this.sheeps.forEach((sheepData, index) => { // Added index for removal
             const sheep = sheepData.mesh;
+
+            // Water Death Check
+            const currentH = this.terrain.getTileHeight(sheep.userData.gridX, sheep.userData.gridZ);
+            if (currentH <= 0) {
+                this.removeSheep(sheep);
+                this.sheeps.splice(index, 1);
+                return;
+            }
 
             // AI State Machine
             sheepData.timer -= deltaTime;

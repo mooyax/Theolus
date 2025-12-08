@@ -150,9 +150,8 @@ export class Game {
 
         window.addEventListener('keydown', initAudio);
 
-        // Spawn initial units
-        // First unit is special (Leader)
-        this.spawnUnit(undefined, undefined, true);
+        // Initial spawn is handled above with safe spot logic (lines 91-109)
+        // this.spawnUnit(undefined, undefined, true);
 
         this.animate();
     }

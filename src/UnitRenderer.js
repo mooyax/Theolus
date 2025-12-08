@@ -100,7 +100,7 @@ export class UnitRenderer {
         const colorSpecial = new THREE.Color(0x0000FF);
 
         for (const unit of units) {
-            if (unit.isDead && unit.isFinished) continue;
+            if (unit.isDead) continue;
             if (unit.isSleeping) continue;
             if (!unit.position) continue; // Safety if unit refactor incomplete
 
