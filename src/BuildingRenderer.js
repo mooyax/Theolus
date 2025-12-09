@@ -154,6 +154,22 @@ export class BuildingRenderer {
         this.assets.castleRoofGeo.translate(0, 1.3, 0);
         this.assets.castleRoofGeo.rotateY(Math.PI / 4);
         this.assets.castleRoofMat = new THREE.MeshLambertMaterial({ ...matOptions, color: 0x800000 });
+
+        // Explicitly assign clippingPlanes to ensure reference is kept
+        const allMats = [
+            this.assets.houseWallMat,
+            this.assets.houseRoofMat,
+            this.assets.farmMat,
+            this.assets.castleKeepMat,
+            this.assets.castleRoofMat
+        ];
+        allMats.forEach(mat => {
+            if (mat) {
+                mat.clippingPlanes = this.clippingPlanes;
+                mat.needsUpdate = true;
+            }
+        });
+        // console.log("BuildingRenderer: Assets Initialized with Clipping Planes", this.clippingPlanes);
     }
 
     initInstancedMeshes() {
@@ -176,6 +192,11 @@ export class BuildingRenderer {
 
     update(buildings) {
         if (!buildings) return;
+
+        // Debug Clipping Plane Sync
+        if (Math.random() < 0.01 && this.clippingPlanes && this.clippingPlanes.length > 0) {
+            console.log("BuildingRenderer Clipping Plane 0 Constant:", this.clippingPlanes[0].constant);
+        }
 
         let hIdx = 0, fIdx = 0, cIdx = 0;
         const dummy = new THREE.Object3D();

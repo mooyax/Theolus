@@ -911,6 +911,9 @@ export class Terrain {
     }
 
     updateLights(time) {
+        // Obsolete: BuildingRenderer handles lighting via material uniforms
+        return;
+        /*
         // Night: 19-24, 0-5.
         const isNight = (time >= 18 || time < 6);
 
@@ -936,6 +939,7 @@ export class Terrain {
                 building.userData.light.intensity = isNight ? 1.0 : 0.0;
             }
         });
+        */
     }
 
     serialize() {
@@ -1028,239 +1032,76 @@ export class Terrain {
     }
 
     restoreHouse(data) {
-        // Duplicate logic from Unit.buildHouse but simplified for restoration
-        const houseGroup = new THREE.Group();
-
-        // We need textures. Can we reuse Unit's texture generators?
-        // They are instance methods of Unit. 
-        // Let's make them static or move them to a Utils class?
-        // For now, I'll duplicate the texture creation or create a temporary Unit to generate them?
-        // Better: Just create simple materials for now or duplicate code.
-        // Duplicating code is safer to avoid dependency hell right now.
-
-        const woodTexture = this.createWoodTexture();
-        const roofTexture = this.createRoofTexture();
-        const wallMaterial = new THREE.MeshLambertMaterial({ map: woodTexture });
-        const roofMaterial = new THREE.MeshLambertMaterial({ map: roofTexture });
-
-        const wallGeo = new THREE.BoxGeometry(0.6, 0.4, 0.6);
-        const walls = new THREE.Mesh(wallGeo, wallMaterial);
-        walls.position.y = 0.2;
-        houseGroup.add(walls);
-
-        const roofGeo = new THREE.ConeGeometry(0.5, 0.4, 4);
-        const roof = new THREE.Mesh(roofGeo, roofMaterial);
-        roof.position.y = 0.6;
-        roof.rotation.y = Math.PI / 4;
-        houseGroup.add(roof);
-
-        // Add Light
-        const light = new THREE.PointLight(0xFFaa33, 0, 5); // Orange light, initially off (intensity 0)
-        light.position.set(0, 0.5, 0);
-        houseGroup.add(light);
-        houseGroup.userData.light = light;
-
-        const height = this.getTileHeight(data.gridX, data.gridZ);
-        houseGroup.position.set(
-            data.gridX - this.logicalWidth / 2 + 0.5,
-            height,
-            data.gridZ - this.logicalDepth / 2 + 0.5
-        );
-
-        this.scene.add(houseGroup);
-
-        // Clones
-        const clones = [];
-        const offsets = [
-            { x: 1, z: 0 }, { x: -1, z: 0 },
-            { x: 0, z: 1 }, { x: 0, z: -1 },
-            { x: 1, z: 1 }, { x: 1, z: -1 },
-            { x: -1, z: 1 }, { x: -1, z: -1 }
-        ];
-        offsets.forEach(offset => {
-            const clone = houseGroup.clone();
-            clone.position.x += offset.x * this.logicalWidth;
-            clone.position.z += offset.z * this.logicalDepth;
-            this.scene.add(clone);
-            clones.push(clone);
-        });
-
-        houseGroup.userData.clones = clones;
-        houseGroup.userData.type = 'house';
-        houseGroup.userData.population = data.population;
-        houseGroup.userData.gridX = data.gridX;
-        houseGroup.userData.gridZ = data.gridZ;
+        const building = {
+            type: 'house',
+            gridX: data.gridX,
+            gridZ: data.gridZ,
+            y: this.getTileHeight(data.gridX, data.gridZ),
+            population: data.population || 0,
+            id: Math.random().toString(36).substr(2, 9),
+            userData: {
+                type: 'house',
+                population: data.population || 0,
+                gridX: data.gridX,
+                gridZ: data.gridZ
+            }
+        };
 
         const cell = this.grid[data.gridX][data.gridZ];
         cell.hasBuilding = true;
-        cell.building = houseGroup;
-        this.buildings.push(houseGroup);
+        cell.building = building;
+        this.buildings.push(building);
     }
 
     restoreFarm(data) {
-        const farmGroup = new THREE.Group();
-
-        const canvas = document.createElement('canvas');
-        canvas.width = 64;
-        canvas.height = 64;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#DAA520';
-        ctx.fillRect(0, 0, 64, 64);
-        ctx.fillStyle = '#B8860B';
-        for (let i = 0; i < 10; i++) ctx.fillRect(i * 6, 0, 2, 64);
-        const wheatTexture = new THREE.CanvasTexture(canvas);
-
-        const material = new THREE.MeshLambertMaterial({ map: wheatTexture });
-        const geometry = new THREE.PlaneGeometry(0.8, 0.8);
-        geometry.rotateX(-Math.PI / 2);
-
-        const farm = new THREE.Mesh(geometry, material);
-        farm.position.y = 0.05;
-        farmGroup.add(farm);
-
-        const height = this.getTileHeight(data.gridX, data.gridZ);
-        farmGroup.position.set(
-            data.gridX - this.logicalWidth / 2 + 0.5,
-            height,
-            data.gridZ - this.logicalDepth / 2 + 0.5
-        );
-
-        this.scene.add(farmGroup);
-
-        const clones = [];
-        const offsets = [
-            { x: 1, z: 0 }, { x: -1, z: 0 },
-            { x: 0, z: 1 }, { x: 0, z: -1 },
-            { x: 1, z: 1 }, { x: 1, z: -1 },
-            { x: -1, z: 1 }, { x: -1, z: -1 }
-        ];
-        offsets.forEach(offset => {
-            const clone = farmGroup.clone();
-            clone.position.x += offset.x * this.logicalWidth;
-            clone.position.z += offset.z * this.logicalDepth;
-            this.scene.add(clone);
-            clones.push(clone);
-        });
-
-        farmGroup.userData.clones = clones;
-        farmGroup.userData.type = 'farm';
-        farmGroup.userData.gridX = data.gridX;
-        farmGroup.userData.gridZ = data.gridZ;
+        const building = {
+            type: 'farm',
+            gridX: data.gridX,
+            gridZ: data.gridZ,
+            y: this.getTileHeight(data.gridX, data.gridZ),
+            population: 0,
+            id: Math.random().toString(36).substr(2, 9),
+            userData: {
+                type: 'farm',
+                gridX: data.gridX,
+                gridZ: data.gridZ
+            }
+        };
 
         const cell = this.grid[data.gridX][data.gridZ];
         cell.hasBuilding = true;
-        cell.building = farmGroup;
-        this.buildings.push(farmGroup);
+        cell.building = building;
+        this.buildings.push(building);
     }
 
-    createWoodTexture() {
-        const canvas = document.createElement('canvas');
-        canvas.width = 64;
-        canvas.height = 64;
-        const ctx = canvas.getContext('2d');
-
-        // Base brown
-        ctx.fillStyle = '#8B4513';
-        ctx.fillRect(0, 0, 64, 64);
-
-        // Wood grain lines
-        ctx.strokeStyle = '#5D2906';
-        ctx.lineWidth = 2;
-        for (let i = 0; i < 8; i++) {
-            ctx.beginPath();
-            ctx.moveTo(0, i * 8 + Math.random() * 4);
-            ctx.lineTo(64, i * 8 + Math.random() * 4);
-            ctx.stroke();
-        }
-
-        return new THREE.CanvasTexture(canvas);
-    }
-
-    createRoofTexture() {
-        const canvas = document.createElement('canvas');
-        canvas.width = 64;
-        canvas.height = 64;
-        const ctx = canvas.getContext('2d');
-
-        // Base red/brown
-        ctx.fillStyle = '#A52A2A';
-        ctx.fillRect(0, 0, 64, 64);
-
-        // Shingles
-        ctx.fillStyle = '#800000';
-        for (let y = 0; y < 64; y += 8) {
-            for (let x = 0; x < 64; x += 8) {
-                if ((x + y) % 16 === 0) ctx.fillRect(x, y, 7, 7);
-            }
-        }
-
-        return new THREE.CanvasTexture(canvas);
-    }
     restoreCastle(data) {
-        const castleGroup = new THREE.Group();
+        const building = {
+            type: 'castle',
+            gridX: data.gridX,
+            gridZ: data.gridZ,
+            y: this.getTileHeight(data.gridX, data.gridZ),
+            population: data.population || 50,
+            id: Math.random().toString(36).substr(2, 9),
+            userData: {
+                type: 'castle',
+                population: data.population || 50,
+                gridX: data.gridX,
+                gridZ: data.gridZ
+            }
+        };
 
-        // Main Keep
-        const keepGeo = new THREE.BoxGeometry(1.6, 1.0, 1.6);
-        const keepMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
-        const keep = new THREE.Mesh(keepGeo, keepMat);
-        keep.position.y = 0.5;
-        castleGroup.add(keep);
+        const cell = this.grid[data.gridX][data.gridZ];
+        cell.hasBuilding = true;
+        cell.building = building;
+        this.buildings.push(building);
 
-        // Windows
-        const windowMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-        const windowGeo = new THREE.PlaneGeometry(0.3, 0.3);
-        const windows = [];
-
-        for (let i = 0; i < 4; i++) {
-            const win = new THREE.Mesh(windowGeo, windowMat.clone());
-            win.position.y = 0.6;
-            if (i === 0) { win.position.z = 0.81; win.position.x = 0; }
-            if (i === 1) { win.position.z = -0.81; win.position.x = 0; win.rotation.y = Math.PI; }
-            if (i === 2) { win.position.x = 0.81; win.position.z = 0; win.rotation.y = Math.PI / 2; }
-            if (i === 3) { win.position.x = -0.81; win.position.z = 0; win.rotation.y = -Math.PI / 2; }
-            castleGroup.add(win);
-            windows.push(win);
-        }
-
-        // Roof
-        const roofGeo = new THREE.CylinderGeometry(0.5, 1.1, 0.6, 4);
-        const roofMat = new THREE.MeshLambertMaterial({ color: 0x800000 });
-        const roof = new THREE.Mesh(roofGeo, roofMat);
-        roof.position.y = 1.3;
-        roof.rotation.y = Math.PI / 4;
-        castleGroup.add(roof);
-
-        const height = this.getTileHeight(data.gridX, data.gridZ);
-        castleGroup.position.set(
-            data.gridX - this.logicalWidth / 2 + 1.0,
-            height,
-            data.gridZ - this.logicalDepth / 2 + 1.0
-        );
-
-        this.scene.add(castleGroup);
-
-        // Mark all 4 cells
-        const bx = data.gridX;
-        const bz = data.gridZ;
-        const tiles = [
-            { x: bx, z: bz },
-            { x: (bx + 1) % this.logicalWidth, z: bz },
-            { x: bx, z: (bz + 1) % this.logicalDepth },
-            { x: (bx + 1) % this.logicalWidth, z: (bz + 1) % this.logicalDepth }
-        ];
-
-        tiles.forEach(tile => {
-            const c = this.grid[tile.x][tile.z];
-            c.hasBuilding = true;
-            c.building = castleGroup;
+        // Mark extra cells for castle (2x2)
+        const offsets = [{ x: 1, z: 0 }, { x: 0, z: 1 }, { x: 1, z: 1 }];
+        offsets.forEach(o => {
+            const ox = (data.gridX + o.x) % this.logicalWidth;
+            const oz = (data.gridZ + o.z) % this.logicalDepth;
+            this.grid[ox][oz].hasBuilding = true;
+            this.grid[ox][oz].building = building;
         });
-
-        castleGroup.userData.type = 'castle';
-        castleGroup.userData.population = data.population;
-        castleGroup.userData.gridX = data.gridX;
-        castleGroup.userData.gridZ = data.gridZ;
-        castleGroup.userData.windows = windows;
-
-        this.buildings.push(castleGroup);
     }
 }
