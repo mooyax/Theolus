@@ -1,15 +1,21 @@
 import * as THREE from 'three';
 
 export class BuildingRenderer {
-    constructor(scene, terrainWidth, terrainDepth, clippingPlanes) {
+    constructor(scene, terrain, clippingPlanes) {
         this.scene = scene;
-        this.terrainWidth = terrainWidth;
-        this.terrainDepth = terrainDepth;
+        this.terrain = terrain; // Store reference to Terrain
+        this.terrainWidth = terrain.logicalWidth;
+        this.terrainDepth = terrain.logicalDepth;
         this.clippingPlanes = clippingPlanes || [];
-        this.MAX_INSTANCES = 2000;
+        this.MAX_INSTANCES = 10000;
         this.meshes = {};
         this.initAssets();
         this.initInstancedMeshes();
+
+        // Frustum Culling Helpers
+        this._scratchVector = new THREE.Vector3();
+        this._scratchSphere = new THREE.Sphere(new THREE.Vector3(), 2.0);
+        this._dummy = new THREE.Object3D();
     }
 
     initAssets() {
@@ -44,31 +50,25 @@ export class BuildingRenderer {
             ctx.beginPath(); ctx.moveTo(0, i * 8); ctx.lineTo(64, i * 8); ctx.stroke();
         }
 
-        // 2. Draw Windows (Front and Back? Box mapping wraps around)
-        // Simple UV box mapping: usually faces are chunks of the texture.
-        // Let's draw a window in the middle of the texture, effectively putting one on every face slightly?
-        // BoxGeometry UVs map the whole texture to each face by default (usually).
-
+        // 2. Draw Windows
         const drawWindow = (cx, cy) => {
             // Diffuse: Dark Blue/Black frame
             ctx.fillStyle = '#222';
             ctx.fillRect(cx - 10, cy - 10, 20, 20);
 
             // Emissive Map: WHITE mask
-            // The actual color will be set by material.emissive
             ctxE.fillStyle = '#FFFFFF';
             ctxE.fillRect(cx - 8, cy - 8, 16, 16);
         };
 
-        // Draw window in center (will appear on all 4 sides if standard UVs)
         drawWindow(32, 32);
 
         this.assets.houseWallMat = new THREE.MeshLambertMaterial({
             ...matOptions,
             map: new THREE.CanvasTexture(canvas),
             emissiveMap: new THREE.CanvasTexture(canvasE),
-            emissive: 0xFFFFFF, // White multiplier for the map
-            emissiveIntensity: 0.0 // Start off
+            emissive: 0xFFFFFF,
+            emissiveIntensity: 0.0
         });
 
         // House Roof
@@ -87,7 +87,7 @@ export class BuildingRenderer {
         // --- FARM ---
         this.assets.farmGeo = new THREE.PlaneGeometry(0.8, 0.8);
         this.assets.farmGeo.rotateX(-Math.PI / 2);
-        this.assets.farmGeo.translate(0, 0.2, 0);
+        this.assets.farmGeo.translate(0, 0.05, 0);
 
         const canvas3 = document.createElement('canvas');
         canvas3.width = 64; canvas3.height = 64;
@@ -107,7 +107,7 @@ export class BuildingRenderer {
 
         // Castle Texture Generation
         const canvasC = document.createElement('canvas');
-        canvasC.width = 128; canvasC.height = 64; // Wider for detailed pattern
+        canvasC.width = 128; canvasC.height = 64;
         const ctxC = canvasC.getContext('2d');
 
         const canvasCE = document.createElement('canvas');
@@ -126,7 +126,7 @@ export class BuildingRenderer {
             }
         }
 
-        // B3. Windows (Archer Slits / Grand Windows)
+        // B3. Windows 
         const drawCastleWindow = (cx, cy) => {
             // Dark Frame
             ctxC.fillStyle = '#111';
@@ -137,8 +137,6 @@ export class BuildingRenderer {
             ctxCE.fillRect(cx - 4, cy - 6, 8, 12);
         };
 
-        // Draw multiple windows on the texture strip
-        // Since BoxGeometry maps the whole texture to faces, we position them nicely.
         drawCastleWindow(32, 32);
         drawCastleWindow(96, 32);
 
@@ -155,13 +153,35 @@ export class BuildingRenderer {
         this.assets.castleRoofGeo.rotateY(Math.PI / 4);
         this.assets.castleRoofMat = new THREE.MeshLambertMaterial({ ...matOptions, color: 0x800000 });
 
+        // --- GOBLIN HUT ---
+        this.assets.goblinHutGeo = new THREE.ConeGeometry(0.4, 0.6, 6); // Simple cone hut
+        this.assets.goblinHutGeo.translate(0, 0.3, 0); // Base at 0
+
+        // Straw-like material
+        const canvasG = document.createElement('canvas');
+        canvasG.width = 64; canvasG.height = 64;
+        const ctxG = canvasG.getContext('2d');
+        ctxG.fillStyle = '#654321'; ctxG.fillRect(0, 0, 64, 64);
+        ctxG.fillStyle = '#8B4513';
+        // Straw pattern
+        for (let i = 0; i < 30; i++) {
+            ctxG.fillRect(Math.random() * 60, Math.random() * 60, 4, 2);
+        }
+        this.assets.goblinHutMat = new THREE.MeshLambertMaterial({
+            ...matOptions,
+            map: new THREE.CanvasTexture(canvasG),
+            color: 0xAAAAAA // Tint
+        });
+
         // Explicitly assign clippingPlanes to ensure reference is kept
         const allMats = [
             this.assets.houseWallMat,
             this.assets.houseRoofMat,
             this.assets.farmMat,
             this.assets.castleKeepMat,
-            this.assets.castleRoofMat
+            this.assets.castleKeepMat,
+            this.assets.castleRoofMat,
+            this.assets.goblinHutMat
         ];
         allMats.forEach(mat => {
             if (mat) {
@@ -169,7 +189,6 @@ export class BuildingRenderer {
                 mat.needsUpdate = true;
             }
         });
-        // console.log("BuildingRenderer: Assets Initialized with Clipping Planes", this.clippingPlanes);
     }
 
     initInstancedMeshes() {
@@ -188,20 +207,24 @@ export class BuildingRenderer {
         this.meshes.farms = make(this.assets.farmGeo, this.assets.farmMat);
         this.meshes.castleKeeps = make(this.assets.castleKeepGeo, this.assets.castleKeepMat);
         this.meshes.castleRoofs = make(this.assets.castleRoofGeo, this.assets.castleRoofMat);
+        this.meshes.goblinHuts = make(this.assets.goblinHutGeo, this.assets.goblinHutMat);
     }
 
-    update(buildings) {
+
+    update(buildings, frustum, camera) {
         if (!buildings) return;
 
-        // Debug Clipping Plane Sync
-        if (Math.random() < 0.01 && this.clippingPlanes && this.clippingPlanes.length > 0) {
-            console.log("BuildingRenderer Clipping Plane 0 Constant:", this.clippingPlanes[0].constant);
-        }
-
-        let hIdx = 0, fIdx = 0, cIdx = 0;
-        const dummy = new THREE.Object3D();
+        let hIdx = 0, fIdx = 0, cIdx = 0, gIdx = 0;
+        const dummy = this._dummy;
         const logicalW = this.terrainWidth || 80;
         const logicalD = this.terrainDepth || 80;
+
+        let baseGridX = 0;
+        let baseGridZ = 0;
+        if (camera) {
+            baseGridX = Math.round(camera.position.x / logicalW);
+            baseGridZ = Math.round(camera.position.z / logicalD);
+        }
 
         const offsets = [
             { x: 0, z: 0 },
@@ -214,12 +237,28 @@ export class BuildingRenderer {
             const z = b.gridZ;
             const y = b.y || 0;
 
-            for (const offset of offsets) {
-                const wx = (x - logicalW / 2) + 0.5 + (offset.x * logicalW);
-                const wz = (z - logicalD / 2) + 0.5 + (offset.z * logicalD);
+            const vPos = this.terrain.getVisualPosition(x, z, true);
 
-                dummy.position.set(wx, y, wz);
-                dummy.rotation.set(0, 0, 0);
+            for (const offset of offsets) {
+                // Apply Base Shift
+                const shiftX = (offset.x + baseGridX) * logicalW;
+                const shiftZ = (offset.z + baseGridZ) * logicalD;
+
+                const posX = vPos.x + shiftX;
+                const posZ = vPos.z + shiftZ;
+
+                // Frustum Culling
+                if (frustum) {
+                    this._scratchVector.set(posX, y + 0.5, posZ);
+                    this._scratchSphere.center.copy(this._scratchVector);
+
+                    if (!frustum.intersectsSphere(this._scratchSphere)) {
+                        continue; // Skip invisible
+                    }
+                }
+
+                dummy.position.set(posX, y, posZ);
+                dummy.rotation.set(0, b.rotation || 0, 0);
                 dummy.scale.set(1, 1, 1);
                 dummy.updateMatrix();
 
@@ -231,14 +270,23 @@ export class BuildingRenderer {
                     this.meshes.farms.setMatrixAt(fIdx, dummy.matrix);
                     fIdx++;
                 } else if (b.type === 'castle' && cIdx < this.MAX_INSTANCES) {
-                    // Castle specific offset: +1.0 from corner
-                    const wxC = (x - logicalW / 2) + 1.0 + (offset.x * logicalW);
-                    const wzC = (z - logicalD / 2) + 1.0 + (offset.z * logicalD);
-                    dummy.position.set(wxC, y, wzC);
+                    const wxC = posX; // Use calculated pos (includes offset)
+                    const wzC = posZ;
+                    // Note: Original code had +1.0 offset for castle?
+                    // Previous: (x - logicalW/2) + 1.0 + (offset.x * logicalW)
+                    // vPos.x is (x - logicalW/2).
+                    // So we needed +1.0.
+                    // Castle is 2x2. Centered at +0.5, +0.5?
+                    // Let's preserve the +1.0 offset relative to base.
+
+                    dummy.position.set(wxC + 1.0, y, wzC + 1.0);
                     dummy.updateMatrix();
                     this.meshes.castleKeeps.setMatrixAt(cIdx, dummy.matrix);
                     this.meshes.castleRoofs.setMatrixAt(cIdx, dummy.matrix);
                     cIdx++;
+                } else if (b.type === 'goblin_hut' && gIdx < this.MAX_INSTANCES) {
+                    this.meshes.goblinHuts.setMatrixAt(gIdx, dummy.matrix);
+                    gIdx++;
                 }
             }
         }
@@ -248,41 +296,32 @@ export class BuildingRenderer {
         this.meshes.farms.count = fIdx;
         this.meshes.castleKeeps.count = cIdx;
         this.meshes.castleRoofs.count = cIdx;
+        this.meshes.goblinHuts.count = gIdx;
 
         this.meshes.houseWalls.instanceMatrix.needsUpdate = true;
         this.meshes.houseRoofs.instanceMatrix.needsUpdate = true;
         this.meshes.farms.instanceMatrix.needsUpdate = true;
         this.meshes.castleKeeps.instanceMatrix.needsUpdate = true;
         this.meshes.castleRoofs.instanceMatrix.needsUpdate = true;
+        this.meshes.goblinHuts.instanceMatrix.needsUpdate = true;
         this.meshes.castleRoofs.instanceMatrix.needsUpdate = true;
     }
 
     updateLighting(isNight) {
         if (this._lastIsNight === isNight) return;
         this._lastIsNight = isNight;
-        console.log(`BuildingRenderer: Night Mode ${isNight ? 'ON' : 'OFF'}`);
-
-        // Toggle lights (Emissive glow)
-        // With emissiveMap, color should be White (to show map colors) or Black (to turn off if no map? No, map defines emission)
-        // Actually, just toggling intensity is enough if we have a map!
+        // console.log(`BuildingRenderer: Night Mode ${isNight ? 'ON' : 'OFF'}`);
 
         const intensity = isNight ? 1.0 : 0.0;
+        const color = isNight ? 0xFF8C00 : 0x000000;
 
         if (this.assets.houseWallMat) {
-            this.assets.houseWallMat.emissive.setHex(isNight ? 0xFF8C00 : 0x000000); // Warm Orange
+            this.assets.houseWallMat.emissive.setHex(color);
             this.assets.houseWallMat.emissiveIntensity = intensity;
             this.assets.houseWallMat.needsUpdate = true;
         }
         if (this.assets.castleKeepMat) {
-            // Castle now uses EmissiveMap too!
-            this.assets.castleKeepMat.emissive.setHex(0xFFFFFF); // White mask base
-            this.assets.castleKeepMat.emissive.setHex(isNight ? 0xFF8C00 : 0x000000); // Wait, if I use White mask, I set Color here.
-            // If uses Map: Emissive color multiplies with map.
-            // Map is White (1,1,1) at windows. Emissive Color (Orange) * Map (White) = Orange.
-            // Map is Black (0,0,0) at walls. Emissive Color (Orange) * Map (Black) = Black.
-            // So: Set Emissive Color to Orange. Set Intensity to 1.0 (or 0.0).
-
-            this.assets.castleKeepMat.emissive.setHex(isNight ? 0xFF8C00 : 0x000000); // Warm Orange
+            this.assets.castleKeepMat.emissive.setHex(color);
             this.assets.castleKeepMat.emissiveIntensity = intensity;
             this.assets.castleKeepMat.needsUpdate = true;
         }

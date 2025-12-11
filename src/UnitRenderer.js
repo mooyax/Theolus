@@ -19,9 +19,10 @@ export class UnitRenderer {
             mats.heads.forEach(h => h.clippingPlanes = this.clippingPlanes);
         }
 
-        // Buffer size: 200 units * 9 clones = 1800. 
-        // Let's safe-guard with 2500.
-        this.maxInstances = 2500;
+        // Buffer size: 200 units * 9 clones = 1800.
+        // With higher population (spawn threshold 10), we need much more.
+        // 1000 units * 9 clones = 9000. Let's go to 10000.
+        this.maxInstances = 10000;
         this.dummy = new THREE.Object3D();
 
         // --- Materials ---
@@ -83,13 +84,21 @@ export class UnitRenderer {
         ];
     }
 
-    update(units, frustum) {
+    update(units, frustum, camera) {
         if (!Unit.assets.initialized) return;
 
         let count = 0;
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
         const margin = 5;
+
+        // Base Offset (Infinite Scroll)
+        let baseGridX = 0;
+        let baseGridZ = 0;
+        if (camera) {
+            baseGridX = Math.round(camera.position.x / logicalW);
+            baseGridZ = Math.round(camera.position.z / logicalD);
+        }
 
         // Debug: Check if we are rendering
         if (units.length > 0 && Math.random() < 0.01) {
@@ -105,10 +114,10 @@ export class UnitRenderer {
             if (!unit.position) continue; // Safety if unit refactor incomplete
 
             // Determine offsets (Clone Logic)
-            const nearEdgeX = (unit.gridX < margin) || (unit.gridX > logicalW - margin);
-            const nearEdgeZ = (unit.gridZ < margin) || (unit.gridZ > logicalD - margin);
-
-            const loopCount = (nearEdgeX || nearEdgeZ) ? 9 : 1;
+            // Was: const nearEdgeX = ...
+            // Fix: Always loop 9 times to ensure clones are visible in infinite scroll.
+            // Frustum culling (L137) will prevents performance drop for off-screen clones.
+            const loopCount = 9;
             const clothesColor = unit.isSpecial ? colorSpecial : colorNormal;
 
             for (let i = 0; i < loopCount; i++) {
@@ -122,6 +131,10 @@ export class UnitRenderer {
                     osx = off.x;
                     osz = off.z;
                 }
+
+                // Apply Base Shift
+                osx += baseGridX;
+                osz += baseGridZ;
 
                 // Base Position with Offset
                 const posX = unit.position.x + osx * logicalW;
@@ -194,9 +207,22 @@ export class UnitRenderer {
         }
 
         // Update Counts
+        // Update Counts
         this.torsoMesh.count = count;
         this.headMesh.count = count;
         this.leftArmMesh.count = count;
+        this.rightArmMesh.count = count;
+        this.leftLegMesh.count = count;
+        this.rightLegMesh.count = count;
+
+        // Disable auto frustum culling to prevent bounding sphere issues
+        // We handle culling manually above
+        this.torsoMesh.frustumCulled = false;
+        this.headMesh.frustumCulled = false;
+        this.leftArmMesh.frustumCulled = false;
+        this.rightArmMesh.frustumCulled = false;
+        this.leftLegMesh.frustumCulled = false;
+        this.rightLegMesh.frustumCulled = false;
         this.rightArmMesh.count = count;
         this.leftLegMesh.count = count;
         this.rightLegMesh.count = count;

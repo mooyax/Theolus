@@ -70,22 +70,26 @@ export class Game {
         this.terrain = new Terrain(this.scene, this.clippingPlanes);
         this.units = [];
         this.resources = {
-            wood: 0,
+            grain: 0,
             fish: 0,
             meat: 0
         };
 
         // 6. Managers
-        this.inputManager = new InputManager(this.scene, this.camera, this.terrain, this.spawnUnit.bind(this), this.units);
-        this.cloudManager = new CloudManager(this.scene, this.terrain.width, this.terrain.depth); // Clouds NOT clipped
+        // Managers Order is important for dependencies
+        this.cloudManager = new CloudManager(this.scene, this.terrain.width, this.terrain.depth);
         this.birdManager = new BirdManager(this.scene, this.terrain.width, this.terrain.depth, this.clippingPlanes);
         this.sheepManager = new SheepManager(this.scene, this.terrain, this.clippingPlanes);
         this.goblinManager = new GoblinManager(this.scene, this.terrain, this, this.clippingPlanes);
         this.fishManager = new FishManager(this.scene, this.terrain, this.clippingPlanes);
         this.minimap = new Minimap(this);
         this.compass = new Compass(this);
+
         this.unitRenderer = new UnitRenderer(this.scene, this.terrain, this.clippingPlanes);
-        this.buildingRenderer = new BuildingRenderer(this.scene, this.terrain.logicalWidth, this.terrain.logicalDepth, this.clippingPlanes);
+        this.buildingRenderer = new BuildingRenderer(this.scene, this.terrain, this.clippingPlanes);
+
+        // InputManager needs access to UnitRenderer for raycasting (tooltips)
+        this.inputManager = new InputManager(this.scene, this.camera, this.terrain, this.spawnUnit.bind(this), this.units, this.unitRenderer);
 
         // Spawn initial unit on Land
         let sx = 10, sz = 10;
@@ -124,8 +128,8 @@ export class Game {
 
         this.lastTime = performance.now();
         this.gameTime = 8;
-        this.gameTime = 8;
-        this.timeScale = 0.0166; // 1 real second = 1 game minute (approx)
+        this.gameTotalTime = 0; // Initialize explicitly to 0
+        this.timeScale = 1.0; // Default speed 1.0
 
         // Initial Resources - Give some to start with so stats show up
         this.resources = {
@@ -148,10 +152,39 @@ export class Game {
         window.addEventListener('touchend', initAudio);
         window.addEventListener('keydown', initAudio);
 
-        window.addEventListener('keydown', initAudio);
+        // Debug Speed Toggle
+        window.toggleDebugSpeed = () => {
+            const btn = document.getElementById('debug-speed-btn');
+            if (this.timeScale === 1.0) {
+                this.timeScale = 10.0;
+                console.log("Debug Speed: 10x");
+                if (btn) btn.classList.add('active');
+            } else {
+                this.timeScale = 1.0;
+                console.log("Debug Speed: 1x");
+                if (btn) btn.classList.remove('active');
+            }
+        };
 
-        // Initial spawn is handled above with safe spot logic (lines 91-109)
-        // this.spawnUnit(undefined, undefined, true);
+        // Debug Season Toggle (P Key)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'p' || e.key === 'P') {
+                const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
+                this.currentSeasonIndex = ((this.currentSeasonIndex || 0) + 1) % 4;
+                const newSeason = SEASONS[this.currentSeasonIndex];
+                console.log(`[DEBUG] Force Cycle Season: ${newSeason}`);
+
+                this.season = newSeason;
+                this.daysPassed = (this.daysPassed || 0) + 1; // Increment day to prevent immediate overwrite?
+                if (this.terrain) this.terrain.setSeason(newSeason);
+
+                // Update UI if exists
+                const seasonVal = document.getElementById('season-val');
+                if (seasonVal) seasonVal.textContent = newSeason;
+            }
+        });
+
+        this.timeScale = 1.0; // Default
 
         this.animate();
     }
@@ -164,8 +197,27 @@ export class Game {
         this.scene.add(this.directionalLight);
     }
 
-    spawnUnit(x, z, isSpecial = false) {
-        const unit = new Unit(this.scene, this.terrain, x, z, isSpecial);
+    spawnUnit(x, z, roleOrSpecial = false) {
+        let role = 'worker';
+        let isSpecial = false;
+
+        // Check if argument is Role (String) or Special (Boolean)
+        if (typeof roleOrSpecial === 'string') {
+            role = roleOrSpecial;
+            isSpecial = false; // Natural birth is not special
+        } else if (typeof roleOrSpecial === 'boolean') {
+            isSpecial = roleOrSpecial;
+
+            // If God Spawn (Special), assign Random Role based on Pop
+            const currentPop = this.totalPopulation || this.units.length || 0;
+            if (currentPop >= 30) {
+                const r = Math.random();
+                if (r < 0.3) role = 'hunter';
+                else if (r < 0.6) role = 'fisher';
+            }
+        }
+
+        const unit = new Unit(this.scene, this.terrain, x, z, role, isSpecial);
         this.units.push(unit);
     }
 
@@ -181,14 +233,8 @@ export class Game {
     }
 
     updateEnvironment(deltaTime) {
-        this.gameTime += deltaTime * this.timeScale;
+        this.gameTime += deltaTime * (this.dayNightSpeed || 0.05);
         if (this.gameTime >= 24) this.gameTime = 0;
-
-        const hours = Math.floor(this.gameTime);
-        const minutes = Math.floor((this.gameTime % 1) * 60);
-        const timeString = hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0');
-        const timeDisplay = document.getElementById('time-val');
-        if (timeDisplay) timeDisplay.innerText = timeString;
 
         // Simple Day/Night
         let isNight = false;
@@ -201,6 +247,45 @@ export class Game {
             this.directionalLight.intensity = 1.0;
         }
         return isNight;
+    }
+
+    updateSeasons(deltaTime) {
+        // Season Config
+        const SEASON_LENGTH_DAYS = 3; // 3 days per season
+        const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
+
+        if (this.currentSeasonIndex === undefined) this.currentSeasonIndex = 0;
+
+        // Detect Day Rollover (timeOfDay wraps 1.0 -> 0.0)
+        // updateEnvironment() runs BEFORE this and updates this.gameTime.
+        // gameTime 0..24 hrs.
+        const currentTimeOfDay = (this.gameTime / 24.0);
+
+        if (this.prevTimeOfDay === undefined) this.prevTimeOfDay = currentTimeOfDay;
+
+        if (currentTimeOfDay < this.prevTimeOfDay) {
+            // New Day
+            this.daysPassed = (this.daysPassed || 0) + 1;
+            console.log(`New Day! Day ${this.daysPassed}. Season: ${SEASONS[this.currentSeasonIndex]}`);
+
+            if (this.daysPassed % SEASON_LENGTH_DAYS === 0) {
+                this.currentSeasonIndex = (this.currentSeasonIndex + 1) % 4;
+                const newSeason = SEASONS[this.currentSeasonIndex];
+                console.log(`Season Changed to: ${newSeason}`);
+
+                // Notify Terrain
+                if (this.terrain) this.terrain.setSeason(newSeason);
+            }
+        }
+        this.prevTimeOfDay = currentTimeOfDay;
+
+        // Initial / Constant Sync
+        const currentSeason = SEASONS[this.currentSeasonIndex];
+        if (this.season !== currentSeason) {
+            console.log(`[DEBUG] Game.updateSeasons: Syncing season mismatch. Game:${this.season} -> ${currentSeason}`);
+            this.season = currentSeason;
+            if (this.terrain) this.terrain.setSeason(this.season);
+        }
     }
 
     updateCameraControls() {
@@ -223,24 +308,43 @@ export class Game {
         if (!this.statsDisplay) return;
 
         // Calculate Population
-        // Calculate Population
         // Total Population = Units (Walkers) + Housing Population (Mana/Potential)
         const housingPop = this.terrain.totalHousingPop || 0;
         this.totalPopulation = Math.floor(housingPop) + this.units.length;
 
+        const hours = Math.floor(this.gameTime);
+        const minutes = Math.floor((this.gameTime % 1) * 60);
+        const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        const isNight = (this.gameTime >= 18 || this.gameTime < 6);
+        const weatherIcon = isNight ? '🌙' : '☀️';
+
+        document.getElementById('time-val').innerText = `${timeStr} ${weatherIcon}`;
+        document.getElementById('season-val').innerText = this.season || 'Spring';
+
         document.getElementById('pop-val').innerText = Math.floor(this.totalPopulation || 0);
+        document.getElementById('active-val').innerText = this.units.length; // New line
         document.getElementById('house-val').innerText = this.terrain.buildings.filter(b => b.userData.type === 'house').length;
-        document.getElementById('grain-val').innerText = this.resources.grain;
-        document.getElementById('fish-val').innerText = this.resources.fish;
-        document.getElementById('meat-val').innerText = this.resources.meat;
+        document.getElementById('castle-val').innerText = this.terrain.buildings.filter(b => b.userData.type === 'castle').length;
+        document.getElementById('grain-val').innerText = Math.floor(this.resources.grain);
+        document.getElementById('fish-val').innerText = Math.floor(this.resources.fish);
+        document.getElementById('meat-val').innerText = Math.floor(this.resources.meat);
     }
 
     animate() {
         requestAnimationFrame(this.animate.bind(this));
 
         const time = performance.now();
-        const deltaTime = (time - this.lastTime) / 1000;
+        // Cap max deltaTime to prevent explosion on tab switch, but apply timeScale
+        let deltaTime = Math.min((time - this.lastTime) / 1000, 0.1);
         this.lastTime = time;
+
+        // Apply Speed Multiplier
+        deltaTime *= (this.timeScale || 1.0);
+
+        // Accumulate SIMULATED time in MILLISECONDS
+        this.gameTotalTime += deltaTime * 1000;
+        const simTime = this.gameTotalTime;
+        const simTimeSec = simTime / 1000; // Legacy seconds for managers
 
         // Heartbeat
         if (!this.lastHeartbeat || time - this.lastHeartbeat > 5000) {
@@ -251,7 +355,8 @@ export class Game {
         let isNight = false;
         try {
             isNight = this.updateEnvironment(deltaTime);
-        } catch (e) { console.error("Env Error:", e); }
+            this.updateSeasons(deltaTime);
+        } catch (e) { console.error("Env/Season Error:", e); }
 
         try {
             this.updateCameraControls();
@@ -279,19 +384,20 @@ export class Game {
         frustum.setFromProjectionMatrix(projScreenMatrix);
 
         try {
-            this.birdManager.update(deltaTime, time / 1000, frustum);
+            this.birdManager.update(deltaTime, simTimeSec, frustum);
         } catch (e) { console.error("Bird Error:", e); }
 
         try {
-            this.sheepManager.update(time / 1000, deltaTime);
+            this.sheepManager.update(simTimeSec, deltaTime);
         } catch (e) { console.error("Sheep Error:", e); }
 
         try {
-            this.goblinManager.update(deltaTime, isNight, this.units);
+            // Pass timeScale for dynamic staggering inside GoblinManager
+            this.goblinManager.update(simTime, deltaTime, isNight, this.units, this.timeScale);
         } catch (e) { console.error("Goblin Manager Error:", e); }
 
         try {
-            this.fishManager.update(time, deltaTime, frustum);
+            this.fishManager.update(simTime, deltaTime, frustum);
         } catch (e) { console.error("Fish Error:", e); }
 
         if (this.minimap) {
@@ -306,35 +412,55 @@ export class Game {
             } catch (e) { console.error("Compass Error:", e); }
         }
 
+        if (this.inputManager) {
+            this.inputManager.update();
+        }
+
+        // Initialize frameCount if needed
+        if (this.frameCount === undefined) this.frameCount = 0;
+        this.frameCount++;
+
+        // Staggered Unit Updates (Processing Load Halving)
+        const stagger = Math.max(1, Math.floor(4 / this.timeScale));
+        const parity = this.frameCount % stagger;
+
         for (let i = this.units.length - 1; i >= 0; i--) {
             const unit = this.units[i];
-            // Simplify: No longer pass goblins/fish/sheep for target seeking (except Goblins maybe for combat?)
-            // We keep Goblins, but remove Fishes/Sheeps.
-            unit.update(time, deltaTime, isNight, this.goblinManager.goblins);
 
-            if (unit.isDead && unit.isFinished) {
-                this.units.splice(i, 1);
+            // 1. Always Update Movement (Visuals) - Every Frame
+            if (unit.updateMovement) {
+                unit.updateMovement(simTime);
+            }
+
+            // 2. Staggered Logic Update (AI, Aging, etc.)
+            if (i % stagger === parity) {
+                unit.updateLogic(simTime, deltaTime * stagger, isNight, this.goblinManager.goblins);
+
+                if (unit.isDead && unit.isFinished) {
+                    this.units.splice(i, 1);
+                }
             }
         }
 
-        this.terrain.update(deltaTime, this.spawnUnit.bind(this));
+        this.terrain.update(deltaTime, this.spawnUnit.bind(this), isNight);
+        this.terrain.updateMeshPosition(this.camera);
 
         // Update House Lights (Via BuildingRenderer)
-        // Update House Lights (Via BuildingRenderer)
-        this.terrain.updateLights(this.gameTime); // Restored for Terrain Glow
+        this.terrain.updateLights(this.gameTime);
         if (this.buildingRenderer) {
             this.buildingRenderer.updateLighting(isNight);
         }
 
         // Update Unit Renderer
         if (this.unitRenderer) {
-            this.unitRenderer.update(this.units, frustum);
+            this.unitRenderer.update(this.units, frustum, this.camera);
         }
 
         // Update Building Renderer
         if (this.buildingRenderer) {
-            this.buildingRenderer.update(this.terrain.buildings);
+            this.buildingRenderer.update(this.terrain.buildings, frustum, this.camera);
         }
+
 
         this.renderer.render(this.scene, this.camera);
     }
@@ -346,6 +472,10 @@ export class Game {
             timestamp: Date.now(),
             resources: this.resources,
             gameTime: this.gameTime,
+            // Season Persistence
+            currentSeasonIndex: this.currentSeasonIndex,
+            daysPassed: this.daysPassed,
+
             terrain: this.terrain.serialize(),
             units: this.units.map(u => u.serialize()),
         };
@@ -365,6 +495,14 @@ export class Game {
 
         this.resources = saveData.resources || { grain: 0, fish: 0, meat: 0 };
         this.gameTime = saveData.gameTime || 8;
+
+        // Restore Season
+        this.currentSeasonIndex = saveData.currentSeasonIndex || 0;
+        this.daysPassed = saveData.daysPassed || 0;
+        // Force update immediately
+        const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
+        this.season = SEASONS[this.currentSeasonIndex];
+        if (this.terrain) this.terrain.setSeason(this.season);
 
         try {
             console.log("Deserializing Terrain with:", saveData.terrain);

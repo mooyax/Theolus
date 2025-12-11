@@ -15,6 +15,9 @@ export class SaveManager {
             return true;
         } catch (e) {
             console.error('Save failed:', e);
+            if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                console.warn("LocalStorage Quota Exceeded!");
+            }
             return false;
         }
     }

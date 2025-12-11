@@ -138,32 +138,28 @@ export class Minimap {
 
                 let r, g, b;
 
-                if (h <= 0) {
-                    // Water
-                    r = 30; g = 144; b = 255;
-                } else if (h <= 4) {
-                    // Grass
-                    r = 100; g = 200; b = 100;
-                } else if (h <= 8) {
-                    // Forest
-                    r = 0; g = 100; b = 0;
-                } else {
-                    // Rock
-                    r = 120; g = 120; b = 120;
-                }
+                // USE HELPER from Terrain with correct parameters
+                // getBiomeColor(height, moisture, noise, leadsNight, season, lx, lz)
+                // We need to access terrain's private properties if they are not exposed, or just pass simple values.
+                // Terrain.getBiomeColor relies on: height, moisture, noise, isNight, season, lx, lz.
 
-                const brightness = 1.0 + (h * 0.05);
-                r = Math.min(255, r * brightness);
-                g = Math.min(255, g * brightness);
-                b = Math.min(255, b * brightness);
+                // height is 'h', moisture is cell.moisture. noise is cell.noise.
+                // isNight? We can get from game or terrain.
+                const isNight = this.game.terrain._lastIsNight || false;
+                const season = this.game.terrain.currentSeason || 'Spring';
 
-                // Assuming 1:1 mapping for 160x160 canvas & map
+                const noise = cell.noise;
+                const moisture = cell.moisture || 0.5;
+
+                // Pass true for forMinimap
+                const color = this.terrain.getBiomeColor(h, moisture, noise, isNight, season, x, z, true);
+
                 // Optimization: direct index mapping without scale if 1:1
                 // 160 width.
                 const index = (z * 160 + x) * 4;
-                data[index] = r;
-                data[index + 1] = g;
-                data[index + 2] = b;
+                data[index] = color.r * 255;
+                data[index + 1] = color.g * 255;
+                data[index + 2] = color.b * 255;
                 data[index + 3] = 255;
             }
         }
@@ -199,15 +195,20 @@ export class Minimap {
         // Map wrapped coordinates.
         // Let's just draw rectangle.
 
-        const viewX = (cx + this.logicalW / 2) % this.logicalW; // ? No.
-        // Camera world pos 0,0 is center of map?
-        // Terrain is centered.
-        // logical grid 0..160.
-        // World 0,0 is logic center (80,80).
-        // So gridX = worldX + 80.
+        // Wrap coordinates for camera
+        // Map logical W/D (160x160)
+        // Camera world 0,0 is at logical W/2, D/2 (80,80)
 
-        const gx = cx + this.logicalW / 2;
-        const gz = cz + this.logicalD / 2;
+        let wx = cx;
+        let wz = cz;
+
+        // Logical Grid coord
+        let gx = wx + this.logicalW / 2;
+        let gz = wz + this.logicalD / 2;
+
+        // Modulo wrapping
+        gx = ((gx % this.logicalW) + this.logicalW) % this.logicalW;
+        gz = ((gz % this.logicalD) + this.logicalD) % this.logicalD;
 
         const mx = gx * scaleX;
         const my = gz * scaleY;
@@ -215,6 +216,21 @@ export class Minimap {
 
         this.ctx.strokeStyle = 'white';
         this.ctx.lineWidth = 1;
+
+        // Draw Main Rect
         this.ctx.strokeRect(mx - r, my - r, r * 2, r * 2);
+
+        // Draw Ghost Rects (if near edge)
+        // Check 3x3 neighbors to handle wrap visual
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                if (dx === 0 && dy === 0) continue;
+
+                const gmx = mx + dx * this.canvas.width;
+                const gmy = my + dy * this.canvas.height;
+
+                this.ctx.strokeRect(gmx - r, gmy - r, r * 2, r * 2);
+            }
+        }
     }
 }

@@ -71,10 +71,11 @@ export class Terrain {
 
 
     findNearestEntity(type, centerX, centerZ, maxRadius) {
+        // ... (Existing implementation kept for compatibility, or alias to findBestTarget?)
+        // Let's keep existing and add new one to avoid breaking changes if used elsewhere efficiently.
+        // Actually, let's implement findBestTarget below.
         let nearest = null;
         let minDistSq = maxRadius * maxRadius;
-
-        // Spiral / BFS search is good, but simple localized loop is easier for manageable radius
         const r = Math.ceil(maxRadius);
         const minX = Math.max(0, centerX - r);
         const maxX = Math.min(this.logicalWidth - 1, centerX + r);
@@ -84,21 +85,14 @@ export class Terrain {
         for (let x = minX; x <= maxX; x++) {
             for (let z = minZ; z <= maxZ; z++) {
                 const cell = this.entityGrid[x][z];
-                // Iterate entities in this cell
                 for (let i = 0; i < cell.length; i++) {
                     const e = cell[i];
-                    // Check type
-                    // Check if entity is valid/alive? (Caller should ensure registration relies on alive)
-                    // We assume registered entities are alive.
-
-                    // e._spatial.type should match
                     if (e._spatial && e._spatial.type === type) {
-                        // Check exact distance
                         const dx = x - centerX;
                         const dz = z - centerZ;
                         const distSq = dx * dx + dz * dz;
                         if (distSq < minDistSq) {
-                            if (e.isDead) continue; // Safety check
+                            if (e.isDead) continue;
                             minDistSq = distSq;
                             nearest = e;
                         }
@@ -107,6 +101,45 @@ export class Terrain {
             }
         }
         return nearest;
+    }
+
+    findBestTarget(type, centerX, centerZ, maxRadius, costFn) {
+        let bestEntity = null;
+        let bestScore = Infinity;
+
+        const r = Math.ceil(maxRadius);
+        const minX = Math.max(0, centerX - r);
+        const maxX = Math.min(this.logicalWidth - 1, centerX + r);
+        const minZ = Math.max(0, centerZ - r);
+        const maxZ = Math.min(this.logicalDepth - 1, centerZ + r);
+
+        for (let x = minX; x <= maxX; x++) {
+            for (let z = minZ; z <= maxZ; z++) {
+                const cell = this.entityGrid[x][z];
+                for (let i = 0; i < cell.length; i++) {
+                    const e = cell[i];
+                    if (e._spatial && e._spatial.type === type) {
+                        if (e.isDead) continue;
+
+                        const dx = x - centerX;
+                        const dz = z - centerZ;
+                        const dist = Math.sqrt(dx * dx + dz * dz);
+
+                        if (dist > maxRadius) continue;
+
+                        // Calculate Cost
+                        const score = costFn(e, dist);
+
+                        // We want the LOWEST score
+                        if (score < bestScore) {
+                            bestScore = score;
+                            bestEntity = e;
+                        }
+                    }
+                }
+            }
+        }
+        return bestEntity;
     }
 
     initTerrain() {
@@ -134,6 +167,23 @@ export class Terrain {
 
         const count = this.geometry.attributes.position.count;
         this.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(count * 3), 3));
+
+        // 1.5. Apply Slight Terrain Distortion (User Request)
+        // Adjust X/Y (which correspond to World X/Z) slightly to look natural
+        const posAttr = this.geometry.attributes.position;
+        for (let i = 0; i < count; i++) {
+            const x = posAttr.getX(i);
+            const y = posAttr.getY(i);
+
+            // Deterministic "Wobble" (Refactored to helper)
+            const offsets = this.getVisualOffset(x, y);
+
+            posAttr.setX(i, x + offsets.x);
+            posAttr.setY(i, y + offsets.y);
+        }
+        // No need to update 'needsUpdate' yet as we haven't rendered, but good practice
+        posAttr.needsUpdate = true;
+
 
         // 2. Generate Height Data (FBM) for Logical Grid
         this.generateRandomTerrain();
@@ -172,11 +222,19 @@ export class Terrain {
                 // height = (n * 20) - 8.
                 // Range: -8 to 12.
                 // Water is n < 0.4.
-                let height = (n * 20) - 8;
+                // User wants less flat land -> Increase Amplitude (Scale)
+                // Old: (n * 20) - 8 => Range -8 to 12
+                // New: (n * 35) - 15 => Range -15 to 20 (Simulates steeper terrain)
+                let height = (n * 35) - 15;
                 height = Math.max(-5, height); // Cap depth at -5
                 height = Math.round(height);
 
                 this.grid[x][z].height = height;
+
+                // Moisture Map (Different seed)
+                // Normalize 0..1
+                let m = this.seamlessFbm(u, v, this.seed + 123.45);
+                this.grid[x][z].moisture = m;
             }
         }
 
@@ -229,25 +287,53 @@ export class Terrain {
         this.mesh.rotation.x = -Math.PI / 2;
         this.mesh.position.set(0, 0, 0); // Centered
 
-        // Wireframe Overlay (Restored for visualization)
-        const wireframeMaterial = new THREE.MeshBasicMaterial({
-            color: 0x000000,
-            wireframe: true,
+        // 1. Grid Lines (Gray) - User Request
+        const gridGeo = new THREE.BufferGeometry();
+        gridGeo.setAttribute('position', this.geometry.attributes.position);
+
+        // Generate Custom Indices for Grid Lines (Horizontal and Vertical only)
+        const indices = [];
+        const cols = this.width + 1;
+        const rows = this.depth + 1;
+
+        for (let z = 0; z < rows; z++) {
+            for (let x = 0; x < cols; x++) {
+                const i = z * cols + x;
+                if (x < this.width) indices.push(i, i + 1);
+                if (z < this.depth) indices.push(i, i + cols);
+            }
+        }
+        gridGeo.setIndex(indices);
+
+        const gridMat = new THREE.LineBasicMaterial({
+            color: 0x000000, // Back to Black
             transparent: true,
-            opacity: 0.15,
-            clippingPlanes: this.clippingPlanes,
-            clipShadows: false
+            opacity: 0.15,   // Original opacity
+            clippingPlanes: this.clippingPlanes
         });
-        const wireframe = new THREE.Mesh(this.geometry, wireframeMaterial);
 
-        wireframeMaterial.polygonOffset = true;
-        wireframeMaterial.polygonOffsetFactor = 1;
-        wireframeMaterial.polygonOffsetUnits = 1;
+        const gridMesh = new THREE.LineSegments(gridGeo, gridMat);
+        gridMesh.position.set(0, 0, 0.04); // Slightly below dots
+        this.mesh.add(gridMesh);
 
-        this.mesh.add(wireframe);
+        // 2. Grid Dots (Matching Lines)
+        const dotsMaterial = new THREE.PointsMaterial({
+            color: 0x000000, // Match Grid (Black)
+            size: 0.15,
+            sizeAttenuation: true,
+            transparent: true,
+            opacity: 0.2,    // Subtle dots
+            clippingPlanes: this.clippingPlanes
+        });
+
+        // We can reuse the main geometry directly because it has vertices at grid intersections
+        const dotsMesh = new THREE.Points(this.geometry, dotsMaterial);
+        dotsMesh.position.set(0, 0, 0.05); // Slight lift to avoid Z-fighting
+
+        this.mesh.add(dotsMesh);
 
         this.scene.add(this.mesh);
-        this.meshes.push(this.mesh); // For InputManager compatibility
+        this.meshes.push(this.mesh);
     }
 
     createWater() {
@@ -281,12 +367,21 @@ export class Terrain {
         }
     }
 
-    updateColors(isNight = false) {
+    setSeason(season) {
+        if (this.currentSeason !== season) {
+            console.log(`[DEBUG] Terrain.setSeason: Changing from ${this.currentSeason} to ${season}`);
+            this.currentSeason = season;
+            this.updateColors(this._lastIsNight);
+        }
+    }
+
+    updateColors(isNight) {
+        if (isNight === undefined) isNight = this._lastIsNight || false;
         const colors = this.geometry.attributes.color.array;
         const positions = this.geometry.attributes.position.array;
-
-        // Optimization: Pre-calculate building map for faster "glow" lookup?
-        // grid[x][z].hasBuilding is O(1). 
+        const season = this.currentSeason || 'Spring';
+        // Debug first iteration
+        console.log(`[DEBUG] Terrain.updateColors: Season=${season}, IsNight=${isNight}`);
 
         for (let i = 0; i < positions.length; i += 3) {
             const x = positions[i];
@@ -302,78 +397,10 @@ export class Terrain {
                 const cell = this.grid[lx][lz];
                 const height = cell.height;
                 const noise = cell.noise;
-                let color = new THREE.Color();
+                const moisture = cell.moisture || 0.5;
 
-                if (height <= 0) {
-                    color.setHex(0xF4A460); // Sand
-                } else if (height <= 4) {
-                    color.setHex(0x66CC66); // Lighter Grass
-                } else if (height <= 8) {
-                    color.setHex(0x005522); // Forest
-                } else {
-                    color.setHex(0x808080); // Rock
-                }
-
-                const hsl = {};
-                color.getHSL(hsl);
-                hsl.l = Math.max(0.2, Math.min(0.9, hsl.l + noise));
-                if (height > 4 && height <= 8) hsl.h += noise * 2;
-
-                // Night Logic: Dim everything, then add Glow
-                if (isNight) {
-                    hsl.l *= 0.3; // Dim terrain significantly at night
-
-                    // Glow Logic
-                    // Check local and neighbors for buildings
-                    // Radius 2 check (5x5) for soft spread
-                    let lightIntensity = 0.0;
-
-                    // Simple range check: -2 to +2
-                    // Optimization: Only check if we are NOT water (height > 0)
-                    if (height > 0) {
-                        for (let dx = -2; dx <= 2; dx++) {
-                            for (let dz = -2; dz <= 2; dz++) {
-                                const nx = (lx + dx + this.logicalWidth) % this.logicalWidth;
-                                const nz = (lz + dz + this.logicalDepth) % this.logicalDepth;
-                                if (this.grid[nx][nz].hasBuilding) {
-                                    // Distance falloff
-                                    const dist = Math.sqrt(dx * dx + dz * dz);
-                                    if (dist <= 2.5) {
-                                        // Specific Building Type Logic?
-                                        // Castle = Brighter/Larger? for now uniformity
-                                        // Add intensity based on distance
-                                        lightIntensity += Math.max(0, 1.0 - (dist / 2.5));
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Apply Glow (Warm Yellow)
-                    if (lightIntensity > 0) {
-                        // Blend towards yellow/orange
-                        // lightIntensity can exceed 1 with multiple neighbors, clamp it
-                        lightIntensity = Math.min(1.0, lightIntensity);
-
-                        // Target Color: Warm Orange Glow (H: 30-40, S: 1.0, L: 0.5-0.8)
-                        // Current Color is Dimmed Terrain.
-                        // We add Light.
-
-                        // Lerp hue towards Orange (0.1)
-                        // Increase Lightness
-
-                        const glowH = 0.1; // Orange
-                        const glowS = 1.0;
-                        const glowL = 0.6;
-
-                        // Simple Lerp
-                        hsl.h = hsl.h * (1 - lightIntensity) + glowH * lightIntensity;
-                        hsl.s = hsl.s * (1 - lightIntensity) + glowS * lightIntensity;
-                        hsl.l = hsl.l + (glowL * lightIntensity); // Additive light
-                    }
-                }
-
-                color.setHSL(hsl.h, hsl.s, hsl.l);
+                // Use Shared Helper
+                const color = this.getBiomeColor(height, moisture, noise, isNight, season, lx, lz);
 
                 colors[i] = color.r;
                 colors[i + 1] = color.g;
@@ -381,6 +408,184 @@ export class Terrain {
             }
         }
         this.geometry.attributes.color.needsUpdate = true;
+    }
+    // SHARED HELPER for Main View & Minimap
+    getBiomeColor(height, moisture, noise, isNight, season, lx, lz, forMinimap = false) {
+        const color = new THREE.Color();
+
+        // 1. Sea Logic (RESTORED)
+        if (height <= 0) {
+            if (forMinimap) {
+                // Minimap: Lighter "Mizuiro" Gradient
+                const shallow = new THREE.Color(0x88CCFF);
+                const deep = new THREE.Color(0x0066CC);
+                let depthFactor = Math.abs(height) / 10.0;
+                depthFactor = Math.min(1.0, depthFactor);
+                color.copy(shallow).lerp(deep, depthFactor);
+                return color;
+            }
+
+            // Terrain (3D View): SEABED COLOR
+            color.setHex(0xF4A460); // Sand base
+            // Texture variation using noise (0.9 to 1.1)
+            const texture = 0.9 + (noise * 0.2);
+            color.multiplyScalar(texture);
+            return color;
+        }
+
+        // 2. Standard Terrain Logic (Height & Season) - Base Color
+        if (height <= 4) {
+            // Grass / Plains
+            if (season === 'Winter') {
+                // User Request: "Wasteland (Desert/Swamp/Sand) keep original."
+                // "Plains (Grass) make Khaki (Withered)."
+                color.setHex(0xBDB76B); // Khaki
+                // Add tiny noise for texture
+                const n = (noise + 1) * 0.5;
+                color.lerp(new THREE.Color(0xA09A5A), n * 0.2);
+            } else if (season === 'Summer') {
+                color.setHex(0x00A850); // Vibrant Green
+            } else if (season === 'Autumn' || season === 'Spring') {
+                color.setHex(0x88DD88); // Spring
+            } else {
+                color.setHex(0x88DD88); // Default
+            }
+        } else if (height <= 8) {
+            // Forest
+            if (season === 'Winter') {
+                color.setHex(0xFFFFFF); // White
+                const n = (noise + 1) * 0.5;
+                color.lerp(new THREE.Color(0xEEF5FF), n * 0.1);
+            } else if (season === 'Autumn') {
+                // User Request: "Single solid colors dappled/spotted"
+                // NEW: High-frequency pseudo-random noise based on coordinates (lx, lz).
+
+                // Simple hash function for 0..1 range
+                const dot = lx * 12.9898 + lz * 78.233;
+                let hash = Math.sin(dot) * 43758.5453;
+                hash = hash - Math.floor(hash); // Fract
+
+                // Patches:
+                if (hash > 0.66) color.setHex(0xCC0000); // Vivid Red
+                else if (hash > 0.33) color.setHex(0xFFCC00); // Vivid Yellow
+                else color.setHex(0x228B22); // Green
+            } else if (season === 'Summer') {
+                color.setHex(0x006400); // Deep Green
+            } else {
+                color.setHex(0x228B22); // Spring
+            }
+        } else {
+            // Rock (Height > 8)
+            color.setHex(0x808080);
+            const n = (noise + 1) * 0.5;
+            color.lerp(new THREE.Color(0x606060), n * 0.2);
+        }
+
+        // 3. Special Biome Logic (Desert / Swamp) - OVERRIDES
+        // User Request (Winter): "Swamp... keep as original."
+        // Means we apply Biome Logic even in Winter.
+        // Desert
+        if (moisture < 0.5 && height <= 8) {
+            const sandColor = new THREE.Color(0xF4A460);
+            let sandFactor = 1.0;
+            if (moisture > 0.35) sandFactor = 1.0 - ((moisture - 0.35) / 0.15);
+            color.lerp(sandColor, sandFactor);
+        }
+
+        // Swamp (High Moisture + Low Height)
+        if (moisture > 0.6 && height <= 3) {
+            const swampColor = new THREE.Color(0x2F4F4F);
+            let moistFade = Math.min(1.0, Math.max(0, (moisture - 0.6) / 0.15));
+
+            // Autumn Swamp -> Brownish
+            if (season === 'Autumn') swampColor.setHex(0x4B3621);
+
+            let heightFade = (height > 2) ? (1.0 - (height - 2)) : 1.0;
+            color.lerp(swampColor, moistFade * heightFade);
+        }
+
+        // 4. Night Mode
+        if (isNight) {
+            const hsl = {};
+            color.getHSL(hsl);
+
+            hsl.l *= 0.3; // Dim
+
+            // Glow Logic (Simplified for performance)
+            let lightIntensity = 0.0;
+            if (height > 0) {
+                // Check neighbors (Radius 2)
+                const W = this.logicalWidth;
+                const H = this.logicalDepth;
+                for (let dx = -2; dx <= 2; dx++) {
+                    for (let dz = -2; dz <= 2; dz++) {
+                        const nx = (lx + dx + W) % W;
+                        const nz = (lz + dz + H) % H;
+                        if (this.grid[nx] && this.grid[nx][nz] && this.grid[nx][nz].hasBuilding) {
+                            const dist = Math.sqrt(dx * dx + dz * dz);
+                            if (dist <= 2.5) lightIntensity += Math.max(0, 1.0 - (dist / 2.5));
+                        }
+                    }
+                }
+            }
+
+            if (lightIntensity > 0) {
+                lightIntensity = Math.min(1.0, lightIntensity);
+                const glowH = 0.1; // Orange
+                hsl.h = hsl.h * (1 - lightIntensity) + glowH * lightIntensity;
+                hsl.l += lightIntensity * 0.4;
+            }
+            color.setHSL(hsl.h, hsl.s, hsl.l);
+        }
+
+        return color;
+    }
+
+    modifyMoisture(gx, gz, amount) {
+        const lx = ((gx % this.logicalWidth) + this.logicalWidth) % this.logicalWidth;
+        const lz = ((gz % this.logicalDepth) + this.logicalDepth) % this.logicalDepth;
+
+        if (this.grid[lx] && this.grid[lx][lz]) {
+            const cell = this.grid[lx][lz];
+            cell.moisture = Math.max(0, Math.min(1, (cell.moisture || 0.5) + amount));
+            this.updateColorAt(lx, lz);
+        }
+    }
+
+    updateColorAt(gridX, gridZ) {
+        const isNight = this._lastIsNight || false;
+        const season = this.currentSeason || 'Spring';
+        const colorAttr = this.geometry.attributes.color;
+        const W = this.logicalWidth;
+        const H = this.logicalDepth;
+        const cols = W + 1; // 161 (0..160)
+
+        // Candidates logic for wrapping seams
+        const candidates = [{ x: gridX, z: gridZ }];
+        if (gridX === 0) candidates.push({ x: W, z: gridZ });
+        if (gridZ === 0) candidates.push({ x: gridX, z: H });
+        if (gridX === 0 && gridZ === 0) candidates.push({ x: W, z: H });
+
+        candidates.forEach(pos => {
+            const index = pos.z * cols + pos.x;
+            if (index < 0 || index >= colorAttr.count) return;
+
+            const lx = pos.x % W;
+            const lz = pos.z % H;
+
+            if (this.grid[lx] && this.grid[lx][lz]) {
+                const cell = this.grid[lx][lz];
+                const height = cell.height;
+                const noise = cell.noise;
+                const moisture = cell.moisture || 0.5;
+
+                // USE HELPER
+                const color = this.getBiomeColor(height, moisture, noise, isNight, season, lx, lz);
+
+                colorAttr.setXYZ(index, color.r, color.g, color.b);
+            }
+        });
+        colorAttr.needsUpdate = true;
     }
 
     modifyHeight(startX, startZ, amount) {
@@ -480,7 +685,7 @@ export class Terrain {
                         console.log("Building drowned!");
                     }
 
-                    if (b.userData.type === 'house' || b.userData.type === 'farm') {
+                    if (b.userData.type === 'house' || b.userData.type === 'farm' || b.userData.type === 'goblin_hut') {
                         // Check 4 corners of this tile
                         const h00 = this.grid[t.x][t.z].height;
                         const h10 = this.grid[(t.x + 1) % this.logicalWidth][t.z].height;
@@ -496,28 +701,10 @@ export class Terrain {
                         const bx = b.userData.gridX;
                         const bz = b.userData.gridZ;
 
-                        // Check all 4 tiles of the castle
-                        // Actually, we just need to check if the castle's base is flat.
-                        // Castle occupies (bx,bz), (bx+1,bz), (bx,bz+1), (bx+1,bz+1)
-                        // All 9 vertices must be same height? 
-                        // Or just the 4 tiles are flat?
-                        // Let's check the 4 tiles.
-
-                        const tiles = [
-                            { x: bx, z: bz },
-                            { x: (bx + 1) % this.logicalWidth, z: bz },
-                            { x: bx, z: (bz + 1) % this.logicalDepth },
-                            { x: (bx + 1) % this.logicalWidth, z: (bz + 1) % this.logicalDepth }
-                        ];
-
-                        // Get height of first tile
-                        const h = this.grid[bx][bz].height;
-
                         // Check if all 4 tiles are flat and at height h
                         // This implies checking all corners of all 4 tiles.
                         // Simplified: Check all vertices involved.
                         // Vertices: (bx,bz) to (bx+2,bz+2)
-
                         for (let i = 0; i <= 2; i++) {
                             for (let j = 0; j <= 2; j++) {
                                 const vx = (bx + i) % this.logicalWidth;
@@ -532,7 +719,7 @@ export class Terrain {
                     if (!isValid) {
                         // Destroy building
                         this.scene.remove(b);
-                        if (b.userData.clones) {
+                        if (b.userData && b.userData.clones) {
                             b.userData.clones.forEach(clone => this.scene.remove(clone));
                         }
 
@@ -578,14 +765,49 @@ export class Terrain {
         const lz = (Math.round(z) + this.logicalDepth) % this.logicalDepth;
         if (this.grid[lx] && this.grid[lx][lz]) {
             const h = this.grid[lx][lz].height;
-            // Debug Log (Sparse) - Removed for performance
-            // if (window.game && Math.random() < 0.0001) {
-            //     console.log(`Terrain Debug: getTileHeight(${x},${z}) -> [${lx},${lz}] = ${h}`);
-            // }
             return h;
         }
-        console.warn(`Terrain Debug: Invalid Grid Access at ${lx},${lz}`);
         return 0;
+    }
+
+    // Helper for Visual Alignment
+    getVisualOffset(localX, localY) {
+        // Matches the distortion logic in initTerrain
+        // X and Y are PlaneGeometry local coords (World X and Z mostly)
+        const offsetX = (Math.sin(localY * 0.5) + Math.cos(localX * 0.4)) * 0.2;
+        const offsetY = (Math.cos(localY * 0.4) + Math.sin(localX * 0.5)) * 0.2;
+        return { x: offsetX, y: offsetY };
+    }
+
+    getVisualPosition(gridX, gridZ, isCentered = true) {
+        // Convert Grid Coord -> Physical World Coord (including distortion)
+        const logicalW = this.logicalWidth || 80;
+        const logicalD = this.logicalDepth || 80;
+
+        // Base Coordinate
+        // If isCentered is true, we add 0.5 to move to tile center.
+        // If false, we stay at integer coordinate (Vertex/Corner).
+        const offset = isCentered ? 0.5 : 0.0;
+
+        const rawX = (gridX - logicalW / 2) + offset;
+        const rawZ = (gridZ - logicalD / 2) + offset;
+
+        // In PlaneGeometry local space (before rotation -PI/2):
+        // x = rawX
+        // y = -rawZ
+        const planeX = rawX;
+        const planeY = -rawZ;
+
+        const offsets = this.getVisualOffset(planeX, planeY);
+
+        // Apply offsets
+        const visualX = rawX + offsets.x;
+        const visualZ = rawZ - offsets.y;
+
+        // Get Height
+        const h = this.getTileHeight(gridX, gridZ);
+
+        return { x: visualX, y: h, z: visualZ };
     }
 
     getInterpolatedHeight(x, z) {
@@ -624,6 +846,8 @@ export class Terrain {
     lower(x, z) {
         this.modifyHeight(x, z, -1);
     }
+
+
 
     // Seamless Fractal Brownian Motion
     seamlessFbm(u, v, seed) {
@@ -752,13 +976,19 @@ export class Terrain {
             gridX: gridX,
             gridZ: gridZ,
             y: h,
+            rotation: Math.random() * Math.PI * 2, // Random rotation
             population: 0,
             id: Math.random().toString(36).substr(2, 9) // Unique ID
         };
 
         // Initial population
-        if (type === 'house' || type === 'farm') building.population = 10;
+        if (type === 'house') building.population = 10;
+        if (type === 'farm') {
+            building.population = 10;
+            building.hp = 5; // Farm Durability (Requested by User)
+        }
         if (type === 'castle') building.population = 50;
+        if (type === 'goblin_hut') building.population = 1; // Start with 1
 
         // Compatibility Shim for Goblin/Legacy logic
         building.userData = building;
@@ -809,105 +1039,180 @@ export class Terrain {
         }
     }
 
-    updatePopulation(deltaTime, spawnCallback) {
-        // 1 real second = 12 game seconds
-        // Base growth: 5 per real second. -> Adjusted logic below
+    updatePopulation(deltaTime, spawnCallback, isNight = false) {
+        // 1. Calculate Total Population & Food Need
+        const activeUnits = window.game && window.game.units ? window.game.units.length : 0;
 
-        // Resource check
+        let totalHousingPop = 0;
+        this.buildings.forEach(b => {
+            const type = b.userData.type || b.type;
+            if ((type === 'house' || type === 'castle') && b.userData.population) {
+                totalHousingPop += b.userData.population;
+            }
+        });
+        this.totalHousingPop = totalHousingPop;
+
+        const totalPopulation = Math.floor(totalHousingPop) + activeUnits;
+
+        // Food Consumption Settings
+        let consumptionRate = 0.005;
+        // Night: 1/10th consumption (User Request)
+        if (isNight) consumptionRate *= 0.1;
+
+        let foodNeed = totalPopulation * consumptionRate * deltaTime;
+
         const resources = window.game ? window.game.resources : { grain: 0, fish: 0, meat: 0 };
+        let hasFood = true;
 
+        if (foodNeed > 0) {
+            let needGrain = foodNeed * 0.40;
+            let needMeat = foodNeed * 0.30;
+            let needFish = foodNeed * 0.30;
+
+            const consume = (type, amount) => {
+                if (amount <= 0) return 0;
+                if (resources[type] >= amount) {
+                    resources[type] -= amount;
+                    return 0;
+                } else {
+                    const consumed = resources[type];
+                    resources[type] = 0;
+                    return amount - consumed;
+                }
+            };
+
+            // Pass 1: Try distributed target
+            let remainGrain = consume('grain', needGrain);
+            let remainMeat = consume('meat', needMeat);
+            let remainFish = consume('fish', needFish);
+
+            // Pass 2: Redistribute Remainders
+            if (remainGrain > 0) remainGrain = consume('meat', remainGrain);
+            if (remainMeat > 0) remainMeat = consume('fish', remainMeat);
+            if (remainGrain > 0) remainGrain = consume('fish', remainGrain);
+
+            let totalRemain = remainGrain + remainMeat + remainFish;
+            if (totalRemain > 0) {
+                totalRemain = consume('grain', totalRemain);
+                totalRemain = consume('meat', totalRemain);
+                totalRemain = consume('fish', totalRemain);
+            }
+
+            // If still remainder, we are out of food.
+            if (totalRemain > 0.0001) {
+                hasFood = false;
+            }
+        }
+
+        // 2. Growth Logic
         let variety = 0;
         if (resources.grain > 0) variety++;
         if (resources.fish > 0) variety++;
         if (resources.meat > 0) variety++;
-
-        // Base rate logic
-        // If 0 variety, very slow growth? Or 0?
-        // Let's say base is 0.05.
-        // Variety multiplier: 1 type -> 1x, 2 types -> 3x, 3 types -> 6x ?
-        // User said "balance of 3 types changes growth rate".
 
         let multiplier = 0.5;
         if (variety === 1) multiplier = 1.0;
         if (variety === 2) multiplier = 2.5;
         if (variety === 3) multiplier = 5.0;
 
-        const baseRate = 0.2 * multiplier;
-        const farmBonus = 0.1; // Reduced since farms provide grain which provides multiplier
+        const baseRate = 0.5 * multiplier;
 
-        this.buildings.forEach(building => {
+        if (this.frameCount === undefined) this.frameCount = 0;
+        this.frameCount++;
+
+        // Staggered Updates
+        const staggerCount = 20;
+        const currentFrame = this.frameCount % staggerCount;
+
+        this.buildings.forEach((building, index) => {
+            // Skip unless it's this building's turn
+            if (index % staggerCount !== currentFrame) return;
+
+            // Adjust deltaTime to account for skipped frames
+            const simDeltaTime = deltaTime * staggerCount;
+
             const type = building.userData.type;
 
             if (type === 'house' || type === 'castle') {
                 const bx = building.userData.gridX;
                 const bz = building.userData.gridZ;
 
-                // Count nearby farms still relevant? Maybe Keep it as "Job" bonus
-                // But mainly rely on Global Food.
-                // Let's keep farm bonus scaling but small.
-
                 let rate = baseRate;
+                if (type === 'castle') rate *= 2;
 
-                // Castle Bonus: 2x Growth
-                if (type === 'castle') {
-                    rate *= 2;
-                }
-
-                // Diminishing Returns based on Total Population
-                const totalPop = window.game ? window.game.totalPopulation : 0;
-                const diminishingFactor = 2000 / (2000 + totalPop);
+                // Diminishing Returns
+                const diminishingFactor = 200000 / (200000 + totalPopulation);
                 rate *= diminishingFactor;
 
-                building.userData.population += rate * deltaTime;
+                if (!hasFood) rate = 0;
 
-                if (building.userData.population >= 100) {
-                    building.userData.population = 0;
+                building.userData.population += rate * simDeltaTime;
 
-                    // Consume Food on Spawn
+                // Handle Overflow
+                let sanityCheck = 0;
+                while (building.userData.population >= 100 && sanityCheck < 10) {
+                    building.userData.population -= 100;
+                    sanityCheck++;
+
+                    // Consume Food for maintenance/spawn check
                     let consumed = false;
-                    if (resources.fish > 0) { resources.fish--; consumed = true; }
-                    if (resources.meat > 0) { resources.meat--; consumed = true; }
-                    if (resources.grain > 0) { resources.grain--; }
+                    if (resources.fish >= 1) { resources.fish--; consumed = true; }
+                    else if (resources.meat >= 1) { resources.meat--; consumed = true; }
+                    else if (resources.grain >= 1) { resources.grain--; consumed = true; }
 
-                    spawnCallback(bx, bz);
+                    if (consumed) {
+                        // Determine Role
+                        let role = 'worker';
+                        const totalActiveUnits = window.game?.units?.length || 0;
+
+                        if (totalActiveUnits > 30) {
+                            const r = Math.random();
+                            if (r < 0.2) role = 'hunter';
+                            else if (r < 0.4) role = 'fisher';
+                            else role = 'worker';
+                        }
+
+                        if (type === 'castle') {
+                            for (let i = 0; i < 4; i++) spawnCallback(bx, bz, role);
+                        } else {
+                            spawnCallback(bx, bz, role);
+                        }
+                    }
                 }
-            } else if (type === 'farm') {
-                // Farm Logic: Generate Food
-                // Use population field as progress (0-100)
-                // Rate: 100 / 10 seconds = 10 per second
-                const growthRate = 10;
-                building.userData.population = (building.userData.population || 0) + growthRate * deltaTime;
+                if (building.userData.population > 100) building.userData.population = 99;
 
-                if (building.userData.population >= 100) {
-                    building.userData.population = 0;
+            } else if (type === 'farm') {
+                // Farm Logic
+                const growthRate = 10;
+                building.userData.population = (building.userData.population || 0) + growthRate * simDeltaTime;
+
+                while (building.userData.population >= 100) {
+                    building.userData.population -= 100;
                     if (window.game && window.game.resources) {
-                        window.game.resources.grain++;
-                        // Visual feedback could go here
+                        // Variable Yield based on Moisture
+                        const x = building.userData.gridX;
+                        const z = building.userData.gridZ;
+                        const m = this.grid[x][z].moisture || 0.5;
+
+                        const diff = Math.abs(m - 0.5);
+                        let efficiency = 1.0 - (diff * 2.0); // 0.5 diff -> 0 efficiency
+                        if (efficiency < 0.2) efficiency = 0.2; // Min 20%
+
+                        // Buff: Increase base yield 5 -> 50 -> Nerf to 20 -> Nerf to 8
+                        const yieldAmount = Math.floor(8 * efficiency);
+                        window.game.resources.grain += yieldAmount;
                     }
                 }
             }
         });
-
-        // Update Total Population Global (Housing Pop + Active Units)
-        this.totalHousingPop = 0;
-        this.buildings.forEach(b => {
-            if (b.userData.population) this.totalHousingPop += b.userData.population;
-        });
-
-        // Game.js handles the final sum with unit count
-
     }
 
     update(deltaTime, spawnCallback) {
+        if (this.colorsDirty) {
+            this.updateColors();
+            this.colorsDirty = false;
+        }
         this.updatePopulation(deltaTime, spawnCallback);
-        // updateLights requires 'time' (hour of day), not deltaTime?
-        // updateLights signature: updateLights(time)
-        // Game.js passes deltaTime, but doesn't pass 'time' to terrain.update currently.
-        // Let's defer updateLights or fix signature. 
-        // Game.js has: this.goblinManager.update(time, deltaTime)
-        // Terrain update only gets deltaTime currently in Game.js which I just wrote.
-        // I should update Game.js to pass time too if needed.
-        // For now, let's just fix the crash by adding the method.
     }
 
     updateLights(time) {
@@ -916,14 +1221,14 @@ export class Terrain {
         /*
         // Night: 19-24, 0-5.
         const isNight = (time >= 18 || time < 6);
-
+     
         // Optimization: Only update if state changed
         if (this._lastIsNight === isNight) return;
         this._lastIsNight = isNight;
-
+     
         const colorHex = isNight ? 0xFFFF00 : 0x000000;
         // console.log("Updating lights. Time:", time, "IsNight:", isNight);
-
+     
         this.buildings.forEach(building => {
             // Windows
             if (building.userData.windows) {
@@ -943,9 +1248,11 @@ export class Terrain {
     }
 
     serialize() {
+        // Optimization: Reduce Precision and JSON structure overhead
         const data = {
             logicalWidth: this.logicalWidth,
             logicalDepth: this.logicalDepth,
+            // Flattened or simplified? Keeping structure but optimizing entries.
             grid: []
         };
 
@@ -953,21 +1260,30 @@ export class Terrain {
             data.grid[x] = [];
             for (let z = 0; z < this.logicalDepth; z++) {
                 const cell = this.grid[x][z];
-                const cellData = {
-                    height: cell.height,
-                    noise: cell.noise,
-                    hasBuilding: cell.hasBuilding,
-                    building: null
-                };
+                // Only save non-default check
+                const cellData = {};
 
-                if (cell.hasBuilding && cell.building) {
-                    cellData.building = {
-                        type: cell.building.userData.type,
-                        population: cell.building.userData.population,
-                        gridX: cell.building.userData.gridX,
-                        gridZ: cell.building.userData.gridZ
-                    };
+                // Truncate Precision (2 decimal places)
+                // Math.round(num * 100) / 100
+                cellData.h = Math.round(cell.height * 100) / 100;
+                cellData.n = Math.round(cell.noise * 100) / 100;
+
+                if (cell.hasBuilding) {
+                    cellData.hb = 1;
+                    if (cell.building) {
+                        // Optimization: Only save building data at origin
+                        if (cell.building.gridX === x && cell.building.gridZ === z) {
+                            cellData.b = {
+                                t: cell.building.userData.type, // type
+                                p: cell.building.userData.population, // population
+                                x: cell.building.userData.gridX,
+                                z: cell.building.userData.gridZ,
+                                r: Math.round(cell.building.rotation * 100) / 100 // rotation
+                            };
+                        }
+                    }
                 }
+
                 data.grid[x][z] = cellData;
             }
         }
@@ -1008,19 +1324,46 @@ export class Terrain {
         for (let x = 0; x < this.logicalWidth; x++) {
             for (let z = 0; z < this.logicalDepth; z++) {
                 const cellData = data.grid[x][z];
-                this.grid[x][z].height = cellData.height;
-                this.grid[x][z].noise = cellData.noise;
+                // Support legacy format check? 
+                // Checks if 'h' exists, otherwise use 'height'.
+                const h = (cellData.h !== undefined) ? cellData.h : cellData.height;
+                const n = (cellData.n !== undefined) ? cellData.n : cellData.noise;
+
+                this.grid[x][z].height = h;
+                this.grid[x][z].noise = n;
 
                 // Restore Buildings
-                if (cellData.hasBuilding && cellData.building) {
+                // Optimized format: hb (hasBuilding), b (building object with t, p, x, z, r)
+                // Legacy: hasBuilding, building (type, population...)
+
+                let hasB = cellData.hb || cellData.hasBuilding;
+                let bData = cellData.b || cellData.building;
+
+                if (hasB && bData) {
                     // Only restore if we are at the origin of the building to prevent duplication
-                    if (cellData.building.gridX === x && cellData.building.gridZ === z) {
-                        if (cellData.building.type === 'house') {
-                            this.restoreHouse(cellData.building);
-                        } else if (cellData.building.type === 'farm') {
-                            this.restoreFarm(cellData.building);
-                        } else if (cellData.building.type === 'castle') {
-                            this.restoreCastle(cellData.building);
+                    // Check coords
+                    const bx = (bData.x !== undefined) ? bData.x : bData.gridX;
+                    const bz = (bData.z !== undefined) ? bData.z : bData.gridZ;
+
+                    if (bx === x && bz === z) {
+                        const type = bData.t || bData.type;
+                        // Map simplified keys to full expected object
+                        const fullData = {
+                            gridX: bx,
+                            gridZ: bz,
+                            type: type,
+                            population: (bData.p !== undefined) ? bData.p : bData.population,
+                            rotation: (bData.r !== undefined) ? bData.r : bData.rotation
+                        };
+
+                        if (type === 'house') {
+                            this.restoreHouse(fullData);
+                        } else if (type === 'farm') {
+                            this.restoreFarm(fullData);
+                        } else if (type === 'castle') {
+                            this.restoreCastle(fullData);
+                        } else if (type === 'goblin_hut') {
+                            this.restoreGoblinHut(fullData);
                         }
                     }
                 }
@@ -1037,6 +1380,7 @@ export class Terrain {
             gridX: data.gridX,
             gridZ: data.gridZ,
             y: this.getTileHeight(data.gridX, data.gridZ),
+            rotation: data.rotation !== undefined ? data.rotation : Math.random() * Math.PI * 2, // Load or Random
             population: data.population || 0,
             id: Math.random().toString(36).substr(2, 9),
             userData: {
@@ -1059,10 +1403,56 @@ export class Terrain {
             gridX: data.gridX,
             gridZ: data.gridZ,
             y: this.getTileHeight(data.gridX, data.gridZ),
+            rotation: data.rotation !== undefined ? data.rotation : Math.random() * Math.PI * 2, // Load or Random
             population: 0,
             id: Math.random().toString(36).substr(2, 9),
             userData: {
                 type: 'farm',
+                gridX: data.gridX,
+                gridZ: data.gridZ
+            }
+        };
+
+        const cell = this.grid[data.gridX][data.gridZ];
+        cell.hasBuilding = true;
+        cell.building = building;
+        this.buildings.push(building);
+    }
+
+    updateMeshPosition(camera) {
+        if (!camera) return;
+
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+
+        // Snap to nearest logical grid center
+        const cx = camera.position.x;
+        const cz = camera.position.z;
+
+        const snapX = Math.round(cx / W) * W;
+        const snapZ = Math.round(cz / D) * D;
+
+        if (this.mesh.position.x !== snapX || this.mesh.position.z !== snapZ) {
+            this.mesh.position.set(snapX, 0, snapZ);
+            if (this.waterMesh) {
+                this.waterMesh.position.set(snapX, 0.2, snapZ);
+            }
+            // console.log(`Terrain Snapped to ${snapX}, ${snapZ}`);
+        }
+    }
+
+    restoreGoblinHut(data) {
+        const building = {
+            type: 'goblin_hut',
+            gridX: data.gridX,
+            gridZ: data.gridZ,
+            y: this.getTileHeight(data.gridX, data.gridZ),
+            rotation: data.rotation !== undefined ? data.rotation : Math.random() * Math.PI * 2,
+            population: data.population || 1,
+            id: Math.random().toString(36).substr(2, 9),
+            userData: {
+                type: 'goblin_hut',
+                population: data.population || 1,
                 gridX: data.gridX,
                 gridZ: data.gridZ
             }
@@ -1080,6 +1470,7 @@ export class Terrain {
             gridX: data.gridX,
             gridZ: data.gridZ,
             y: this.getTileHeight(data.gridX, data.gridZ),
+            rotation: data.rotation !== undefined ? data.rotation : Math.random() * Math.PI * 2, // Load or Random
             population: data.population || 50,
             id: Math.random().toString(36).substr(2, 9),
             userData: {
@@ -1103,5 +1494,112 @@ export class Terrain {
             this.grid[ox][oz].hasBuilding = true;
             this.grid[ox][oz].building = building;
         });
+    }
+
+    findPath(sx, sz, ex, ez) {
+        // A* Pathfinding (Simplified)
+        // Returns array of {x, z} steps or null if no path
+        const W = this.logicalWidth;
+        const H = this.logicalDepth;
+
+        // Wrap coords for start/end if needed, but assuming input is normalized helps
+
+        // Priority Queue? Using simple array sort for now (Grid is small < 100x100)
+        // If slow, optimize structure.
+
+        const startNode = { x: sx, z: sz, g: 0, h: 0, f: 0, parent: null };
+        const openList = [startNode];
+        const closedSet = new Set(); // Stores "x,z" keys
+
+        // Max steps to prevent infinite loop or lag
+        let steps = 0;
+        const maxSteps = 1000;
+
+        while (openList.length > 0) {
+            steps++;
+            if (steps > maxSteps) return null; // Too complex
+
+            // Get lowest F
+            openList.sort((a, b) => a.f - b.f);
+            const current = openList.shift();
+
+            if (current.x === ex && current.z === ez) {
+                // Reconstruct Path
+                const path = [];
+                let curr = current;
+                while (curr) {
+                    path.push({ x: curr.x, z: curr.z });
+                    curr = curr.parent;
+                }
+                return path.reverse();
+            }
+
+            const key = `${current.x},${current.z}`;
+            closedSet.add(key);
+
+            const neighbors = [
+                { x: 1, z: 0 }, { x: -1, z: 0 },
+                { x: 0, z: 1 }, { x: 0, z: -1 }
+            ];
+
+            for (const n of neighbors) {
+                let nx = current.x + n.x;
+                let nz = current.z + n.z;
+
+                // Wrapping logic handled carefully?
+                // Pathfinder should handle wrapping OR inputs should be unwrapped?
+                // Given the game wraps, pathfinder needs to understand wrapping neighbors.
+                if (nx < 0) nx = W - 1;
+                if (nx >= W) nx = 0;
+                if (nz < 0) nz = H - 1;
+                if (nz >= H) nz = 0;
+
+                if (closedSet.has(`${nx},${nz}`)) continue;
+
+                // Passability Check
+                const hStart = this.grid[current.x][current.z].height;
+                // Important: Ensure this.grid[nx][nz] exists (Safety)
+                if (!this.grid[nx] || !this.grid[nx][nz]) continue;
+
+                const hEnd = this.grid[nx][nz].height;
+
+                // Allow walking on land (h > 0) and climbing up to 2.0
+                if (hEnd <= 0) continue; // Water
+                if (Math.abs(hEnd - hStart) > 2.0) continue; // Too steep
+
+                const gScore = current.g + 1; // Distance 1
+
+                // Check if already in openList with lower G
+                const existing = openList.find(node => node.x === nx && node.z === nz);
+                if (existing && existing.g <= gScore) continue;
+
+                // Heuristic (Manhattan with wrap awareness)
+                let dx = Math.abs(nx - ex);
+                let dz = Math.abs(nz - ez);
+                if (dx > W / 2) dx = W - dx;
+                if (dz > H / 2) dz = H - dz;
+                const hScore = dx + dz;
+
+                const newNode = {
+                    x: nx,
+                    z: nz,
+                    g: gScore,
+                    h: hScore,
+                    f: gScore + hScore,
+                    parent: current
+                };
+
+                if (existing) {
+                    // Update existing (rarely reached with simplified queue logic above)
+                    // We just replace or ignore. Since we checked gScore, we know ours is better.
+                    // Ideally remove old, add new. 
+                    // Array splice is fine for small list.
+                    const idx = openList.indexOf(existing);
+                    openList.splice(idx, 1);
+                }
+                openList.push(newNode);
+            }
+        }
+        return null; // No path found
     }
 }

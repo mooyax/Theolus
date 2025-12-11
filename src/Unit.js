@@ -63,13 +63,22 @@ export class Unit {
         return new THREE.CanvasTexture(canvas);
     }
 
-    constructor(scene, terrain, x, z, isSpecial = false) {
+    constructor(scene, terrain, x, z, role = 'worker', isSpecial = false) {
         Unit.initAssets();
 
         this.scene = scene;
         this.terrain = terrain;
         this.gridX = x || 20;
         this.gridZ = z || 20;
+
+        // Legacy compatibility check (if role arg is boolean)
+        if (typeof role === 'boolean') {
+            isSpecial = role;
+            role = 'worker';
+        }
+
+        this.role = role || 'worker';
+        this.isSpecial = isSpecial;
 
         this.lastGridX = this.gridX;
         this.lastGridZ = this.gridZ;
@@ -88,16 +97,20 @@ export class Unit {
 
         // Lifespan
         this.isSpecial = isSpecial || false;
-        const baseLifespan = 50 + Math.random() * 30; // 50-80 seconds
-        this.lifespan = this.isSpecial ? baseLifespan * 3 : baseLifespan;
+        // Reverted to original lifespan (50-80 sim seconds)
+        // With staggered update (half speed), this is ~2-3 mins real time.
+        // Special Unit = 6-9 mins.
+        const baseLifespan = 50 + Math.random() * 30;
+        // User Request: Special units live +20 years longer than normal (instead of 3x)
+        this.lifespan = this.isSpecial ? baseLifespan + 20 : baseLifespan;
 
-        this.age = 0;
+        this.age = 20; // Starts at 20 years old
         this.isDead = false;
-        this.isFinished = false; // True when death animation is done
+        this.isFinished = false;
         this.crossMesh = null;
 
         // Combat Stats
-        this.hp = 30 + Math.floor(Math.random() * 20); // 30-50 HP
+        this.hp = 30 + Math.floor(Math.random() * 20);
         this.maxHp = this.hp;
         this.attackCooldown = 0;
         this.attackRate = 1.0;
@@ -105,25 +118,24 @@ export class Unit {
         this.targetGoblin = null;
 
         this.updatePosition();
-        // this.scene.add(this.mesh); // Removed
-
-        // Clones Logic Removed (Handled by Renderer)
-        // this.clones = [];
-        // this.createClones();
 
         this.moveTimer = 0;
-        this.moveInterval = 100;
-        this.lastTime = performance.now();
+        this.moveInterval = 200;
+        this.lastTime = (window.game && window.game.gameTotalTime !== undefined) ? window.game.gameTotalTime : 0;
+        this.lastGatherTime = 0; // Initialize gathering timer
 
         // Animation state
         this.isMoving = false;
         this.targetX = 0;
         this.targetZ = 0;
         this.moveStartTime = 0;
-        this.moveDuration = 500;
+        this.moveDuration = 1000;
 
         // Register in Spatial Grid
         this.terrain.registerEntity(this, this.gridX, this.gridZ, 'unit');
+
+        this.wanderCount = 0;
+        this.migrationTarget = null;
     }
 
     // createClones removed
@@ -173,13 +185,17 @@ export class Unit {
         this.attackCooldown = this.attackRate;
     }
 
-    update(time, deltaTime, isNight, goblins, fishes, sheeps) {
+    updateLogic(time, deltaTime, isNight, goblins, fishes, sheeps) {
         // Debug Entry
         // if (Math.random() < 0.001) console.log(`Unit ${this.id || '?'} update. Dead:${this.isDead} Sleep:${this.isSleeping} Moving:${this.isMoving}`);
         if (this.isDead) {
             this.updateDeathAnimation(deltaTime);
+            this.action = "Dead";
             return;
         }
+
+        // Default action if ready
+        if (!this.isMoving && time >= this.lastTime) this.action = "Idle";
 
         // Aging
         this.age += deltaTime;
@@ -214,7 +230,7 @@ export class Unit {
         if (this.stagnationTimer > 10.0) {
             // Force Move if stuck for 10s
             // Try normal random move first
-            this.moveRandomly();
+            this.moveRandomly(time);
 
             // Critical Stuck Check: If stuck for > 20s, TELEPORT.
             if (this.stagnationTimer > 20.0) {
@@ -225,110 +241,75 @@ export class Unit {
         }
 
         // Safety: Stuck in "isMoving" state?
-        if (this.isMoving && (time - this.moveStartTime) > 2000) {
-            // If moving for > 2 seconds (duration is 500ms), something is wrong.
-            // Force finish.
-            console.warn("Unit stuck in moving state. Forcing finish.");
+        // Allow some buffer over moveDuration (e.g. + 500ms)
+        if (this.isMoving && (time - this.moveStartTime) > (this.moveDuration + 500)) {
+            console.warn("Unit stuck in moving state. Forcing finish. Duration:", this.moveDuration);
             this.isMoving = false;
             this.gridX = this.targetGridX;
             this.gridZ = this.targetGridZ;
             this.updatePosition();
-            this.tryBuildStructure();
+            this.tryBuildStructure(time);
         }
 
-        // 1. EXECUTION PHASE: Movement & Animation
-        if (this.isMoving) {
-            const progress = (time - this.moveStartTime) / this.moveDuration;
-
-            if (progress >= 1) {
-                this.isMoving = false;
-                this.gridX = this.targetGridX;
-                this.gridZ = this.targetGridZ;
-                this.updatePosition(); // Snap to final position
-
-                // Reset limbs
-                this.limbs.leftArm.x = 0;
-                this.limbs.rightArm.x = 0;
-                this.limbs.leftLeg.x = 0;
-                this.limbs.rightLeg.x = 0;
-
-                this.tryBuildStructure();
-            } else {
-                // Interpolate position
-                let sx = this.startGridX;
-                let sz = this.startGridZ;
-                let tx = this.targetGridX;
-                let tz = this.targetGridZ;
-
-                if (tx - sx > logicalW / 2) sx += logicalW;
-                if (sx - tx > logicalW / 2) tx += logicalW;
-                if (tz - sz > logicalD / 2) sz += logicalD;
-                if (sz - tz > logicalD / 2) tz += logicalD;
-
-                const lerpX = sx + (tx - sx) * progress;
-                const lerpZ = sz + (tz - sz) * progress;
-
-                const pos = this.getPositionForGrid(lerpX, lerpZ);
-                this.position.copy(pos);
-
-                // Animate limbs
-                const limbAngle = Math.sin(progress * Math.PI * 4) * 0.5;
-                this.limbs.leftArm.x = limbAngle;
-                this.limbs.rightArm.x = -limbAngle;
-                this.limbs.leftLeg.x = -limbAngle;
-                this.limbs.rightLeg.x = limbAngle;
-            }
-        }
-
-        // Day/Night Behavior
+        // Day/Night Behavior Logic
         if (isNight) {
             const cell = this.terrain.grid[this.gridX][this.gridZ];
-            if (cell.hasBuilding) {
-                // Hide inside house
+            const isShelter = cell.hasBuilding && cell.building && (cell.building.type === 'house' || cell.building.type === 'castle');
+
+            if (isShelter) {
                 if (!this.isSleeping) {
                     this.isSleeping = true;
-                    // Visibility handled by renderer
                 }
-                return; // Stop moving
+                return;
             } else {
-                // Not in house.
-                if (this.isSleeping) this.isSleeping = false; // Safety reset if left house logic fails
+                if (this.isSleeping) this.isSleeping = false;
 
-                // Seek Shelter?
-                if (!this.isMoving && !this.targetGoblin && !this.targetFood) {
-                    // Find nearest building
-                    let nearest = null;
-                    let minD = 30.0; // Scan range
-
-                    if (this.terrain.buildings) {
-                        this.terrain.buildings.forEach(b => {
-                            const dx = b.userData.gridX - this.gridX;
-                            const dz = b.userData.gridZ - this.gridZ;
-                            const d = Math.sqrt(dx * dx + dz * dz);
-                            if (d < minD) {
-                                minD = d;
-                                nearest = b;
-                            }
-                        });
-                    }
-
-                    if (nearest) {
-                        // Go to house
-                        this.triggerMove(nearest.userData.gridX, nearest.userData.gridZ, time);
-                        return;
-                    }
+                // Seek Shelter Logic (Simplified from original update)
+                // If not Moving, try to find shelter
+                if (!this.isMoving) {
+                    // ... (Logic continues below in next chunk if needed, but for now we just moved logic top)
+                    // Actually, the original code had movement block *before* Day/Night logic.
+                    // But Day/Night logic also needs to run.
+                    // We remove the MOVEMENT block from here.
                 }
-                // If no house found, fall through to Normal Behavior (Wander/Fight)
             }
         } else {
-            // Morning - Wake up
-            if (this.isSleeping) {
-                this.isSleeping = false;
-                // mesh visibility handled by renderer
-                // Eject to neighbor cell to avoid immediate re-entry? 
-                // Currently just wakes up and can move out via moveRandomly
-            }
+            if (this.isSleeping) this.isSleeping = false;
         }
+
+        // 2. DECISION PHASE (If not moving)
+        if (!this.isMoving) {
+            // ... (Rest of logic)
+
+            if (isNight && !this.isMoving && !this.targetGoblin && !this.targetFood) {
+                // Find nearest building
+                let nearest = null;
+                let minD = 30.0; // Scan range
+
+                if (this.terrain.buildings) {
+                    this.terrain.buildings.forEach(b => {
+                        // Only seek Houses or Castles
+                        if (b.type !== 'house' && b.type !== 'castle') return;
+
+                        const dx = b.gridX - this.gridX;
+                        const dz = b.gridZ - this.gridZ;
+                        const d = Math.sqrt(dx * dx + dz * dz);
+                        if (d < minD) {
+                            minD = d;
+                            nearest = b;
+                        }
+                    });
+                }
+
+                if (nearest) {
+                    // Go to house
+                    this.triggerMove(nearest.userData.gridX, nearest.userData.gridZ, time);
+                    return;
+                }
+            }
+            // If no house found, fall through to Normal Behavior (Wander/Fight)
+        }
+
 
         this.attackCooldown -= deltaTime;
 
@@ -368,16 +349,122 @@ export class Unit {
         if (this.targetFood) { ... }
         */
 
-        // 2. DECISION PHASE: Wandering
+        // 2. DECISION PHASE: Wandering / Land Improvement
         // Only if not moving, not fighting (hunting removed)
         if (!this.isMoving && !this.targetGoblin) {
+
+            // Migration Logic: If we have a long-term target (Mountain/Sea)
+            if (this.migrationTarget) {
+                const dx = this.migrationTarget.x - this.gridX;
+                const dz = this.migrationTarget.z - this.gridZ;
+                const dist = Math.sqrt(dx * dx + dz * dz);
+                // Arrived or Close enough
+                if (dist < 3.0) {
+                    console.log("Unit arrived at migration target.");
+                    this.migrationTarget = null;
+                    this.wanderCount = 0;
+                } else {
+                    if (time - this.lastTime > this.moveInterval) {
+                        this.triggerMove(this.migrationTarget.x, this.migrationTarget.z, time);
+                    }
+                    return; // Skip random move
+                }
+            }
+
             if (time - this.lastTime > this.moveInterval) {
-                this.moveRandomly();
+
+                // Land Improvement Logic (Irrigation/Drainage)
+                // Check current tile moisture
+                let cell = null;
+                if (this.terrain.grid[this.gridX] && this.terrain.grid[this.gridX][this.gridZ]) {
+                    cell = this.terrain.grid[this.gridX][this.gridZ];
+                }
+
+                if (cell && !cell.hasBuilding) { // Only improve empty land
+                    const m = cell.moisture || 0.5;
+                    let improved = false;
+
+                    // 1. Irrigation (Desert -> Grass)
+                    // Only irrigate if heavily desert (< 0.35)
+                    if (m < 0.35) {
+                        // Action: Irrigate
+                        // Just do it instantly for now, or add small delay?
+                        // Let's do it instantly but reset timer to simulate effort
+                        this.terrain.modifyMoisture(this.gridX, this.gridZ, 0.05);
+                        console.log(`Unit irrigated land at ${this.gridX},${this.gridZ} (M: ${m.toFixed(2)} -> ${(m + 0.05).toFixed(2)})`);
+                        this.action = "Irrigating";
+                        improved = true;
+                    }
+                    // 2. Drainage (Swamp -> Grass)
+                    // Only drain if deep swamp (> 0.75)
+                    else if (m > 0.75) {
+                        // Action: Drain
+                        this.terrain.modifyMoisture(this.gridX, this.gridZ, -0.05);
+                        console.log(`Unit drained land at ${this.gridX},${this.gridZ} (M: ${m.toFixed(2)} -> ${(m - 0.05).toFixed(2)})`);
+                        this.action = "Draining";
+                        improved = true;
+                    }
+
+                    if (improved) {
+                        this.lastTime = time + 1000; // Wait 1s before next action (Work takes time)
+                        return; // Done work, don't move yet
+                    }
+                }
+
+                this.moveRandomly(time);
                 this.lastTime = time;
             }
         }
 
         // Sync Clones: Handled by renderer
+    }
+
+    updateMovement(time) {
+        if (!this.isMoving) return;
+
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        const progress = (time - this.moveStartTime) / this.moveDuration;
+
+        if (progress >= 1) {
+            this.isMoving = false;
+            this.gridX = this.targetGridX;
+            this.gridZ = this.targetGridZ;
+            this.updatePosition(); // Snap to final position
+
+            // Reset limbs
+            this.limbs.leftArm.x = 0;
+            this.limbs.rightArm.x = 0;
+            this.limbs.leftLeg.x = 0;
+            this.limbs.rightLeg.x = 0;
+
+            this.tryBuildStructure(time);
+        } else {
+            // Interpolate position
+            let sx = this.startGridX;
+            let sz = this.startGridZ;
+            let tx = this.targetGridX;
+            let tz = this.targetGridZ;
+
+            if (tx - sx > logicalW / 2) sx += logicalW;
+            if (sx - tx > logicalW / 2) tx += logicalW;
+            if (tz - sz > logicalD / 2) sz += logicalD;
+            if (sz - tz > logicalD / 2) tz += logicalD;
+
+            const lerpX = sx + (tx - sx) * progress;
+            const lerpZ = sz + (tz - sz) * progress;
+
+            const pos = this.getPositionForGrid(lerpX, lerpZ);
+            this.position.copy(pos);
+
+            // Animate limbs
+            const limbAngle = Math.sin(progress * Math.PI * 4) * 0.5;
+            this.limbs.leftArm.x = limbAngle;
+            this.limbs.rightArm.x = -limbAngle;
+            this.limbs.leftLeg.x = -limbAngle;
+            this.limbs.rightLeg.x = limbAngle;
+        }
     }
 
     triggerMove(tx, tz, time) {
@@ -409,7 +496,19 @@ export class Unit {
         // Simple walk check: Match moveRandomly limit (2.0)
         if (Math.abs(targetHeight - currentHeight) <= 2.0 && targetHeight > 0) {
             this.isMoving = true;
-            this.moveStartTime = performance.now();
+            // Slope Penalty: Quarter speed on inclined terrain (User requested stronger effect)
+            // Rock Penalty: Very slow on Rock (Height > 8)
+            const heightDiff = Math.abs(targetHeight - currentHeight);
+
+            if (targetHeight > 8) {
+                this.moveDuration = 8000; // Rock: Very Slow
+            } else if (heightDiff > 0.1) {
+                this.moveDuration = 4000; // Slope: Slow
+            } else {
+                this.moveDuration = 1000; // Normal
+            }
+
+            this.moveStartTime = time; // Use simTime
             this.startGridX = this.gridX;
             this.startGridZ = this.gridZ;
             this.targetGridX = nextX;
@@ -432,8 +531,8 @@ export class Unit {
                 this.targetGoblin = null;
                 this.targetFood = null;
                 this.stuckCount = 0;
-                this.huntingCooldown = performance.now() + 5000; // 5 seconds ignore targets
-                this.moveRandomly();
+                this.huntingCooldown = time + 5000; // 5 seconds ignore targets
+                this.moveRandomly(time);
             }
 
             // If hunting fish, we might be blocked by water. If dist is close, collect.
@@ -442,46 +541,56 @@ export class Unit {
     }
 
     gatherResources(time) {
-        // Gather every 30 seconds (Slowed down from 10s)
-        if (time - this.lastGatherTime < 30) return;
+        // Gather every 5000ms (5 seconds)
+        if (time - this.lastGatherTime < 5000) return;
         this.lastGatherTime = time;
 
-        const range = 2; // Check 5x5 area
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
         let foundWater = false;
         let foundForest = false;
 
-        const minX = Math.max(0, this.gridX - range);
-        const maxX = Math.min(this.terrain.logicalWidth - 1, this.gridX + range);
-        const minZ = Math.max(0, this.gridZ - range);
-        const maxZ = Math.min(this.terrain.logicalDepth - 1, this.gridZ + range);
+        // Sparse Sampling Pattern (Optimized for performance)
+        // Check Current(1) + Neighbors(4) + Far(4) = 9 checks
+        // Range extended to ~5 tiles to allow gathering from city edge
+        const sampleOffsets = [
+            { x: 0, z: 0 },
+            { x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 }, // Dist 1
+            { x: 4, z: 0 }, { x: -4, z: 0 }, { x: 0, z: 4 }, { x: 0, z: -4 }  // Dist 4
+        ];
 
-        for (let x = minX; x <= maxX; x++) {
-            for (let z = minZ; z <= maxZ; z++) {
-                const height = this.terrain.getTileHeight(x, z);
+        for (const off of sampleOffsets) {
+            let nx = this.gridX + off.x;
+            let nz = this.gridZ + off.z;
 
-                // Water (<= 0)
-                if (height <= 0) {
-                    foundWater = true;
-                }
-                // Forest (> 4 and <= 8)
-                else if (height > 4 && height <= 8) {
-                    foundForest = true;
-                }
+            // Wrap
+            if (nx < 0) nx = logicalW + nx; // handled by modulo usually but logicW-1 is safe
+            if (nx >= logicalW) nx = nx - logicalW;
+            if (nz < 0) nz = logicalD + nz;
+            if (nz >= logicalD) nz = nz - logicalD;
 
-                if (foundWater && foundForest) break;
-            }
-            if (foundWater && foundForest) break;
+            // Safety wrap again if weird negativity (Double strict)
+            nx = (nx % logicalW + logicalW) % logicalW;
+            nz = (nz % logicalD + logicalD) % logicalD;
+
+            const h = this.terrain.getTileHeight(nx, nz);
+
+            if (h <= 0) foundWater = true;
+            else if (h > 4 && h <= 8) foundForest = true; // Forest height
+
+            if (foundWater && foundForest) break; // Found both, stop
         }
 
-        if (foundWater) {
-            if (window.game && window.game.resources) {
-                window.game.resources.fish++;
-                // Optional: Show effect?
+        if (window.game && window.game.resources) {
+            if (foundWater) {
+                // Buffed Amounts: 1.0 Base, 3.0 Specialist
+                const amount = (this.role === 'fisher') ? 3.0 : 1.0;
+                window.game.resources.fish += amount;
             }
-        }
-        if (foundForest) {
-            if (window.game && window.game.resources) {
-                window.game.resources.meat++;
+            if (foundForest) {
+                const amount = (this.role === 'hunter') ? 3.0 : 1.0;
+                window.game.resources.meat += amount;
             }
         }
     }
@@ -490,16 +599,26 @@ export class Unit {
         if (!goblins || goblins.length === 0) return;
 
         let nearest = null;
-        let minDistSq = 10.0 * 10.0; // Range 10, squared
-
-        // Linear scan - optimized with squared distance
+        let minScore = Infinity; // Use Score instead of direct distance
+        // Linear scan
         for (const goblin of goblins) {
             const dx = this.gridX - goblin.gridX;
             const dz = this.gridZ - goblin.gridZ;
-            const distSq = dx * dx + dz * dz;
+            const dist = Math.sqrt(dx * dx + dz * dz);
 
-            if (distSq < minDistSq) {
-                minDistSq = distSq;
+            // Limit range (10.0)
+            if (dist > 10.0) continue;
+
+            const targetH = this.terrain.getTileHeight(goblin.gridX, goblin.gridZ);
+            let score = dist;
+
+            // Penalty for Rock
+            if (targetH > 8) {
+                score += 20.0; // Virtual Distance Penalty
+            }
+
+            if (score < minScore) {
+                minScore = score;
                 nearest = goblin;
             }
         }
@@ -512,9 +631,7 @@ export class Unit {
         return Math.sqrt(dx * dx + dz * dz);
     }
 
-
-
-    moveRandomly() {
+    moveRandomly(time) {
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
@@ -523,14 +640,32 @@ export class Unit {
             { x: 0, z: 1 }, { x: 0, z: -1 }
         ];
 
-        // Shuffle directions to avoid bias
-        for (let i = directions.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [directions[i], directions[j]] = [directions[j], directions[i]];
+        // --- MIGRATION CHECK ---
+        this.wanderCount = (this.wanderCount || 0) + 1;
+        // If wandered > 15 times (approx 3-5 seconds of continuous movement without purpose)
+        if (this.wanderCount > 15) {
+            // Try to find a Mountain or Sea target
+            for (let i = 0; i < 15; i++) {
+                const rx = Math.floor(Math.random() * logicalW);
+                const rz = Math.floor(Math.random() * logicalD);
+                const h = this.terrain.getTileHeight(rx, rz);
+
+                // Mountain (>8) or Coast (<2 but >0)
+                if (h > 8 || (h > 0 && h < 2)) {
+                    this.migrationTarget = { x: rx, z: rz };
+                    this.wanderCount = 0;
+                    console.log(`Unit bored. Migrating to ${h > 8 ? 'Mountain' : 'Sea'} at ${rx},${rz}`);
+                    this.triggerMove(rx, rz, time);
+                    return;
+                }
+            }
+            // If failed to find target, continue normal random move
         }
 
         const currentHeight = this.terrain.getTileHeight(this.gridX, this.gridZ);
+        const validMoves = [];
 
+        // 1. Identify Valid Moves
         for (const dir of directions) {
             let targetX = this.gridX + dir.x;
             let targetZ = this.gridZ + dir.z;
@@ -543,37 +678,80 @@ export class Unit {
 
             const targetHeight = this.terrain.getTileHeight(targetX, targetZ);
 
-            // Allow climbing up to 2.0 units
-            if (Math.abs(targetHeight - currentHeight) <= 2.0) {
-                // Check Sea Level (Must be land > 0)
-                if (targetHeight > 0) {
-                    this.isMoving = true;
-                    console.log(`Unit moving from ${this.gridX},${this.gridZ} (${currentHeight.toFixed(2)}) to ${targetX},${targetZ} (${targetHeight.toFixed(2)})`);
-                    this.moveStartTime = performance.now();
-                    this.startGridX = this.gridX;
-                    this.startGridZ = this.gridZ;
-                    this.targetGridX = targetX;
-                    this.targetGridZ = targetZ;
-
-                    const angle = Math.atan2(dir.x, dir.z); // Wait, atan2(x, y). z is y.
-                    // Actually dx=dir.x, dz=dir.z. atan2(dx, dz).
-                    this.rotationY = Math.atan2(dir.x, dir.z);
-
-                    return; // Found a valid move!
-                } else {
-                    console.log(`Unit failed move: Target is water (${targetHeight})`);
-                }
-            } else {
-                console.log(`Unit failed move: Too steep (${currentHeight} -> ${targetHeight})`);
+            // Validity Check: Climb <= 2.0 and Land > 0
+            if (Math.abs(targetHeight - currentHeight) <= 2.0 && targetHeight > 0) {
+                validMoves.push({ x: targetX, z: targetZ, h: targetHeight, dir: dir });
             }
         }
-        // If no valid move found, stay idle.
-        console.log(`Unit idle: No valid neighbors`);
-        this.lastTime = performance.now(); // Reset timer so we don't spam checks
+
+        if (validMoves.length === 0) {
+            this.lastTime = time;
+            return;
+        }
+
+        // 2. Weighted Selection based on Role
+        let selectedMove = null;
+
+        if (this.role === 'hunter' || this.role === 'fisher') {
+            let totalWeight = 0;
+            // Calculate weights
+            validMoves.forEach(m => {
+                let weight = 1.0;
+                if (this.role === 'hunter') {
+                    // Prefer Forests (High Ground 4-8)
+                    if (m.h > 4 && m.h <= 8) weight = 5.0; // Strong preference
+                    else if (m.h > 8) weight = 2.0; // Higher is okay too
+                } else if (this.role === 'fisher') {
+                    // Prefer Lowlands (Near Water 0-3)
+                    if (m.h <= 2.5) weight = 5.0;
+                }
+                m.weight = weight;
+                totalWeight += weight;
+            });
+
+            // Random Pick
+            let r = Math.random() * totalWeight;
+            for (const m of validMoves) {
+                r -= m.weight;
+                if (r <= 0) {
+                    selectedMove = m;
+                    break;
+                }
+            }
+        }
+
+        // Fallback or Worker (Uniform Random)
+        if (!selectedMove) {
+            const idx = Math.floor(Math.random() * validMoves.length);
+            selectedMove = validMoves[idx];
+        }
+
+        // 3. Execute Move
+        this.isMoving = true;
+        this.action = "Moving";
+
+        // Slope Penalty
+        const heightDiff = Math.abs(selectedMove.h - currentHeight);
+
+        if (selectedMove.h > 8) {
+            this.moveDuration = 6000; // Rock Wander (slightly faster than forced move?) Keep it slow.
+        } else if (heightDiff > 0.1) {
+            this.moveDuration = 2500;
+        } else {
+            this.moveDuration = 1000;
+        }
+
+        this.moveStartTime = time;
+        this.startGridX = this.gridX;
+        this.startGridZ = this.gridZ;
+        this.targetGridX = selectedMove.x;
+        this.targetGridZ = selectedMove.z;
+
+        const angle = Math.atan2(selectedMove.dir.x, selectedMove.dir.z);
+        this.rotationY = angle;
     }
 
     updatePosition() {
-
         const pos = this.getPositionForGrid(this.gridX, this.gridZ);
         this.position.copy(pos);
     }
@@ -620,14 +798,14 @@ export class Unit {
                 this.gridZ = tz;
                 this.updatePosition();
                 this.terrain.moveEntity(this, oldX, oldZ, tx, tz, 'unit');
-                console.log(`Unit warped from ${oldX},${oldX} to ${tx},${tz}`);
+                console.log(`Unit warped from ${oldX},${oldZ} to ${tx},${tz}`);
                 found = true;
             }
             attempts++;
         }
     }
 
-    tryBuildStructure() {
+    tryBuildStructure(time) {
         // Performance Optimization: Moved logical width/depth fetch
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
@@ -640,10 +818,11 @@ export class Unit {
         // 1. Fast Exit: If already occupied, abort immediately
         if (cell.hasBuilding) return;
 
+        // Rock Restriction: Cannot build on Rock (Height > 8)
+        if (cell.height > 8) return;
+
         // 2. Castle Check Setup
         const totalPop = window.game ? window.game.totalPopulation : 0;
-        // Debug Log for Pop
-        // if (Math.random() < 0.005) console.log("Total Pop:", totalPop);
 
         // Ensure we are visible when building!
         this.isSleeping = false;
@@ -712,15 +891,34 @@ export class Unit {
             const castleThreshold = 1000 * (castleCount + 1);
 
             if (totalPop >= castleThreshold) {
-                console.log(`Castle Construction Attempt: Pop ${totalPop} >= ${castleThreshold}. Flatness verified (3x3).`);
-                if (Math.random() < 0.2) { // 20% chance
-                    this.buildCastle(x, z, x1, z1);
-                    return;
+                // Determine food status
+                const res = window.game ? window.game.resources : { grain: 0, meat: 0, fish: 0 };
+                const totalFood = res.grain + res.meat + res.fish;
+
+                // Don't build expensive castles during famine!
+                if (totalFood > 200) {
+                    console.log(`Castle Construction Attempt: Pop ${totalPop} >= ${castleThreshold}. Flatness verified (3x3).`);
+                    if (Math.random() < 0.2) { // 20% chance
+                        this.buildCastle();
+                        return;
+                    }
                 }
             }
         }
 
         // House/Farm Logic (Requires 1x1 Flatness)
+        // Swamp Check (User Rule: No building on Swamp)
+        // Swamp Def: Moisture > 0.6 && Height <= 3
+        const isSwamp = (cell.moisture > 0.6 && cell.height <= 3);
+
+        if (isSwamp) {
+            // Cannot build on swamp. Try to drain it?
+            // Re-use improveLand logic to lower moisture
+            console.log("Unit refused to build on Swamp. Draining land...");
+            this.improveLand(time);
+            return;
+        }
+
         if (is1x1Flat) {
             let houseCount = 0;
             let farmCount = 0;
@@ -733,28 +931,58 @@ export class Unit {
             // Strict Balancer Logic
             let shouldBuildFarm = false;
 
+            // Priority Check: Low Food?
+            // If total food is low, prioritized farms!
+            const res = window.game ? window.game.resources : { grain: 0, meat: 0, fish: 0 };
+            const totalFood = res.grain + res.meat + res.fish;
+
+            // Revised Threshold: < 100 or if Grain is 0 (immediate need)
+            if (totalFood < 100 || res.grain < 5) {
+                shouldBuildFarm = true;
+            }
+
             // If we have fewer farms than half of houses, we MUST build a farm.
-            if (farmCount < Math.ceil(houseCount / 2)) {
+            // (Unless priority above already set it)
+            // BUT: If we have massive food surplus, ignore this rule to prevent infinite farm spam (290k farms!)
+
+            const isFoodSurplus = totalFood > 5000;
+
+            if (!shouldBuildFarm && !isFoodSurplus && farmCount < Math.ceil(houseCount / 2)) {
                 shouldBuildFarm = true;
             }
 
             // Random factor: small chance to build farm anyway if low
-            if (Math.random() < 0.2) shouldBuildFarm = true;
+            if (!shouldBuildFarm && Math.random() < 0.2) shouldBuildFarm = true;
 
             if (shouldBuildFarm) {
-                this.buildFarm();
+                // Return success/fail. If fail (bad soil), fallback to House.
+                const farmSuccess = this.buildFarm(time);
+
+                // CRITICAL FIX: If we NEED food (starving), and cannot build farm,
+                // DO NOT build a house instead! That just adds mouths to feed.
+                // Only fallback if we are NOT in a crisis.
+                if (!farmSuccess) {
+                    if (totalFood > 50) {
+                        this.buildHouse(time);
+                    } else {
+                        console.log("Starvation Mode: Aborted House construction due to Farm failure.");
+                    }
+                }
             } else {
-                this.buildHouse();
+                this.buildHouse(time);
             }
 
-            this.lastTime = performance.now();
+            this.lastTime = time;
             this.stagnationTimer = 0;
             setTimeout(() => {
-                if (!this.isDead) this.moveRandomly();
+                if (!this.isDead) {
+                    const now = window.game ? window.game.gameTotalTime : performance.now();
+                    this.moveRandomly(now);
+                }
             }, 500);
         } else {
             // Not flat enough to build anything
-            this.moveRandomly();
+            this.moveRandomly(time);
         }
     }
 
@@ -805,21 +1033,80 @@ export class Unit {
         return Unit.assets.buildings;
     }
 
-    buildHouse() {
+    buildHouse(time) {
         // Use Terrain logic for consistent data structure
         this.terrain.addBuilding('house', this.gridX, this.gridZ);
         console.log("House built at", this.gridX, this.gridZ);
 
         // Eject unit to avoid being stuck inside
-        this.moveRandomly();
+        this.moveRandomly(time);
     }
 
-    buildFarm() {
+    improveLand(time) {
+        if (!this.terrain.grid[this.gridX] || !this.terrain.grid[this.gridX][this.gridZ]) return;
+
+        const cell = this.terrain.grid[this.gridX][this.gridZ];
+        const currentM = cell.moisture || 0.5;
+        const targetM = 0.5;
+
+        // Strong Improvement (User Request)
+        // Close 40% of the gap to 0.5, or at least 0.1
+        let diff = targetM - currentM;
+        let change = diff * 0.4;
+
+        // Ensure minimum effectiveness
+        if (Math.abs(change) < 0.1 && Math.abs(diff) > 0.01) {
+            change = (diff > 0) ? 0.1 : -0.1;
+        }
+
+        // Clamp to not overshooting if diff is small
+        if (Math.abs(change) > Math.abs(diff)) change = diff;
+
+        this.terrain.modifyMoisture(this.gridX, this.gridZ, change);
+        console.log(`Unit improved land at ${this.gridX},${this.gridZ}. Moisture ${currentM.toFixed(2)} -> ${(currentM + change).toFixed(2)}`);
+
+        // Consume time
+        this.moveRandomly(time);
+    }
+
+    buildFarm(time) {
+        const height = this.terrain.getTileHeight(this.gridX, this.gridZ);
+
+        // Moisture Check
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+        let cell = null;
+        if (this.terrain.grid[this.gridX] && this.terrain.grid[this.gridX][this.gridZ]) {
+            cell = this.terrain.grid[this.gridX][this.gridZ];
+        }
+
+        if (cell) {
+            const m = cell.moisture || 0.5;
+            // Probabilistic Failure based on Moisture
+            // Optimal: 0.5. 
+            // Diff 0.0 -> 100% Success
+            // Diff 0.3 -> 25% Success
+            // Diff >= 0.4 -> 0% Success
+
+            const diff = Math.abs(m - 0.5);
+            let successChance = 1.0 - (diff * 2.5);
+            if (successChance < 0) successChance = 0;
+
+            if (Math.random() > successChance) {
+                console.log(`Farm construction failed due to soil conditions (Moisture: ${m.toFixed(2)}, Chance: ${(successChance * 100).toFixed(0)}%). Improving Land.`);
+
+                // FAILURE RECOVERY: Improve the land so next time it might work!
+                this.improveLand(time);
+                return false;
+            }
+        }
+
         // Use Terrain logic
         this.terrain.addBuilding('farm', this.gridX, this.gridZ);
 
         // Eject unit
-        this.moveRandomly();
+        this.moveRandomly(time);
+        return true;
     }
 
     static getCrossAssets() {
@@ -863,7 +1150,13 @@ export class Unit {
     updateDeathAnimation(deltaTime) {
         if (!this.crossMesh) return;
 
-        this.deathTimer += deltaTime;
+        // Safety: Prevent NaN
+        if (isNaN(this.deathTimer)) this.deathTimer = 0;
+
+        // Ensure progress even if deltaTime is weird
+        const safeDt = (deltaTime > 0) ? deltaTime : 0.016;
+        this.deathTimer += safeDt;
+
         const duration = 3.0; // 3 seconds animation
 
         if (this.deathTimer >= duration) {
@@ -932,6 +1225,7 @@ export class Unit {
 
         return new THREE.CanvasTexture(canvas);
     }
+
     serialize() {
         return {
             gridX: this.gridX,
@@ -949,26 +1243,33 @@ export class Unit {
             startGridZ: this.startGridZ,
             targetGridX: this.targetGridX,
             targetGridZ: this.targetGridZ,
-            isSpecial: this.isSpecial
+            targetGridZ: this.targetGridZ,
+            isSpecial: this.isSpecial,
+            role: this.role
         };
     }
 
     static deserialize(data, scene, terrain) {
-        const unit = new Unit(scene, terrain, data.gridX, data.gridZ, data.isSpecial);
-        unit.age = data.age;
-        unit.lifespan = data.lifespan;
-        unit.isDead = data.isDead;
-        unit.isFinished = data.isFinished;
+        // Pass role if exists, otherwise defaults to worker via constructor logic or legacy boolean handling
+        const unit = new Unit(scene, terrain, data.gridX, data.gridZ, data.role || data.isSpecial, data.isSpecial);
+        unit.age = data.age || 20;
+
+        // 2025-12-09: Fallback for old saves without lifespan
+        if (typeof data.lifespan === 'number' && data.lifespan > 0) {
+            unit.lifespan = data.lifespan;
+        }
+
+        if (data.lifespan) unit.lifespan = data.lifespan;
+
+        unit.isDead = data.isDead || false;
+        unit.isFinished = data.isFinished || false;
 
         // Restore animation state if moving
         if (data.isMoving) {
             unit.isMoving = true;
             unit.targetX = data.targetX;
             unit.targetZ = data.targetZ;
-            // We can't easily restore exact animation time relative to performance.now()
-            // So we might just snap to target or reset movement?
-            // Let's just snap to target to avoid complexity with time sync.
-            unit.isMoving = false;
+            unit.isMoving = false; // Snap immediately
             unit.gridX = data.targetGridX;
             unit.gridZ = data.targetGridZ;
             unit.updatePosition();
@@ -978,10 +1279,6 @@ export class Unit {
             // If dead, ensure cross is created if not finished
             if (!unit.isFinished) {
                 unit.createCross();
-            } else {
-                // If finished, maybe don't even spawn? 
-                // But Game loop filters finished units.
-                // If we spawn it as finished, it will be removed immediately.
             }
         }
 

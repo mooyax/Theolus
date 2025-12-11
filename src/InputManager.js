@@ -1,20 +1,25 @@
 import * as THREE from 'three';
 
 export class InputManager {
-    constructor(scene, camera, terrain, spawnCallback, units) {
+    constructor(scene, camera, terrain, spawnCallback, units, unitRenderer) {
         this.scene = scene;
         this.camera = camera;
         this.terrain = terrain;
         this.spawnCallback = spawnCallback;
         this.units = units || [];
+        this.unitRenderer = unitRenderer; // New dependency
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
         this.mode = 'raise'; // 'raise', 'lower', 'spawn'
 
-        // Visual Cursor
-        const cursorGeo = new THREE.BoxGeometry(1, 1, 1);
+        // Visual Cursor (User Request: Arrow/Point instead of Box)
+        // ConeGeometry(radius, height, radialSegments)
+        const cursorGeo = new THREE.ConeGeometry(0.2, 1, 8);
+        // Default Cone points UP (Tip at +Y). We want DOWN.
+        // We will rotate the Mesh.
         const cursorMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
         this.cursor = new THREE.Mesh(cursorGeo, cursorMat);
+        this.cursor.rotation.x = Math.PI; // Point down
         this.scene.add(this.cursor);
 
         this.tooltip = document.getElementById('tooltip');
@@ -52,14 +57,24 @@ export class InputManager {
             btnSpawn.addEventListener('click', () => updateActive('spawn'));
         }
     }
+    isUIInteraction(event) {
+        const target = event.target;
+        return target.closest('button') ||
+            target.closest('input') ||
+            target.closest('select') ||
+            target.closest('a') ||
+            target.id === 'minimap' ||
+            target.closest('#minimap') ||
+            target.closest('.ui-container'); // Generic catch-all if used
+    }
 
     onPointerDown(event) {
-        if (event.target.tagName === 'BUTTON' || event.target.id === 'minimap') return;
+        if (this.isUIInteraction(event)) return;
         this.downPosition.set(event.clientX, event.clientY);
     }
 
     onPointerUp(event) {
-        if (event.target.tagName === 'BUTTON' || event.target.id === 'minimap') return;
+        if (this.isUIInteraction(event)) return;
 
         const upPosition = new THREE.Vector2(event.clientX, event.clientY);
         if (this.downPosition.distanceTo(upPosition) > this.dragThreshold) {
@@ -72,6 +87,8 @@ export class InputManager {
     onMouseMove(event) {
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        this.lastClientX = event.clientX;
+        this.lastClientY = event.clientY;
         this.updateCursor();
         this.updateTooltip(event.clientX, event.clientY);
     }
@@ -82,56 +99,48 @@ export class InputManager {
         let text = '';
         let found = false;
 
-        // 1. Check Units (Raycast)
-        // We need to raycast against unit meshes.
-        // Units have a `mesh` property which is a Group.
-        const unitMeshes = this.units.map(u => u.mesh).filter(m => m);
+        // Use consistent Raycast Logic (Same as Cursor/Interaction)
+        // Ensure mouse is updated (it should be from updateCursor, but safety set)
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        const unitIntersects = this.raycaster.intersectObjects(unitMeshes, true); // Recursive for children
+        const hitPoint = this.terrain.raycast(this.raycaster.ray.origin, this.raycaster.ray.direction);
 
-        if (unitIntersects.length > 0) {
-            // Find which unit belongs to this mesh
-            // The intersect object might be a child mesh (arm, leg, etc.)
-            // We need to traverse up to find the root group that matches a unit.mesh
-            let hitObj = unitIntersects[0].object;
-            while (hitObj.parent && !this.units.find(u => u.mesh === hitObj)) {
-                hitObj = hitObj.parent;
+        if (hitPoint) {
+            const snapX = Math.round(hitPoint.x);
+            const snapZ = Math.round(hitPoint.z);
+
+            const logicalW = this.terrain.logicalWidth || 80;
+            const logicalD = this.terrain.logicalDepth || 80;
+
+            let gridX = Math.round(snapX + logicalW / 2);
+            let gridZ = Math.round(snapZ + logicalD / 2);
+
+            gridX = ((gridX % logicalW) + logicalW) % logicalW;
+            gridZ = ((gridZ % logicalD) + logicalD) % logicalD;
+
+            // 1. Check Building (Direct Cell Lookup)
+            const cell = this.terrain.grid[gridX][gridZ];
+            if (cell && cell.hasBuilding && cell.building) {
+                const b = cell.building;
+                const type = b.userData.type || b.type;
+
+                if (type === 'house') {
+                    const pop = Math.floor(b.userData.population || 0);
+                    text = `House Pop: ${pop}/100`;
+                    found = true;
+                } else if (type === 'castle') {
+                    const pop = Math.floor(b.userData.population || 0);
+                    text = `Castle Pop: ${pop}/200`;
+                    found = true;
+                }
             }
 
-            const unit = this.units.find(u => u.mesh === hitObj);
-            if (unit) {
-                text = `Age: ${Math.floor(unit.age)}`;
-                found = true;
-            }
-        }
-
-        // 2. Check Buildings (Grid)
-        if (!found) {
-            const intersects = this.raycaster.intersectObjects(this.terrain.meshes);
-            if (intersects.length > 0) {
-                const intersect = intersects[0];
-                const point = intersect.point;
-
-                const logicalW = this.terrain.logicalWidth || 80;
-                const logicalD = this.terrain.logicalDepth || 80;
-
-                let gridX = Math.round(point.x + logicalW / 2);
-                let gridZ = Math.round(point.z + logicalD / 2);
-
-                gridX = ((gridX % logicalW) + logicalW) % logicalW;
-                gridZ = ((gridZ % logicalD) + logicalD) % logicalD;
-
-                const cell = this.terrain.grid[gridX][gridZ];
-                if (cell && cell.hasBuilding && cell.building) {
-                    const type = cell.building.userData.type;
-                    if (type === 'house') {
-                        const pop = Math.floor(cell.building.userData.population);
-                        text = `House Pop: ${pop}/100`;
-                        found = true;
-                    } else if (type === 'farm') {
-                        text = `Farm`;
-                        found = true;
-                    }
+            // 2. Check Unit (Spatial Search)
+            if (!found) {
+                const candidate = this.terrain.findNearestEntity('unit', gridX, gridZ, 2.5);
+                if (candidate) {
+                    text = `Age: ${Math.floor(candidate.age)}`;
+                    if (candidate.action) text += `\n${candidate.action}`;
+                    found = true;
                 }
             }
         }
@@ -146,50 +155,63 @@ export class InputManager {
         }
     }
 
+    update() {
+        // Continuous update for tooltip even if mouse doesn't move
+        if (this.lastClientX !== undefined && this.lastClientY !== undefined) {
+            this.updateTooltip(this.lastClientX, this.lastClientY);
+        }
+    }
+
     updateCursor() {
         this.raycaster.setFromCamera(this.mouse, this.camera);
 
-        // Optimizing Raycast: Raycast against mathematical plane y=0 instead of high-poly mesh.
-        // This is O(1) vs O(N).
-        // Raymarch against terrain heightmap
-        const hitPoint = this.terrain.raycast(this.raycaster.ray.origin, this.raycaster.ray.direction);
-        const intersects = hitPoint ? [{ point: hitPoint }] : [];
+        let hitPoint = null;
+        // Optimization: Use terrain.raycast (Math-based) instead of Mesh Intersection (O(N) triangles)
+        // Mesh intersection against 26k triangles every frame causes stuttering.
+        hitPoint = this.terrain.raycast(this.raycaster.ray.origin, this.raycaster.ray.direction);
 
-        /* Plane Optimization (Replaced due to parallax)
-        const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-        const target = new THREE.Vector3();
-        const hit = this.raycaster.ray.intersectPlane(plane, target);
-        const intersects = hit ? [{ point: target }] : [];
-        */
-        // const intersects = this.raycaster.intersectObjects(this.terrain.meshes);
+        const intersects = hitPoint ? [{ point: hitPoint }] : [];
 
         if (intersects.length > 0) {
             const intersect = intersects[0];
             const point = intersect.point;
 
-            // Snap to nearest integer grid
+            // Snap to nearest integer grid (World Coordinates)
             const snapX = Math.round(point.x);
             const snapZ = Math.round(point.z);
 
-            // Calculate height at this position
-            // We need to map to logical grid coordinates (0..40)
-            // World 0,0 corresponds to Logical Center (20,20)
-            // So we add half logical width/depth
             const logicalW = this.terrain.logicalWidth || 80;
             const logicalD = this.terrain.logicalDepth || 80;
 
+            // Calculate Wrapped Grid Coordinates for Visual Lookup
+            // We need to know what the 'local' visual offset is for this grid type.
             let gridX = Math.round(snapX + logicalW / 2);
             let gridZ = Math.round(snapZ + logicalD / 2);
-
             gridX = ((gridX % logicalW) + logicalW) % logicalW;
             gridZ = ((gridZ % logicalD) + logicalD) % logicalD;
 
-            const height = this.terrain.getTileHeight(gridX, gridZ);
+            // Get Visual Position for the base/canonical tile
+            // isCentered = false (Vertex alignment matching snapX)
+            const vPosBase = this.terrain.getVisualPosition(gridX, gridZ, false);
 
-            this.cursor.position.set(snapX, height + 0.5, snapZ);
+            // Calculate relative distortion offset
+            // vPosBase includes: (BaseGridPos + Distortion).
+            // We want just Distortion.
+            // Reconstruct Undistorted Base Position:
+            // From Terrain.js getVisualPosition logic:
+            // rawX = (gridX - logicalW/2)
+            const rawBaseX = (gridX - logicalW / 2);
+            const rawBaseZ = (gridZ - logicalD / 2);
+
+            const distortionX = vPosBase.x - rawBaseX;
+            const distortionZ = vPosBase.z - rawBaseZ;
+
+            // Apply distortion to the WORLD Snapped Coordinate
+            // This preserves the Infinite Scroll position while matching terrain wobble.
+            this.cursor.position.set(snapX + distortionX, vPosBase.y + 0.5, snapZ + distortionZ);
             this.cursor.visible = true;
 
-            // Change cursor color based on mode
+            // Simple Mode-based Color (Reverted)
             if (this.mode === 'spawn') {
                 this.cursor.material.color.setHex(0x0000ff); // Blue for spawn
             } else {
@@ -207,28 +229,22 @@ export class InputManager {
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
 
-        // Optimization: Plane intersection
-        // Raymarch against terrain heightmap
+        // Optimization: Use terrain.raycast exclusively for consistency with Cursor
+        // This prevents "Visual vs Logic" misalignment because Cursor uses raycast.
         const hitPoint = this.terrain.raycast(this.raycaster.ray.origin, this.raycaster.ray.direction);
-        const intersects = hitPoint ? [{ point: hitPoint }] : [];
 
-        /* Plane Optimization (Replaced due to parallax)
-        const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-        const target = new THREE.Vector3();
-        const hit = this.raycaster.ray.intersectPlane(plane, target);
-        const intersects = hit ? [{ point: target }] : [];
-        */
-        // const intersects = this.raycaster.intersectObjects(this.terrain.meshes);
+        if (hitPoint) {
+            const point = hitPoint;
 
-        if (intersects.length > 0) {
-            const intersect = intersects[0];
-            const point = intersect.point;
+            // Snap to nearest integer grid (World Coordinates) matching Cursor Logic
+            const snapX = Math.round(point.x);
+            const snapZ = Math.round(point.z);
 
             const logicalW = this.terrain.logicalWidth || 80;
             const logicalD = this.terrain.logicalDepth || 80;
 
-            let gridX = Math.round(point.x + logicalW / 2);
-            let gridZ = Math.round(point.z + logicalD / 2);
+            let gridX = Math.round(snapX + logicalW / 2);
+            let gridZ = Math.round(snapZ + logicalD / 2);
 
             // Wrap to 0..logicalWidth-1
             gridX = ((gridX % logicalW) + logicalW) % logicalW;
@@ -252,6 +268,7 @@ export class InputManager {
             this.updateCursor();
         }
     }
+
     update(deltaTime) {
         // Update cursor every frame to handle camera movement even if mouse is static
         this.updateCursor();
