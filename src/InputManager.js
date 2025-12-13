@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 
 export class InputManager {
-    constructor(scene, camera, terrain, spawnCallback, units, unitRenderer) {
+    constructor(scene, camera, terrain, spawnCallback, units, unitRenderer, game) {
         this.scene = scene;
         this.camera = camera;
         this.terrain = terrain;
         this.spawnCallback = spawnCallback;
         this.units = units || [];
-        this.unitRenderer = unitRenderer; // New dependency
+        this.unitRenderer = unitRenderer;
+        this.game = game; // Store game reference logic // New dependency
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
         this.mode = 'raise'; // 'raise', 'lower', 'spawn'
@@ -39,12 +40,16 @@ export class InputManager {
         const btnRaise = document.getElementById('btn-raise');
         const btnLower = document.getElementById('btn-lower');
         const btnSpawn = document.getElementById('btn-spawn');
+        const btnBarracks = document.getElementById('btn-barracks');
+        const btnTower = document.getElementById('btn-tower');
 
         const updateActive = (mode) => {
             this.mode = mode;
             if (btnRaise) btnRaise.classList.toggle('active', mode === 'raise');
             if (btnLower) btnLower.classList.toggle('active', mode === 'lower');
             if (btnSpawn) btnSpawn.classList.toggle('active', mode === 'spawn');
+            if (btnBarracks) btnBarracks.classList.toggle('active', mode === 'barracks');
+            if (btnTower) btnTower.classList.toggle('active', mode === 'tower');
         };
 
         if (btnRaise) {
@@ -55,6 +60,12 @@ export class InputManager {
         }
         if (btnSpawn) {
             btnSpawn.addEventListener('click', () => updateActive('spawn'));
+        }
+        if (btnBarracks) {
+            btnBarracks.addEventListener('click', () => updateActive('barracks'));
+        }
+        if (btnTower) {
+            btnTower.addEventListener('click', () => updateActive('tower'));
         }
     }
     isUIInteraction(event) {
@@ -125,11 +136,19 @@ export class InputManager {
 
                 if (type === 'house') {
                     const pop = Math.floor(b.userData.population || 0);
-                    text = `House Pop: ${pop}/100`;
+                    text = `House Pop: ${pop}/10`;
                     found = true;
                 } else if (type === 'castle') {
                     const pop = Math.floor(b.userData.population || 0);
                     text = `Castle Pop: ${pop}/200`;
+                    found = true;
+                } else if (type === 'barracks') {
+                    const pop = Math.floor(b.userData.population || 0);
+                    text = `Barracks Pop: ${pop}/200`;
+                    found = true;
+                } else if (type === 'tower') {
+                    const pop = Math.floor(b.userData.population || 0);
+                    text = `Tower Pop: ${pop}/300`;
                     found = true;
                 }
             }
@@ -251,17 +270,97 @@ export class InputManager {
             gridZ = ((gridZ % logicalD) + logicalD) % logicalD;
 
             if (event.button === 0) { // Left click
+                // GLOBAL MANA PRE-CHECK
+                if (this.game && !this.game.canAction()) {
+                    console.warn("Action Blocked: Not enough Mana (Negative)");
+                    return;
+                }
+
                 if (this.mode === 'raise') {
                     this.terrain.raise(gridX, gridZ);
+                    if (this.game) this.game.consumeMana(10); // Cost for 1.0 height
                 } else if (this.mode === 'lower') {
                     this.terrain.lower(gridX, gridZ);
+                    if (this.game) this.game.consumeMana(10); // Cost for 1.0 height
                 } else if (this.mode === 'spawn') {
                     if (this.spawnCallback) {
-                        this.spawnCallback(gridX, gridZ, true); // Manual spawn is Special
+                        this.spawnCallback(gridX, gridZ, true);
+                        if (this.game) this.game.consumeMana(20); // Cost for Unit Spawn
+                    }
+                } else if (this.mode === 'barracks') {
+                    // Build Barracks (God Mode)
+                    if (this.terrain) {
+                        console.log(`Debug: Force-building Barracks at ${gridX}, ${gridZ}`);
+
+                        // 1. Force Flatness (3x3)
+                        this.terrain.flattenArea(gridX, gridZ, 3);
+
+                        // 2. Clear Obstacles
+                        const W = this.terrain.logicalWidth;
+                        const D = this.terrain.logicalDepth;
+                        for (let i = 0; i < 3; i++) {
+                            for (let j = 0; j < 3; j++) {
+                                const cx = (gridX + i) % W;
+                                const cz = (gridZ + j) % D;
+                                const cell = this.terrain.grid[cx][cz];
+                                if (cell && cell.hasBuilding && cell.building) {
+                                    this.terrain.removeBuilding(cell.building);
+                                }
+                            }
+                        }
+
+                        // 3. Add Building
+                        const success = this.terrain.addBuilding('barracks', gridX, gridZ);
+                        if (success) {
+                            console.log("Debug: Barracks placed successfully!");
+                            // Visual update handled by addBuilding usually? 
+                            // Terrain.addBuilding calls createBuildingMesh? Yes, implicitly via updateMesh maybe?
+                            // Actually Terrain.js addBuilding usually does logic. 
+                            // BuildingRenderer handles visuals.
+                            // We might need to force update if it doesn't auto-update.
+                            this.terrain.updateMesh();
+                            if (this.game) this.game.consumeMana(50);
+                        } else {
+                            console.error("Debug: Barracks placement failed.");
+                        }
+                    }
+                } else if (this.mode === 'tower') {
+                    // Debug Build Tower
+                    if (this.terrain) {
+                        console.log(`Debug: Force-building Tower at ${gridX}, ${gridZ}`);
+
+                        // 1. Force Flatness
+                        this.terrain.flattenArea(gridX, gridZ, 3);
+
+                        // 2. Clear Obstacles (Rocks, Trees)
+                        const W = this.terrain.logicalWidth;
+                        const D = this.terrain.logicalDepth;
+                        for (let i = 0; i < 3; i++) {
+                            for (let j = 0; j < 3; j++) {
+                                const cx = (gridX + i) % W;
+                                const cz = (gridZ + j) % D;
+                                if (this.terrain.grid[cx][cz]) {
+                                    this.terrain.grid[cx][cz].hasBuilding = false;
+                                    this.terrain.grid[cx][cz].building = null;
+                                }
+                            }
+                        }
+
+                        // 3. Add Building
+                        const success = this.terrain.addBuilding('tower', gridX, gridZ);
+                        if (success) {
+                            console.log("Debug: Tower placed successfully!");
+                            this.terrain.updateMesh();
+                        } else {
+                            console.error("Debug: Tower placement failed even after clearing.");
+                        }
                     }
                 }
-            } else if (event.button === 2) { // Right click
+            } else if (event.button === 2) { // Right click (Lower)
+                if (this.game && !this.game.canAction()) return;
+
                 this.terrain.lower(gridX, gridZ);
+                if (this.game) this.game.consumeMana(10);
             }
 
             // Update cursor immediately to reflect height change

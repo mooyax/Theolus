@@ -617,21 +617,16 @@ export class Terrain {
             const currentHeight = cell.height;
 
             // Destroy building if present
+            // Destroy building if present
+            // Destroy building if present
             if (cell.hasBuilding && cell.building) {
-                this.scene.remove(cell.building);
-                if (cell.building.userData && cell.building.userData.clones) {
-                    cell.building.userData.clones.forEach(clone => this.scene.remove(clone));
+                // Fix: Caves float/adapt to terrain
+                if (cell.building.userData.type === 'cave') {
+                    cell.building.y = currentHeight;
+                    cell.building.userData.y = currentHeight;
+                } else {
+                    this.removeBuilding(cell.building);
                 }
-                cell.building = null;
-                cell.hasBuilding = false;
-
-                // Remove from buildings array
-                const index = this.buildings.indexOf(cell.building);
-                if (index > -1) {
-                    this.buildings.splice(index, 1);
-                }
-
-                console.log("Building destroyed at", cx, cz);
             }
 
             const neighbors = [
@@ -671,90 +666,18 @@ export class Terrain {
                 { x: cx, z: cz }
             ];
 
+            // Centralized Integrity Check
             checkTiles.forEach(t => {
                 const cell = this.grid[t.x][t.z];
                 if (cell.hasBuilding && cell.building) {
-                    // Verify flatness AND Water Level
-                    const b = cell.building;
-                    let isValid = true;
-
-                    // 1. Water Check: If base is <= 0, destroy immediately
-                    const baseHeight = this.grid[t.x][t.z].height;
-                    if (baseHeight <= 0) {
-                        isValid = false;
-                        console.log("Building drowned!");
-                    }
-
-                    if (b.userData.type === 'house' || b.userData.type === 'farm' || b.userData.type === 'goblin_hut') {
-                        // Check 4 corners of this tile
-                        const h00 = this.grid[t.x][t.z].height;
-                        const h10 = this.grid[(t.x + 1) % this.logicalWidth][t.z].height;
-                        const h01 = this.grid[t.x][(t.z + 1) % this.logicalDepth].height;
-                        const h11 = this.grid[(t.x + 1) % this.logicalWidth][(t.z + 1) % this.logicalDepth].height;
-
-                        if (h00 !== h10 || h00 !== h01 || h00 !== h11) {
-                            isValid = false;
-                        }
-                    } else if (b.userData.type === 'castle') {
-                        // Check 2x2 area flatness
-                        // Castle origin is at b.userData.gridX, gridZ
-                        const bx = b.userData.gridX;
-                        const bz = b.userData.gridZ;
-
-                        // Check if all 4 tiles are flat and at height h
-                        // This implies checking all corners of all 4 tiles.
-                        // Simplified: Check all vertices involved.
-                        // Vertices: (bx,bz) to (bx+2,bz+2)
-                        for (let i = 0; i <= 2; i++) {
-                            for (let j = 0; j <= 2; j++) {
-                                const vx = (bx + i) % this.logicalWidth;
-                                const vz = (bz + j) % this.logicalDepth;
-                                if (this.grid[vx][vz].height !== h) {
-                                    isValid = false;
-                                }
-                            }
-                        }
-                    }
-
-                    if (!isValid) {
-                        // Destroy building
-                        this.scene.remove(b);
-                        if (b.userData && b.userData.clones) {
-                            b.userData.clones.forEach(clone => this.scene.remove(clone));
-                        }
-
-                        // Clear references
-                        // For castle, we need to clear multiple cells
-                        if (b.userData.type === 'castle') {
-                            const bx = b.userData.gridX;
-                            const bz = b.userData.gridZ;
-                            const tiles = [
-                                { x: bx, z: bz },
-                                { x: (bx + 1) % this.logicalWidth, z: bz },
-                                { x: bx, z: (bz + 1) % this.logicalDepth },
-                                { x: (bx + 1) % this.logicalWidth, z: (bz + 1) % this.logicalDepth }
-                            ];
-                            tiles.forEach(tile => {
-                                const c = this.grid[tile.x][tile.z];
-                                c.hasBuilding = false;
-                                c.building = null;
-                            });
-                        } else {
-                            cell.hasBuilding = false;
-                            cell.building = null;
-                        }
-
-                        // Remove from buildings array
-                        const index = this.buildings.indexOf(b);
-                        if (index > -1) {
-                            this.buildings.splice(index, 1);
-                        }
-
-                        console.log("Building destroyed due to terrain change at", t.x, t.z);
+                    if (!this.checkBuildingIntegrity(cell.building)) {
+                        this.removeBuilding(cell.building);
                     }
                 }
             });
         }
+
+
 
         this.updateMesh();
         this.updateColors();
@@ -772,6 +695,25 @@ export class Terrain {
 
     // Helper for Visual Alignment
     getVisualOffset(localX, localY) {
+        // Suppress visual distortion under buildings to ensure they sit flat
+        if (this.grid) {
+            const W = this.logicalWidth || 80;
+            const D = this.logicalDepth || 80;
+
+            // Map Plane Coords to Grid (Reverse of initialization logic)
+            // localX corresponds to (gridX - W/2)
+            // localY corresponds to -(gridZ - D/2)
+            const gx = Math.round(localX + W / 2);
+            const gz = Math.round(-localY + D / 2);
+
+            const lx = ((gx % W) + W) % W;
+            const lz = ((gz % D) + D) % D;
+
+            if (this.grid[lx] && this.grid[lx][lz] && this.grid[lx][lz].hasBuilding) {
+                return { x: 0, y: 0 };
+            }
+        }
+
         // Matches the distortion logic in initTerrain
         // X and Y are PlaneGeometry local coords (World X and Z mostly)
         const offsetX = (Math.sin(localY * 0.5) + Math.cos(localX * 0.4)) * 0.2;
@@ -916,30 +858,11 @@ export class Terrain {
             // Let's just use getInterpolatedHeight which handles wrapping.
 
             // Optimization: If very high above max possible height (10-15), skip narrow checks?
-            if (check.y > 20) continue;
-            if (check.y < -5) break; // Below ground
+            // Optimization: If very high above max possible height (e.g. 50), skip narrow checks
+            if (check.y > 50) continue;
+            if (check.y < -10) break; // Below ground
 
-            const h = this.getInterpolatedHeight((check.x + this.width / 2), (check.z + this.depth / 2));
-            // Wait, getInterpolatedHeight expects Grid coordinates (0..40/120).
-            // World coordinates: 0,0 is center.
-            // visual width is this.width.
-            // Grid 0,0 corresponds to World -width/2, -depth/2 ?
-            // Need to map World -> Grid.
-
-            // From initTerrain: 
-            // this.width = this.logicalWidth * 3;
-            // Geometry centered.
-            // So Grid X = (World X + Width/2).
-            // But we use logical wrapping.
-
-            // Let's use the helper:
-            // InputManager uses `getTileHeight(gridX, gridZ)`.
-            // World -> Grid:
-            // const gridX = Math.floor(intersect.point.x + logicalW/2);
-            // This assumes 1 world unit = 1 grid unit?
-            // Yes, PlaneGeometry(width, depth, width, depth) means 1 segment = 1 unit.
-
-            // Refined Grid Mapping:
+            // Refined Grid Mapping: (World 0,0 is Grid Center)
             const gx = check.x + this.logicalWidth / 2;
             const gz = check.z + this.logicalDepth / 2;
 
@@ -962,76 +885,28 @@ export class Terrain {
         return sin - Math.floor(sin);
     }
 
-    /**
-     * Registers a new building at the given coordinates.
-     * Replaces old mesh-based logic.
-     */
-    addBuilding(type, gridX, gridZ) {
-        // Use exact height to prevent submerging on flat-but-fractional terrain
-        // getTileHeight uses floor(), which causes issues.
-        const h = this.grid[gridX][gridZ].height;
 
-        const building = {
-            type: type,
-            gridX: gridX,
-            gridZ: gridZ,
-            y: h,
-            rotation: Math.random() * Math.PI * 2, // Random rotation
-            population: 0,
-            id: Math.random().toString(36).substr(2, 9) // Unique ID
-        };
 
-        // Initial population
-        if (type === 'house') building.population = 10;
-        if (type === 'farm') {
-            building.population = 10;
-            building.hp = 5; // Farm Durability (Requested by User)
-        }
-        if (type === 'castle') building.population = 50;
-        if (type === 'goblin_hut') building.population = 1; // Start with 1
+    removeBuilding(b) {
+        if (!b) return;
 
-        // Compatibility Shim for Goblin/Legacy logic
-        building.userData = building;
+        // ENABLE CAVE DESTRUCTION (Requested by User)
+        // if (b.userData && b.userData.type === 'cave') { ... }
 
-        this.buildings.push(building);
+        // console.warn(`[Terrain] Removing Building: ${b.userData.type} at ${b.gridX},${b.gridZ}`);
+        // console.trace(); // Enable if needed, but warning might be enough to see context
 
-        // Mark grid
-        // Mark grid
-        const cell = this.grid[gridX][gridZ];
-        cell.hasBuilding = true;
-        cell.building = building;
+        // Remove from list
+        const idx = this.buildings.indexOf(b);
+        if (idx > -1) this.buildings.splice(idx, 1);
 
-        // Castle extra cells
-        if (type === 'castle') {
-            // Mark 2x2
-            const offsets = [{ x: 1, z: 0 }, { x: 0, z: 1 }, { x: 1, z: 1 }];
-            offsets.forEach(o => {
-                const ox = (gridX + o.x) % this.logicalWidth;
-                const oz = (gridZ + o.z) % this.logicalDepth;
-                this.grid[ox][oz].hasBuilding = true;
-                this.grid[ox][oz].building = building;
-            });
-        }
-
-        console.log(`Building added: ${type} at ${gridX},${gridZ}`);
-        return building;
-    }
-
-    removeBuilding(building) {
-        const idx = this.buildings.indexOf(building);
-        if (idx !== -1) {
-            this.buildings.splice(idx, 1);
-            console.log("Terrain: Building removed from list. Remaining:", this.buildings.length);
-        } else {
-            console.warn("Terrain: removeBuilding called but building not found in list!");
-        }
-
-        // Unmark grid
-        // Simple 1x1 unmark (Castle needs more, but for now ok)
-        // Ideally should check all cells pointing to this building
-        for (let x = 0; x < this.logicalWidth; x++) {
-            for (let z = 0; z < this.logicalDepth; z++) {
-                if (this.grid[x][z].building === building) {
+        // Clear grid
+        const size = (b.type === 'mansion' || b.type === 'tower') ? 3 : (b.type === 'farm' || b.type === 'house' ? 2 : 1);
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                const x = (b.gridX + i) % this.logicalWidth;
+                const z = (b.gridZ + j) % this.logicalDepth;
+                if (this.grid[x][z].building === b) {
                     this.grid[x][z].hasBuilding = false;
                     this.grid[x][z].building = null;
                 }
@@ -1039,17 +914,205 @@ export class Terrain {
         }
     }
 
-    updatePopulation(deltaTime, spawnCallback, isNight = false) {
-        // 1. Calculate Total Population & Food Need
-        const activeUnits = window.game && window.game.units ? window.game.units.length : 0;
+    addBuilding(type, gridX, gridZ) {
+        // Use exact height
+        if (!this.grid[gridX] || !this.grid[gridX][gridZ]) return null;
+        const h = this.grid[gridX][gridZ].height;
 
+        const building = {
+            type: type,
+            gridX: gridX,
+            gridZ: gridZ,
+            y: h,
+            rotation: Math.random() * Math.PI * 2,
+            population: 0,
+            id: Math.random().toString(36).substr(2, 9),
+            userData: {
+                type: type,
+                gridX: gridX,
+                gridZ: gridZ,
+                population: 0
+            }
+        };
+
+
+
+        // Grid Occupation Logic
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+
+        // Consistent Sizing
+        let size = 1;
+        if (type === 'farm') size = 2; // 2x2
+        if (type === 'mansion') size = 3; // 3x3
+        if (type === 'house') size = 2; // NOW 2x2 (User Request)
+        if (type === 'tower') size = 3; // Tower 3x3
+        // goblin_hut = 1
+        if (type === 'cave') size = 1; // Cave is 1x1
+
+        // Auto-flatten for Caves (User Request: Fix Regression)
+        if (type === 'cave') {
+            this.flattenArea(gridX, gridZ, size);
+        }
+
+        // SAFETY CHECK: Verify flatness again (Internal enforcement)
+        // Force Spawn for Caves: Bypass check
+        if (type !== 'cave' && !this.checkFlatArea(gridX, gridZ, size)) {
+            return null;
+        }
+
+        this.buildings.push(building);
+
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                const x = (gridX + i) % W;
+                const z = (gridZ + j) % D;
+                const cell = this.grid[x][z];
+                cell.hasBuilding = true;
+                cell.building = building;
+            }
+        }
+
+        console.log(`[Terrain] Building Added: ${type} at (${gridX}, ${gridZ}) Size:${size}x${size}. Total: ${this.buildings.length}`);
+
+        // Refresh visuals to flatten ground under building (via getVisualOffset)
+        this.updateMesh();
+
+        return building;
+    }
+
+
+
+    // --- Terrain Analysis ---
+    checkBuildingIntegrity(b) {
+        if (!b) return false;
+
+        // 1. Check Water (Drowning)
+        const rootH = this.grid[b.gridX][b.gridZ].height;
+        if (rootH <= 0) return false;
+
+        // 2. Strict Check: Ground height must match Building creation height
+        // This ensures buried/floating buildings (even 1x1) are destroyed.
+        // Also destroys legacy buildings (undefined y) on terrain change.
+        // Exception: Caves track terrain
+        if (b.userData.type !== 'cave') {
+            if (typeof b.y !== 'number' || Math.abs(rootH - b.y) > 0.1) {
+                console.log(`[Terrain] Integrity Fail: Type=${b.userData.type} RootH=${rootH.toFixed(2)} b.y=${b.y} (Height Mismatch)`);
+                return false;
+            }
+        }
+
+        // 2. Check Flatness based on Size
+        const type = b.userData.type;
+        let size = 1;
+        if (type === 'farm' || type === 'house') size = 2;
+        if (type === 'mansion') size = 3;
+        // goblin_hut = 1, cave = 1
+
+        // CAVE EXEMPTION: Caves adapt to terrain, don't need flat ground
+        if (type === 'cave') return true;
+
+        // Use checkFlatArea but we need to check if existing building IS us.
+        // checkFlatArea returns false if ANY building exists (including us).
+        // So we copy logic but allow 'us'.
+
+        // Actually, we just need to verify Vertex Flatness of the area.
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+
+        for (let i = 0; i <= size; i++) {
+            for (let j = 0; j <= size; j++) {
+                const nx = (b.gridX + i) % W;
+                const nz = (b.gridZ + j) % D;
+                const cell = this.grid[nx][nz];
+
+                if (cell.height !== rootH) {
+                    // console.log(`[Terrain] Integrity Fail: ${type} at ${b.gridX},${b.gridZ} - Not Flat at ${nx},${nz}`);
+                    return false;
+                }
+                if (cell.height <= 0) return false;
+            }
+        }
+        return true;
+    }
+
+    checkFlatArea(x, z, size) {
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+        if (!this.grid[x] || !this.grid[x][z]) return false;
+        const h0 = this.grid[x][z].height;
+
+        if (h0 <= 0) return false; // Cannot build on water
+        if (this.grid[x][z].hasBuilding) return false;
+
+        // Check Vertices (size + 1 for cell coverage)
+        for (let i = 0; i <= size; i++) {
+            for (let j = 0; j <= size; j++) {
+                const nx = (x + i) % W;
+                const nz = (z + j) % D;
+                const cell = this.grid[nx][nz];
+
+                // Strict: Must be same height, not water
+                if (cell.height !== h0) return false;
+                if (cell.height <= 0) return false;
+
+                // Only check hasBuilding for the INTERIOR cells (0..size-1)
+                // Shared edges (index == size) can be adjacent to other buildings?
+                // Actually, to prevent overlap, we check hasBuilding on Cells.
+                // Loop i,j corresponds to Vertices here.
+                // BUT grid.hasBuilding usually marks the Cell anchored at that vertex.
+                // If i == size, we are at the far edge vertex.
+                // The cell at nx,nz (far edge) is OUTSIDE the building area.
+                // So we should NOT check hasBuilding for i==size or j==size.
+
+                if (i < size && j < size) {
+                    if (cell.hasBuilding) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // New: Flatten Area for construction
+    flattenArea(x, z, size) {
+        const h0 = this.grid[x][z].height;
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+        let changed = false;
+
+        for (let i = 0; i <= size; i++) {
+            for (let j = 0; j <= size; j++) {
+                const nx = (x + i) % W;
+                const nz = (z + j) % D;
+                const cell = this.grid[nx][nz];
+
+                if (cell.height !== h0) {
+                    cell.height = h0;
+                    changed = true;
+                    // Integrity Check: If building exists here, check if it survives
+                    if (cell.hasBuilding && cell.building) {
+                        this.checkBuildingIntegrity(cell.building);
+                    }
+                }
+                // Also remove trees/rocks (noise)?
+            }
+        }
+        if (changed) {
+            this.updateMesh();
+            this.updateColors(); // If height changed colors might change
+        }
+        return true;
+    }
+
+    updatePopulation(deltaTime, isNight, activeUnits, spawnCallback) {
         let totalHousingPop = 0;
         this.buildings.forEach(b => {
-            const type = b.userData.type || b.type;
-            if ((type === 'house' || type === 'castle') && b.userData.population) {
+            const t = b.userData.type;
+            if ((t === 'house' || t === 'mansion' || t === 'castle') && b.userData.population > 0) {
                 totalHousingPop += b.userData.population;
             }
         });
+
         this.totalHousingPop = totalHousingPop;
 
         const totalPopulation = Math.floor(totalHousingPop) + activeUnits;
@@ -1061,7 +1124,8 @@ export class Terrain {
 
         let foodNeed = totalPopulation * consumptionRate * deltaTime;
 
-        const resources = window.game ? window.game.resources : { grain: 0, fish: 0, meat: 0 };
+        // Make window.game.resources check safe
+        const resources = (window.game && window.game.resources) ? window.game.resources : { grain: 0, fish: 0, meat: 0 };
         let hasFood = true;
 
         if (foodNeed > 0) {
@@ -1115,7 +1179,7 @@ export class Terrain {
         if (variety === 2) multiplier = 2.5;
         if (variety === 3) multiplier = 5.0;
 
-        const baseRate = 0.5 * multiplier;
+        const baseRate = 0.05 * multiplier; // Slower growth (Populous style)
 
         if (this.frameCount === undefined) this.frameCount = 0;
         this.frameCount++;
@@ -1133,12 +1197,18 @@ export class Terrain {
 
             const type = building.userData.type;
 
-            if (type === 'house' || type === 'castle') {
+            if (type === 'house' || type === 'barracks') {
                 const bx = building.userData.gridX;
                 const bz = building.userData.gridZ;
 
                 let rate = baseRate;
-                if (type === 'castle') rate *= 2;
+
+                let cap = 10; // House Cap (User Request)
+
+                if (type === 'barracks') {
+                    rate *= 5; // Faster than house, but not instant
+                    cap = 200; // Aligned with UI
+                }
 
                 // Diminishing Returns
                 const diminishingFactor = 200000 / (200000 + totalPopulation);
@@ -1148,40 +1218,59 @@ export class Terrain {
 
                 building.userData.population += rate * simDeltaTime;
 
-                // Handle Overflow
-                let sanityCheck = 0;
-                while (building.userData.population >= 100 && sanityCheck < 10) {
-                    building.userData.population -= 100;
-                    sanityCheck++;
+                // Spawning Logic (When full)
 
-                    // Consume Food for maintenance/spawn check
-                    let consumed = false;
-                    if (resources.fish >= 1) { resources.fish--; consumed = true; }
-                    else if (resources.meat >= 1) { resources.meat--; consumed = true; }
-                    else if (resources.grain >= 1) { resources.grain--; consumed = true; }
-
-                    if (consumed) {
-                        // Determine Role
-                        let role = 'worker';
-                        const totalActiveUnits = window.game?.units?.length || 0;
-
-                        if (totalActiveUnits > 30) {
-                            const r = Math.random();
-                            if (r < 0.2) role = 'hunter';
-                            else if (r < 0.4) role = 'fisher';
-                            else role = 'worker';
-                        }
-
-                        if (type === 'castle') {
-                            for (let i = 0; i < 4; i++) spawnCallback(bx, bz, role);
+                if (building.userData.population >= cap) {
+                    if (spawnCallback) {
+                        if (type === 'house') {
+                            // House: Spawn 1 unit, Reset to 0 (User Request)
+                            const spawned = spawnCallback(bx, bz, type);
+                            if (spawned) {
+                                building.userData.population = 0;
+                            } else {
+                                building.userData.population = cap; // Wait if blocked
+                            }
+                        } else if (type === 'barracks') {
+                            // Barracks: Spawn 4 units (Revert to specs), Reset to 0
+                            let spawnedCount = 0;
+                            for (let k = 0; k < 4; k++) {
+                                if (spawnCallback(bx, bz, type)) spawnedCount++;
+                            }
+                            if (spawnedCount > 0) {
+                                building.userData.population = 0;
+                            } else {
+                                building.userData.population = cap;
+                            }
                         } else {
-                            spawnCallback(bx, bz, role);
+                            // Just clamp
+                            if (building.userData.population > cap) building.userData.population = cap;
                         }
                     }
                 }
-                if (building.userData.population > 100) building.userData.population = 99;
+            } else if (type === 'tower') {
+                // TOWER SPAWN LOGIC
+                const rate = baseRate * 5;
+                const cap = 300; // Aligned with UI
 
+                building.userData.population += rate * simDeltaTime;
+
+                if (building.userData.population >= cap) {
+                    // SPAWN 4 WIZARDS (Revert to specs)
+                    if (spawnCallback) {
+                        let spawnedCount = 0;
+                        for (let k = 0; k < 4; k++) {
+                            if (spawnCallback(building.userData.gridX, building.userData.gridZ, 'tower')) spawnedCount++;
+                        }
+
+                        if (spawnedCount > 0) {
+                            building.userData.population = 0;
+                        } else {
+                            building.userData.population = cap;
+                        }
+                    }
+                }
             } else if (type === 'farm') {
+                // Farm Logic: Yield based on Moisture
                 // Farm Logic
                 const growthRate = 10;
                 building.userData.population = (building.userData.population || 0) + growthRate * simDeltaTime;
@@ -1207,12 +1296,16 @@ export class Terrain {
         });
     }
 
-    update(deltaTime, spawnCallback) {
+    update(deltaTime, spawnCallback, isNight) {
         if (this.colorsDirty) {
             this.updateColors();
             this.colorsDirty = false;
         }
-        this.updatePopulation(deltaTime, spawnCallback);
+        // Get active units from Global or verify
+        const activeUnits = window.game && window.game.units ? window.game.units.length : 0;
+
+        // Pass correct arguments: deltaTime, isNight, activeUnits, spawnCallback
+        this.updatePopulation(deltaTime, isNight, activeUnits, spawnCallback);
     }
 
     updateLights(time) {
@@ -1267,6 +1360,9 @@ export class Terrain {
                 // Math.round(num * 100) / 100
                 cellData.h = Math.round(cell.height * 100) / 100;
                 cellData.n = Math.round(cell.noise * 100) / 100;
+                if (cell.moisture !== undefined) {
+                    cellData.m = Math.round(cell.moisture * 100) / 100;
+                }
 
                 if (cell.hasBuilding) {
                     cellData.hb = 1;
@@ -1331,6 +1427,11 @@ export class Terrain {
 
                 this.grid[x][z].height = h;
                 this.grid[x][z].noise = n;
+                if (cellData.m !== undefined) {
+                    this.grid[x][z].moisture = cellData.m;
+                } else if (cellData.moisture !== undefined) {
+                    this.grid[x][z].moisture = cellData.moisture;
+                }
 
                 // Restore Buildings
                 // Optimized format: hb (hasBuilding), b (building object with t, p, x, z, r)
@@ -1360,10 +1461,25 @@ export class Terrain {
                             this.restoreHouse(fullData);
                         } else if (type === 'farm') {
                             this.restoreFarm(fullData);
+                        } else if (type === 'mansion') {
+                            this.restoreMansion(fullData);
                         } else if (type === 'castle') {
+                            // Legacy: Convert to Mansion or House?
+                            // User said "Abolish House/Farm, Rename Castle to House".
+                            // If loading OLD castle, convert to NEW House (visual reuse).
+                            // But old castle was 2x2. New House is 1x1.
+                            // Safe fallback: Convert to Mansion (3x3)? Or keep as 'castle' legacy?
+                            // Better: `restoreCastle` (Legacy) kept for compatibility, OR mapped to Mansion?
+                            // Let's keep `restoreCastle` but maybe deprecate it.
                             this.restoreCastle(fullData);
                         } else if (type === 'goblin_hut') {
                             this.restoreGoblinHut(fullData);
+                        } else if (type === 'tower') {
+                            this.restoreTower(fullData);
+                        } else if (type === 'barracks') {
+                            this.restoreBarracks(fullData);
+                        } else if (type === 'cave') {
+                            this.restoreCave(fullData);
                         }
                     }
                 }
@@ -1375,48 +1491,33 @@ export class Terrain {
     }
 
     restoreHouse(data) {
-        const building = {
-            type: 'house',
-            gridX: data.gridX,
-            gridZ: data.gridZ,
-            y: this.getTileHeight(data.gridX, data.gridZ),
-            rotation: data.rotation !== undefined ? data.rotation : Math.random() * Math.PI * 2, // Load or Random
-            population: data.population || 0,
-            id: Math.random().toString(36).substr(2, 9),
-            userData: {
-                type: 'house',
-                population: data.population || 0,
-                gridX: data.gridX,
-                gridZ: data.gridZ
-            }
-        };
-
-        const cell = this.grid[data.gridX][data.gridZ];
-        cell.hasBuilding = true;
-        cell.building = building;
-        this.buildings.push(building);
+        const building = this.addBuilding('house', data.gridX, data.gridZ);
+        if (building) {
+            building.population = data.population || 0;
+            building.userData.population = data.population || 0;
+            if (data.rotation !== undefined) building.rotation = data.rotation;
+        }
     }
 
     restoreFarm(data) {
-        const building = {
-            type: 'farm',
-            gridX: data.gridX,
-            gridZ: data.gridZ,
-            y: this.getTileHeight(data.gridX, data.gridZ),
-            rotation: data.rotation !== undefined ? data.rotation : Math.random() * Math.PI * 2, // Load or Random
-            population: 0,
-            id: Math.random().toString(36).substr(2, 9),
-            userData: {
-                type: 'farm',
-                gridX: data.gridX,
-                gridZ: data.gridZ
-            }
-        };
+        const building = this.addBuilding('farm', data.gridX, data.gridZ);
+        if (building && data.rotation !== undefined) building.rotation = data.rotation;
+    }
 
-        const cell = this.grid[data.gridX][data.gridZ];
-        cell.hasBuilding = true;
-        cell.building = building;
-        this.buildings.push(building);
+    restoreMansion(data) {
+        const building = this.addBuilding('mansion', data.gridX, data.gridZ);
+        if (building) {
+            building.population = data.population || 0;
+            building.userData.population = data.population || 0;
+            if (data.rotation !== undefined) building.rotation = data.rotation;
+        }
+    }
+
+    // Legacy support
+    restoreCastle(data) {
+        // Keep old logic for old saves, or try to upgrade
+        // For now, minimal support to prevent crash
+        this.restoreMansion(data); // Upgrade to Mansion?
     }
 
     updateMeshPosition(camera) {
@@ -1442,59 +1543,51 @@ export class Terrain {
     }
 
     restoreGoblinHut(data) {
-        const building = {
-            type: 'goblin_hut',
-            gridX: data.gridX,
-            gridZ: data.gridZ,
-            y: this.getTileHeight(data.gridX, data.gridZ),
-            rotation: data.rotation !== undefined ? data.rotation : Math.random() * Math.PI * 2,
-            population: data.population || 1,
-            id: Math.random().toString(36).substr(2, 9),
-            userData: {
-                type: 'goblin_hut',
-                population: data.population || 1,
-                gridX: data.gridX,
-                gridZ: data.gridZ
-            }
-        };
-
-        const cell = this.grid[data.gridX][data.gridZ];
-        cell.hasBuilding = true;
-        cell.building = building;
-        this.buildings.push(building);
+        // Use addBuilding to ensure consistency with other buildings
+        const building = this.addBuilding('goblin_hut', data.gridX, data.gridZ);
+        if (building) {
+            building.population = data.population || 1;
+            building.userData.population = data.population || 1;
+            if (data.rotation !== undefined) building.rotation = data.rotation;
+        } else {
+            console.warn("Failed to restore goblin_hut at", data.gridX, data.gridZ);
+        }
     }
 
-    restoreCastle(data) {
-        const building = {
-            type: 'castle',
-            gridX: data.gridX,
-            gridZ: data.gridZ,
-            y: this.getTileHeight(data.gridX, data.gridZ),
-            rotation: data.rotation !== undefined ? data.rotation : Math.random() * Math.PI * 2, // Load or Random
-            population: data.population || 50,
-            id: Math.random().toString(36).substr(2, 9),
-            userData: {
-                type: 'castle',
-                population: data.population || 50,
-                gridX: data.gridX,
-                gridZ: data.gridZ
-            }
-        };
-
-        const cell = this.grid[data.gridX][data.gridZ];
-        cell.hasBuilding = true;
-        cell.building = building;
-        this.buildings.push(building);
-
-        // Mark extra cells for castle (2x2)
-        const offsets = [{ x: 1, z: 0 }, { x: 0, z: 1 }, { x: 1, z: 1 }];
-        offsets.forEach(o => {
-            const ox = (data.gridX + o.x) % this.logicalWidth;
-            const oz = (data.gridZ + o.z) % this.logicalDepth;
-            this.grid[ox][oz].hasBuilding = true;
-            this.grid[ox][oz].building = building;
-        });
+    restoreTower(data) {
+        const building = this.addBuilding('tower', data.gridX, data.gridZ);
+        if (building) {
+            building.population = data.population || 0;
+            building.userData.population = data.population || 0;
+            if (data.rotation !== undefined) building.rotation = data.rotation;
+        }
     }
+
+    restoreBarracks(data) {
+        // Handle migration from Mansion -> Barracks if needed, or just standard restore
+        const building = this.addBuilding('barracks', data.gridX, data.gridZ);
+        if (building) {
+            building.population = data.population || 0;
+            building.userData.population = data.population || 0;
+            if (data.rotation !== undefined) building.rotation = data.rotation;
+        }
+    }
+
+    restoreCave(data) {
+        // Caves are 1x1 (?) or larger? Checked addBuilding: 'cave' size=1.
+        // Special: Caves might be auto-flattened or integrated differently.
+        // Just use addBuilding to ensure visual creation.
+        // HOWEVER, removeBuilding blocks cave removal. Checks?
+        const building = this.addBuilding('cave', data.gridX, data.gridZ);
+        // Cave pop?
+        if (building) {
+            building.population = data.population || 0;
+            building.userData.population = data.population || 0;
+        }
+    }
+
+
+
 
     findPath(sx, sz, ex, ez) {
         // A* Pathfinding (Simplified)

@@ -11,28 +11,99 @@ export class Unit {
     static initAssets() {
         if (Unit.assets.initialized) return;
 
-        // --- Geometries ---
-        Unit.assets.geometries.torso = new THREE.BoxGeometry(0.3, 0.4, 0.2);
-        Unit.assets.geometries.head = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-        Unit.assets.geometries.arm = new THREE.BoxGeometry(0.1, 0.3, 0.1);
-        Unit.assets.geometries.leg = new THREE.BoxGeometry(0.12, 0.3, 0.12);
+        // Geometries
+        // Geometries (Reverted to Cute/Chibi proportions)
+        const bodyGeo = new THREE.BoxGeometry(0.3, 0.35, 0.2);
+        bodyGeo.translate(0, 0.3, 0); // Center height ~0.3
+        Unit.assets.geometries.body = bodyGeo;
 
-        // --- Textures ---
+        const headGeo = new THREE.BoxGeometry(0.25, 0.25, 0.25);
+        headGeo.translate(0, 0.6, 0); // On top of body (0.3 + 0.175 + head_half? ~0.55-0.6)
+        Unit.assets.geometries.head = headGeo;
+
+        const limbGeo = new THREE.BoxGeometry(0.1, 0.25, 0.1);
+        limbGeo.translate(0, -0.1, 0); // Pivot at top
+        Unit.assets.geometries.limb = limbGeo;
+
+        // Sword (Blade + Hilt joined? No, simple box for chibi)
+        // Blade: 0.05 x 0.4 x 0.05
+        const swordGeo = new THREE.BoxGeometry(0.05, 0.5, 0.05);
+        swordGeo.translate(0, 0.25, 0); // Handle at bottom
+        Unit.assets.geometries.sword = swordGeo;
+
+        // Staff (Long pole)
+        const staffGeo = new THREE.BoxGeometry(0.05, 0.8, 0.05);
+        staffGeo.translate(0, 0, 0); // Center held
+        Unit.assets.geometries.staff = staffGeo;
+
+        // Wizard Hat (Cone + Brim)
+        // Brim: Cylinder thin
+        const brimGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.02, 16);
+        brimGeo.translate(0, 0, 0);
+        // Cone
+        const coneGeo = new THREE.ConeGeometry(0.15, 0.4, 16);
+        coneGeo.translate(0, 0.2, 0);
+
+        // Merge for simple instancing? Or kept separate?
+        // Let's merge for single draw call per hat
+        // Requires BufferGeometryUtils which might not be imported here?
+        // Unit.js imports THREE.
+        // Let's just use Cone for now for simplicity or complex if imported.
+        // Actually Unit.js doesn't import Utils.
+        // Let's use two meshes in Renderer or just the Cone for now?
+        // User asked for "Gandalf like". Needs brim.
+        // We will define them separate and render separate or use a Group logic?
+        // InstancedMesh supports one Geometry.
+        // We will just define `wizardHat` as the Cone part and `wizardHatBrim`?
+        // Or we can construct a merged geometry manually if simple?
+        // Let's stick to simple: Just a tall Cone for now, maybe add brim later if needed or modify `UnitRenderer` to handle multi-part hat.
+        // Wait, I can't merge easily without util.
+        // Let's define `hat` as just the Cone for now, but wide base.
+        const hatGeo = new THREE.ConeGeometry(0.2, 0.5, 16);
+        hatGeo.translate(0, 0.25, 0);
+        Unit.assets.geometries.wizardHat = hatGeo;
+
+        // Brim (Separate for Renderer to handle? Or renderer renders 2 parts?)
+        const hatBrimGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.02, 16);
+        Unit.assets.geometries.wizardHatBrim = hatBrimGeo;
+
+        // Materials
+        // Standard
+        Unit.assets.materials.skin = new THREE.MeshStandardMaterial({ color: 0xffccaa, roughness: 0.8 });
+        Unit.assets.materials.clothes = new THREE.MeshStandardMaterial({ color: 0x885533, roughness: 1.0 });
+        Unit.assets.materials.tool = new THREE.MeshStandardMaterial({ color: 0x555555, metalness: 0.5 });
+        Unit.assets.materials.hat = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 1.0 });
+
+        // Knight Materials
+        Unit.assets.materials.armor = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.8, roughness: 0.2 });
+        Unit.assets.materials.helmet = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.9, roughness: 0.1 });
+
+        // Wizard Materials
+        Unit.assets.materials.robe = new THREE.MeshStandardMaterial({ color: 0x444499, roughness: 1.0 });
+        Unit.assets.materials.robe = new THREE.MeshStandardMaterial({ color: 0x444499, roughness: 1.0 });
+        Unit.assets.materials.wizardHat = new THREE.MeshStandardMaterial({ color: 0x333388, roughness: 1.0 });
+
+        // New Item Materials
+        Unit.assets.materials.metal = new THREE.MeshStandardMaterial({ color: 0xDDDDDD, metalness: 0.9, roughness: 0.2 });
+        Unit.assets.materials.wood = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 0.9 });
+        Unit.assets.materials.darkMagic = new THREE.MeshStandardMaterial({ color: 0x330033, roughness: 1.0 });
+
+        // Faces & Textures
         Unit.assets.textures.face = Unit.createFaceTexture();
+        Unit.assets.materials.face = new THREE.MeshStandardMaterial({ map: Unit.assets.textures.face, transparent: true });
+
         Unit.assets.textures.hair = Unit.createHairTexture();
+        Unit.assets.materials.hair = new THREE.MeshStandardMaterial({ map: Unit.assets.textures.hair, transparent: true });
 
-        // --- Materials ---
-        Unit.assets.materials.limb = new THREE.MeshLambertMaterial({ color: 0xFFCCAA });
-        Unit.assets.materials.clothesNormal = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
-        Unit.assets.materials.clothesSpecial = new THREE.MeshLambertMaterial({ color: 0x0000FF });
-
+        // Restore Head Materials Array (Required by UnitRenderer)
+        // Order: Right, Left, Top, Bottom, Front (Face), Back
         Unit.assets.materials.heads = [
-            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair }), // Right
-            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair }), // Left
-            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair }), // Top
-            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair }), // Bottom
-            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.face }), // Front
-            new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair })  // Back
+            Unit.assets.materials.hair, // Right
+            Unit.assets.materials.hair, // Left
+            Unit.assets.materials.hair, // Top
+            Unit.assets.materials.hair, // Bottom
+            Unit.assets.materials.face, // Front
+            Unit.assets.materials.hair  // Back
         ];
 
         Unit.assets.initialized = true;
@@ -109,7 +180,7 @@ export class Unit {
         this.isFinished = false;
         this.crossMesh = null;
 
-        // Combat Stats
+        // Combat Stats (Default)
         this.hp = 30 + Math.floor(Math.random() * 20);
         this.maxHp = this.hp;
         this.attackCooldown = 0;
@@ -117,19 +188,44 @@ export class Unit {
         this.damage = 6;
         this.targetGoblin = null;
 
+        // Stats Overrides
+        if (this.role === 'knight') {
+            this.hp *= 10;
+            this.maxHp = this.hp;
+            this.damage *= 10;
+        } else if (this.role === 'wizard') {
+            this.hp *= 0.5;
+            this.maxHp = this.hp;
+            this.damage *= 10; // Same as Knight
+            this.attackRate = 2.0; // Slower attack? Or faster? "Multi-target"
+            // Range handled in logic
+        }
+
         this.updatePosition();
 
         this.moveTimer = 0;
-        this.moveInterval = 200;
-        this.lastTime = (window.game && window.game.gameTotalTime !== undefined) ? window.game.gameTotalTime : 0;
-        this.lastGatherTime = 0; // Initialize gathering timer
+        this.moveDuration = 1000;
+        this.moveStartTime = 0;
+        this.startGridX = 0;
+        this.startGridZ = 0;
+        this.targetGridX = 0;
+        this.targetGridZ = 0;
+
+        // Action Timers
+        this.lastTime = 0;
+        // Reduced interval for more active units (2s - 5s)
+        this.moveInterval = 2000 + Math.random() * 3000;
+
+        this.stagnationTimer = 0;
+        this.huntingCooldown = 0;
+        this.target = null; // Assuming 'Target' was a typo for 'this.target'
 
         // Animation state
         this.isMoving = false;
         this.targetX = 0;
         this.targetZ = 0;
-        this.moveStartTime = 0;
-        this.moveDuration = 1000;
+        // this.moveStartTime = 0; // Already defined above
+        // this.moveDuration = 1000; // Already defined above
 
         // Register in Spatial Grid
         this.terrain.registerEntity(this, this.gridX, this.gridZ, 'unit');
@@ -138,16 +234,10 @@ export class Unit {
         this.migrationTarget = null;
     }
 
-    // createClones removed
-
     takeDamage(amount) {
         this.hp -= amount;
-        // console.log(`Unit ${this.id || ''} took ${amount} damage. HP: ${this.hp}`);
         if (this.hp <= 0) {
             this.die();
-        } else {
-            // Flash red removed to protect shared static materials
-            // TODO: Implement emissive flash or sprite flash if visual feedback needed
         }
     }
 
@@ -155,268 +245,361 @@ export class Unit {
         if (this.isDead) return;
         this.isDead = true;
         this.terrain.unregisterEntity(this);
-        // Remove mesh handled by renderer? No, we remove it here to stop rendering or let renderer handle it?
-        // UnitRenderer iterates units. If we remove from scene, UnitRenderer might re-add it if it controls visibility.
-        // But previously we removed it.
-        // Let's check UnitRenderer usage in Game.js later. For now standard remove.
-        // Actually, UnitRenderer uses InstancedMesh maybe?
-        // If UnitRenderer is used, we shouldn't modify scene directly for unit mesh if it's instanced.
-        // But comments said "Clones Logic Removed". And `this.scene.add(this.mesh)` was commented out in constructor.
-        // So UnitRenderer handles it.
-        // If UnitRenderer handles it, we don't need to scene.remove(this.mesh).
-        // But we DO need to set isDead = true, which UnitRenderer likely checks.
-
         this.createCross();
         console.log(`Unit died.`);
     }
 
-
-
     attackGoblin(goblin) {
         if (this.attackCooldown > 0) return;
 
-        // Attack anim (Visual only)
-        this.limbs.rightArm.x = -Math.PI / 2;
-        setTimeout(() => {
-            if (!this.isDead) this.limbs.rightArm.x = 0;
-        }, 200);
+        // VISUALS
+        if (this.role === 'wizard') {
+            // Ranged Attack Animation
+            this.limbs.leftArm.x = -Math.PI; // Raise staff
+            this.limbs.rightArm.x = -Math.PI;
+            setTimeout(() => {
+                if (!this.isDead) {
+                    this.limbs.leftArm.x = 0;
+                    this.limbs.rightArm.x = 0;
+                }
+            }, 500);
+        } else {
+            // Melee (Soldier/Worker)
+            this.limbs.rightArm.x = -Math.PI / 2;
+            setTimeout(() => {
+                if (!this.isDead) this.limbs.rightArm.x = 0;
+            }, 200);
+        }
 
+        // DAMAGE LOGIC
         goblin.takeDamage(this.damage);
+
+        if (goblin.hp <= 0) {
+            goblin.isDead = true;
+            this.targetGoblin = null;
+            // AI Memory: Record this kill location
+            if (window.game && (this.role === 'knight' || this.role === 'wizard')) {
+                // Record raid point or clear area
+                if (window.game.recordRaidPoint) window.game.recordRaidPoint(goblin.gridX, goblin.gridZ);
+                this.searchForHut(goblin.gridX, goblin.gridZ);
+            }
+        }
+
         this.attackCooldown = this.attackRate;
     }
 
     updateLogic(time, deltaTime, isNight, goblins, fishes, sheeps) {
-        // Debug Entry
-        // if (Math.random() < 0.001) console.log(`Unit ${this.id || '?'} update. Dead:${this.isDead} Sleep:${this.isSleeping} Moving:${this.isMoving}`);
         if (this.isDead) {
             this.updateDeathAnimation(deltaTime);
             this.action = "Dead";
             return;
         }
 
-        // Default action if ready
+        // STUCK MONITOR
+        if (this.isMoving && time - this.moveStartTime > 20000) {
+            console.warn(`[Unit] Stuck moving for >20s (Sim). Forcing Reset. ID:${this.id} Rate:${deltaTime}`);
+            this.isMoving = false;
+            this.updatePosition();
+        }
+
+        // Default action
         if (!this.isMoving && time >= this.lastTime) this.action = "Idle";
 
         // Aging
-        this.age += deltaTime;
+        let agingRate = 1.0;
+        // Soldiers age much slower to allow long expeditions (User Request)
+        if (this.role === 'knight' || this.role === 'wizard') {
+            agingRate = 0.2;
+        }
+
+        this.age += deltaTime * agingRate;
         if (this.age >= this.lifespan) {
             this.die();
             return;
         }
 
-        // WATER DEATH CHECK (Level <= 0)
-        // Note: Fish logic is separate, so this Unit class (Humans/Goblins) should always die in water.
-        {
-            const h = this.terrain.getTileHeight(this.gridX, this.gridZ);
-            if (h <= 0) {
-                console.log(`Unit drowned at ${this.gridX},${this.gridZ} (Height: ${h})`);
-                this.die();
-                return;
-            }
+        // WATER DEATH CHECK
+        const h = this.terrain.getTileHeight(this.gridX, this.gridZ);
+        if (h <= 0) {
+            this.die();
+            return;
         }
 
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
-
-
-        if (this.lastGridX === this.gridX && this.lastGridZ === this.gridZ && !this.isSleeping) {
-            this.stagnationTimer += deltaTime;
-        } else {
-            this.lastGridX = this.gridX;
-            this.lastGridZ = this.gridZ;
-            this.stagnationTimer = 0;
-        }
-
-        if (this.stagnationTimer > 10.0) {
-            // Force Move if stuck for 10s
-            // Try normal random move first
-            this.moveRandomly(time);
-
-            // Critical Stuck Check: If stuck for > 20s, TELEPORT.
-            if (this.stagnationTimer > 20.0) {
-                console.warn("Unit critically stuck. Teleporting to safety.");
-                this.forceUnstuck();
-                this.stagnationTimer = 0;
-            }
-        }
-
-        // Safety: Stuck in "isMoving" state?
-        // Allow some buffer over moveDuration (e.g. + 500ms)
-        if (this.isMoving && (time - this.moveStartTime) > (this.moveDuration + 500)) {
-            console.warn("Unit stuck in moving state. Forcing finish. Duration:", this.moveDuration);
-            this.isMoving = false;
-            this.gridX = this.targetGridX;
-            this.gridZ = this.targetGridZ;
-            this.updatePosition();
-            this.tryBuildStructure(time);
-        }
-
-        // Day/Night Behavior Logic
-        if (isNight) {
-            const cell = this.terrain.grid[this.gridX][this.gridZ];
-            const isShelter = cell.hasBuilding && cell.building && (cell.building.type === 'house' || cell.building.type === 'castle');
-
-            if (isShelter) {
-                if (!this.isSleeping) {
-                    this.isSleeping = true;
-                }
-                return;
-            } else {
-                if (this.isSleeping) this.isSleeping = false;
-
-                // Seek Shelter Logic (Simplified from original update)
-                // If not Moving, try to find shelter
-                if (!this.isMoving) {
-                    // ... (Logic continues below in next chunk if needed, but for now we just moved logic top)
-                    // Actually, the original code had movement block *before* Day/Night logic.
-                    // But Day/Night logic also needs to run.
-                    // We remove the MOVEMENT block from here.
-                }
-            }
-        } else {
-            if (this.isSleeping) this.isSleeping = false;
-        }
-
-        // 2. DECISION PHASE (If not moving)
-        if (!this.isMoving) {
-            // ... (Rest of logic)
-
-            if (isNight && !this.isMoving && !this.targetGoblin && !this.targetFood) {
-                // Find nearest building
-                let nearest = null;
-                let minD = 30.0; // Scan range
-
-                if (this.terrain.buildings) {
-                    this.terrain.buildings.forEach(b => {
-                        // Only seek Houses or Castles
-                        if (b.type !== 'house' && b.type !== 'castle') return;
-
-                        const dx = b.gridX - this.gridX;
-                        const dz = b.gridZ - this.gridZ;
-                        const d = Math.sqrt(dx * dx + dz * dz);
-                        if (d < minD) {
-                            minD = d;
-                            nearest = b;
-                        }
-                    });
-                }
-
-                if (nearest) {
-                    // Go to house
-                    this.triggerMove(nearest.userData.gridX, nearest.userData.gridZ, time);
-                    return;
-                }
-            }
-            // If no house found, fall through to Normal Behavior (Wander/Fight)
-        }
-
-
-        this.attackCooldown -= deltaTime;
-
-        // Check Cooldown for Hunting/Combat
+        // Combat Choice
         if (this.huntingCooldown && time < this.huntingCooldown) {
-            // Cooldown active, ignore targets, just wander.
+            // Cooldown active
         } else {
-            // Combat Logic
+            // Priority: Calculate Best Target (Goblin vs Building)
+            let bestTarget = null;
+            let bestScore = Infinity; // Lower is better
+
+            // 1. Scan Goblins
             if (goblins) {
-                this.findTargetGoblin(goblins);
-                if (this.targetGoblin) {
-                    const dist = this.getDistance(this.targetGoblin.gridX, this.targetGoblin.gridZ);
-                    if (dist <= 1.5) {
-                        this.attackGoblin(this.targetGoblin);
-                    } else {
-                        // Chase Goblin logic reuse
-                        if (!this.isMoving && time - this.lastTime > this.moveInterval) {
-                            const tx = this.targetGoblin.gridX;
-                            const tz = this.targetGoblin.gridZ;
-                            this.triggerMove(tx, tz, time);
+                const maxDist = (this.role === 'knight' || this.role === 'wizard') ? 50 : 15;
+                for (const g of goblins) {
+                    if (g.isDead) continue;
+                    const d = this.getDistance(g.gridX, g.gridZ);
+                    if (d > maxDist) continue;
+
+                    // Score = Distance
+                    // High ground penalty? (Existing logic had +20 for mountain)
+                    const h = this.terrain.getTileHeight(g.gridX, g.gridZ);
+                    let score = d;
+                    if (h > 8) score += 20;
+
+                    if (score < bestScore) {
+                        bestScore = score;
+                        bestTarget = { type: 'goblin', obj: g };
+                    }
+                }
+            }
+
+            // 2. Scan Buildings (Huts/Caves)
+            if (this.terrain.buildings) {
+                // Workers: Increased range 10 -> 30 (User Request)
+                // Soldiers: Infinity
+                const range = (this.role === 'knight' || this.role === 'wizard') ? Infinity : 30;
+
+                for (const b of this.terrain.buildings) {
+                    if (this.role === 'worker' && b.type !== 'goblin_hut') continue;
+                    if (b.type === 'goblin_hut' || b.type === 'cave') {
+                        const d = this.getDistance(b.gridX, b.gridZ);
+                        if (d > range) continue;
+
+                        // Priority Bonus: -5.0 (Treat as 5 units closer)
+                        let score = d - 5.0;
+
+                        if (score < bestScore) {
+                            bestScore = score;
+                            bestTarget = { type: 'building', obj: b };
                         }
                     }
                 }
-                // return; // Don't return, just don't wander
+            }
+
+            // Apply Target
+            this.targetGoblin = null;
+            this.targetBuilding = null;
+
+            if (bestTarget) {
+                if (bestTarget.type === 'goblin') {
+                    this.targetGoblin = bestTarget.obj;
+                } else {
+                    this.targetBuilding = bestTarget.obj;
+                }
+            }
+
+            // Priority 3: Raid Point (Go to last known enemy location)
+            if (!this.targetGoblin && !this.targetBuilding && window.game && window.game.raidPoints && window.game.raidPoints.length > 0) {
+                this.findRaidTarget();
+            }
+
+            if (this.targetGoblin) {
+                const dist = this.getDistance(this.targetGoblin.gridX, this.targetGoblin.gridZ);
+
+                // Attack Range
+                let range = 1.5;
+                if (this.role === 'wizard') range = 5.5; // Ranged
+
+                if (dist <= range) {
+                    this.attackGoblin(this.targetGoblin);
+                } else {
+                    // Chase
+                    if (!this.isMoving && time - this.lastTime > this.moveInterval) {
+                        const tx = this.targetGoblin.gridX;
+                        const tz = this.targetGoblin.gridZ;
+                        this.triggerMove(tx, tz, time);
+                    }
+                }
+            } else if (this.targetBuilding) {
+                // Move to destroy building
+                const dist = this.getDistance(this.targetBuilding.gridX, this.targetBuilding.gridZ);
+                if (dist <= 2.0) {
+                    this.attackBuilding(this.targetBuilding);
+                } else {
+                    if (!this.isMoving && time - this.lastTime > this.moveInterval) {
+                        this.triggerMove(this.targetBuilding.gridX, this.targetBuilding.gridZ, time);
+                    }
+                }
+            } else if (this.targetRaidPoint) {
+                // Move to Raid Point
+                const dist = this.getDistance(this.targetRaidPoint.x, this.targetRaidPoint.z);
+                if (dist <= 5.0) {
+                    // Arrived at search area
+                    this.searchForHut(this.gridX, this.gridZ);
+                    this.targetRaidPoint = null; // Clear after checking
+                } else {
+                    if (!this.isMoving && time - this.lastTime > this.moveInterval) {
+                        this.triggerMove(this.targetRaidPoint.x, this.targetRaidPoint.z, time);
+                    }
+                }
             }
         }
 
-        // Passive Resource Gathering
-        // Only if not built or fighting? Or always?
-        // Let's do it if idle or moving (basically always while alive and outside)
         this.gatherResources(time);
 
-        // Hunting Logic - REMOVED for Simplification
-        // No longer seek fishes or sheeps.
-        /*
-        if (!this.targetFood && (fishes || sheeps)) { ... }
-        if (this.targetFood) { ... }
-        */
 
-        // 2. DECISION PHASE: Wandering / Land Improvement
-        // Only if not moving, not fighting (hunting removed)
-        if (!this.isMoving && !this.targetGoblin) {
+        // Wander / Improve Land
+        // If not doing anything else
+        if (!this.isMoving && !this.targetGoblin && !this.targetBuilding && !this.targetRaidPoint) {
 
-            // Migration Logic: If we have a long-term target (Mountain/Sea)
-            if (this.migrationTarget) {
-                const dx = this.migrationTarget.x - this.gridX;
-                const dz = this.migrationTarget.z - this.gridZ;
-                const dist = Math.sqrt(dx * dx + dz * dz);
-                // Arrived or Close enough
-                if (dist < 3.0) {
-                    console.log("Unit arrived at migration target.");
-                    this.migrationTarget = null;
-                    this.wanderCount = 0;
-                } else {
-                    if (time - this.lastTime > this.moveInterval) {
-                        this.triggerMove(this.migrationTarget.x, this.migrationTarget.z, time);
-                    }
-                    return; // Skip random move
+            // Unit Stagnation Logic
+            if (this.lastGridX === this.gridX && this.lastGridZ === this.gridZ && !this.isSleeping) {
+                this.stagnationTimer += deltaTime;
+            } else {
+                this.lastGridX = this.gridX;
+                this.lastGridZ = this.gridZ;
+                this.stagnationTimer = 0;
+            }
+
+            if (this.stagnationTimer > 10.0) {
+                this.moveRandomly(time);
+                if (this.stagnationTimer > 20.0) {
+                    this.forceUnstuck();
+                    this.stagnationTimer = 0;
                 }
+                return;
+            }
+
+            // Stuck in Moving Check (failsafe)
+            if (this.isMoving && (time - this.moveStartTime) > (this.moveDuration + 500)) {
+                this.isMoving = false;
+                this.updatePosition();
+            }
+
+            // Day/Night Sleep Logic
+            const canSleep = (this.role === 'worker' || this.role === 'fisher' || this.role === 'hunter');
+            if (isNight && canSleep) {
+                const cell = this.terrain.grid[this.gridX][this.gridZ];
+                const isShelter = cell.hasBuilding && cell.building && (cell.building.type === 'house' || cell.building.type === 'castle');
+
+                if (isShelter) {
+                    if (!this.isSleeping) this.isSleeping = true;
+                    return;
+                }
+            } else {
+                if (this.isSleeping) this.isSleeping = false;
             }
 
             if (time - this.lastTime > this.moveInterval) {
-
-                // Land Improvement Logic (Irrigation/Drainage)
-                // Check current tile moisture
-                let cell = null;
-                if (this.terrain.grid[this.gridX] && this.terrain.grid[this.gridX][this.gridZ]) {
-                    cell = this.terrain.grid[this.gridX][this.gridZ];
+                // Workers improve land
+                if (this.role === 'worker') {
+                    // Check improve...
+                    const cell = this.terrain.grid[this.gridX][this.gridZ];
+                    if (cell && cell.moisture !== 0.5) {
+                        if (Math.random() < 0.1) this.improveLand(time);
+                    }
+                    this.moveRandomly(time);
+                } else if (this.role === 'knight' || this.role === 'wizard') {
+                    // Knights/Wizards Patrol
+                    this.patrol(time);
+                } else {
+                    // Others (Hunter/Fisher)
+                    this.moveRandomly(time);
                 }
-
-                if (cell && !cell.hasBuilding) { // Only improve empty land
-                    const m = cell.moisture || 0.5;
-                    let improved = false;
-
-                    // 1. Irrigation (Desert -> Grass)
-                    // Only irrigate if heavily desert (< 0.35)
-                    if (m < 0.35) {
-                        // Action: Irrigate
-                        // Just do it instantly for now, or add small delay?
-                        // Let's do it instantly but reset timer to simulate effort
-                        this.terrain.modifyMoisture(this.gridX, this.gridZ, 0.05);
-                        console.log(`Unit irrigated land at ${this.gridX},${this.gridZ} (M: ${m.toFixed(2)} -> ${(m + 0.05).toFixed(2)})`);
-                        this.action = "Irrigating";
-                        improved = true;
-                    }
-                    // 2. Drainage (Swamp -> Grass)
-                    // Only drain if deep swamp (> 0.75)
-                    else if (m > 0.75) {
-                        // Action: Drain
-                        this.terrain.modifyMoisture(this.gridX, this.gridZ, -0.05);
-                        console.log(`Unit drained land at ${this.gridX},${this.gridZ} (M: ${m.toFixed(2)} -> ${(m - 0.05).toFixed(2)})`);
-                        this.action = "Draining";
-                        improved = true;
-                    }
-
-                    if (improved) {
-                        this.lastTime = time + 1000; // Wait 1s before next action (Work takes time)
-                        return; // Done work, don't move yet
-                    }
-                }
-
-                this.moveRandomly(time);
                 this.lastTime = time;
+                // Reset interval to keep them active
+                this.moveInterval = 2000 + Math.random() * 3000;
+            }
+        }
+    }
+
+    findTargetBuilding(range) {
+        // Search for 'goblin_hut' or 'cave' nearby
+        if (!this.terrain.buildings) return;
+        const buildings = this.terrain.buildings;
+        let nearest = null;
+        let minDist = Infinity; // Global Search (Soldiers travel far)
+        let foundType = null;
+
+        const limitRange = (range !== undefined) ? range : Infinity;
+
+        for (const b of buildings) {
+            // Workers ONLY target huts, not Caves (Caves require explosives/Knights?)
+            // Actually user just said "Goblin Huts". Let's restrict workers to huts.
+            if (this.role === 'worker' && b.type !== 'goblin_hut') continue;
+
+            if (b.type === 'goblin_hut' || b.type === 'cave') {
+                const dist = this.getDistance(b.gridX, b.gridZ);
+
+                if (dist > limitRange) continue;
+
+                // Prefer closer, but take any
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearest = b;
+                    foundType = b.type;
+                }
             }
         }
 
-        // Sync Clones: Handled by renderer
+        // Debug log (Throttle)
+        if (this.role === 'knight' && Math.random() < 0.001) {
+            console.log(`[Unit Debug] Targeted: ${this.targetGoblin ? 'Goblin' : (this.targetBuilding ? this.targetBuilding.type : 'None')}`);
+        }
+
+        if (nearest) {
+            // console.log(`Unit ${this.id} targets enemy base: ${nearest.type} at ${nearest.gridX},${nearest.gridZ}`);
+            this.targetBuilding = nearest;
+        }
+    }
+
+    findRaidTarget() {
+        if (!window.game || !window.game.raidPoints || window.game.raidPoints.length === 0) return;
+        let nearest = null;
+        let minDist = Infinity;
+
+        window.game.raidPoints.forEach(p => {
+            const dist = this.getDistance(p.x, p.z);
+            if (dist < minDist) {
+                minDist = dist;
+                nearest = p;
+            }
+        });
+        this.targetRaidPoint = nearest;
+    }
+
+    searchForHut(x, z) {
+        // Active scan around kill location x,z
+        if (!this.terrain.buildings) return;
+        const buildings = this.terrain.buildings;
+
+        let nearest = null;
+        let minDist = 100; // Search range around kill
+
+        for (const b of buildings) {
+            if (b.type === 'goblin_hut' || b.type === 'cave') {
+                const dx = b.gridX - x;
+                const dz = b.gridZ - z;
+                const dist = Math.sqrt(dx * dx + dz * dz);
+
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearest = b;
+                }
+            }
+        }
+
+        if (nearest) {
+            console.log(`Unit ${this.id} found base near kill: ${nearest.type}`);
+            this.targetBuilding = nearest;
+        }
+    }
+
+    attackBuilding(b) {
+        console.log(`[Unit] Knight destroyed ${b.type} at ${b.gridX},${b.gridZ}`);
+        this.terrain.removeBuilding(b);
+        this.targetBuilding = null;
+
+        // Remove from Raid Points if exists
+        if (window.game && window.game.raidPoints) {
+            // Filter out points near this building
+            window.game.raidPoints = window.game.raidPoints.filter(p => {
+                const dx = p.x - b.gridX;
+                const dz = p.z - b.gridZ;
+                return (Math.sqrt(dx * dx + dz * dz) > 5);
+            });
+        }
     }
 
     updateMovement(time) {
@@ -429,6 +612,12 @@ export class Unit {
 
         if (progress >= 1) {
             this.isMoving = false;
+
+            // Update Spatial Partitioning
+            if (this.terrain && this.terrain.moveEntity) {
+                this.terrain.moveEntity(this, this.gridX, this.gridZ, this.targetGridX, this.targetGridZ, 'unit');
+            }
+
             this.gridX = this.targetGridX;
             this.gridZ = this.targetGridZ;
             this.updatePosition(); // Snap to final position
@@ -455,6 +644,12 @@ export class Unit {
             const lerpX = sx + (tx - sx) * progress;
             const lerpZ = sz + (tz - sz) * progress;
 
+            if (isNaN(lerpX) || isNaN(lerpZ)) {
+                this.isMoving = false;
+                this.updatePosition();
+                return;
+            }
+
             const pos = this.getPositionForGrid(lerpX, lerpZ);
             this.position.copy(pos);
 
@@ -464,6 +659,31 @@ export class Unit {
             this.limbs.rightArm.x = -limbAngle;
             this.limbs.leftLeg.x = -limbAngle;
             this.limbs.rightLeg.x = limbAngle;
+        }
+    }
+
+    patrol(time) {
+        // Go to a random building to "guard" it, or just wander if none
+        if (this.terrain.buildings && this.terrain.buildings.length > 0) {
+            // Pick random building
+            const r = Math.floor(Math.random() * this.terrain.buildings.length);
+            const b = this.terrain.buildings[r];
+
+            // Go near it
+            // Don't go INSIDE, go next to it.
+            // Simple: Target its location.
+            // Dist check?
+            const dx = Math.abs(this.gridX - b.gridX);
+            const dz = Math.abs(this.gridZ - b.gridZ);
+
+            // If already near, wander locally
+            if (dx < 5 && dz < 5) {
+                this.moveRandomly(time);
+            } else {
+                this.triggerMove(b.gridX, b.gridZ, time);
+            }
+        } else {
+            this.moveRandomly(time);
         }
     }
 
@@ -488,16 +708,12 @@ export class Unit {
         if (nextZ < 0) nextZ = logicalD - 1;
         if (nextZ >= logicalD) nextZ = 0;
 
-        // Check Sea Level (Unless target is fish, then we might walk to shore)
-        // If target is fish, next step might be water. We stop at shore.
         const currentHeight = this.terrain.getTileHeight(this.gridX, this.gridZ);
         const targetHeight = this.terrain.getTileHeight(nextX, nextZ);
 
-        // Simple walk check: Match moveRandomly limit (2.0)
+        // Simple walk check
         if (Math.abs(targetHeight - currentHeight) <= 2.0 && targetHeight > 0) {
             this.isMoving = true;
-            // Slope Penalty: Quarter speed on inclined terrain (User requested stronger effect)
-            // Rock Penalty: Very slow on Rock (Height > 8)
             const heightDiff = Math.abs(targetHeight - currentHeight);
 
             if (targetHeight > 8) {
@@ -519,29 +735,24 @@ export class Unit {
             this.rotationY = angle;
 
             this.lastTime = time;
-            this.stuckCount = 0; // Reset stuck counter
+            this.stuckCount = 0;
         } else {
-            // Cannot reach?
-            this.lastTime = time; // Set cooldown even if fail!
+            // Cannot reach
+            this.lastTime = time;
             this.stuckCount = (this.stuckCount || 0) + 1;
 
             // If stuck too long, abandon target
             if (this.stuckCount > 5) {
                 console.log("Unit stuck chasing target. Abandoning and cooling down.");
                 this.targetGoblin = null;
-                this.targetFood = null;
                 this.stuckCount = 0;
-                this.huntingCooldown = time + 5000; // 5 seconds ignore targets
+                this.huntingCooldown = time + 5000;
                 this.moveRandomly(time);
             }
-
-            // If hunting fish, we might be blocked by water. If dist is close, collect.
-            // (Handled elsewhere)
         }
     }
 
     gatherResources(time) {
-        // Gather every 5000ms (5 seconds)
         if (time - this.lastGatherTime < 5000) return;
         this.lastGatherTime = time;
 
@@ -551,13 +762,10 @@ export class Unit {
         let foundWater = false;
         let foundForest = false;
 
-        // Sparse Sampling Pattern (Optimized for performance)
-        // Check Current(1) + Neighbors(4) + Far(4) = 9 checks
-        // Range extended to ~5 tiles to allow gathering from city edge
         const sampleOffsets = [
             { x: 0, z: 0 },
-            { x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 }, // Dist 1
-            { x: 4, z: 0 }, { x: -4, z: 0 }, { x: 0, z: 4 }, { x: 0, z: -4 }  // Dist 4
+            { x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 },
+            { x: 4, z: 0 }, { x: -4, z: 0 }, { x: 0, z: 4 }, { x: 0, z: -4 }
         ];
 
         for (const off of sampleOffsets) {
@@ -565,26 +773,24 @@ export class Unit {
             let nz = this.gridZ + off.z;
 
             // Wrap
-            if (nx < 0) nx = logicalW + nx; // handled by modulo usually but logicW-1 is safe
+            if (nx < 0) nx = logicalW + nx;
             if (nx >= logicalW) nx = nx - logicalW;
             if (nz < 0) nz = logicalD + nz;
             if (nz >= logicalD) nz = nz - logicalD;
 
-            // Safety wrap again if weird negativity (Double strict)
             nx = (nx % logicalW + logicalW) % logicalW;
             nz = (nz % logicalD + logicalD) % logicalD;
 
             const h = this.terrain.getTileHeight(nx, nz);
 
             if (h <= 0) foundWater = true;
-            else if (h > 4 && h <= 8) foundForest = true; // Forest height
+            else if (h > 4 && h <= 8) foundForest = true;
 
-            if (foundWater && foundForest) break; // Found both, stop
+            if (foundWater && foundForest) break;
         }
 
         if (window.game && window.game.resources) {
             if (foundWater) {
-                // Buffed Amounts: 1.0 Base, 3.0 Specialist
                 const amount = (this.role === 'fisher') ? 3.0 : 1.0;
                 window.game.resources.fish += amount;
             }
@@ -599,22 +805,23 @@ export class Unit {
         if (!goblins || goblins.length === 0) return;
 
         let nearest = null;
-        let minScore = Infinity; // Use Score instead of direct distance
-        // Linear scan
+        let minScore = Infinity;
+
+        const maxDist = (this.role === 'knight' || this.role === 'wizard') ? 50 : 15;
+
         for (const goblin of goblins) {
+            if (goblin.isDead) continue;
             const dx = this.gridX - goblin.gridX;
             const dz = this.gridZ - goblin.gridZ;
             const dist = Math.sqrt(dx * dx + dz * dz);
 
-            // Limit range (10.0)
-            if (dist > 10.0) continue;
+            if (dist > maxDist) continue;
 
             const targetH = this.terrain.getTileHeight(goblin.gridX, goblin.gridZ);
             let score = dist;
 
-            // Penalty for Rock
             if (targetH > 8) {
-                score += 20.0; // Virtual Distance Penalty
+                score += 20.0;
             }
 
             if (score < minScore) {
@@ -640,17 +847,13 @@ export class Unit {
             { x: 0, z: 1 }, { x: 0, z: -1 }
         ];
 
-        // --- MIGRATION CHECK ---
         this.wanderCount = (this.wanderCount || 0) + 1;
-        // If wandered > 15 times (approx 3-5 seconds of continuous movement without purpose)
         if (this.wanderCount > 15) {
-            // Try to find a Mountain or Sea target
             for (let i = 0; i < 15; i++) {
                 const rx = Math.floor(Math.random() * logicalW);
                 const rz = Math.floor(Math.random() * logicalD);
                 const h = this.terrain.getTileHeight(rx, rz);
 
-                // Mountain (>8) or Coast (<2 but >0)
                 if (h > 8 || (h > 0 && h < 2)) {
                     this.migrationTarget = { x: rx, z: rz };
                     this.wanderCount = 0;
@@ -659,13 +862,11 @@ export class Unit {
                     return;
                 }
             }
-            // If failed to find target, continue normal random move
         }
 
         const currentHeight = this.terrain.getTileHeight(this.gridX, this.gridZ);
         const validMoves = [];
 
-        // 1. Identify Valid Moves
         for (const dir of directions) {
             let targetX = this.gridX + dir.x;
             let targetZ = this.gridZ + dir.z;
@@ -678,7 +879,6 @@ export class Unit {
 
             const targetHeight = this.terrain.getTileHeight(targetX, targetZ);
 
-            // Validity Check: Climb <= 2.0 and Land > 0
             if (Math.abs(targetHeight - currentHeight) <= 2.0 && targetHeight > 0) {
                 validMoves.push({ x: targetX, z: targetZ, h: targetHeight, dir: dir });
             }
@@ -689,27 +889,22 @@ export class Unit {
             return;
         }
 
-        // 2. Weighted Selection based on Role
         let selectedMove = null;
 
         if (this.role === 'hunter' || this.role === 'fisher') {
             let totalWeight = 0;
-            // Calculate weights
             validMoves.forEach(m => {
                 let weight = 1.0;
                 if (this.role === 'hunter') {
-                    // Prefer Forests (High Ground 4-8)
-                    if (m.h > 4 && m.h <= 8) weight = 5.0; // Strong preference
-                    else if (m.h > 8) weight = 2.0; // Higher is okay too
+                    if (m.h > 4 && m.h <= 8) weight = 5.0;
+                    else if (m.h > 8) weight = 2.0;
                 } else if (this.role === 'fisher') {
-                    // Prefer Lowlands (Near Water 0-3)
                     if (m.h <= 2.5) weight = 5.0;
                 }
                 m.weight = weight;
                 totalWeight += weight;
             });
 
-            // Random Pick
             let r = Math.random() * totalWeight;
             for (const m of validMoves) {
                 r -= m.weight;
@@ -720,21 +915,18 @@ export class Unit {
             }
         }
 
-        // Fallback or Worker (Uniform Random)
         if (!selectedMove) {
             const idx = Math.floor(Math.random() * validMoves.length);
             selectedMove = validMoves[idx];
         }
 
-        // 3. Execute Move
         this.isMoving = true;
         this.action = "Moving";
 
-        // Slope Penalty
         const heightDiff = Math.abs(selectedMove.h - currentHeight);
 
         if (selectedMove.h > 8) {
-            this.moveDuration = 6000; // Rock Wander (slightly faster than forced move?) Keep it slow.
+            this.moveDuration = 6000;
         } else if (heightDiff > 0.1) {
             this.moveDuration = 2500;
         } else {
@@ -752,6 +944,11 @@ export class Unit {
     }
 
     updatePosition() {
+        if (isNaN(this.gridX) || isNaN(this.gridZ)) {
+            console.warn(`Unit ${this.id} NaN Grid Coords! Resetting.`);
+            this.gridX = Math.round(this.gridX) || 0;
+            this.gridZ = Math.round(this.gridZ) || 0;
+        }
         const pos = this.getPositionForGrid(this.gridX, this.gridZ);
         this.position.copy(pos);
     }
@@ -763,20 +960,18 @@ export class Unit {
         const height = this.terrain.getInterpolatedHeight(x, z);
         return new THREE.Vector3(
             x - logicalW / 2 + 0.5,
-            height + 0.25, // height is surface height, + half unit height (approx)
+            height + 0.25,
             z - logicalD / 2 + 0.5
         );
     }
 
     forceUnstuck() {
-        // Teleport to a random safe spot nearby
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
         let found = false;
         let attempts = 0;
         while (!found && attempts < 10) {
-            // Try range +/- 3
             const rx = Math.floor(Math.random() * 7) - 3;
             const rz = Math.floor(Math.random() * 7) - 3;
             if (rx === 0 && rz === 0) continue;
@@ -790,8 +985,7 @@ export class Unit {
             if (tz >= logicalD) tz = 0;
 
             const h = this.terrain.getTileHeight(tx, tz);
-            if (h > 0) { // Land only
-                // Teleport!
+            if (h > 0) {
                 const oldX = this.gridX;
                 const oldZ = this.gridZ;
                 this.gridX = tx;
@@ -806,240 +1000,72 @@ export class Unit {
     }
 
     tryBuildStructure(time) {
-        // Performance Optimization: Moved logical width/depth fetch
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
         const x = this.gridX;
         const z = this.gridZ;
-        // Optimization: Direct access to grid
         const cell = this.terrain.grid[x][z];
 
-        // 1. Fast Exit: If already occupied, abort immediately
         if (cell.hasBuilding) return;
 
-        // Rock Restriction: Cannot build on Rock (Height > 8)
         if (cell.height > 8) return;
 
-        // 2. Castle Check Setup
+        const houses = this.terrain.buildings.filter(b => b.type === 'house');
+        const farms = this.terrain.buildings.filter(b => b.type === 'farm');
+        const mansions = this.terrain.buildings.filter(b => b.type === 'mansion');
+
+        const houseCount = houses.length;
+        const farmCount = farms.length;
+        const mansionCount = mansions.length;
         const totalPop = window.game ? window.game.totalPopulation : 0;
 
-        // Ensure we are visible when building!
-        this.isSleeping = false;
+        // 2. Tower Logic (3x3) - Unlock at 3000
+        const towers = this.terrain.buildings.filter(b => b.type === 'tower');
+        const towerTarget = Math.floor(totalPop / 3000);
 
-        // 3. Check 2x2 Area (Quad)
-        const x1 = (x + 1) % logicalW;
-        const z1 = (z + 1) % logicalD;
-
-        const c00 = cell;
-        const c10 = this.terrain.grid[x1][z];
-        const c01 = this.terrain.grid[x][z1];
-        const c11 = this.terrain.grid[x1][z1];
-
-        // Obstruction Check
-        if (c00.hasBuilding || c10.hasBuilding || c01.hasBuilding || c11.hasBuilding) {
-            return; // Obstructed
-        }
-
-        const h00 = c00.height;
-        const h10 = c10.height;
-        const h01 = c01.height;
-        const h11 = c11.height;
-
-        // 1x1 Flatness (For House/Farm)
-        const is1x1Flat = (h00 === h10 && h00 === h01 && h00 === h11 && h00 > 0);
-
-        // 2x2 Flatness (For Castle)
-        let is2x2Flat = false;
-
-
-        if (is1x1Flat) {
-            // Only verify 3x3 if 1x1 is already flat (optimization)
-            const x2 = (x + 2) % logicalW;
-            const z2 = (z + 2) % logicalD;
-
-            // Check remaining 5 vertices for 2x2 area
-            // (x+2, z), (x+2, z+1), (x+2, z+2)
-            // (x, z+2), (x+1, z+2)
-
-            const h20 = this.terrain.grid[x2][z].height;
-            const h21 = this.terrain.grid[x2][z1].height;
-            const h22 = this.terrain.grid[x2][z2].height;
-            const h02 = this.terrain.grid[x][z2].height;
-            const h12 = this.terrain.grid[x1][z2].height;
-
-            if (h00 === h20 && h00 === h21 && h00 === h22 && h00 === h02 && h00 === h12) {
-                is2x2Flat = true;
+        if (towers.length < towerTarget) {
+            if (this.terrain.checkFlatArea(x, z, 3)) {
+                this.terrain.addBuilding('tower', x, z);
+                this.moveRandomly(time);
+                return;
             }
         }
 
-        // 4. Build Decision
-
-        // Strategy: 
-        // If 2x2 Flat -> Attempt Castle.
-        // If Castle fails or not 2x2 -> Attempt House/Farm (needs 1x1 flat).
-
-        if (is2x2Flat) {
-            // Castle Opportunity Check
-            let castleCount = 0;
-            if (this.terrain.buildings.length > 0) {
-                this.terrain.buildings.forEach(b => {
-                    if (b.userData.type === 'castle') castleCount++;
-                });
+        // 3. Mansion Logic (3x3)
+        const mansionTarget = Math.floor(totalPop / 1000);
+        if (mansionCount < mansionTarget) {
+            if (this.terrain.checkFlatArea(x, z, 3)) {
+                this.terrain.addBuilding('mansion', x, z);
+                this.moveRandomly(time);
+                return;
             }
+        }
 
-            const castleThreshold = 1000 * (castleCount + 1);
+        // 3. Farm Logic (2x2)
+        const food = window.game ? window.game.resources.grain : 100;
+        const lowFood = food < totalPop * 2;
+        const lowFarms = farmCount < (houseCount / 2) + 1;
 
-            if (totalPop >= castleThreshold) {
-                // Determine food status
-                const res = window.game ? window.game.resources : { grain: 0, meat: 0, fish: 0 };
-                const totalFood = res.grain + res.meat + res.fish;
-
-                // Don't build expensive castles during famine!
-                if (totalFood > 200) {
-                    console.log(`Castle Construction Attempt: Pop ${totalPop} >= ${castleThreshold}. Flatness verified (3x3).`);
-                    if (Math.random() < 0.2) { // 20% chance
-                        this.buildCastle();
-                        return;
-                    }
+        if (lowFood || lowFarms) {
+            if (Math.random() < 0.3) {
+                if (this.terrain.checkFlatArea(x, z, 2)) {
+                    if (this.buildFarm(time)) return;
                 }
             }
         }
 
-        // House/Farm Logic (Requires 1x1 Flatness)
-        // Swamp Check (User Rule: No building on Swamp)
-        // Swamp Def: Moisture > 0.6 && Height <= 3
-        const isSwamp = (cell.moisture > 0.6 && cell.height <= 3);
-
-        if (isSwamp) {
-            // Cannot build on swamp. Try to drain it?
-            // Re-use improveLand logic to lower moisture
-            console.log("Unit refused to build on Swamp. Draining land...");
-            this.improveLand(time);
+        // 4. House Logic (Now 2x2)
+        if (this.terrain.checkFlatArea(x, z, 2)) {
+            if (cell.moisture > 0.8) {
+                return;
+            }
+            this.terrain.addBuilding('house', x, z);
+            this.moveRandomly(time);
+            return;
+        } else {
             return;
         }
-
-        if (is1x1Flat) {
-            let houseCount = 0;
-            let farmCount = 0;
-
-            this.terrain.buildings.forEach(b => {
-                if (b.type === 'house' || (b.userData && b.userData.type === 'house')) houseCount++;
-                else if (b.type === 'farm' || (b.userData && b.userData.type === 'farm')) farmCount++;
-            });
-
-            // Strict Balancer Logic
-            let shouldBuildFarm = false;
-
-            // Priority Check: Low Food?
-            // If total food is low, prioritized farms!
-            const res = window.game ? window.game.resources : { grain: 0, meat: 0, fish: 0 };
-            const totalFood = res.grain + res.meat + res.fish;
-
-            // Revised Threshold: < 100 or if Grain is 0 (immediate need)
-            if (totalFood < 100 || res.grain < 5) {
-                shouldBuildFarm = true;
-            }
-
-            // If we have fewer farms than half of houses, we MUST build a farm.
-            // (Unless priority above already set it)
-            // BUT: If we have massive food surplus, ignore this rule to prevent infinite farm spam (290k farms!)
-
-            const isFoodSurplus = totalFood > 5000;
-
-            if (!shouldBuildFarm && !isFoodSurplus && farmCount < Math.ceil(houseCount / 2)) {
-                shouldBuildFarm = true;
-            }
-
-            // Random factor: small chance to build farm anyway if low
-            if (!shouldBuildFarm && Math.random() < 0.2) shouldBuildFarm = true;
-
-            if (shouldBuildFarm) {
-                // Return success/fail. If fail (bad soil), fallback to House.
-                const farmSuccess = this.buildFarm(time);
-
-                // CRITICAL FIX: If we NEED food (starving), and cannot build farm,
-                // DO NOT build a house instead! That just adds mouths to feed.
-                // Only fallback if we are NOT in a crisis.
-                if (!farmSuccess) {
-                    if (totalFood > 50) {
-                        this.buildHouse(time);
-                    } else {
-                        console.log("Starvation Mode: Aborted House construction due to Farm failure.");
-                    }
-                }
-            } else {
-                this.buildHouse(time);
-            }
-
-            this.lastTime = time;
-            this.stagnationTimer = 0;
-            setTimeout(() => {
-                if (!this.isDead) {
-                    const now = window.game ? window.game.gameTotalTime : performance.now();
-                    this.moveRandomly(now);
-                }
-            }, 500);
-        } else {
-            // Not flat enough to build anything
-            this.moveRandomly(time);
-        }
-    }
-
-    buildCastle() {
-        // Center of 2x2
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
-
-        const x0 = this.gridX;
-        const z0 = this.gridZ;
-
-        // Add via Terrain logic
-        this.terrain.addBuilding('castle', x0, z0);
-
-        // Unit enters castle
-        this.isFinished = true;
-        this.isDead = true;
-        console.log(`Unit entered castle at ${x0}, ${z0} and became a citizen.`);
-    }
-
-    static getBuildingAssets() {
-        if (!Unit.assets.buildings) {
-            Unit.assets.buildings = {};
-
-            // HOUSE
-            Unit.assets.buildings.woodTexture = Unit.createWoodTexture();
-            Unit.assets.buildings.roofTexture = Unit.createRoofTexture();
-            Unit.assets.buildings.wallMat = new THREE.MeshLambertMaterial({ map: Unit.assets.buildings.woodTexture });
-            Unit.assets.buildings.roofMat = new THREE.MeshLambertMaterial({ map: Unit.assets.buildings.roofTexture });
-            Unit.assets.buildings.wallGeo = new THREE.BoxGeometry(0.6, 0.4, 0.6);
-            Unit.assets.buildings.roofGeo = new THREE.ConeGeometry(0.5, 0.4, 4);
-            Unit.assets.buildings.windowGeo = new THREE.PlaneGeometry(0.15, 0.15);
-            Unit.assets.buildings.windowMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-
-            // FARM
-            const canvas = document.createElement('canvas');
-            canvas.width = 64; canvas.height = 64;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#DAA520'; ctx.fillRect(0, 0, 64, 64);
-            ctx.fillStyle = '#B8860B';
-            for (let i = 0; i < 10; i++) ctx.fillRect(i * 6, 0, 2, 64);
-            Unit.assets.buildings.wheatTexture = new THREE.CanvasTexture(canvas);
-            Unit.assets.buildings.farmMat = new THREE.MeshLambertMaterial({ map: Unit.assets.buildings.wheatTexture });
-            const farmGeo = new THREE.PlaneGeometry(0.8, 0.8);
-            farmGeo.rotateX(-Math.PI / 2);
-            Unit.assets.buildings.farmGeo = farmGeo;
-        }
-        return Unit.assets.buildings;
-    }
-
-    buildHouse(time) {
-        // Use Terrain logic for consistent data structure
-        this.terrain.addBuilding('house', this.gridX, this.gridZ);
-        console.log("House built at", this.gridX, this.gridZ);
-
-        // Eject unit to avoid being stuck inside
-        this.moveRandomly(time);
     }
 
     improveLand(time) {
@@ -1049,32 +1075,22 @@ export class Unit {
         const currentM = cell.moisture || 0.5;
         const targetM = 0.5;
 
-        // Strong Improvement (User Request)
-        // Close 40% of the gap to 0.5, or at least 0.1
         let diff = targetM - currentM;
         let change = diff * 0.4;
 
-        // Ensure minimum effectiveness
         if (Math.abs(change) < 0.1 && Math.abs(diff) > 0.01) {
             change = (diff > 0) ? 0.1 : -0.1;
         }
 
-        // Clamp to not overshooting if diff is small
         if (Math.abs(change) > Math.abs(diff)) change = diff;
 
         this.terrain.modifyMoisture(this.gridX, this.gridZ, change);
         console.log(`Unit improved land at ${this.gridX},${this.gridZ}. Moisture ${currentM.toFixed(2)} -> ${(currentM + change).toFixed(2)}`);
 
-        // Consume time
         this.moveRandomly(time);
     }
 
     buildFarm(time) {
-        const height = this.terrain.getTileHeight(this.gridX, this.gridZ);
-
-        // Moisture Check
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
         let cell = null;
         if (this.terrain.grid[this.gridX] && this.terrain.grid[this.gridX][this.gridZ]) {
             cell = this.terrain.grid[this.gridX][this.gridZ];
@@ -1082,11 +1098,6 @@ export class Unit {
 
         if (cell) {
             const m = cell.moisture || 0.5;
-            // Probabilistic Failure based on Moisture
-            // Optimal: 0.5. 
-            // Diff 0.0 -> 100% Success
-            // Diff 0.3 -> 25% Success
-            // Diff >= 0.4 -> 0% Success
 
             const diff = Math.abs(m - 0.5);
             let successChance = 1.0 - (diff * 2.5);
@@ -1094,17 +1105,13 @@ export class Unit {
 
             if (Math.random() > successChance) {
                 console.log(`Farm construction failed due to soil conditions (Moisture: ${m.toFixed(2)}, Chance: ${(successChance * 100).toFixed(0)}%). Improving Land.`);
-
-                // FAILURE RECOVERY: Improve the land so next time it might work!
                 this.improveLand(time);
                 return false;
             }
         }
 
-        // Use Terrain logic
         this.terrain.addBuilding('farm', this.gridX, this.gridZ);
 
-        // Eject unit
         this.moveRandomly(time);
         return true;
     }
@@ -1121,24 +1128,20 @@ export class Unit {
         const group = new THREE.Group();
         const GEO = Unit.getCrossAssets();
 
-        // Material must be unique per cross to allow individual fading
         const material = new THREE.MeshLambertMaterial({
             color: 0xFFFFFF,
             transparent: true,
             opacity: 1.0
         });
 
-        // Vertical part
         const vMesh = new THREE.Mesh(GEO.crossV, material);
         vMesh.position.y = 0.5;
         group.add(vMesh);
 
-        // Horizontal part
         const hMesh = new THREE.Mesh(GEO.crossH, material);
         hMesh.position.y = 0.7;
         group.add(hMesh);
 
-        // Position
         const pos = this.getPositionForGrid(this.gridX, this.gridZ);
         group.position.copy(pos);
 
@@ -1150,20 +1153,15 @@ export class Unit {
     updateDeathAnimation(deltaTime) {
         if (!this.crossMesh) return;
 
-        // Safety: Prevent NaN
         if (isNaN(this.deathTimer)) this.deathTimer = 0;
 
-        // Ensure progress even if deltaTime is weird
         const safeDt = (deltaTime > 0) ? deltaTime : 0.016;
         this.deathTimer += safeDt;
 
-        const duration = 3.0; // 3 seconds animation
+        const duration = 3.0;
 
         if (this.deathTimer >= duration) {
-            // Clean up
             this.scene.remove(this.crossMesh);
-
-            // CRITICAL: Dispose of materials to prevent memory leak
             this.crossMesh.children.forEach(child => {
                 if (child.material) child.material.dispose();
             });
@@ -1171,10 +1169,7 @@ export class Unit {
 
             this.isFinished = true;
         } else {
-            // Rise up
             this.crossMesh.position.y += deltaTime * 1.0;
-
-            // Fade out
             const progress = this.deathTimer / duration;
             this.crossMesh.children.forEach(child => {
                 child.material.opacity = 1.0 - progress;
@@ -1188,11 +1183,9 @@ export class Unit {
         canvas.height = 64;
         const ctx = canvas.getContext('2d');
 
-        // Base brown
         ctx.fillStyle = '#8B4513';
         ctx.fillRect(0, 0, 64, 64);
 
-        // Wood grain lines
         ctx.strokeStyle = '#5D2906';
         ctx.lineWidth = 2;
         for (let i = 0; i < 8; i++) {
@@ -1211,11 +1204,9 @@ export class Unit {
         canvas.height = 64;
         const ctx = canvas.getContext('2d');
 
-        // Base red/brown
         ctx.fillStyle = '#A52A2A';
         ctx.fillRect(0, 0, 64, 64);
 
-        // Shingles
         ctx.fillStyle = '#800000';
         for (let y = 0; y < 64; y += 8) {
             for (let x = 0; x < 64; x += 8) {
@@ -1234,7 +1225,6 @@ export class Unit {
             lifespan: this.lifespan,
             isDead: this.isDead,
             isFinished: this.isFinished,
-            // Animation state
             isMoving: this.isMoving,
             targetX: this.targetX,
             targetZ: this.targetZ,
@@ -1243,18 +1233,22 @@ export class Unit {
             startGridZ: this.startGridZ,
             targetGridX: this.targetGridX,
             targetGridZ: this.targetGridZ,
-            targetGridZ: this.targetGridZ,
             isSpecial: this.isSpecial,
-            role: this.role
+            role: this.role,
+            // Stats
+            hp: this.hp,
+            maxHp: this.maxHp,
+            damage: this.damage,
+            xp: this.xp || 0,
+            level: this.level || 1,
+            name: this.name
         };
     }
 
     static deserialize(data, scene, terrain) {
-        // Pass role if exists, otherwise defaults to worker via constructor logic or legacy boolean handling
         const unit = new Unit(scene, terrain, data.gridX, data.gridZ, data.role || data.isSpecial, data.isSpecial);
         unit.age = data.age || 20;
 
-        // 2025-12-09: Fallback for old saves without lifespan
         if (typeof data.lifespan === 'number' && data.lifespan > 0) {
             unit.lifespan = data.lifespan;
         }
@@ -1262,21 +1256,28 @@ export class Unit {
         if (data.lifespan) unit.lifespan = data.lifespan;
 
         unit.isDead = data.isDead || false;
+        unit.isDead = data.isDead || false;
         unit.isFinished = data.isFinished || false;
 
-        // Restore animation state if moving
+        // Restore Stats
+        if (data.hp !== undefined) unit.hp = data.hp;
+        if (data.maxHp !== undefined) unit.maxHp = data.maxHp;
+        if (data.damage !== undefined) unit.damage = data.damage;
+        if (data.xp !== undefined) unit.xp = data.xp;
+        if (data.level !== undefined) unit.level = data.level;
+        if (data.name !== undefined) unit.name = data.name;
+
         if (data.isMoving) {
             unit.isMoving = true;
             unit.targetX = data.targetX;
             unit.targetZ = data.targetZ;
-            unit.isMoving = false; // Snap immediately
+            unit.isMoving = false;
             unit.gridX = data.targetGridX;
             unit.gridZ = data.targetGridZ;
             unit.updatePosition();
         }
 
         if (unit.isDead) {
-            // If dead, ensure cross is created if not finished
             if (!unit.isFinished) {
                 unit.createCross();
             }

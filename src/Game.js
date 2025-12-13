@@ -24,6 +24,34 @@ export class Game {
         console.log("Game constructor called");
         this.saveManager = new SaveManager();
         this.soundManager = new SoundManager();
+        this.mana = 100; // Initial Mana
+
+        // Battle Memory System (Global)
+        this.battleMemory = {
+            raids: [], // {x, z, time, threat}
+            victories: [], // {x, z, time} 
+            reportRaid: (x, z) => {
+                this.battleMemory.raids.push({ x, z, time: this.gameTotalTime, threat: 10 });
+                // Clean old
+                if (this.battleMemory.raids.length > 20) this.battleMemory.raids.shift();
+            },
+            reportVictory: (x, z) => {
+                this.battleMemory.victories.push({ x, z, time: this.gameTotalTime });
+                // Remove nearby raids
+                this.battleMemory.raids = this.battleMemory.raids.filter(r => {
+                    const dx = r.x - x;
+                    const dz = r.z - z;
+                    return (dx * dx + dz * dz) > 100; // Keep if far away
+                });
+            },
+            getPriorities: () => {
+                // Return recent raids
+                // Filter out very old raids (> 300 seconds)
+                const now = this.gameTotalTime;
+                return this.battleMemory.raids.filter(r => (now - r.time) < 300000);
+            }
+        };
+
         window.game = this;
 
         // 1. Setup Scene & Camera
@@ -31,8 +59,8 @@ export class Game {
         this.scene.background = new THREE.Color(0x87CEEB); // Sky blue
 
         const aspect = window.innerWidth / window.innerHeight;
-        // User requested zoomed in view (d=20)
-        const d = 20;
+        // User requested zoomed in view (d=20) -> Expanded to d=50 to prevent clipping
+        const d = 50;
         this.camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
         this.camera.position.set(20, 20, 20); // Isometric
         this.camera.lookAt(this.scene.position);
@@ -89,7 +117,8 @@ export class Game {
         this.buildingRenderer = new BuildingRenderer(this.scene, this.terrain, this.clippingPlanes);
 
         // InputManager needs access to UnitRenderer for raycasting (tooltips)
-        this.inputManager = new InputManager(this.scene, this.camera, this.terrain, this.spawnUnit.bind(this), this.units, this.unitRenderer);
+        // Pass 'this' (Game instance) for Mana control
+        this.inputManager = new InputManager(this.scene, this.camera, this.terrain, this.spawnUnit.bind(this), this.units, this.unitRenderer, this);
 
         // Spawn initial unit on Land
         let sx = 10, sz = 10;
@@ -129,6 +158,7 @@ export class Game {
         this.lastTime = performance.now();
         this.gameTime = 8;
         this.gameTotalTime = 0; // Initialize explicitly to 0
+        this.raidPoints = []; // Raid Memory
         this.timeScale = 1.0; // Default speed 1.0
 
         // Initial Resources - Give some to start with so stats show up
@@ -221,6 +251,51 @@ export class Game {
         this.units.push(unit);
     }
 
+    handleBuildingSpawn(x, z, buildingType) {
+        // Callback from Terrain when a building overflows
+        let role = 'worker';
+
+        // Determine role based on building type or global needs
+        if (buildingType === 'barracks') {
+            role = 'knight';
+        } else if (buildingType === 'tower') {
+            role = 'wizard';
+        } else {
+            // Normal House Spawn Logic
+            const totalActiveUnits = this.units.length;
+            // If population is high, diversify
+            if (totalActiveUnits > 20) {
+                const r = Math.random();
+                if (r < 0.25) role = 'hunter';
+                else if (r < 0.50) role = 'fisher';
+            }
+        }
+
+        // Spawn nearby
+        // Terrain passes building center x,z.
+        // We might want to randomize slightly?
+        // Unit constructor handles snapping to grid.
+        this.spawnUnit(x, z, role);
+        return true;
+    }
+
+    recordRaidPoint(x, z) {
+        // Add point if far enough from existing
+        const exists = this.raidPoints.some(p => Math.abs(p.x - x) < 10 && Math.abs(p.z - z) < 10);
+        if (!exists) {
+            this.raidPoints.push({ x, z, time: this.gameTime });
+            // console.log(`[Game] Raid Point Recorded at ${x},${z}`);
+        }
+    }
+
+    canAction() {
+        return this.mana >= 0;
+    }
+
+    consumeMana(amount) {
+        this.mana -= amount;
+    }
+
     onWindowResize() {
         const aspect = window.innerWidth / window.innerHeight;
         const d = 20;
@@ -308,9 +383,10 @@ export class Game {
         if (!this.statsDisplay) return;
 
         // Calculate Population
-        // Total Population = Units (Walkers) + Housing Population (Mana/Potential)
+        // User Request: 1 Unit = 10 Pop.
+        // Total Population = (Units * 10) + Housing Population
         const housingPop = this.terrain.totalHousingPop || 0;
-        this.totalPopulation = Math.floor(housingPop) + this.units.length;
+        this.totalPopulation = Math.floor(housingPop) + (this.units.length * 10);
 
         const hours = Math.floor(this.gameTime);
         const minutes = Math.floor((this.gameTime % 1) * 60);
@@ -322,12 +398,30 @@ export class Game {
         document.getElementById('season-val').innerText = this.season || 'Spring';
 
         document.getElementById('pop-val').innerText = Math.floor(this.totalPopulation || 0);
-        document.getElementById('active-val').innerText = this.units.length; // New line
+
+        // Active Unit Counts
+        const knights = this.units.filter(u => u.role === 'knight').length;
+        const wizards = this.units.filter(u => u.role === 'wizard').length;
+
+        document.getElementById('active-val').innerText = this.units.length;
+        const elKnight = document.getElementById('knight-val');
+        if (elKnight) elKnight.innerText = knights;
+        const elWizard = document.getElementById('wizard-val');
+        if (elWizard) elWizard.innerText = wizards;
+
         document.getElementById('house-val').innerText = this.terrain.buildings.filter(b => b.userData.type === 'house').length;
-        document.getElementById('castle-val').innerText = this.terrain.buildings.filter(b => b.userData.type === 'castle').length;
+        document.getElementById('castle-val').innerText = this.terrain.buildings.filter(b => b.userData.type === 'barracks').length;
         document.getElementById('grain-val').innerText = Math.floor(this.resources.grain);
         document.getElementById('fish-val').innerText = Math.floor(this.resources.fish);
         document.getElementById('meat-val').innerText = Math.floor(this.resources.meat);
+
+        // Mana Check
+        const elMana = document.getElementById('mana-val');
+        if (elMana) {
+            elMana.innerText = Math.floor(this.mana);
+            // Change color if negative
+            elMana.style.color = this.mana < 0 ? '#ff4444' : 'white';
+        }
     }
 
     animate() {
@@ -365,6 +459,19 @@ export class Game {
         try {
             this.updateStats();
         } catch (e) { console.error("Stats Error:", e); }
+
+        // --- MANA SYSTEM ---
+        // --- MANA SYSTEM ---
+        // Use Game's totalPopulation (Active Units + Housing) calculated in updateStats
+        const pop = (this.totalPopulation || 0);
+        // Debug
+        // if (Math.random() < 0.01) console.log("Mana Delta:", pop * 0.1 * deltaTime, "Pop:", pop);
+        // Mana Gain: 0.1 per person per second. 
+        // 10 Pop = 1 Mana/sec
+        // 100 Pop = 10 Mana/sec
+        const manaDelta = pop * 0.1 * deltaTime;
+        this.mana += manaDelta;
+        // No Cap? "Statistical info shows accumultated sin" - maybe limitless.
 
         try {
             this.inputManager.update(deltaTime);
@@ -434,7 +541,13 @@ export class Game {
 
             // 2. Staggered Logic Update (AI, Aging, etc.)
             if (i % stagger === parity) {
-                unit.updateLogic(simTime, deltaTime * stagger, isNight, this.goblinManager.goblins);
+                try {
+                    unit.updateLogic(simTime, deltaTime * stagger, isNight, this.goblinManager.goblins);
+                } catch (e) {
+                    console.error("Unit Logic Error:", e, unit);
+                    // Kill unit to prevent persistent crash
+                    unit.isDead = true;
+                }
 
                 if (unit.isDead && unit.isFinished) {
                     this.units.splice(i, 1);
@@ -442,7 +555,10 @@ export class Game {
             }
         }
 
-        this.terrain.update(deltaTime, this.spawnUnit.bind(this), isNight);
+        try {
+            this.terrain.update(deltaTime, this.handleBuildingSpawn.bind(this), isNight);
+        } catch (e) { console.error("Terrain Update Error:", e); }
+
         this.terrain.updateMeshPosition(this.camera);
 
         // Update House Lights (Via BuildingRenderer)
@@ -453,12 +569,16 @@ export class Game {
 
         // Update Unit Renderer
         if (this.unitRenderer) {
-            this.unitRenderer.update(this.units, frustum, this.camera);
+            try {
+                this.unitRenderer.update(this.units, frustum, this.camera);
+            } catch (e) { console.error("UnitRenderer Error:", e); }
         }
 
         // Update Building Renderer
         if (this.buildingRenderer) {
-            this.buildingRenderer.update(this.terrain.buildings, frustum, this.camera);
+            try {
+                this.buildingRenderer.update(this.terrain.buildings, frustum, this.camera);
+            } catch (e) { console.error("BuildingRenderer Error:", e); }
         }
 
 
@@ -477,7 +597,15 @@ export class Game {
             daysPassed: this.daysPassed,
 
             terrain: this.terrain.serialize(),
-            units: this.units.map(u => u.serialize()),
+            terrain: this.terrain.serialize(),
+            terrain: this.terrain.serialize(),
+            units: this.units.filter(u => !u.isDead).map(u => u.serialize()),
+            // Camera State
+            camera: {
+                position: { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z },
+                zoom: this.camera.zoom,
+                target: { x: this.controls.target.x, y: this.controls.target.y, z: this.controls.target.z }
+            }
         };
         console.log("Saving Game Data:", saveData);
         if (!saveData.terrain) console.error("Save Error: Terrain data is missing!");
@@ -492,6 +620,9 @@ export class Game {
             return false;
         }
         console.log("Load Game: Data found", saveData);
+
+        // Reset Systems
+        if (this.goblinManager) this.goblinManager.reset();
 
         this.resources = saveData.resources || { grain: 0, fish: 0, meat: 0 };
         this.gameTime = saveData.gameTime || 8;
@@ -511,6 +642,8 @@ export class Game {
             console.error("Terrain deserialize failed:", e);
             return false;
         }
+
+        if (this.goblinManager) this.goblinManager.scanForCaves();
 
         // Recreate units
         try {
@@ -540,6 +673,20 @@ export class Game {
         }
 
         this.inputManager.units = this.units;
+
+        if (saveData.camera) {
+            if (saveData.camera.position) {
+                this.camera.position.set(saveData.camera.position.x, saveData.camera.position.y, saveData.camera.position.z);
+            }
+            if (saveData.camera.zoom) {
+                this.camera.zoom = saveData.camera.zoom;
+            }
+            if (saveData.camera.target) {
+                this.controls.target.set(saveData.camera.target.x, saveData.camera.target.y, saveData.camera.target.z);
+            }
+            this.camera.updateProjectionMatrix();
+            this.controls.update();
+        }
 
         console.log("Game loaded from slot", slotId);
         return true;

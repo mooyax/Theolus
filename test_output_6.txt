@@ -1,0 +1,93 @@
+
+> test@0.0.0 test
+> vitest src/tests/Terrain.test.js
+
+
+[1m[44m DEV [49m[22m [34mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mPopulation Update[2m > [22m[2mshould correctly sum housing population excluding farms
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mPopulation Update[2m > [22m[2mshould handle massive population overflow loop correctly
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould grow crops using simDeltaTime (Not raw deltaTime)
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould preserve overflow when harvesting
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould scale farm yield based on moisture
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould reduce food consumption at night
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould consume normal amount during day
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mSeasonal Colors[2m > [22m[2mshould return different colors for seasons
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mSeasonal Colors[2m > [22m[2mshould keep rock color even if dry (desert override check)
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+ [32m笨・[39m src/tests/Terrain.test.js [2m([22m[2m9 tests[22m[2m)[22m[33m 2654[2mms[22m[39m
+       [33m[2m笨・[22m[39m should correctly sum housing population excluding farms [33m 380[2mms[22m[39m
+       [33m[2m笨・[22m[39m should consume normal amount during day [33m 324[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m9 passed[39m[22m[90m (9)[39m
+[2m   Start at [22m 15:48:08
+[2m   Duration [22m 2.99s[2m (transform 73ms, setup 0ms, import 137ms, tests 2.65s, environment 0ms)[22m
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/Terrain.js [22m[34mx1 [34m[39m
+       [2m Filename pattern: [22m[34msrc/tests/Terrain.test.js[39m
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mPopulation Update[2m > [22m[2mshould correctly sum housing population excluding farms
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mPopulation Update[2m > [22m[2mshould handle massive population overflow loop correctly
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould grow crops using simDeltaTime (Not raw deltaTime)
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould preserve overflow when harvesting
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould scale farm yield based on moisture
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould reduce food consumption at night
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould consume normal amount during day
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mSeasonal Colors[2m > [22m[2mshould return different colors for seasons
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mSeasonal Colors[2m > [22m[2mshould keep rock color even if dry (desert override check)
+[22m[39m[DEBUG] Terrain.updateColors: Season=Spring, IsNight=false
+
+ [32m笨・[39m src/tests/Terrain.test.js [2m([22m[2m9 tests[22m[2m)[22m[33m 7355[2mms[22m[39m
+       [33m[2m笨・[22m[39m should correctly sum housing population excluding farms [33m 1110[2mms[22m[39m
+       [33m[2m笨・[22m[39m should handle massive population overflow loop correctly [33m 602[2mms[22m[39m
+       [33m[2m笨・[22m[39m should grow crops using simDeltaTime (Not raw deltaTime) [33m 948[2mms[22m[39m
+       [33m[2m笨・[22m[39m should preserve overflow when harvesting [33m 1108[2mms[22m[39m
+       [33m[2m笨・[22m[39m should scale farm yield based on moisture [33m 712[2mms[22m[39m
+       [33m[2m笨・[22m[39m should reduce food consumption at night [33m 642[2mms[22m[39m
+       [33m[2m笨・[22m[39m should consume normal amount during day [33m 618[2mms[22m[39m
+         [33m[2m笨・[22m[39m should return different colors for seasons [33m 882[2mms[22m[39m
+         [33m[2m笨・[22m[39m should keep rock color even if dry (desert override check) [33m 728[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m9 passed[39m[22m[90m (9)[39m
+[2m   Start at [22m 17:42:46
+[2m   Duration [22m 7.86s
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m

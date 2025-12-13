@@ -205,6 +205,15 @@ export class Goblin {
         }
 
         this.attackCooldown -= deltaTime;
+        // Logic continue...
+
+    } // End of update()
+
+    updateLogic(time, deltaTime, units, buildings) {
+        // Debug Log only for one goblin occasionally
+        if (Math.random() < 0.005) {
+            console.log(`[GoblinAI] ID:${this.id} State:${this.state} Moving:${this.isMoving} TargetU:${!!this.targetUnit} TargetB:${!!this.targetBuilding} Pos:${this.gridX.toFixed(1)},${this.gridZ.toFixed(1)}`);
+        }
 
         // AI Logic
         if (!this.isMoving) {
@@ -254,6 +263,7 @@ export class Goblin {
                     }
                 }
             } else if (this.targetBuilding) {
+                // console.log(`[GoblinAI] ${this.id} Moving to Building ${this.targetBuilding.userData.type}`);
                 this.moveToTarget(this.targetBuilding.userData.gridX, this.targetBuilding.userData.gridZ, time);
                 // Destroy if close
                 if (this.getDistance(this.targetBuilding.userData.gridX, this.targetBuilding.userData.gridZ) <= 2.5) {
@@ -269,6 +279,8 @@ export class Goblin {
                     }
                     this.moveRandomly(time);
                     this.lastTime = time;
+                } else {
+                    // console.log(`[GoblinAI] ${this.id} Waiting...`);
                 }
             }
         }
@@ -316,8 +328,8 @@ export class Goblin {
             let minDist = 20; // Larger range
 
             for (const b of buildings) {
-                // Ignore Goblin Huts
-                if (b.userData.type === 'goblin_hut') continue;
+                // Ignore Goblin Huts AND Caves
+                if (b.userData.type === 'goblin_hut' || b.userData.type === 'cave') continue;
 
                 // Skip if far quickly
                 const dx = Math.abs(b.userData.gridX - this.gridX);
@@ -552,6 +564,12 @@ export class Goblin {
 
         if (progress >= 1) {
             this.isMoving = false;
+
+            // Update Spatial Partitioning
+            if (this.terrain && this.terrain.moveEntity) {
+                this.terrain.moveEntity(this, this.gridX, this.gridZ, this.targetGridX, this.targetGridZ, 'goblin');
+            }
+
             this.gridX = this.targetGridX;
             this.gridZ = this.targetGridZ;
             this.updatePosition();
@@ -789,6 +807,19 @@ export class Goblin {
         // console.log("Goblin died");
     }
 
+    // Explicit Cleanup
+    dispose() {
+        if (this.crossMesh) {
+            this.scene.remove(this.crossMesh);
+            this.crossMesh.traverse(c => {
+                if (c.material && c.userData.clonedMat) c.material.dispose();
+            });
+            this.crossMesh = null;
+        }
+        this.scene.remove(this.mesh);
+        this.terrain.unregisterEntity(this);
+    }
+
     createCross() {
         const group = new THREE.Group();
         // Use shared cross material/geo
@@ -812,19 +843,41 @@ export class Goblin {
         this.scene.add(group);
         this.crossMesh = group;
         this.deathTimer = 0;
+
+        // FAILSAFE: Force remove after 1.5s regardless of update loop
+        // This handles cases where manager culls the goblin or updates stop
+        setTimeout(() => {
+            if (this.crossMesh) {
+                console.log(`[Goblin] Failsafe removing cross ID:${this.id}`);
+                this.scene.remove(this.crossMesh);
+                // Clean materials
+                this.crossMesh.traverse(c => {
+                    if (c.material && c.userData.clonedMat) c.material.dispose();
+                });
+                this.crossMesh = null;
+            }
+        }, 1500);
     }
 
     updateDeathAnimation(deltaTime) {
-        if (!this.crossMesh) return;
+        if (!this.crossMesh) {
+            // Already cleaned up (by failsafe?), so mark finished
+            this.isFinished = true;
+            return;
+        }
+
+        // Console Log to debug "Never Disappearing"
+        // if (Math.random() < 0.05) console.log(`[Goblin] Death Update ID:${this.id} Timer:${this.deathTimer.toFixed(2)}/${1.0}`);
 
         // Safety
         if (isNaN(this.deathTimer)) this.deathTimer = 0;
         const safeDt = (deltaTime > 0) ? deltaTime : 0.016;
         this.deathTimer += safeDt;
 
-        const duration = 3.0; // 3 seconds animation
+        const duration = 1.0; // 1 second animation (Faster removal)
 
         if (this.deathTimer >= duration) {
+            console.log(`[Goblin] Death Animation Finished ID:${this.id}. Removing Cross.`);
             this.scene.remove(this.crossMesh);
 
             // CRITICAL: Dispose of materials to prevent memory leak

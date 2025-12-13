@@ -238,6 +238,9 @@
         class="material-symbols-outlined">stat_3</span></button>
     <button id="btn-lower" title="Lower Land"><span class="material-symbols-outlined">stat_minus_3</span></button>
     <button id="btn-spawn" title="Spawn Unit"><span class="material-symbols-outlined">person_add</span></button>
+    <button id="btn-barracks" title="Build Barracks (Knight)"><span
+        class="material-symbols-outlined">shield</span></button>
+    <button id="btn-tower" title="Debug: Build Tower"><span class="material-symbols-outlined">fort</span></button>
     <button id="save-load-btn" title="Save/Load"><span class="material-symbols-outlined">save</span></button>
     <button id="debug-speed-btn" onclick="toggleDebugSpeed()" title="Toggle Speed"><span
         class="material-symbols-outlined">fast_forward</span></button>
@@ -248,13 +251,26 @@
       <span class="material-symbols-outlined">schedule</span>
       <span id="time-val">08:00</span>
     </div>
-    <div class="stat-row">
-      <span class="material-symbols-outlined">wb_sunny</span>
+    <div class="stat-row" title="Season">
+      <span class="material-symbols-outlined">filter_drama</span>
       <span id="season-val">Spring</span>
     </div>
+    <div class="stat-row" title="Knights">
+      <span class="material-symbols-outlined">shield</span>
+      <span id="knight-val">0</span>
+    </div>
+    <div class="stat-row" title="Wizards">
+      <span class="material-symbols-outlined">auto_awesome</span>
+      <span id="wizard-val">0</span>
+    </div>
+
     <div class="stat-row">
       <span class="material-symbols-outlined">groups</span>
       <span id="pop-val">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="material-symbols-outlined">bolt</span>
+      <span id="mana-val" style="color: cyan;">0</span>
     </div>
     <div class="stat-row">
       <span class="material-symbols-outlined">directions_run</span>
@@ -264,8 +280,8 @@
       <span class="material-symbols-outlined">house</span>
       <span id="house-val">0</span>
     </div>
-    <div class="stat-row">
-      <span class="material-symbols-outlined">fort</span>
+    <div class="stat-row" title="兵舎 (Barracks)">
+      <span class="material-symbols-outlined">account_balance</span>
       <span id="castle-val">0</span>
     </div>
     <div class="stat-row">
