@@ -26,6 +26,8 @@ export class Goblin extends Entity {
         Goblin.assets.geometries.arm = new THREE.BoxGeometry(0.08, 0.25, 0.08);
         Goblin.assets.geometries.leg = new THREE.BoxGeometry(0.1, 0.25, 0.1);
         Goblin.assets.geometries.club = new THREE.CylinderGeometry(0.03, 0.05, 0.4, 6);
+        // New: Staff for Shaman
+        Goblin.assets.geometries.staff = new THREE.BoxGeometry(0.04, 0.8, 0.04);
 
         // Cross (If needed by ParticleManager? ParticleManager uses its own) 
         // We can keep these just in case.
@@ -37,7 +39,14 @@ export class Goblin extends Entity {
         Goblin.assets.materials.clothesNormal = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
         Goblin.assets.materials.skinHob = new THREE.MeshLambertMaterial({ color: 0x336633 });
         Goblin.assets.materials.clothesHob = new THREE.MeshLambertMaterial({ color: 0x222222 });
-        Goblin.assets.materials.club = new THREE.MeshLambertMaterial({ color: 0x654321 });
+        Goblin.assets.materials.club = new THREE.MeshLambertMaterial({ color: 0x654321 }); // Wood
+        Goblin.assets.materials.staff = new THREE.MeshLambertMaterial({ color: 0x8B4513 }); // Wood
+
+        // New Types
+        Goblin.assets.materials.skinShaman = new THREE.MeshLambertMaterial({ color: 0x008888 }); // Blue-Green
+        Goblin.assets.materials.clothesShaman = new THREE.MeshLambertMaterial({ color: 0x330066 }); // Dark Purple/Blue Robe
+        Goblin.assets.materials.skinKing = new THREE.MeshLambertMaterial({ color: 0x880000 }); // Red Skin
+        Goblin.assets.materials.clothesKing = new THREE.MeshLambertMaterial({ color: 0xFFD700 }); // Gold Armor
 
         // Cross Material
         Goblin.assets.materials.cross = new THREE.MeshLambertMaterial({
@@ -70,16 +79,37 @@ export class Goblin extends Entity {
         this.id = Goblin.nextId++;
 
         // Stats
-        if (this.type === 'hobgoblin') {
-            this.hp = 60 + Math.floor(Math.random() * 30); // Buffed HP
+        this.scale = 1.0;
+        this.isRanged = false;
+
+        if (this.type === 'king') {
+            // King: 2x Knight (Knight HP ~600 -> King 1200)
+            this.hp = 1200 + Math.floor(Math.random() * 200);
+            this.maxHp = this.hp;
+            this.lifespan = 200; // Long lived
+            this.damage = 200; // Knight * 2 (Knight 100)
+            this.scale = 1.8; // 1.5x Hobgoblin (1.2) = 1.8
+            this.attackRate = 1.5; // Slightly slower heavy hits
+        } else if (this.type === 'shaman') {
+            // Shaman: Knight HP (~600)
+            this.hp = 500 + Math.floor(Math.random() * 100);
+            this.maxHp = this.hp;
+            this.lifespan = 100;
+            this.damage = 80; // Wizard Dmg
+            this.scale = 1.2; // Same as Hob
+            this.isRanged = true; // Magic
+            this.attackRate = 2.0; // Slower cast
+        } else if (this.type === 'hobgoblin') {
+            this.hp = 60 + Math.floor(Math.random() * 30);
             this.maxHp = this.hp;
             this.lifespan = 80 + Math.random() * 40;
-            this.damage = 15; // Strong
+            this.damage = 15;
+            this.scale = 1.2;
         } else {
-            this.hp = 30 + Math.floor(Math.random() * 10); // Buffed HP (30-40)
+            this.hp = 30 + Math.floor(Math.random() * 10);
             this.maxHp = this.hp;
             this.lifespan = 30 + Math.random() * 20;
-            this.damage = 8; // Buffed Dmg (Worker has ~40HP -> 5 hits)
+            this.damage = 8;
         }
 
         this.age = 0;
@@ -91,7 +121,8 @@ export class Goblin extends Entity {
         this.targetUnit = null;
         this.targetBuilding = null;
         this.attackCooldown = 0;
-        this.attackRate = 1.0;
+        // this.attackRate set above or default
+        if (!this.attackRate) this.attackRate = 1.0;
 
         // RENDER STATE (Data Only)
         this.position = new THREE.Vector3(); // For smooth visual movement
@@ -123,6 +154,37 @@ export class Goblin extends Entity {
         this.terrain.registerEntity(this, this.gridX, this.gridZ, 'goblin');
     }
 
+    takeDamage(amount) {
+        this.hp -= amount;
+        if (this.hp <= 0) {
+            this.die();
+        }
+    }
+
+    die() {
+        if (this.isDead) return;
+        this.isDead = true;
+        this.terrain.unregisterEntity(this);
+
+        // Report death to Clan Memory?
+        if (this.clanId && window.goblinManager) {
+            // window.goblinManager.reportCasualty(this.clanId, this.gridX, this.gridZ); 
+            // (Not impl yet, optional)
+        }
+
+        this.createCross();
+        console.log(`Goblin (${this.type}) died. ID:${this.id}`);
+
+        // Drop Loot?
+        // King drops huge Mana?
+        if (this.type === 'king' && window.game) {
+            window.game.mana += 500;
+            console.log("King Defeated! +500 Mana");
+        }
+    }
+
+    // Attack Methods are defined below (lines ~760) to keep file structure clean.
+
     // REMOVED: createMesh, updateVisuals, updatePosition (visual part)
 
     updateLogic(time, deltaTime, units, buildings) {
@@ -146,15 +208,10 @@ export class Goblin extends Entity {
             this.updateMovement(time);
         }
 
-        // Attack Logic for Attack Animation?
         // If attacking, maybe swing arm?
         if (this.attackCooldown > 0) {
             this.attackCooldown -= deltaTime;
-            if (this.attackCooldown > (1.0 - 0.2)) { // During strike
-                this.limbs.rightArm.x = -Math.PI / 2; // Raised high? Or forward?
-                // Club is attached to right arm. 
-                // Simple strike anim: Lift and swing.
-            }
+            // Simple strike anim: Lift and swing.
         }
 
         // ... Existing AI Logic ...
@@ -262,8 +319,6 @@ export class Goblin extends Entity {
                     // console.log(`[GoblinAI] ${this.id} Waiting...`);
                 }
             }
-        } else {
-            // Visual logic moved
         }
     }
 
@@ -645,6 +700,14 @@ export class Goblin extends Entity {
         }
     }
 
+    attackTarget(time, deltaTime) {
+        if (this.targetUnit) {
+            this.attackUnit(this.targetUnit);
+        } else if (this.targetBuilding) {
+            this.attackBuilding(this.targetBuilding);
+        }
+    }
+
     attackUnit(unit) {
         if (this.attackCooldown > 0) return;
         if (unit.isDead) {
@@ -652,20 +715,39 @@ export class Goblin extends Entity {
             return;
         }
 
-        // Attack anim
-        this.limbs.rightArm.x = -Math.PI / 2; // Raise club
+        // Visuals
+        if (this.isRanged) {
+            // Shaman Staff Cast
+            this.limbs.rightArm.x = -Math.PI; // Raise
+            setTimeout(() => {
+                if (!this.isDead) this.limbs.rightArm.x = 0;
+            }, 500);
+
+            // Projectile (Blue Fireball)
+            if (window.game && window.game.spawnProjectile) {
+                const startPos = this.position.clone().add(new THREE.Vector3(0, 0.8 * this.scale, 0));
+                const targetPos = unit.position.clone().add(new THREE.Vector3(0, 0.5, 0)); // Chest
+                window.game.spawnProjectile(startPos, targetPos, 0x00FFFF);
+            }
+        } else {
+            // Melee
+            this.limbs.rightArm.x = -Math.PI / 2; // Raise club
+        }
 
         // Synced Damage
         setTimeout(() => {
-            this.limbs.rightArm.x = 0; // Swing
-            if (!unit.isDead && this.getDistance(unit.gridX, unit.gridZ) <= 2.0) { // Check range again
+            if (!this.isRanged) this.limbs.rightArm.x = 0; // Swing
+
+            // Range Check safety
+            const dist = this.getDistance(unit.gridX, unit.gridZ);
+            if (!unit.isDead && (this.isRanged || dist <= 2.5)) {
                 unit.takeDamage(this.damage);
                 console.log(`Goblin hit Unit! Dmg: ${this.damage} UnitHP: ${unit.hp}`);
 
                 if (unit.isDead) {
                     // Plunder Bonus!
                     if (window.game && window.game.goblinManager) {
-                        window.game.goblinManager.increasePlunder();
+                        window.goblinManager.increasePlunder();
                         // Record Memory
                         window.game.goblinManager.recordRaidLocation(this.clanId, unit.gridX, unit.gridZ);
                     }
@@ -679,11 +761,26 @@ export class Goblin extends Entity {
     attackBuilding(building) {
         if (this.attackCooldown > 0) return;
 
-        // Attack anim
-        this.limbs.rightArm.x = -Math.PI / 2;
-        setTimeout(() => {
-            this.limbs.rightArm.x = 0;
-        }, 200);
+        // Visuals
+        if (this.isRanged) {
+            this.limbs.rightArm.x = -Math.PI;
+            setTimeout(() => { if (!this.isDead) this.limbs.rightArm.x = 0; }, 500);
+
+            if (window.game && window.game.spawnProjectile) {
+                const startPos = this.position.clone().add(new THREE.Vector3(0, 0.8 * this.scale, 0));
+                // Fix: Convert Grid to World
+                const tx = this.terrain.gridToWorld(building.userData.gridX);
+                const tz = this.terrain.gridToWorld(building.userData.gridZ);
+                const targetPos = new THREE.Vector3(tx, building.y + 1, tz);
+
+                window.game.spawnProjectile(startPos, targetPos, 0x00FFFF);
+            }
+        } else {
+            this.limbs.rightArm.x = -Math.PI / 2;
+            setTimeout(() => {
+                this.limbs.rightArm.x = 0;
+            }, 200);
+        }
 
         // Damage building population
         if (building.userData.population === undefined) building.userData.population = 10;
@@ -692,13 +789,9 @@ export class Goblin extends Entity {
         const isFarm = (building.userData.type === 'farm');
 
         // Damage Logic
-        // Farm now uses HP (5). Others use Population.
         if (isFarm && building.userData.hp !== undefined) {
             // Damage HP
-            building.userData.hp -= 1; // 1 damage per hit? User said HP is 5.
-            // Goblin attack rate is 1/sec. So destroys in 5 sec.
-            // Previous damage was 25 vs growth. Now 1 vs 5 static.
-            // Let's use 1 damage. The user said "HP 5".
+            building.userData.hp -= 1;
             console.log(`Goblin hit Farm! HP: ${building.userData.hp}`);
 
             if (building.userData.hp <= 0) {
@@ -722,31 +815,28 @@ export class Goblin extends Entity {
         }
 
         // Fix: Check < 1.0 because Terrain update might adds fractional population (0.001)
-        // which prevents <= 0 check from passing even if displayed as 0.
         if (building.userData.population < 1.0) {
             this.destroyBuilding(building);
         }
 
-        // Record Memory on hit
-        if (window.game && window.game.goblinManager) {
-            window.game.goblinManager.recordRaidLocation(this.clanId, building.userData.gridX, building.userData.gridZ);
+        // Fix: Check < 1.0 because Terrain update might adds fractional population (0.001)
+        if (building.userData.population < 1.0) {
+            this.destroyBuilding(building);
         }
-
-        this.attackCooldown = this.attackRate;
     }
 
     destroyBuilding(building) {
-        // Instanced Rendering Update:
-        // Building is just a data object. Renderer handles visual removal.
-        // We just need to remove data.
-
+        if (!building) return;
         this.terrain.removeBuilding(building);
-        console.log("Building destroyed!");
+        console.log(`Goblin ${this.id} destroyed ${building.userData.type}!`);
 
         // Plunder Bonus
         if (window.game && window.game.goblinManager) {
             window.game.goblinManager.increasePlunder();
         }
+
+        // Reset Target
+        this.targetBuilding = null;
     }
 
     takeDamage(amount) {
@@ -937,7 +1027,6 @@ export class Goblin extends Entity {
         if (this.terrain.grid[x][z].hasBuilding) return false;
 
         // Rock check (Height > 8)
-        // Rock check (Height > 8)
         const h = this.terrain.getTileHeight(x, z);
         if (h > 8) return false; // Cannot build on Rock
         if (h <= 0) return false; // Cannot build on Water
@@ -968,6 +1057,23 @@ export class Goblin extends Entity {
             return true;
         }
         return false;
+    }
+
+    serialize() {
+        return {
+            id: this.id,
+            type: this.type,
+            gridX: this.gridX,
+            gridZ: this.gridZ,
+            hp: this.hp,
+            maxHp: this.maxHp,
+            clanId: this.clanId,
+            age: this.age,
+            lifespan: this.lifespan,
+            state: this.state,
+            migrationTarget: this.migrationTarget,
+            scale: this.scale // Save scale just in case
+        };
     }
 }
 

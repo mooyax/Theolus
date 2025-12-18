@@ -360,8 +360,21 @@ export class GoblinManager {
     }
 
     spawnGoblin(x, z, clanId = null) {
-        const isHob = Math.random() < 0.1; // 10% chance
-        const type = isHob ? 'hobgoblin' : 'normal';
+        const r = Math.random();
+        let type = 'normal';
+
+        if (r < 0.01) { // 1% King
+            type = 'king';
+            console.log("👑 Goblin King Spawned!");
+        } else if (r < 0.055) { // 4.5% Shaman (Half of Hob's 9%)
+            type = 'shaman';
+        } else if (r < 0.145) { // 9% Hobgoblin (Remaining)
+            // Note: Previous was 10%. User said "Shaman is half of Hob". 
+            // If I keep Hob at ~10%, Shaman ~5%.
+            type = 'hobgoblin';
+        }
+
+        // Create
         const goblin = new Goblin(this.scene, this.terrain, x, z, type, clanId);
         this.goblins.push(goblin);
 
@@ -369,7 +382,7 @@ export class GoblinManager {
             this.terrain.registerEntity(goblin, x, z, 'goblin');
         }
 
-        console.log(`Goblin spawned at ${x},${z} Clan:${clanId} `);
+        // console.log(`Goblin spawned at ${x},${z} Type:${type} Clan:${clanId} `);
     }
 
     increasePlunder() {
@@ -480,5 +493,107 @@ export class GoblinManager {
                 console.log(`Clan ${clanId} forgot raid location ${x},${z}`);
             }
         }
+    }
+
+    serialize() {
+        return {
+            plunderCount: this.plunderCount,
+            goblins: this.goblins.map(g => {
+                if (typeof g.serialize === 'function') {
+                    return g.serialize();
+                } else {
+                    console.warn(`Goblin ${g.id} missing serialize method! HMR issue?`);
+                    // Fallback manual serialization
+                    return {
+                        id: g.id,
+                        type: g.type,
+                        gridX: g.gridX,
+                        gridZ: g.gridZ,
+                        hp: g.hp,
+                        maxHp: g.maxHp,
+                        clanId: g.clanId,
+                        age: g.age || 0,
+                        lifespan: g.lifespan || 100,
+                        state: g.state || 'idle',
+                        migrationTarget: g.migrationTarget
+                    };
+                }
+            }),
+            caves: this.caves.map(c => ({
+                x: c.gridX,
+                z: c.gridZ,
+                spawnCooldown: c.spawnCooldown,
+                clanId: c.clanId
+            }))
+        };
+    }
+
+    deserialize(data) {
+        try {
+            if (!data) {
+                console.warn("GoblinManager: No data to deserialize");
+                return;
+            }
+            console.log("GoblinManager: Deserializing...", data);
+
+            this.plunderCount = data.plunderCount || 0;
+
+            // Restore Caves
+            this.caves = [];
+            if (data.caves) {
+                data.caves.forEach(cd => {
+                    const building = this.terrain.getBuildingAt(cd.x, cd.z);
+                    if (building && building.userData.type === 'cave') {
+                        this.caves.push({
+                            gridX: cd.x,
+                            gridZ: cd.z,
+                            mesh: new THREE.Group(),
+                            spawnCooldown: cd.spawnCooldown || 0,
+                            originalHeight: building.y,
+                            building: building,
+                            clanId: cd.clanId
+                        });
+                    }
+                });
+            }
+
+            // Restore Goblins
+            if (data.goblins && Array.isArray(data.goblins)) {
+                data.goblins.forEach(gd => {
+                    // Create Goblin
+                    const goblin = new Goblin(this.scene, this.terrain, gd.gridX, gd.gridZ, gd.type, gd.clanId);
+                    // Restore Stats
+                    goblin.id = gd.id;
+                    goblin.hp = gd.hp;
+                    goblin.maxHp = gd.maxHp;
+                    goblin.age = gd.age || 0;
+                    goblin.lifespan = gd.lifespan || 100;
+                    goblin.state = gd.state || 'idle';
+                    goblin.migrationTarget = gd.migrationTarget;
+                    if (gd.scale) goblin.scale = gd.scale;
+
+                    this.goblins.push(goblin);
+                    if (this.terrain.registerEntity) {
+                        this.terrain.registerEntity(goblin, gd.gridX, gd.gridZ, 'goblin');
+                    }
+                });
+                console.log(`GoblinManager: Restored ${this.goblins.length} goblins.`);
+            } else {
+                console.warn("GoblinManager: No goblins list in save data.");
+            }
+        } catch (e) {
+            console.error("GoblinManager Deserialize CRITICAL ERROR:", e);
+            alert("Goblin Load Error: " + e.message);
+        }
+    }
+
+    scanForCaves() {
+        // Fallback scan
+        const buildings = this.terrain.buildings || [];
+        buildings.forEach(b => {
+            if (b.userData.type === 'cave') {
+                this.registerCave(b);
+            }
+        });
     }
 }

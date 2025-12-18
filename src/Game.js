@@ -679,8 +679,19 @@ export class Game {
 
     claimRequest(unit, req) {
         if (!req || req.status !== 'pending') return false;
+
+        // Check if unit is capable
+        if (unit.role !== 'worker') return false; // Only workers
+
         req.status = 'assigned';
         req.assignedTo = unit.id;
+
+        // COMBAT CLEAR: Stop fighting to work
+        unit.targetGoblin = null;
+        unit.targetBuilding = null;
+        unit.action = 'Idle'; // Reset action to ensure smooth transition
+
+        // console.log(`[Game] Request ${req.id} assigned to Unit ${unit.id}`);
         return true;
     }
 
@@ -833,23 +844,65 @@ export class Game {
         }
     }
 
+    clearProjectiles() {
+        if (!this.projectiles) return;
+        console.log(`Clearing ${this.projectiles.length} projectiles...`);
+        for (const p of this.projectiles) {
+            if (p.mesh) {
+                this.scene.remove(p.mesh);
+                if (p.mesh.geometry) p.mesh.geometry.dispose();
+                // Material might be shared (markerMaterial), so don't dispose shared material
+                if (p.mesh.material && p.mesh.material !== this.markerMaterial) {
+                    p.mesh.material.dispose();
+                }
+            }
+        }
+        this.projectiles = [];
+    }
+
     // --- Projectile System ---
-    spawnProjectile(startPos, endPos) {
+    spawnProjectile(startPos, endPos, color = 0xFF4400) {
         // Shared Geometry (Sphere)
         if (!this.projectileGeo) this.projectileGeo = new THREE.SphereGeometry(0.3, 16, 16);
 
         // Material (Fireball Shader)
         const material = this.markerMaterial.clone();
-        material.uniforms.uColor.value.setHex(0xFF4400); // Orange-Red
+        material.uniforms.uColor.value.setHex(color); // Use passed color
 
         const mesh = new THREE.Mesh(this.projectileGeo, material);
         mesh.position.copy(startPos);
+
+        // MAP WRAPPING VISUAL FIX
+        // If dist > logicalWidth / 2, move target to be adjacent!
+        const logicalW = (this.terrain && this.terrain.logicalWidth) ? this.terrain.logicalWidth : 80;
+        const logicalD = (this.terrain && this.terrain.logicalDepth) ? this.terrain.logicalDepth : 80;
+
+        const dx = endPos.x - startPos.x;
+        const dz = endPos.z - startPos.z;
+
+        // If distance along axis > half map, wrap it
+        // Assumes World Coordinate ~ Grid Coordinate (centered usually, but let's check magnitude)
+        // Default scale is 1 unit = 1 tile? Yes.
+
+        const finalTarget = endPos.clone();
+
+        // Wrap X
+        if (Math.abs(dx) > logicalW / 2) {
+            if (dx > 0) finalTarget.x -= logicalW;
+            else finalTarget.x += logicalW;
+        }
+
+        // Wrap Z
+        if (Math.abs(dz) > logicalD / 2) {
+            if (dz > 0) finalTarget.z -= logicalD;
+            else finalTarget.z += logicalD;
+        }
 
         this.scene.add(mesh);
 
         this.projectiles.push({
             mesh: mesh,
-            target: endPos.clone(),
+            target: finalTarget,
             speed: 15.0, // Fast
             uTime: 0
         });
@@ -1203,6 +1256,7 @@ export class Game {
 
             terrain: this.terrain.serialize(),
             units: this.units.filter(u => !u.isDead).map(u => u.serialize()),
+            goblinManager: this.goblinManager ? this.goblinManager.serialize() : null,
             // Camera State
             camera: {
                 position: { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z },
@@ -1226,6 +1280,17 @@ export class Game {
 
         // Reset Systems
         if (this.goblinManager) this.goblinManager.reset();
+        this.clearProjectiles();
+
+        // Restore Goblins (After Terrain deserialization!)
+        // Terrain is restored below. We must wait for terrain to have buildings before linking caves.
+        // However, Terrain deserialization is synchronous?
+        // Let's verify standard flow.
+        // this.terrain.deserialize(saveData.terrain);
+
+        // So we should move Goblin deserialization AFTER Terrain deserialization.
+        // See line 1409 for Season restoration, then Terrain.
+
 
         this.resources = saveData.resources || { grain: 0, fish: 0, meat: 0 };
         this.gameTime = saveData.gameTime || 8;
@@ -1247,7 +1312,15 @@ export class Game {
             return false;
         }
 
-        if (this.goblinManager) this.goblinManager.scanForCaves();
+        if (this.goblinManager) {
+            if (saveData.goblinManager) {
+                this.goblinManager.deserialize(saveData.goblinManager);
+            } else {
+                console.warn("[Game.js] No goblinManager data found in save slot!");
+                // alert("Warning: No Goblin data found in this save file. (Did you save after the update?)");
+                this.goblinManager.scanForCaves();
+            }
+        }
 
         // Recreate units
         try {

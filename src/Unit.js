@@ -561,18 +561,37 @@ export class Unit extends Entity {
             // COMMITMENT LOGIC:
             const hasValidGoblin = this.targetGoblin && !this.targetGoblin.isDead;
             const hasValidBuilding = this.targetBuilding && this.targetBuilding.userData.hp > 0;
-            const isBusy = (this.action === 'Chasing' || this.action === 'Fighting' || this.action === 'Sieging' || this.action === 'Unstuck');
+            let isBusy = (this.action === 'Chasing' || this.action === 'Fighting' || this.action === 'Sieging' || this.action === 'Unstuck');
+
+            // WORKER PACIFISM
+            if (this.role === 'worker' && this.targetRequest) isBusy = true;
 
             this.scanTimer = (this.scanTimer || 0) + 1;
-            const forceScan = (this.scanTimer > 30); // Check every ~0.5s
 
-            if (!isBusy || (!hasValidGoblin && !hasValidBuilding) || forceScan) {
+            // Adaptive Scan Rate
+            // If we have a target, scan LESS frequently (every ~5s) to avoid jitter/indecision.
+            // If we have NO target, scan frequently (every ~0.5s) to find one fast.
+            let scanInterval = 30;
+            if (hasValidGoblin || hasValidBuilding) {
+                scanInterval = 300; // 5 seconds commitment
+            }
+
+            const forceScan = (this.scanTimer > scanInterval);
+
+            // Logic: Scan if Idle OR Invalid Target OR Force Scan... UNLESS Worker is Working
+            let shouldScan = (!isBusy || (!hasValidGoblin && !hasValidBuilding) || forceScan);
+            if (this.role === 'worker' && this.targetRequest) shouldScan = false;
+
+            if (shouldScan) {
                 if (forceScan) this.scanTimer = 0;
+
+                // Current Target Data for Hysteresis
+                const currentTargetId = this.targetGoblin ? this.targetGoblin.id :
+                    (this.targetBuilding ? this.targetBuilding.id : null);
 
                 // 1. Scan Goblins
                 if (goblins) {
                     const maxDist = (this.role === 'knight' || this.role === 'wizard') ? 50 : 15;
-                    const currentTargetId = this.targetGoblin ? this.targetGoblin.id : null;
 
                     for (const g of goblins) {
                         if (g.isDead) continue;
@@ -581,18 +600,18 @@ export class Unit extends Entity {
                         const d = this.getDistance(g.gridX, g.gridZ);
 
                         // Relaxed Range for Current Target (Stickiness)
-                        // Allow chasing further than initial acquisition range
                         let limit = maxDist;
                         if (g.id === currentTargetId) limit = maxDist * 2.0;
 
                         if (d > limit) continue;
 
                         const h = this.terrain.getTileHeight(g.gridX, g.gridZ);
-                        let score = d - 1000.0;
+                        let score = d - 1000.0; // Base priority for Goblins (High)
                         if (h > 8) score += 20;
 
-                        // Sticky Bonus
-                        if (g.id === currentTargetId) score -= 200.0;
+                        // Sticky Bonus (Huge hysteresis to prevent switching)
+                        // If this is our current target, artificially lower its score (make it better)
+                        if (g.id === currentTargetId) score -= 500.0;
 
                         if (score < bestScore) {
                             bestScore = score;
@@ -611,8 +630,13 @@ export class Unit extends Entity {
                             if (this.ignoredTargets.has(b.id)) continue;
                             const d = this.getDistance(b.gridX, b.gridZ);
                             if (d > range) continue;
-                            let score = d - 5.0;
-                            if (d < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 2000.0;
+
+                            let score = d - 5.0; // Lower priority than goblins (-1000)
+                            if (b.id === currentTargetId) score -= 500.0; // Sticky Bonus
+
+                            // Special logic: Don't hug caves if active goblins are nearby?
+                            if (d < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 2000.0; // Sieging Logic Override
+
                             if (score < bestScore) {
                                 bestScore = score;
                                 bestTarget = { type: 'building', obj: b };
@@ -622,8 +646,13 @@ export class Unit extends Entity {
                 }
 
                 // Apply Target
+                // Only switch if we found a significantly better one OR current is invalid
+                // But Hysteresis is already baked into score (-500 for current).
+                // So simple comparison is safe.
+
                 this.targetGoblin = null;
                 this.targetBuilding = null;
+
                 if (bestTarget) {
                     if (bestTarget.type === 'goblin') this.targetGoblin = bestTarget.obj;
                     else this.targetBuilding = bestTarget.obj;

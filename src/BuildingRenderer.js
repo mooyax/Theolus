@@ -119,8 +119,13 @@ export class BuildingRenderer {
         canvasT.width = 128; canvasT.height = 256;
         const ctxT = canvasT.getContext('2d');
 
+        const canvasTE = document.createElement('canvas');
+        canvasTE.width = 128; canvasTE.height = 256;
+        const ctxTE = canvasTE.getContext('2d');
+
         // T1. Base Stone (Darker Gray)
         ctxT.fillStyle = '#505050'; ctxT.fillRect(0, 0, 128, 256);
+        ctxTE.fillStyle = '#000000'; ctxTE.fillRect(0, 0, 128, 256); // Black Emissive Base
 
         // T2. Bricks (Smaller/Denser)
         ctxT.fillStyle = '#404040';
@@ -132,22 +137,30 @@ export class BuildingRenderer {
         }
 
         // T3. Windows (Arrow Slits) - Vertical and Narrow
-        // Place them at specific heights (e.g., 30%, 60%)
-        // Avoid top 10% (Rim)
-        ctxT.fillStyle = '#101010'; // Black hole
+        const drawTowerWindow = (x, y, w, h) => {
+            ctxT.fillStyle = '#101010'; // Black hole
+            ctxT.fillRect(x, y, w, h);
+
+            // Emissive Light (Warm White)
+            ctxTE.fillStyle = '#FFFFEE';
+            ctxTE.fillRect(x + 1, y + 1, w - 2, h - 2); // Slightly smaller for frame effect
+        };
+
         // Lower Tier
-        ctxT.fillRect(20, 80, 8, 24);
-        ctxT.fillRect(80, 80, 8, 24);
+        drawTowerWindow(20, 80, 6, 18);
+        drawTowerWindow(80, 80, 6, 18);
         // Upper Tier
-        ctxT.fillRect(50, 180, 8, 24);
-        ctxT.fillRect(110, 180, 8, 24);
+        drawTowerWindow(50, 180, 6, 18);
+        drawTowerWindow(110, 180, 6, 18);
 
         // Tower Material (New)
         this.assets.towerMat = new THREE.MeshLambertMaterial({
             ...matOptions,
             map: new THREE.CanvasTexture(canvasT),
+            emissiveMap: new THREE.CanvasTexture(canvasTE),
             color: 0xeeeeee,
-            emissive: 0x000000
+            emissive: 0x000000,
+            emissiveIntensity: 0.0
         });
 
         // Cap Material (Top/Bottom) - Plain Dark Stone
@@ -260,7 +273,7 @@ export class BuildingRenderer {
         });
 
         // Needed for updates
-        [this.assets.houseWallMat, this.assets.barracksMat].forEach(m => {
+        [this.assets.houseWallMat, this.assets.barracksMat, this.assets.towerMat].forEach(m => {
             if (m) { m.clippingPlanes = this.clippingPlanes; m.needsUpdate = true; }
         });
     }
@@ -452,6 +465,16 @@ export class BuildingRenderer {
             this.assets.houseWallMat.emissive.setHex(color);
             this.assets.houseWallMat.emissiveIntensity = intensity;
             this.assets.houseWallMat.needsUpdate = true;
+        }
+        if (this.assets.barracksMat) {
+            this.assets.barracksMat.emissive.setHex(color);
+            this.assets.barracksMat.emissiveIntensity = intensity;
+            this.assets.barracksMat.needsUpdate = true;
+        }
+        if (this.assets.towerMat) {
+            this.assets.towerMat.emissive.setHex(color);
+            this.assets.towerMat.emissiveIntensity = intensity;
+            this.assets.towerMat.needsUpdate = true;
         }
         if (this.assets.castleKeepMat) {
             this.assets.castleKeepMat.emissive.setHex(color);

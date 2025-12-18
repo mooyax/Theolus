@@ -705,6 +705,18 @@ export class Terrain {
         return 0;
     }
 
+    getBuildingAt(x, z) {
+        // Search buildings list for exact match
+        // Or check grid? Grid also has .building property
+        const lx = (Math.round(x) + this.logicalWidth) % this.logicalWidth;
+        const lz = (Math.round(z) + this.logicalDepth) % this.logicalDepth;
+
+        if (this.grid[lx] && this.grid[lx][lz] && this.grid[lx][lz].building) {
+            return this.grid[lx][lz].building;
+        }
+        return null; // or scan this.buildings if grid logic unreliable?
+    }
+
     // Helper for Visual Alignment
     getVisualOffset(localX, localY) {
         // Suppress visual distortion under buildings

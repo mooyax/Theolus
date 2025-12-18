@@ -66,6 +66,9 @@ export class GoblinRenderer {
         // 6. Club (Cylinder)
         this.clubMesh = createMesh(assets.geometries.club, assets.materials.club, this.MAX_INSTANCES);
 
+        // 7. Staff (Box - Shaman)
+        this.staffMesh = createMesh(assets.geometries.staff, assets.materials.staff, this.MAX_INSTANCES);
+
         // Colors Helper
         // We need to tint Skin and Clothes.
         // Materials in Goblin.js are pre-colored Lambert.
@@ -91,11 +94,12 @@ export class GoblinRenderer {
         let armCount = 0;
         let legCount = 0;
         let clubCount = 0;
+        let staffCount = 0;
 
         // Debug Log (Once per second roughly)
         const now = performance.now();
         if (!this.lastLog || now - this.lastLog > 2000) {
-            console.log(`[GoblinRenderer] Updating ${goblins.length} goblins. First pos: ${goblins[0] ? goblins[0].gridX : 'N/A'}`);
+            console.log(`[GoblinRenderer] Updating ${goblins.length} goblins.`);
             this.lastLog = now;
         }
 
@@ -114,8 +118,13 @@ export class GoblinRenderer {
         // Pre-defined Colors
         const colSkinNormal = new THREE.Color(0x55AA55);
         const colSkinHob = new THREE.Color(0x336633);
+        const colSkinShaman = new THREE.Color(0x008888);
+        const colSkinKing = new THREE.Color(0x880000);
+
         const colClothesNormal = new THREE.Color(0x8B4513);
         const colClothesHob = new THREE.Color(0x222222);
+        const colClothesShaman = new THREE.Color(0x330066);
+        const colClothesKing = new THREE.Color(0xFFD700);
 
         const offsets = [
             { x: 0, z: 0 },
@@ -128,34 +137,35 @@ export class GoblinRenderer {
         for (const g of goblins) {
             if (g.isDead || g.isFinished) continue;
 
+            // Determine Props
             const isHob = (g.type === 'hobgoblin');
-            const skinColor = isHob ? colSkinHob : colSkinNormal;
-            const clothesColor = isHob ? colClothesHob : colClothesNormal;
+            const isKing = (g.type === 'king');
+            const isShaman = (g.type === 'shaman');
+
+            let skinColor = colSkinNormal;
+            let clothesColor = colClothesNormal;
+
+            if (isHob) { skinColor = colSkinHob; clothesColor = colClothesHob; }
+            else if (isShaman) { skinColor = colSkinShaman; clothesColor = colClothesShaman; }
+            else if (isKing) { skinColor = colSkinKing; clothesColor = colClothesKing; }
+
+            // Scale (From logic, defaulting if missing)
+            let baseScale = g.scale || 1.0;
+            if (isHob && baseScale === 1.0) baseScale = 1.2; // Legacy fix
 
             // Base Position
             // Use smooth position if available, else snap to grid
             let vPos;
-            if (g.position && g.isMoving) { // Trust smooth pos
-                // Note: g.position is raw World Coord. 
-                // getVisualPosition adds centering logic? 
-                // Terrain.gridToWorld does simple offset.
-                // We need to ensure consistency.
-                // If getVisualPosition adds height offset? No, usually center of tile height.
+            if (g.position && g.isMoving) {
                 vPos = { x: g.position.x, y: g.position.y, z: g.position.z };
             } else {
                 vPos = this.terrain.getVisualPosition(g.gridX, g.gridZ, true);
             }
-            // vPos is the center of the tile.
 
             // ROBUST SMART CLONING (Same as UnitRenderer)
-            // Calculate which integer offsets (k) place the unit within the View Volume.
             const viewRadius = 90; // Safe margin
-            const logicalW = this.terrain.logicalWidth || 80;
-            const logicalD = this.terrain.logicalDepth || 80;
-
             const minKx = Math.floor((camera.position.x - viewRadius - vPos.x) / logicalW);
             const maxKx = Math.ceil((camera.position.x + viewRadius - vPos.x) / logicalW);
-
             const minKz = Math.floor((camera.position.z - viewRadius - vPos.z) / logicalD);
             const maxKz = Math.ceil((camera.position.z + viewRadius - vPos.z) / logicalD);
 
@@ -180,23 +190,12 @@ export class GoblinRenderer {
                     const posY = vPos.y; // Ground level
 
                     // Root Dummy (for positioning parts)
-                    // Note: parts have local offsets.
-
                     // 1. Torso
-                    // Offset: y=0.3
                     dummy.position.set(posX, posY + 0.3, posZ);
                     dummy.rotation.set(0, rotY, 0);
-                    // Scale for Hobgoblin?
-                    // Normal Torso: 0.25 width. Hob: 0.35 width. Ratio 1.4.
-                    // Also Hob mesh scale is 1.2 overall.
-                    // Combined: Hob Torso Width = 0.35 * 1.2? 
-                    // Wait, Goblin.js: "isHob? scale.set(1.2,1.2,1.2)".
-                    // And Torso Geo is separate.
-                    // Let's simplify: Scale the Instance Matrix.
-                    const baseScale = isHob ? 1.2 : 1.0;
-                    // Torso Geo difference: Normal (0.25), Hob (0.35). Ratio 1.4.
-                    const torsoScaleX = isHob ? 1.4 : 1.0;
 
+                    // Scale Logic
+                    const torsoScaleX = isHob ? 1.4 : 1.0; // Hob is wider
                     dummy.scale.set(baseScale * torsoScaleX, baseScale, baseScale);
                     dummy.updateMatrix();
 
@@ -204,11 +203,7 @@ export class GoblinRenderer {
                     this.torsoMesh.setColorAt(count, skinColor);
 
                     // 2. Head
-                    // Offset: y=0.55
-                    dummy.position.set(0, 0.25, 0); // Relative to Torso (0.3 -> 0.55)
-                    // Actually easier to set absolute from root
-                    dummy.position.set(posX, posY + 0.55, posZ); // Correct?
-                    // Rotation matches body
+                    dummy.position.set(posX, posY + 0.55, posZ); // Approx
                     dummy.rotation.set(0, rotY, 0);
                     dummy.scale.set(baseScale, baseScale, baseScale);
                     dummy.updateMatrix();
@@ -217,19 +212,10 @@ export class GoblinRenderer {
                     this.headMesh.setColorAt(count, skinColor);
 
                     // 3. Ears
-                    // Left Ear: 0.12, 0.55, 0. Rot Z -PI/2
-                    // We need to apply RotY first, then offset.
-                    // Parent logic simulation:
-                    // Head Center: (posX, posY+0.55, posZ) rotated rotY.
-                    // Ear Local: (+0.12, 0, 0) relative to head center? 
-                    // Wait, in Goblin.js: head is at 0.55. Ears at 0.55.
-                    // Relative X is +/- 0.12.
-
                     // Left Ear
-                    dummy.position.set(0.12 * baseScale, 0.55, 0); // Local Offset scaled
-                    dummy.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotY); // Rotate around origin
-                    dummy.position.add(new THREE.Vector3(posX, posY, posZ)); // Add Root
-
+                    dummy.position.set(0.12 * baseScale, 0.55, 0);
+                    dummy.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotY);
+                    dummy.position.add(new THREE.Vector3(posX, posY, posZ));
                     dummy.rotation.set(0, rotY, -Math.PI / 2);
                     dummy.scale.set(baseScale, baseScale, baseScale);
                     dummy.updateMatrix();
@@ -240,7 +226,6 @@ export class GoblinRenderer {
                     dummy.position.set(-0.12 * baseScale, 0.55, 0);
                     dummy.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotY);
                     dummy.position.add(new THREE.Vector3(posX, posY, posZ));
-
                     dummy.rotation.set(0, rotY, Math.PI / 2);
                     dummy.scale.set(baseScale, baseScale, baseScale);
                     dummy.updateMatrix();
@@ -248,12 +233,10 @@ export class GoblinRenderer {
                     this.earMesh.setColorAt(earCount - 1, skinColor);
 
                     // 4. Arms
-                    // Left Arm: 0.18, 0.3, 0.
+                    // Left Arm
                     dummy.position.set(0.18 * baseScale, 0.3, 0);
                     dummy.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotY);
                     dummy.position.add(new THREE.Vector3(posX, posY, posZ));
-
-                    // Arm Rotation: X=anim, Y=body
                     dummy.rotation.set(lArmRx, rotY, 0);
                     dummy.scale.set(baseScale, baseScale, baseScale);
                     dummy.updateMatrix();
@@ -264,71 +247,70 @@ export class GoblinRenderer {
                     dummy.position.set(-0.18 * baseScale, 0.3, 0);
                     dummy.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotY);
                     dummy.position.add(new THREE.Vector3(posX, posY, posZ));
-
                     dummy.rotation.set(rArmRx, rotY, 0);
                     dummy.scale.set(baseScale, baseScale, baseScale);
                     dummy.updateMatrix();
                     this.armMesh.setMatrixAt(armCount++, dummy.matrix);
                     this.armMesh.setColorAt(armCount - 1, skinColor);
 
-                    // Club (Right Arm Child)
-                    // Offset: 0, -0.15, 0.1 relative to Right Arm
-                    // Rotation: X=PI/2 relative to Right Arm
-                    {
-                        // Parent Matrix is current dummy.matrix (Right Arm)
-                        // We can multiply matrices or simpler: compute position manually
-                        // Right Arm Pos/Rot is set in dummy.
-                        // Club local: (0, -0.15, 0.1). 
-                        // Apply Arm Rotation (lArmRx, 0, 0) [Note: Y rotation handled by parent offset logic?]
-                        // Wait, dummy.rotation was (rArmRx, rotY, 0).
+                    // WEAPON (Linked to Right Arm Dummy)
+                    // The dummy currently holds Right Arm Position & Rotation.
+                    // We can reuse it.
 
-                        // Complex parenting for InstancedMesh can be tricky.
-                        // Let's do: Start at Arm Pos. Apply Local Offset rotated by Arm Rot.
-                        const armPos = dummy.position.clone();
-                        const armRot = dummy.rotation.clone(); // Euler
+                    if (isShaman) {
+                        // STAFF
+                        // Adjusted: 0.0 (Center of arm holds center of staff) was -0.3 (Too low)
+                        const staffOffset = new THREE.Vector3(0, 0.0, 0.1);
+                        staffOffset.applyEuler(dummy.rotation);
+                        const staffPos = dummy.position.clone().add(staffOffset);
 
+                        dummy.position.copy(staffPos);
+                        // Vertical Staff?
+                        // Arm is swinging X. Staff should ideally stay vertical-ish or follow arm?
+                        // If holding vertical staff, default rot is fine.
+                        // Let's match arm rot but with offset?
+                        // Or Just vertical relative to arm?
+                        // Simple: Match arm rot + 90 deg?
+                        dummy.rotation.set(rArmRx + Math.PI / 2, rotY, 0);
+                        dummy.scale.set(baseScale, baseScale, baseScale);
+                        dummy.updateMatrix();
+
+                        this.staffMesh.setMatrixAt(staffCount++, dummy.matrix);
+                        // Hide Club for this instance?
+                        // InstancedMesh index handling: We must skip index or set scale 0.
+                        // Better: Use `staffCount` and `clubCount` separately.
+                        // Each weapon has its own InstancedMesh.
+                        // We act as if we are adding to a list.
+                        // But wait, `clubMesh` and `staffMesh` are different Meshes.
+                        // So we just add to staffMesh here.
+                    } else {
+                        // CLUB (Normal / King / Hob)
                         const clubOffset = new THREE.Vector3(0, -0.15, 0.1);
-                        clubOffset.applyEuler(armRot); // Rotate offset by arm rotation
-
-                        const clubPos = armPos.clone().add(clubOffset);
+                        clubOffset.applyEuler(dummy.rotation);
+                        const clubPos = dummy.position.clone().add(clubOffset);
 
                         dummy.position.copy(clubPos);
-                        // Rotation: Arm Rot * Local Rot (X +90)
-                        // Simple approxim: ArmRX + PI/2 ?
-                        // Club is Cylinder along Y (default).
-                        // In Goblin.js: club.rotation.x = Math.PI / 2.
-                        // So relative to Arm, it is pitched 90.
                         dummy.rotation.set(rArmRx + Math.PI / 2, rotY, 0);
                         dummy.scale.set(baseScale, baseScale, baseScale);
                         dummy.updateMatrix();
                         this.clubMesh.setMatrixAt(clubCount++, dummy.matrix);
-                        // Club Color is fixed texture/mat? No, standard Lambert.
-                        // We use clubMesh material which is predefined. No setColorAt needed?
-                        // InstancedMesh supports color if material uses VertexColors.
-                        // Goblin.assets.materials.club is just brown.
-                        // We can reuse setColorAt if we want different club colors, otherwise logic is fine.
-                        // If we initialized clubMesh with clubMat, color is baked in material.
-                        // BUT InstancedMesh ignores material color if instanceColor is present?
-                        // Safe to not set color if we don't need variation.
                     }
 
                     // 5. Legs
-                    // Left Leg: 0.08, 0.12, 0. clothesColor
+                    // Left Leg
                     dummy.position.set(0.08 * baseScale, 0.12, 0);
                     dummy.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotY);
                     dummy.position.add(new THREE.Vector3(posX, posY, posZ));
-
-                    dummy.rotation.set(lLegRx, rotY, 0); // Anim
+                    dummy.rotation.set(lLegRx, rotY, 0);
                     dummy.scale.set(baseScale, baseScale, baseScale);
                     dummy.updateMatrix();
                     this.legMesh.setMatrixAt(legCount++, dummy.matrix);
                     this.legMesh.setColorAt(legCount - 1, clothesColor);
 
-                    // Right Leg: -0.08, 0.12, 0
+                    // Right Leg
                     dummy.position.set(-0.08 * baseScale, 0.12, 0);
                     dummy.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotY);
                     dummy.position.add(new THREE.Vector3(posX, posY, posZ));
-
                     dummy.rotation.set(rLegRx, rotY, 0);
                     dummy.scale.set(baseScale, baseScale, baseScale);
                     dummy.updateMatrix();
@@ -346,6 +328,7 @@ export class GoblinRenderer {
         this.armMesh.count = armCount;
         this.legMesh.count = legCount;
         this.clubMesh.count = clubCount;
+        this.staffMesh.count = staffCount;
 
         // Commit
         this.torsoMesh.instanceMatrix.needsUpdate = true;
@@ -359,5 +342,6 @@ export class GoblinRenderer {
         this.legMesh.instanceMatrix.needsUpdate = true;
         this.legMesh.instanceColor.needsUpdate = true;
         this.clubMesh.instanceMatrix.needsUpdate = true;
+        this.staffMesh.instanceMatrix.needsUpdate = true;
     }
 }
