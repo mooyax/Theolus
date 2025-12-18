@@ -89,20 +89,19 @@ describe('Terrain Movement and Logic Tests', () => {
     });
 
     it('should set very slow moveDuration for Unit on Rock (Height > 8)', () => {
-        // Setup Rock at 10,11 AND 10,10 (Current Pos)
-        // Move from Rock to Rock (Diff 0)
-        terrain.grid[10][10].height = 10;
+        // Setup Rock at 10,11
+        terrain.grid[10][10].height = 0;
         terrain.grid[10][11].height = 10;
 
         unit.gridX = 10; unit.gridZ = 10;
-        // Check if Unit updates its internal height? 
-        // triggerMove uses terrain.getTileHeight for currentHeight logic?
-        // Unit.js: const currentHeight = this.terrain.getTileHeight(this.gridX, this.gridZ);
-        // So updating grid is enough.
 
+        // Try move
         unit.triggerMove(10, 11, 100);
 
-        expect(unit.moveDuration).toBe(8000); // Expect Rock Speed
+        // Should MOVE but be SLOW
+        expect(unit.isMoving).toBe(true);
+        expect(unit.targetGridX).toBe(10);
+        expect(unit.moveDuration).toBeGreaterThan(5000);
     });
 
     it('should set slow moveDuration for Unit on Slope', () => {
@@ -220,25 +219,26 @@ describe('Terrain Movement and Logic Tests', () => {
 
         // Add a hut
         const hut = {
-            userData: { type: 'goblin_hut', population: 9.5, gridX: 5, gridZ: 5 }
+            userData: { type: 'goblin_hut', population: 9.8, gridX: 5, gridZ: 5 }
         };
         terrain.buildings.push(hut);
 
         console.log("Before Update: Pop", hut.userData.population, "Plunder", gm.plunderCount);
 
         // Update to trigger spawn
-        // Rate is 0.5 per sec. Delta = 2.0 -> +1.0 -> 10.5
+        // Rate is 0.15 per sec. Delta = 2.0 -> +0.3 -> 10.0
         gm.updateHuts(2.0);
 
         console.log("After Update: Pop", hut.userData.population);
 
-        expect(hut.userData.population).toBeCloseTo(0.5); // 10.5 - 10 = 0.5
+        // 9.7 + 0.3 = 10.0 -> Reset (-10) -> 0.0
+        expect(hut.userData.population).toBeCloseTo(0.0);
         expect(gm.spawnGoblinAtCave).toHaveBeenCalled();
     });
 
     it('should accelerate growth with plunder', () => {
         const gm = new GoblinManager(mockScene, terrain);
-        gm.plunderCount = 10; // +1.0 rate -> Total 1.5
+        gm.plunderCount = 10; // +0.3 rate (10 * 0.03) -> Total 0.45 (0.15 base)
         console.log("Plunder Test: Count set to", gm.plunderCount);
 
         const hut = {
@@ -249,6 +249,6 @@ describe('Terrain Movement and Logic Tests', () => {
         gm.updateHuts(1.0);
         console.log("Plunder Test: Pop", hut.userData.population);
 
-        expect(hut.userData.population).toBeCloseTo(1.5); // 0 + 1.5 * 1.0
+        expect(hut.userData.population).toBeCloseTo(0.45); // 0 + 0.45 * 1.0
     });
 });

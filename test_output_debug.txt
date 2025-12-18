@@ -1,0 +1,68 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/UnitFreezeFix.test.js[2m > [22m[2mUnit Freeze & Migration Fixes[2m > [22m[2mshould trigger walking migration when stuck (Stagnation)
+[22m[39mUnit test-unit-1 migrating to 77,52 (Walking)
+
+stderr | src/tests/UnitFreezeFix.test.js > Unit Freeze & Migration Fixes > should reset if stuck physically (Watchdog)
+UpdateMovement Error: TypeError: Cannot read properties of undefined (reading 'grain')
+    at Unit.tryBuildStructure (C:/Users/mooya/develop/test/src/Unit.js:1415:58)
+    at Unit.updateMovement (C:/Users/mooya/develop/test/src/Unit.js:889:36)
+    at Unit.updateLogic (C:/Users/mooya/develop/test/src/Unit.js:357:18)
+    at C:/Users/mooya/develop/test/src/tests/UnitFreezeFix.test.js:122:14
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1650:37
+
+ [31m笶ｯ[39m src/tests/UnitFreezeFix.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 74[2mms[22m[39m
+     [32m笨・[39m should trigger walking migration when stuck (Stagnation)[32m 23[2mms[22m[39m
+[31m     [31mﾃ・[31m should walk continuously during migration[39m[32m 12[2mms[22m[39m
+[31m     [31mﾃ・[31m should reset if stuck physically (Watchdog)[39m[32m 34[2mms[22m[39m
+     [32m笨・[39m should not throw error if window.game is missing (Safety check)[32m 3[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/UnitFreezeFix.test.js > Unit Freeze & Migration Fixes > should walk continuously during migration
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ 笶ｯ src/tests/UnitFreezeFix.test.js:106:31
+    104|         unit.updateMovement(2500); // Finishes move
+    105| 
+    106|         expect(unit.isMoving).toBe(false);
+       |                               ^
+    107|         // Position should have updated
+    108|         expect(unit.gridX).not.toBe(50); // Moved one step
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/UnitFreezeFix.test.js > Unit Freeze & Migration Fixes > should reset if stuck physically (Watchdog)
+AssertionError: expected 'Moving' to be 'Idle' // Object.is equality
+
+Expected: "Idle"
+Received: "Moving"
+
+ 笶ｯ src/tests/UnitFreezeFix.test.js:125:29
+    123| 
+    124|         // Should reset
+    125|         expect(unit.action).toBe('Idle');
+       |                             ^
+    126|         expect(unit.isMoving).toBe(true); // Triggers random nudge move
+    127|         expect(unit.moveStuckTimer).toBe(0);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 17:57:51
+[2m   Duration [22m 413ms[2m (transform 72ms, setup 0ms, import 136ms, tests 74ms, environment 0ms)[22m
+

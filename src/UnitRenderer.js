@@ -44,11 +44,17 @@ export class UnitRenderer {
         this.torsoMesh.frustumCulled = false; // We handle culling manually
         this.scene.add(this.torsoMesh);
 
-        // 2. Head
-        this.headMesh = new THREE.InstancedMesh(Unit.assets.geometries.head, this.headMaterials, this.maxInstances);
+        // 2. Head (Hair/Helmet Volume)
+        this.headMesh = new THREE.InstancedMesh(Unit.assets.geometries.head, Unit.assets.materials.hair, this.maxInstances);
         this.headMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
         this.headMesh.frustumCulled = false;
         this.scene.add(this.headMesh);
+
+        // 2.5 Face (Plane Overlay)
+        this.faceMesh = new THREE.InstancedMesh(Unit.assets.geometries.facePlane, Unit.assets.materials.face, this.maxInstances);
+        this.faceMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        this.faceMesh.frustumCulled = false;
+        this.scene.add(this.faceMesh);
 
         // 3. Left Arm
         this.leftArmMesh = new THREE.InstancedMesh(Unit.assets.geometries.limb, this.skinMaterial, this.maxInstances);
@@ -113,7 +119,14 @@ export class UnitRenderer {
     }
 
     update(units, frustum, camera) {
-        if (!Unit.assets.initialized) return;
+        if (!camera) return;
+
+        if (!Unit.assets.initialized) {
+            // throw new Error("UnitRenderer: Assets not initialized");
+            // Just return for now, but log?
+            console.error("UR: Assets Missing");
+            return;
+        }
 
         let count = 0;
         let swordCount = 0;
@@ -136,8 +149,9 @@ export class UnitRenderer {
             // console.log(`UnitRenderer: Total Units: ${units.length}`);
         }
 
-        const colorNormal = new THREE.Color(0x8B4513);
-        const colorSpecial = new THREE.Color(0x0000FF);
+        const colorNormal = new THREE.Color(0x654321); // Dark Brown (Restored)
+        const colorHair = new THREE.Color(0xD4AF37);   // Golden/Blonde
+        const colorSpecial = new THREE.Color(0x00008B); // Dark Blue (Darkened from 0x0000FF)
         const colorKnight = new THREE.Color(0xAAAAAA); // Silver
         const colorWizard = new THREE.Color(0x440088); // Purple
         const colorSkin = new THREE.Color(0xffccaa); // Match skin material
@@ -147,184 +161,225 @@ export class UnitRenderer {
             if (unit.isSleeping) continue;
             if (!unit.position) continue; // Safety if unit refactor incomplete
 
-            // Determine offsets (Clone Logic)
-            // Was: const nearEdgeX = ...
-            // Fix: Always loop 9 times to ensure clones are visible in infinite scroll.
-            // Frustum culling (L137) will prevents performance drop for off-screen clones.
-            const loopCount = 9;
+            // Determine Color
             let clothesColor = colorNormal;
-            if (unit.isSpecial) clothesColor = colorSpecial;
             if (unit.role === 'knight') clothesColor = colorKnight;
-            if (unit.role === 'wizard') clothesColor = colorWizard;
+            else if (unit.role === 'wizard') clothesColor = colorWizard;
+            else if (unit.role === 'fisher') clothesColor = colorSpecial; // Blue
+            else if (unit.role === 'hunter') clothesColor = new THREE.Color(0x006400); // Dark Green (Darkened from 0x228B22)
+            else if (unit.role === 'worker') {
+                if (unit.isSpecial) clothesColor = new THREE.Color(0x8B0000); // Special: Dark Red (Darkened from 0xFF3333)
+                else clothesColor = colorNormal; // Normal: Dark Brown (Clothes)
+            }
 
-            for (let i = 0; i < loopCount; i++) {
-                if (count >= this.maxInstances) break;
+            // ... (Skipping cloning logic for replacement block context) ...
 
-                let osx = 0;
-                let osz = 0;
+            // ... (Skipping loop context) ...
 
-                if (i > 0) {
-                    const off = this._neighborOffsets[i - 1];
-                    osx = off.x;
-                    osz = off.z;
-                }
 
-                // Apply Base Shift
-                osx += baseGridX;
-                osz += baseGridZ;
 
-                // Base Position with Offset
-                const posX = unit.position.x + osx * logicalW;
-                const posZ = unit.position.z + osz * logicalD;
-                const posY = unit.position.y;
-                const rotY = unit.rotationY;
+            // ROBUST SMART CLONING
+            // Calculate which integer offsets (k) place the unit within the View Volume.
+            // Formula: Camera - Radius <= Unit + k*W <= Camera + Radius
+            // k*W >= Camera - Radius - Unit
+            // k >= (Camera - Radius - Unit) / W
+            // And k <= (Camera + Radius - Unit) / W
 
-                // FRUSTUM CULLING (Allocation Free)
-                if (frustum) {
-                    this._scratchVector.set(posX, posY + 0.5, posZ);
-                    this._scratchSphere.center.copy(this._scratchVector);
-                    if (!frustum.intersectsSphere(this._scratchSphere)) continue;
-                }
+            const viewRadius = 90; // Safe margin (Screen width + Buffer)
 
-                // 1. Torso (Body)
-                // Cute Geo: Translated 0.3. 
-                // Place Dummy at Base (0) -> Visual: 0.125 to 0.475
-                this.dummy.position.set(posX, posY, posZ);
-                this.dummy.rotation.set(0, rotY, 0);
-                this.dummy.scale.set(1, 1, 1);
-                this.dummy.updateMatrix();
-                this.torsoMesh.setMatrixAt(count, this.dummy.matrix);
-                this.torsoMesh.setColorAt(count, clothesColor);
+            const minKx = Math.floor((camera.position.x - viewRadius - unit.position.x) / logicalW);
+            const maxKx = Math.ceil((camera.position.x + viewRadius - unit.position.x) / logicalW);
 
-                // 2. Head
-                // Cute Geo: Translated 0.6.
-                // Place Dummy at Base (0) -> Visual: 0.475 to 0.725
-                this.dummy.position.set(posX, posY, posZ);
-                this.dummy.rotation.set(0, rotY, 0);
-                this.dummy.updateMatrix();
-                this.headMesh.setMatrixAt(count, this.dummy.matrix);
+            const minKz = Math.floor((camera.position.z - viewRadius - unit.position.z) / logicalD);
+            const maxKz = Math.ceil((camera.position.z + viewRadius - unit.position.z) / logicalD);
 
-                // 3. Left Arm
-                // Shoulder Height: ~0.45 (Near top of body)
-                // Offset X: 0.18 (Body width 0.3 -> half 0.15. Arm just outside)
-                this.dummy.position.set(0.18, 0.45, 0);
-                this.dummy.position.applyAxisAngle(this._up, rotY);
-                this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
+            // Safety Clamp (prevent huge loops if math goes wild nearby very far coordinates)
+            // Usually max - min is 0 or 1.
 
-                this.dummy.rotation.set(unit.limbs.leftArm.x, rotY, 0);
-                this.dummy.updateMatrix();
-                this.leftArmMesh.setMatrixAt(count, this.dummy.matrix);
-                this.leftArmMesh.setColorAt(count, colorSkin);
+            for (let kx = minKx; kx <= maxKx; kx++) {
+                for (let kz = minKz; kz <= maxKz; kz++) {
+                    if (count >= this.maxInstances) break;
 
-                // 4. Right Arm
-                this.dummy.position.set(-0.18, 0.45, 0);
-                this.dummy.position.applyAxisAngle(this._up, rotY);
-                this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
+                    const osx = kx;
+                    const osz = kz;
+                    // Proceed to render...
 
-                this.dummy.rotation.set(unit.limbs.rightArm.x, rotY, 0);
-                this.dummy.updateMatrix();
-                this.rightArmMesh.setMatrixAt(count, this.dummy.matrix);
-                this.rightArmMesh.setColorAt(count, colorSkin);
+                    // Base Position with Offset
+                    const posX = unit.position.x + osx * logicalW;
+                    const posZ = unit.position.z + osz * logicalD;
+                    const posY = unit.position.y;
+                    const rotY = unit.rotationY;
 
-                // 5. Left Leg
-                // Hip Height: ~0.25 (Legs hang down from here)
-                // Offset X: 0.08
-                this.dummy.position.set(0.08, 0.25, 0);
-                this.dummy.position.applyAxisAngle(this._up, rotY);
-                this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
+                    // 1. Torso (Body)
+                    // Cute Geo: Translated 0.3. 
+                    // Place Dummy at Base (0) -> Visual: 0.125 to 0.475
+                    this.dummy.position.set(posX, posY, posZ);
+                    this.dummy.rotation.set(0, rotY, 0);
+                    this.dummy.scale.set(1, 1, 1);
+                    this.dummy.updateMatrix();
+                    this.torsoMesh.setMatrixAt(count, this.dummy.matrix);
+                    this.torsoMesh.setColorAt(count, clothesColor);
 
-                this.dummy.rotation.set(unit.limbs.leftLeg.x, rotY, 0);
-                this.dummy.updateMatrix();
-                this.leftLegMesh.setMatrixAt(count, this.dummy.matrix);
-                this.leftLegMesh.setColorAt(count, clothesColor);
+                    // 2. Head
+                    // Cute Geo: Translated 0.6.
+                    // Place Dummy at Base (0) -> Visual: 0.475 to 0.725
+                    this.dummy.position.set(posX, posY, posZ);
+                    this.dummy.rotation.set(0, rotY, 0);
+                    this.dummy.scale.set(1, 1, 1);
 
-                // 6. Right Leg
-                this.dummy.position.set(-0.08, 0.25, 0);
-                this.dummy.position.applyAxisAngle(this._up, rotY);
-                this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
+                    // Wizard Design Adjustment (User Request)
+                    if (unit.role === 'wizard') {
+                        // Half Height Head
+                        this.dummy.scale.set(1, 0.5, 1);
+                        // Correct Position:
+                        // Original Geo Center y=0.6. Scaled becomes 0.3.
+                        // We want bottom to match neck (~0.475). 
+                        // New Height is 0.125 (was 0.25). 
+                        // Base of head at 0.3 - 0.0625 = 0.2375.
+                        // We need base at 0.475. Difference = +0.2375.
+                        this.dummy.position.y += 0.2375;
+                    }
 
-                this.dummy.rotation.set(unit.limbs.rightLeg.x, rotY, 0);
-                this.dummy.updateMatrix();
-                this.rightLegMesh.setMatrixAt(count, this.dummy.matrix);
-                this.rightLegMesh.setColorAt(count, clothesColor);
+                    this.dummy.updateMatrix();
 
-                // --- Accessories Rendering ---
+                    // Head Mesh (Hair/Helmet)
+                    this.headMesh.setMatrixAt(count, this.dummy.matrix);
 
-                // Knight Sword
-                if (unit.role === 'knight') {
-                    // Attach to Right Arm
-                    // Re-calculate Right Arm pos
-                    this.dummy.position.set(-0.18, 0.45, 0); // Shoulder
+                    // Face Overlay matches Head Transform
+                    this.faceMesh.setMatrixAt(count, this.dummy.matrix);
+
+                    // Knight Helmet (Tint Head Box ONLY)
+                    if (unit.role === 'knight') {
+                        this.headMesh.setColorAt(count, clothesColor); // Silver Body Color
+                    } else {
+                        // Normal Hair Color (Use explicit colorHair)
+                        this.headMesh.setColorAt(count, colorHair);
+                    }
+
+                    // Face Material is separate -> No Tint (White)
+                    this.faceMesh.setColorAt(count, new THREE.Color(0xFFFFFF));
+
+                    // 3. Left Arm
+                    // Shoulder Height: ~0.45 (Near top of body)
+                    // Offset X: 0.18 (Body width 0.3 -> half 0.15. Arm just outside)
+                    this.dummy.position.set(0.18, 0.45, 0);
                     this.dummy.position.applyAxisAngle(this._up, rotY);
                     this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
 
-                    // Rotation should follow arm but maybe angled out?
-                    // Arm rot is (unit.limbs.rightArm.x, rotY, 0)
-                    // We want sword to stick out or be held.
-                    // Simple: Match arm rotation + offset to be in "hand"
-                    this.dummy.rotation.set(unit.limbs.rightArm.x + Math.PI / 2, rotY, 0); // Point forward?
-                    // Actually swordGeo handles at bottom (0.25 up). 
-                    // If arm is down (0), sword points forward? No, if arm down, sword down.
-                    // If arm x=0, sword points down?
-                    // BoxGeo defaults Y aligned.
-                    // Let's try matching arm X.
-                    this.dummy.rotation.set(unit.limbs.rightArm.x, rotY, 0);
-
-                    // Offset to Hand (Arm length 0.25, origin at top. Hand is at -0.25 local Y?)
-                    // Arm Geo origin is top (-0.1 y translate). Length 0.25. 
-                    // Hand is roughly -0.2 y local.
-                    this.dummy.translateY(-0.25);
-                    // Rotate sword to point forward/up?
-                    this.dummy.rotateX(-Math.PI / 2); // Point forward relative to arm?
-
+                    this.dummy.rotation.set(unit.limbs.leftArm.x, rotY, 0);
                     this.dummy.updateMatrix();
-                    this.swordMesh.setMatrixAt(swordCount, this.dummy.matrix);
-                    swordCount++;
-                }
+                    this.leftArmMesh.setMatrixAt(count, this.dummy.matrix);
+                    this.leftArmMesh.setColorAt(count, colorSkin);
 
-                // Wizard Staff
-                if (unit.role === 'wizard') {
-                    // Right Arm
+                    // 4. Right Arm
                     this.dummy.position.set(-0.18, 0.45, 0);
                     this.dummy.position.applyAxisAngle(this._up, rotY);
                     this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
 
                     this.dummy.rotation.set(unit.limbs.rightArm.x, rotY, 0);
-                    this.dummy.translateY(-0.25); // Hand
-                    // Staff is held upright?
-                    // Staff Geo center held.
-                    this.dummy.rotateX(-Math.PI / 2); // Vertical relative to ground? 
-                    // If Arm is swinging, Staff swings.
-                    // Let's just match arm rotation but offset angle.
-
                     this.dummy.updateMatrix();
-                    this.staffMesh.setMatrixAt(staffCount, this.dummy.matrix);
-                    this.staffMesh.setColorAt(staffCount, Unit.assets.materials.wood.color); // Force wood color?
-                    staffCount++;
+                    this.rightArmMesh.setMatrixAt(count, this.dummy.matrix);
+                    this.rightArmMesh.setColorAt(count, colorSkin);
 
-                    // Hat on Head
-                    // Head pos: 0, 0.6, 0 (Base) -> Visual 0.6.
-                    this.dummy.position.set(posX, posY + 0.6 + 0.15, posZ); // Sit on top of head (0.25 size)
-                    this.dummy.rotation.set(0, rotY, 0);
-                    this.dummy.scale.set(1, 1, 1);
+                    // 5. Left Leg
+                    // Hip Height: ~0.25 (Legs hang down from here)
+                    // Offset X: 0.08
+                    this.dummy.position.set(0.08, 0.25, 0);
+                    this.dummy.position.applyAxisAngle(this._up, rotY);
+                    this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
+
+                    this.dummy.rotation.set(unit.limbs.leftLeg.x, rotY, 0);
                     this.dummy.updateMatrix();
+                    this.leftLegMesh.setMatrixAt(count, this.dummy.matrix);
+                    this.leftLegMesh.setColorAt(count, clothesColor);
 
-                    this.hatMesh.setMatrixAt(hatCount, this.dummy.matrix);
-                    this.hatBrimMesh.setMatrixAt(hatCount, this.dummy.matrix);
-                    hatCount++;
+                    // 6. Right Leg
+                    this.dummy.position.set(-0.08, 0.25, 0);
+                    this.dummy.position.applyAxisAngle(this._up, rotY);
+                    this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
+
+                    this.dummy.rotation.set(unit.limbs.rightLeg.x, rotY, 0);
+                    this.dummy.updateMatrix();
+                    this.rightLegMesh.setMatrixAt(count, this.dummy.matrix);
+                    this.rightLegMesh.setColorAt(count, clothesColor);
+
+                    // --- Accessories Rendering ---
+
+                    // Knight Sword
+                    if (unit.role === 'knight') {
+                        // Attach to Right Arm
+                        // Re-calculate Right Arm pos
+                        this.dummy.position.set(-0.18, 0.45, 0); // Shoulder
+                        this.dummy.position.applyAxisAngle(this._up, rotY);
+                        this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
+
+                        // Rotation should follow arm but maybe angled out?
+                        // Arm rot is (unit.limbs.rightArm.x, rotY, 0)
+                        // We want sword to stick out or be held.
+                        // Simple: Match arm rotation + offset to be in "hand"
+                        this.dummy.rotation.set(unit.limbs.rightArm.x + Math.PI / 2, rotY, 0); // Point forward?
+                        // Actually swordGeo handles at bottom (0.25 up). 
+                        // If arm is down (0), sword points forward? No, if arm down, sword down.
+                        // If arm x=0, sword points down?
+                        // BoxGeo defaults Y aligned.
+                        // Let's try matching arm X.
+                        this.dummy.rotation.set(unit.limbs.rightArm.x, rotY, 0);
+
+                        // Offset to Hand (Arm length 0.25, origin at top. Hand is at -0.25 local Y?)
+                        // Arm Geo origin is top (-0.1 y translate). Length 0.25. 
+                        // Hand is roughly -0.2 y local.
+                        this.dummy.translateY(-0.25);
+                        // Rotate sword to point forward/up?
+                        this.dummy.rotateX(Math.PI / 2); // Point forward relative to arm?
+
+                        this.dummy.updateMatrix();
+                        this.swordMesh.setMatrixAt(swordCount, this.dummy.matrix);
+                        swordCount++;
+                    }
+
+                    // Wizard Staff
+                    if (unit.role === 'wizard') {
+                        // Right Arm
+                        this.dummy.position.set(-0.18, 0.45, 0);
+                        this.dummy.position.applyAxisAngle(this._up, rotY);
+                        this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
+
+                        this.dummy.rotation.set(unit.limbs.rightArm.x, rotY, 0);
+                        this.dummy.translateY(-0.25); // Hand
+                        // Staff is held upright?
+                        // Staff Geo center held.
+                        this.dummy.rotateX(Math.PI / 2); // Point forward
+
+                        this.dummy.updateMatrix();
+                        this.staffMesh.setMatrixAt(staffCount, this.dummy.matrix);
+                        this.staffMesh.setColorAt(staffCount, Unit.assets.materials.wood.color); // Force wood color?
+                        staffCount++;
+
+                        // Hat on Head
+                        // Head pos: 0, 0.6, 0 (Base) -> Visual 0.6.
+                        // Wizard Head Scaled 0.5 -> Top is at 0.6 relative to ground (was 0.725)
+                        const hatYOffset = (unit.role === 'wizard') ? (0.625) : (0.75);
+                        this.dummy.position.set(posX, posY + hatYOffset, posZ); // Sit on top of head
+                        this.dummy.rotation.set(0, rotY, 0);
+                        this.dummy.scale.set(1, 1, 1);
+                        this.dummy.updateMatrix();
+
+                        this.hatMesh.setMatrixAt(hatCount, this.dummy.matrix);
+                        this.hatBrimMesh.setMatrixAt(hatCount, this.dummy.matrix);
+                        hatCount++;
+                    }
+
+                    count++;
                 }
-
-                count++;
             }
         }
 
         // Update Counts
-        // Update Counts
         this.torsoMesh.count = count;
         this.headMesh.count = count;
+        this.faceMesh.count = count;
         this.leftArmMesh.count = count;
         this.rightArmMesh.count = count;
-        this.leftLegMesh.count = count;
         this.leftLegMesh.count = count;
         this.rightLegMesh.count = count;
 
@@ -337,22 +392,28 @@ export class UnitRenderer {
         // We handle culling manually above
         this.torsoMesh.frustumCulled = false;
         this.headMesh.frustumCulled = false;
+        this.faceMesh.frustumCulled = false;
         this.leftArmMesh.frustumCulled = false;
         this.rightArmMesh.frustumCulled = false;
         this.leftLegMesh.frustumCulled = false;
         this.rightLegMesh.frustumCulled = false;
-        this.rightArmMesh.count = count;
-        this.leftLegMesh.count = count;
-        this.rightLegMesh.count = count;
+
+        // Mark all instance matrices as needing update
+        if (this.torsoMesh.instanceColor) this.torsoMesh.instanceColor.needsUpdate = true;
+        if (this.headMesh.instanceColor) this.headMesh.instanceColor.needsUpdate = true;
+        if (this.faceMesh.instanceColor) this.faceMesh.instanceColor.needsUpdate = true;
+
         if (this.leftLegMesh.instanceColor) this.leftLegMesh.instanceColor.needsUpdate = true;
         if (this.rightLegMesh.instanceColor) this.rightLegMesh.instanceColor.needsUpdate = true;
         if (this.leftArmMesh.instanceColor) this.leftArmMesh.instanceColor.needsUpdate = true;
         if (this.rightArmMesh.instanceColor) this.rightArmMesh.instanceColor.needsUpdate = true;
 
+        if (this.staffMesh.instanceColor) this.staffMesh.instanceColor.needsUpdate = true;
+
         // Commit Updates
         this.torsoMesh.instanceMatrix.needsUpdate = true;
-        if (this.torsoMesh.instanceColor) this.torsoMesh.instanceColor.needsUpdate = true;
         this.headMesh.instanceMatrix.needsUpdate = true;
+        this.faceMesh.instanceMatrix.needsUpdate = true;
         this.leftArmMesh.instanceMatrix.needsUpdate = true;
         this.rightArmMesh.instanceMatrix.needsUpdate = true;
         this.leftLegMesh.instanceMatrix.needsUpdate = true;
@@ -360,7 +421,6 @@ export class UnitRenderer {
 
         this.swordMesh.instanceMatrix.needsUpdate = true;
         this.staffMesh.instanceMatrix.needsUpdate = true;
-        if (this.staffMesh.instanceColor) this.staffMesh.instanceColor.needsUpdate = true; // Added color
         this.hatMesh.instanceMatrix.needsUpdate = true;
         this.hatBrimMesh.instanceMatrix.needsUpdate = true;
     }

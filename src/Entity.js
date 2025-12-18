@@ -1,0 +1,181 @@
+import * as THREE from 'three';
+
+export class Entity {
+    static nextId = 0;
+
+    constructor(scene, terrain, x, z, type) {
+        this.id = Entity.nextId++; // Shared ID counter? Or separate? 
+        // UnitMain had its own, Goblin had its own. 
+        // If we mix them, ID collisions might happen if Game.js assumes Unit IDs start at 0.
+        // Let's keep separate static counters in subclasses if needed, OR force unique IDs globally.
+        // For safety, let's use the ID passed or let subclass handle ID generation.
+        // Actually, let's let subclass set ID. 
+        // But we DO need ID for logs.
+
+        this.scene = scene;
+        this.terrain = terrain;
+        this.gridX = x;
+        this.gridZ = z;
+        this.type = type || 'entity';
+
+        this.position = new THREE.Vector3();
+        this.rotationY = 0;
+
+        // Movement State
+        this.isMoving = false;
+        this.moveTimer = 0;
+        this.moveDuration = 1000;
+        this.moveStartTime = 0;
+        this.startGridX = 0;
+        this.startGridZ = 0;
+        this.targetGridX = 0;
+        this.targetGridZ = 0;
+
+        // Visual State
+        this.walkAnimTimer = 0; // Shared anim timer?
+
+        // Register in Spatial Grid
+        if (this.terrain && this.terrain.registerEntity) {
+            this.terrain.registerEntity(this, this.gridX, this.gridZ, this.type);
+        }
+
+        // Initial visual sync
+        this.updatePosition();
+    }
+
+    // --- POSITIONING ---
+
+    updatePosition() {
+        if (isNaN(this.gridX) || isNaN(this.gridZ)) return;
+
+        const pos = this.getPositionForGrid(this.gridX, this.gridZ);
+        this.position.copy(pos);
+    }
+
+    getPositionForGrid(x, z) {
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        // Center check
+        const rawX = x - logicalW / 2 + 0.5;
+        const rawZ = z - logicalD / 2 + 0.5;
+
+        // Apply Terrain Distortion (Visual)
+        // Plane Coordinates: x = rawX, y = -rawZ
+        const planeX = rawX;
+        const planeY = -rawZ;
+
+        let offsets = { x: 0, y: 0 };
+        if (this.terrain && this.terrain.getVisualOffset) {
+            offsets = this.terrain.getVisualOffset(planeX, planeY);
+        }
+
+        // KEY FIX: Use Interpolated Height for smooth visual snap
+        let height = 0;
+        if (this.terrain && this.terrain.getInterpolatedHeight) {
+            height = this.terrain.getInterpolatedHeight(x, z);
+        } else if (this.terrain && this.terrain.getTileHeight) {
+            height = this.terrain.getTileHeight(x, z);
+        }
+
+        return new THREE.Vector3(
+            rawX + offsets.x,
+            height,
+            rawZ - offsets.y
+        );
+    }
+
+    getDistance(tx, tz) {
+        const dx = Math.abs(this.gridX - tx);
+        const dz = Math.abs(this.gridZ - tz);
+        return Math.sqrt(dx * dx + dz * dz);
+    }
+
+    // --- MOVEMENT ENGINE ---
+
+    startMove(tx, tz, time) {
+        // Validation handled by caller usually, but we can do basic checks here
+        this.isMoving = true;
+        this.moveStartTime = time;
+        this.startGridX = this.gridX;
+        this.startGridZ = this.gridZ;
+        this.targetGridX = tx;
+        this.targetGridZ = tz;
+
+        // Rotation
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        let dx = tx - this.gridX;
+        let dz = tz - this.gridZ;
+
+        // Wrap Logic for Rotation
+        if (Math.abs(dx) > logicalW / 2) dx -= Math.sign(dx) * logicalW;
+        if (Math.abs(dz) > logicalD / 2) dz -= Math.sign(dz) * logicalD;
+
+        this.rotationY = Math.atan2(dx, dz);
+    }
+
+    updateMovement(time) {
+        if (!this.isMoving) return;
+
+        const progress = (time - this.moveStartTime) / this.moveDuration;
+
+        if (progress >= 1) {
+            // ARRIVAL
+            this.isMoving = false;
+
+            // Spatial Update
+            if (this.terrain && this.terrain.moveEntity) {
+                this.terrain.moveEntity(this, this.gridX, this.gridZ, this.targetGridX, this.targetGridZ, this.type);
+            }
+
+            this.gridX = this.targetGridX;
+            this.gridZ = this.targetGridZ;
+
+            // Final Snap (Visual)
+            this.updatePosition();
+
+            // Subclass hook
+            if (this.onMoveFinished) {
+                this.onMoveFinished(time);
+            }
+        } else {
+            // LERP
+            const logicalW = this.terrain.logicalWidth || 80;
+            const logicalD = this.terrain.logicalDepth || 80;
+
+            let sx = this.startGridX;
+            let sz = this.startGridZ;
+            let tx = this.targetGridX;
+            let tz = this.targetGridZ;
+
+            // Wrap support for Lerp
+            if (tx - sx > logicalW / 2) sx += logicalW;
+            if (sx - tx > logicalW / 2) sx -= logicalW;
+            if (tz - sz > logicalD / 2) sz += logicalD;
+            if (sz - tz > logicalD / 2) sz -= logicalD;
+
+            const cx = sx + (tx - sx) * progress;
+            const cz = sz + (tz - sz) * progress;
+
+            // Visual Update
+            const pos = this.getPositionForGrid(cx, cz);
+            this.position.copy(pos);
+
+            // Subclass hook (Animation)
+            if (this.onMoveStep) {
+                this.onMoveStep(progress);
+            }
+        }
+    }
+
+    // --- LIFECYCLE ---
+
+    die() {
+        this.isDead = true;
+        if (this.terrain && this.terrain.unregisterEntity) {
+            this.terrain.unregisterEntity(this);
+        }
+    }
+}

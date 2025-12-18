@@ -1,26 +1,30 @@
+
 import * as THREE from 'three';
 import { Goblin } from './Goblin.js';
+import { GoblinRenderer } from './GoblinRenderer.js';
 
 export class GoblinManager {
-    constructor(scene, terrain, unitManager, clippingPlanes) {
+    constructor(scene, terrain, particleManager) {
         this.scene = scene;
         this.terrain = terrain;
-        this.unitManager = unitManager; // To pass to goblins for targeting
-        this.clippingPlanes = clippingPlanes || [];
+        this.particleManager = particleManager;
         this.goblins = [];
         this.caves = [];
+        this.hutSpawnTimers = new Map(); // Map<Building, float>
+
+        this.renderer = new GoblinRenderer(scene, terrain, terrain.clippingPlanes);
+
         this.spawnTimer = 0;
         this.spawnInterval = 2; // Spawn every 2 seconds (faster!)
-        this.spawnInterval = 2; // Spawn every 2 seconds (faster!)
         this.plunderCount = 0; // Track successful raids
-        this.MAX_GOBLINS = 300; // Hard Cap to prevent lag
+        this.MAX_GOBLINS = 20000; // InstancedMesh allows high count!
         this.clanMemory = {}; // { clanId: [ {x,z,weight,timestamp} ] }
 
         // Initialize Goblin Assets & Apply Clipping
         Goblin.initAssets();
         const gmats = Goblin.assets.materials;
         Object.values(gmats).forEach(mat => {
-            if (mat) mat.clippingPlanes = this.clippingPlanes;
+            if (mat) mat.clippingPlanes = this.terrain.clippingPlanes;
         });
 
         this.caveGroup = new THREE.Group();
@@ -91,7 +95,7 @@ export class GoblinManager {
             spawnCooldown: 0,
             originalHeight: building.y,
             building: building, // Link
-            clanId: `clan_${building.userData.gridX}_${building.userData.gridZ}`
+            clanId: `clan_${building.userData.gridX}_${building.userData.gridZ} `
         };
         // Visuals? 
         // If Terrain renders cave, we don't need to add another mesh.
@@ -165,7 +169,7 @@ export class GoblinManager {
         const caveGeo = new THREE.SphereGeometry(0.4, 16, 16);
         const caveMat = new THREE.MeshLambertMaterial({
             color: 0x000000,
-            clippingPlanes: this.clippingPlanes
+            clippingPlanes: this.terrain.clippingPlanes || []
         });
         const cave = new THREE.Mesh(caveGeo, caveMat);
 
@@ -184,7 +188,7 @@ export class GoblinManager {
 
         const valid = this.terrain.addBuilding('cave', x, z);
         if (valid) {
-            console.log(`GoblinManager: Cave registered at ${x},${z}`);
+            console.log(`GoblinManager: Cave registered at ${x},${z} `);
             // Link mesh to building for reverse lookup if needed later
             valid.userData.linkedMesh = cave;
 
@@ -195,7 +199,7 @@ export class GoblinManager {
                 gridZ: z,
                 originalHeight: height,
                 spawnCooldown: Math.random() * this.spawnInterval,
-                clanId: `clan_cave_${x}_${z}` // Group ID
+                clanId: `clan_cave_${x}_${z} ` // Group ID
             });
             return true;
         } else {
@@ -206,14 +210,14 @@ export class GoblinManager {
         }
     }
 
-    update(time, deltaTime, isNight, units, timeScale = 1.0) {
+    update(time, deltaTime, isNight, units, timeScale = 1.0, camera) {
         // time passed is simTime (ms)
 
         // Spawn Goblins
         this.caves.forEach((cave, index) => {
             // Debug Log first cave position periodically
             if (index === 0 && Math.random() < 0.01) {
-                console.log(`[GoblinManager] Cave 0 Pos: ${cave.mesh.position.x.toFixed(2)}, ${cave.mesh.position.y.toFixed(2)}, ${cave.mesh.position.z.toFixed(2)} Visible:${cave.mesh.visible} Parent:${!!cave.mesh.parent}`);
+                console.log(`[GoblinManager] Cave 0 Pos: ${cave.mesh.position.x.toFixed(2)}, ${cave.mesh.position.y.toFixed(2)}, ${cave.mesh.position.z.toFixed(2)} Visible:${cave.mesh.visible} Parent:${!!cave.mesh.parent} `);
             }
 
             // Check if cave is still valid
@@ -222,7 +226,7 @@ export class GoblinManager {
 
             if (currentHeight <= 0) {
                 // Destroy if submerged
-                console.error(`[GoblinManager] Cave destroyed: SUBMERGED (H=${currentHeight})`);
+                console.error(`[GoblinManager] Cave destroyed: SUBMERGED(H = ${currentHeight})`);
                 this.destroyCave(cave, index);
                 return;
             }
@@ -254,7 +258,8 @@ export class GoblinManager {
 
             cave.spawnCooldown -= deltaTime;
             if (cave.spawnCooldown <= 0) {
-                if (this.goblins.length < 50) {
+                // Removed hard cap of 50. Use global limit if needed.
+                if (this.goblins.length < (this.MAX_GOBLINS || 20000)) {
                     this.spawnGoblinAtCave(cave);
                     cave.spawnCooldown = this.spawnInterval + Math.random() * 5;
                 }
@@ -271,22 +276,8 @@ export class GoblinManager {
         // Base stagger was 2.
         const stagger = Math.max(1, Math.floor(2 / timeScale));
 
-        // CULLING LOGIC: If vastly overpopulated, remove some each frame
-        if (this.goblins.length > (this.MAX_GOBLINS || 300)) {
-            // Remove 1 random goblin per frame to reduce population
-            const killIdx = Math.floor(Math.random() * this.goblins.length);
-            const victim = this.goblins[killIdx];
-            if (victim) {
-                // Ensure complete cleanup (including crosses)
-                if (victim.dispose) victim.dispose();
-                else {
-                    this.scene.remove(victim.mesh);
-                    this.terrain.unregisterEntity(victim);
-                }
-                this.goblins.splice(killIdx, 1);
-                // Skip standard update for this victim (it's gone now)
-            }
-        }
+        // CULLING LOGIC REMOVED (User Request: Lifespan handles population control)
+        // if (this.goblins.length > (this.MAX_GOBLINS || 1000)) ...
 
         if (this.frameCount === undefined) this.frameCount = 0;
         this.frameCount++;
@@ -309,22 +300,44 @@ export class GoblinManager {
                 // We run this block 1/stagger times.
                 // So effective dt for logic is dw * stagger.
                 try {
-                    goblin.updateLogic(time, deltaTime * stagger, units, buildings);
+                    if (goblin.isDead) {
+                        goblin.updateDeathAnimation(deltaTime * stagger);
+                    } else {
+                        goblin.updateLogic(time, deltaTime * stagger, units, buildings);
+                    }
                 } catch (e) {
-                    console.error(`[GoblinManager] Error updating goblin ${i}:`, e);
+                    console.error(`[GoblinManager] Error updating goblin ${i}: `, e);
                     // Dispose if corrupted?
-                    return;
+                    continue; // Fix: Don't abort entire loop
                 }
 
                 if (goblin.isFinished) {
-                    console.log(`[GoblinManager] Removing finished goblin index ${i}`);
+                    // console.log(`[GoblinManager] Removing finished goblin index ${ i } `);
                     this.goblins.splice(i, 1);
                 }
             }
         }
+        if (this.renderer) this.renderer.update(this.goblins, camera);
     }
 
     spawnGoblinAtCave(cave) {
+        // Validation: Verify Cave Still Exists
+        if (cave.building) {
+            // Check Terrain List
+            if (!this.terrain.buildings.includes(cave.building)) {
+                console.warn("[GoblinManager] Aborting spawn: Cave building missing");
+                this.destroyCave(cave, this.caves.indexOf(cave)); // Self-heal
+                return;
+            }
+        }
+        // Check Grid Consistency
+        const cell = this.terrain.grid[cave.gridX][cave.gridZ];
+        if (!cell || !cell.hasBuilding) {
+            console.warn("[GoblinManager] Aborting spawn: Grid cell has no building");
+            // Force cleanup?
+            return;
+        }
+
         const neighbors = [
             { x: 1, z: 0 }, { x: -1, z: 0 },
             { x: 0, z: 1 }, { x: 0, z: -1 }
@@ -351,12 +364,17 @@ export class GoblinManager {
         const type = isHob ? 'hobgoblin' : 'normal';
         const goblin = new Goblin(this.scene, this.terrain, x, z, type, clanId);
         this.goblins.push(goblin);
-        console.log(`Goblin spawned at ${x},${z} Clan:${clanId}`);
+
+        if (this.terrain.registerEntity) {
+            this.terrain.registerEntity(goblin, x, z, 'goblin');
+        }
+
+        console.log(`Goblin spawned at ${x},${z} Clan:${clanId} `);
     }
 
     increasePlunder() {
         this.plunderCount++;
-        console.log(`Goblin Raid Success! Plunder Count: ${this.plunderCount}`);
+        console.log(`Goblin Raid Success! Plunder Count: ${this.plunderCount} `);
     }
 
     updateHuts(deltaTime) {
@@ -368,28 +386,17 @@ export class GoblinManager {
         // Cap bonus?
         if (growthRate > 2.0) growthRate = 2.0;
 
-        const timer = this.debugTimer || 0;
-        this.debugTimer = timer + deltaTime;
-        const doLog = this.debugTimer > 5.0; // Log every 5 seconds
-        if (doLog) {
-            this.debugTimer = 0;
-            console.log(`[GoblinManager] Global Pop: ${this.goblins.length}/${this.MAX_GOBLINS || 300}. Plunder: ${this.plunderCount}`);
-        }
-
         const buildings = this.terrain.buildings || [];
         buildings.forEach(b => {
+            if (!b.userData) return;
             if (b.userData.type === 'goblin_hut') {
                 b.userData.population = (b.userData.population || 0) + growthRate * deltaTime;
 
                 if (b.userData.population >= 10) {
-                    b.userData.population -= 10;
+                    // Global Cap Limit REMOVED
+                    // if (this.goblins.length >= (this.MAX_GOBLINS || 1000)) return;
 
-                    // Global Cap Limit
-                    if (this.goblins.length >= (this.MAX_GOBLINS || 300)) {
-                        // Cap reached, population stalled or lost?
-                        // Just ignore spawn.
-                        return;
-                    }
+                    b.userData.population -= 10;
 
                     // Spawn logic reuse
                     // Use a temporary fake cave object to reuse spawnGoblinAtCave logic which checks neighbors
@@ -398,9 +405,6 @@ export class GoblinManager {
                     const fakeCave = { gridX: b.userData.gridX, gridZ: b.userData.gridZ, clanId: clanId };
                     this.spawnGoblinAtCave(fakeCave);
                     console.log(`Goblin born from Hut! Clan: ${clanId}. Global Pop: ${this.goblins.length}`);
-                } else if (doLog) {
-                    // Occasional debug log
-                    console.log(`[GoblinHut] Pop: ${b.userData.population.toFixed(1)}/10.0`);
                 }
             }
         });

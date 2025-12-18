@@ -1,0 +1,23 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould retry migration after 30 seconds timeout
+[22m[39mUnit test-migrant migrating to 89,47 (Walking)
+Unit test-migrant migration timed out. Retrying.
+Unit test-migrant migrating to 91,47 (Walking)
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould interrupt migration if enemy is found (Priority)
+[22m[39mUnit test-migrant migrating to 70,26 (Walking)
+Unit test-migrant interrupted migration for combat.
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould stop migrating if construction succeeds
+[22m[39mUnit test-migrant migrating to 10,45 (Walking)
+Unit test-migrant built structure during migration. Stopping.
+
+ [32m笨・[39m src/tests/MigrationImprovement.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 18:44:35
+[2m   Duration [22m 329ms[2m (transform 82ms, setup 0ms, import 114ms, tests 7ms, environment 0ms)[22m
+

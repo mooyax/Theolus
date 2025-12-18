@@ -58,6 +58,14 @@ export class Terrain {
         entity._spatial = null;
     }
 
+    // Helper: Convert Grid Coord to World Coord (flat, no height, CENTERED)
+    gridToWorld(val) {
+        // logicalWidth 160 -> -80 to +80
+        // val is 0..159
+        // Return CENTER of the tile (e.g. index 0 -> -79.5)
+        return (val - this.logicalWidth / 2) + 0.5;
+    }
+
     moveEntity(entity, oldX, oldZ, newX, newZ, type) {
         if (Math.floor(oldX) === Math.floor(newX) && Math.floor(oldZ) === Math.floor(newZ)) {
             // Still in same cell, no need to update grid
@@ -589,6 +597,7 @@ export class Terrain {
     }
 
     modifyHeight(startX, startZ, amount) {
+        let totalChange = 0;
         // Queue for propagation
         const queue = [];
 
@@ -604,6 +613,7 @@ export class Terrain {
         const start = getWrapped(startX, startZ);
         if (this.grid[start.x] && this.grid[start.x][start.z]) {
             this.grid[start.x][start.z].height += amount;
+            totalChange += Math.abs(amount);
             queue.push(start);
         }
 
@@ -616,8 +626,6 @@ export class Terrain {
             const cell = this.grid[cx][cz];
             const currentHeight = cell.height;
 
-            // Destroy building if present
-            // Destroy building if present
             // Destroy building if present
             if (cell.hasBuilding && cell.building) {
                 // Fix: Caves float/adapt to terrain
@@ -645,12 +653,16 @@ export class Terrain {
 
                 // If difference > 1, pull neighbor UP
                 if (diff > 1) {
-                    neighborCell.height = currentHeight - 1;
+                    const newH = currentHeight - 1;
+                    totalChange += Math.abs(newH - neighborHeight);
+                    neighborCell.height = newH;
                     queue.push(nw);
                 }
                 // If difference < -1, push neighbor DOWN (if we lowered the center)
                 else if (diff < -1) {
-                    neighborCell.height = currentHeight + 1;
+                    const newH = currentHeight + 1;
+                    totalChange += Math.abs(newH - neighborHeight);
+                    neighborCell.height = newH;
                     queue.push(nw);
                 }
             }
@@ -677,10 +689,10 @@ export class Terrain {
             });
         }
 
-
-
         this.updateMesh();
         this.updateColors();
+
+        return totalChange;
     }
 
     getTileHeight(x, z) {
@@ -695,14 +707,12 @@ export class Terrain {
 
     // Helper for Visual Alignment
     getVisualOffset(localX, localY) {
-        // Suppress visual distortion under buildings to ensure they sit flat
+        // Suppress visual distortion under buildings
         if (this.grid) {
             const W = this.logicalWidth || 80;
             const D = this.logicalDepth || 80;
 
-            // Map Plane Coords to Grid (Reverse of initialization logic)
-            // localX corresponds to (gridX - W/2)
-            // localY corresponds to -(gridZ - D/2)
+            // Map Plane Coords to Grid
             const gx = Math.round(localX + W / 2);
             const gz = Math.round(-localY + D / 2);
 
@@ -714,10 +724,27 @@ export class Terrain {
             }
         }
 
-        // Matches the distortion logic in initTerrain
-        // X and Y are PlaneGeometry local coords (World X and Z mostly)
-        const offsetX = (Math.sin(localY * 0.5) + Math.cos(localX * 0.4)) * 0.2;
-        const offsetY = (Math.cos(localY * 0.4) + Math.sin(localX * 0.5)) * 0.2;
+        // Periodic Distortion (Seamless)
+        // W = 160 (logicalWidth) * 3 typically? No, logicalWidth is 160.
+        // Plane is 3x width? No, logicalWidth is used for wrapping.
+        // We want period = logicalWidth.
+        const W = this.logicalWidth || 80;
+        const D = this.logicalDepth || 80;
+
+        const freqX = (Math.PI * 2) / W;
+        const freqZ = (Math.PI * 2) / D;
+
+        // Use higher harmonic to match original "0.4" approx density
+        // 0.4 approx 8 * 2PI/160 (0.31). Let's use integer Multiplier.
+        // x * freqX * 10 -> 10 waves per map.
+
+        const phaseX = localX * freqX * 10;
+        const phaseY = localY * freqZ * 10;
+
+        // Original: (sin(y*0.5) + cos(x*0.4)) * 0.2
+        const offsetX = (Math.sin(phaseY) + Math.cos(phaseX)) * 0.2;
+        const offsetY = (Math.cos(phaseY) + Math.sin(phaseX)) * 0.2;
+
         return { x: offsetX, y: offsetY };
     }
 
@@ -782,11 +809,11 @@ export class Terrain {
     }
 
     raise(x, z) {
-        this.modifyHeight(x, z, 1);
+        return this.modifyHeight(x, z, 1);
     }
 
     lower(x, z) {
-        this.modifyHeight(x, z, -1);
+        return this.modifyHeight(x, z, -1);
     }
 
 
@@ -897,11 +924,13 @@ export class Terrain {
         // console.trace(); // Enable if needed, but warning might be enough to see context
 
         // Remove from list
+        this.unregisterEntity(b);
         const idx = this.buildings.indexOf(b);
         if (idx > -1) this.buildings.splice(idx, 1);
 
         // Clear grid
-        const size = (b.type === 'mansion' || b.type === 'tower') ? 3 : (b.type === 'farm' || b.type === 'house' ? 2 : 1);
+        // Clear grid
+        const size = this.getBuildingSize(b.type);
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
                 const x = (b.gridX + i) % this.logicalWidth;
@@ -914,7 +943,7 @@ export class Terrain {
         }
     }
 
-    addBuilding(type, gridX, gridZ) {
+    addBuilding(type, gridX, gridZ, force = false) {
         // Use exact height
         if (!this.grid[gridX] || !this.grid[gridX][gridZ]) return null;
         const h = this.grid[gridX][gridZ].height;
@@ -931,7 +960,8 @@ export class Terrain {
                 type: type,
                 gridX: gridX,
                 gridZ: gridZ,
-                population: 0
+                population: 0,
+                hp: (type === 'goblin_hut') ? 100 : (type === 'cave' ? 200 : 50)
             }
         };
 
@@ -942,22 +972,21 @@ export class Terrain {
         const D = this.logicalDepth;
 
         // Consistent Sizing
-        let size = 1;
-        if (type === 'farm') size = 2; // 2x2
-        if (type === 'mansion') size = 3; // 3x3
-        if (type === 'house') size = 2; // NOW 2x2 (User Request)
-        if (type === 'tower') size = 3; // Tower 3x3
-        // goblin_hut = 1
-        if (type === 'cave') size = 1; // Cave is 1x1
+        const size = this.getBuildingSize(type);
 
-        // Auto-flatten for Caves (User Request: Fix Regression)
-        if (type === 'cave') {
+        // Auto-flatten for All Buildings (Worker prepares ground)
+        // User reports buildings not appearing -> likely due to uneven ground check failing.
+        // We force flatten the area to the height of the top-left (anchor) tile.
+        // Auto-flatten for All Buildings (Worker prepares ground)
+        if (true) { // Always flatten
+            this.clearArea(gridX, gridZ, size); // Force remove obstacles
             this.flattenArea(gridX, gridZ, size);
         }
 
         // SAFETY CHECK: Verify flatness again (Internal enforcement)
         // Force Spawn for Caves: Bypass check
-        if (type !== 'cave' && !this.checkFlatArea(gridX, gridZ, size)) {
+        if (!force && type !== 'cave' && !this.checkFlatArea(gridX, gridZ, size)) {
+            // Should be flat now due to above, but if something failed:
             return null;
         }
 
@@ -975,15 +1004,52 @@ export class Terrain {
 
         console.log(`[Terrain] Building Added: ${type} at (${gridX}, ${gridZ}) Size:${size}x${size}. Total: ${this.buildings.length}`);
 
+        // OPTIMIZATION: Register as Entity for fast spatial search
+        // Use Grid Center or Corner? Corner is gridX/Z.
+        this.registerEntity(building, gridX, gridZ, 'building');
+
         // Refresh visuals to flatten ground under building (via getVisualOffset)
         this.updateMesh();
 
         return building;
     }
 
+    clearArea(gridX, gridZ, size) {
+        // Remove any buildings in this area
+        const buildingsToRemove = new Set();
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                const x = (gridX + i) % W;
+                const z = (gridZ + j) % D;
+                const cell = this.grid[x][z];
+                if (cell.hasBuilding && cell.building) {
+                    buildingsToRemove.add(cell.building);
+                }
+            }
+        }
+
+        for (const b of buildingsToRemove) {
+            console.log(`[Terrain] Clearing obstacle: ${b.type} for new construction.`);
+            this.removeBuilding(b);
+        }
+    }
+
 
 
     // --- Terrain Analysis ---
+    // Helper: Centralize Building Size Logic
+    getBuildingSize(type) {
+        if (type === 'tower') return 3;
+        if (type === 'barracks') return 3;
+        if (type === 'farm') return 2;
+        if (type === 'house') return 2;
+        // goblin_hut = 1, cave = 1, default = 1
+        return 1;
+    }
+
     checkBuildingIntegrity(b) {
         if (!b) return false;
 
@@ -997,16 +1063,14 @@ export class Terrain {
         // Exception: Caves track terrain
         if (b.userData.type !== 'cave') {
             if (typeof b.y !== 'number' || Math.abs(rootH - b.y) > 0.1) {
-                console.log(`[Terrain] Integrity Fail: Type=${b.userData.type} RootH=${rootH.toFixed(2)} b.y=${b.y} (Height Mismatch)`);
+                console.log(`[Terrain] Integrity Fail: Type = ${b.userData.type} RootH = ${rootH.toFixed(2)} b.y = ${b.y} (Height Mismatch)`);
                 return false;
             }
         }
 
         // 2. Check Flatness based on Size
         const type = b.userData.type;
-        let size = 1;
-        if (type === 'farm' || type === 'house') size = 2;
-        if (type === 'mansion') size = 3;
+        const size = this.getBuildingSize(type);
         // goblin_hut = 1, cave = 1
 
         // CAVE EXEMPTION: Caves adapt to terrain, don't need flat ground
@@ -1027,7 +1091,7 @@ export class Terrain {
                 const cell = this.grid[nx][nz];
 
                 if (cell.height !== rootH) {
-                    // console.log(`[Terrain] Integrity Fail: ${type} at ${b.gridX},${b.gridZ} - Not Flat at ${nx},${nz}`);
+                    // console.log(`[Terrain] Integrity Fail: ${ type } at ${ b.gridX },${ b.gridZ } - Not Flat at ${ nx },${ nz } `);
                     return false;
                 }
                 if (cell.height <= 0) return false;
@@ -1224,7 +1288,7 @@ export class Terrain {
                     if (spawnCallback) {
                         if (type === 'house') {
                             // House: Spawn 1 unit, Reset to 0 (User Request)
-                            const spawned = spawnCallback(bx, bz, type);
+                            const spawned = spawnCallback(bx, bz, type, building);
                             if (spawned) {
                                 building.userData.population = 0;
                             } else {
@@ -1234,7 +1298,7 @@ export class Terrain {
                             // Barracks: Spawn 4 units (Revert to specs), Reset to 0
                             let spawnedCount = 0;
                             for (let k = 0; k < 4; k++) {
-                                if (spawnCallback(bx, bz, type)) spawnedCount++;
+                                if (spawnCallback(bx, bz, type, building)) spawnedCount++;
                             }
                             if (spawnedCount > 0) {
                                 building.userData.population = 0;
@@ -1259,7 +1323,7 @@ export class Terrain {
                     if (spawnCallback) {
                         let spawnedCount = 0;
                         for (let k = 0; k < 4; k++) {
-                            if (spawnCallback(building.userData.gridX, building.userData.gridZ, 'tower')) spawnedCount++;
+                            if (spawnCallback(building.userData.gridX, building.userData.gridZ, 'tower', building)) spawnedCount++;
                         }
 
                         if (spawnedCount > 0) {
@@ -1349,6 +1413,8 @@ export class Terrain {
             grid: []
         };
 
+        const savedBuildingIds = new Set();
+
         for (let x = 0; x < this.logicalWidth; x++) {
             data.grid[x] = [];
             for (let z = 0; z < this.logicalDepth; z++) {
@@ -1367,14 +1433,21 @@ export class Terrain {
                 if (cell.hasBuilding) {
                     cellData.hb = 1;
                     if (cell.building) {
-                        // Optimization: Only save building data at origin
-                        if (cell.building.gridX === x && cell.building.gridZ === z) {
+                        // Optimization: Verify building hasn't been saved yet
+                        // Robust deduplication using ID
+                        if (!savedBuildingIds.has(cell.building.id)) {
+                            savedBuildingIds.add(cell.building.id);
+
+                            // Save at current cell (effectively the "origin" for this save)
+                            const bx = (cell.building.gridX !== undefined) ? cell.building.gridX : cell.building.userData.gridX;
+                            const bz = (cell.building.gridZ !== undefined) ? cell.building.gridZ : cell.building.userData.gridZ;
+
                             cellData.b = {
                                 t: cell.building.userData.type, // type
                                 p: cell.building.userData.population, // population
-                                x: cell.building.userData.gridX,
-                                z: cell.building.userData.gridZ,
-                                r: Math.round(cell.building.rotation * 100) / 100 // rotation
+                                x: bx,
+                                z: bz,
+                                r: (cell.building.rotation !== undefined) ? Math.round(cell.building.rotation * 100) / 100 : 0
                             };
                         }
                     }
@@ -1491,7 +1564,7 @@ export class Terrain {
     }
 
     restoreHouse(data) {
-        const building = this.addBuilding('house', data.gridX, data.gridZ);
+        const building = this.addBuilding('house', data.gridX, data.gridZ, true);
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
@@ -1500,12 +1573,15 @@ export class Terrain {
     }
 
     restoreFarm(data) {
-        const building = this.addBuilding('farm', data.gridX, data.gridZ);
-        if (building && data.rotation !== undefined) building.rotation = data.rotation;
+        const building = this.addBuilding('farm', data.gridX, data.gridZ, true);
+        if (building) {
+            building.userData.hp = 5; // Farm HP
+            if (data.rotation !== undefined) building.rotation = data.rotation;
+        }
     }
 
     restoreMansion(data) {
-        const building = this.addBuilding('mansion', data.gridX, data.gridZ);
+        const building = this.addBuilding('mansion', data.gridX, data.gridZ, true);
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
@@ -1538,13 +1614,13 @@ export class Terrain {
             if (this.waterMesh) {
                 this.waterMesh.position.set(snapX, 0.2, snapZ);
             }
-            // console.log(`Terrain Snapped to ${snapX}, ${snapZ}`);
+            // console.log(`Terrain Snapped to ${ snapX }, ${ snapZ } `);
         }
     }
 
     restoreGoblinHut(data) {
         // Use addBuilding to ensure consistency with other buildings
-        const building = this.addBuilding('goblin_hut', data.gridX, data.gridZ);
+        const building = this.addBuilding('goblin_hut', data.gridX, data.gridZ, true);
         if (building) {
             building.population = data.population || 1;
             building.userData.population = data.population || 1;
@@ -1555,7 +1631,7 @@ export class Terrain {
     }
 
     restoreTower(data) {
-        const building = this.addBuilding('tower', data.gridX, data.gridZ);
+        const building = this.addBuilding('tower', data.gridX, data.gridZ, true);
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
@@ -1565,7 +1641,7 @@ export class Terrain {
 
     restoreBarracks(data) {
         // Handle migration from Mansion -> Barracks if needed, or just standard restore
-        const building = this.addBuilding('barracks', data.gridX, data.gridZ);
+        const building = this.addBuilding('barracks', data.gridX, data.gridZ, true);
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
@@ -1578,7 +1654,7 @@ export class Terrain {
         // Special: Caves might be auto-flattened or integrated differently.
         // Just use addBuilding to ensure visual creation.
         // HOWEVER, removeBuilding blocks cave removal. Checks?
-        const building = this.addBuilding('cave', data.gridX, data.gridZ);
+        const building = this.addBuilding('cave', data.gridX, data.gridZ, true);
         // Cave pop?
         if (building) {
             building.population = data.population || 0;
@@ -1627,7 +1703,7 @@ export class Terrain {
                 return path.reverse();
             }
 
-            const key = `${current.x},${current.z}`;
+            const key = `${current.x},${current.z} `;
             closedSet.add(key);
 
             const neighbors = [
@@ -1647,7 +1723,7 @@ export class Terrain {
                 if (nz < 0) nz = H - 1;
                 if (nz >= H) nz = 0;
 
-                if (closedSet.has(`${nx},${nz}`)) continue;
+                if (closedSet.has(`${nx},${nz} `)) continue;
 
                 // Passability Check
                 const hStart = this.grid[current.x][current.z].height;
@@ -1659,6 +1735,7 @@ export class Terrain {
                 // Allow walking on land (h > 0) and climbing up to 2.0
                 if (hEnd <= 0) continue; // Water
                 if (Math.abs(hEnd - hStart) > 2.0) continue; // Too steep
+                if (this.grid[nx][nz].hasBuilding) continue; // Blocked by Building
 
                 const gScore = current.g + 1; // Distance 1
 

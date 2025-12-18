@@ -295,8 +295,6 @@ export class BuildingRenderer {
     update(buildings, frustum, camera) {
         if (!buildings) return;
 
-        let hIdx = 0, fIdx = 0, gIdx = 0, mIdx = 0, tIdx = 0;
-        const dummy = this._dummy;
         const logicalW = this.terrainWidth || 80;
         const logicalD = this.terrainDepth || 80;
 
@@ -306,6 +304,22 @@ export class BuildingRenderer {
             baseGridX = Math.round(camera.position.x / logicalW);
             baseGridZ = Math.round(camera.position.z / logicalD);
         }
+
+        // Optimization: Only update if Camera Chunk changed OR Building Count changed OR Force Update
+        if (this._lastBaseGridX === baseGridX &&
+            this._lastBaseGridZ === baseGridZ &&
+            this._lastBuildingCount === buildings.length &&
+            !this.forceUpdate) {
+            return;
+        }
+
+        this._lastBaseGridX = baseGridX;
+        this._lastBaseGridZ = baseGridZ;
+        this._lastBuildingCount = buildings.length;
+        this.forceUpdate = false;
+
+        let hIdx = 0, fIdx = 0, gIdx = 0, mIdx = 0, tIdx = 0;
+        const dummy = this._dummy;
 
         const offsets = [
             { x: 0, z: 0 },
@@ -353,23 +367,18 @@ export class BuildingRenderer {
                 }
 
                 // Frustum Culling
-                if (frustum) {
-                    let cullY = y + 0.5;
-                    let cullR = 2.0;
-                    if (b.type === 'tower') {
-                        cullY = y + 3.0;
-                        cullR = 15.0; // Huge radius to ensure visibility
-                    }
+                // Note: If we optimize updates, we LOSE dynamic frustum culling per frame.
+                // The GPU will draw everything we put in the buffer.
+                // However, since we re-update on camera chunk change, we cull large swaths.
+                // To keep high perf, we might want to skip detailed frustum culling here if we are not updating every frame.
+                // Actually, if we don't update every frame, we act as "Static Draw".
+                // InstancedMesh supports Frustum Culling natively if we set valid boundingSphere.
+                // But we set frustumCulled = false because we wrap.
+                // Conclusion: By caching the buffer, we are drawing ALL instances (9x copies).
+                // Is this faster than CPU culling 9x every frame?
+                // Yes, GPU culling is fast. CPU Loop overhead was the bottleneck.
 
-                    this._scratchVector.set(finalX, cullY, finalZ);
-                    this._scratchSphere.center.copy(this._scratchVector);
-                    this._scratchSphere.radius = cullR;
-
-                    // Radius adaptation?
-                    if (!frustum.intersectsSphere(this._scratchSphere)) {
-                        continue; // Skip invisible
-                    }
-                }
+                // if (frustum) { ... } // Removed Frustum check for Static Batching
 
                 dummy.position.set(finalX, y, finalZ);
                 // Safety: Ensure scale is 1
@@ -403,8 +412,8 @@ export class BuildingRenderer {
             }
         }
 
-        if (Math.random() < 0.01) {
-            console.log(`[BuildingRenderer] Rendered: House:${hIdx}, Farm:${fIdx}, Barracks:${mIdx}, Hut:${gIdx}. Total:${buildings.length}`);
+        if (Math.random() < 0.005) {
+            console.log(`[BuildingRenderer] Updated Buffers. House:${hIdx}, Farm:${fIdx} (BaseGrid: ${baseGridX},${baseGridZ})`);
         }
 
         this.meshes.houseWalls.count = hIdx;

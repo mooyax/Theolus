@@ -1,0 +1,12 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/KnightIdle.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 16[2mms[22m[39m
+[31m     [31mﾃ・[31m should start moving immediately after updateLogic decides to explore[39m[32m 14[2mms[22m[39m
+[31m     [31mﾃ・[31m should not wait 3 seconds before moving[39m[32m 1[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 19:26:19
+[2m   Duration [22m 284ms[2m (transform 67ms, setup 0ms, import 95ms, tests 16ms, environment 0ms)[22m
+

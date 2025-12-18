@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 
-export class Goblin {
+import { Entity } from './Entity.js';
+
+export class Goblin extends Entity {
     static nextId = 0;
-    // Static Cache
+    // Static Cache (Kept for Renderer to use)
     static assets = {
         geometries: {},
         materials: {},
@@ -16,7 +18,7 @@ export class Goblin {
         // Normal Torso
         Goblin.assets.geometries.torsoNormal = new THREE.BoxGeometry(0.25, 0.3, 0.2);
         // Hobgoblin Torso
-        Goblin.assets.geometries.torsoHob = new THREE.BoxGeometry(0.35, 0.3, 0.2); // 0.25 * 1.4 approx for X
+        Goblin.assets.geometries.torsoHob = new THREE.BoxGeometry(0.35, 0.3, 0.2);
 
         // Shared
         Goblin.assets.geometries.head = new THREE.BoxGeometry(0.2, 0.2, 0.2);
@@ -25,17 +27,16 @@ export class Goblin {
         Goblin.assets.geometries.leg = new THREE.BoxGeometry(0.1, 0.25, 0.1);
         Goblin.assets.geometries.club = new THREE.CylinderGeometry(0.03, 0.05, 0.4, 6);
 
-        // Cross
+        // Cross (If needed by ParticleManager? ParticleManager uses its own) 
+        // We can keep these just in case.
         Goblin.assets.geometries.crossV = new THREE.BoxGeometry(0.2, 0.8, 0.2);
         Goblin.assets.geometries.crossH = new THREE.BoxGeometry(0.6, 0.2, 0.2);
 
         // Materials
         Goblin.assets.materials.skinNormal = new THREE.MeshLambertMaterial({ color: 0x55AA55 });
         Goblin.assets.materials.clothesNormal = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
-
         Goblin.assets.materials.skinHob = new THREE.MeshLambertMaterial({ color: 0x336633 });
         Goblin.assets.materials.clothesHob = new THREE.MeshLambertMaterial({ color: 0x222222 });
-
         Goblin.assets.materials.club = new THREE.MeshLambertMaterial({ color: 0x654321 });
 
         // Cross Material
@@ -45,40 +46,40 @@ export class Goblin {
             opacity: 1.0
         });
 
-        // Rotate reusable geometries if needed?
-        // Geometries like ear need rotation but we can do that on mesh.
-        // Or bake rotation into geometry?
-        // For shared geometries, better to rotate mesh.
-
         Goblin.assets.initialized = true;
     }
 
     constructor(scene, terrain, x, z, type = 'normal', clanId = null) {
-        Goblin.initAssets();
+        Goblin.initAssets(); // Ensure assets exist (for Renderer)
 
-        this.scene = scene;
-        this.terrain = terrain;
-        this.gridX = x;
-        this.gridZ = z;
+        super(scene, terrain, x, z, 'goblin');
+
+        this.type = type; // Entity sets type, but we override or enhance? 
+        // Entity ctor(..., type) sets this.type. 
+        // We passed 'goblin'. But we want 'normal'/'hobgoblin' as sub-type?
+        // Entity.type is used for Spatial Grid. 'goblin' is correct for Grid.
+        // We should store sub-type in another var if needed, or overwrite this.type.
+        // But Goblin.js uses this.type for stats.
+        // Let's store 'goblin' in super, and keep this.type as subType?
+        // Or just overwrite this.type = type.
         this.type = type;
-        this.clanId = clanId;
-        this.id = Goblin.nextId++; // Track instances
 
-        if (this.gridX === undefined || isNaN(this.gridX) || this.gridZ === undefined || isNaN(this.gridZ)) {
-            console.error(`Goblin Created with INVALID COORDS: ${this.gridX},${this.gridZ}`);
-        }
+        this.clanId = clanId;
+        // this.id = Goblin.nextId++; // Use Entity's ID or Goblin's?
+        // Let's stick to Goblin's ID sequence for now to avoid ID conflict fears.
+        this.id = Goblin.nextId++;
 
         // Stats
         if (this.type === 'hobgoblin') {
-            this.hp = 50 + Math.floor(Math.random() * 20); // ~2x HP
+            this.hp = 60 + Math.floor(Math.random() * 30); // Buffed HP
             this.maxHp = this.hp;
-            this.lifespan = 80 + Math.random() * 40; // ~2x Lifespan
-            this.damage = 20; // 4x Damage (5->20)
+            this.lifespan = 80 + Math.random() * 40;
+            this.damage = 15; // Strong
         } else {
-            this.hp = 20 + Math.floor(Math.random() * 10); // 20-30 HP
+            this.hp = 30 + Math.floor(Math.random() * 10); // Buffed HP (30-40)
             this.maxHp = this.hp;
-            this.lifespan = 30 + Math.random() * 20; // 30-50 seconds
-            this.damage = 10; // Buffed 5 -> 10
+            this.lifespan = 30 + Math.random() * 20;
+            this.damage = 8; // Buffed Dmg (Worker has ~40HP -> 5 hits)
         }
 
         this.age = 0;
@@ -86,110 +87,46 @@ export class Goblin {
         this.isFinished = false;
 
         // AI State
-        this.state = 'idle'; // idle, moving, attacking, destroying
+        this.state = 'idle';
         this.targetUnit = null;
         this.targetBuilding = null;
         this.attackCooldown = 0;
-        this.attackRate = 1.0; // 1 attack per second
+        this.attackRate = 1.0;
 
+        // RENDER STATE (Data Only)
+        this.position = new THREE.Vector3(); // For smooth visual movement
+        this.rotationY = 0;
+        this.limbs = {
+            leftArm: { x: 0 },
+            rightArm: { x: 0 },
+            leftLeg: { x: 0 },
+            rightLeg: { x: 0 }
+        };
+        // Animation State
+        this.walkAnimTimer = 0;
 
-        // Mesh
-        this.mesh = new THREE.Group();
-        this.createMesh();
+        // Init Position
+        // Replaced updatePosition() visuals with just data logic if needed? 
+        // Actually gridX/Z is enough for renderer.
+        this.position.set(this.terrain.gridToWorld(this.gridX), this.terrain.getTileHeight(this.gridX, this.gridZ), this.terrain.gridToWorld(this.gridZ));
 
-        // Ghost Meshes for Infinite Scroll
-        this.ghosts = [];
-        this.neighborOffsets = [
-            { x: 1, z: 0 }, { x: -1, z: 0 },
-            { x: 0, z: 1 }, { x: 0, z: -1 },
-            { x: 1, z: 1 }, { x: 1, z: -1 },
-            { x: -1, z: 1 }, { x: -1, z: -1 }
-        ];
-
-        this.neighborOffsets.forEach(offset => {
-            const ghost = this.mesh.clone(); // Clone structure
-            this.scene.add(ghost);
-            this.ghosts.push({ mesh: ghost, offset: offset });
-        });
-
-        this.updatePosition();
-        this.scene.add(this.mesh);
 
         // Movement
         this.isMoving = false;
         this.moveTimer = 0;
-        this.moveInterval = 1600; // Half Speed (800 -> 1600)
+        this.moveInterval = 1600;
         this.lastTime = (window.game && window.game.gameTotalTime !== undefined) ? window.game.gameTotalTime : 0;
-        this.lastTime = (window.game && window.game.gameTotalTime !== undefined) ? window.game.gameTotalTime : 0;
-        this.baseMoveDuration = 800; // Default
+        this.baseMoveDuration = 800;
         this.moveDuration = this.baseMoveDuration;
 
         // Register in Spatial Grid
         this.terrain.registerEntity(this, this.gridX, this.gridZ, 'goblin');
     }
 
-    createMesh() {
-        const isHob = (this.type === 'hobgoblin');
-        const skinMat = isHob ? Goblin.assets.materials.skinHob : Goblin.assets.materials.skinNormal;
-        const clothesMat = isHob ? Goblin.assets.materials.clothesHob : Goblin.assets.materials.clothesNormal;
-
-        const torsoGeo = isHob ? Goblin.assets.geometries.torsoHob : Goblin.assets.geometries.torsoNormal;
-
-        // Torso
-        this.torso = new THREE.Mesh(torsoGeo, skinMat);
-        this.torso.position.y = 0.3;
-        this.mesh.add(this.torso);
-
-        // Head (Big ears?)
-        this.head = new THREE.Mesh(Goblin.assets.geometries.head, skinMat);
-        this.head.position.y = 0.55;
-        this.mesh.add(this.head);
-
-        // Ears
-        const leftEar = new THREE.Mesh(Goblin.assets.geometries.ear, skinMat);
-        leftEar.position.set(0.12, 0.55, 0);
-        leftEar.rotation.z = -Math.PI / 2;
-        this.mesh.add(leftEar);
-
-        const rightEar = new THREE.Mesh(Goblin.assets.geometries.ear, skinMat);
-        rightEar.position.set(-0.12, 0.55, 0);
-        rightEar.rotation.z = Math.PI / 2;
-        this.mesh.add(rightEar);
-
-        // Arms
-        this.leftArm = new THREE.Mesh(Goblin.assets.geometries.arm, skinMat);
-        this.leftArm.position.set(0.18, 0.3, 0);
-        this.mesh.add(this.leftArm);
-
-        this.rightArm = new THREE.Mesh(Goblin.assets.geometries.arm, skinMat);
-        this.rightArm.position.set(-0.18, 0.3, 0);
-        this.mesh.add(this.rightArm);
-
-        // Legs (Clothes color)
-        this.leftLeg = new THREE.Mesh(Goblin.assets.geometries.leg, clothesMat);
-        this.leftLeg.position.set(0.08, 0.12, 0);
-        this.mesh.add(this.leftLeg);
-
-        this.rightLeg = new THREE.Mesh(Goblin.assets.geometries.leg, clothesMat);
-        this.rightLeg.position.set(-0.08, 0.12, 0);
-        this.mesh.add(this.rightLeg);
-
-        // Club (Weapon)
-        this.club = new THREE.Mesh(Goblin.assets.geometries.club, Goblin.assets.materials.club);
-        this.club.position.set(0, -0.15, 0.1);
-        this.club.rotation.x = Math.PI / 2;
-        this.rightArm.add(this.club);
-
-        if (isHob) {
-            this.mesh.scale.set(1.2, 1.2, 1.2);
-        }
-    }
+    // REMOVED: createMesh, updateVisuals, updatePosition (visual part)
 
     updateLogic(time, deltaTime, units, buildings) {
-        if (this.isDead) {
-            this.updateDeathAnimation(deltaTime);
-            return;
-        }
+        if (this.isDead || this.isFinished) return;
 
         this.age += deltaTime;
         if (this.age >= this.lifespan) {
@@ -204,12 +141,23 @@ export class Goblin {
             return;
         }
 
-        this.attackCooldown -= deltaTime;
-        // Logic continue...
+        // Update Animation State
+        if (this.isMoving) {
+            this.updateMovement(time);
+        }
 
-    } // End of update()
+        // Attack Logic for Attack Animation?
+        // If attacking, maybe swing arm?
+        if (this.attackCooldown > 0) {
+            this.attackCooldown -= deltaTime;
+            if (this.attackCooldown > (1.0 - 0.2)) { // During strike
+                this.limbs.rightArm.x = -Math.PI / 2; // Raised high? Or forward?
+                // Club is attached to right arm. 
+                // Simple strike anim: Lift and swing.
+            }
+        }
 
-    updateLogic(time, deltaTime, units, buildings) {
+        // ... Existing AI Logic ...
         // Debug Log only for one goblin occasionally
         if (Math.random() < 0.005) {
             console.log(`[GoblinAI] ID:${this.id} State:${this.state} Moving:${this.isMoving} TargetU:${!!this.targetUnit} TargetB:${!!this.targetBuilding} Pos:${this.gridX.toFixed(1)},${this.gridZ.toFixed(1)}`);
@@ -217,6 +165,19 @@ export class Goblin {
 
         // AI Logic
         if (!this.isMoving) {
+            // Migration Step
+            if (this.state === 'migrating' && this.migrationTarget) {
+                this.moveToTarget(this.migrationTarget.x, this.migrationTarget.z, time);
+
+                // Check if arrived
+                if (this.getDistance(this.migrationTarget.x, this.migrationTarget.z) < 2.0) {
+                    console.log(`Goblin ${this.id} finished migrating.`);
+                    this.state = 'idle';
+                    this.migrationTarget = null;
+                }
+                return;
+            }
+
             // 1. Look for targets
             this.findTarget(units, buildings);
 
@@ -255,54 +216,71 @@ export class Goblin {
                     this.moveRandomly(time);
                 } else {
                     this.moveToTarget(this.targetUnit.gridX, this.targetUnit.gridZ, time);
+
+                    if (!this.targetUnit) return; // Safety check if target voided during move
+
                     // Attack if close
                     // Castle range 2.5, Normal 1.5. Unit is small.
                     if (this.getDistance(this.targetUnit.gridX, this.targetUnit.gridZ) <= 1.8) {
-                        this.attackUnit(this.targetUnit);
+                        this.attackTarget(time, deltaTime); // Call attackTarget
                         this.chaseTimer = 0; // Reset on successful attack
                     }
                 }
             } else if (this.targetBuilding) {
                 // console.log(`[GoblinAI] ${this.id} Moving to Building ${this.targetBuilding.userData.type}`);
-                this.moveToTarget(this.targetBuilding.userData.gridX, this.targetBuilding.userData.gridZ, time);
-                // Destroy if close
-                if (this.getDistance(this.targetBuilding.userData.gridX, this.targetBuilding.userData.gridZ) <= 2.5) {
-                    this.attackBuilding(this.targetBuilding);
+                this.moveToTarget(this.targetBuilding.gridX, this.targetBuilding.gridZ, time);
+                // Destroy if close (Perimeter check)
+                if (this.getDistanceToBuilding(this.targetBuilding) <= 1.5) { // Range 1.5 from PERIMETER
+                    this.attackTarget(time, deltaTime); // Call attackTarget
                 }
             } else {
                 // Wander
-                if (time - this.lastTime > this.moveInterval) {
+                if (!this.isMoving && time - this.lastTime > this.moveInterval) {
+                    // Stagnation Check
+                    this.wanderCount = (this.wanderCount || 0) + 1;
+
                     // Try to build Hut (Rarely)
                     // Balance: Reduced to 1.0% (was 2.0%, originally 0.5%)
-                    if (Math.random() < 0.01) {
-                        this.tryBuildHut();
+                    let built = false;
+                    if (Math.random() < 0.02) { // Increased chance slightly to reset wanderCount?
+                        built = this.tryBuildHut();
                     }
+
+                    if (built) {
+                        this.wanderCount = 0;
+                    } else if (this.wanderCount > 10) { // Approx 20-30s of idleness
+                        console.log(`Goblin ${this.id} bored. Migrating...`);
+                        this.migrate(time);
+                        this.wanderCount = 0;
+                        this.lastTime = time; // Reset timer so we don't spam migrate
+                        return; // Skip standard wander
+                    }
+
                     this.moveRandomly(time);
                     this.lastTime = time;
                 } else {
                     // console.log(`[GoblinAI] ${this.id} Waiting...`);
                 }
             }
+        } else {
+            // Visual logic moved
         }
     }
 
-
     findTarget(units, buildings) {
-        // Use Spatial Search for Units
-        // Range 10.0
-        // We need a way to filter sleeping units in findNearestEntity or check after.
-        // spatial search returns nearest. if nearest is sleeping, we might miss a non-sleeping one further away.
-        // For simple spatial search optimization, we assume findNearestEntity returns nearest VALID target?
-        // Current implementation of findNearestEntity doesn't take custom filter.
-        // Let's modify it or just check closest. If closest is sleeping, ignore?
-        // Better: iterate nearby entities manually using Terrain helper if needed, or just accept if closest is sleeping we ignore (goblin confusingly ignores everyone if closest is hidden).
-        // To be strict: We need 'findNearestValidEntity'.
-        // For now: Get nearest 'unit'. If sleeping, too bad, goblin finds nothing (or wanders).
-        // Wait, if closest is sleeping, goblin should find NEXT closest.
-        // Terrain.findNearestEntity is simple O(1) mostly.
-        // Let's rely on standard search but check sleeping.
+        // If we have a target, check if valid
+        if (this.targetUnit && (this.targetUnit.isDead || this.targetUnit.isFinished)) {
+            this.targetUnit = null;
+        }
+        if (this.targetBuilding && this.targetBuilding.userData.hp <= 0) {
+            this.targetBuilding = null;
+        }
 
-        // Use Weighted Search
+        if (this.targetUnit || this.targetBuilding) return; // Keep target
+
+        // Find Unit
+        // 1. Closest Unit (exclude Sleeping, Rock Penalty)
+        // Use Terrain Spatial Hash for perf!
         const closestUnit = this.terrain.findBestTarget('unit', this.gridX, this.gridZ, 10.0, (entity, dist) => {
             if (entity.isSleeping) return Infinity; // Ignore sleeping
 
@@ -311,46 +289,66 @@ export class Goblin {
             if (h > 8) score += 20.0; // Rock Penalty
             return score;
         });
-
         this.targetUnit = closestUnit;
 
-        if (!this.targetUnit) {
-            // Look for buildings
-            // Buildings are in a simple list `this.terrain.buildings`. O(N) is okay if N ~ 100.
-            // But for performance with many buildings, we should also spatially partition buildings?
-            // buildings are already in grid! grid[x][z].building.
-            // But we need to SEARCH.
-            // Let's stick to linear search for buildings for now as they are static and usually fewer than units/goblins?
-            // Or use spatial grid if we registered buildings as entities? (We didn't).
-            // Let's keep linear for buildings but optimize skip.
+        if (this.targetUnit) return;
 
-            let closestBuilding = null;
-            let minDist = 20; // Larger range
+        // Find Building (Random scan or closest?)
+        // Scan specific types
+        // const targetTypes = ['house', 'farm', 'barracks', 'tower']; // Not used directly
+        // Filter out destroyed or own huts
+        // Simple search: Closest?
+        // OPTIMIZATION: Use Spatial Partitioning for Buildings too (O(k) vs O(N))
+        const bestB = this.terrain.findBestTarget('building', this.gridX, this.gridZ, 20.0, (entity, dist) => {
+            // Filter out own huts and caves
+            if (entity.userData.type === 'goblin_hut' || entity.userData.type === 'cave') return Infinity;
+            if (entity.userData.hp <= 0) return Infinity; // Ignore destroyed
 
-            for (const b of buildings) {
-                // Ignore Goblin Huts AND Caves
-                if (b.userData.type === 'goblin_hut' || b.userData.type === 'cave') continue;
+            return dist; // Simple distance scoring
+        });
+        this.targetBuilding = bestB;
 
-                // Skip if far quickly
-                const dx = Math.abs(b.userData.gridX - this.gridX);
-                const dz = Math.abs(b.userData.gridZ - this.gridZ);
-                if (dx > minDist || dz > minDist) continue; // Manhattan pre-check
-
-                const dist = this.getDistance(b.userData.gridX, b.userData.gridZ);
-                if (dist < minDist) {
-                    minDist = dist;
-                    closestBuilding = b;
+        // Clan Memory Logic (Keep existing)
+        // This part was in updateLogic, moving it here for target finding context
+        if (!this.targetUnit && !this.targetBuilding) {
+            // If we arrived at a memory target but found no valid target to attack
+            if (this.currentMemoryTarget) {
+                const dist = this.getDistance(this.currentMemoryTarget.x, this.currentMemoryTarget.z);
+                if (dist < 5.0) {
+                    if (window.game && window.game.goblinManager) {
+                        window.game.goblinManager.reportRaidFailure(this.clanId, this.currentMemoryTarget.x, this.currentMemoryTarget.z);
+                    }
                 }
+                this.currentMemoryTarget = null;
             }
-            this.targetBuilding = closestBuilding;
         }
     }
 
-    getDistance(tx, tz) {
-        const dx = Math.abs(this.gridX - tx);
-        const dz = Math.abs(this.gridZ - tz);
-        // Handle wrapping distance? For now simple Manhattan or Euclidean
-        // Simple Euclidean without wrap for AI simplicity
+    // getDistance inherited from Entity
+
+    getDistanceToBuilding(b) {
+        if (!b) return Infinity;
+        let size = 1;
+        // Hardcode sizes or check terrain? Terrain reference is better.
+        // House/Farm=2, Barracks/Tower/Mansion=3?
+        // Let's safe-guess or ask Terrain.
+        if (this.terrain && this.terrain.getBuildingSize) {
+            size = this.terrain.getBuildingSize(b.type);
+        } else {
+            // Fallback
+            if (b.type === 'house' || b.type === 'farm') size = 2;
+            if (b.type === 'mansion' || b.type === 'barracks' || b.type === 'tower') size = 3;
+            if (b.type === 'castle') size = 4;
+        }
+
+        const minX = b.gridX;
+        const maxX = b.gridX + size - 1;
+        const minZ = b.gridZ;
+        const maxZ = b.gridZ + size - 1;
+
+        const dx = Math.max(minX - this.gridX, 0, this.gridX - maxX);
+        const dz = Math.max(minZ - this.gridZ, 0, this.gridZ - maxZ);
+
         return Math.sqrt(dx * dx + dz * dz);
     }
 
@@ -361,7 +359,7 @@ export class Goblin {
         // Recalculate if no path, or path target is different
         // For dynamic targets (units), might need frequent updates.
         // For static (buildings/points), just one calc.
-        const isDynamic = !!this.targetUnit;
+        // const isDynamic = !!this.targetUnit; // Not used
 
         // Simple optimization: Only recalculate every 1s or if no path
         // We'll calculate next step.
@@ -377,6 +375,40 @@ export class Goblin {
         let pathFound = false;
 
         if (dist > 2.0 && this.terrain.findPath) {
+            // Fix: If Target is a building, find nearest adjacent point
+            // This prevents pathfinding failure and clipping
+            if (this.terrain.grid[tx] && this.terrain.grid[tx][tz] && this.terrain.grid[tx][tz].hasBuilding) {
+                // Find closest neighbor to self
+                let bestX = tx, bestZ = tz;
+                let minD = Infinity;
+                const neighbors = [
+                    { x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 }
+                ];
+                for (const n of neighbors) {
+                    const nx = tx + n.x;
+                    const nz = tz + n.z;
+                    // Check validity
+                    if (this.terrain.isValidGrid(nx, nz) && !this.terrain.grid[nx][nz].hasBuilding && this.terrain.grid[nx][nz].height > 0) {
+                        // Dist from goblin
+                        const d = Math.pow(this.gridX - nx, 2) + Math.pow(this.gridZ - nz, 2);
+                        if (d < minD) {
+                            minD = d;
+                            bestX = nx;
+                            bestZ = nz;
+                        }
+                    }
+                }
+                // Update Target
+                if (minD !== Infinity) {
+                    tx = bestX;
+                    tz = bestZ;
+                } else {
+                    // Surrounded? Attack from range?
+                    // Just stay put or fail?
+                    // Let pathfinding try, it will fail.
+                }
+            }
+
             // Limit pathfinding calls? (Performance)
             // Just find path to target.
             // Note: findPath is somewhat expensive. Don't call every frame for 300 goblins.
@@ -425,10 +457,25 @@ export class Goblin {
         }
 
         // Common Move Logic
+        // Common Move Logic
         const targetH = this.terrain.getTileHeight(nextX, nextZ);
-        if (targetH <= 0) {
-            // Blocked by water
+        // Check Validity: Water, Height change, OR Building
+        // Note: Climbing limit is 2.0 in Terrain passability.
+        // We should enforce building collision here too.
+        let blocked = false;
+        if (targetH <= 0) blocked = true;
+        else if (Math.abs(targetH - this.terrain.getTileHeight(this.gridX, this.gridZ)) > 2.0) blocked = true;
+        // Fix: Block entering buildings
+        // Exception: If we are attacking the building and this step is NOT inside?
+        // But preventing entering is safer. AI should attack from outside.
+        // If we are already IN a building (glitched), let us out?
+        // Logic: specific block if target has building.
+        else if (this.terrain.grid[nextX][nextZ].hasBuilding) blocked = true;
+
+        if (blocked) {
+            // Blocked
             this.path = null; // Invalidate path
+            this.handleMoveFailure(time);
             return;
         }
 
@@ -463,6 +510,7 @@ export class Goblin {
                             this.startMove(nextX, nextZ, time);
                             return;
                         }
+
                     }
                 }
             }
@@ -508,6 +556,19 @@ export class Goblin {
         this.lastTime = time;
     }
 
+    handleMoveFailure(time) {
+        this.pathFailCount = (this.pathFailCount || 0) + 1;
+        if (this.pathFailCount > 3) {
+            console.log(`Goblin ${this.id} gave up target! Stuck/Coast.`);
+            this.targetUnit = null;
+            this.targetBuilding = null;
+            this.currentMemoryTarget = null;
+            this.path = null;
+            this.pathFailCount = 0;
+            this.moveRandomly(time);
+        }
+    }
+
     startMove(tx, tz, time) {
         // Safety: Ensure we have valid coords
         if (this.gridX === undefined || isNaN(this.gridX)) {
@@ -517,22 +578,11 @@ export class Goblin {
         }
 
         const targetH = this.terrain.getTileHeight(tx, tz);
-
-        // Speed Logic
-        if (targetH > 8) {
-            this.moveDuration = 6000; // Rock: Very Slow
-        } else {
-            this.moveDuration = this.baseMoveDuration || 800;
-        }
-
-        // Check height diff
         const currentH = this.terrain.getTileHeight(this.gridX, this.gridZ);
-        // targetH is already declared above
 
-        // Consistent limit with moveRandomly (2.0)
+        // Height Diff Limit (Climbing)
         if (Math.abs(targetH - currentH) > 2.0) {
             // Can't climb steep
-            // Add stuck logic here
             this.stuckCount = (this.stuckCount || 0) + 1;
             if (this.stuckCount > 5) {
                 this.targetBuilding = null;
@@ -542,143 +592,58 @@ export class Goblin {
             return;
         }
 
-        this.stuckCount = 0;
-        this.isMoving = true;
-        this.moveStartTime = time;
-        this.startGridX = this.gridX;
-        this.startGridZ = this.gridZ;
-        this.targetGridX = tx;
-        this.targetGridZ = tz;
+        // Use Entity base
+        super.startMove(tx, tz, time);
 
-        // Rotate mesh
-        let dx = tx - this.gridX;
-        let dz = tz - this.gridZ;
-        const angle = Math.atan2(dx, dz);
-        this.mesh.rotation.y = angle;
-    }
-
-    updateMovement(time) {
-        if (!this.isMoving) return;
-
-        const progress = (time - this.moveStartTime) / this.moveDuration;
-
-        if (progress >= 1) {
-            this.isMoving = false;
-
-            // Update Spatial Partitioning
-            if (this.terrain && this.terrain.moveEntity) {
-                this.terrain.moveEntity(this, this.gridX, this.gridZ, this.targetGridX, this.targetGridZ, 'goblin');
-            }
-
-            this.gridX = this.targetGridX;
-            this.gridZ = this.targetGridZ;
-            this.updatePosition();
+        // Speed Logic
+        const heightDiff = Math.abs(targetH - currentH);
+        if (targetH > 8) {
+            this.moveDuration = 6000; // Rock: Very Slow
+        } else if (heightDiff > 0.1) {
+            this.moveDuration = 3000; // Slope: Slow
         } else {
-            // Lerp
-            const logicalW = this.terrain.logicalWidth || 80;
-            const logicalD = this.terrain.logicalDepth || 80;
-
-            let sx = this.startGridX;
-            let sz = this.startGridZ;
-            let tx = this.targetGridX;
-            let tz = this.targetGridZ;
-
-            // Wrap interpolation logic (simplified)
-            if (tx - sx > logicalW / 2) sx += logicalW;
-            if (sx - tx > logicalW / 2) tx += logicalW;
-            if (tz - sz > logicalD / 2) sz += logicalD;
-            if (sz - tz > logicalD / 2) tz += logicalD;
-
-            const lerpX = sx + (tx - sx) * progress;
-            const lerpZ = sz + (tz - sz) * progress;
-
-            if (isNaN(lerpX) || isNaN(lerpZ)) {
-                console.warn(`Goblin NaN detected. ID:${this.id} Time:${time} StartT:${this.moveStartTime} SX:${sx} TX:${tx} Prog:${progress}`);
-                this.isMoving = false;
-                return;
-            }
-
-            // Use Visual Position
-            const vPos = this.terrain.getVisualPosition(lerpX, lerpZ, true);
-            this.visualPosRaw = new THREE.Vector3(vPos.x, vPos.y, vPos.z);
-            this.mesh.position.set(vPos.x, vPos.y + 0.2, vPos.z);
-
-            // Walk anim
-            const limbAngle = Math.sin(progress * Math.PI * 4) * 0.5;
-            this.leftArm.rotation.x = limbAngle;
-            this.rightArm.rotation.x = -limbAngle;
-            this.leftLeg.rotation.x = -limbAngle;
-            this.rightLeg.rotation.x = limbAngle;
+            this.moveDuration = this.baseMoveDuration || 800;
         }
+
+        this.stuckCount = 0;
+        this.pathFailCount = 0;
     }
 
-    updatePosition() {
-        // Spatial Grid update
-        const oldX = this._spatial ? this._spatial.x : this.gridX;
-        const oldZ = this._spatial ? this._spatial.z : this.gridZ;
+    // updateMovement inherited
 
-        this.terrain.moveEntity(this, oldX, oldZ, this.gridX, this.gridZ, 'goblin');
-
-        // Use Terrain Visual Position (Handles distortion/infinite logic)
-        const vPos = this.terrain.getVisualPosition(this.gridX, this.gridZ, true);
-        this.visualPosRaw = new THREE.Vector3(vPos.x, vPos.y, vPos.z);
-        this.mesh.position.set(vPos.x, vPos.y + 0.2, vPos.z);
-
-        this.updateVisuals();
+    onMoveFinished(time) {
+        // Final Snap handled by Entity
+        // Logic for Goblin on arrival?
+        // Just reset animation?
+        this.walkAnimTimer = 0;
+        this.limbs.leftArm.x = 0;
+        this.limbs.rightArm.x = 0;
+        this.limbs.leftLeg.x = 0;
+        this.limbs.rightLeg.x = 0;
     }
 
-    updateVisuals() {
-        // Update Mesh & Ghosts based on Camera Position (Infinite Scroll)
-        // If we don't have a raw position yet, skip or use current as fallback
-        if (!this.visualPosRaw) {
-            this.visualPosRaw = this.mesh.position.clone();
-            this.visualPosRaw.y -= 0.2; // Undo render offset
-        }
-
-        const vPos = this.visualPosRaw;
-        const logicalW = this.terrain.logicalWidth || 80; // W=80 is hardcoded default
-        const logicalD = this.terrain.logicalDepth || 80;
-
-        // Camera Base Offset
-        let baseGridX = 0;
-        let baseGridZ = 0;
-        if (window.game && window.game.camera) {
-            baseGridX = Math.round(window.game.camera.position.x / logicalW);
-            baseGridZ = Math.round(window.game.camera.position.z / logicalD);
-        }
-
-        // 1. Shift Main Mesh (Fixes Center Tile Disappearance)
-        this.mesh.position.set(
-            vPos.x + baseGridX * logicalW,
-            vPos.y + 0.2,
-            vPos.z + baseGridZ * logicalD
-        );
-
-        // 2. Update Ghosts
-        if (this.ghosts) {
-            this.ghosts.forEach(g => {
-                const offX = g.offset.x + baseGridX;
-                const offZ = g.offset.z + baseGridZ;
-
-                g.mesh.position.set(
-                    vPos.x + offX * logicalW,
-                    vPos.y + 0.2,
-                    vPos.z + offZ * logicalD
-                );
-                // Sync Initial State
-                g.mesh.rotation.copy(this.mesh.rotation);
-                const srcLimbs = this.mesh.children;
-                const dstLimbs = g.mesh.children;
-                for (let i = 0; i < srcLimbs.length && i < dstLimbs.length; i++) {
-                    dstLimbs[i].rotation.copy(srcLimbs[i].rotation);
-                    dstLimbs[i].position.copy(srcLimbs[i].position);
-                }
-                g.mesh.visible = this.mesh.visible;
-            });
-        }
+    onMoveStep(progress) {
+        // Walk anim
+        this.walkAnimTimer += 0.1; // Simple increment
+        const armSwing = Math.sin(this.walkAnimTimer) * 0.5;
+        const legSwing = Math.sin(this.walkAnimTimer) * 0.5;
+        this.limbs.leftArm.x = armSwing;
+        this.limbs.rightArm.x = -armSwing;
+        this.limbs.leftLeg.x = -legSwing;
+        this.limbs.rightLeg.x = legSwing;
     }
 
 
+
+    // updatePosition inherited from Entity
+
+    attackTarget(time, deltaTime) {
+        if (this.targetUnit) {
+            this.attackUnit(this.targetUnit);
+        } else if (this.targetBuilding) {
+            this.attackBuilding(this.targetBuilding);
+        }
+    }
 
     attackUnit(unit) {
         if (this.attackCooldown > 0) return;
@@ -688,11 +653,11 @@ export class Goblin {
         }
 
         // Attack anim
-        this.rightArm.rotation.x = -Math.PI / 2; // Raise club
+        this.limbs.rightArm.x = -Math.PI / 2; // Raise club
 
         // Synced Damage
         setTimeout(() => {
-            this.rightArm.rotation.x = 0; // Swing
+            this.limbs.rightArm.x = 0; // Swing
             if (!unit.isDead && this.getDistance(unit.gridX, unit.gridZ) <= 2.0) { // Check range again
                 unit.takeDamage(this.damage);
                 console.log(`Goblin hit Unit! Dmg: ${this.damage} UnitHP: ${unit.hp}`);
@@ -715,9 +680,9 @@ export class Goblin {
         if (this.attackCooldown > 0) return;
 
         // Attack anim
-        this.rightArm.rotation.x = -Math.PI / 2;
+        this.limbs.rightArm.x = -Math.PI / 2;
         setTimeout(() => {
-            this.rightArm.rotation.x = 0;
+            this.limbs.rightArm.x = 0;
         }, 200);
 
         // Damage building population
@@ -754,15 +719,17 @@ export class Goblin {
                     console.log(`Goblin took ${retaliation} retaliation damage from ${building.userData.type}!`);
                 }
             }
+        }
 
-            if (building.userData.population <= 0) {
-                this.destroyBuilding(building);
-            }
+        // Fix: Check < 1.0 because Terrain update might adds fractional population (0.001)
+        // which prevents <= 0 check from passing even if displayed as 0.
+        if (building.userData.population < 1.0) {
+            this.destroyBuilding(building);
+        }
 
-            // Record Memory on hit
-            if (window.game && window.game.goblinManager) {
-                window.game.goblinManager.recordRaidLocation(this.clanId, building.userData.gridX, building.userData.gridZ);
-            }
+        // Record Memory on hit
+        if (window.game && window.game.goblinManager) {
+            window.game.goblinManager.recordRaidLocation(this.clanId, building.userData.gridX, building.userData.gridZ);
         }
 
         this.attackCooldown = this.attackRate;
@@ -785,10 +752,25 @@ export class Goblin {
     takeDamage(amount) {
         if (this.isDead) return; // Ignore damage if already dead
         this.hp -= amount;
-        if (this.hp <= 0) {
-            this.die();
+        // Animation update removed from here. Handled in updateLogic.
+        if (this.isMoving) {
+            // No-op for limb updates here, rely on updateLogic
+        } else {
+            // Reset limbs if needed, or leave for updateLogic
+        }
+
+        // Attack Animation Override
+        if (this.attackCooldown > 0) {
+            const progress = this.attackCooldown / this.attackRate; // 1.0 -> 0.0
+            // Swing around 0.8
+            if (progress < 0.9 && progress > 0.5) {
+                this.limbs.rightArm.x = -Math.PI / 2 + (Math.sin(progress * Math.PI * 4) * 0.5); // Chop
+            }
         } else {
             // Flash red logic removed
+        }
+        if (this.hp <= 0) {
+            this.die();
         }
     }
 
@@ -796,13 +778,6 @@ export class Goblin {
         if (this.isDead) return; // Prevent double death
         this.isDead = true;
         this.terrain.unregisterEntity(this);
-        this.mesh.visible = false;
-        this.scene.remove(this.mesh);
-        this.ghosts.forEach(g => {
-            g.mesh.visible = false;
-            this.scene.remove(g.mesh);
-        });
-        this.ghosts = [];
         this.createCross();
         // console.log("Goblin died");
     }
@@ -816,7 +791,6 @@ export class Goblin {
             });
             this.crossMesh = null;
         }
-        this.scene.remove(this.mesh);
         this.terrain.unregisterEntity(this);
     }
 
@@ -880,6 +854,11 @@ export class Goblin {
             console.log(`[Goblin] Death Animation Finished ID:${this.id}. Removing Cross.`);
             this.scene.remove(this.crossMesh);
 
+            // Remove from Spatial Grid
+            if (this.terrain && this.terrain.unregisterEntity) {
+                this.terrain.unregisterEntity(this);
+            }
+
             // CRITICAL: Dispose of materials to prevent memory leak
             this.crossMesh.children.forEach(child => {
                 if (child.material && child.userData.clonedMat) {
@@ -911,18 +890,57 @@ export class Goblin {
         }
     }
 
+    migrate(time) {
+        // Move far away (20-30 tiles) - Step by step!
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        // Random direction
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 20 + Math.random() * 20;
+
+        let tx = Math.floor(this.gridX + Math.cos(angle) * dist);
+        let tz = Math.floor(this.gridZ + Math.sin(angle) * dist);
+
+        // Wrap
+        if (tx < 0) tx += logicalW;
+        if (tx >= logicalW) tx -= logicalW;
+        if (tz < 0) tz += logicalD;
+        if (tz >= logicalD) tz -= logicalD;
+
+        // Validate target (Water check)
+        const h = this.terrain.getTileHeight(tx, tz);
+        if (h <= 0) {
+            tx = (tx + 5) % logicalW;
+        }
+
+        console.log(`Goblin ${this.id} migrating to ${tx},${tz} (Walking)`);
+        this.state = 'migrating';
+        this.migrationTarget = { x: tx, z: tz };
+
+        // Start first step
+        this.moveToTarget(tx, tz, time);
+    }
+
     tryBuildHut() {
         // 1. Check constraints
-        const x = this.gridX;
-        const z = this.gridZ;
+        const x = Math.round(this.gridX);
+        const z = Math.round(this.gridZ);
+
+        // Safety Check: Grid bounds
+        if (!this.terrain.grid[x] || !this.terrain.grid[x][z]) {
+            // console.warn(`Goblin ${this.id} attempted build at invalid coords ${x},${z}`);
+            return false;
+        }
 
         // Check if building already exists
-        if (this.terrain.grid[x][z].hasBuilding) return;
+        if (this.terrain.grid[x][z].hasBuilding) return false;
 
         // Rock check (Height > 8)
+        // Rock check (Height > 8)
         const h = this.terrain.getTileHeight(x, z);
-        if (h > 8) return; // Cannot build on Rock
-        if (h <= 0) return; // Cannot build on Water
+        if (h > 8) return false; // Cannot build on Rock
+        if (h <= 0) return false; // Cannot build on Water
 
         // Space Check (Don't build too close to other huts? Optional, but good for distribution)
         // User Request: Check for surrounding space.
@@ -937,7 +955,7 @@ export class Goblin {
 
                 // If within spacing radius, abort
                 if (distSq < minSpacing * minSpacing) {
-                    return;
+                    return false;
                 }
             }
         }
@@ -947,6 +965,9 @@ export class Goblin {
         if (hut) {
             hut.userData.clanId = this.clanId;
             console.log(`Goblin (Clan: ${this.clanId}) built a Hut!`);
+            return true;
         }
+        return false;
     }
 }
+

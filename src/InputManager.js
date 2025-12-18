@@ -42,6 +42,7 @@ export class InputManager {
         const btnSpawn = document.getElementById('btn-spawn');
         const btnBarracks = document.getElementById('btn-barracks');
         const btnTower = document.getElementById('btn-tower');
+        const btnCancel = document.getElementById('btn-cancel');
 
         const updateActive = (mode) => {
             this.mode = mode;
@@ -50,6 +51,7 @@ export class InputManager {
             if (btnSpawn) btnSpawn.classList.toggle('active', mode === 'spawn');
             if (btnBarracks) btnBarracks.classList.toggle('active', mode === 'barracks');
             if (btnTower) btnTower.classList.toggle('active', mode === 'tower');
+            if (btnCancel) btnCancel.classList.toggle('active', mode === 'cancel');
         };
 
         if (btnRaise) {
@@ -57,6 +59,9 @@ export class InputManager {
         }
         if (btnLower) {
             btnLower.addEventListener('click', () => updateActive('lower'));
+        }
+        if (btnCancel) {
+            btnCancel.addEventListener('click', () => updateActive('cancel'));
         }
         if (btnSpawn) {
             btnSpawn.addEventListener('click', () => updateActive('spawn'));
@@ -76,7 +81,9 @@ export class InputManager {
             target.closest('a') ||
             target.id === 'minimap' ||
             target.closest('#minimap') ||
-            target.closest('.ui-container'); // Generic catch-all if used
+            target.closest('#start-screen') || // Block Start Screen
+            target.closest('#save-modal') ||   // Block Save Modal
+            target.closest('.ui-container');
     }
 
     onPointerDown(event) {
@@ -276,100 +283,58 @@ export class InputManager {
                     return;
                 }
 
+                // Pass World Coords for Visualization
+                // FIX: 'intersect' is not defined here. Use 'point' (which is hitPoint vector).
+                const worldX = point.x;
+                const worldZ = point.z;
+
                 if (this.mode === 'raise') {
-                    this.terrain.raise(gridX, gridZ);
-                    if (this.game) this.game.consumeMana(10); // Cost for 1.0 height
+                    if (this.game) {
+                        this.game.addRequest('raise', gridX, gridZ, null, worldX, worldZ);
+                        this.game.consumeMana(10);
+                        console.log(`[Input] Request Queued: Raise at ${gridX},${gridZ}`);
+                    }
                 } else if (this.mode === 'lower') {
-                    this.terrain.lower(gridX, gridZ);
-                    if (this.game) this.game.consumeMana(10); // Cost for 1.0 height
+                    if (this.game) {
+                        this.game.addRequest('lower', gridX, gridZ, null, worldX, worldZ);
+                        this.game.consumeMana(10);
+                        console.log(`[Input] Request Queued: Lower at ${gridX},${gridZ}`);
+                    }
+                } else if (this.mode === 'cancel') { // CANCEL INSTRUCTION
+                    if (this.game) {
+                        if (this.game.tryCancelRequest(gridX, gridZ)) {
+                            console.log(`[Input] Request Canceled at ${gridX},${gridZ}`);
+                        }
+                    }
                 } else if (this.mode === 'spawn') {
                     if (this.spawnCallback) {
                         this.spawnCallback(gridX, gridZ, true);
-                        if (this.game) this.game.consumeMana(20); // Cost for Unit Spawn
+                        if (this.game) this.game.consumeMana(20);
                     }
                 } else if (this.mode === 'barracks') {
-                    // Build Barracks (God Mode)
-                    if (this.terrain) {
-                        console.log(`Debug: Force-building Barracks at ${gridX}, ${gridZ}`);
-
-                        // 1. Force Flatness (3x3)
-                        this.terrain.flattenArea(gridX, gridZ, 3);
-
-                        // 2. Clear Obstacles
-                        const W = this.terrain.logicalWidth;
-                        const D = this.terrain.logicalDepth;
-                        for (let i = 0; i < 3; i++) {
-                            for (let j = 0; j < 3; j++) {
-                                const cx = (gridX + i) % W;
-                                const cz = (gridZ + j) % D;
-                                const cell = this.terrain.grid[cx][cz];
-                                if (cell && cell.hasBuilding && cell.building) {
-                                    this.terrain.removeBuilding(cell.building);
-                                }
-                            }
-                        }
-
-                        // 3. Add Building
-                        const success = this.terrain.addBuilding('barracks', gridX, gridZ);
-                        if (success) {
-                            console.log("Debug: Barracks placed successfully!");
-                            // Visual update handled by addBuilding usually? 
-                            // Terrain.addBuilding calls createBuildingMesh? Yes, implicitly via updateMesh maybe?
-                            // Actually Terrain.js addBuilding usually does logic. 
-                            // BuildingRenderer handles visuals.
-                            // We might need to force update if it doesn't auto-update.
-                            this.terrain.updateMesh();
-                            if (this.game) this.game.consumeMana(50);
-                        } else {
-                            console.error("Debug: Barracks placement failed.");
-                        }
+                    if (this.game) {
+                        this.game.addRequest('build_barracks', gridX, gridZ, null, worldX, worldZ);
+                        this.game.consumeMana(50);
                     }
                 } else if (this.mode === 'tower') {
-                    // Debug Build Tower
-                    if (this.terrain) {
-                        console.log(`Debug: Force-building Tower at ${gridX}, ${gridZ}`);
-
-                        // 1. Force Flatness
-                        this.terrain.flattenArea(gridX, gridZ, 3);
-
-                        // 2. Clear Obstacles (Rocks, Trees)
-                        const W = this.terrain.logicalWidth;
-                        const D = this.terrain.logicalDepth;
-                        for (let i = 0; i < 3; i++) {
-                            for (let j = 0; j < 3; j++) {
-                                const cx = (gridX + i) % W;
-                                const cz = (gridZ + j) % D;
-                                if (this.terrain.grid[cx][cz]) {
-                                    this.terrain.grid[cx][cz].hasBuilding = false;
-                                    this.terrain.grid[cx][cz].building = null;
-                                }
-                            }
-                        }
-
-                        // 3. Add Building
-                        const success = this.terrain.addBuilding('tower', gridX, gridZ);
-                        if (success) {
-                            console.log("Debug: Tower placed successfully!");
-                            this.terrain.updateMesh();
-                        } else {
-                            console.error("Debug: Tower placement failed even after clearing.");
-                        }
+                    if (this.game) {
+                        this.game.addRequest('build_tower', gridX, gridZ, null, worldX, worldZ);
+                        this.game.consumeMana(50);
                     }
                 }
-            } else if (event.button === 2) { // Right click (Lower)
+            } else if (event.button === 2) { // Right click (Lower Request)
                 if (this.game && !this.game.canAction()) return;
 
-                this.terrain.lower(gridX, gridZ);
-                if (this.game) this.game.consumeMana(10);
+                if (this.game) {
+                    const worldX = point.x;
+                    const worldZ = point.z;
+                    this.game.addRequest('lower', gridX, gridZ, null, worldX, worldZ);
+                    this.game.consumeMana(10);
+                }
             }
 
             // Update cursor immediately to reflect height change
             this.updateCursor();
         }
-    }
-
-    update(deltaTime) {
-        // Update cursor every frame to handle camera movement even if mouse is static
-        this.updateCursor();
     }
 }

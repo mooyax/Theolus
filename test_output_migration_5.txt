@@ -1,0 +1,48 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould retry migration after 30 seconds timeout
+[22m[39mUnit test-migrant migrating to 89,47 (Walking)
+Unit test-migrant migration timed out. Retrying.
+Unit test-migrant migrating to 91,47 (Walking)
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould interrupt migration if enemy is found (Priority)
+[22m[39mUnit test-migrant migrating to 89,47 (Walking)
+Unit test-migrant interrupted migration for combat.
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould stop migrating if construction succeeds
+[22m[39mUnit test-migrant migrating to 89,47 (Walking)
+Unit test-migrant built structure during migration. Stopping.
+
+ [31m笶ｯ[39m src/tests/MigrationImprovement.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 17[2mms[22m[39m
+[31m     [31mﾃ・[31m should retry migration after 30 seconds timeout[39m[32m 14[2mms[22m[39m
+     [32m笨・[39m should interrupt migration if enemy is found (Priority)[32m 1[2mms[22m[39m
+     [32m笨・[39m should stop migrating if construction succeeds[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/MigrationImprovement.test.js > Migration Improvements > should retry migration after 30 seconds timeout
+AssertionError: expected 35 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 35
+
+ 笶ｯ src/tests/MigrationImprovement.test.js:104:37
+    102|         // Should have called migrate again
+    103|         // We can check if migrationTimer reset
+    104|         expect(unit.migrationTimer).toBe(0);
+       |                                     ^
+    105|         // And target should likely be different (random chance, but h窶ｦ
+    106|         // or effectively 'Migrating' continues.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 18:33:27
+[2m   Duration [22m 394ms[2m (transform 91ms, setup 0ms, import 124ms, tests 17ms, environment 0ms)[22m
+
