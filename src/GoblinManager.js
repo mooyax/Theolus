@@ -266,6 +266,9 @@ export class GoblinManager {
             }
         });
 
+        // WAVE SYSTEM UPDATE
+        this.updateClanWaves(deltaTime);
+
         // 1.5 Goblin Hut Logic (New)
         this.updateHuts(deltaTime);
 
@@ -320,6 +323,95 @@ export class GoblinManager {
         if (this.renderer) this.renderer.update(this.goblins, camera);
     }
 
+    // --- WAVE SYSTEM ---
+    notifyClanActivity(clanId) {
+        if (!clanId) return;
+        if (!this.clans) this.clans = {};
+
+        let clan = this.clans[clanId];
+        if (!clan) {
+            clan = {
+                id: clanId,
+                active: false,
+                waveTimer: 0,
+                waveLevel: 0,
+                caves: [] // Cache if needed
+            };
+            this.clans[clanId] = clan;
+        }
+
+        // If inactive, activate!
+        if (!clan.active) {
+            clan.active = true;
+            clan.waveTimer = 30; // First wave in 30 seconds
+            clan.waveLevel = 1;  // Start at Level 1
+            console.log(`[GoblinManager] Clan ${clanId} ACTIVATED! Wave 1 in 30s.`);
+
+            // Visual/Sound cue could go here
+        }
+    }
+
+    updateClanWaves(deltaTime) {
+        if (!this.clans) return;
+
+        Object.values(this.clans).forEach(clan => {
+            if (clan.active) {
+                clan.waveTimer -= deltaTime;
+
+                if (clan.waveTimer <= 0) {
+                    this.triggerWave(clan);
+                }
+            }
+        });
+    }
+
+    triggerWave(clan) {
+        console.log(`[GoblinManager] TRIGGERING WAVE Level ${clan.waveLevel} for Clan ${clan.id}!`);
+
+        // Find caves for this clan
+        // Filter this.caves
+        const clanCaves = this.caves.filter(c => c.clanId === clan.id); // Strict string match? Trim?
+        // Note: clanId in cave creation includes trailing space? `clan_${x}_${z} `
+        // Let's ensure matching logic is robust.
+
+        if (clanCaves.length === 0) {
+            // Trim check
+            const trimmedId = clan.id.trim();
+            const fallbackCaves = this.caves.filter(c => c.clanId.trim() === trimmedId);
+            if (fallbackCaves.length === 0) {
+                console.warn(`[GoblinManager] No caves found for active Clan ${clan.id}. Deactivating.`);
+                clan.active = false;
+                return;
+            }
+            // Use fallback
+            fallbackCaves.forEach(cave => this.spawnWaveAtCave(cave, clan.waveLevel));
+        } else {
+            clanCaves.forEach(cave => this.spawnWaveAtCave(cave, clan.waveLevel));
+        }
+
+        // Progression
+        clan.waveLevel++;
+        if (clan.waveLevel > 10) clan.waveLevel = 10; // Cap at 10 for now? Or let it grow?
+
+        // Reset Timer (30s? 60s?)
+        clan.waveTimer = 45; // slightly longer between waves
+    }
+
+    spawnWaveAtCave(cave, level) {
+        // Spawn 'level' number of goblins instantly (or slightly staggered)
+        // Cap spawn per wave per cave to prevent explosion
+        const count = Math.min(level, 10); // Max 10 per cave per wave
+
+        console.log(`[Wave] Spawning ${count} goblins at cave ${cave.gridX},${cave.gridZ}`);
+
+        for (let i = 0; i < count; i++) {
+            // Slight stagger to avoid stacking
+            setTimeout(() => {
+                this.spawnGoblinAtCave(cave);
+            }, i * 200);
+        }
+    }
+
     spawnGoblinAtCave(cave) {
         // Validation: Verify Cave Still Exists
         if (cave.building) {
@@ -351,7 +443,9 @@ export class GoblinManager {
             const tz = cave.gridZ + n.z;
             const h = this.terrain.getTileHeight(tx, tz);
             if (h > 0) {
-                this.spawnGoblin(tx, tz, cave.clanId);
+                // Get Raid Target
+                const raidTarget = this.getClanRaidTarget(cave.clanId);
+                this.spawnGoblin(tx, tz, cave.clanId, raidTarget);
                 return;
             }
         }
@@ -359,7 +453,7 @@ export class GoblinManager {
         this.spawnGoblin(cave.gridX, cave.gridZ, cave.clanId);
     }
 
-    spawnGoblin(x, z, clanId = null) {
+    spawnGoblin(x, z, clanId = null, raidTarget = null) {
         const r = Math.random();
         let type = 'normal';
 
@@ -375,7 +469,7 @@ export class GoblinManager {
         }
 
         // Create
-        const goblin = new Goblin(this.scene, this.terrain, x, z, type, clanId);
+        const goblin = new Goblin(this.scene, this.terrain, x, z, type, clanId, raidTarget);
         this.goblins.push(goblin);
 
         if (this.terrain.registerEntity) {

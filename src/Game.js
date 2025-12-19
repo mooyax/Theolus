@@ -1269,11 +1269,30 @@ export class Game {
         return this.saveManager.save(slotId, saveData);
     }
 
-    loadGame(slotId) {
+    async loadGame(slotId) {
         if (!this.saveManager) return false;
+
+        // Show Loading Screen
+        const loadingScreen = document.getElementById('loading-screen');
+        const loadingBar = document.getElementById('loading-bar');
+        const loadingText = document.getElementById('loading-text');
+
+        if (loadingScreen) {
+            loadingScreen.style.display = 'flex';
+            if (loadingBar) loadingBar.style.width = '0%';
+            if (loadingText) loadingText.innerText = '0%';
+        }
+
+        // Indicate Loading Start
+        console.log("Load Started...");
+
+        // Small delay to let UI render (yield)
+        await new Promise(r => setTimeout(r, 50));
+
         const saveData = this.saveManager.load(slotId);
         if (!saveData) {
             console.error("Load Game Failed: No data for slot", slotId);
+            if (loadingScreen) loadingScreen.style.display = 'none';
             return false;
         }
         console.log("Load Game: Data found", saveData);
@@ -1282,134 +1301,84 @@ export class Game {
         if (this.goblinManager) this.goblinManager.reset();
         this.clearProjectiles();
 
-        // Restore Goblins (After Terrain deserialization!)
-        // Terrain is restored below. We must wait for terrain to have buildings before linking caves.
-        // However, Terrain deserialization is synchronous?
-        // Let's verify standard flow.
-        // this.terrain.deserialize(saveData.terrain);
+        // Chunked / Async Deserialization to prevent freeze
+        await this.terrain.deserialize(saveData.terrain, (pct) => {
+            if (loadingBar) loadingBar.style.width = pct + '%';
+            if (loadingText) loadingText.innerText = pct + '%';
+        });
 
-        // So we should move Goblin deserialization AFTER Terrain deserialization.
-        // See line 1409 for Season restoration, then Terrain.
-
-
+        // Continue Restoration
         this.resources = saveData.resources || { grain: 0, fish: 0, meat: 0 };
         this.gameTime = saveData.gameTime || 8;
-        this.gameTotalTime = saveData.gameTotalTime || 0; // Fix: Sync Unit Time
+        this.gameTotalTime = saveData.gameTotalTime || 0;
 
         // Restore Season
         this.currentSeasonIndex = saveData.currentSeasonIndex || 0;
         this.daysPassed = saveData.daysPassed || 0;
-        // Force update immediately
+
         const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
         this.season = SEASONS[this.currentSeasonIndex];
         if (this.terrain) this.terrain.setSeason(this.season);
 
-        try {
-            console.log("Deserializing Terrain with:", saveData.terrain);
-            this.terrain.deserialize(saveData.terrain);
-        } catch (e) {
-            console.error("Terrain deserialize failed:", e);
-            return false;
+        // Restore Units
+        if (this.units) {
+            this.units.forEach(u => {
+                if (u.dispose) u.dispose();
+                this.scene.remove(u.mesh);
+                if (u.crossMesh) this.scene.remove(u.crossMesh);
+            });
+        }
+        this.units = [];
+
+        if (saveData.units) {
+            try {
+                // Pre-import Unit to ensure availability if needed, mainly for reference. 
+                // It is imported at module level, so should be fine.
+                saveData.units.forEach(uData => {
+                    const u = Unit.deserialize(uData, this.scene, this.terrain);
+                    if (u) {
+                        this.units.push(u);
+                    }
+                });
+            } catch (e) { console.error("Unit restore failed:", e); }
         }
 
+        // Restore Goblin Manager
         if (this.goblinManager) {
             if (saveData.goblinManager) {
                 this.goblinManager.deserialize(saveData.goblinManager);
             } else {
-                console.warn("[Game.js] No goblinManager data found in save slot!");
-                // alert("Warning: No Goblin data found in this save file. (Did you save after the update?)");
                 this.goblinManager.scanForCaves();
             }
         }
 
-        // Recreate units
-        try {
-            this.units.forEach(u => {
-                if (u.dispose) {
-                    u.dispose();
-                } else if (u.mesh) {
-                    // Fallback if dispose undefined (should not happen now)
-                    this.scene.remove(u.mesh);
-                    if (u.mesh.geometry) u.mesh.geometry.dispose();
-                }
-            });
-            this.units = [];
-        } catch (e) {
-            console.error("Unit cleanup failed:", e);
-        }
-
-        try {
-            const unitsData = saveData.units || [];
-            unitsData.forEach(unitData => {
-                try {
-                    const unit = Unit.deserialize(unitData, this.scene, this.terrain);
-                    unit.game = this; // Ensure game ref is set
-                    this.units.push(unit);
-
-                    // Re-link to connection (Barracks/Tower)
-                    if (unit.role === 'knight' || unit.role === 'wizard') {
-                        let linkedBuilding = null;
-
-                        // 1. Try Precise Link (New Persistence Logic)
-                        if (unit.savedHomeBaseX !== undefined && unit.savedHomeBaseZ !== undefined) {
-                            // Find building at exact coords
-                            // Optimized: In theory, we could map buildings by X_Z key, but array find is okay for <100 buildings.
-                            linkedBuilding = this.terrain.buildings.find(b =>
-                                Math.abs(b.gridX - unit.savedHomeBaseX) < 0.1 &&
-                                Math.abs(b.gridZ - unit.savedHomeBaseZ) < 0.1
-                            );
-                        }
-
-                        // 2. Fallback to Nearest (Legacy Support or Glitch safety) - Only if precise lookup failed?
-                        // User disliked "Nearest", so maybe we only fallback if absolutely necessary, or just don't?
-                        // Let's keep fallback for now but prefer precise.
-                        if (!linkedBuilding) {
-                            const type = (unit.role === 'knight') ? 'barracks' : 'tower';
-                            let bestDist = Infinity;
-                            this.terrain.buildings.forEach(b => {
-                                if (b.userData.type === type) {
-                                    const d = Math.abs(b.gridX - unit.gridX) + Math.abs(b.gridZ - unit.gridZ); // Manhattan
-                                    if (d < bestDist) {
-                                        bestDist = d;
-                                        linkedBuilding = b;
-                                    }
-                                }
-                            });
-                        }
-
-                        if (linkedBuilding) {
-                            unit.homeBase = linkedBuilding; // Re-Link
-                            // Ensure Memory exists
-                            if (!linkedBuilding.userData.memory) {
-                                linkedBuilding.userData.memory = new BattleMemory();
-                            }
-                        }
-                    }
-                } catch (err) {
-                    console.error("Failed to deserialize unit:", err, unitData);
-                }
-            });
-        } catch (e) {
-            console.error("Unit restoration loop failed:", e);
-        }
-
-        this.inputManager.units = this.units;
-
+        // Restore Camera
         if (saveData.camera) {
-            if (saveData.camera.position) {
-                this.camera.position.set(saveData.camera.position.x, saveData.camera.position.y, saveData.camera.position.z);
-            }
-            if (saveData.camera.zoom) {
-                this.camera.zoom = saveData.camera.zoom;
-            }
-            if (saveData.camera.target) {
+            this.camera.position.set(saveData.camera.position.x, saveData.camera.position.y, saveData.camera.position.z);
+            this.camera.zoom = saveData.camera.zoom;
+            if (this.controls) {
                 this.controls.target.set(saveData.camera.target.x, saveData.camera.target.y, saveData.camera.target.z);
+                this.controls.update();
             }
             this.camera.updateProjectionMatrix();
-            this.controls.update();
         }
 
-        console.log("Game loaded from slot", slotId);
+        // Hide Loading Screen
+        if (loadingScreen) {
+            if (loadingBar) loadingBar.style.width = '100%';
+            if (loadingText) loadingText.innerText = '100%';
+
+            // Small delay for 100% check
+            await new Promise(r => setTimeout(r, 200));
+            loadingScreen.style.display = 'none';
+        }
+
         return true;
     }
+
+
+
+
+
+
 }

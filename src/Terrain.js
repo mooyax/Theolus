@@ -1307,9 +1307,9 @@ export class Terrain {
                                 building.userData.population = cap; // Wait if blocked
                             }
                         } else if (type === 'barracks') {
-                            // Barracks: Spawn 4 units (Revert to specs), Reset to 0
+                            // Barracks: Spawn 2 units (Halved per User Request), Reset to 0
                             let spawnedCount = 0;
-                            for (let k = 0; k < 4; k++) {
+                            for (let k = 0; k < 2; k++) {
                                 if (spawnCallback(bx, bz, type, building)) spawnedCount++;
                             }
                             if (spawnedCount > 0) {
@@ -1331,10 +1331,10 @@ export class Terrain {
                 building.userData.population += rate * simDeltaTime;
 
                 if (building.userData.population >= cap) {
-                    // SPAWN 4 WIZARDS (Revert to specs)
+                    // SPAWN 2 WIZARDS (Halved per User Request)
                     if (spawnCallback) {
                         let spawnedCount = 0;
-                        for (let k = 0; k < 4; k++) {
+                        for (let k = 0; k < 2; k++) {
                             if (spawnCallback(building.userData.gridX, building.userData.gridZ, 'tower', building)) spawnedCount++;
                         }
 
@@ -1471,7 +1471,7 @@ export class Terrain {
         return data;
     }
 
-    deserialize(data) {
+    async deserialize(data, onProgress) {
         if (!data) {
             console.error("Terrain.deserialize received invalid data:", data);
             return;
@@ -1486,8 +1486,14 @@ export class Terrain {
         });
         this.buildings = [];
 
-        // Clear grid buildings references
+        // Clear grid buildings references - Fast synchronous clear is fine usually, 
+        // but if map is huge, might need chunking too. Let's chunk logic width.
+        const yieldInterval = 10; // Yield every 10 rows
+
         for (let x = 0; x < this.logicalWidth; x++) {
+            // Yield periodically
+            if (x % yieldInterval === 0) await new Promise(resolve => setTimeout(resolve, 0));
+
             for (let z = 0; z < this.logicalDepth; z++) {
                 const cell = this.grid[x][z];
                 if (cell.hasBuilding && cell.building) {
@@ -1503,6 +1509,15 @@ export class Terrain {
         this.logicalDepth = data.logicalDepth;
 
         for (let x = 0; x < this.logicalWidth; x++) {
+            // Yield periodically (Loading Bar effect?)
+            if (x % yieldInterval === 0) {
+                await new Promise(resolve => setTimeout(resolve, 0));
+                if (onProgress) {
+                    const pct = Math.floor((x / this.logicalWidth) * 100);
+                    onProgress(pct);
+                }
+            }
+
             for (let z = 0; z < this.logicalDepth; z++) {
                 const cellData = data.grid[x][z];
                 // Support legacy format check? 

@@ -58,7 +58,7 @@ export class Goblin extends Entity {
         Goblin.assets.initialized = true;
     }
 
-    constructor(scene, terrain, x, z, type = 'normal', clanId = null) {
+    constructor(scene, terrain, x, z, type = 'normal', clanId = null, raidTarget = null) {
         Goblin.initAssets(); // Ensure assets exist (for Renderer)
 
         super(scene, terrain, x, z, 'goblin');
@@ -118,6 +118,14 @@ export class Goblin extends Entity {
 
         // AI State
         this.state = 'idle';
+        if (raidTarget) {
+            this.state = 'raiding';
+            this.raidGoal = { ...raidTarget };
+            // Add randomness to spread out raids
+            this.raidGoal.x += (Math.random() - 0.5) * 8;
+            this.raidGoal.z += (Math.random() - 0.5) * 8;
+            console.log(`Goblin ${this.id} SPAWNED FOR RAIDING! Target: ${this.raidGoal.x.toFixed(0)},${this.raidGoal.z.toFixed(0)}`);
+        }
         this.targetUnit = null;
         this.targetBuilding = null;
         this.attackCooldown = 0;
@@ -291,6 +299,23 @@ export class Goblin extends Entity {
                     this.attackTarget(time, deltaTime); // Call attackTarget
                 }
             } else {
+                // No current target.
+
+                // RAIDING STATE LOGIC
+                if (this.state === 'raiding' && this.raidGoal) {
+                    // Check arrival
+                    const dist = this.getDistance(this.raidGoal.x, this.raidGoal.z);
+                    if (dist < 5.0) {
+                        console.log(`Goblin ${this.id} arrived at Raid Target. Switch to IDLE (Hunt).`);
+                        this.state = 'idle';
+                        this.raidGoal = null;
+                    } else {
+                        // Move towards goal
+                        this.moveToTarget(this.raidGoal.x, this.raidGoal.z, time);
+                        return; // Skip wandering
+                    }
+                }
+
                 // Wander
                 if (!this.isMoving && time - this.lastTime > this.moveInterval) {
                     // Stagnation Check
@@ -693,6 +718,11 @@ export class Goblin extends Entity {
     // updatePosition inherited from Entity
 
     attackTarget(time, deltaTime) {
+        // Trigger Wave System logic (Call for help!)
+        if (window.game && window.game.goblinManager) {
+            window.game.goblinManager.notifyClanActivity(this.clanId);
+        }
+
         if (this.targetUnit) {
             this.attackUnit(this.targetUnit);
         } else if (this.targetBuilding) {
@@ -789,38 +819,40 @@ export class Goblin extends Entity {
         const isFarm = (building.userData.type === 'farm');
 
         // Damage Logic
+        // Damage Logic
         if (isFarm && building.userData.hp !== undefined) {
-            // Damage HP
-            building.userData.hp -= 1;
-            console.log(`Goblin hit Farm! HP: ${building.userData.hp}`);
-
+            // Farm uses HP
+            building.userData.hp -= 5; // Fast destroy for farm
             if (building.userData.hp <= 0) {
                 this.destroyBuilding(building);
+                return;
             }
         } else {
-            // House/Castle uses Population as Health
-            const damage = isCastle ? 2 : 5;
-            building.userData.population -= damage;
+            // House/Castle/Mansion uses Population as Health
+            // Barracks/Tower also use Population now? User didn't specify, but safer to assume pop.
+            const damage = 20; // High damage to destroy quickly
 
-            // Retaliation Damage (House/Castle only)
+            if (building.userData.population > 0) {
+                building.userData.population -= damage;
+            } else {
+                // Already 0 population? Destroy immediately
+                this.destroyBuilding(building);
+                return;
+            }
+
+            // Retaliation Logic (Reduced)
             if (!isFarm) {
-                const factor = isCastle ? 0.5 : 0.2;
+                const factor = isCastle ? 0.2 : 0.1;
                 const retaliation = Math.floor(building.userData.population * factor);
 
                 if (retaliation > 0) {
                     this.takeDamage(retaliation);
-                    console.log(`Goblin took ${retaliation} retaliation damage from ${building.userData.type}!`);
                 }
             }
         }
 
-        // Fix: Check < 1.0 because Terrain update might adds fractional population (0.001)
-        if (building.userData.population < 1.0) {
-            this.destroyBuilding(building);
-        }
-
-        // Fix: Check < 1.0 because Terrain update might adds fractional population (0.001)
-        if (building.userData.population < 1.0) {
+        // Final Check: If population dropped below 1 (or 0), destroy
+        if (!isFarm && building.userData.population <= 0) {
             this.destroyBuilding(building);
         }
     }

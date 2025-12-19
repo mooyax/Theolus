@@ -218,7 +218,7 @@
       box-shadow: 0 0 20px #2196F3;
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-CzDKakVk.js"></script>
+  <script type="module" crossorigin src="./assets/index-6wCnIJFg.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-Bqp-OHo3.css">
 </head>
 
@@ -301,10 +301,32 @@
       <span id="meat-val">0</span>
     </div>
   </div>
+  <div id="stats-container">
+    <!-- ... (stats rows) ... -->
+    <div class="stat-row">
+      <span class="material-symbols-outlined">set_meal</span>
+      <span id="fish-val">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="material-symbols-outlined">kebab_dining</span>
+      <span id="meat-val">0</span>
+    </div>
+  </div>
   </div>
 
   <canvas id="minimap" width="160" height="160"
     style="position: absolute; top: 10px; right: 10px; border: 2px solid white; background: black; z-index: 1000;"></canvas>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 4000; justify-content: center; align-items: center; flex-direction: column; color: white;">
+    <h1 style="font-size: 2rem; margin-bottom: 20px;">Loading...</h1>
+    <div
+      style="width: 300px; height: 20px; background: #333; border-radius: 10px; overflow: hidden; border: 1px solid #555;">
+      <div id="loading-bar" style="width: 0%; height: 100%; background: #4CAF50; transition: width 0.1s;"></div>
+    </div>
+    <div id="loading-text" style="margin-top: 10px;">0%</div>
+  </div>
 
   <!-- Save/Load Modal -->
   <!-- Save/Load Modal -->
@@ -424,10 +446,12 @@
         }
       };
 
-      window.loadGame = (id) => {
+      window.loadGame = async (id) => {
         if (window.game) {
-          if (window.game.loadGame(id)) {
-            alert('Game Loaded!');
+          // Await the async load process
+          const success = await window.game.loadGame(id);
+          if (success) {
+            // alert('Game Loaded!'); // Optional, maybe annoying if loading bar handles it
             modal.style.display = 'none';
           }
         }

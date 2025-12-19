@@ -1655,6 +1655,9 @@ export class Unit extends Entity {
     }
 
     tryBuildStructure(time) {
+        // Restriction: Only Workers can build (User Request)
+        if (this.role !== 'worker') return false;
+
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
@@ -1856,6 +1859,34 @@ export class Unit extends Entity {
         }
 
         return new THREE.CanvasTexture(canvas);
+    }
+
+
+
+    takeDamage(amount) {
+        if (this.isDead) return;
+        this.hp -= amount;
+
+        // Ensure HP is finite
+        if (isNaN(this.hp)) this.hp = 0;
+
+        if (this.hp <= 0) {
+            this.hp = 0;
+            this.die();
+        }
+    }
+
+    die() {
+        if (this.isDead) return;
+        this.isDead = true;
+
+        this.createCross(); // Visual death
+
+        console.log(`Unit ${this.id} (${this.role}) DIED. R.I.P.`);
+
+        if (this.terrain && this.terrain.unregisterEntity) {
+            this.terrain.unregisterEntity(this);
+        }
     }
 
     static createRoofTexture() {
