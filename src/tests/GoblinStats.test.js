@@ -64,10 +64,8 @@ vi.mock('three', () => {
     };
 });
 
-describe('Building Destruction Logic', () => {
+describe('Goblin Stats Verification', () => {
     let terrain;
-    let goblin;
-    let house;
 
     beforeEach(() => {
         global.window = { game: { gameTotalTime: 0 } };
@@ -79,44 +77,22 @@ describe('Building Destruction Logic', () => {
         terrain.getTileHeight = () => 1.0;
         terrain.gridToWorld = (v) => v;
         terrain.registerEntity = () => { };
-        terrain.removeBuilding = vi.fn(); // Mock removal
-
-        goblin = new Goblin(scene, terrain, 10, 10, 'normal');
-        goblin.destroyBuilding = vi.fn(); // Spy on method
-
-        house = {
-            userData: {
-                type: 'house',
-                population: 10, // Low Population
-                gridX: 11,
-                gridZ: 10
-            }
-        };
     });
 
-    it('should destroy building immediately when population hits 0', () => {
-        // Attack Damage is 20 for buildings (refer to Goblin.js implementation)
-        // Population is 10.
-        // 10 - 20 = -10. Should trigger destruction.
+    it('Normal Goblin should have sufficient lifespan and speed', () => {
+        const g = new Goblin({}, terrain, 10, 10, 'normal');
 
-        goblin.attackBuilding(house);
+        // Lifespan check (should be > 100s now)
+        expect(g.lifespan).toBeGreaterThan(100);
+        console.log(`Normal Goblin Lifespan: ${g.lifespan}s`);
 
-        expect(house.userData.population).toBeLessThanOrEqual(0);
-        expect(goblin.destroyBuilding).toHaveBeenCalled();
-        expect(goblin.destroyBuilding).toHaveBeenCalledWith(house);
+        // Speed check (should be 800ms)
+        expect(g.moveInterval).toBe(800);
+        expect(g.baseMoveDuration).toBe(400);
     });
 
-    it('should destroy building if already 0', () => {
-        house.userData.population = 0;
-        goblin.attackBuilding(house);
-        expect(goblin.destroyBuilding).toHaveBeenCalled();
-    });
-
-    it('should NOT destroy building if population remains > 0', () => {
-        house.userData.population = 50; // High pop
-        goblin.attackBuilding(house); // -20
-
-        expect(house.userData.population).toBe(30);
-        expect(goblin.destroyBuilding).not.toHaveBeenCalled();
+    it('King Goblin should be long lived', () => {
+        const g = new Goblin({}, terrain, 10, 10, 'king');
+        expect(g.lifespan).toBeGreaterThan(250); // > 250s
     });
 });

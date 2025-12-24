@@ -53,20 +53,24 @@ vi.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
 }));
 
 // Mock THREE partially
+// Mock THREE partially
 vi.mock('three', async () => {
     const actual = await vi.importActual('three');
     return {
         ...actual,
-        WebGLRenderer: vi.fn().mockImplementation(() => ({
-            setPixelRatio: vi.fn(),
-            setSize: vi.fn(),
-            domElement: document.createElement('canvas'), // Real mock element
-            render: vi.fn(),
-            dispose: vi.fn(),
-            shadowMap: {},
-            outputEncoding: null,
-            capabilities: { getMaxAnisotropy: () => 1 }
-        }))
+        WebGLRenderer: vi.fn().mockImplementation(() => {
+            console.log("MOCK WebGLRenderer Created"); // Debug log
+            return {
+                setPixelRatio: vi.fn(),
+                setSize: vi.fn(),
+                domElement: { style: {}, getContext: () => ({}) }, // Simple object, no document dep
+                render: vi.fn(),
+                dispose: vi.fn(),
+                shadowMap: {},
+                outputEncoding: null,
+                capabilities: { getMaxAnisotropy: () => 1 }
+            };
+        })
     };
 });
 

@@ -1,6 +1,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Terrain } from '../Terrain.js';
+import { Entity } from '../Entity.js';
+import { GoblinManager } from '../GoblinManager.js';
 import { Goblin } from '../Goblin.js';
 import * as THREE from 'three';
 
@@ -64,59 +66,95 @@ vi.mock('three', () => {
     };
 });
 
-describe('Building Destruction Logic', () => {
+describe('Goblin Mobilization Verification', () => {
+
     let terrain;
-    let goblin;
-    let house;
+    let gm;
 
     beforeEach(() => {
+        // Mock window
         global.window = { game: { gameTotalTime: 0 } };
+        // Mock Scene
         const scene = { add: () => { }, remove: () => { } };
         terrain = new Terrain(scene, []);
         terrain.logicalWidth = 80;
         terrain.logicalDepth = 80;
-        terrain.grid = Array(80).fill(0).map(() => Array(80).fill({ height: 1 }));
+        // Mock EntityGrid
+        terrain.entityGrid = Array(80).fill(0).map(() => Array(80).fill([]));
+        terrain.grid = Array(80).fill(0).map(() => Array(80).fill({ height: 1, hasBuilding: false }));
+
+        gm = new GoblinManager(scene, terrain, {});
+        // Mock getTileHeight
         terrain.getTileHeight = () => 1.0;
         terrain.gridToWorld = (v) => v;
-        terrain.registerEntity = () => { };
-        terrain.removeBuilding = vi.fn(); // Mock removal
+        terrain.isValidGrid = () => true;
+    });
 
-        goblin = new Goblin(scene, terrain, 10, 10, 'normal');
-        goblin.destroyBuilding = vi.fn(); // Spy on method
-
-        house = {
-            userData: {
-                type: 'house',
-                population: 10, // Low Population
-                gridX: 11,
-                gridZ: 10
+    it('triggerWave should mobilize idle goblins', () => {
+        // Setup Clan
+        const clanId = 'test_clan';
+        gm.clans = {
+            [clanId]: {
+                id: clanId,
+                active: true,
+                waveLevel: 1,
+                waveTimer: 0,
+                raidTarget: { x: 50, z: 50 }
             }
         };
+        // Mock Cave
+        gm.caves = [{ gridX: 10, gridZ: 10, clanId: clanId, hasBuilding: true }];
+        // Need to ensure terrain.buildings has cave object for validity check
+        terrain.buildings = [gm.caves[0]];
+
+        // Add Idle Goblins of this clan
+        const g1 = new Goblin(gm.scene, terrain, 10, 10, 'normal', clanId);
+        g1.state = 'idle';
+        gm.goblins.push(g1);
+
+        const g2 = new Goblin(gm.scene, terrain, 12, 12, 'normal', clanId);
+        g2.state = 'idle';
+        gm.goblins.push(g2);
+
+        // Add Goblin of DIFFERENT clan
+        const gOther = new Goblin(gm.scene, terrain, 15, 15, 'normal', 'other_clan');
+        gOther.state = 'idle';
+        gm.goblins.push(gOther);
+
+        // Trigger Wave
+        gm.triggerWave(gm.clans[clanId]);
+
+        // Check if Goblins were mobilized
+        expect(g1.state).toBe('raiding');
+        expect(g1.raidGoal.x).toBeCloseTo(50, -1);
+        expect(g1.raidGoal.z).toBeCloseTo(50, -1);
+
+        expect(g2.state).toBe('raiding');
+
+        // Other clan should NOT be mobilized
+        expect(gOther.state).toBe('idle');
     });
 
-    it('should destroy building immediately when population hits 0', () => {
-        // Attack Damage is 20 for buildings (refer to Goblin.js implementation)
-        // Population is 10.
-        // 10 - 20 = -10. Should trigger destruction.
+    it('mobilizeClan should rely on getClanRaidTarget fallback', () => {
+        const clanId = 'test_clan_fallback';
+        gm.clans = {
+            [clanId]: {
+                id: clanId,
+                active: true,
+                waveLevel: 1,
+                waveTimer: 0,
+                raidTarget: { x: 60, z: 60 }
+            }
+        };
 
-        goblin.attackBuilding(house);
+        const g1 = new Goblin(gm.scene, terrain, 5, 5, 'normal', clanId);
+        g1.state = 'idle';
+        gm.goblins.push(g1);
 
-        expect(house.userData.population).toBeLessThanOrEqual(0);
-        expect(goblin.destroyBuilding).toHaveBeenCalled();
-        expect(goblin.destroyBuilding).toHaveBeenCalledWith(house);
+        gm.mobilizeClan(gm.clans[clanId]);
+
+        expect(g1.state).toBe('raiding');
+        expect(g1.raidGoal.x).toBeCloseTo(60, -1); // Approx check with randomization
     });
 
-    it('should destroy building if already 0', () => {
-        house.userData.population = 0;
-        goblin.attackBuilding(house);
-        expect(goblin.destroyBuilding).toHaveBeenCalled();
-    });
-
-    it('should NOT destroy building if population remains > 0', () => {
-        house.userData.population = 50; // High pop
-        goblin.attackBuilding(house); // -20
-
-        expect(house.userData.population).toBe(30);
-        expect(goblin.destroyBuilding).not.toHaveBeenCalled();
-    });
 });

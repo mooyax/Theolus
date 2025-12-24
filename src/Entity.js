@@ -86,8 +86,15 @@ export class Entity {
     }
 
     getDistance(tx, tz) {
-        const dx = Math.abs(this.gridX - tx);
-        const dz = Math.abs(this.gridZ - tz);
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        let dx = Math.abs(this.gridX - tx);
+        let dz = Math.abs(this.gridZ - tz);
+
+        if (dx > logicalW / 2) dx = logicalW - dx;
+        if (dz > logicalD / 2) dz = logicalD - dz;
+
         return Math.sqrt(dx * dx + dz * dz);
     }
 
@@ -95,10 +102,44 @@ export class Entity {
 
     startMove(tx, tz, time) {
         // Validation handled by caller usually, but we can do basic checks here
+        // SMART MOVEMENT START
+        // If already moving, start from CURRENT interpolated position to prevent "Teleport Back" glitch.
+        if (this.isMoving) {
+            const progress = (time - this.moveStartTime) / this.moveDuration;
+            const clampedProg = Math.max(0, Math.min(1, progress));
+
+            // Calculate current visual position logic
+            // Note: Use simple Lerp here consistent with updateMovement
+            // Wrap logic is complex, but for short distances standard Lerp is approx correct.
+            // If wrapping was active, this might be slightly off, but better than snapping to tile center.
+            let sx = this.startGridX;
+            let sz = this.startGridZ;
+            let oldTx = this.targetGridX;
+            let oldTz = this.targetGridZ;
+
+            // Wrap adjustment (matches updateMovement)
+            const logicalW = this.terrain.logicalWidth || 80;
+            const logicalD = this.terrain.logicalDepth || 80;
+            if (oldTx - sx > logicalW / 2) sx += logicalW;
+            if (sx - oldTx > logicalW / 2) sx -= logicalW;
+            if (oldTz - sz > logicalD / 2) sz += logicalD;
+            if (sz - oldTz > logicalD / 2) sz -= logicalD;
+
+            this.startGridX = sx + (oldTx - sx) * clampedProg;
+            this.startGridZ = sz + (oldTz - sz) * clampedProg;
+
+            // Re-normalize if we wrapped out of bounds (keep coords sane)
+            // (Optional, but good for data hygiene)
+            this.startGridX = ((this.startGridX % logicalW) + logicalW) % logicalW;
+            this.startGridZ = ((this.startGridZ % logicalD) + logicalD) % logicalD;
+
+        } else {
+            this.startGridX = this.gridX;
+            this.startGridZ = this.gridZ;
+        }
+
         this.isMoving = true;
         this.moveStartTime = time;
-        this.startGridX = this.gridX;
-        this.startGridZ = this.gridZ;
         this.targetGridX = tx;
         this.targetGridZ = tz;
 
@@ -118,6 +159,8 @@ export class Entity {
 
     updateMovement(time) {
         if (!this.isMoving) return;
+
+
 
         const progress = (time - this.moveStartTime) / this.moveDuration;
 

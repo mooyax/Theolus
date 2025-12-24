@@ -15,7 +15,7 @@ export class GoblinManager {
         this.renderer = new GoblinRenderer(scene, terrain, terrain.clippingPlanes);
 
         this.spawnTimer = 0;
-        this.spawnInterval = 2; // Spawn every 2 seconds (faster!)
+        this.spawnInterval = 20; // Slowed down from 10s to 20s per User Request (Halve Rate)
         this.plunderCount = 0; // Track successful raids
         this.MAX_GOBLINS = 20000; // InstancedMesh allows high count!
         this.clanMemory = {}; // { clanId: [ {x,z,weight,timestamp} ] }
@@ -189,18 +189,21 @@ export class GoblinManager {
         const valid = this.terrain.addBuilding('cave', x, z);
         if (valid) {
             console.log(`GoblinManager: Cave registered at ${x},${z} `);
-            // Link mesh to building for reverse lookup if needed later
+            // Link mesh to building for very strict checks
             valid.userData.linkedMesh = cave;
 
+            const clanId = `clan_cave_${x}_${z}`; // Removed trailing space
             this.caves.push({
-                mesh: cave, // CRITICAL FIX: Reference to mesh
-                building: valid, // Reference to Terrain Building
+                mesh: cave,
+                building: valid,
                 gridX: x,
                 gridZ: z,
                 originalHeight: height,
                 spawnCooldown: Math.random() * this.spawnInterval,
-                clanId: `clan_cave_${x}_${z} ` // Group ID
+                clanId: clanId
             });
+            // AUTO-ACTIVATE CLAN for Waves
+            this.notifyClanActivity(clanId, null);
             return true;
         } else {
             console.warn(`GoblinManager: Failed to register cave at ${x},${z} (Terrain rejected)`);
@@ -309,9 +312,13 @@ export class GoblinManager {
                         goblin.updateLogic(time, deltaTime * stagger, units, buildings);
                     }
                 } catch (e) {
-                    console.error(`[GoblinManager] Error updating goblin ${i}: `, e);
-                    // Dispose if corrupted?
-                    continue; // Fix: Don't abort entire loop
+                    // Detailed Error Logging
+                    if (!this._hasLoggedError) {
+                        console.error(`[GoblinManager] CRITICAL Error updating goblin ${i}:`, e.message);
+                        console.error(e.stack);
+                        this._hasLoggedError = true; // Prevent spamming 1000 times
+                    }
+                    continue;
                 }
 
                 if (goblin.isFinished) {
@@ -324,7 +331,8 @@ export class GoblinManager {
     }
 
     // --- WAVE SYSTEM ---
-    notifyClanActivity(clanId) {
+    // --- WAVE SYSTEM ---
+    notifyClanActivity(clanId, targetInput = null) {
         if (!clanId) return;
         if (!this.clans) this.clans = {};
 
@@ -335,9 +343,31 @@ export class GoblinManager {
                 active: false,
                 waveTimer: 0,
                 waveLevel: 0,
-                caves: [] // Cache if needed
+                caves: [], // Cache if needed
+                raidTarget: null
             };
             this.clans[clanId] = clan;
+        }
+
+        // Update Raid Target logic
+        // If targetInput is provided, update clan's target logic
+        if (targetInput) {
+            // Target can be an object {x, z} or Entity
+            let tx, tz;
+            if (targetInput.gridX !== undefined) {
+                tx = targetInput.gridX;
+                tz = targetInput.gridZ;
+            } else if (targetInput.x !== undefined) {
+                tx = targetInput.x;
+                tz = targetInput.z;
+            }
+
+            if (tx !== undefined && tz !== undefined) {
+                // Set or Update Target
+                // Maybe only update if no target, or replace old one?
+                // For now: Always update to latest "noise"
+                clan.raidTarget = { x: tx, z: tz };
+            }
         }
 
         // If inactive, activate!
@@ -345,11 +375,11 @@ export class GoblinManager {
             clan.active = true;
             clan.waveTimer = 30; // First wave in 30 seconds
             clan.waveLevel = 1;  // Start at Level 1
-            console.log(`[GoblinManager] Clan ${clanId} ACTIVATED! Wave 1 in 30s.`);
-
-            // Visual/Sound cue could go here
+            console.log(`[GoblinManager] Clan ${clanId} ACTIVATED! Wave 1 in 30s. Target:`, clan.raidTarget);
         }
     }
+
+    // getClanRaidTarget removed (Merged with implementation below)
 
     updateClanWaves(deltaTime) {
         if (!this.clans) return;
@@ -379,7 +409,8 @@ export class GoblinManager {
             const trimmedId = clan.id.trim();
             const fallbackCaves = this.caves.filter(c => c.clanId.trim() === trimmedId);
             if (fallbackCaves.length === 0) {
-                console.warn(`[GoblinManager] No caves found for active Clan ${clan.id}. Deactivating.`);
+                // Natural lifecycle: Cave destroyed, so clan dissolves.
+                console.log(`[GoblinManager] Clan ${clan.id} has no caves remaining. Deactivating wave system.`);
                 clan.active = false;
                 return;
             }
@@ -389,30 +420,36 @@ export class GoblinManager {
             clanCaves.forEach(cave => this.spawnWaveAtCave(cave, clan.waveLevel));
         }
 
+        // MOBILIZATION: Force existing idle goblins of this clan to attack!
+        this.mobilizeClan(clan);
+
         // Progression
         clan.waveLevel++;
-        if (clan.waveLevel > 10) clan.waveLevel = 10; // Cap at 10 for now? Or let it grow?
+        // Caps logic: Soft cap at 20? 
+        if (clan.waveLevel > 20) clan.waveLevel = 20;
 
-        // Reset Timer (30s? 60s?)
-        clan.waveTimer = 45; // slightly longer between waves
+        // Reset Timer (Slower Waves per User Request)
+        clan.waveTimer = 90; // Default 90s (was 45s)
     }
 
     spawnWaveAtCave(cave, level) {
         // Spawn 'level' number of goblins instantly (or slightly staggered)
-        // Cap spawn per wave per cave to prevent explosion
-        const count = Math.min(level, 10); // Max 10 per cave per wave
+        // Reduce spawn per wave per cave to prevent explosion
+        // User requested lower spawn rate to rely on mobilization
+        // Formula: 1 + level/10. Max 3 per cave. (Slower ramp)
+        const count = Math.min(1 + Math.floor(level / 10), 3);
 
-        console.log(`[Wave] Spawning ${count} goblins at cave ${cave.gridX},${cave.gridZ}`);
+        console.log(`[Wave] Spawning ${count} goblins at cave ${cave.gridX},${cave.gridZ} (Lvl ${level})`);
 
         for (let i = 0; i < count; i++) {
             // Slight stagger to avoid stacking
             setTimeout(() => {
-                this.spawnGoblinAtCave(cave);
+                this.spawnGoblinAtCave(cave, level);
             }, i * 200);
         }
     }
 
-    spawnGoblinAtCave(cave) {
+    spawnGoblinAtCave(cave, difficultyLevel = 1) {
         // Validation: Verify Cave Still Exists
         if (cave.building) {
             // Check Terrain List
@@ -425,8 +462,8 @@ export class GoblinManager {
         // Check Grid Consistency
         const cell = this.terrain.grid[cave.gridX][cave.gridZ];
         if (!cell || !cell.hasBuilding) {
-            console.warn("[GoblinManager] Aborting spawn: Grid cell has no building");
-            // Force cleanup?
+            console.warn("[GoblinManager] Aborting spawn: Grid cell has no building. Self-healing/Destroying Cave.");
+            this.destroyCave(cave, this.caves.indexOf(cave));
             return;
         }
 
@@ -445,26 +482,33 @@ export class GoblinManager {
             if (h > 0) {
                 // Get Raid Target
                 const raidTarget = this.getClanRaidTarget(cave.clanId);
-                this.spawnGoblin(tx, tz, cave.clanId, raidTarget);
+                this.spawnGoblin(tx, tz, cave.clanId, raidTarget, difficultyLevel);
                 return;
             }
         }
         // If all blocked, spawn at cave center
-        this.spawnGoblin(cave.gridX, cave.gridZ, cave.clanId);
+        this.spawnGoblin(cave.gridX, cave.gridZ, cave.clanId, null, difficultyLevel);
     }
 
-    spawnGoblin(x, z, clanId = null, raidTarget = null) {
+    spawnGoblin(x, z, clanId = null, raidTarget = null, difficultyLevel = 1) {
         const r = Math.random();
         let type = 'normal';
 
-        if (r < 0.01) { // 1% King
+        // Scale probabilities with Difficulty
+        // Level 1: King 1%, Shaman 4.5%, Hob 9%
+        // Level 10: King 6%, Shaman 10%, Hob 20%
+        const levelFactor = Math.min(difficultyLevel, 20) - 1; // 0..19
+
+        const probKing = 0.01 + (levelFactor * 0.0025); // Max ~0.06
+        const probShaman = 0.045 + (levelFactor * 0.005); // Max ~0.14
+        const probHob = 0.09 + (levelFactor * 0.01); // Max ~0.3
+
+        if (r < probKing) { // King
             type = 'king';
             console.log("👑 Goblin King Spawned!");
-        } else if (r < 0.055) { // 4.5% Shaman (Half of Hob's 9%)
+        } else if (r < probKing + probShaman) { // Shaman
             type = 'shaman';
-        } else if (r < 0.145) { // 9% Hobgoblin (Remaining)
-            // Note: Previous was 10%. User said "Shaman is half of Hob". 
-            // If I keep Hob at ~10%, Shaman ~5%.
+        } else if (r < probKing + probShaman + probHob) { // Hobgoblin
             type = 'hobgoblin';
         }
 
@@ -486,12 +530,12 @@ export class GoblinManager {
 
     updateHuts(deltaTime) {
         // Base growth
-        let growthRate = 0.15; // Balance: 1 goblin per ~66s (Was 0.3, orig 0.1)
-        // Plunder Bonus: +0.03 per plunder (Was 0.05, orig 0.02)
-        growthRate += this.plunderCount * 0.03;
+        let growthRate = 0.025; // Reduced from 0.05 (User Request: Halve reproduction)
+        // Plunder Bonus: Reduced impact (+0.01)
+        growthRate += this.plunderCount * 0.01;
 
-        // Cap bonus?
-        if (growthRate > 2.0) growthRate = 2.0;
+        // Cap bonus: Prevent runaway difficulty from successful raids
+        if (growthRate > 0.5) growthRate = 0.5; // Was 2.0
 
         const buildings = this.terrain.buildings || [];
         buildings.forEach(b => {
@@ -543,22 +587,56 @@ export class GoblinManager {
     }
 
     getClanRaidTarget(clanId) {
-        if (!clanId || !this.clanMemory[clanId] || this.clanMemory[clanId].length === 0) return null;
+        if (!clanId) return null;
 
-        // Pick weighted random
-        const memories = this.clanMemory[clanId];
-        const totalW = memories.reduce((acc, m) => acc + m.weight, 0);
-        let r = Math.random() * totalW;
+        // 1. Try Memory (Weighted Random)
+        if (this.clanMemory[clanId] && this.clanMemory[clanId].length > 0) {
+            const memories = this.clanMemory[clanId];
+            const totalW = memories.reduce((acc, m) => acc + m.weight, 0);
+            let r = Math.random() * totalW;
 
-        for (const m of memories) {
-            r -= m.weight;
-            if (r <= 0) return m;
+            for (const m of memories) {
+                r -= m.weight;
+                if (r <= 0) return m;
+            }
+            return memories[0];
         }
-        return memories[0];
+
+        // 2. Fallback to Active Alert (Real-time target)
+        if (this.clans && this.clans[clanId] && this.clans[clanId].raidTarget) {
+            return this.clans[clanId].raidTarget;
+        }
+
+        return null; // No target
+    }
+
+    mobilizeClan(clan) {
+        // Find a target to raid
+        const target = this.getClanRaidTarget(clan.id);
+        if (!target) return; // No target known
+
+        let count = 0;
+        // Iterate all goblins
+        this.goblins.forEach(g => {
+            if (g.clanId === clan.id && !g.isDead && (g.state === 'idle' || g.state === 'patrolling')) {
+                // Force Raid
+                g.state = 'raiding';
+                g.raidGoal = { x: target.x, z: target.z };
+                // Randomize slightly
+                g.raidGoal.x += (Math.random() - 0.5) * 5;
+                g.raidGoal.z += (Math.random() - 0.5) * 5;
+                g.isMoving = false; // Reset move to force pathfinding to new goal
+                count++;
+            }
+        });
+
+        if (count > 0) {
+            console.log(`[GoblinManager] Mobilized ${count} idle goblins from Clan ${clan.id} to raid target!`);
+        }
     }
 
     destroyCave(cave, index) {
-        console.error(`[GoblinManager] DESTROYING CAVE at ${cave.gridX},${cave.gridZ}!`);
+        console.warn(`[GoblinManager] Removing invalid cave at ${cave.gridX},${cave.gridZ}`);
         // Trace stack to see who called it
         // console.trace();
         if (cave.mesh) {

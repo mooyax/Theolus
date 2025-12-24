@@ -163,7 +163,8 @@ export class GoblinRenderer {
             }
 
             // ROBUST SMART CLONING (Same as UnitRenderer)
-            const viewRadius = 90; // Safe margin
+            // ROBUST SMART CLONING (Same as UnitRenderer)
+            const viewRadius = 60; // Safe margin optimized
             const minKx = Math.floor((camera.position.x - viewRadius - vPos.x) / logicalW);
             const maxKx = Math.ceil((camera.position.x + viewRadius - vPos.x) / logicalW);
             const minKz = Math.floor((camera.position.z - viewRadius - vPos.z) / logicalD);
@@ -343,5 +344,28 @@ export class GoblinRenderer {
         this.legMesh.instanceColor.needsUpdate = true;
         this.clubMesh.instanceMatrix.needsUpdate = true;
         this.staffMesh.instanceMatrix.needsUpdate = true;
+    }
+    dispose() {
+        console.log("[GoblinRenderer] Disposing...");
+        const remove = (m) => {
+            if (m) {
+                this.scene.remove(m);
+                if (m.geometry) m.geometry.dispose();
+                if (m.material) {
+                    if (Array.isArray(m.material)) m.material.forEach(mat => mat.dispose());
+                    else m.material.dispose();
+                }
+            }
+        };
+
+        remove(this.torsoMesh);
+        remove(this.headMesh);
+        remove(this.earMesh);
+        remove(this.armMesh);
+        remove(this.legMesh);
+        remove(this.clubMesh);
+        remove(this.staffMesh);
+
+        if (this.whiteMat) this.whiteMat.dispose();
     }
 }

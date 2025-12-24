@@ -355,7 +355,6 @@ export class Unit extends Actor {
 
     attackBuilding(building) {
         if (this.attackCooldown > 0) return;
-        if (!building || !building.userData) return;
 
         // VISUALS
         if (this.role === 'wizard') {
@@ -374,96 +373,20 @@ export class Unit extends Actor {
             }, 200);
         }
 
-        const bType = building.userData.type;
+        // DAMAGE LOGIC
+        if (building.userData.hp === undefined) building.userData.hp = 100; // Legacy Safety
+        building.userData.hp -= this.damage;
 
-        // --- FARM LOGIC (Fixed HP) ---
-        if (bType === 'farm') {
-            // Farm HP Fixed to 5
-            if (building.userData.hp === undefined) building.userData.hp = 5;
-            // Cap max HP for farms to 5 if it was higher (legacy fix)
-            if (building.userData.hp > 5) building.userData.hp = 5;
+        // Feedback
+        console.log(`Unit ${this.id} attacking ${building.type}. HP: ${building.userData.hp}`);
 
-            building.userData.hp -= this.damage;
-            console.log(`Unit ${this.id} attacking Farm. HP: ${building.userData.hp}`);
+        if (building.userData.hp <= 0) {
+            console.log(`Building ${building.type} Destroyed!`);
+            this.terrain.removeBuilding(building);
+            this.targetBuilding = null;
 
-            if (building.userData.hp <= 0) {
-                console.log(`Farm Destroyed!`);
-                this.terrain.removeBuilding(building);
-                this.targetBuilding = null;
-                this.searchSurroundings(this.gridX, this.gridZ);
-            }
-        }
-        // --- POPULATED BUILDING LOGIC (Pop = HP + Counter Attack) ---
-        else if (bType === 'house' || bType === 'mansion' || bType === 'castle' || bType === 'tower' || bType === 'barracks') {
-
-            // 1. DAMAGE (Population Loss)
-            // If population is 0, it's effectively 1 HP (Structure only)
-            let pop = building.userData.population || 0;
-
-            if (pop <= 0) {
-                // Empty building - destroyed instantly
-                console.log(`Unit ${this.id} destroyed Empty ${bType}!`);
-                this.terrain.removeBuilding(building);
-                this.targetBuilding = null;
-                this.searchSurroundings(this.gridX, this.gridZ);
-                this.attackCooldown = this.attackRate;
-                return;
-            }
-
-            // Damage formulation: 1 Damage = 1 Population ?
-            // Units deal ~10-20 damage. Houses have ~10-100 pop.
-            // Direct subtraction seems fair.
-            // Safety: Don't drop below 0 immediately, handle removal.
-            building.userData.population -= Math.ceil(this.damage / 2); // Halve damage so populations last a bit longer? Or 1:1? User said Pop IS HP.
-            // Let's stick to 1:1 roughly, maybe slightly dampened to prevent 1-shotting small houses.
-            // Actually, `this.damage` is around 10. A house with 5 people (new) dies in 1 hit. Seems realistic.
-
-            // Sync visualized population
-            building.population = building.userData.population;
-
-            console.log(`Unit ${this.id} attacked ${bType}. Pop remaining: ${building.userData.population}`);
-
-            if (building.userData.population <= 0) {
-                console.log(`${bType} Destroyed (Population wiped out)!`);
-                this.terrain.removeBuilding(building);
-                this.targetBuilding = null;
-                this.searchSurroundings(this.gridX, this.gridZ);
-            } else {
-                // 2. COUNTER ATTACK (Retaliation)
-                // Only if survivors exists
-                let retaliationFactor = 0.5; // Default (House/Worker)
-
-                if (bType === 'tower') retaliationFactor = 2.0; // Wizards (Strong)
-                if (bType === 'barracks') retaliationFactor = 1.5; // Knights (Medium-Strong)
-                if (bType === 'castle') retaliationFactor = 2.0; // Elite
-
-                // Damage based on CURRENT population (Strength in numbers)
-                // Cap effective output to avoid 1-shotting the attacker instantly if pop is huge (100 pop * 2 = 200 dmg!)
-                // Cap at 30? Or allow swarms to be deadly?
-                // Populous: Angry mobs ARE deadly. 
-                // Let's dampen slightly: damage = sqrt(pop) * factor?
-                // Or linear but small per person.
-
-                // Let's try Linear: Each person deals 0.5 damage?
-                const retaliationDamage = Math.floor(pop * retaliationFactor * 0.5);
-
-                if (retaliationDamage > 0) {
-                    console.log(`[Combat] ${bType} (Pop ${pop}) retaliates! Deals ${retaliationDamage} dmg to Unit ${this.id}`);
-                    this.takeDamage(retaliationDamage);
-                }
-            }
-        }
-        // --- OTHERS (Goblin Hut / Cave) ---
-        else {
-            // Standard HP Logic for Enemy Buildings
-            if (building.userData.hp === undefined) building.userData.hp = 100;
-            building.userData.hp -= this.damage;
-
-            if (building.userData.hp <= 0) {
-                this.terrain.removeBuilding(building);
-                this.targetBuilding = null;
-                this.searchSurroundings(this.gridX, this.gridZ);
-            }
+            // Search surroundings for next target
+            this.searchSurroundings(this.gridX, this.gridZ);
         }
 
         this.attackCooldown = this.attackRate;
@@ -483,9 +406,9 @@ export class Unit extends Actor {
         // Movement / Job
         if (this.targetRequest) return "Working";
 
-        // Patrol / Raid (Moving to a distant point)
+        // Exploration (Moving to a distant point)
         if (this.targetRaidPoint) {
-            return `Patrolling (${this.targetRaidPoint.x},${this.targetRaidPoint.z})`;
+            return `Exploration (${this.targetRaidPoint.x},${this.targetRaidPoint.z})`;
         }
 
         // Migration (Moving to new home)
@@ -523,7 +446,9 @@ export class Unit extends Actor {
             this.attackCooldown -= deltaTime;
         }
 
-
+        if (this.isMoving) {
+            this.updateMovement(time);
+        }
 
         // Cleanup Ignored Targets
         if (this.ignoredTargets.size > 0) {
@@ -574,7 +499,7 @@ export class Unit extends Actor {
 
         // Default action
         // Default action
-        if (!this.isMoving && time >= this.lastTime && this.action !== 'Migrating' && this.action !== 'Reinforcing' && this.action !== 'Patrolling Battle') this.action = "Idle";
+        if (!this.isMoving && time >= this.lastTime && this.action !== 'Migrating') this.action = "Idle";
 
         // Aging
         let agingRate = 1.0;
@@ -720,11 +645,6 @@ export class Unit extends Actor {
 
                         if (d > limit) continue;
 
-                        // HEIGHT CHECK (Phantom/Underground Goblin Fix)
-                        const myH = this.terrain.getTileHeight(this.gridX, this.gridZ);
-                        const targetH = this.terrain.getTileHeight(g.gridX, g.gridZ);
-                        if (Math.abs(myH - targetH) > 10.0) continue; // Too high/low (e.g. underground)
-
                         const h = this.terrain.getTileHeight(g.gridX, g.gridZ);
                         let score = d - 1000.0; // Base priority for Goblins (High)
                         if (h > 8) score += 20;
@@ -744,8 +664,8 @@ export class Unit extends Actor {
                 if (this.terrain.buildings) {
                     const range = (this.role === 'knight' || this.role === 'wizard') ? Infinity : 30;
                     for (const b of this.terrain.buildings) {
-                        if (this.role === 'worker' && b.userData.type !== 'goblin_hut') continue;
-                        if (b.userData.type === 'goblin_hut' || b.userData.type === 'cave') {
+                        if (this.role === 'worker' && b.type !== 'goblin_hut') continue;
+                        if (b.type === 'goblin_hut' || b.type === 'cave') {
                             if (b.userData && b.userData.hp <= 0) continue;
                             if (this.ignoredTargets.has(b.id)) continue;
                             const d = this.getDistance(b.gridX, b.gridZ);
@@ -905,7 +825,6 @@ export class Unit extends Actor {
             const dist = this.getDistance(this.targetBuilding.gridX, this.targetBuilding.gridZ);
             if (dist <= 2.0) {
                 this.action = "Sieging";
-                this.isMoving = false; // Fix: Stop moving when in range!
                 this.attackBuilding(this.targetBuilding);
             } else {
                 // STAGNATION CHECK
@@ -967,15 +886,10 @@ export class Unit extends Actor {
                     // If pathfinding finds path, next frame we follow it.
                     // If falls (unreachable), itブラックlists and aborts.
                     // Do NOT call triggerMove until path found.
-                } else {
-                    // URGENT: Reinforcing should not wait for long moveInterval (2-5s).
-                    if (this.action === 'Idle') this.action = 'Reinforcing';
-
-                    if (!this.isMoving && time - this.lastTime > 200) { // Fast reaction (200ms)
-                        this.checkArrivalAtRaidPoint(); // Check BEFORE triggering new move
-                        if (this.targetRaidPoint) {
-                            this.triggerMove(this.targetRaidPoint.x, this.targetRaidPoint.z, time);
-                        }
+                } else if (!this.isMoving && time - this.lastTime > this.moveInterval) {
+                    this.checkArrivalAtRaidPoint(); // Check BEFORE triggering new move
+                    if (this.targetRaidPoint) {
+                        this.triggerMove(this.targetRaidPoint.x, this.targetRaidPoint.z, time);
                     }
                 }
             }
@@ -998,6 +912,89 @@ export class Unit extends Actor {
                         this.attemptPathfinding(time);
                     } else {
                         this.triggerMove(this.migrationTarget.x, this.migrationTarget.z, time);
+                    }
+                }
+            }
+
+            // --- WORKER JOB LOGIC ---
+        } else if (this.role === 'worker' && this.targetRequest) {
+            if (this.isSleeping) this.isSleeping = false; // Force Wake Up
+
+            // INTERRUPT WANDER / MIGRATION
+            // If we are moving but NOT for work/fight, stop immediately to attend job.
+            // CAUTION: Do NOT interrupt if we are ALREADY 'Approaching Job' or 'Working', otherwise we oscillate!
+            if (this.isMoving && (this.action === 'Idle' || this.action === 'Moving' || this.action === 'Migrating')) {
+                console.log(`[Unit ${this.id}] Interrupting movement for Job ${this.targetRequest.type}`);
+                this.isMoving = false;
+                this.moveTimer = 0; // Reset interpolation
+                this.lastMoveAttempt = 0; // Allow immediate retry
+            }
+
+            const dist = this.getDistance(this.targetRequest.x, this.targetRequest.z);
+            if (dist <= 2.0) {
+                this.action = "Working";
+                this.isMoving = false; // Stop moving to work
+                // Execute
+                // Execute
+                if (window.game) window.game.completeRequest(this, this.targetRequest);
+                this.targetRequest = null;
+
+                // JOB CHAINING: Immediately look for another job nearby
+                // prevents walking away when there is more work 2 tiles away.
+                // We use findBestRequest which searches globally/nearby.
+                if (window.game) {
+                    const nextReq = window.game.findBestRequest(this);
+                    if (nextReq && window.game.claimRequest(this, nextReq)) {
+                        this.targetRequest = nextReq;
+                        this.action = 'Approaching Job';
+                        console.log(`[Unit ${this.id}] Chained Job ${nextReq.type}`);
+                    } else {
+                        this.action = "Idle";
+                    }
+                } else {
+                    this.action = "Idle";
+                }
+            } else {
+                this.action = "Working";
+                if (!this.isMoving && time - (this.lastMoveAttempt || 0) > 1000) {
+                    this.lastMoveAttempt = time;
+                    this.triggerMove(this.targetRequest.x, this.targetRequest.z, time);
+
+                    // CRITICAL FIX: executeMove sets action='Moving'.
+                    // We must force it to 'Approaching Job' so our interrupt logic ignores it next frame.
+                    if (this.isMoving) {
+                        this.action = 'Approaching Job';
+                    }
+
+                    // Track failures to start moving (e.g. across water/cliffs)
+                    if (!this.isMoving) {
+                        this.jobMoveFailures = (this.jobMoveFailures || 0) + 1;
+                        if (this.jobMoveFailures > 5) {
+                            console.warn(`Unit ${this.id} failed to reach job ${this.targetRequest.id} after 5 attempts. Releasing.`);
+                            if (window.game) window.game.releaseRequest(this, this.targetRequest);
+                            this.targetRequest = null;
+                            this.action = 'Idle';
+                            this.jobMoveFailures = 0;
+                        }
+                    } else {
+                        this.jobMoveFailures = 0;
+                    }
+                }
+            }
+
+            // --- IDLE / JOB SEARCH ---
+        } else {
+            // If idle, look for a job (Workers Only)
+            if (this.role === 'worker' && !this.targetRequest && window.game) {
+                // Throttle job search
+                // Increased from 0.1 to 0.5 for faster reaction (User Request: "Too slow")
+                if (Math.random() < 0.5) {
+                    const req = window.game.findBestRequest(this);
+                    if (req) {
+                        if (window.game.claimRequest(this, req)) {
+                            this.targetRequest = req;
+                            console.log(`Unit ${this.id} claimed job ${req.type}`);
+                        }
                     }
                 }
             }
@@ -1081,112 +1078,30 @@ export class Unit extends Actor {
             }
         }
 
-        if (this.id === 0 && this.debugFrame % 60 === 0) console.log(`[Unit Debug] Executing Logic. Role: ${this.role}`);
-
-        if (this.role === 'worker') {
-            this.updateWorkerLogic(time, deltaTime, isNight, goblins);
-        } else if (this.role === 'knight' || this.role === 'wizard') {
-            // Already handled in updateLogic (Combat/Patrol)
-        } else {
-            this.moveRandomly(time);
-        }
-    } // End updateLogic
-
-    updateWorkerLogic(time, deltaTime, isNight, goblins) {
-        // PRIORITY: Self Defense
-        // If we are currently engaged in combat (Target set by generic updateLogic),
-        // do NOT try to do jobs or go get sleep. Fight for your life!
-        if (this.targetGoblin || (this.targetBuilding && this.targetBuilding.userData && this.targetBuilding.userData.hp > 0)) {
-            return;
-        }
-
-        // SLEEP
-        if (isNight) {
-            const cell = this.terrain.grid[this.gridX][this.gridZ];
-            const isShelter = cell.hasBuilding && cell.building && (cell.building.type === 'house' || cell.building.type === 'castle');
-            if (isShelter) {
-                if (!this.isSleeping) this.isSleeping = true;
-                return;
-            }
-            // Go Home
-            if (!this.isMoving && time - this.lastTime > this.moveInterval) {
-                let target = this.homeBase || this.findNearestShelter();
-                if (target) {
-                    this.action = "Going Home";
-                    this.triggerMove(target.userData.gridX, target.userData.gridZ, time);
-                    return;
+        // Active Wander/Work
+        if (!this.isMoving && time - this.lastTime > this.moveInterval) {
+            if (this.id === 0 && this.debugFrame % 60 === 0) console.log(`[Unit Debug] Executing Logic. Role: ${this.role}`);
+            if (this.role === 'worker') {
+                const cell = this.terrain.grid[this.gridX][this.gridZ];
+                if (cell && cell.moisture !== 0.5 && Math.random() < 0.1) {
+                    this.improveLand(time);
+                } else {
+                    this.moveRandomly(time);
                 }
-            }
-        } else {
-            this.isSleeping = false;
-        }
-
-        // JOB
-        if (this.targetRequest) {
-            // Interrupt Loop check
-            if (this.isMoving && this.action === 'Idle') this.isMoving = false;
-
-            const dist = this.getDistance(this.targetRequest.x, this.targetRequest.z);
-            if (dist <= 2.0) {
-                this.action = "Working";
-                // FIX: Do NOT force isMoving=false here if we might chain immediately.
-                // Let the next triggerMove handle the transition.
-                // But we must stop if NO chain happens.
-
-                if (window.game) window.game.completeRequest(this, this.targetRequest);
-                this.targetRequest = null;
-
-                // Chaining
-                let chained = false;
-                if (window.game) {
-                    const next = window.game.findBestRequest(this);
-                    if (next && window.game.claimRequest(this, next)) {
-                        this.targetRequest = next;
-                        chained = true;
-                    }
-                }
-
-                if (!chained) {
-                    this.isMoving = false;
+            } else if (this.role === 'knight' || this.role === 'wizard') {
+                const found = this.findRaidTarget();
+                if (!found) this.exploreSurroundings(time);
+                if (this.targetRaidPoint) {
+                    this.triggerMove(this.targetRaidPoint.x, this.targetRaidPoint.z, time);
+                } else {
+                    this.patrol(time);
                 }
             } else {
-                // Fix Jitter: Only trigger move if NOT moving, or if we are moving to the WRONG place
-                // (e.g. redirected or path finished but not marked arrived)
-                // Also retry periodically if stuck (handled by stuck monitor, but 5s failsafe is okay)
-
-                const headingToTarget = (this.isMoving && this.targetGridX === this.targetRequest.x && this.targetGridZ === this.targetRequest.z);
-
-                // Allow re-path if stuck for > 3s (but stuck monitor usually handles this)
-                // Ideally, just !this.isMoving is enough. 
-                // But sometimes isMoving=true but path is empty?
-
-                // JITTER FIX: Do NOT re-call triggerMove if we are already heading there!
-                if (!this.isMoving || (!headingToTarget && (time - this.lastMoveAttempt > 1000))) {
-                    this.lastMoveAttempt = time;
-                    this.action = "Going to Work";
-                    this.triggerMove(this.targetRequest.x, this.targetRequest.z, time);
-                }
+                this.moveRandomly(time);
             }
-            return;
-        }
-
-        // IDLE / FIND JOB
-        if (window.game && Math.random() < 0.1) {
-            const req = window.game.findBestRequest(this);
-            if (req && window.game.claimRequest(this, req)) {
-                this.targetRequest = req;
-                return;
-            }
-        }
-
-        // WANDER
-        if (!this.isMoving && time - this.lastTime > this.moveInterval) {
-            this.moveRandomly(time);
             this.lastTime = time;
-            this.moveInterval = 3000 + Math.random() * 2000;
+            this.moveInterval = 2000 + Math.random() * 3000;
         }
-        this.lastTime = time;
-        this.moveInterval = 2000 + Math.random() * 3000;
     }
 
 
@@ -1437,7 +1352,40 @@ export class Unit extends Actor {
         return nearest;
     }
 
+    exploreSurroundings(time) {
+        // No memory target. Pick a random patrol point on the map.
+        // This simulates "Exploration" and triggers searchSurroundings upon arrival.
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
 
+        // Try to pick a spot somewhat far away to encourage movement?
+        // Or just random.
+        const rx = Math.floor(Math.random() * logicalW);
+        const rz = Math.floor(Math.random() * logicalD);
+
+        // Don't pick water?
+        const h = this.terrain.getTileHeight(rx, rz);
+        if (h <= 0) return; // Try again next frame
+
+        // REGION CHECK for Exploration
+        // Ensure the random point is reachable
+        if (this.terrain.grid) {
+            const mCell = this.terrain.grid[this.gridX][this.gridZ];
+            const tCell = this.terrain.grid[rx][rz];
+            if (mCell && tCell && mCell.regionId !== tCell.regionId) {
+                // Different region, impossible to reach.
+                // Fail and try again later.
+                return;
+            }
+        }
+
+        // Don't pick too close (avoid immediate loop)
+        const dist = this.getDistance(rx, rz);
+        if (dist < 15.0) return; // Too close
+
+        this.targetRaidPoint = { x: rx, z: rz, priority: 1 };
+        console.log(`Unit ${this.id} exploring to ${rx},${rz}`);
+    }
 
     checkArrivalAtRaidPoint() {
         if (!this.targetRaidPoint) return;
@@ -1483,12 +1431,6 @@ export class Unit extends Actor {
                     if (this.ignoredTargets.has(g.id) && now < this.ignoredTargets.get(g.id)) return Infinity;
                 }
                 if (g.isDead) return Infinity;
-
-                // HEIGHT CHECK
-                // const myH ... we don't have 'this' context in simple lambda? we do.
-                const myH = this.terrain.getTileHeight(this.gridX, this.gridZ);
-                const targetH = this.terrain.getTileHeight(g.gridX, g.gridZ);
-                if (Math.abs(myH - targetH) > 10.0) return Infinity;
 
                 // REGION CHECK
                 if (this.terrain.grid) {
@@ -1781,49 +1723,13 @@ export class Unit extends Actor {
         const heightDiff = Math.abs(targetHeight - currentHeight);
 
         // Smoother Slope Penalty
-        // Base Speed: 800ms per tile (Slower than 600ms to look natural)
+        // Base Speed: 600ms (approx 1.6 tiles/sec)
         // Slope Penalty: +1000ms per height unit
         // High Altitude (>8): +2000ms flat penalty (Thin air / Snow)
-        let base = 800;
+        let base = 600;
         if (targetHeight > 8) base += 2000;
 
-        // DISTANCE CHECK (Horizontal)
-        // FIX: If we are already moving, we must calculate distance from our CURRENT VISUAL POSITION
-        // otherwise retargeting mid-move causes "Overspeed" (covering extra distance in standard time).
-
-        let startX = this.gridX;
-        let startZ = this.gridZ;
-
-        if (this.isMoving) {
-            const progress = (time - this.moveStartTime) / this.moveDuration;
-            // Clamp progress for safety, though >1 handled by updateMovement usually
-            const p = Math.max(0, Math.min(1, progress));
-
-            // Wrap safe Lerp (copied from Entity logic)
-            let sx = this.startGridX;
-            let sz = this.startGridZ;
-            let tx = this.targetGridX;
-            let tz = this.targetGridZ; // Use actual memory targets
-
-            // Wrap adjust
-            if (tx - sx > logicalW / 2) sx += logicalW;
-            if (sx - tx > logicalW / 2) sx -= logicalW;
-            if (tz - sz > logicalD / 2) sz += logicalD;
-            if (sz - tz > logicalD / 2) sz -= logicalD;
-
-            startX = sx + (tx - sx) * p;
-            startZ = sz + (tz - sz) * p;
-        }
-
-        let dx = Math.abs(nextX - startX);
-        let dz = Math.abs(nextZ - startZ);
-        if (dx > logicalW / 2) dx = logicalW - dx; // Wrap logic
-        if (dz > logicalD / 2) dz = logicalD - dz;
-        const dist2D = Math.sqrt(dx * dx + dz * dz);
-
-        // Apply distance multiplier (min 1.0 for standard moves)
-        // Use Math.max(0.1) just in case dist2D is tiny to avoid 0 duration
-        this.moveDuration = (base * Math.max(1.0, dist2D)) + (heightDiff * 1000);
+        this.moveDuration = base + (heightDiff * 1000);
 
         // Reset stuck count
         this.stuckCount = 0;
@@ -2470,18 +2376,39 @@ export class Unit extends Actor {
             unit.savedTargetRequestId = data.targetRequestId;
         }
 
-        // MOVEMENT STATE RESET
-        // Do NOT restore isMoving state blindly, because moveStartTime is relative to the previous session's clock.
-        // If we restore it, the unit might teleport instantly or freeze.
-        // Instead, we trust updateLogic to resume movement towards the target on the next frame.
         if (data.isMoving) {
-            // Restore Intent so Logic picks it up
-            if (data.targetGridX !== undefined) unit.targetGridX = data.targetGridX;
-            if (data.targetGridZ !== undefined) unit.targetGridZ = data.targetGridZ;
+            unit.isMoving = true;
+            unit.targetX = data.targetX;
+            unit.targetZ = data.targetZ;
+            unit.moveStartTime = data.moveStartTime;
+            unit.startGridX = data.startGridX;
+            unit.startGridZ = data.startGridZ;
+            unit.targetGridX = data.targetGridX;
+            unit.targetGridZ = data.targetGridZ;
 
-            // Force Reset
-            unit.isMoving = false;
-            unit.action = "Idle"; // or leave as is if saved
+            // Recalculate moveDuration (it wasn't saved, but can be derived or re-calculated)
+            // Or just rely on updateMovement to handle it?
+            // updateMovement uses this.moveDuration.
+            // moveDuration is usually distance * speed.
+            // Let's re-calculate it to be safe.
+            const dist = unit.getDistance(unit.targetGridX, unit.targetGridZ); // Wait, getDistance uses this.gridX/Z vs arg?
+            // getDistance(tx,tz) uses current grid.
+            // unit.gridX was restored.
+            // Note: getDistance calculates from current grid.
+            // But strict duration depends on START grid.
+            let dx = Math.abs(unit.startGridX - unit.targetGridX);
+            let dz = Math.abs(unit.startGridZ - unit.targetGridZ);
+
+            // Wrap fix for deserialization too, though less critical for move duration unless very long warp
+            const logicalW = unit.terrain.logicalWidth || 80;
+            const logicalD = unit.terrain.logicalDepth || 80;
+            if (dx > logicalW / 2) dx = logicalW - dx;
+            if (dz > logicalD / 2) dz = logicalD - dz;
+
+            const totalDist = Math.sqrt(dx * dx + dz * dz);
+            unit.moveDuration = totalDist * 1000; // Assuming 1000ms per tile speed (standard)
+            // If they are fast units, we might need to know speed.
+            // Unit.js doesn't seem to have variable speed property (just moveDuration).
         }
 
         if (unit.isDead) {

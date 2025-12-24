@@ -308,6 +308,19 @@ export class BuildingRenderer {
     update(buildings, frustum, camera) {
         if (!buildings) return;
 
+        // Debug Log (Moved to Top)
+        if (!this._debugTimer) this._debugTimer = 0;
+        this._debugTimer++;
+        if (this._debugTimer > 120) {
+            this._debugTimer = 0;
+            const counts = {};
+            buildings.forEach(b => {
+                const t = (b.userData && b.userData.type) ? b.userData.type : 'unknown';
+                counts[t] = (counts[t] || 0) + 1;
+            });
+            console.log(`[BuildingRenderer] ListSize=${buildings.length}. Types:`, JSON.stringify(counts));
+        }
+
         const logicalW = this.terrainWidth || 80;
         const logicalD = this.terrainDepth || 80;
 
@@ -344,6 +357,8 @@ export class BuildingRenderer {
         const colorRoof = new THREE.Color(0xFFFFFF); // White to show texture
         const colorBarracksRoof = new THREE.Color(0xFFFFFF);
         const colorGoblinHut = new THREE.Color(0xAAAAAA);
+
+
 
 
         for (const b of buildings) {
@@ -486,5 +501,33 @@ export class BuildingRenderer {
             this.assets.barracksMat.emissiveIntensity = intensity;
             this.assets.barracksMat.needsUpdate = true;
         }
+    }
+    dispose() {
+        console.log("[BuildingRenderer] Disposing...");
+        const remove = (m) => {
+            if (m) {
+                this.scene.remove(m);
+                if (m.geometry) m.geometry.dispose();
+                if (m.material) {
+                    if (Array.isArray(m.material)) m.material.forEach(mat => mat.dispose());
+                    else m.material.dispose();
+                }
+            }
+        };
+
+        remove(this.meshes.houseWalls);
+        remove(this.meshes.houseRoofs);
+        remove(this.meshes.farms);
+        remove(this.meshes.goblinHuts);
+        remove(this.meshes.towers);
+        remove(this.meshes.towerRims);
+        remove(this.meshes.barracksWalls);
+        remove(this.meshes.barracksRoofs);
+
+        // Clear assets
+        Object.values(this.assets).forEach(a => {
+            if (a && a.dispose) a.dispose();
+        });
+        this.meshes = {};
     }
 }

@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
-import { Entity } from './Entity.js';
+import { Actor } from './Actor.js';
 
-export class Goblin extends Entity {
+export class Goblin extends Actor {
     static nextId = 0;
     // Static Cache (Kept for Renderer to use)
     static assets = {
@@ -86,29 +86,31 @@ export class Goblin extends Entity {
             // King: 2x Knight (Knight HP ~600 -> King 1200)
             this.hp = 1200 + Math.floor(Math.random() * 200);
             this.maxHp = this.hp;
-            this.lifespan = 200; // Long lived
-            this.damage = 200; // Knight * 2 (Knight 100)
-            this.scale = 1.8; // 1.5x Hobgoblin (1.2) = 1.8
-            this.attackRate = 1.5; // Slightly slower heavy hits
+            this.lifespan = 300; // Was 200. Now 5 mins.
+            this.damage = 200;
+            this.scale = 1.8;
+            this.attackRate = 1.5;
         } else if (this.type === 'shaman') {
-            // Shaman: Knight HP (~600)
             this.hp = 500 + Math.floor(Math.random() * 100);
             this.maxHp = this.hp;
-            this.lifespan = 100;
-            this.damage = 80; // Wizard Dmg
-            this.scale = 1.2; // Same as Hob
-            this.isRanged = true; // Magic
-            this.attackRate = 2.0; // Slower cast
+            this.lifespan = 250; // Was 100
+            this.damage = 80;
+            this.scale = 1.2;
+            this.isRanged = true;
+            this.attackRate = 2.0;
         } else if (this.type === 'hobgoblin') {
             this.hp = 60 + Math.floor(Math.random() * 30);
             this.maxHp = this.hp;
-            this.lifespan = 80 + Math.random() * 40;
+            this.lifespan = 200 + Math.random() * 40; // Was 80
             this.damage = 15;
             this.scale = 1.2;
         } else {
+            // Normal
             this.hp = 30 + Math.floor(Math.random() * 10);
             this.maxHp = this.hp;
-            this.lifespan = 30 + Math.random() * 20;
+            // NERF: Lifespan reduced slightly from 120 to 100 to reduce swarm accumulation.
+            // Still enough to reach base (travel time ~80s now).
+            this.lifespan = 100 + Math.random() * 20;
             this.damage = 8;
         }
 
@@ -126,9 +128,10 @@ export class Goblin extends Entity {
             this.raidGoal.z += (Math.random() - 0.5) * 8;
             console.log(`Goblin ${this.id} SPAWNED FOR RAIDING! Target: ${this.raidGoal.x.toFixed(0)},${this.raidGoal.z.toFixed(0)}`);
         }
-        this.targetUnit = null;
-        this.targetBuilding = null;
         this.attackCooldown = 0;
+        this.targetUnit = null; // Current target unit
+        this.targetBuilding = null; // Current target building
+        this.ignoredTargets = new Map(); // id -> timestamp until ignored (Blacklist)
         // this.attackRate set above or default
         if (!this.attackRate) this.attackRate = 1.0;
 
@@ -145,51 +148,25 @@ export class Goblin extends Entity {
         this.walkAnimTimer = 0;
 
         // Init Position
-        // Replaced updatePosition() visuals with just data logic if needed? 
-        // Actually gridX/Z is enough for renderer.
         this.position.set(this.terrain.gridToWorld(this.gridX), this.terrain.getTileHeight(this.gridX, this.gridZ), this.terrain.gridToWorld(this.gridZ));
 
 
         // Movement
         this.isMoving = false;
         this.moveTimer = 0;
-        this.moveInterval = 1600;
-        this.lastTime = (window.game && window.game.gameTotalTime !== undefined) ? window.game.gameTotalTime : 0;
-        this.baseMoveDuration = 800;
+        // NERF: Speed reduced. 800ms -> 1000ms. (Was originally 1600ms).
+        // Middle ground to make them catchable by workers but not snails.
+        this.moveInterval = 1000;
+        this.lastTime = -9999; // Force immediate logic update on first frame
+        this.baseMoveDuration = 500; // Animation speed adjusted
         this.moveDuration = this.baseMoveDuration;
 
         // Register in Spatial Grid
         this.terrain.registerEntity(this, this.gridX, this.gridZ, 'goblin');
     }
 
-    takeDamage(amount) {
-        this.hp -= amount;
-        if (this.hp <= 0) {
-            this.die();
-        }
-    }
-
-    die() {
-        if (this.isDead) return;
-        this.isDead = true;
-        this.terrain.unregisterEntity(this);
-
-        // Report death to Clan Memory?
-        if (this.clanId && window.goblinManager) {
-            // window.goblinManager.reportCasualty(this.clanId, this.gridX, this.gridZ); 
-            // (Not impl yet, optional)
-        }
-
-        this.createCross();
-        console.log(`Goblin (${this.type}) died. ID:${this.id}`);
-
-        // Drop Loot?
-        // King drops huge Mana?
-        if (this.type === 'king' && window.game) {
-            window.game.mana += 500;
-            console.log("King Defeated! +500 Mana");
-        }
-    }
+    // Legacy methods removed.
+    // See lines 900+ for canonical implementation of takeDamage and die.
 
     // Attack Methods are defined below (lines ~760) to keep file structure clean.
 
@@ -202,6 +179,11 @@ export class Goblin extends Entity {
         if (this.age >= this.lifespan) {
             this.die();
             return;
+        }
+
+        // Freeze Diagnostic
+        if (!this.isMoving && this.age > 5.0 && this.age < 5.5) {
+            console.log(`[Goblin Debug ${this.id}] 5s Check: State=${this.state} Pos=${this.gridX},${this.gridZ} TargetU=${!!this.targetUnit} TargetB=${!!this.targetBuilding} LastTimeDiff=${time - this.lastTime}`);
         }
 
         // Water Death Check
@@ -232,11 +214,42 @@ export class Goblin extends Entity {
         if (!this.isMoving) {
             // Migration Step
             if (this.state === 'migrating' && this.migrationTarget) {
-                this.moveToTarget(this.migrationTarget.x, this.migrationTarget.z, time);
+                // STAGNATION CHECK (Migration)
+                const dist = this.getDistance(this.migrationTarget.x, this.migrationTarget.z);
+                const currentMin = this.minDistToTarget || Infinity;
+                if (dist < currentMin - 0.5) {
+                    this.minDistToTarget = dist;
+                    this.pathStagnation = 0;
+                } else {
+                    this.pathStagnation = (this.pathStagnation || 0) + deltaTime;
+                }
+
+                if (this.pathStagnation > 5.0) {
+                    console.log(`[Goblin ${this.id}] Migration Stagnation. Force Re-path.`);
+                    this.path = null;
+                    this.lastPathTime = 0; // Force A*
+                    this.pathStagnation = 0;
+                    this.minDistToTarget = dist;
+                }
+
+                // USE ACTOR SMART MOVE
+                const moved = this.smartMove(this.migrationTarget.x, this.migrationTarget.z, time);
+                if (!moved && !this.isMoving) {
+                    // Blocked?
+                    // handleMoveFailure?
+                }
 
                 // Check if arrived
-                if (this.getDistance(this.migrationTarget.x, this.migrationTarget.z) < 2.0) {
+                if (dist < 2.0) {
                     console.log(`Goblin ${this.id} finished migrating.`);
+                    this.state = 'idle';
+                    this.migrationTarget = null;
+                }
+
+                // Check for opportunistic targets
+                this.findTarget(units, buildings, time);
+                if (this.targetUnit || this.targetBuilding) {
+                    console.log(`Goblin ${this.id} interrupted migration for target!`);
                     this.state = 'idle';
                     this.migrationTarget = null;
                 }
@@ -253,23 +266,32 @@ export class Goblin extends Entity {
             }
 
             // Memory Failure Check
-            // If we arrived at a memory target but found no valid target to attack
             if (this.currentMemoryTarget && !this.targetUnit && !this.targetBuilding) {
-                // We are idle, finished moving, and found nothing.
-                // Check if we are close to the memory target
                 const dist = this.getDistance(this.currentMemoryTarget.x, this.currentMemoryTarget.z);
+                // STAGNATION CHECK (Memory)
+                const currentMin = this.minDistToTarget || Infinity;
+                if (dist < currentMin - 0.5) {
+                    this.minDistToTarget = dist;
+                    this.pathStagnation = 0;
+                } else {
+                    this.pathStagnation = (this.pathStagnation || 0) + deltaTime;
+                }
+                if (this.pathStagnation > 5.0) {
+                    console.log(`[Goblin ${this.id}] Memory Target Stagnation. Abort.`);
+                    this.currentMemoryTarget = null; // Give up
+                    this.pathStagnation = 0;
+                    this.moveRandomly(time); // Wander away
+                    return;
+                }
+
+                // Existing Arrival Check
                 if (dist < 5.0) {
-                    // We arrived and found nothing. Report Failure.
                     if (window.game && window.game.goblinManager) {
                         window.game.goblinManager.reportRaidFailure(this.clanId, this.currentMemoryTarget.x, this.currentMemoryTarget.z);
                     }
+                    this.currentMemoryTarget = null;
                 }
-                // Clear memory target
-                this.currentMemoryTarget = null;
             }
-            // Check if target changed? If so, reset path.
-            // Simplified: recalculate path periodically if moving?
-
 
             // 2. Act based on target
             if (this.targetUnit) {
@@ -280,7 +302,8 @@ export class Goblin extends Entity {
                     this.chaseTimer = 0;
                     this.moveRandomly(time);
                 } else {
-                    this.moveToTarget(this.targetUnit.gridX, this.targetUnit.gridZ, time);
+                    // USE ACTOR SMART MOVE
+                    this.smartMove(this.targetUnit.gridX, this.targetUnit.gridZ, time);
 
                     if (!this.targetUnit) return; // Safety check if target voided during move
 
@@ -293,9 +316,10 @@ export class Goblin extends Entity {
                 }
             } else if (this.targetBuilding) {
                 // console.log(`[GoblinAI] ${this.id} Moving to Building ${this.targetBuilding.userData.type}`);
-                this.moveToTarget(this.targetBuilding.gridX, this.targetBuilding.gridZ, time);
+                this.smartMove(this.targetBuilding.gridX, this.targetBuilding.gridZ, time);
                 // Destroy if close (Perimeter check)
-                if (this.getDistanceToBuilding(this.targetBuilding) <= 1.5) { // Range 1.5 from PERIMETER
+                // Fix: Increased range to 2.5 to allow swarming/crowding goblins to attack
+                if (this.getDistanceToBuilding(this.targetBuilding) <= 2.5) {
                     this.attackTarget(time, deltaTime); // Call attackTarget
                 }
             } else {
@@ -303,15 +327,33 @@ export class Goblin extends Entity {
 
                 // RAIDING STATE LOGIC
                 if (this.state === 'raiding' && this.raidGoal) {
-                    // Check arrival
                     const dist = this.getDistance(this.raidGoal.x, this.raidGoal.z);
+
+                    // STAGNATION CHECK (Raiding)
+                    const currentMin = this.minDistToTarget || Infinity;
+                    if (dist < currentMin - 0.5) {
+                        this.minDistToTarget = dist;
+                        this.pathStagnation = 0;
+                    } else {
+                        this.pathStagnation = (this.pathStagnation || 0) + deltaTime;
+                    }
+
+                    if (this.pathStagnation > 5.0) {
+                        console.log(`[Goblin ${this.id}] Raid Stagnation. Force Re-path.`);
+                        this.path = null;
+                        this.lastPathTime = 0;
+                        this.pathStagnation = 0;
+                        this.minDistToTarget = dist;
+                    }
+
+                    // Check arrival
                     if (dist < 5.0) {
                         console.log(`Goblin ${this.id} arrived at Raid Target. Switch to IDLE (Hunt).`);
                         this.state = 'idle';
                         this.raidGoal = null;
                     } else {
                         // Move towards goal
-                        this.moveToTarget(this.raidGoal.x, this.raidGoal.z, time);
+                        this.smartMove(this.raidGoal.x, this.raidGoal.z, time);
                         return; // Skip wandering
                     }
                 }
@@ -348,6 +390,10 @@ export class Goblin extends Entity {
     }
 
     findTarget(units, buildings) {
+        // Frustration Check
+        const time = window.game ? window.game.gameTotalTime : Date.now();
+        if (this.frustratedUntil && time < this.frustratedUntil) return;
+
         // If we have a target, check if valid
         if (this.targetUnit && (this.targetUnit.isDead || this.targetUnit.isFinished)) {
             this.targetUnit = null;
@@ -359,39 +405,72 @@ export class Goblin extends Entity {
         if (this.targetUnit || this.targetBuilding) return; // Keep target
 
         // Find Unit
-        // 1. Closest Unit (exclude Sleeping, Rock Penalty)
-        // Use Terrain Spatial Hash for perf!
-        const closestUnit = this.terrain.findBestTarget('unit', this.gridX, this.gridZ, 10.0, (entity, dist) => {
+        // Reduced ranges per User Request (Too fast detection)
+        const searchDistUnits = (this.state === 'raiding') ? 20.0 : 10.0;
+        // Optimization: Pass 'units' list to avoid expensive Grid Search for large radius
+        const closestUnit = this.terrain.findBestTarget('unit', this.gridX, this.gridZ, searchDistUnits, (entity, dist) => {
             if (entity.isSleeping) return Infinity; // Ignore sleeping
+            // Blacklist Check
+            const now = window.game ? window.game.gameTotalTime : Date.now();
+            if (this.ignoredTargets.has(entity.id) && this.ignoredTargets.get(entity.id) > now) return Infinity;
 
             const h = this.terrain.getTileHeight(entity.gridX, entity.gridZ);
             let score = dist;
             if (h > 8) score += 20.0; // Rock Penalty
             return score;
-        });
-        this.targetUnit = closestUnit;
+        }, units);
 
-        if (this.targetUnit) return;
+        // Find Building
+        const bldDist = (this.state === 'raiding') ? 30.0 : 20.0;
+        // Optimization: Pass 'buildings' list
+        const closestBuilding = this.terrain.findBestTarget('building', this.gridX, this.gridZ, bldDist, (entity, dist) => {
+            if (!entity.userData || entity.userData.type === 'goblin_hut' || entity.userData.type === 'cave') return Infinity;
+            if (entity.userData.hp !== undefined && entity.userData.hp <= 0) return Infinity;
+            if (entity.userData.population !== undefined && entity.userData.population <= 0) return Infinity; // Ignore Dead
+            return dist;
+        }, buildings);
 
-        // Find Building (Random scan or closest?)
-        // Scan specific types
-        // const targetTypes = ['house', 'farm', 'barracks', 'tower']; // Not used directly
-        // Filter out destroyed or own huts
-        // Simple search: Closest?
-        // OPTIMIZATION: Use Spatial Partitioning for Buildings too (O(k) vs O(N))
-        const bestB = this.terrain.findBestTarget('building', this.gridX, this.gridZ, 20.0, (entity, dist) => {
-            // Filter out own huts and caves
-            if (entity.userData.type === 'goblin_hut' || entity.userData.type === 'cave') return Infinity;
-            if (entity.userData.hp <= 0) return Infinity; // Ignore destroyed
+        // Decision Logic: Arsonist Bias
+        // If we have both, prefer Building if it is reasonably close.
+        // Rule: If Building is within 10 tiles, ALWAYS prioritze it over Unit (unless Unit is literally touching us?)
+        // Rule: If Building is closer than Unit, take Building.
 
-            return dist; // Simple distance scoring
-        });
-        this.targetBuilding = bestB;
+        let chosen = null;
+
+        if (closestUnit && closestBuilding) {
+            // Arsonist Logic: If Building is CLOSE (< 15), burn it!
+            const W = this.terrain.logicalWidth || 80;
+            const D = this.terrain.logicalDepth || 80;
+
+            // Recalc precise distances
+            const uDx = Math.abs(closestUnit.gridX - this.gridX);
+            const uDz = Math.abs(closestUnit.gridZ - this.gridZ);
+            const uAdx = Math.min(uDx, W - uDx);
+            const uAdz = Math.min(uDz, D - uDz);
+            const uDist = Math.sqrt(uAdx * uAdx + uAdz * uAdz);
+
+            const bDx = Math.abs(closestBuilding.gridX - this.gridX);
+            const bDz = Math.abs(closestBuilding.gridZ - this.gridZ);
+            const bAdx = Math.min(bDx, W - bDx);
+            const bAdz = Math.min(bDz, D - bDz);
+            const bDist = Math.sqrt(bAdx * bAdx + bAdz * bAdz);
+
+            if (bDist < 15.0) {
+                chosen = closestBuilding;
+            } else {
+                chosen = (uDist < bDist) ? closestUnit : closestBuilding;
+            }
+        } else {
+            chosen = closestUnit || closestBuilding;
+        }
+
+        if (chosen) {
+            if (chosen.userData && chosen.userData.hp !== undefined) this.targetBuilding = chosen;
+            else this.targetUnit = chosen;
+        }
 
         // Clan Memory Logic (Keep existing)
-        // This part was in updateLogic, moving it here for target finding context
         if (!this.targetUnit && !this.targetBuilding) {
-            // If we arrived at a memory target but found no valid target to attack
             if (this.currentMemoryTarget) {
                 const dist = this.getDistance(this.currentMemoryTarget.x, this.currentMemoryTarget.z);
                 if (dist < 5.0) {
@@ -432,135 +511,7 @@ export class Goblin extends Entity {
         return Math.sqrt(dx * dx + dz * dz);
     }
 
-    moveToTarget(tx, tz, time) {
-        if (this.isMoving) return;
 
-        // Pathfinding Logic
-        // Recalculate if no path, or path target is different
-        // For dynamic targets (units), might need frequent updates.
-        // For static (buildings/points), just one calc.
-        // const isDynamic = !!this.targetUnit; // Not used
-
-        // Simple optimization: Only recalculate every 1s or if no path
-        // We'll calculate next step.
-
-        // Use Terrain Pathfinding
-        // Only calculate if we are far away (Euclidean > 2)
-        const dist = this.getDistance(tx, tz);
-
-        // Destination node
-        let nextX = this.gridX;
-        let nextZ = this.gridZ;
-
-        let pathFound = false;
-
-        if (dist > 2.0 && this.terrain.findPath) {
-            // Fix: If Target is a building, find nearest adjacent point
-            // This prevents pathfinding failure and clipping
-            if (this.terrain.grid[tx] && this.terrain.grid[tx][tz] && this.terrain.grid[tx][tz].hasBuilding) {
-                // Find closest neighbor to self
-                let bestX = tx, bestZ = tz;
-                let minD = Infinity;
-                const neighbors = [
-                    { x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 }
-                ];
-                for (const n of neighbors) {
-                    const nx = tx + n.x;
-                    const nz = tz + n.z;
-                    // Check validity
-                    if (this.terrain.isValidGrid(nx, nz) && !this.terrain.grid[nx][nz].hasBuilding && this.terrain.grid[nx][nz].height > 0) {
-                        // Dist from goblin
-                        const d = Math.pow(this.gridX - nx, 2) + Math.pow(this.gridZ - nz, 2);
-                        if (d < minD) {
-                            minD = d;
-                            bestX = nx;
-                            bestZ = nz;
-                        }
-                    }
-                }
-                // Update Target
-                if (minD !== Infinity) {
-                    tx = bestX;
-                    tz = bestZ;
-                } else {
-                    // Surrounded? Attack from range?
-                    // Just stay put or fail?
-                    // Let pathfinding try, it will fail.
-                }
-            }
-
-            // Limit pathfinding calls? (Performance)
-            // Just find path to target.
-            // Note: findPath is somewhat expensive. Don't call every frame for 300 goblins.
-            // Only call if we don't have a valid next step?
-            // Or Use flow field?
-            // Let's rely on the fact that Goblins are staggered in Manager or not?
-            // They update every frame. 
-            // We'll use a cooldown/timer for pathfinding recalculation.
-
-            if (!this.path || this.path.length === 0 || (time - this.lastPathTime > 2000)) {
-                const newPath = this.terrain.findPath(this.gridX, this.gridZ, tx, tz);
-                if (newPath && newPath.length > 1) {
-                    this.path = newPath;
-                    this.pathIndex = 1; // 0 is current
-                    this.lastPathTime = time;
-                }
-            }
-
-            if (this.path && this.pathIndex < this.path.length) {
-                const node = this.path[this.pathIndex];
-                nextX = node.x;
-                nextZ = node.z;
-                this.pathIndex++;
-                pathFound = true;
-            }
-        }
-
-        if (!pathFound) {
-            // Fallback to Linear (Old Logic)
-            const dx = tx - this.gridX;
-            const dz = tz - this.gridZ;
-
-            if (Math.abs(dx) > Math.abs(dz)) {
-                nextX += Math.sign(dx);
-            } else {
-                nextZ += Math.sign(dz);
-            }
-
-            // Wrap checks for fallback
-            const logicalW = this.terrain.logicalWidth || 80;
-            const logicalD = this.terrain.logicalDepth || 80;
-            if (nextX < 0) nextX = logicalW - 1;
-            if (nextX >= logicalW) nextX = 0;
-            if (nextZ < 0) nextZ = logicalD - 1;
-            if (nextZ >= logicalD) nextZ = 0;
-        }
-
-        // Common Move Logic
-        // Common Move Logic
-        const targetH = this.terrain.getTileHeight(nextX, nextZ);
-        // Check Validity: Water, Height change, OR Building
-        // Note: Climbing limit is 2.0 in Terrain passability.
-        // We should enforce building collision here too.
-        let blocked = false;
-        if (targetH <= 0) blocked = true;
-        else if (Math.abs(targetH - this.terrain.getTileHeight(this.gridX, this.gridZ)) > 2.0) blocked = true;
-        // Fix: Block entering buildings
-        // Exception: If we are attacking the building and this step is NOT inside?
-        // But preventing entering is safer. AI should attack from outside.
-        // If we are already IN a building (glitched), let us out?
-        // Logic: specific block if target has building.
-        else if (this.terrain.grid[nextX][nextZ].hasBuilding) blocked = true;
-
-        if (blocked) {
-            // Blocked
-            this.path = null; // Invalidate path
-            this.handleMoveFailure(time);
-            return;
-        }
-
-        this.startMove(nextX, nextZ, time);
-    }
 
     moveRandomly(time) {
         // Clan Memory Logic: 30% chance to move towards a known raid spot
@@ -572,29 +523,34 @@ export class Goblin extends Entity {
             } else if (window.game && window.game.goblinManager) {
                 const target = window.game.goblinManager.getClanRaidTarget(this.clanId);
                 if (target) {
-                    // STORE MEMORY TARGET
                     this.currentMemoryTarget = target;
-
-                    // Move towards target
-                    const dx = target.x - this.gridX;
-                    const dz = target.z - this.gridZ;
-                    // Normalize direction
-                    if (Math.abs(dx) > 0 || Math.abs(dz) > 0) {
-                        const nextX = this.gridX + Math.sign(dx);
-                        const nextZ = this.gridZ + Math.sign(dz);
-
-                        // Check validity (Height/Water)
-                        const h = this.terrain.getTileHeight(nextX, nextZ);
-                        const ch = this.terrain.getTileHeight(this.gridX, this.gridZ);
-                        if (h > 0 && Math.abs(h - ch) <= 2.0) {
-                            this.startMove(nextX, nextZ, time);
-                            return;
-                        }
-
+                    // Move towards target using robust fallback logic
+                    const dist = this.getDistance(target.x, target.z);
+                    if (dist > 3.0) {
+                        this.smartMove(target.x, target.z, time);
+                        return;
                     }
                 }
             }
         }
+
+        // Random adjacent move (Existing random logic)
+        // Can we just pick a random point within 5 tiles and smartMove?
+        // Or keep current simple step Logic for "Wander"?
+        // Current logic checks specific neighbors. It's fine for small wander.
+        // But we should use smartMove for guaranteed validity?
+        // No, random wander is "dumb". Let's keep it simple or use smartMove short range?
+        // Let's keep simple neighbor check but add Region Check?
+
+        // Actually, let's keep the existing `moveRandomly` logic but ensure it calls `startMove` which is inherited.
+        // Wait, `startMove` in Goblin was just a wrapper.
+        // `Actor` has `startMove` from `Entity`.
+        // Goblin `startMove` (lines 776+) had logic for speed/stuck.
+        // We removed `startMove` override? No, I should KEEP Goblin's startMove override if it has specific logic.
+        // Ah, I need to check if I deleted `startMove` in previous step?
+        // I deleted `moveToTarget`.
+
+        // Let's verify `moveRandomly` content.
 
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
@@ -622,12 +578,18 @@ export class Goblin extends Entity {
             if (nextZ < 0) nextZ = logicalD - 1;
             if (nextZ >= logicalD) nextZ = 0;
 
+            // Region Check for Random Move (Strict)
+            if (!this.isReachable(nextX, nextZ)) continue;
+
             const targetH = this.terrain.getTileHeight(nextX, nextZ);
 
             // Allow climbing up to 2.0 units
             if (Math.abs(targetH - currentH) <= 2.0) {
                 // Check Sea Level
                 if (targetH > 0) {
+                    // Check Building (Goblin specific preference not to walk INTO huts?)
+                    if (this.terrain.grid[nextX][nextZ].hasBuilding) continue;
+
                     this.startMove(nextX, nextZ, time);
                     return;
                 }
@@ -720,17 +682,11 @@ export class Goblin extends Entity {
     attackTarget(time, deltaTime) {
         // Trigger Wave System logic (Call for help!)
         if (window.game && window.game.goblinManager) {
-            window.game.goblinManager.notifyClanActivity(this.clanId);
+            const currentTarget = this.targetUnit || this.targetBuilding;
+            // Notify manager of activity AND target
+            window.game.goblinManager.notifyClanActivity(this.clanId, currentTarget);
         }
 
-        if (this.targetUnit) {
-            this.attackUnit(this.targetUnit);
-        } else if (this.targetBuilding) {
-            this.attackBuilding(this.targetBuilding);
-        }
-    }
-
-    attackTarget(time, deltaTime) {
         if (this.targetUnit) {
             this.attackUnit(this.targetUnit);
         } else if (this.targetBuilding) {
@@ -777,7 +733,7 @@ export class Goblin extends Entity {
                 if (unit.isDead) {
                     // Plunder Bonus!
                     if (window.game && window.game.goblinManager) {
-                        window.goblinManager.increasePlunder();
+                        window.game.goblinManager.increasePlunder();
                         // Record Memory
                         window.game.goblinManager.recordRaidLocation(this.clanId, unit.gridX, unit.gridZ);
                     }
@@ -813,6 +769,12 @@ export class Goblin extends Entity {
         }
 
         // Damage building population
+        if (!building || !building.userData) {
+            console.error(`Goblin ${this.id} attackBuilding failed: Invalid building data`, building);
+            this.targetBuilding = null;
+            return;
+        }
+
         if (building.userData.population === undefined) building.userData.population = 10;
 
         const isCastle = (building.userData.type === 'castle');
@@ -827,34 +789,19 @@ export class Goblin extends Entity {
                 this.destroyBuilding(building);
                 return;
             }
-        } else {
-            // House/Castle/Mansion uses Population as Health
-            // Barracks/Tower also use Population now? User didn't specify, but safer to assume pop.
-            const damage = 20; // High damage to destroy quickly
+        }
 
-            if (building.userData.population > 0) {
-                building.userData.population -= damage;
-            } else {
-                // Already 0 population? Destroy immediately
-                this.destroyBuilding(building);
-                return;
-            }
+        // Retaliation Logic (Reduced)
+        if (!isFarm && building.userData.population > 0) {
+            const factor = isCastle ? 0.2 : 0.1;
+            const retaliation = Math.floor(building.userData.population * factor);
 
-            // Retaliation Logic (Reduced)
-            if (!isFarm) {
-                const factor = isCastle ? 0.2 : 0.1;
-                const retaliation = Math.floor(building.userData.population * factor);
-
-                if (retaliation > 0) {
-                    this.takeDamage(retaliation);
-                }
+            if (retaliation > 0) {
+                this.takeDamage(retaliation);
             }
         }
 
-        // Final Check: If population dropped below 1 (or 0), destroy
-        if (!isFarm && building.userData.population <= 0) {
-            this.destroyBuilding(building);
-        }
+        this.attackCooldown = this.attackRate;
     }
 
     destroyBuilding(building) {
@@ -900,8 +847,28 @@ export class Goblin extends Entity {
         if (this.isDead) return; // Prevent double death
         this.isDead = true;
         this.terrain.unregisterEntity(this);
+
+        // Report death to Clan Memory?
+        if (this.clanId && window.goblinManager) {
+            // window.goblinManager.reportCasualty(this.clanId, this.gridX, this.gridZ); 
+        }
+
         this.createCross();
-        // console.log("Goblin died");
+        console.log(`Goblin (${this.type}) died. ID:${this.id}`);
+
+        // King Drops huge Mana
+        if (this.type === 'king' && window.game) {
+            window.game.mana += 500;
+            console.log("King Defeated! +500 Mana");
+
+            // Fix: UI is updated in Game.updateStats(), no explicit call needed.
+            // window.game.uiManager.updateMana(window.game.mana);
+
+            // Floating Text is fine if scene exists
+            if (this.terrain && this.terrain.createFloatingText) {
+                this.terrain.scene.add(this.terrain.createFloatingText("+500", this.mesh.position, 0xFFFF00));
+            }
+        }
     }
 
     // Explicit Cleanup
@@ -1041,7 +1008,7 @@ export class Goblin extends Entity {
         this.migrationTarget = { x: tx, z: tz };
 
         // Start first step
-        this.moveToTarget(tx, tz, time);
+        this.smartMove(tx, tz, time);
     }
 
     tryBuildHut() {

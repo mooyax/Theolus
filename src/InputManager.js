@@ -165,7 +165,10 @@ export class InputManager {
                 const candidate = this.terrain.findNearestEntity('unit', gridX, gridZ, 2.5);
                 if (candidate) {
                     text = `Age: ${Math.floor(candidate.age)}`;
-                    if (candidate.action) text += `\n${candidate.action}`;
+                    if (candidate.getBehaviorMode) {
+                        text += `\nMode: ${candidate.getBehaviorMode()}`;
+                    }
+                    if (candidate.action) text += `\nAct: ${candidate.action}`;
                     found = true;
                 }
             }

@@ -185,7 +185,7 @@ export class UnitRenderer {
             // k >= (Camera - Radius - Unit) / W
             // And k <= (Camera + Radius - Unit) / W
 
-            const viewRadius = 90; // Safe margin (Screen width + Buffer)
+            const viewRadius = 60; // Reduced from 90 to Optimize (Map is often ~80, so 90 causing 5x5 overlap). 60 covers diagonal of screen.
 
             const minKx = Math.floor((camera.position.x - viewRadius - unit.position.x) / logicalW);
             const maxKx = Math.ceil((camera.position.x + viewRadius - unit.position.x) / logicalW);
@@ -423,5 +423,31 @@ export class UnitRenderer {
         this.staffMesh.instanceMatrix.needsUpdate = true;
         this.hatMesh.instanceMatrix.needsUpdate = true;
         this.hatBrimMesh.instanceMatrix.needsUpdate = true;
+    }
+    dispose() {
+        console.log("[UnitRenderer] Disposing...");
+        const remove = (m) => {
+            if (m) {
+                this.scene.remove(m);
+                if (m.geometry) m.geometry.dispose();
+                // Material might be shared (Unit.assets) so don't dispose shared ones!
+                // Only dispose local ones if any. whiteMaterial is local.
+                // InstancedMesh clones material array? No.
+            }
+        };
+
+        remove(this.torsoMesh);
+        remove(this.headMesh);
+        remove(this.faceMesh);
+        remove(this.leftArmMesh);
+        remove(this.rightArmMesh);
+        remove(this.leftLegMesh);
+        remove(this.rightLegMesh);
+        remove(this.swordMesh);
+        remove(this.staffMesh);
+        remove(this.hatMesh);
+        remove(this.hatBrimMesh);
+
+        if (this.whiteMaterial) this.whiteMaterial.dispose();
     }
 }
