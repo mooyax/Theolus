@@ -218,7 +218,7 @@
       box-shadow: 0 0 20px #2196F3;
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-6wCnIJFg.js"></script>
+  <script type="module" crossorigin src="./assets/index-epBzbZuv.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-Bqp-OHo3.css">
 </head>
 
@@ -301,17 +301,7 @@
       <span id="meat-val">0</span>
     </div>
   </div>
-  <div id="stats-container">
-    <!-- ... (stats rows) ... -->
-    <div class="stat-row">
-      <span class="material-symbols-outlined">set_meal</span>
-      <span id="fish-val">0</span>
-    </div>
-    <div class="stat-row">
-      <span class="material-symbols-outlined">kebab_dining</span>
-      <span id="meat-val">0</span>
-    </div>
-  </div>
+
   </div>
 
   <canvas id="minimap" width="160" height="160"
@@ -363,12 +353,36 @@
         startLoadBtn.style.display = 'block';
       }
 
-      // Audio Unlock & Start
+      // Wake Lock Sentinel
+      let wakeLock = null;
+
+      const requestWakeLock = async () => {
+        try {
+          if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            // console.log('Wake Lock request successful');
+          }
+        } catch (err) {
+          console.warn(`${err.name}, ${err.message}`);
+        }
+      };
+
+      // Re-request wake lock when visibility changes
+      document.addEventListener('visibilitychange', async () => {
+        if (wakeLock !== null && document.visibilityState === 'visible') {
+          await requestWakeLock();
+        }
+      });
+
+      // Audio Unlock & Start & WakeLock
       const unlockAndStart = () => {
         if (window.game && window.game.soundManager) {
           window.game.soundManager.init(window.game.camera);
         }
         startScreen.style.display = 'none';
+
+        // Request Wake Lock on user gesture
+        requestWakeLock();
       };
 
       startNewBtn.addEventListener('click', () => {
@@ -433,7 +447,7 @@
           `;
           slotList.appendChild(div);
         });
-      }
+      };
 
       window.saveGame = (id) => {
         if (window.game) {
