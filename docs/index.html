@@ -100,6 +100,79 @@
       margin-bottom: 5px;
     }
 
+    /* Mobile Optimization */
+    @media (max-width: 800px) {
+      #stats-container {
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+        top: 0;
+        left: 0;
+        padding: 5px;
+        /* Reserve space for Minimap? No, moving it down. */
+        padding-right: 5px;
+        gap: 5px;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent);
+        /* Visual separation */
+      }
+
+      .stat-row {
+        font-size: 12px;
+        padding: 4px 6px;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.4);
+        margin: 0;
+      }
+
+      .stat-row span.material-symbols-outlined {
+        font-size: 16px;
+        margin-right: 4px;
+      }
+
+      #time-display {
+        font-size: 14px;
+        padding: 4px 8px;
+        margin-bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        /* More visible */
+      }
+
+      /* Hide less critical texts if needed, or just keep them small */
+
+      /* Responsive UI Buttons */
+      #ui {
+        width: 90%;
+        bottom: 10px;
+        gap: 5px;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 5px;
+        border-radius: 10px;
+        /* Tighter radius */
+      }
+
+      #ui button {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+      }
+
+      #ui button .material-symbols-outlined {
+        font-size: 22px;
+        /* Smaller Icons */
+      }
+
+      /* Resize Minimap */
+      #minimap {
+        width: 100px !important;
+        height: 100px !important;
+        top: 70px !important;
+        /* Adjusted: 70px seems to be the sweet spot (2 lines) */
+        right: 10px !important;
+        border-width: 1px !important;
+      }
+    }
+
     /* Modal Styles */
     #save-modal {
       display: none;
@@ -167,20 +240,28 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      /* Dark overlay */
+      /* background set inline for easy tuning */
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
+      /* User Request: Align Left */
+      padding-left: 10%;
+      /* Indent slightly */
+      padding-top: 100px;
       z-index: 3000;
       color: white;
+      pointer-events: none;
+      /* Allow clicks to pass through to canvas */
     }
 
     #start-screen h1 {
       font-size: 3rem;
-      margin-bottom: 2rem;
+      margin-bottom: 0.5rem;
+      /* User Request: Reduce Gap */
       text-shadow: 0 0 10px #4CAF50;
+      pointer-events: auto;
+      /* Allow interaction */
     }
 
     .start-btn {
@@ -188,7 +269,10 @@
       height: auto;
       padding: 15px 40px;
       font-size: 1.5rem;
-      margin: 10px;
+      padding: 15px 40px;
+      font-size: 1.5rem;
+      margin: 10px 0;
+      /* Vertical margin only for left align */
       border: 2px solid #4CAF50;
       background: transparent;
       color: #4CAF50;
@@ -197,6 +281,8 @@
       transition: all 0.3s;
       text-transform: uppercase;
       font-weight: bold;
+      pointer-events: auto;
+      /* Allow interaction */
     }
 
     .start-btn:hover {
@@ -217,8 +303,244 @@
       color: white;
       box-shadow: 0 0 20px #2196F3;
     }
+
+    /* Help Modal Styles */
+    #help-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .help-content {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      width: 600px;
+      max-width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .help-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    .help-header h2 {
+      margin: 0;
+      color: #333;
+    }
+
+    .help-section {
+      margin-bottom: 25px;
+    }
+
+    .help-section h3 {
+      color: #4CAF50;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+      margin-top: 0;
+    }
+
+    .help-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .help-icon {
+      background: #333;
+      color: white;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+
+    .help-icon .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    .credits {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+      color: #666;
+    }
+
+    .credits h4 {
+      margin: 5px 0;
+      color: #333;
+    }
+
+    /* Tab Styles */
+    .help-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0px;
+    }
+
+    .tab-btn {
+      padding: 10px 15px;
+      cursor: pointer;
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      font-weight: bold;
+      font-size: 13px;
+      /* Smaller font */
+      color: #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Center content */
+      gap: 6px;
+      transition: all 0.2s;
+      flex: 1 1 auto;
+      /* Allow shrink and grow */
+      white-space: normal;
+      /* Allow wrap */
+      text-align: center;
+      line-height: 1.2;
+      min-width: 80px;
+      /* Minimum width */
+    }
+
+    .tab-btn .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      color: #333;
+      border-color: #ddd;
+      border-bottom: 3px solid #fff;
+      /* Blend with content bg */
+      margin-bottom: -2px;
+      /* Overlap border */
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .tab-btn:hover {
+      background: #e9e9e9;
+    }
+
+    /* Showroom Styles */
+    .showroom-container {
+      display: flex;
+      height: 45vh;
+      /* Reduced height again (User Request) - with CSS fix */
+      gap: 15px;
+      background: #fff;
+    }
+
+    .unit-list {
+      width: 30%;
+      overflow-y: auto;
+      border-right: 1px solid #eee;
+      padding-right: 10px;
+    }
+
+    .unit-list-item {
+      padding: 10px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.2s;
+      border-radius: 5px;
+    }
+
+    .unit-list-item:hover {
+      background: #f9f9f9;
+      color: #4CAF50;
+    }
+
+    .unit-list-item.active {
+      background: #e0ffe0;
+      border-right: 3px solid #4CAF50;
+    }
+
+    .unit-preview-area {
+      width: 70%;
+      height: 100%;
+      /* Critical Fix: Ensure it takes parent height */
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fcfcfc;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #eee;
+    }
+
+    .preview-canvas-container {
+      width: 100%;
+      flex-grow: 1;
+      /* Fill space */
+      position: relative;
+    }
+
+    .preview-canvas-container canvas {
+      position: absolute;
+      /* Force fill */
+      top: 0;
+      left: 0;
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    .unit-description-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px;
+      border-top: 1px solid #eee;
+      max-height: 40%;
+      overflow-y: auto;
+    }
+
+    .unit-description-overlay h3 {
+      margin: 0 0 5px 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .unit-description-overlay p {
+      margin: 0;
+      font-size: 14px;
+      color: #555;
+      line-height: 1.4;
+    }
   </style>
-  <script type="module" crossorigin src="./assets/index-epBzbZuv.js"></script>
+  <script type="module" crossorigin src="./assets/index-oR27rICi.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-Bqp-OHo3.css">
 </head>
 
@@ -227,26 +549,6 @@
   <div id="app"></div>
   <div id="tooltip"
     style="display: none; position: absolute; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 5px; pointer-events: none; font-size: 14px; z-index: 1000;">
-  </div>
-
-  <div id="start-screen">
-    <h1>Theolus</h1>
-    <button id="start-new-btn" class="start-btn">NEW</button>
-    <button id="start-load-btn" class="start-btn">LOAD</button>
-  </div>
-
-  <div id="ui">
-    <button id="btn-raise" class="active" title="Raise Land"><span
-        class="material-symbols-outlined">stat_3</span></button>
-    <button id="btn-lower" title="Lower Land"><span class="material-symbols-outlined">stat_minus_3</span></button>
-    <button id="btn-spawn" title="Spawn Unit"><span class="material-symbols-outlined">person_add</span></button>
-    <button id="btn-barracks" title="Build Barracks (Knight)"><span
-        class="material-symbols-outlined">shield</span></button>
-    <button id="btn-cancel" title="Cancel Request"><span class="material-symbols-outlined">cancel</span></button>
-    <button id="btn-tower" title="Debug: Build Tower"><span class="material-symbols-outlined">fort</span></button>
-    <button id="save-load-btn" title="Save/Load"><span class="material-symbols-outlined">save</span></button>
-    <button id="debug-speed-btn" onclick="toggleDebugSpeed()" title="Toggle Speed"><span
-        class="material-symbols-outlined">fast_forward</span></button>
   </div>
 
   <div id="stats-container">
@@ -302,6 +604,57 @@
     </div>
   </div>
 
+  <div id="start-screen" style="background: rgba(0, 0, 0, 0.4);">
+    <h1>Theolus</h1>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <button id="start-new-btn" class="start-btn">NEW</button>
+      <button id="regenerate-btn" class="start-btn"
+        style="padding: 15px; width: 60px; height: 60px; border-radius: 50%; font-size: 2rem;"
+        title="Regenerate Terrain">♻️</button>
+    </div>
+    <button id="start-load-btn" class="start-btn">LOAD</button>
+  </div>
+
+  <div id="ui" style="display: none;">
+    <!-- Navigation Group -->
+    <div class="ui-group"
+      style="display: flex; gap: 5px; margin-right: 15px; border-right: 1px solid rgba(255,255,255,0.3); padding-right: 15px;">
+      <button id="btn-view" class="active" title="View / Select (No Action)"><span
+          class="material-symbols-outlined">near_me</span></button>
+    </div>
+
+    <!-- Terrain Group -->
+    <div class="ui-group"
+      style="display: flex; gap: 5px; margin-right: 15px; border-right: 1px solid rgba(255,255,255,0.3); padding-right: 15px;">
+      <button id="btn-raise" title="Raise Land"><span class="material-symbols-outlined">stat_3</span></button>
+      <button id="btn-lower" title="Lower Land"><span class="material-symbols-outlined">stat_minus_3</span></button>
+    </div>
+
+    <!-- Units & Buildings Group -->
+    <div class="ui-group"
+      style="display: flex; gap: 5px; margin-right: 15px; border-right: 1px solid rgba(255,255,255,0.3); padding-right: 15px;">
+      <button id="btn-spawn" title="Spawn Unit"><span class="material-symbols-outlined">person_add</span></button>
+      <button id="btn-barracks" title="Build Barracks (Knight)"><span
+          class="material-symbols-outlined">shield</span></button>
+      <button id="btn-tower" title="Debug: Build Tower"><span class="material-symbols-outlined">fort</span></button>
+      <button id="btn-cancel" title="Cancel Request"><span class="material-symbols-outlined">cancel</span></button>
+    </div>
+
+    <!-- Tools Group (Empty or reuse) -->
+    <div class="ui-group" style="display: none; gap: 5px;"></div>
+
+    <!-- System Group (Pushed to right or just separate) -->
+    <div class="ui-group"
+      style="display: flex; gap: 5px; margin-left: 15px; border-left: 1px solid rgba(255,255,255,0.3); padding-left: 15px;">
+      <button id="save-load-btn" title="Save/Load"><span class="material-symbols-outlined">save</span></button>
+      <button id="help-btn" title="Help / Guide"><span class="material-symbols-outlined">help</span></button>
+      <button id="debug-speed-btn" onclick="toggleDebugSpeed()" title="Toggle Speed"><span
+          class="material-symbols-outlined">fast_forward</span></button>
+    </div>
+
+
+
+
   </div>
 
   <canvas id="minimap" width="160" height="160"
@@ -332,6 +685,245 @@
     </div>
   </div>
 
+  </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div id="help-modal">
+    <div class="help-content">
+      <div class="help-header">
+        <h2>初心者ガイド (Guide)</h2>
+        <button id="close-help-btn" style="width: 30px; height: 30px; font-size: 16px; background: #eee;">✕</button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="help-tabs" style="flex-wrap: wrap;">
+        <button class="tab-btn active" onclick="openTab('controls')">
+          <span class="material-symbols-outlined">gamepad</span> 操作 (Controls)
+        </button>
+        <button class="tab-btn" onclick="openTab('stats')">
+          <span class="material-symbols-outlined">bar_chart</span> 統計 (Stats)
+        </button>
+        <button class="tab-btn" onclick="openTab('units')">
+          <span class="material-symbols-outlined">groups</span> 人間 (Humans)
+        </button>
+        <button class="tab-btn" onclick="openTab('buildings')">
+          <span class="material-symbols-outlined">castle</span> 建物 (Buildings)
+        </button>
+        <button class="tab-btn" onclick="openTab('goblins')">
+          <span class="material-symbols-outlined">bug_report</span> ゴブリン (Goblins)
+        </button>
+        <button class="tab-btn" onclick="openTab('others')">
+          <span class="material-symbols-outlined">pets</span> その他 (Others)
+        </button>
+      </div>
+
+      <!-- Controls Tab -->
+      <div id="tab-controls" class="help-tab-content" style="display: block;">
+        <div class="help-section">
+          <h3>操作メニュー (Controls)</h3>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">near_me</span></div>
+            <div><strong>見る / 選択 (View Mode)</strong><br>カメラ操作のみの安全モードです。</div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">stat_3</span></div>
+            <div><strong>土地を上げる (Raise)</strong><br>地面を高くします（平地に家が建ちます）。</div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">stat_minus_3</span></div>
+            <div><strong>土地を下げる (Lower)</strong><br>地面を低くします。</div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">person_add</span></div>
+            <div><strong>ユニット作成 (Spawn)</strong><br>労働者を作成します。</div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">shield</span></div>
+            <div><strong>兵舎建設 (Barracks)</strong><br>騎士 (Knight) を生産する兵舎を建てます。</div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">fort</span></div>
+            <div><strong>塔建設 (Tower)</strong><br>魔法使い (Wizard) を生産する塔を建てます。</div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">cancel</span></div>
+            <div><strong>キャンセル (Cancel)</strong><br>建設予定などをキャンセルします。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Tab -->
+      <div id="tab-stats" class="help-tab-content" style="display: none;">
+        <div class="help-section">
+          <h3>統計情報 (Stats)</h3>
+          <p>画面左上のアイコンの意味です。</p>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">groups</span></div>
+            <div><strong>人口 (Population)</strong>: 現在の総人口です。</div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">bolt</span></div>
+            <div><strong>マナ (Mana)</strong>: 奇跡（土地操作など）を使う力です。</div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">grain</span></div>
+            <div><strong>穀物 (Grain)</strong>: 畑から収穫される主要な食料です。</div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">set_meal</span></div>
+            <div><strong>魚 (Fish)</strong>: 漁師が海で捕獲します。</div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">kebab_dining</span></div>
+            <div><strong>肉 (Meat)</strong>: 狩人が動物から得ます。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Units Tab (Showroom) -->
+      <div id="tab-units" class="help-tab-content" style="display: none;">
+        <div class="showroom-container">
+          <!-- Sidebar -->
+          <div class="unit-list">
+            <div class="unit-list-item active" data-type="worker" onclick="selectShowroomUnit('worker', this)">
+              <span class="material-symbols-outlined">engineering</span>
+              <div><strong>労働者</strong><br><small>Worker</small></div>
+            </div>
+            <div class="unit-list-item" data-type="knight" onclick="selectShowroomUnit('knight', this)">
+              <span class="material-symbols-outlined">shield</span>
+              <div><strong>騎士</strong><br><small>Knight</small></div>
+            </div>
+            <div class="unit-list-item" data-type="wizard" onclick="selectShowroomUnit('wizard', this)">
+              <span class="material-symbols-outlined">auto_fix</span>
+              <div><strong>魔法使い</strong><br><small>Wizard</small></div>
+            </div>
+          </div>
+
+          <!-- Preview -->
+          <div class="unit-preview-area">
+            <div class="preview-canvas-container">
+              <canvas id="showroom-canvas"></canvas>
+            </div>
+            <div class="unit-description-overlay">
+              <h3 id="showroom-title">労働者 (Worker)</h3>
+              <p id="showroom-desc">基本的なユニット。建築、修理、資源（木・魚）の収集を行います。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buildings Tab (Showroom) -->
+      <div id="tab-buildings" class="help-tab-content" style="display: none;">
+        <div class="showroom-container">
+          <div class="unit-list">
+            <div class="unit-list-item active" data-type="house" onclick="selectShowroomUnit('house', this)">
+              <span class="material-symbols-outlined">house</span>
+              <div><strong>家</strong><br><small>House</small></div>
+            </div>
+            <div class="unit-list-item" data-type="farm" onclick="selectShowroomUnit('farm', this)">
+              <span class="material-symbols-outlined">grain</span>
+              <div><strong>畑</strong><br><small>Farm</small></div>
+            </div>
+            <div class="unit-list-item" data-type="barracks" onclick="selectShowroomUnit('barracks', this)">
+              <span class="material-symbols-outlined">shield</span>
+              <div><strong>兵舎</strong><br><small>Barracks</small></div>
+            </div>
+            <div class="unit-list-item" data-type="tower" onclick="selectShowroomUnit('tower', this)">
+              <span class="material-symbols-outlined">fort</span>
+              <div><strong>塔</strong><br><small>Tower</small></div>
+            </div>
+            <div class="unit-list-item" data-type="goblin_hut" onclick="selectShowroomUnit('goblin_hut', this)">
+              <span class="material-symbols-outlined">forest</span>
+              <div><strong>ゴブリンの小屋</strong><br><small>Goblin Hut</small></div>
+            </div>
+            <div class="unit-list-item" data-type="cave" onclick="selectShowroomUnit('cave', this)">
+              <span class="material-symbols-outlined">landscape</span>
+              <div><strong>ゴブリンの洞窟</strong><br><small>Goblin Cave</small></div>
+            </div>
+          </div>
+          <div class="unit-preview-area">
+            <div class="preview-canvas-container">
+              <canvas id="showroom-canvas-b"></canvas>
+            </div>
+            <div class="unit-description-overlay">
+              <h3 id="showroom-title-b">家 (House)</h3>
+              <p id="showroom-desc-b">労働者が住む場所。人口を増やします。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Goblins Tab (Showroom) -->
+      <div id="tab-goblins" class="help-tab-content" style="display: none;">
+        <div class="showroom-container">
+          <div class="unit-list">
+            <div class="unit-list-item active" data-type="goblin" onclick="selectShowroomUnit('goblin', this)">
+              <span class="material-symbols-outlined">skull</span>
+              <div><strong>ゴブリン</strong><br><small>Normal</small></div>
+            </div>
+            <div class="unit-list-item" data-type="hob" onclick="selectShowroomUnit('hob', this)">
+              <span class="material-symbols-outlined">fitness_center</span>
+              <div><strong>ホブゴブリン</strong><br><small>Hobgoblin</small></div>
+            </div>
+            <div class="unit-list-item" data-type="shaman" onclick="selectShowroomUnit('shaman', this)">
+              <span class="material-symbols-outlined">auto_fix_high</span>
+              <div><strong>シャーマン</strong><br><small>Shaman</small></div>
+            </div>
+            <div class="unit-list-item" data-type="king" onclick="selectShowroomUnit('king', this)">
+              <span class="material-symbols-outlined">chess_king</span>
+              <div><strong>キング</strong><br><small>Goblin King</small></div>
+            </div>
+          </div>
+          <div class="unit-preview-area">
+            <div class="preview-canvas-container">
+              <canvas id="showroom-canvas-g"></canvas>
+            </div>
+            <div class="unit-description-overlay">
+              <h3 id="showroom-title-g">ゴブリン (Goblin)</h3>
+              <p id="showroom-desc-g">弱いが数で攻めてくる敵。こん棒で攻撃します。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Others Tab (Showroom) -->
+      <div id="tab-others" class="help-tab-content" style="display: none;">
+        <div class="showroom-container">
+          <div class="unit-list">
+            <div class="unit-list-item active" data-type="bird" onclick="selectShowroomUnit('bird', this)">
+              <span class="material-symbols-outlined">flight</span>
+              <div><strong>鳥</strong><br><small>Bird</small></div>
+            </div>
+            <div class="unit-list-item" data-type="sheep" onclick="selectShowroomUnit('sheep', this)">
+              <span class="material-symbols-outlined">grass</span>
+              <div><strong>羊</strong><br><small>Sheep</small></div>
+            </div>
+            <div class="unit-list-item" data-type="fish" onclick="selectShowroomUnit('fish', this)">
+              <span class="material-symbols-outlined">set_meal</span>
+              <div><strong>魚</strong><br><small>Fish</small></div>
+            </div>
+          </div>
+          <div class="unit-preview-area">
+            <div class="preview-canvas-container">
+              <canvas id="showroom-canvas-o"></canvas>
+            </div>
+            <div class="unit-description-overlay">
+              <h3 id="showroom-title-o">鳥 (Bird)</h3>
+              <p id="showroom-desc-o">空を飛び回る白い鳥。環境を彩ります。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="credits">
+        <h4>Theolus</h4>
+        <p>Creator: <strong>mooyax</strong></p>
+        <p>Programmer: <strong>Google Antigravity</strong></p>
+      </div>
+    </div>
+  </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Start Screen Logic
@@ -342,6 +934,17 @@
       // Check for saved games
       // We can peek at localStorage without Game.js being fully ready if naming convention is known ('god_game_save_')
       let hasSaves = false;
+
+      // Wire Regenerate Button
+      const regenBtn = document.getElementById('regenerate-btn');
+      if (regenBtn) {
+        regenBtn.addEventListener('click', () => {
+          if (window.game && window.game.regenerateWorld) {
+            window.game.regenerateWorld();
+          }
+        });
+      }
+
       for (let i = 1; i <= 5; i++) {
         if (localStorage.getItem('god_game_save_' + i)) {
           hasSaves = true;
@@ -387,7 +990,9 @@
 
       startNewBtn.addEventListener('click', () => {
         unlockAndStart();
-        // Reset Game? For now just start as is (fresh reload usually)
+        if (window.game) {
+          window.game.startNewGame();
+        }
       });
 
       startLoadBtn.addEventListener('click', () => {
@@ -443,6 +1048,7 @@
             <div class="slot-actions">
               <button onclick="saveGame(${slot.id})" style="${saveStyle}">Save</button>
               <button onclick="loadGame(${slot.id})" ${slot.empty ? 'disabled' : ''}>Load</button>
+              <button onclick="deleteGame(${slot.id})" style="background:#ff4444; color:white; ${slot.empty ? 'display:none;' : ''}">Del</button>
             </div>
           `;
           slotList.appendChild(div);
@@ -462,14 +1068,210 @@
 
       window.loadGame = async (id) => {
         if (window.game) {
-          // Await the async load process
           const success = await window.game.loadGame(id);
           if (success) {
-            // alert('Game Loaded!'); // Optional, maybe annoying if loading bar handles it
             modal.style.display = 'none';
           }
         }
       };
+
+      window.deleteGame = (id) => {
+        if (confirm('Delete this save?')) {
+          if (window.game && window.game.saveManager) {
+            window.game.saveManager.delete(id);
+            // Refresh logic
+            updateSlots(document.getElementById('save-modal').style.display === 'flex' ? 'both' : 'load');
+
+            // Check if we need to hide Load button on Start Screen
+            let hasSaves = false;
+            for (let i = 1; i <= 5; i++) {
+              if (localStorage.getItem('god_game_save_' + i)) { hasSaves = true; break; }
+            }
+            if (!hasSaves && document.getElementById('start-load-btn')) {
+              document.getElementById('start-load-btn').style.display = 'none';
+              if (document.getElementById('save-modal').style.display === 'flex') {
+                // If modal is open from Start Screen and no saves left, maybe close it?
+                // User might want to see empty slots though.
+              }
+            }
+          }
+        }
+      };
+
+      window.clearAllData = () => {
+        if (confirm('CRITICAL WARNING: This will delete ALL save data. Returns to fresh state. Sure?')) {
+          localStorage.clear();
+          location.reload();
+        }
+      };
+
+      // Help Modal Logic
+      const helpModal = document.getElementById('help-modal');
+      const helpBtn = document.getElementById('help-btn');
+      const closeHelpBtn = document.getElementById('close-help-btn');
+
+      // Showroom Logic
+      let showroomUnit = null;
+      let showroomGoblin = null;
+      let showroomBuilding = null;
+
+      // Import Showroom dynamically
+      // Note: Since this is inside DOMContentLoaded which is inside a script tag (not module),
+      // we need to use dynamic import.
+      import('./assets/HelpShowroom-Dz6iYXJI.js').then((module) => {
+        const HelpShowroom = module.HelpShowroom;
+
+        let showroomOthers = null;
+
+        const canvasU = document.getElementById('showroom-canvas');
+        if (canvasU) showroomUnit = new HelpShowroom(canvasU);
+
+        const canvasG = document.getElementById('showroom-canvas-g');
+        if (canvasG) showroomGoblin = new HelpShowroom(canvasG);
+
+        const canvasB = document.getElementById('showroom-canvas-b');
+        if (canvasB) showroomBuilding = new HelpShowroom(canvasB);
+
+        const canvasO = document.getElementById('showroom-canvas-o');
+        if (canvasO) showroomOthers = new HelpShowroom(canvasO);
+
+        // Initial Setup
+        if (showroomUnit) showroomUnit.currentType = 'worker';
+        if (showroomGoblin) showroomGoblin.currentType = 'goblin';
+        if (showroomBuilding) showroomBuilding.currentType = 'house';
+        if (showroomOthers) showroomOthers.currentType = 'bird';
+
+        window.showroomOthers = showroomOthers; // Global ref for openTab logic closures
+      });
+
+      // Data Map for descriptions
+      const descMap = {
+        'worker': { title: '労働者 (Worker)', desc: '基本的なユニット。建築、修理、資源（木・魚）の収集を行います。' },
+        'knight': { title: '騎士 (Knight)', desc: '高い体力と防御力を持つ戦士。ゴブリンの攻撃から街を守ります。' },
+        'wizard': { title: '魔法使い (Wizard)', desc: '強力なファイアボール魔法を使い、遠距離から範囲攻撃を行います。' },
+        'goblin': { title: 'ゴブリン (Goblin)', desc: '最も一般的な敵。棍棒で武装しており、数で押し寄せてきます。' },
+        'hob': { title: 'ホブゴブリン (Hobgoblin)', desc: '大型で筋肉質なゴブリン。高い耐久力と攻撃力を持ちます。' },
+        'shaman': { title: 'シャーマン (Shaman)', desc: '魔法を使うゴブリン。遠距離から怪しげな弾を放ってきます。' },
+        'king': { title: 'ゴブリンキング (King)', desc: 'ゴブリン族の王。黄金の鎧を身にまとい、非常に強力です。' },
+        'house': { title: '家 (House)', desc: '労働者の住処。建てると人口が増えます。平地にのみ建設可能。' },
+        'farm': { title: '畑 (Farm)', desc: '食料（穀物）を生産します。人口増加に必要です。' },
+        'barracks': { title: '兵舎 (Barracks)', desc: '騎士を訓練する施設です。頑丈な石造りの建物です。' },
+        'tower': { title: '塔 (Tower)', desc: '魔法使いを召喚する高い塔です。遠くを見渡すことができます。' },
+        'goblin_hut': { title: 'ゴブリンの小屋 (Goblin Hut)', desc: 'ゴブリンが湧き出る不気味な小屋。破壊するとゴブリンの出現が止まります。' },
+        'cave': { title: 'ゴブリンの洞窟 (Goblin Cave)', desc: '地下深くにつながる闇の穴。ここから強力なゴブリンの群れが現れます。' },
+        'bird': { title: '鳥 (Bird)', desc: '空を自由に飛び回る白い鳥。環境に生命を与えます。' },
+        'sheep': { title: '羊 (Sheep)', desc: '草原を歩き回る動物。時々鳴き声をあげます。' },
+        'fish': { title: '魚 (Fish)', desc: '海を泳ぐ魚。漁師によって捕獲され、食料になります。' }
+      };
+
+      window.selectShowroomUnit = function (type, el) {
+        const isGoblin = ['goblin', 'hob', 'shaman', 'king'].includes(type);
+        const isBuilding = ['house', 'farm', 'barracks', 'tower', 'goblin_hut', 'cave'].includes(type);
+        const isOther = ['bird', 'sheep', 'fish'].includes(type);
+
+        let showroom = showroomUnit;
+        let titleId = 'showroom-title';
+        let descId = 'showroom-desc';
+
+        if (isGoblin) {
+          showroom = showroomGoblin;
+          titleId = 'showroom-title-g';
+          descId = 'showroom-desc-g';
+        } else if (isBuilding) {
+          showroom = showroomBuilding;
+          titleId = 'showroom-title-b';
+          descId = 'showroom-desc-b';
+        } else if (isOther) {
+          showroom = window.showroomOthers;
+          titleId = 'showroom-title-o';
+          descId = 'showroom-desc-o';
+        }
+
+        if (showroom) showroom.show(type);
+
+        // Update Text
+        const data = descMap[type];
+        if (data) {
+          const tEl = document.getElementById(titleId);
+          const dEl = document.getElementById(descId);
+          if (tEl) tEl.innerText = data.title;
+          if (dEl) dEl.innerText = data.desc;
+        }
+
+        // Active Class Update
+        const siblings = el.parentElement.children;
+        for (let i = 0; i < siblings.length; i++) {
+          siblings[i].classList.remove('active');
+        }
+        el.classList.add('active');
+      };
+
+      window.openTab = function (tabName) {
+        // Hide all
+        document.querySelectorAll('.help-tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+        // Show selected
+        document.getElementById('tab-' + tabName).style.display = 'block';
+
+        // Find button
+        const btns = document.querySelectorAll('.tab-btn');
+        // Indices: 0=Controls, 1=Stats, 2=Units, 3=Buildings, 4=Goblins
+        const btnMap = {
+          'controls': 0,
+          'stats': 1,
+          'units': 2,
+          'buildings': 3,
+          'goblins': 4,
+          'others': 5
+        };
+
+        if (btnMap[tabName] !== undefined && btns[btnMap[tabName]]) {
+          btns[btnMap[tabName]].classList.add('active');
+        }
+
+        if (tabName === 'units' && showroomUnit) {
+          showroomUnit.resize();
+          showroomUnit.show(showroomUnit.currentType || 'worker');
+        }
+        if (tabName === 'goblins' && showroomGoblin) {
+          showroomGoblin.resize();
+          showroomGoblin.show(showroomGoblin.currentType || 'goblin');
+        }
+        if (tabName === 'buildings' && showroomBuilding) {
+          showroomBuilding.resize();
+          showroomBuilding.show(showroomBuilding.currentType || 'house');
+        }
+        if (tabName === 'others' && window.showroomOthers) {
+          window.showroomOthers.resize();
+          window.showroomOthers.show(window.showroomOthers.currentType || 'bird');
+        }
+      };
+
+      if (helpBtn && helpModal) {
+        helpBtn.addEventListener('click', () => {
+          helpModal.style.display = 'flex';
+          openTab('controls');
+        });
+
+        closeHelpBtn.addEventListener('click', () => {
+          helpModal.style.display = 'none';
+          if (showroomUnit) showroomUnit.stop();
+          if (showroomGoblin) showroomGoblin.stop();
+          if (showroomBuilding) showroomBuilding.stop();
+        });
+
+        // Close on outside click
+        helpModal.addEventListener('click', (e) => {
+          if (e.target === helpModal) {
+            helpModal.style.display = 'none';
+            if (showroomUnit) showroomUnit.stop();
+            if (showroomGoblin) showroomGoblin.stop();
+            if (showroomBuilding) showroomBuilding.stop();
+            if (window.showroomOthers) window.showroomOthers.stop();
+          }
+        });
+      }
     });
   </script>
 
