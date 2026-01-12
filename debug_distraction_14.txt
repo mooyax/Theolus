@@ -1,0 +1,31 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/RefuseDistraction.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 162[2mms[22m[39m
+[31m     [31mﾃ・[31m should prioritize MANUAL move marker over autonomous HOUSE BUILDING[39m[32m 92[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT Switch to a better Auto-Job if Manual Job is active[39m[32m 68[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/RefuseDistraction.test.js > Refuse Distraction > should prioritize MANUAL move marker over autonomous HOUSE BUILDING
+ FAIL  src/tests/RefuseDistraction.test.js > Refuse Distraction > should NOT Switch to a better Auto-Job if Manual Job is active
+TypeError: this.material.clone is not a function
+ 笶ｯ CloudManager.initClouds src/CloudManager.js:94:45
+     92|             sprite.scale.set(baseScale * aspect, baseScale, 1);
+     93| 
+     94|             sprite.material = this.material.clone();
+       |                                             ^
+     95|             sprite.material.rotation = Math.random() * Math.PI * 2;
+     96| 
+ 笶ｯ new CloudManager src/CloudManager.js:77:14
+ 笶ｯ new Game src/Game.js:160:29
+ 笶ｯ src/tests/RefuseDistraction.test.js:151:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 12:05:39
+[2m   Duration [22m 1.84s[2m (transform 455ms, setup 44ms, import 622ms, tests 162ms, environment 681ms)[22m
+

@@ -27,9 +27,11 @@ describe('Mana System', () => {
     beforeEach(() => {
         // Partial Mock of Game Logic
         mockGame = {
+            gameActive: true,
             mana: 100,
             canAction: function () { return this.mana >= 0; },
-            consumeMana: vi.fn(function (amount) { this.mana -= amount; })
+            consumeMana: vi.fn(function (amount) { this.mana -= amount; }),
+            addRequest: vi.fn()
         };
     });
 
@@ -80,7 +82,7 @@ describe('Mana System', () => {
 
             inputManager.handleInteraction(event);
 
-            expect(mockTerrain.raise).toHaveBeenCalled();
+            expect(mockGame.addRequest).toHaveBeenCalled();
             expect(mockGame.consumeMana).toHaveBeenCalledWith(10);
             expect(mockGame.mana).toBe(90);
         });

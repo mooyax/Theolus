@@ -1,0 +1,36 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitWander 0] ENTER. ResumeCtx? false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[MockTerrain] findPath: (0,0) -> (80,80)
+[UnitWander 1] ENTER. ResumeCtx? false
+[MockTerrain] findPath: (0,0) -> (30,30)
+[Unit 1] Moving onto Rock at 30,31 H:10 (Speed Penalty)
+[JobState 1] generating Resume State. Context: Idle
+[UnitWander 1] ENTER. ResumeCtx? true
+[UnitWander 1] Resuming Context: Idle Target: {"x":80,"z":80}
+[MockTerrain] findPath: (30,30) -> (80,80)
+[Test] Final Target: 80,80 State: UnitWanderState
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould resume MIGRATION after Combat interruption
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitWander 1] ENTER. ResumeCtx? false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould resume MIGRATION after Combat interruption
+[22m[39m[CombatState 1] Entered. Capturing Context: Migrating
+
+ [31m笶ｯ[39m src/tests/InterruptResume.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 60[2mms[22m[39m
+     [32m笨・[39m should return to previous movement target after finishing a job[32m 13[2mms[22m[39m
+[31m     [31mﾃ・[31m should resume MIGRATION after Combat interruption[39m[32m 44[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m   Start at [22m 22:59:37
+[2m   Duration [22m 1.42s[2m (transform 199ms, setup 46ms, import 282ms, tests 60ms, environment 631ms)[22m
+

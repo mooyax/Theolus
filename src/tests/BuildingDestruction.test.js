@@ -1,122 +1,146 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import * as THREE from 'three';
 import { Terrain } from '../Terrain.js';
 import { Goblin } from '../Goblin.js';
-import * as THREE from 'three';
 
 // Mock THREE
 vi.mock('three', () => {
     const Vector3 = class {
         constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
-        copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
-        set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
-        add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
         clone() { return new Vector3(this.x, this.y, this.z); }
-    };
-
-    const Object3D = class {
-        position = new Vector3();
-        rotation = { x: 0, y: 0, z: 0 };
-        scale = new Vector3(1, 1, 1);
-        add() { }
-        remove() { }
-        updateMatrix() { }
+        add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
+        set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
+        multiplyScalar(s) { this.x *= s; this.y *= s; this.z *= s; return this; }
+        normalize() { return this; }
+        copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
     };
 
     return {
-        Vector3,
-        Group: class extends Object3D { },
-        Mesh: class extends Object3D { },
-        MeshLambertMaterial: class { },
-        BoxGeometry: class { },
-        ConeGeometry: class { },
-        CylinderGeometry: class { },
-        SphereGeometry: class { },
-        CanvasTexture: class { },
-        Color: class {
-            constructor(hex) { }
-            lerp() { return this; }
-            setHex() { return this; }
-            getHSL() { return {}; }
-            setHSL() { return this; }
-            copy(c) { return this; }
-            multiplyScalar() { return this; }
+        Scene: class { add() { } remove() { } getObjectByName() { } },
+        Mesh: class {
+            constructor() { this.position = new Vector3(); this.rotation = { x: 0 }; this.add = vi.fn(); }
         },
-        BufferAttribute: class { constructor(arr, size) { this.array = arr; this.count = arr.length / size; } },
+        Group: class { add() { }; position = new Vector3(); },
+        TextureLoader: class { load() { return {}; } },
+        CanvasTexture: class { constructor() { } },
         PlaneGeometry: class {
-            attributes = { position: { count: 100, array: new Float32Array(300), getX: () => 0, getY: () => 0, setX: () => { }, setY: () => { } }, color: { array: [], count: 100, needsUpdate: false } };
-            setAttribute(name, attr) { this.attributes[name] = attr; }
-            getAttribute(name) { return this.attributes[name]; }
+            constructor() {
+                this.attributes = {
+                    position: {
+                        count: 100,
+                        array: new Float32Array(300),
+                        getX: () => 0, getY: () => 0, setX: () => { }, setY: () => { },
+                        needsUpdate: false
+                    },
+                    color: { count: 100, array: new Float32Array(300), setXYZ: () => { }, needsUpdate: false }
+                };
+            }
+            setAttribute() { }
             computeVertexNormals() { }
+            setIndex() { }
         },
-        LineBasicMaterial: class { },
-        LineSegments: class extends Object3D { },
-        PointsMaterial: class { },
-        Points: class extends Object3D { },
         BufferGeometry: class { setAttribute() { } setIndex() { } },
+        BoxGeometry: class { translate() { } rotateY() { } },
+        ConeGeometry: class { translate() { } rotateY() { } },
+        CylinderGeometry: class { translate() { } },
+        MeshLambertMaterial: class { },
+        LineBasicMaterial: class { },
+        PointsMaterial: class { },
+        BufferAttribute: class { },
+        Vector3: Vector3,
+        Points: class { constructor() { this.position = new Vector3(); this.add = vi.fn(); } },
+        LineSegments: class { constructor() { this.position = new Vector3(); this.add = vi.fn(); } },
+        Color: class { setHex() { } lerp() { } copy() { } setHSL() { } getHSL() { return { h: 0, s: 0, l: 0 }; } },
+        MathUtils: { degToRad: () => 0 },
         DoubleSide: 2,
-        Object3D,
-        Sphere: class { constructor(c, r) { } },
-        InstancedMesh: class extends Object3D {
-            constructor() { super(); this.instanceMatrix = { setUsage: () => { } }; }
-        },
-        DynamicDrawUsage: 1
     };
 });
 
 describe('Building Destruction Logic', () => {
     let terrain;
-    let goblin;
-    let house;
+    let scene;
 
     beforeEach(() => {
-        global.window = { game: { gameTotalTime: 0 } };
-        const scene = { add: () => { }, remove: () => { } };
-        terrain = new Terrain(scene, []);
-        terrain.logicalWidth = 80;
-        terrain.logicalDepth = 80;
-        terrain.grid = Array(80).fill(0).map(() => Array(80).fill({ height: 1 }));
-        terrain.getTileHeight = () => 1.0;
-        terrain.gridToWorld = (v) => v;
-        terrain.registerEntity = () => { };
-        terrain.removeBuilding = vi.fn(); // Mock removal
-
-        goblin = new Goblin(scene, terrain, 10, 10, 'normal');
-        goblin.destroyBuilding = vi.fn(); // Spy on method
-
-        house = {
-            userData: {
-                type: 'house',
-                population: 10, // Low Population
-                gridX: 11,
-                gridZ: 10
-            }
+        scene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
+        terrain = new Terrain(scene);
+        // Mock geometry stuff to avoid "position attribute missing"
+        terrain.geometry = {
+            attributes: {
+                position: { count: 100, array: new Float32Array(300), getX: () => 0, getY: () => 0, needsUpdate: false },
+                color: { count: 100, array: new Float32Array(300), setXYZ: vi.fn(), needsUpdate: false }
+            },
+            computeVertexNormals: vi.fn()
         };
+        terrain.updateMesh = vi.fn();
+        terrain.updateColors = vi.fn();
     });
 
-    it('should destroy building immediately when population hits 0', () => {
-        // Attack Damage is 20 for buildings (refer to Goblin.js implementation)
-        // Population is 10.
-        // 10 - 20 = -10. Should trigger destruction.
+    it('should successfully remove a building from the list', () => {
+        const b = terrain.addBuilding('house', 10, 10, true);
+        expect(terrain.buildings).toContain(b);
+        expect(terrain.buildings.length).toBe(1);
 
-        goblin.attackBuilding(house);
-
-        expect(house.userData.population).toBeLessThanOrEqual(0);
-        expect(goblin.destroyBuilding).toHaveBeenCalled();
-        expect(goblin.destroyBuilding).toHaveBeenCalledWith(house);
+        terrain.removeBuilding(b);
+        expect(terrain.buildings).not.toContain(b);
+        expect(terrain.buildings.length).toBe(0);
     });
 
-    it('should destroy building if already 0', () => {
-        house.userData.population = 0;
-        goblin.attackBuilding(house);
-        expect(goblin.destroyBuilding).toHaveBeenCalled();
+    it('should allow a goblin to destroy a building', () => {
+        // Setup Goblin
+        Goblin.initAssets = vi.fn();
+        Goblin.assets.initialized = true;
+
+        const goblin = new Goblin(scene, terrain, 11, 10); // Adjacent
+
+        // Setup Building
+        const building = terrain.addBuilding('house', 10, 10, true);
+        building.hp = 10; // Sync HP directly for Class
+        building.userData.hp = 10;
+        building.population = 0; // Empty
+        building.userData.population = 0;
+
+        // Goblin targets building
+        goblin.targetBuilding = building;
+
+        // Mock attack logic calls
+        // We actally want to call attackBuilding directly to test the damage/destroy logic
+
+        // Check initial state
+        expect(terrain.buildings).toContain(building);
+
+        // Attack loop
+        // Attack 1: Damage
+        goblin.attackBuilding(building);
+        expect(building.userData.hp).toBeLessThan(10);
+        expect(terrain.buildings).toContain(building);
+
+        // Force kill
+        building.hp = 1;
+        building.userData.hp = 1;
+        goblin.attackCooldown = 0; // Reset cooldown
+        goblin.attackBuilding(building);
+
+        // Should be destroyed now
+        expect(terrain.buildings).not.toContain(building);
+        // Correct check for Class Instance
+        expect(building.isDead).toBe(true);
     });
 
-    it('should NOT destroy building if population remains > 0', () => {
-        house.userData.population = 50; // High pop
-        goblin.attackBuilding(house); // -20
+    it('should handle identity mismatch (Ghost Building)', () => {
+        const realBuilding = terrain.addBuilding('house', 20, 20, true);
 
-        expect(house.userData.population).toBe(30);
-        expect(goblin.destroyBuilding).not.toHaveBeenCalled();
+        // Create a fake "ghost" object that mimics the real one
+        const ghost = { ...realBuilding };
+        // Note: Shallow copy, but distinct object reference.
+
+        expect(terrain.buildings).toContain(realBuilding);
+        expect(terrain.buildings).not.toContain(ghost);
+
+        // Attempt to remove using ghost
+        terrain.removeBuilding(ghost);
+
+        // logic in removeBuilding handles this by searching coords
+        expect(terrain.buildings.length).toBe(0);
     });
 });

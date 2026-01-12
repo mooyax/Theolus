@@ -7,43 +7,93 @@ import { Terrain } from '../Terrain';
 // Mock Dependencies
 vi.mock('three', async () => {
     const actual = await vi.importActual('three');
+    class BufferAttribute {
+        constructor(array, itemSize) { this.array = array; this.itemSize = itemSize; this.count = array.length / itemSize; }
+        setX(i, x) { if (this.array) this.array[i * this.itemSize] = x; return this; }
+        setY(i, y) { if (this.array) this.array[i * this.itemSize + 1] = y; return this; }
+        setZ(i, z) { if (this.array) this.array[i * this.itemSize + 2] = z; return this; }
+        setXYZ(i, x, y, z) { this.setX(i, x); this.setY(i, y); this.setZ(i, z); return this; }
+        getX(i) { return this.array ? this.array[i * this.itemSize] : 0; }
+        getY(i) { return this.array ? this.array[i * this.itemSize + 1] : 0; }
+        getZ(i) { return this.array ? this.array[i * this.itemSize + 2] : 0; }
+    }
+    class Vector3 {
+        constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
+        set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
+        copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
+        clone() { return new Vector3(this.x, this.y, this.z); }
+        add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
+        sub(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
+        normalize() { return this; }
+        multiplyScalar(s) { this.x *= s; this.y *= s; this.z *= s; return this; }
+    }
+    class Color {
+        constructor() { }
+        setHex(h) { return this; }
+        set(c) { return this; }
+        lerp(c, alpha) { return this; }
+        clone() { return new Color(); }
+    }
+
+    class Object3D {
+        constructor() {
+            this.position = new Vector3();
+            this.rotation = { x: 0, y: 0, z: 0, set: vi.fn() };
+            this.scale = new Vector3(1, 1, 1);
+            this.children = [];
+            this.add = vi.fn((obj) => { if (obj) this.children.push(obj); });
+            this.remove = vi.fn((obj) => { this.children = this.children.filter(c => c !== obj); });
+            this.renderOrder = 0;
+            this.userData = {};
+        }
+    }
+
     return {
         ...actual,
-        // Mock Mesh to avoid canvas issues
-        Mesh: class {
+        Vector3,
+        Color,
+        Object3D,
+        Group: class extends Object3D { },
+        Points: class extends Object3D { },
+        Mesh: class extends Object3D {
             constructor() {
-                this.position = { set: vi.fn(), x: 0, y: 0, z: 0 };
-                this.material = { clone: () => ({ uniforms: { uColor: { value: { setHex: vi.fn() } } }, dispose: vi.fn() }), dispose: vi.fn() };
+                super();
+                this.material = { clone: () => ({ uniforms: { uColor: { value: new Color() } }, dispose: vi.fn() }), dispose: vi.fn() };
                 this.geometry = { dispose: vi.fn() };
-                this.renderOrder = 0;
             }
         },
-        Scene: class {
-            add() { }
-            remove() { }
+        Scene: class extends Object3D {
+            constructor() { super(); }
+            getObjectByName() { return { add: vi.fn(), remove: vi.fn(), children: [] }; }
         },
-        // Minimal stubs for other used classes
-        CylinderGeometry: class { dispose() { } },
-        PlaneGeometry: class { attributes = { position: { count: 10, getX: () => 0, getY: () => 0 } } },
-        BufferAttribute: class { },
-        TextureLoader: class { load() { return {}; } },
-        OrthographicCamera: class {
-            constructor() { this.position = { set: vi.fn(), x: 0, y: 0, z: 0 }; }
-            lookAt() { }
-            updateProjectionMatrix() { }
+        PlaneGeometry: class {
+            constructor() {
+                this.attributes = {
+                    position: new BufferAttribute(new Float32Array(30), 3),
+                    color: new BufferAttribute(new Float32Array(30), 3)
+                };
+                // Manually add spy/mock methods if needed, but BufferAttribute has setX/Y/Z now
+                this.attributes.position.needsUpdate = false;
+                this.attributes.color.needsUpdate = false;
+            }
+            setAttribute(name, attr) { this.attributes[name] = attr; }
+            getAttribute(name) { return this.attributes[name]; }
+            computeVertexNormals() { }
+            computeVertexNormals() { }
+            translate() { }
+            rotateX() { }
+            rotateY() { }
+            rotateZ() { }
+            dispose() { }
         },
+        BufferAttribute,
         WebGLRenderer: class {
+            constructor() { this.domElement = {}; }
             setPixelRatio() { }
             setSize() { }
             render() { }
-            constructor() { this.domElement = {}; }
-        },
-        AmbientLight: class { },
-        DirectionalLight: class { position = { set: () => { } } },
-        Vector3: class { constructor(x, y, z) { this.x = x; this.y = y; this.z = z; } },
-        Vector2: class { },
-        Plane: class { },
-        Color: class { },
+            dispose() { }
+        }
     };
 });
 
@@ -63,16 +113,103 @@ describe('Game Request Lifecycle', () => {
 
     beforeEach(() => {
         // Mock Browser Globals
-        global.window = {
-            innerWidth: 1024,
-            innerHeight: 768,
-            devicePixelRatio: 1,
-            addEventListener: vi.fn(),
-        };
-        global.document = {
+        if (typeof window !== 'undefined') {
+            window.game = {
+                gameTime: 100,
+                requestQueue: [],
+                releaseRequest: vi.fn()
+            };
+        }
+
+        vi.stubGlobal('document', {
             body: { appendChild: vi.fn() },
-            getElementById: vi.fn(() => ({ addEventListener: vi.fn(), classList: { toggle: vi.fn(), remove: vi.fn() } })), // Mock UI buttons
-        };
+            getElementById: vi.fn((id) => {
+                return {
+                    // Element properties
+                    style: {},
+                    width: 100,
+                    height: 100,
+                    innerText: '',
+
+                    // Container methods
+                    appendChild: vi.fn(),
+                    remove: vi.fn(), // Add remove for cleanup
+
+                    // Canvas methods
+                    getContext: vi.fn(() => ({
+                        fillRect: vi.fn(),
+                        drawImage: vi.fn(),
+                        clearRect: vi.fn(),
+                        fillStyle: '',
+                        measureText: vi.fn(() => ({ width: 0 })),
+                        fillText: vi.fn(),
+                        beginPath: vi.fn(),
+                        moveTo: vi.fn(),
+                        lineTo: vi.fn(),
+                        stroke: vi.fn(),
+                        fill: vi.fn(),
+                        arc: vi.fn(),
+                        save: vi.fn(),
+                        restore: vi.fn(),
+                        translate: vi.fn(),
+                        rotate: vi.fn(),
+                        scale: vi.fn()
+                    })),
+
+                    // Events & Listeners
+                    addEventListener: vi.fn(),
+                    classList: { toggle: vi.fn(), remove: vi.fn(), add: vi.fn() }
+                };
+            }),
+            createElement: vi.fn((tag) => {
+                console.log(`[Mock] createElement called with tag: ${tag}`);
+                return {
+                    id: '',
+                    style: {},
+                    width: 100,
+                    height: 100,
+                    appendChild: vi.fn(),
+                    getContext: vi.fn(() => ({
+                        fillRect: vi.fn(),
+                        createImageData: () => ({ data: [] }),
+                        putImageData: vi.fn(),
+                        drawImage: vi.fn(),
+                        clearRect: vi.fn(),
+                        fillStyle: '',
+                        measureText: vi.fn(() => ({ width: 0 })),
+                        fillText: vi.fn(),
+                        beginPath: vi.fn(),
+                        moveTo: vi.fn(),
+                        lineTo: vi.fn(),
+                        stroke: vi.fn(),
+                        fill: vi.fn(),
+                        arc: vi.fn(),
+                        save: vi.fn(),
+                        restore: vi.fn(),
+                        translate: vi.fn(),
+                        rotate: vi.fn(),
+                        scale: vi.fn()
+                    })),
+                    addEventListener: vi.fn(),
+                    classList: { toggle: vi.fn(), remove: vi.fn(), add: vi.fn() }
+                };
+            }),
+            createElementNS: vi.fn((ns, tag) => {
+                if (tag === 'canvas' || ns === 'http://www.w3.org/1999/xhtml') {
+                    return {
+                        width: 0, height: 0,
+                        getContext: () => ({
+                            fillRect: vi.fn(),
+                            createImageData: () => ({ data: [] }),
+                            putImageData: vi.fn()
+                        }),
+                        addEventListener: vi.fn(),
+                        style: { display: '' }
+                    };
+                }
+                return {};
+            }),
+        });
         global.requestAnimationFrame = vi.fn();
 
         // Mock OrbitControls GLOBAL because Game imports it? 
@@ -119,8 +256,8 @@ describe('Game Request Lifecycle', () => {
     });
 
     it('should tag new requests with createdAt timestamp', () => {
-        const now = 100000;
-        vi.spyOn(Date, 'now').mockReturnValue(now);
+        const now = 1000; // seconds
+        game.simTotalTimeSec = now;
 
         const req = game.addRequest('raise', 10, 10);
 
@@ -129,21 +266,23 @@ describe('Game Request Lifecycle', () => {
     });
 
     it('should cleanup expired pending requests', () => {
-        const start = 100000;
-        vi.spyOn(Date, 'now').mockReturnValue(start);
+        const start = 1000;
+        game.simTotalTimeSec = start;
 
         // Add Request 1 (Old)
         const reqOld = game.addRequest('raise', 10, 10);
 
-        // Add Request 2 (New)
-        vi.spyOn(Date, 'now').mockReturnValue(start + 20000); // +20s
+        // Advance 290s (Safe)
+        game.simTotalTimeSec = start + 290;
         const reqNew = game.addRequest('raise', 20, 20);
 
         expect(game.requestQueue.length).toBe(2);
 
-        // Advance Time past TIMEOUT (45s) relative to start
-        // Current Time = start + 50s (Old is age 50s, New is age 30s)
-        const checkTime = start + 50000;
+        // Advance past 300s from Start (Start+310 = 1310)
+        // Old age: 310s (>300) -> Expire
+        // New age: 20s (<300) -> Keep
+        const checkTime = start + 310;
+        game.simTotalTimeSec = checkTime;
 
         game.checkExpiredRequests(checkTime);
 

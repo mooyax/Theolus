@@ -1,0 +1,73 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins deal population damage to player buildings
+Goblin 0 attacking house. Pop: 9.00
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins deal structural damage to empty player buildings
+Goblin 1 hitting Empty house. HP: 40
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins destroy player buildings when HP reaches 0
+Goblin 2 hitting Empty house. HP: 0
+Goblin 2 destroyed house!
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Buildings retaliate against melee goblins
+Goblin 3 attacking house. Pop: 9.92
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Towers have massive retaliation
+Goblin 4 attacking tower. Pop: 4.92
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > No retaliation for distant attackers (Shamans)
+Goblin 5 attacking house. Pop: 9.20
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Standard HP logic for Goblin buildings
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:20,20 Special:false
+Unit 0 attacking cave. HP: 150
+
+ 笶ｯ src/tests/BuildingDefense.test.js (8 tests | 1 failed) 26ms
+     笨・Goblins deal population damage to player buildings 7ms
+     笨・Goblins deal structural damage to empty player buildings 1ms
+     笨・Goblins destroy player buildings when HP reaches 0 2ms
+     笨・Buildings retaliate against melee goblins 1ms
+     笨・Towers have massive retaliation 1ms
+     笨・No retaliation for distant attackers (Shamans) 1ms
+     ﾃ・Goblins can target buildings with 0 population but > 0 structural HP 7ms
+     笨・Standard HP logic for Goblin buildings 2ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins can target buildings with 0 population but > 0 structural HP
+AssertionError: expected null to be { 窶ｦ(3) } // Object.is equality
+
+- Expected: 
+{
+  "population": 10,
+  "userData": {
+    "gridX": 10,
+    "gridZ": 10,
+    "hp": 50,
+    "population": 0,
+    "type": "house",
+  },
+  "y": 5,
+}
+
++ Received: 
+null
+
+ 笶ｯ src/tests/BuildingDefense.test.js:130:39
+    128|         goblin.findTarget(units, buildings);
+    129| 
+    130|         expect(goblin.targetBuilding).toBe(mockBuilding);
+       |                                       ^
+    131|     });
+    132| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  20:22:10
+   Duration  933ms (transform 156ms, setup 37ms, import 212ms, tests 26ms, environment 450ms)
+

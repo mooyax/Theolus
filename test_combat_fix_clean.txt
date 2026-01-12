@@ -1,0 +1,28 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/CombatRetaliation.test.js[2m > [22m[2mCombat Retaliation System[2m > [22m[2mshould retaliate when hit while working (JobState)
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/CombatRetaliation.test.js[2m > [22m[2mCombat Retaliation System[2m > [22m[2mshould retaliate when hit while working (JobState)
+[22m[39m[Actor 0] Pathfinding deferred or unavailable. Fallback to Linear.
+[JobState] Entered. Target: move. ResumeCtx: Idle
+
+[90mstdout[2m | src/tests/CombatRetaliation.test.js[2m > [22m[2mCombat Retaliation System[2m > [22m[2mshould switch strictly for self-defense scan failure in JobState (Non-worker)
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/CombatRetaliation.test.js[2m > [22m[2mCombat Retaliation System[2m > [22m[2mshould switch strictly for self-defense scan failure in JobState (Non-worker)
+[22m[39m[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:1
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:1
+
+ [31mﾃ・[39m src/tests/CombatRetaliation.test.js[2m > [22mCombat Retaliation System[2m > [22mshould retaliate when hit while working (JobState)[32m 47[2mms[22m[39m
+[31m   竊・expected null to be Goblin{ id: +0, 窶ｦ(48) } // Object.is equality[39m
+ [32m笨・[39m src/tests/CombatRetaliation.test.js[2m > [22mCombat Retaliation System[2m > [22mshould switch strictly for self-defense scan failure in JobState (Non-worker)[32m 3[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m   Start at [22m 11:49:48
+[2m   Duration [22m 896ms[2m (transform 184ms, setup 33ms, import 203ms, tests 51ms, environment 408ms)[22m
+

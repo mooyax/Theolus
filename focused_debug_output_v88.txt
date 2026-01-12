@@ -1,0 +1,43 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/ReproductionJitabata.test.js > Jitabata Bug Reproduction (Interrupt Loop) > should NOT trigger Jitabata (Stop-and-Go) when a distant Raid Point appears during Migration
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10
+
+stdout | src/tests/ReproductionJitabata.test.js > Jitabata Bug Reproduction (Interrupt Loop) > should NOT trigger Jitabata (Stop-and-Go) when a distant Raid Point appears during Migration
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug] AgeID:0 Delta:0.016 Rate:0.02 Age:20.00->20.00
+[Defense PreCheck 0] Action:Migrating MigrTarg:true Force:false
+[Test] Frame 1 Post-logic isMoving: true, action: Fighting
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug] AgeID:0 Delta:0.016 Rate:0.02 Age:20.00->20.00
+[Test] Frame 2 Post-logic isMoving: true, action: Fighting
+
+ 笶ｯ src/tests/ReproductionJitabata.test.js (1 test | 1 failed) 27ms
+     ﾃ・should NOT trigger Jitabata (Stop-and-Go) when a distant Raid Point appears during Migration 25ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ReproductionJitabata.test.js > Jitabata Bug Reproduction (Interrupt Loop) > should NOT trigger Jitabata (Stop-and-Go) when a distant Raid Point appears during Migration
+AssertionError: expected 'Fighting' to be 'Migrating' // Object.is equality
+
+Expected: "Migrating"
+Received: "Fighting"
+
+ 笶ｯ src/tests/ReproductionJitabata.test.js:61:29
+     59| 
+     60|         expect(unit.isMoving).toBe(true);
+     61|         expect(unit.action).toBe("Migrating");
+       |                             ^
+     62|     });
+     63| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  21:23:02
+   Duration  1.33s (transform 181ms, setup 53ms, import 248ms, tests 27ms, environment 670ms)
+

@@ -1,0 +1,94 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Goblin if it is much closer than Building
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Goblin if it is much closer than Building
+[TEST DEBUG 1] Initial State: null
+[Unit Debug V3] Start Logic. Night=false, Sleep=false, Action=undefined
+[ActorDebug] Grid: 0,0 Target: 10,0 Diff: 10,0
+[ActorDebug] Next: 1,0
+[ActorDebug] Check Move 1,0 -> true
+[TEST DEBUG 1] After updateLogic: targetG=YES, targetB=null, State=null
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are similar (Bonus check)
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are similar (Bonus check)
+[ActorDebug] Grid: 0,0 Target: 10,0 Diff: 10,0
+[ActorDebug] Next: 1,0
+[ActorDebug] Check Move 1,0 -> true
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should allow Workers to target Huts at range 25 (New Range: 30)
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+
+ 笶ｯ src/tests/TargetingPriority.test.js (3 tests | 2 failed) 18ms
+     笨・should prioritize Goblin if it is much closer than Building 6ms
+     ﾃ・should prioritize Building if distances are similar (Bonus check) 8ms
+     ﾃ・should allow Workers to target Huts at range 25 (New Range: 30) 2ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are similar (Bonus check)
+AssertionError: expected null to be { userData: { 窶ｦ(4) }, gridX: 12, 窶ｦ(1) } // Object.is equality
+
+- Expected: 
+{
+  "gridX": 12,
+  "gridZ": 0,
+  "userData": {
+    "gridX": 12,
+    "gridZ": 0,
+    "hp": 100,
+    "type": "goblin_hut",
+  },
+}
+
++ Received: 
+null
+
+ 笶ｯ src/tests/TargetingPriority.test.js:98:37
+     96| 
+     97|         // AI logic: If Building distance < 15, PRIORITIZE it over Uni窶ｦ
+     98|         expect(unit.targetBuilding).toBe(hut);
+       |                                     ^
+     99|         expect(unit.targetGoblin).toBeNull();
+    100|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/TargetingPriority.test.js > Unit Targeting Priority > should allow Workers to target Huts at range 25 (New Range: 30)
+AssertionError: expected undefined to be { userData: { 窶ｦ(4) }, gridX: 25, 窶ｦ(1) } // Object.is equality
+
+- Expected: 
+{
+  "gridX": 25,
+  "gridZ": 0,
+  "userData": {
+    "gridX": 25,
+    "gridZ": 0,
+    "hp": 100,
+    "type": "goblin_hut",
+  },
+}
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/TargetingPriority.test.js:114:37
+    112|         unit.updateLogic(1000, 0.1, false, [], [], []);
+    113| 
+    114|         expect(unit.targetBuilding).toBe(hut);
+       |                                     ^
+    115|     });
+    116| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  20:36:05
+   Duration  784ms (transform 108ms, setup 35ms, import 147ms, tests 18ms, environment 400ms)
+

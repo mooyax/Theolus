@@ -1,0 +1,76 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould retry migration after 30 seconds timeout
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould retry migration after 30 seconds timeout
+[22m[39mUnit test-migrant migrating to 50,50 (Region undefined)
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+[Unit Trace] updateLogic entry. ID:test-migrant Action:Migrating Target:SET
+[Unit Trace] updateLogic entry. ID:test-migrant Action:Migrating Target:SET
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould interrupt migration if enemy is found (Priority)
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould interrupt migration if enemy is found (Priority)
+[22m[39mUnit test-migrant migrating to 50,50 (Region undefined)
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+[Unit Trace] updateLogic entry. ID:test-migrant Action:Migrating Target:SET
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould stop migrating if construction succeeds
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50 Special:false
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould stop migrating if construction succeeds
+[22m[39mUnit test-migrant migrating to 50,50 (Region undefined)
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+Unit test-migrant built structure during migration. Stopping.
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mDEBUG: should log blockage reasons correctly
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:50,50 Special:false
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mDEBUG: should log blockage reasons correctly
+[22m[39m--- DEBUG: Testing Slope Block ---
+[Unit test-migrant] Blocked by Slope at 21,20 H:2->6
+--- DEBUG: Testing Water Block ---
+--- DEBUG: Testing Building Pass ---
+
+ [31m笶ｯ[39m src/tests/MigrationImprovement.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 17[2mms[22m[39m
+     [32m笨・[39m should retry migration after 30 seconds timeout[32m 5[2mms[22m[39m
+[31m     [31mﾃ・[31m should interrupt migration if enemy is found (Priority)[39m[32m 9[2mms[22m[39m
+     [32m笨・[39m should stop migrating if construction succeeds[32m 1[2mms[22m[39m
+     [32m笨・[39m DEBUG: should log blockage reasons correctly[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+AssertionError: expected 'Migrating' to be 'Idle' // Object.is equality
+
+Expected: "Idle"
+Received: "Migrating"
+
+ 笶ｯ src/tests/MigrationImprovement.test.js:138:29
+    136|         randomSpy.mockRestore();
+    137| 
+    138|         expect(unit.action).toBe('Idle');
+       |                             ^
+    139|         expect(unit.migrationTarget).toBeNull();
+    140|         expect(unit.targetGoblin).toBeTruthy();
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 23:52:42
+[2m   Duration [22m 751ms[2m (transform 123ms, setup 32ms, import 132ms, tests 17ms, environment 386ms)[22m
+

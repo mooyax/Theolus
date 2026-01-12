@@ -1,0 +1,197 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould tag new requests with createdAt timestamp
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 128,137. Force:false
+[Terrain] Building Added: cave at (128, 137) Size:1x1. Total: 1
+GoblinManager: Cave registered at 128,137 
+[GoblinManager] Clan clan_cave_128_137 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 77,83. Force:false
+[Terrain] Building Added: cave at (77, 83) Size:1x1. Total: 2
+GoblinManager: Cave registered at 77,83 
+[GoblinManager] Clan clan_cave_77_83 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 144,132. Force:false
+[Terrain] Building Added: cave at (144, 132) Size:1x1. Total: 3
+GoblinManager: Cave registered at 144,132 
+[GoblinManager] Clan clan_cave_144_132 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 113,71. Force:false
+[Terrain] Building Added: cave at (113, 71) Size:1x1. Total: 4
+GoblinManager: Cave registered at 113,71 
+[GoblinManager] Clan clan_cave_113_71 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 85,96. Force:false
+[Terrain] Building Added: cave at (85, 96) Size:1x1. Total: 5
+GoblinManager: Cave registered at 85,96 
+[GoblinManager] Clan clan_cave_85_96 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 7 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould cleanup expired pending requests
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 84,0. Force:false
+[Terrain] Building Added: cave at (84, 0) Size:1x1. Total: 1
+GoblinManager: Cave registered at 84,0 
+[GoblinManager] Clan clan_cave_84_0 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 42,152. Force:false
+[Terrain] Building Added: cave at (42, 152) Size:1x1. Total: 2
+GoblinManager: Cave registered at 42,152 
+[GoblinManager] Clan clan_cave_42_152 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 150,112. Force:false
+[Terrain] Building Added: cave at (150, 112) Size:1x1. Total: 3
+GoblinManager: Cave registered at 150,112 
+[GoblinManager] Clan clan_cave_150_112 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 107,151. Force:false
+[Terrain] Building Added: cave at (107, 151) Size:1x1. Total: 4
+GoblinManager: Cave registered at 107,151 
+[GoblinManager] Clan clan_cave_107_151 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 46,107. Force:false
+[Terrain] Building Added: cave at (46, 107) Size:1x1. Total: 5
+GoblinManager: Cave registered at 46,107 
+[GoblinManager] Clan clan_cave_46_107 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 7 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould NOT cleanup assigned requests even if old
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 115,69. Force:false
+[Terrain] Building Added: cave at (115, 69) Size:1x1. Total: 1
+GoblinManager: Cave registered at 115,69 
+[GoblinManager] Clan clan_cave_115_69 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 86,82. Force:false
+[Terrain] Building Added: cave at (86, 82) Size:1x1. Total: 2
+GoblinManager: Cave registered at 86,82 
+[GoblinManager] Clan clan_cave_86_82 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 24,57. Force:false
+[Terrain] Building Added: cave at (24, 57) Size:1x1. Total: 3
+GoblinManager: Cave registered at 24,57 
+[GoblinManager] Clan clan_cave_24_57 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 58,25. Force:false
+[Terrain] Building Added: cave at (58, 25) Size:1x1. Total: 4
+GoblinManager: Cave registered at 58,25 
+[GoblinManager] Clan clan_cave_58_25 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 142,50. Force:false
+[Terrain] Building Added: cave at (142, 50) Size:1x1. Total: 5
+GoblinManager: Cave registered at 142,50 
+[GoblinManager] Clan clan_cave_142_50 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 9 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould cancel request via Proximity Search
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 103,87. Force:false
+[Terrain] Building Added: cave at (103, 87) Size:1x1. Total: 1
+GoblinManager: Cave registered at 103,87 
+[GoblinManager] Clan clan_cave_103_87 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 134,12. Force:false
+[Terrain] Building Added: cave at (134, 12) Size:1x1. Total: 2
+GoblinManager: Cave registered at 134,12 
+[GoblinManager] Clan clan_cave_134_12 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 31,3. Force:false
+[Terrain] Building Added: cave at (31, 3) Size:1x1. Total: 3
+GoblinManager: Cave registered at 31,3 
+[GoblinManager] Clan clan_cave_31_3 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 121,149. Force:false
+[Terrain] Building Added: cave at (121, 149) Size:1x1. Total: 4
+GoblinManager: Cave registered at 121,149 
+[GoblinManager] Clan clan_cave_121_149 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 29,84. Force:false
+[Terrain] Building Added: cave at (29, 84) Size:1x1. Total: 5
+GoblinManager: Cave registered at 29,84 
+[GoblinManager] Clan clan_cave_29_84 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 5 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould prioritize nearest request when cancelling
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 14,21. Force:false
+[Terrain] Building Added: cave at (14, 21) Size:1x1. Total: 1
+GoblinManager: Cave registered at 14,21 
+[GoblinManager] Clan clan_cave_14_21 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 139,79. Force:false
+[Terrain] Building Added: cave at (139, 79) Size:1x1. Total: 2
+GoblinManager: Cave registered at 139,79 
+[GoblinManager] Clan clan_cave_139_79 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 100,117. Force:false
+[Terrain] Building Added: cave at (100, 117) Size:1x1. Total: 3
+GoblinManager: Cave registered at 100,117 
+[GoblinManager] Clan clan_cave_100_117 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 88,71. Force:false
+[Terrain] Building Added: cave at (88, 71) Size:1x1. Total: 4
+GoblinManager: Cave registered at 88,71 
+[GoblinManager] Clan clan_cave_88_71 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 20,21. Force:false
+[Terrain] Building Added: cave at (20, 21) Size:1x1. Total: 5
+GoblinManager: Cave registered at 20,21 
+[GoblinManager] Clan clan_cave_20_21 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 14 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+
+ [31m笶ｯ[39m src/tests/RequestLifecycle.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[33m 848[2mms[22m[39m
+[31m     [31mﾃ・[31m should tag new requests with createdAt timestamp[39m[32m 293[2mms[22m[39m
+[31m     [31mﾃ・[31m should cleanup expired pending requests[39m[32m 147[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT cleanup assigned requests even if old[39m[32m 151[2mms[22m[39m
+[31m     [31mﾃ・[31m should cancel request via Proximity Search[39m[32m 114[2mms[22m[39m
+[31m     [31mﾃ・[31m should prioritize nearest request when cancelling[39m[32m 142[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 5 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should tag new requests with createdAt timestamp
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cleanup expired pending requests
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should NOT cleanup assigned requests even if old
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cancel request via Proximity Search
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should prioritize nearest request when cancelling
+TypeError: faceGeo.translate is not a function
+ 笶ｯ Function.initAssets src/Unit.js:29:17
+     27|         // Face Plane (Separate mesh to allow independent tinting of H窶ｦ
+     28|         const faceGeo = new THREE.PlaneGeometry(0.2, 0.2);
+     29|         faceGeo.translate(0, 0.6, 0.126); // Slightly in front of Head窶ｦ
+       |                 ^
+     30|         Unit.assets.geometries.facePlane = faceGeo;
+     31| 
+ 笶ｯ new UnitRenderer src/UnitRenderer.js:10:14
+ 笶ｯ new Game src/Game.js:157:29
+ 笶ｯ src/tests/RequestLifecycle.test.js:220:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/5]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m5 failed[39m[22m[90m (5)[39m
+[2m   Start at [22m 22:41:02
+[2m   Duration [22m 1.93s[2m (transform 337ms, setup 36ms, import 451ms, tests 848ms, environment 404ms)[22m
+

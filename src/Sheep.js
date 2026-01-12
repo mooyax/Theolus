@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Actor } from './Actor.js';
+import { SheepWanderState, SheepFleeState } from './ai/states/AnimalStates.js';
 
 export class Sheep extends Actor {
     static assets = {
@@ -27,8 +28,9 @@ export class Sheep extends Actor {
     constructor(scene, terrain, x, z) {
         Sheep.initAssets();
         super(scene, terrain, x, z, 'sheep');
+        this.game = window.game;
 
-        this.moveInterval = 2000 + Math.random() * 3000;
+        this.moveInterval = 2.0 + Math.random() * 3.0;
         this.lastTime = 0;
         this.stagnationTimer = 0;
 
@@ -37,7 +39,11 @@ export class Sheep extends Actor {
         this.scene.add(this.mesh);
 
         // Initial Position Sync
+        // Initial Position Sync
         this.updatePosition();
+
+        // Init State
+        this.changeState(new SheepWanderState(this));
     }
 
     createMesh() {
@@ -74,29 +80,89 @@ export class Sheep extends Actor {
 
     // Override Default Logic
     updateLogic(time, deltaTime) {
+        this.simTime = time;
         // 1. Water Death Check
         const h = this.terrain.getTileHeight(this.gridX, this.gridZ);
         if (h <= 0) {
-            this.die(); // Actor/Unit doesn't have die()? Entity doesn't. We must implement or handle removal.
-            // Entity usually doesn't self-destruct from Scene list. Manager handles it.
-            // But here we set a flag.
+            this.die();
             this.isDead = true;
             return;
         }
 
-        // 2. Movement State Machine
+        // 2. State Machine Override
+        if (this.state) {
+            this.state.update(time, deltaTime);
+        }
+
+        // 3. Animation Hook (Idle)
         if (!this.isMoving) {
-            if (time - this.lastTime > this.moveInterval) {
-                this.moveRandomly(time);
-                this.lastTime = time;
-                this.moveInterval = 2000 + Math.random() * 3000;
-            } else {
-                // Idle Animation
-                if (this.mesh && this.mesh.userData.legs) {
-                    this.mesh.userData.legs.forEach(l => l.rotation.x = 0);
-                }
+            if (this.mesh && this.mesh.userData.legs) {
+                this.mesh.userData.legs.forEach(l => l.rotation.x = 0);
             }
         }
+
+        // 4. Sound (Random Bleat)
+        // Chance: ~1 every 20-30 seconds.
+        // Assuming 60fps, 20s = 1200 frames.
+        // Probability per frame: 1/1200 ~ 0.0008.
+        if (Math.random() < 0.0008) {
+            if (this.game && this.game.soundManager) {
+                this.game.soundManager.playSheepSound(this.position);
+            }
+        }
+    }
+
+    checkForPredators() {
+        if (!window.game) return null;
+        const range = 8.0;
+
+        // Check Goblins
+        // Optimization: using terrain utility if available? 
+        // Or simpler: iterate goblins. Usually few.
+        // Actually, window.game.goblins is array? or Map?
+        // Usually game.goblins is array or Map. Let's assume Set or Map from known context (Goblin uses window.game.units).
+        // Let's use terrain.findBestTarget if efficient?
+
+        // Simpler: Just get nearest Goblin.
+        const goblins = (window.game && window.game.goblinManager) ? window.game.goblinManager.goblins : [];
+        const nearestGoblin = this.terrain.findBestTarget('goblin', this.gridX, this.gridZ, range, (g, dist) => dist, goblins);
+        if (nearestGoblin) return nearestGoblin;
+
+        // Check Units (Knights/Workers might kill sheep for food)
+        // Only if unit.action is 'Hunting'? Hard to know.
+        // Just flee from all Units if close?
+        // Check Units (Knights/Workers might kill sheep for food)
+        const units = window.game ? window.game.units : [];
+        const nearestUnit = this.terrain.findBestTarget('unit', this.gridX, this.gridZ, 5.0, (u, dist) => dist, units);
+        if (nearestUnit) return nearestUnit;
+
+        return null;
+    }
+
+    fleeFrom(predator, time) {
+        // Run away
+        const dx = this.gridX - predator.gridX;
+        const dz = this.gridZ - predator.gridZ;
+
+        // Normalize roughly
+        const len = Math.sqrt(dx * dx + dz * dz);
+        if (len < 0.1) {
+            this.moveRandomly(time); // Panic
+            return;
+        }
+
+        // Panic Bleat (Higher frequency if fleeing, but standard sound is fine for now)
+        if (Math.random() < 0.1 && this.game && this.game.soundManager) {
+            this.game.soundManager.playSheepSound(this.position);
+        }
+
+        const runDist = 5.0;
+        const tx = this.gridX + (dx / len) * runDist;
+        const tz = this.gridZ + (dz / len) * runDist;
+
+        this.smartMove(tx, tz, time);
+        // Note: smartMove handles wrapping and blocking (mostly).
+        // If blocking, it might fail.
     }
 
     // Override moveRandomly to use Logic instead of direct

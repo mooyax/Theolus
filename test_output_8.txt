@@ -1,0 +1,16 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/ResumeLogic.test.js[2m > [22m[2mResume Logic Verification[2m > [22m[2mshould save and resume movement target
+[22m[39m[JobState 1] Ownership LOST for Job 1. Switching to Wander.
+[JobState] Resuming move to 50,50
+[JobState 1] Ownership LOST for Job 1. Switching to Wander.
+[JobState] Resuming move to 50,50
+
+ [32m笨・[39m src/tests/ResumeLogic.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 10[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 21:24:38
+[2m   Duration [22m 855ms[2m (transform 58ms, setup 42ms, import 45ms, tests 10ms, environment 477ms)[22m
+

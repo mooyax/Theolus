@@ -1,0 +1,36 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/UnitMigration.test.js[2m > [22m[2mUnit Migration Logic[2m > [22m[2mshould return true on successful build
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/UnitMigration.test.js[2m > [22m[2mUnit Migration Logic[2m > [22m[2mshould increment stagnation on failed build
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/UnitMigration.test.js[2m > [22m[2mUnit Migration Logic[2m > [22m[2mshould increment stagnation on failed build
+[22m[39m[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:None
+[UnitWanderState 1] Stagnation Check. Moving:false Sleeping:false H:10 Role:worker Night:false
+[UnitWanderState 1] BuildTimer incremented: 1
+[UnitWanderState 1] Stagnation incremented (Failed build): 1
+
+[90mstdout[2m | src/tests/UnitMigration.test.js[2m > [22m[2mUnit Migration Logic[2m > [22m[2mshould migrate after 20 seconds of stagnation
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/UnitMigration.test.js[2m > [22m[2mUnit Migration Logic[2m > [22m[2mshould migrate after 20 seconds of stagnation
+[22m[39m[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:None
+[UnitWanderState 1] Stagnation Check. Moving:false Sleeping:false H:10 Role:worker Night:false
+[UnitWanderState 1] BuildTimer incremented: 1
+[UnitWanderState 1] Stagnation incremented (Failed build): 21.1
+[UnitWanderState 1] Stagnation Threshold Reached: 21.1. Migrating...
+Unit 1 migrating to 51,51 (Region 1)
+
+ [32m笨・[39m src/tests/UnitMigration.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 13:53:57
+[2m   Duration [22m 1.25s[2m (transform 169ms, setup 43ms, import 233ms, tests 25ms, environment 603ms)[22m
+

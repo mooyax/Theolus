@@ -1,40 +1,78 @@
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll, afterEach } from 'vitest';
 import { GoblinManager } from '../GoblinManager.js';
 import * as THREE from 'three';
+import { MockGame, MockTerrain } from './TestHelper.js';
+import { Goblin } from '../Goblin.js';
 
 // Mock Three.js
+vi.mock('three', async () => {
+    const actual = await vi.importActual('three');
+    return {
+        ...actual,
+        InstancedMesh: class {
+            constructor() {
+                this.isObject3D = true;
+                this.instanceMatrix = { setUsage: vi.fn() };
+                this.updateMatrix = vi.fn();
+                this.setMatrixAt = vi.fn();
+                this.setColorAt = vi.fn();
+                this.count = 0;
+                this.castShadow = false;
+                this.receiveShadow = false;
+                this.frustumCulled = false;
+                this.dispose = vi.fn();
+                this.removeFromParent = vi.fn();
+                this.dispatchEvent = vi.fn();
+                this.addEventListener = vi.fn();
+                this.removeEventListener = vi.fn();
+            }
+        },
+        Scene: vi.fn(() => ({
+            add: vi.fn(),
+            remove: vi.fn(),
+            getObjectByName: vi.fn(),
+            clear: vi.fn()
+        })),
+    };
+});
+
 global.THREE = THREE;
+if (!global.window) global.window = {};
 
 describe('Goblin Hut Spawning', () => {
     let goblinManager;
-    let mockScene;
-    let mockTerrain;
     let mockGame;
+    let mockTerrain;
+
+    beforeAll(() => {
+        Goblin.initAssets = vi.fn();
+    });
 
     beforeEach(() => {
-        mockScene = { add: vi.fn(), remove: vi.fn() };
-        mockTerrain = {
-            buildings: [],
-            checkBuildingIntegrity: vi.fn(),
-            getInterpolatedHeight: () => 0,
-            logicalWidth: 100, logicalDepth: 100
-        };
+        mockGame = new MockGame();
+        mockTerrain = new MockTerrain(100, 100);
+        // Add registerCave if missing (TestHelper update might be needed if not preserved)
+        if (!mockTerrain.registerCave) {
+            mockTerrain.registerCave = (x, z, cave) => {
+                mockTerrain.buildings.push(cave);
+                return true;
+            };
+        }
 
-        // Mock Game
-        mockGame = {
-            units: [],
-            scene: mockScene
-        };
-        global.window = { game: mockGame };
+        mockGame.terrain = mockTerrain;
+        global.window.game = mockGame;
 
-        goblinManager = new GoblinManager(mockScene, mockTerrain);
-        // Force low cap for testing if needed, or check default
-        // goblinManager.MAX_GOBLINS is typically 300
+        goblinManager = new GoblinManager(mockGame.scene, mockTerrain);
+        mockGame.goblinManager = goblinManager;
+        vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
     it('should spawn goblin when hut population reaches 10', () => {
-        // Setup a Hut
         const hut = {
             userData: {
                 type: 'goblin_hut',
@@ -46,57 +84,35 @@ describe('Goblin Hut Spawning', () => {
         };
         mockTerrain.buildings = [hut];
 
-        // Mock spawnGoblinAtCave to detect success
-        // We need to spy on it, but it's a method of the same instance.
         const spawnSpy = vi.spyOn(goblinManager, 'spawnGoblinAtCave');
-        spawnSpy.mockImplementation(() => true); // Simulate success
+        spawnSpy.mockImplementation((cave) => {
+            // Simulate side effect of real method
+            if (cave.building) cave.building.userData.population -= 1.0;
+            return true;
+        });
 
-        // Update with enough time for growth
-        // Growth ~ 1.0 * rate * dt. rate depends on 'goblins.length' (growthRate logic)
-        // Let's force growth.
-        // check code: const growthRate = (1.0 + (this.goblins.length / 50)); 
-        // If 0 goblins, rate is 1.0.
+        const deltaTime = 1.0;
+        goblinManager.checkHutSpawns(deltaTime);
 
-        const deltaTime = 1.0; // Should add ~1.0 pop -> 10.9
-        goblinManager.updateHuts(deltaTime);
-
-        expect(hut.userData.population).toBeLessThan(10); // Should reset (subtract 10)
+        expect(hut.userData.population).toBeLessThan(9.0); // Should be 8.9
         expect(spawnSpy).toHaveBeenCalled();
     });
 
     it('should NOT spawn if Global Cap is reached', () => {
-        // Setup Hut
         const hut = {
             userData: { type: 'goblin_hut', population: 9.9, gridX: 10, gridZ: 10 }
         };
         mockTerrain.buildings = [hut];
-
-        // Fill Global Cap
-        goblinManager.goblins = Array(300).fill({}); // Simulate 300 goblins
+        goblinManager.goblins = Array(300).fill({});
+        goblinManager.MAX_GOBLINS = 300; // Force cap logic check
 
         const spawnSpy = vi.spyOn(goblinManager, 'spawnGoblinAtCave');
 
-        goblinManager.updateHuts(1.0);
+        goblinManager.checkHutSpawns(1.0); // Correct method name
 
         expect(spawnSpy).not.toHaveBeenCalled();
-        expect(hut.userData.population).toBeLessThan(10); // Logic says: "Cap reached... Just ignore spawn."
-        // Wait, if it returns, does it subtract population?
-        // Code line 314: "return;" immediately.
-        // But subtraction (line 308) happens BEFORE check?
-        // Let's verify that too. If it mistakenly consumes pop without spawning, that's a "silent fail".
-        // Or if it subtracts and fails, it's just "loss".
-        // If the code is:
-        // if (pop >= 10) { pop -= 10; if (cap) return; ... }
-        // Then pop consumes, but no spawn.
+        expect(hut.userData.population).toBe(9.9);
     });
-
-    it('should retry if spawn fails due to location?', () => {
-        // Current logic:
-        // this.spawnGoblinAtCave(fakeCave);
-        // If this returns false (blocked), is pop restored?
-        // Looking at code: it just calls it. No return value check.
-        // So pop is lost if spawn fails.
-        // This explains "nothing happens" -> Pop consumed, spawn failed (blocked?), nothing appears.
-    });
-
 });
+
+

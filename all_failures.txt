@@ -1,0 +1,96 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould retry migration after 30 seconds timeout
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/GoblinAggression.test.js[2m > [22m[2mGoblin Aggression Bug[2m > [22m[2mshould find target, chase, and attack
+[22m[39m[Test] Creating Goblin
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould interrupt migration if enemy is found (Priority)
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/SquadAi.test.js[2m > [22m[2mSquad AI & Region Logic[2m > [22m[2mshould share targets among squad members
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:20,20 Special:false
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:20,20
+[Unit 1 SquadDebug] ID:576325 Target:50,50 Dist:42.4 Age:-1767589139360.0s Reachable:true 
+
+[90mstdout[2m | src/tests/GoblinAggression.test.js[2m > [22m[2mGoblin Aggression Bug[2m > [22m[2mshould find target, chase, and attack
+[22m[39m[Test] START Goblin Aggression
+[Test] Scanning for targets...
+[Test] Goblin Found Target & Switched to Combat
+[Test] Chasing...
+Goblin hit Unit! Dmg: 8 UnitHP: 92
+[Test] Arrived in Range (Dist 2)
+[Test] Attack Successful. UnitHP: 92
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould interrupt migration if enemy is found (Priority)
+[22m[39m[Test Debug] Action after 1st update: Chasing
+[Test Debug] Action after 2nd update: Chasing
+
+[90mstdout[2m | src/tests/SquadAi.test.js[2m > [22m[2mSquad AI & Region Logic[2m > [22m[2mRegression: Migration Stagnation Fix (Knight)
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:10,10
+Unit 2 (knight) finished migrating. Resuming Idle.
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould stop migrating if construction succeeds
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/SquadAi.test.js[2m > [22m[2mSquad AI & Region Logic[2m > [22m[2mRegression: Migration Stagnation Fix (Worker)
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10
+Unit 3 (Worker) migration target invalid for build. Searching nearby...
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mDEBUG: should log blockage reasons correctly
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/SquadAi.test.js[2m > [22m[2mSquad AI & Region Logic[2m > [22m[2mshould allow cross-region movement if target is very close (Self Defense)
+[22m[39m[UnitCore.js] Unit Created ID:4 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:4 Role:knight Pos:10,10
+
+ [32m笨・[39m src/tests/GoblinAggression.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 15[2mms[22m[39m
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mDEBUG: should log blockage reasons correctly
+[22m[39m[Unit test-migrant] Blocked by Slope at 21,20 H:2->6
+
+ [32m笨・[39m src/tests/SquadAi.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m笨・[39m src/tests/MigrationImprovement.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+[90mstdout[2m | src/tests/Animals.test.js[2m > [22m[2mAnimal Movement Verification[2m > [22m[2mSheep should move after interval (Manual Time Step)
+[22m[39mSheepManager Refactored: Initialized with Entity-based Sheep.
+
+[90mstdout[2m | src/tests/Animals.test.js[2m > [22m[2mAnimal Movement Verification[2m > [22m[2mFish should move in water
+[22m[39mSpawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+
+ [32m笨・[39m src/tests/Animals.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 38[2mms[22m[39m
+[90mstdout[2m | src/tests/ManaSystem.test.js[2m > [22m[2mMana System[2m > [22m[2mInputManager Integration[2m > [22m[2mshould consume mana on raise terrain
+[22m[39m[Input] Request Queued: Raise at 0,0
+
+ [32m笨・[39m src/tests/ManaSystem.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+[90mstdout[2m | src/tests/MultiJob.test.js[2m > [22m[2mMulti-Job Juggling Verification[2m > [22m[2mshould NOT interrupt busy units when a new job is added
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+ [31m笶ｯ[39m src/tests/MultiJob.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 842[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT interrupt busy units when a new job is added[39m[33m 841[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m17 passed[39m[22m[90m (18)[39m
+[2m     Errors [22m [1m[31m509 errors[39m[22m
+[2m   Start at [22m 13:58:58
+[2m   Duration [22m 3.62s[2m (transform 1.55s, setup 319ms, import 2.51s, tests 955ms, environment 6.99s)[22m
+

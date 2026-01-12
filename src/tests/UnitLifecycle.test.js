@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
-import { Unit } from '../UnitRefactored.js';
+import { Unit } from '../Unit.js';
 import * as THREE from 'three';
 
 global.THREE = THREE;
@@ -31,10 +31,11 @@ describe('Unit Lifecycle and Aging', () => {
             logicalWidth: 100,
             logicalDepth: 100
         };
-        mockGame = { raidPoints: [] };
+        mockGame = {
+            raidPoints: [],
+            findBestRequest: vi.fn().mockReturnValue(null)
+        };
         global.window.game = mockGame;
-
-        // Create a standard worker unit for baseline tests
         unit = new Unit({ add: vi.fn() }, mockTerrain, 0, 0, 'worker');
     });
 
@@ -44,45 +45,38 @@ describe('Unit Lifecycle and Aging', () => {
 
     it('should increment age when updateLogic is called', () => {
         const initialAge = unit.age;
-        const deltaTime = 1.0; // 1 second
+        const deltaTime = 10.0; // Use 10s to see 2.0 age gain
 
-        try {
-            unit.updateLogic(1000, deltaTime, false, [], [], []);
-        } catch (e) {
-            console.error("Test Error:", e);
-            throw e;
-        }
+        unit.updateLogic(1000, deltaTime, false, [], [], []);
 
-        console.log("DEBUG: Age Start:", initialAge, "Age End:", unit.age);
-        expect(unit.age).toBeGreaterThan(initialAge);
-        expect(unit.age).toBeCloseTo(initialAge + deltaTime, 5);
+        // Worker agingRate is 0.2. 10 * 0.2 = 2.0.
+        expect(unit.age).toBeCloseTo(initialAge + 2.0, 1);
     });
 
     it('should die when age exceeds lifespan', () => {
-        unit.lifespan = 10;
-        unit.age = 9.9;
+        unit.lifespan = 50;
+        unit.age = 49.9;
 
-        // Update small step - still alive
-        unit.updateLogic(1000, 0.05, false, [], [], []);
-        expect(unit.isDead).toBe(false);
-
-        // Update to exceed lifespan
-        unit.updateLogic(1000, 0.2, false, [], [], []);
+        // Update with 1s (0.2 age gain)
+        unit.updateLogic(1000, 1.0, false, [], [], []);
         expect(unit.isDead).toBe(true);
     });
 
-    it('should age slower for Knights and Wizards (0.1 rate)', () => {
+    it('should age slower for Knights and Wizards (0.02 rate)', () => {
         const knight = new Unit({ add: vi.fn() }, mockTerrain, 0, 0, 'knight');
         const wizard = new Unit({ add: vi.fn() }, mockTerrain, 0, 0, 'wizard');
+
+        knight.age = 20.0;
+        wizard.age = 20.0;
 
         const deltaTime = 10.0;
 
         knight.updateLogic(1000, deltaTime, false, [], [], []);
         wizard.updateLogic(1000, deltaTime, false, [], [], []);
 
-        // 10 seconds passed, but strict 0.1 rate means 1.0 age added. Start age 20.
-        expect(knight.age).toBeCloseTo(21.0, 1);
-        expect(wizard.age).toBeCloseTo(21.0, 1);
+        // 10 seconds * 0.02 rate = 0.2 age added.
+        expect(knight.age).toBeCloseTo(20.2, 1);
+        expect(wizard.age).toBeCloseTo(20.2, 1);
     });
 
     it('should have longer lifespan for Special units', () => {

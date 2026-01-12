@@ -1,0 +1,25 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/GhostAssignment.test.js[2m > [22m[2mGhost Assignment Debugging[2m > [22m[2mshould restore isManual flag and link unit correctly
+[22m[39mCreating Terrain...
+Terrain creation failed: TypeError: this.mesh.add is not a function
+    at Terrain.createMesh (C:/Users/mooya/develop/test/src/Terrain.js:557:19)
+    at Terrain.initTerrain (C:/Users/mooya/develop/test/src/Terrain.js:302:14)
+    at new Terrain (C:/Users/mooya/develop/test/src/Terrain.js:26:14)
+    at new Game (C:/Users/mooya/develop/test/src/Game.js:163:32)
+    at C:/Users/mooya/develop/test/src/tests/GhostAssignment.test.js:56:16
+    at [90mfile:///C:/Users/mooya/develop/test/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/mooya/develop/test/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/mooya/develop/test/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1206:10[90m)[39m
+    at runHook [90m(file:///C:/Users/mooya/develop/test/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1511:51[90m)[39m
+
+ [31mﾃ・[39m src/tests/GhostAssignment.test.js[2m > [22mGhost Assignment Debugging[2m > [22mshould restore isManual flag and link unit correctly[33m 452[2mms[22m[39m
+[31m   竊・Cannot read properties of undefined (reading 'width')[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 11:09:23
+[2m   Duration [22m 1.69s[2m (transform 362ms, setup 39ms, import 503ms, tests 454ms, environment 464ms)[22m
+

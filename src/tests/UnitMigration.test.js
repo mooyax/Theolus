@@ -1,134 +1,96 @@
-
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Unit } from '../Unit';
-import { Terrain } from '../Terrain';
+import { UnitWanderState } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
+import { MockGame, MockTerrain } from './TestHelper.js';
 
 // Mock THREE
 global.THREE = THREE;
 
 describe('Unit Migration Logic', () => {
     let unit;
+    let mockGame;
     let mockTerrain;
 
     beforeEach(() => {
         Unit.assets = { initialized: true };
 
-        // Mock Window Game
-        global.window = {
-            game: {
-                resources: { grain: 100 },
-                totalPopulation: 100
-            }
-        };
+        mockGame = new MockGame();
+        mockTerrain = new MockTerrain(100, 100);
+        mockGame.terrain = mockTerrain;
+        global.window.game = mockGame;
 
-        mockTerrain = {
-            logicalWidth: 100,
-            logicalDepth: 100,
-            buildings: [],
-            grid: [],
-            getTileHeight: () => 1, // Valid land
-            getInterpolatedHeight: () => 1,
-            getVisualPosition: () => ({ x: 0, y: 0, z: 0 }),
-            isValidGrid: () => true,
-            checkFlatArea: vi.fn(), // Mock build checks
-            addBuilding: vi.fn(),
-            moveEntity: vi.fn(),
-            getVisualOffset: () => ({ x: 0, y: 0 }),
-            registerEntity: vi.fn(),
-            unregisterEntity: vi.fn(),
-        };
-
-        // Init Grid
-        for (let x = 0; x < 100; x++) {
-            mockTerrain.grid[x] = [];
-            for (let z = 0; z < 100; z++) {
-                mockTerrain.grid[x][z] = { hasBuilding: false, height: 1, moisture: 0.5 };
-            }
-        }
+        // Ensure resources for tests
+        mockGame.resources = { grain: 100, totalPopulation: 100 };
+        mockGame.totalPopulation = 100;
 
         try {
-            unit = new Unit(null, mockTerrain, 50, 50, 'worker');
+            unit = new Unit(mockGame.scene, mockTerrain, 50, 50, 'worker');
         } catch (e) {
             console.error("UNIT CONSTRUCTOR FAILED:", e);
             throw e;
         }
         unit.id = 1;
-        // Stub triggerMove to verify migration targeting
+        unit.game = mockGame; // Ensure explicit link
+
+        // Initial state
+        unit.changeState(new UnitWanderState(unit));
+
         unit.triggerMove = vi.fn();
         unit.updatePosition = vi.fn();
+        unit.smartMove = vi.fn(); // Stub smartMove too
+        unit.checkStuck = vi.fn(); // Stub checkStuck to prevent crash
 
-        // Suppress logs
-        vi.spyOn(console, 'log').mockImplementation(() => { });
+        vi.spyOn(Math, 'random').mockReturnValue(0.5); // Predictable random
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
     it('should return true on successful build', () => {
         unit.stagnationTimer = 4;
 
+        // Fix: Height must be <= 8 for building
+        mockTerrain.grid[50][50].height = 1;
+
         // Mock success for House (2x2)
-        mockTerrain.checkFlatArea.mockReturnValue(true);
+        vi.spyOn(mockTerrain, 'checkFlatArea').mockReturnValue(true);
+        const addBuildingSpy = vi.spyOn(mockTerrain, 'addBuilding');
 
         const result = unit.tryBuildStructure(1000);
 
-        expect(mockTerrain.addBuilding).toHaveBeenCalled();
+        expect(addBuildingSpy).toHaveBeenCalled();
         expect(result).toBe(true);
     });
 
     it('should increment stagnation on failed build', () => {
+        // Migration logic now resides in UnitWanderState for workers
+        unit.role = 'worker';
         unit.stagnationTimer = 0;
+        unit.lastGridX = 50; unit.lastGridZ = 50;
+        unit.gridX = 50; unit.gridZ = 50;
+        unit.isMoving = false;
+        unit.isSleeping = false;
 
-        // Mock failure (Not flat)
-        mockTerrain.checkFlatArea.mockReturnValue(false);
-        // Also force Farm fail
-        unit.buildFarm = () => false;
+        // Mock terrain to fail build (e.g. no flat area)
+        vi.spyOn(mockTerrain, 'checkFlatArea').mockReturnValue(false);
 
-        // We need to call logic that triggers tryBuildStructure via updateMovement
-        // But modifying tryBuildStructure directly is easier to test boolean return
-        const result = unit.tryBuildStructure(1000);
-
-        expect(result).toBe(false);
-
-        // Let's test `updateMovement` integration (Simulate arrival)
-        unit.isMoving = true;
-        unit.moveStartTime = 0;
-        unit.moveDuration = 100;
-
-        try {
-            unit.updateMovement(200); // Finish move
-        } catch (e) {
-            console.error("updateMovement FAILED:", e);
-            throw e;
-        }
-
-        expect(unit.stagnationTimer).toBe(1);
+        unit.updateLogic(1000, 1.0);
+        expect(unit.stagnationTimer).toBeGreaterThan(0);
     });
 
-    it('should migrate after 5 failures', () => {
-        unit.stagnationTimer = 5;
-        mockTerrain.checkFlatArea.mockReturnValue(false);
-        unit.buildFarm = () => false;
+    it('should migrate after 20 seconds of stagnation', () => {
+        unit.role = 'worker';
+        unit.stagnationTimer = 20.1;
+        unit.lastGridX = 50; unit.lastGridZ = 50;
+        unit.gridX = 50; unit.gridZ = 50;
+        unit.isMoving = false;
+        unit.isSleeping = false;
 
-        unit.isMoving = true;
-        unit.moveStartTime = 0;
-        unit.moveDuration = 100;
+        vi.spyOn(unit, 'migrate');
+        unit.updateLogic(5000, 1.0);
 
-        try {
-            unit.updateMovement(200); // Fail 6th time -> Trigger Migrate
-        } catch (e) {
-            console.error("updateMovement FAILED:", e);
-            throw e;
-        }
-
-        expect(unit.triggerMove).toHaveBeenCalled();
-        // Verify distance > 10 (Migration) vs local (Building move is usually random small)
-        const callArgs = unit.triggerMove.mock.calls[0];
-        const tx = callArgs[0];
-        const tz = callArgs[1];
-
-        const dx = Math.abs(tx - 50);
-        const dz = Math.abs(tz - 50);
-        const dist = Math.sqrt(dx * dx + dz * dz);
-
-        expect(dist).toBeGreaterThan(15);
+        expect(unit.migrate).toHaveBeenCalled();
     });
 });

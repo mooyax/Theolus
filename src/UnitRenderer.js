@@ -2,109 +2,114 @@ import * as THREE from 'three';
 import { Unit } from './Unit.js';
 
 export class UnitRenderer {
-    constructor(scene, terrain, clippingPlanes) {
+    constructor(scene, terrain, clippingPlanes, maxInstances = 2000) {
         this.scene = scene;
         this.terrain = terrain;
         this.clippingPlanes = clippingPlanes || [];
+        this.maxInstances = maxInstances;
 
-        Unit.initAssets(); // Ensure shared assets are ready
-
-        // Apply Clipping Planes to Shared Materials
-        // This affects ALL units globally, which is what we want.
-        const mats = Unit.assets.materials;
-        Object.values(mats).forEach(mat => {
-            if (mat) mat.clippingPlanes = this.clippingPlanes;
-        });
-        if (mats.heads) {
-            mats.heads.forEach(h => h.clippingPlanes = this.clippingPlanes);
-        }
-
-        // Buffer size: 200 units * 9 clones = 1800.
-        // With higher population (spawn threshold 10), we need much more.
-        // Buffer size: 10000 units * 9 clones = 90000? No, maxInstances is total instances.
-        // We need to support dense populations.
-        // Let's go to 50000 instances (Supports ~5500 active units)
-        this.maxInstances = 50000;
         this.dummy = new THREE.Object3D();
 
-        // --- Materials ---
-        // We use a white material for tinting Clothes (Normal vs Special)
-        this.whiteMaterial = new THREE.MeshLambertMaterial({
+        // Initialize Instanced Meshes
+        // We defer this slightly to ensure Unit assets are ready? 
+        // Or assume Unit.initAssets called by Game.js
+        Unit.initAssets();
+
+        // Helper to create meshes
+        const createMesh = (geo, mat) => {
+            const m = new THREE.InstancedMesh(geo, mat, this.maxInstances);
+            m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+            m.frustumCulled = false; // Manually culled
+            m.castShadow = true;
+            m.receiveShadow = true;
+            this.scene.add(m);
+            return m;
+        };
+
+        // Shared White Material for Tinting
+        this.whiteMat = new THREE.MeshStandardMaterial({
             color: 0xFFFFFF,
+            roughness: 1.0,
             clippingPlanes: this.clippingPlanes
         });
-        this.skinMaterial = Unit.assets.materials.skin;
-        this.headMaterials = Unit.assets.materials.heads;
 
-        // --- Instanced Meshes ---
+        // Apply clipping to Shared Assets Materials
+        // Apply clipping to Shared Assets Materials EXPLICITLY
+        // The loop below might fail if keys are missing or structure is weird.
+        // We list known materials used by Renderer.
+        const setClip = (mat) => {
+            if (mat) {
+                mat.clippingPlanes = this.clippingPlanes;
+                mat.needsUpdate = true;
+            }
+        };
+
+        setClip(Unit.assets.materials.face);
+        setClip(Unit.assets.materials.metal);
+        setClip(Unit.assets.materials.wood);
+        setClip(Unit.assets.materials.wizardHat);
+        setClip(Unit.assets.materials.redIndicator);
+        setClip(Unit.assets.materials.armor); // Just in case
+        setClip(Unit.assets.materials.helmet);
+        setClip(Unit.assets.materials.robe);
+
+        // Apply clipping to shared materials EXPLICITLY for Goblin assets
+        // This assumes Goblin.assets.materials exists and is initialized
+        // (e.g., by Goblin.initAssets() in Game.js)
+        // setClip(Goblin.assets.materials.club);
+        // setClip(Goblin.assets.materials.staff);
+        // setClip(Goblin.assets.materials.face);
+        // setClip(Goblin.assets.materials.cross); // If used
+
+        // Also keep the generic loop as fallback/safety for future mats
+        const mats = Unit.assets.materials;
+        Object.values(mats).forEach(mat => {
+            if (mat && (mat.isMaterial || Array.isArray(mat))) {
+                const materialList = Array.isArray(mat) ? mat : [mat];
+                materialList.forEach(m => {
+                    m.clippingPlanes = this.clippingPlanes;
+                    m.needsUpdate = true;
+                });
+            }
+        });
 
         // 1. Torso
-        this.torsoMesh = new THREE.InstancedMesh(Unit.assets.geometries.body, this.whiteMaterial, this.maxInstances);
-        this.torsoMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.torsoMesh.frustumCulled = false; // We handle culling manually
-        this.scene.add(this.torsoMesh);
+        this.torsoMesh = createMesh(Unit.assets.geometries.body, this.whiteMat);
 
-        // 2. Head (Hair/Helmet Volume)
-        this.headMesh = new THREE.InstancedMesh(Unit.assets.geometries.head, Unit.assets.materials.hair, this.maxInstances);
-        this.headMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.headMesh.frustumCulled = false;
-        this.scene.add(this.headMesh);
+        // 2. Head
+        this.headMesh = createMesh(Unit.assets.geometries.head, this.whiteMat);
 
-        // 2.5 Face (Plane Overlay)
-        this.faceMesh = new THREE.InstancedMesh(Unit.assets.geometries.facePlane, Unit.assets.materials.face, this.maxInstances);
-        this.faceMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.faceMesh.frustumCulled = false;
-        this.scene.add(this.faceMesh);
+        // 3. Face (Keep existing logic, usually texture)
+        this.faceMesh = createMesh(Unit.assets.geometries.facePlane, Unit.assets.materials.face);
 
-        // 3. Left Arm
-        this.leftArmMesh = new THREE.InstancedMesh(Unit.assets.geometries.limb, this.skinMaterial, this.maxInstances);
-        this.leftArmMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.leftArmMesh.frustumCulled = false;
-        this.scene.add(this.leftArmMesh);
+        // 4. Arms
+        this.leftArmMesh = createMesh(Unit.assets.geometries.limb, this.whiteMat);
+        this.rightArmMesh = createMesh(Unit.assets.geometries.limb, this.whiteMat);
 
-        // 4. Right Arm
-        this.rightArmMesh = new THREE.InstancedMesh(Unit.assets.geometries.limb, this.skinMaterial, this.maxInstances);
-        this.rightArmMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.rightArmMesh.frustumCulled = false;
-        this.scene.add(this.rightArmMesh);
+        // 5. Legs
+        this.leftLegMesh = createMesh(Unit.assets.geometries.limb, this.whiteMat);
+        this.rightLegMesh = createMesh(Unit.assets.geometries.limb, this.whiteMat);
 
-        // 5. Left Leg
-        this.leftLegMesh = new THREE.InstancedMesh(Unit.assets.geometries.limb, this.whiteMaterial, this.maxInstances);
-        this.leftLegMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.leftLegMesh.frustumCulled = false;
-        this.scene.add(this.leftLegMesh);
+        // 6. Knight Sword
+        this.swordMesh = createMesh(Unit.assets.geometries.sword, Unit.assets.materials.metal);
 
-        // 6. Right Leg
-        this.rightLegMesh = new THREE.InstancedMesh(Unit.assets.geometries.limb, this.whiteMaterial, this.maxInstances);
-        this.rightLegMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.rightLegMesh.frustumCulled = false;
-        this.scene.add(this.rightLegMesh);
+        // 7. Knight Visor (NEW - Ingenuity!)
+        this.visorMesh = createMesh(Unit.assets.geometries.head, this.whiteMat);
 
-        // --- Accessories ---
-
-        // 7. Sword (Knight)
-        this.swordMesh = new THREE.InstancedMesh(Unit.assets.geometries.sword, Unit.assets.materials.metal, this.maxInstances);
-        this.swordMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.swordMesh.frustumCulled = false;
-        this.scene.add(this.swordMesh);
-
-        // 8. Staff (Wizard)
-        this.staffMesh = new THREE.InstancedMesh(Unit.assets.geometries.staff, Unit.assets.materials.wood, this.maxInstances);
-        this.staffMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.staffMesh.frustumCulled = false;
-        this.scene.add(this.staffMesh);
+        // 8. Wizard Staff
+        this.staffMesh = createMesh(Unit.assets.geometries.staff, Unit.assets.materials.wood);
 
         // 9. Wizard Hat Cone
-        this.hatMesh = new THREE.InstancedMesh(Unit.assets.geometries.wizardHat, Unit.assets.materials.wizardHat, this.maxInstances);
-        this.hatMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.hatMesh.frustumCulled = false;
-        this.scene.add(this.hatMesh);
+        this.hatMesh = createMesh(Unit.assets.geometries.wizardHat, Unit.assets.materials.wizardHat);
 
         // 10. Wizard Hat Brim
-        this.hatBrimMesh = new THREE.InstancedMesh(Unit.assets.geometries.wizardHatBrim, Unit.assets.materials.wizardHat, this.maxInstances);
-        this.hatBrimMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.hatBrimMesh.frustumCulled = false;
-        this.scene.add(this.hatBrimMesh);
+        this.hatBrimMesh = createMesh(Unit.assets.geometries.wizardHatBrim, Unit.assets.materials.wizardHat);
+
+        // 11. Job Indicator Top
+        this.indicatorTopMesh = createMesh(Unit.assets.geometries.jobIndicatorTop, Unit.assets.materials.redIndicator);
+
+        // 12. Job Indicator Dot
+        this.indicatorDotMesh = createMesh(Unit.assets.geometries.jobIndicatorDot, Unit.assets.materials.redIndicator);
 
         // Optimization: Scratch objects
         this._scratchVector = new THREE.Vector3();
@@ -118,8 +123,8 @@ export class UnitRenderer {
         ];
     }
 
-    update(units, frustum, camera) {
-        if (!camera) return;
+    update(units, frustum, viewCenter) {
+        if (!viewCenter) return;
 
         if (!Unit.assets.initialized) {
             // throw new Error("UnitRenderer: Assets not initialized");
@@ -130,19 +135,20 @@ export class UnitRenderer {
 
         let count = 0;
         let swordCount = 0;
+        let visorCount = 0;
         let staffCount = 0;
         let hatCount = 0;
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
+        let indicatorCount = 0;
+        const logicalW = this.terrain.logicalWidth || 240;
+        const logicalD = this.terrain.logicalDepth || 240;
         const margin = 5;
 
         // Base Offset (Infinite Scroll)
-        let baseGridX = 0;
-        let baseGridZ = 0;
-        if (camera) {
-            baseGridX = Math.round(camera.position.x / logicalW);
-            baseGridZ = Math.round(camera.position.z / logicalD);
-        }
+        // Unit positions are absolute in world space? No, terrain wraps?
+        // Terrain logic: unit.position is absolute?
+        // In Game.js, "Wraparound logic" updates unit.position.
+        // So unit.position is always within 0..LogicW?
+        // If so, we render clones around it.
 
         // Debug: Check if we are rendering
         if (units.length > 0 && Math.random() < 0.01) {
@@ -152,7 +158,7 @@ export class UnitRenderer {
         const colorNormal = new THREE.Color(0x654321); // Dark Brown (Restored)
         const colorHair = new THREE.Color(0xD4AF37);   // Golden/Blonde
         const colorSpecial = new THREE.Color(0x00008B); // Dark Blue (Darkened from 0x0000FF)
-        const colorKnight = new THREE.Color(0xAAAAAA); // Silver
+        const colorKnight = new THREE.Color(0x999999); // Mid Grey (User Request)
         const colorWizard = new THREE.Color(0x440088); // Purple
         const colorSkin = new THREE.Color(0xffccaa); // Match skin material
 
@@ -172,29 +178,15 @@ export class UnitRenderer {
                 else clothesColor = colorNormal; // Normal: Dark Brown (Clothes)
             }
 
-            // ... (Skipping cloning logic for replacement block context) ...
-
-            // ... (Skipping loop context) ...
-
-
-
             // ROBUST SMART CLONING
             // Calculate which integer offsets (k) place the unit within the View Volume.
-            // Formula: Camera - Radius <= Unit + k*W <= Camera + Radius
-            // k*W >= Camera - Radius - Unit
-            // k >= (Camera - Radius - Unit) / W
-            // And k <= (Camera + Radius - Unit) / W
+            const viewRadius = 120; // Expanded from 80 to match Game.js 120
 
-            const viewRadius = 60; // Reduced from 90 to Optimize (Map is often ~80, so 90 causing 5x5 overlap). 60 covers diagonal of screen.
+            const minKx = Math.floor((viewCenter.x - viewRadius - unit.position.x) / logicalW);
+            const maxKx = Math.ceil((viewCenter.x + viewRadius - unit.position.x) / logicalW);
 
-            const minKx = Math.floor((camera.position.x - viewRadius - unit.position.x) / logicalW);
-            const maxKx = Math.ceil((camera.position.x + viewRadius - unit.position.x) / logicalW);
-
-            const minKz = Math.floor((camera.position.z - viewRadius - unit.position.z) / logicalD);
-            const maxKz = Math.ceil((camera.position.z + viewRadius - unit.position.z) / logicalD);
-
-            // Safety Clamp (prevent huge loops if math goes wild nearby very far coordinates)
-            // Usually max - min is 0 or 1.
+            const minKz = Math.floor((viewCenter.z - viewRadius - unit.position.z) / logicalD);
+            const maxKz = Math.ceil((viewCenter.z + viewRadius - unit.position.z) / logicalD);
 
             for (let kx = minKx; kx <= maxKx; kx++) {
                 for (let kz = minKz; kz <= maxKz; kz++) {
@@ -202,7 +194,6 @@ export class UnitRenderer {
 
                     const osx = kx;
                     const osz = kz;
-                    // Proceed to render...
 
                     // Base Position with Offset
                     const posX = unit.position.x + osx * logicalW;
@@ -212,7 +203,6 @@ export class UnitRenderer {
 
                     // 1. Torso (Body)
                     // Cute Geo: Translated 0.3. 
-                    // Place Dummy at Base (0) -> Visual: 0.125 to 0.475
                     this.dummy.position.set(posX, posY, posZ);
                     this.dummy.rotation.set(0, rotY, 0);
                     this.dummy.scale.set(1, 1, 1);
@@ -222,21 +212,21 @@ export class UnitRenderer {
 
                     // 2. Head
                     // Cute Geo: Translated 0.6.
-                    // Place Dummy at Base (0) -> Visual: 0.475 to 0.725
                     this.dummy.position.set(posX, posY, posZ);
                     this.dummy.rotation.set(0, rotY, 0);
                     this.dummy.scale.set(1, 1, 1);
 
                     // Wizard Design Adjustment (User Request)
+                    let headScaleY = 1.0;
                     if (unit.role === 'wizard') {
                         // Half Height Head
-                        this.dummy.scale.set(1, 0.5, 1);
+                        headScaleY = 0.5;
+                        this.dummy.scale.set(1, headScaleY, 1);
                         // Correct Position:
-                        // Original Geo Center y=0.6. Scaled becomes 0.3.
-                        // We want bottom to match neck (~0.475). 
-                        // New Height is 0.125 (was 0.25). 
-                        // Base of head at 0.3 - 0.0625 = 0.2375.
-                        // We need base at 0.475. Difference = +0.2375.
+                        // Original Geo Top 0.725, Bottom 0.475. Center 0.6.
+                        // Scaled (0.5 y): Center 0.3. Top 0.3625. Bottom 0.2375.
+                        // We want Base at 0.475 (Neck).
+                        // Shift = 0.475 - 0.2375 = +0.2375.
                         this.dummy.position.y += 0.2375;
                     }
 
@@ -259,14 +249,46 @@ export class UnitRenderer {
                     // Face Material is separate -> No Tint (White)
                     this.faceMesh.setColorAt(count, new THREE.Color(0xFFFFFF));
 
+                    // --- Knight Visor (New) ---
+                    if (unit.role === 'knight') {
+                        this.dummy.position.set(posX, posY, posZ);
+                        this.dummy.rotation.set(0, rotY, 0);
+                        // Visor Band: Slightly wider than head, thin height
+                        // Head is 0.25 cubed (geo). Scale 1=0.25.
+                        // We want 1.1x Width, 0.2x Height.
+                        this.dummy.scale.set(1.1, 0.2, 1.1);
+                        // Position: Eye level.
+                        // Head Center 0.6 (Visually). Eyes ~0.65?
+                        // Let's place it at 0.65 -> Translate dummy! (headGeo is at 0.6 implicitly)
+                        // If we scale Y by 0.2, pivot (0.6) becomes 0.12.
+                        // We want visual center at 0.65. Shift +0.53.
+                        // Wait, easier: `headGeo` translated 0.6.
+                        // If we render at 0,0,0, mesh is at 0.6.
+                        // If scale 0.2 Y, mesh is at 0.12.
+                        // We want mesh at 0.65. Delta = 0.53.
+                        this.dummy.position.y += 0.53;
+
+                        this.dummy.updateMatrix();
+                        this.visorMesh.setMatrixAt(visorCount, this.dummy.matrix);
+                        this.visorMesh.setColorAt(visorCount, new THREE.Color(0x999999)); // Silver/Grey Visor (User Request)
+                        visorCount++;
+                    }
+
                     // 3. Left Arm
-                    // Shoulder Height: ~0.45 (Near top of body)
-                    // Offset X: 0.18 (Body width 0.3 -> half 0.15. Arm just outside)
                     this.dummy.position.set(0.18, 0.45, 0);
                     this.dummy.position.applyAxisAngle(this._up, rotY);
                     this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
 
                     this.dummy.rotation.set(unit.limbs.leftArm.x, rotY, 0);
+
+                    // Wizard Arm Adjustment (Lengthen)
+                    if (unit.role === 'wizard') {
+                        this.dummy.scale.set(1, 1.25, 1);
+                        this.dummy.translateY(-0.035);
+                    } else {
+                        this.dummy.scale.set(1, 1, 1);
+                    }
+
                     this.dummy.updateMatrix();
                     this.leftArmMesh.setMatrixAt(count, this.dummy.matrix);
                     this.leftArmMesh.setColorAt(count, colorSkin);
@@ -277,13 +299,20 @@ export class UnitRenderer {
                     this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
 
                     this.dummy.rotation.set(unit.limbs.rightArm.x, rotY, 0);
+
+                    // Wizard Arm Adjustment (Lengthen)
+                    if (unit.role === 'wizard') {
+                        this.dummy.scale.set(1, 1.25, 1); // 25% Longer
+                        this.dummy.translateY(-0.035);
+                    } else {
+                        this.dummy.scale.set(1, 1, 1);
+                    }
+
                     this.dummy.updateMatrix();
                     this.rightArmMesh.setMatrixAt(count, this.dummy.matrix);
                     this.rightArmMesh.setColorAt(count, colorSkin);
 
                     // 5. Left Leg
-                    // Hip Height: ~0.25 (Legs hang down from here)
-                    // Offset X: 0.08
                     this.dummy.position.set(0.08, 0.25, 0);
                     this.dummy.position.applyAxisAngle(this._up, rotY);
                     this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
@@ -307,29 +336,11 @@ export class UnitRenderer {
 
                     // Knight Sword
                     if (unit.role === 'knight') {
-                        // Attach to Right Arm
-                        // Re-calculate Right Arm pos
                         this.dummy.position.set(-0.18, 0.45, 0); // Shoulder
                         this.dummy.position.applyAxisAngle(this._up, rotY);
                         this.dummy.position.add(this._scratchVector.set(posX, posY, posZ));
-
-                        // Rotation should follow arm but maybe angled out?
-                        // Arm rot is (unit.limbs.rightArm.x, rotY, 0)
-                        // We want sword to stick out or be held.
-                        // Simple: Match arm rotation + offset to be in "hand"
-                        this.dummy.rotation.set(unit.limbs.rightArm.x + Math.PI / 2, rotY, 0); // Point forward?
-                        // Actually swordGeo handles at bottom (0.25 up). 
-                        // If arm is down (0), sword points forward? No, if arm down, sword down.
-                        // If arm x=0, sword points down?
-                        // BoxGeo defaults Y aligned.
-                        // Let's try matching arm X.
                         this.dummy.rotation.set(unit.limbs.rightArm.x, rotY, 0);
-
-                        // Offset to Hand (Arm length 0.25, origin at top. Hand is at -0.25 local Y?)
-                        // Arm Geo origin is top (-0.1 y translate). Length 0.25. 
-                        // Hand is roughly -0.2 y local.
                         this.dummy.translateY(-0.25);
-                        // Rotate sword to point forward/up?
                         this.dummy.rotateX(Math.PI / 2); // Point forward relative to arm?
 
                         this.dummy.updateMatrix();
@@ -356,9 +367,9 @@ export class UnitRenderer {
                         staffCount++;
 
                         // Hat on Head
-                        // Head pos: 0, 0.6, 0 (Base) -> Visual 0.6.
-                        // Wizard Head Scaled 0.5 -> Top is at 0.6 relative to ground (was 0.725)
-                        const hatYOffset = (unit.role === 'wizard') ? (0.625) : (0.75);
+                        // FIXED: Adjusted Offset to prevent floating (User Request)
+                        // Head Top estimated at 0.3625 (after 0.5 scale of 0.725 high head).
+                        const hatYOffset = 0.60; // Slightly higher than 0.55
                         this.dummy.position.set(posX, posY + hatYOffset, posZ); // Sit on top of head
                         this.dummy.rotation.set(0, rotY, 0);
                         this.dummy.scale.set(1, 1, 1);
@@ -367,6 +378,18 @@ export class UnitRenderer {
                         this.hatMesh.setMatrixAt(hatCount, this.dummy.matrix);
                         this.hatBrimMesh.setMatrixAt(hatCount, this.dummy.matrix);
                         hatCount++;
+                    }
+
+                    // 11. Job Indicator (!)
+                    if (unit.targetRequest) {
+                        const floatY = Math.sin(Date.now() * 0.005) * 0.1;
+                        this.dummy.position.set(posX, posY + 1.2 + floatY, posZ);
+                        this.dummy.rotation.set(0, rotY, 0); // Face with unit, or could be static
+                        this.dummy.scale.set(1, 1, 1);
+                        this.dummy.updateMatrix();
+                        this.indicatorTopMesh.setMatrixAt(indicatorCount, this.dummy.matrix);
+                        this.indicatorDotMesh.setMatrixAt(indicatorCount, this.dummy.matrix);
+                        indicatorCount++;
                     }
 
                     count++;
@@ -387,67 +410,59 @@ export class UnitRenderer {
         this.staffMesh.count = staffCount;
         this.hatMesh.count = hatCount;
         this.hatBrimMesh.count = hatCount;
-
-        // Disable auto frustum culling to prevent bounding sphere issues
-        // We handle culling manually above
-        this.torsoMesh.frustumCulled = false;
-        this.headMesh.frustumCulled = false;
-        this.faceMesh.frustumCulled = false;
-        this.leftArmMesh.frustumCulled = false;
-        this.rightArmMesh.frustumCulled = false;
-        this.leftLegMesh.frustumCulled = false;
-        this.rightLegMesh.frustumCulled = false;
-
-        // Mark all instance matrices as needing update
-        if (this.torsoMesh.instanceColor) this.torsoMesh.instanceColor.needsUpdate = true;
-        if (this.headMesh.instanceColor) this.headMesh.instanceColor.needsUpdate = true;
-        if (this.faceMesh.instanceColor) this.faceMesh.instanceColor.needsUpdate = true;
-
-        if (this.leftLegMesh.instanceColor) this.leftLegMesh.instanceColor.needsUpdate = true;
-        if (this.rightLegMesh.instanceColor) this.rightLegMesh.instanceColor.needsUpdate = true;
-        if (this.leftArmMesh.instanceColor) this.leftArmMesh.instanceColor.needsUpdate = true;
-        if (this.rightArmMesh.instanceColor) this.rightArmMesh.instanceColor.needsUpdate = true;
-
-        if (this.staffMesh.instanceColor) this.staffMesh.instanceColor.needsUpdate = true;
+        this.visorMesh.count = visorCount; // Update Visor Count
+        this.indicatorTopMesh.count = indicatorCount;
+        this.indicatorDotMesh.count = indicatorCount;
 
         // Commit Updates
-        this.torsoMesh.instanceMatrix.needsUpdate = true;
-        this.headMesh.instanceMatrix.needsUpdate = true;
-        this.faceMesh.instanceMatrix.needsUpdate = true;
-        this.leftArmMesh.instanceMatrix.needsUpdate = true;
-        this.rightArmMesh.instanceMatrix.needsUpdate = true;
-        this.leftLegMesh.instanceMatrix.needsUpdate = true;
-        this.rightLegMesh.instanceMatrix.needsUpdate = true;
+        const updateMesh = (m) => {
+            if (m.instanceMatrix) m.instanceMatrix.needsUpdate = true;
+            if (m.instanceColor) m.instanceColor.needsUpdate = true;
+        };
 
-        this.swordMesh.instanceMatrix.needsUpdate = true;
-        this.staffMesh.instanceMatrix.needsUpdate = true;
-        this.hatMesh.instanceMatrix.needsUpdate = true;
-        this.hatBrimMesh.instanceMatrix.needsUpdate = true;
+        updateMesh(this.torsoMesh);
+        updateMesh(this.headMesh);
+        updateMesh(this.faceMesh);
+        updateMesh(this.leftArmMesh);
+        updateMesh(this.rightArmMesh);
+        updateMesh(this.leftLegMesh);
+        updateMesh(this.rightLegMesh);
+        updateMesh(this.swordMesh);
+        updateMesh(this.visorMesh); // Commit Visor
+        updateMesh(this.staffMesh);
+        updateMesh(this.hatMesh);
+        updateMesh(this.hatBrimMesh);
+        updateMesh(this.indicatorTopMesh);
+        updateMesh(this.indicatorDotMesh);
     }
+
     dispose() {
-        console.log("[UnitRenderer] Disposing...");
-        const remove = (m) => {
+        const disposeMesh = (m) => {
             if (m) {
                 this.scene.remove(m);
                 if (m.geometry) m.geometry.dispose();
-                // Material might be shared (Unit.assets) so don't dispose shared ones!
-                // Only dispose local ones if any. whiteMaterial is local.
-                // InstancedMesh clones material array? No.
+                // Material handled by Unit.assets? Or separate? 
+                // Unit.assets are static. Don't dispose static assets here!
+                // Except cloned/created ones? InstancedMesh materials are shared from Unit.assets.
+                // WE SHOULD NOT DISPOSE SHARED ASSETS HERE.
             }
         };
 
-        remove(this.torsoMesh);
-        remove(this.headMesh);
-        remove(this.faceMesh);
-        remove(this.leftArmMesh);
-        remove(this.rightArmMesh);
-        remove(this.leftLegMesh);
-        remove(this.rightLegMesh);
-        remove(this.swordMesh);
-        remove(this.staffMesh);
-        remove(this.hatMesh);
-        remove(this.hatBrimMesh);
+        disposeMesh(this.torsoMesh);
+        disposeMesh(this.headMesh);
+        disposeMesh(this.faceMesh);
+        disposeMesh(this.leftArmMesh);
+        disposeMesh(this.rightArmMesh);
+        disposeMesh(this.leftLegMesh);
+        disposeMesh(this.rightLegMesh);
+        disposeMesh(this.swordMesh);
+        disposeMesh(this.visorMesh);
+        disposeMesh(this.staffMesh);
+        disposeMesh(this.hatMesh);
+        disposeMesh(this.hatBrimMesh);
+        disposeMesh(this.indicatorTopMesh);
+        disposeMesh(this.indicatorDotMesh);
 
-        if (this.whiteMaterial) this.whiteMaterial.dispose();
+        if (this.whiteMat) this.whiteMat.dispose();
     }
 }

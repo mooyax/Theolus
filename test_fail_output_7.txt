@@ -1,0 +1,48 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/CombatVerification.test.js[2m > [22m[2mCombat Logic Verification[2m > [22m[2mScenario A: Worker destroys Cave
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 1] Moving onto Rock at 10,10 H:10 (Speed Penalty)
+
+[90mstdout[2m | src/tests/CombatVerification.test.js[2m > [22m[2mCombat Logic Verification[2m > [22m[2mScenario B: Goblin destroys House
+[22m[39mGoblin 0 SPAWNED FOR RAIDING! Target: NaN,NaN
+[Goblin 0] ENTER RaidState. Goal: NaN,NaN
+[MockTerrain] Searching 1 buildings. Range:25 Center:20,20
+  - Checking Building at 22,20. Dist:2
+    -> Score: 2
+Goblin 0 attacking house. Pop: 1.92
+Goblin 0 attacking house. Pop: 1.84
+House Pop: 1.8399999999999999
+
+ [31m笶ｯ[39m src/tests/CombatVerification.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 27[2mms[22m[39m
+[31m     [31mﾃ・[31m Scenario A: Worker destroys Cave[39m[32m 20[2mms[22m[39m
+     [32m笨・[39m Scenario B: Goblin destroys House[32m 4[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario A: Worker destroys Cave
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/CombatVerification.test.js:181:24
+    179|         worker.debugFrame = 30; // Force run
+    180|         const threat = worker.checkSelfDefense();
+    181|         expect(threat).toBe(true); // Should pass now!
+       |                        ^
+    182|         expect(worker.targetBuilding).toBeDefined();
+    183|         expect(worker.targetBuilding.userData.type).toBe('cave');
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m   Start at [22m 12:07:18
+[2m   Duration [22m 911ms[2m (transform 184ms, setup 34ms, import 213ms, tests 27ms, environment 439ms)[22m
+

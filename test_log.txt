@@ -1,0 +1,49 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/CaveDestruction.test.js[2m > [22m[2mCave Destruction Bug[2m > [22m[2mshould autonomously FIND and ATTACK cave
+[22m[39m[Test] Creating Unit
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10
+
+[90mstdout[2m | src/tests/CaveDestruction.test.js[2m > [22m[2mCave Destruction Bug[2m > [22m[2mshould autonomously FIND and ATTACK cave
+[22m[39m[Test] START Autonomous Search
+[Test] Searching surroundings...
+[Defense Debug 0] shouldScan:true isBusy:false force:false PassedGoblins:0
+[Unit 0] UpdateCombatLogic. CD: 0. damage: 20
+[Unit 0] attackBuilding. CD: 0.8. Type: cave
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Test] Target: cave
+[Test] Starting Attack Loop. HP: 200
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Unit 0] UpdateCombatLogic. CD: -0.19999999999999996. damage: 20
+[Unit 0] attackBuilding. CD: 0.8. Type: cave
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Test] HP After Loop: 200
+
+ [31m笶ｯ[39m src/tests/CaveDestruction.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 17[2mms[22m[39m
+[31m     [31mﾃ・[31m should autonomously FIND and ATTACK cave[39m[32m 15[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/CaveDestruction.test.js > Cave Destruction Bug > should autonomously FIND and ATTACK cave
+AssertionError: expected 200 to be less than 200
+ 笶ｯ src/tests/CaveDestruction.test.js:112:49
+    110| 
+    111|         console.log(`[Test] HP After Loop: ${unit.targetBuilding.userD窶ｦ
+    112|         expect(unit.targetBuilding.userData.hp).toBeLessThan(hpStart);
+       |                                                 ^
+    113|     });
+    114| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 10:48:47
+[2m   Duration [22m 1.19s[2m (transform 148ms, setup 44ms, import 161ms, tests 17ms, environment 584ms)[22m
+

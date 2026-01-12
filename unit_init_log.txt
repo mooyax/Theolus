@@ -1,0 +1,32 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/UnitInit.test.js > Unit Initialization and Movement Start > should NOT freeze if started at time 0
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[ActorDebug] Grid: 10,10 Target: 5,5 Diff: -5,-5
+[ActorDebug] Next: 10,9
+[ActorDebug] Check Move 10,9 -> true
+
+ 笶ｯ src/tests/UnitInit.test.js (1 test | 1 failed) 9ms
+     ﾃ・should NOT freeze if started at time 0 8ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/UnitInit.test.js > Unit Initialization and Movement Start > should NOT freeze if started at time 0
+TypeError: [Function moveRandomly] is not a spy or a call to a spy!
+ 笶ｯ src/tests/UnitInit.test.js:40:39
+     38|         // Advance time by 1s (1000ms)
+     39|         unit.updateLogic(1000, 1.0, false, [], [], []);
+     40|         expect(unit.moveRandomly).not.toHaveBeenCalled();
+       |                                       ^
+     41| 
+     42|         // Advance time by 6s (6000ms) -> Should trigger
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  20:20:57
+   Duration  796ms (transform 112ms, setup 35ms, import 149ms, tests 9ms, environment 406ms)
+

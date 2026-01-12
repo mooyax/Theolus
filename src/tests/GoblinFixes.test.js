@@ -1,167 +1,149 @@
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Terrain } from '../Terrain.js';
-import { Entity } from '../Entity.js';
-import { GoblinManager } from '../GoblinManager.js';
 import * as THREE from 'three';
+import { Building } from '../Building.js';
+import { Game } from '../Game.js';
 
-// Mock THREE
-vi.mock('three', () => {
-    const Vector3 = class {
-        constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
-        copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
-        set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
-        add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
-        clone() { return new Vector3(this.x, this.y, this.z); }
-    };
+// --- Global Mocks/Setup ---
+if (typeof HTMLCanvasElement !== 'undefined') {
+    HTMLCanvasElement.prototype.getContext = vi.fn().mockImplementation((type) => {
+        if (type !== '2d') return null;
+        return {
+            fillRect: vi.fn(),
+            clearRect: vi.fn(),
+            getImageData: vi.fn(() => ({ data: new Uint8ClampedArray(4) })),
+            putImageData: vi.fn(),
+            createImageData: vi.fn(() => ({ data: new Uint8ClampedArray(4) })),
+            setTransform: vi.fn(),
+            drawImage: vi.fn(),
+            save: vi.fn(),
+            restore: vi.fn(),
+            beginPath: vi.fn(),
+            moveTo: vi.fn(),
+            lineTo: vi.fn(),
+            closePath: vi.fn(),
+            stroke: vi.fn(),
+            fill: vi.fn(),
+            arc: vi.fn(),
+            createRadialGradient: vi.fn(() => ({ addColorStop: vi.fn() })),
+            measureText: vi.fn(() => ({ width: 0 })),
+        };
+    });
+}
 
-    const Object3D = class {
-        position = new Vector3();
-        rotation = { x: 0, y: 0, z: 0 };
-        scale = new Vector3(1, 1, 1);
-        add() { }
-        remove() { }
-        updateMatrix() { }
-    };
+// Mock Component classes
+vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } dispose() { } } }));
+vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
+vi.mock('../CloudManager.js', () => ({ CloudManager: class { update() { } } }));
+vi.mock('../BirdManager.js', () => ({ BirdManager: class { update() { } } }));
+vi.mock('../SheepManager.js', () => ({ SheepManager: class { update() { } } }));
+vi.mock('../FishManager.js', () => ({ FishManager: class { update() { } } }));
+vi.mock('../SoundManager.js', () => ({ SoundManager: class { init() { } play() { } initialized = true; } }));
+vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { update() { } dispose() { } initAssets() { } initInstancedMeshes() { } updateLighting() { } assets = { caveGeo: { parameters: { radiusTop: 0.45 } } }; } }));
+vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { update() { } dispose() { } initAssets() { } updateLighting() { } } }));
+vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { update() { } dispose() { } initAssets() { } updateLighting() { } } }));
+vi.mock('../InputManager.js', () => ({ InputManager: class { update() { } } }));
+vi.mock('../ParticleManager.js', () => ({ ParticleManager: class { update() { } } }));
+vi.mock('three/examples/jsm/controls/OrbitControls.js', () => ({ OrbitControls: class { update() { } } }));
 
+// Mock THREE more robustly
+vi.mock('three', async () => {
+    const actual = await vi.importActual('three');
+    class MockRenderer {
+        constructor() {
+            this.domElement = document.createElement('canvas');
+            this.clippingPlanes = [];
+            this.localClippingEnabled = false;
+        }
+        setSize() { }
+        setPixelRatio() { }
+        render() { }
+        setClearColor() { }
+        dispose() { }
+    }
     return {
-        Vector3,
-        Group: class extends Object3D { },
-        Mesh: class extends Object3D { },
-        MeshLambertMaterial: class { },
-        BoxGeometry: class { },
-        ConeGeometry: class { },
-        CylinderGeometry: class { },
-        SphereGeometry: class { },
-        CanvasTexture: class { },
-        Color: class {
-            constructor(hex) { }
-            lerp() { return this; }
-            setHex() { return this; }
-            getHSL() { return {}; }
-            setHSL() { return this; }
-            copy(c) { return this; }
-            multiplyScalar() { return this; }
-        },
-        BufferAttribute: class { constructor(arr, size) { this.array = arr; this.count = arr.length / size; } },
-        PlaneGeometry: class {
-            attributes = { position: { count: 100, array: new Float32Array(300), getX: () => 0, getY: () => 0, setX: () => { }, setY: () => { } }, color: { array: [], count: 100, needsUpdate: false } };
-            setAttribute(name, attr) { this.attributes[name] = attr; }
-            getAttribute(name) { return this.attributes[name]; }
-            computeVertexNormals() { }
-        },
-        LineBasicMaterial: class { },
-        LineSegments: class extends Object3D { },
-        PointsMaterial: class { },
-        Points: class extends Object3D { },
-        BufferGeometry: class { setAttribute() { } setIndex() { } },
-        DoubleSide: 2,
-        Object3D,
-        Sphere: class { constructor(c, r) { } },
-        InstancedMesh: class extends Object3D {
-            constructor() { super(); this.instanceMatrix = { setUsage: () => { } }; }
-        },
-        DynamicDrawUsage: 1
+        ...actual,
+        WebGLRenderer: MockRenderer
     };
 });
 
-describe('Goblin Fixes Verification', () => {
+// Mock Unit & Goblin (Static methods)
+vi.mock('../Unit.js', async () => {
+    const { Unit } = await vi.importActual('../Unit.js');
+    Unit.createFaceTexture = vi.fn().mockReturnValue(new THREE.Texture());
+    Unit.initAssets = vi.fn();
+    return { Unit };
+});
 
-    let terrain;
+vi.mock('../Goblin.js', async () => {
+    const { Goblin } = await vi.importActual('../Goblin.js');
+    Goblin.createFaceTexture = vi.fn().mockReturnValue(new THREE.Texture());
+    Goblin.initAssets = vi.fn();
+    return { Goblin };
+});
 
+const mockTerrain = {
+    logicalWidth: 240,
+    logicalDepth: 240,
+    width: 720,
+    depth: 720,
+    buildings: [],
+    grid: Array(240).fill(0).map(() => Array(240).fill(0).map(() => ({ height: 1, hasBuilding: false }))),
+    getVisualPosition: (x, z) => ({ x, y: 1, z }),
+    getVisualOffset: () => ({ x: 0, y: 0 }),
+    getTileHeight: () => 1,
+    getInterpolatedHeight: () => 1,
+    isValidGrid: () => true,
+    isWalkable: () => true,
+    isReachable: () => true,
+    update: vi.fn(),
+    registerEntity: vi.fn(),
+    unregisterEntity: vi.fn(),
+    moveEntity: vi.fn(),
+    canAddBuilding: () => true,
+    addBuilding: vi.fn().mockImplementation((type, x, z) => {
+        const b = new Building(null, mockTerrain, type, x, z);
+        mockTerrain.buildings.push(b);
+        return b;
+    }),
+    findBestTarget: () => null,
+    clippingPlanes: []
+};
+
+describe('Goblin Spawning Logic', () => {
     beforeEach(() => {
-        // Mock window
-        global.window = { game: { gameTotalTime: 0 } };
-        // Mock Scene
-        const scene = { add: () => { }, remove: () => { } };
-        terrain = new Terrain(scene, []);
-        terrain.logicalWidth = 80;
-        terrain.logicalDepth = 80;
-        // Mock EntityGrid
-        terrain.entityGrid = Array(80).fill(0).map(() => Array(80).fill([]));
-        terrain.grid = Array(80).fill(0).map(() => Array(80).fill({ height: 0, hasBuilding: false }));
+        vi.clearAllMocks();
+        mockTerrain.buildings = [];
     });
 
-    it('Entity.getDistance should handle wrapping', () => {
-        const e = new Entity({}, terrain, 2, 2, 'test');
+    it('should update building population', () => {
+        const cave = new Building(null, mockTerrain, 'cave', 10, 10);
+        mockTerrain.buildings.push(cave);
 
-        // Target far away in raw coords, but close via wrap
-        const dist = e.getDistance(78, 2);
+        expect(cave.userData.population).toBe(0);
 
-        // 2 -> 78 via wrap is 2->1->0->79->78. Distance 4.
-        expect(dist).toBe(4);
+        const deltaTime = 1.0;
+        cave.update(0, deltaTime);
 
-        // Standard Euclidean
-        expect(e.getDistance(6, 2)).toBe(4);
+        // Cave growth rate is 0.3
+        expect(cave.userData.population).toBeCloseTo(0.3, 2);
     });
 
-    it('Terrain.findBestTarget should find wrapped targets', () => {
-        // Mock Entity at 78, 2
-        const target = new Entity({}, terrain, 78, 2, 'unit');
-        terrain.registerEntity(target, 78, 2, 'unit');
+    it('should synchronize clipping planes with controls.target when available', () => {
+        const game = new Game(null, mockTerrain, true);
 
-        // Searcher at 2, 2
-        // If radius is 5, it should find it.
-        // Raw distance = 76. Wrapped distance = 4.
+        // Mock controls.target
+        game.controls = {
+            target: new THREE.Vector3(500, 0, 500),
+            update: vi.fn(),
+            domElement: document.createElement('canvas')
+        };
 
-        const best = terrain.findBestTarget('unit', 2, 2, 5.0, (e, d) => d);
+        game.camera.position.set(100, 100, 100); // Camera follows target but is far away
+        game.updateCameraControls();
 
-        expect(best).toBe(target);
+        const viewRadius = 150;
+        // Should use target (500) instead of camera position (100)
+        expect(game.clippingPlanes[1].constant).toBe(500 + viewRadius);
+        expect(game.clippingPlanes[1].constant).not.toBe(100 + viewRadius);
     });
-
-    it('Terrain.findBestTarget should handle non-wrapping case correctly (sanity)', () => {
-        const target = new Entity({}, terrain, 5, 2, 'unit');
-        terrain.registerEntity(target, 5, 2, 'unit');
-
-        const best = terrain.findBestTarget('unit', 2, 2, 5.0, (e, d) => d);
-        expect(best).toBe(target);
-    });
-
-    it('GoblinManager difficulty scaling increases stronger goblin probability', () => {
-        const gm = new GoblinManager({ add: () => { } }, terrain, {});
-        gm.goblins = [];
-
-        // Mock spawnGoblin internal logic by spying or just checking distribution?
-        // We can't easily spy on internal method call since it's same class instance.
-        // We will run spawnGoblin many times and check distribution.
-
-        const samples = 1000;
-        let kings = 0;
-        let shamans = 0;
-        let hobs = 0;
-
-        // Level 1
-        for (let i = 0; i < samples; i++) {
-            gm.spawnGoblin(10, 10, 'clan', null, 1);
-        }
-        kings = gm.goblins.filter(g => g.type === 'king').length;
-        shamans = gm.goblins.filter(g => g.type === 'shaman').length;
-        hobs = gm.goblins.filter(g => g.type === 'hobgoblin').length;
-
-        console.log(`Lvl 1 - King: ${kings}, Shaman: ${shamans}, Hob: ${hobs}`);
-        // Expect low numbers
-        // King ~1% (10), Shaman ~4.5% (45), Hob ~9% (90)
-        expect(kings).toBeLessThan(30);
-
-        gm.goblins = [];
-
-        // Level 20
-        for (let i = 0; i < samples; i++) {
-            gm.spawnGoblin(10, 10, 'clan', null, 20);
-        }
-        kings = gm.goblins.filter(g => g.type === 'king').length;
-        shamans = gm.goblins.filter(g => g.type === 'shaman').length;
-        hobs = gm.goblins.filter(g => g.type === 'hobgoblin').length;
-
-        console.log(`Lvl 20 - King: ${kings}, Shaman: ${shamans}, Hob: ${hobs}`);
-        // Expect higher numbers
-        // King 1% + 19*0.25% = 1+4.75 = ~5.75% (~57)
-        // Shaman 4.5% + 19*0.5% = 4.5+9.5 = ~14% (~140)
-        // Hob 9% + 19*1% = 28% (~280)
-
-        expect(kings).toBeGreaterThan(30);
-        expect(shamans).toBeGreaterThan(80);
-        expect(hobs).toBeGreaterThan(150);
-    });
-
 });

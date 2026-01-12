@@ -1,0 +1,120 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mResource Gathering[2m > [22m[2mshould gather fish if checking neighbors finds water
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mResource Gathering[2m > [22m[2mshould NOT gather fish if completely inland
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould prioritize Farm and ABORT house if farm fails during famine
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould prioritize Farm and ABORT house if farm fails during famine
+[22m[39m[ActorDebug] Grid: 5,5 Target: 6,6 Diff: 1,1
+[ActorDebug] Next: 5,6
+[Unit 2] Moving onto Rock at 5,6 H:10 (Speed Penalty)
+[Unit 2] Blocked by Slope at 5,6 H:1->10
+[ActorDebug] Check Move 5,6 -> false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould fallback to House if NOT in famine
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould fallback to House if NOT in famine
+[22m[39m[ActorDebug] Grid: 5,5 Target: 6,6 Diff: 1,1
+[ActorDebug] Next: 5,6
+[Unit 3] Moving onto Rock at 5,6 H:10 (Speed Penalty)
+[Unit 3] Blocked by Slope at 5,6 H:1->10
+[ActorDebug] Check Move 5,6 -> false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould accept role in constructor
+[22m[39m[UnitCore.js] Unit Created ID:4 Role:worker Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould accept role in constructor
+[22m[39m[UnitCore.js] Unit Created ID:5 Role:hunter Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:7 Role:true Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould FAIL buildFarm and IMPROVE LAND if moisture is poor (simulated)
+[22m[39m[UnitCore.js] Unit Created ID:8 Role:worker Pos:5,5 Special:false
+
+stderr | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor (simulated)
+TEST CRASHED: AssertionError: expected true to be false // Object.is equality
+    at C:/Users/mooya/develop/test/src/tests/Unit.test.js:136:32
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1650:37
+    at Traces.$ (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/traces.U4xDYhzZ.js:115:27)
+    at trace (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/test.BT8LKgU9.js:239:21)
+    at runTest (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1650:12) {
+  actual: true,
+  expected: false,
+  showDiff: true,
+  operator: 'strictEqual'
+}
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould FAIL buildFarm and IMPROVE LAND if moisture is poor (simulated)
+[22m[39m[Unit Debug] buildFarm ID:8 Moisture:0.5 Chance:1 Rnd:0.9
+[ActorDebug] Grid: 5,5 Target: 6,6 Diff: 1,1
+[ActorDebug] Next: 5,6
+[Unit 8] Moving onto Rock at 5,6 H:10 (Speed Penalty)
+[ActorDebug] Check Move 5,6 -> true
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould succeed buildFarm if moisture is optimal
+[22m[39m[UnitCore.js] Unit Created ID:9 Role:worker Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould succeed buildFarm if moisture is optimal
+[22m[39m[Unit Debug] buildFarm ID:9 Moisture:0.5 Chance:1 Rnd:0.5
+[ActorDebug] Grid: 5,5 Target: 6,6 Diff: 1,1
+[ActorDebug] Next: 5,6
+[Unit 9] Moving onto Rock at 5,6 H:10 (Speed Penalty)
+[ActorDebug] Check Move 5,6 -> true
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould check heights during moveRandomly
+[22m[39m[UnitCore.js] Unit Created ID:10 Role:worker Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould check heights during moveRandomly
+[22m[39m[ActorDebug] Grid: 5,5 Target: 6,6 Diff: 1,1
+[ActorDebug] Next: 5,6
+[ActorDebug] Check Move 5,6 -> true
+
+ [31m笶ｯ[39m src/tests/Unit.test.js [2m([22m[2m8 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 36[2mms[22m[39m
+       [32m笨・[39m should gather fish if checking neighbors finds water[32m 4[2mms[22m[39m
+       [32m笨・[39m should NOT gather fish if completely inland[32m 1[2mms[22m[39m
+       [32m笨・[39m should prioritize Farm and ABORT house if farm fails during famine[32m 2[2mms[22m[39m
+       [32m笨・[39m should fallback to House if NOT in famine[32m 6[2mms[22m[39m
+       [32m笨・[39m should accept role in constructor[32m 2[2mms[22m[39m
+[31m       [31mﾃ・[31m should FAIL buildFarm and IMPROVE LAND if moisture is poor (simulated)[39m[32m 15[2mms[22m[39m
+       [32m笨・[39m should succeed buildFarm if moisture is optimal[32m 2[2mms[22m[39m
+       [32m笨・[39m should check heights during moveRandomly[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor (simulated)
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ 笶ｯ src/tests/Unit.test.js:136:32
+    134|                 const result = unit.buildFarm(100);
+    135| 
+    136|                 expect(result).toBe(false);
+       |                                ^
+    137|                 expect(mockTerrain.addBuilding).not.toHaveBeenCalled();
+    138|                 expect(mockTerrain.modifyMoisture).toHaveBeenCalled();
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m7 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 23:43:00
+[2m   Duration [22m 843ms[2m (transform 133ms, setup 37ms, import 170ms, tests 36ms, environment 422ms)[22m
+

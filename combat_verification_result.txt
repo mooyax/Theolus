@@ -1,0 +1,39 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario A: Worker destroys Cave
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+Approach Point: 11,10
+Unit 1 attacking cave. HP: 195
+Cave HP: 195 (Was: 200)
+
+stderr | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario A: Worker destroys Cave
+[Test A] Pre-Update: HP=200 Cooldown=0
+[Test A] Post-Update: HP=195 Action=Fighting
+
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario B: Goblin destroys House
+Goblin 0 SPAWNED FOR RAIDING! Target: NaN,NaN
+[Goblin 0] ENTER RaidState. Goal: NaN,NaN
+[MockTerrain] Searching 1 buildings. Range:25 Center:20,20
+  - Checking Building at 22,20. Dist:2
+    -> Score: 2
+[Actor 0] SmartMove Dist: 1 Path: No
+Goblin Raid: House population reduced. Rem: -2
+House Pop: -2
+
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario C: Goblin finds and destroys House
+[MockTerrain] Searching 1 buildings. Range:12 Center:8,8
+  - Checking Building at 10,10. Dist:2.8284271247461903
+    -> Score: 2.8284271247461903
+[Actor 1] SmartMove Dist: 0 Path: No
+[Actor 1] SmartMove Dist: 0 Path: No
+[Test] House HP reduced to 84
+
+ 笨・src/tests/CombatVerification.test.js (3 tests) 13ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  18:06:00
+   Duration  892ms (transform 164ms, setup 34ms, import 185ms, tests 13ms, environment 479ms)
+

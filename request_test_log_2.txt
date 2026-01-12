@@ -1,0 +1,56 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould tag new requests with createdAt timestamp
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould cleanup expired pending requests
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould NOT cleanup assigned requests even if old
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould cancel request via Proximity Search
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould prioritize nearest request when cancelling
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+
+ [31m笶ｯ[39m src/tests/RequestLifecycle.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[33m 303[2mms[22m[39m
+[31m     [31mﾃ・[31m should tag new requests with createdAt timestamp[39m[32m 99[2mms[22m[39m
+[31m     [31mﾃ・[31m should cleanup expired pending requests[39m[32m 63[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT cleanup assigned requests even if old[39m[32m 56[2mms[22m[39m
+[31m     [31mﾃ・[31m should cancel request via Proximity Search[39m[32m 43[2mms[22m[39m
+[31m     [31mﾃ・[31m should prioritize nearest request when cancelling[39m[32m 40[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 5 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should tag new requests with createdAt timestamp
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cleanup expired pending requests
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should NOT cleanup assigned requests even if old
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cancel request via Proximity Search
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should prioritize nearest request when cancelling
+TypeError: ctx.createImageData is not a function
+ 笶ｯ new CloudManager src/CloudManager.js:18:29
+     16| 
+     17|         // PIXEL-BASED FRACTAL NOISE GENERATION (True Organic Clouds)
+     18|         const imgData = ctx.createImageData(width, height);
+       |                             ^
+     19|         const data = imgData.data;
+     20| 
+ 笶ｯ new Game src/Game.js:149:29
+ 笶ｯ src/tests/RequestLifecycle.test.js:218:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/5]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m5 failed[39m[22m[90m (5)[39m
+[2m   Start at [22m 22:39:30
+[2m   Duration [22m 1.52s[2m (transform 316ms, setup 39ms, import 436ms, tests 303ms, environment 514ms)[22m
+

@@ -64,8 +64,8 @@ describe('Terrain Logic', () => {
             // Correct Signature: deltaTime, isNight, activeUnits, spawnCallback
             terrain.updatePopulation(0.016, false, 0, spawnCallback);
 
-            // Barracks attempts to spawn 4 units.
-            expect(spawnCallback).toHaveBeenCalledTimes(4);
+            // Barracks attempts to spawn 2 units (Updated Logic).
+            expect(spawnCallback).toHaveBeenCalledTimes(2);
             expect(spawnCallback).toHaveBeenCalled();
         });
     });

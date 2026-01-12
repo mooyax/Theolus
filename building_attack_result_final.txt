@@ -1,0 +1,63 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should automatically engage a nearby goblin hut
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10
+Unit created. Game set: [33mtrue[39m
+
+stdout | src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should automatically engage a nearby goblin hut
+Mock findBestTarget called for building
+Unit 1 found Base via Spatial Search!
+[Actor 1] SmartMove Dist: 5 Path: No
+
+stdout | src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should NOT engage if worker (safeguard check)
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:10,10
+Unit created. Game set: [33mtrue[39m
+
+stdout | src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should NOT engage if worker (safeguard check)
+Unit 1 found Goblin via Spatial Search!
+[Actor 1] SmartMove Dist: NaN Path: No
+[Unit 1] Moving onto Rock at 10,NaN H:10 (Speed Penalty)
+
+ 笶ｯ src/tests/BuildingAttackAuto.test.js (2 tests | 2 failed) 32ms
+     ﾃ・should automatically engage a nearby goblin hut 20ms
+     ﾃ・should NOT engage if worker (safeguard check) 10ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should automatically engage a nearby goblin hut
+AssertionError: expected 'Chasing' to be 'Fighting' // Object.is equality
+
+Expected: "Fighting"
+Received: "Chasing"
+
+ 笶ｯ src/tests/BuildingAttackAuto.test.js:76:29
+     74| 
+     75|         expect(unit.state).toBeInstanceOf(CombatState);
+     76|         expect(unit.action).toBe('Fighting');
+       |                             ^
+     77|         console.log('Unit successfully entered CombatState for Buildin窶ｦ
+     78|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should NOT engage if worker (safeguard check)
+AssertionError: expected JobState{ actor: Unit{ 窶ｦ(61) }, 窶ｦ(10) } to be an instance of UnitWanderState
+ 笶ｯ src/tests/BuildingAttackAuto.test.js:132:28
+    130|         // For now, simple check: Knight engaged, that's the goal.
+    131|         // Explicitly check that state is NOT CombatState
+    132|         expect(unit.state).toBeInstanceOf(UnitWanderState);
+       |                            ^
+    133|         expect(unit.action).not.toBe('Fighting');
+    134|         console.log('Worker correctly ignored combat due to job');
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  23:17:19
+   Duration  1.21s (transform 139ms, setup 44ms, import 194ms, tests 32ms, environment 623ms)
+

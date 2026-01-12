@@ -1,0 +1,23 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,0
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug] Condition Check. Role:worker State:UnitWanderState HasUpdate:function
+[UnitWanderState] Update. ID:0 Action:Idle Target:No
+[SleepState] Entering Sleep logic.
+[SleepState] Dist to Shelter: 0.00. Target: 10,0
+[Unit Debug] Early Return for worker. State: SleepState
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug] Condition Check. Role:worker State:SleepState HasUpdate:function
+[Unit Debug] Early Return for worker. State: SleepState
+
+ 笨・src/tests/NightLogic.test.js (1 test) 12ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  20:51:04
+   Duration  1.55s (transform 225ms, setup 70ms, import 293ms, tests 12ms, environment 868ms)
+

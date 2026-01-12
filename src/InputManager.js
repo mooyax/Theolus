@@ -28,12 +28,31 @@ export class InputManager {
         this.setupUI();
 
         // Use pointer events to distinguish click from drag
-        window.addEventListener('pointerdown', this.onPointerDown.bind(this));
-        window.addEventListener('pointerup', this.onPointerUp.bind(this));
-        window.addEventListener('mousemove', this.onMouseMove.bind(this));
+        this._binds = {
+            onPointerDown: this.onPointerDown.bind(this),
+            onPointerUp: this.onPointerUp.bind(this),
+            onPointerMove: this.onPointerMove.bind(this)
+        };
 
-        this.dragThreshold = 5; // pixels
+        window.addEventListener('pointerdown', this._binds.onPointerDown);
+        window.addEventListener('pointerup', this._binds.onPointerUp);
+        window.addEventListener('mousemove', this._binds.onPointerMove);
+
+        this.dragThreshold = 15; // pixels
         this.downPosition = new THREE.Vector2();
+    }
+
+    dispose() {
+        if (this._binds) {
+            window.removeEventListener('pointerdown', this._binds.onPointerDown);
+            window.removeEventListener('pointerup', this._binds.onPointerUp);
+            window.removeEventListener('mousemove', this._binds.onPointerMove);
+        }
+        if (this.cursor) {
+            this.scene.remove(this.cursor);
+            this.cursor.geometry.dispose();
+            this.cursor.material.dispose();
+        }
     }
 
     setupUI() {
@@ -43,6 +62,7 @@ export class InputManager {
         const btnBarracks = document.getElementById('btn-barracks');
         const btnTower = document.getElementById('btn-tower');
         const btnCancel = document.getElementById('btn-cancel');
+        const btnView = document.getElementById('btn-view'); // New
 
         const updateActive = (mode) => {
             this.mode = mode;
@@ -52,8 +72,15 @@ export class InputManager {
             if (btnBarracks) btnBarracks.classList.toggle('active', mode === 'barracks');
             if (btnTower) btnTower.classList.toggle('active', mode === 'tower');
             if (btnCancel) btnCancel.classList.toggle('active', mode === 'cancel');
+            if (btnView) btnView.classList.toggle('active', mode === 'view'); // New
         };
 
+        // Default to View Mode
+        updateActive('view');
+
+        if (btnView) {
+            btnView.addEventListener('click', () => updateActive('view'));
+        }
         if (btnRaise) {
             btnRaise.addEventListener('click', () => updateActive('raise'));
         }
@@ -83,6 +110,7 @@ export class InputManager {
             target.closest('#minimap') ||
             target.closest('#start-screen') || // Block Start Screen
             target.closest('#save-modal') ||   // Block Save Modal
+            target.closest('#help-modal') ||   // Block Help Modal
             target.closest('.ui-container');
     }
 
@@ -95,14 +123,20 @@ export class InputManager {
         if (this.isUIInteraction(event)) return;
 
         const upPosition = new THREE.Vector2(event.clientX, event.clientY);
-        if (this.downPosition.distanceTo(upPosition) > this.dragThreshold) {
+        const dist = this.downPosition.distanceTo(upPosition);
+        if (dist > this.dragThreshold) {
+            // console.log(`[Input] Click ignored: Drag detected (${dist.toFixed(1)}px > ${this.dragThreshold}px)`);
             return; // It was a drag (camera control), not a click
         }
 
         this.handleInteraction(event);
     }
 
-    onMouseMove(event) {
+    onPointerMove(event) {
+        // Block if modal is open
+        if (document.getElementById('help-modal').style.display === 'flex') return;
+        if (document.getElementById('save-modal') && document.getElementById('save-modal').style.display === 'flex') return;
+
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         this.lastClientX = event.clientX;
@@ -157,30 +191,82 @@ export class InputManager {
                     const pop = Math.floor(b.userData.population || 0);
                     text = `Tower Pop: ${pop}/300`;
                     found = true;
-                }
-            }
-
-            // 2. Check Unit (Spatial Search)
-            if (!found) {
-                const candidate = this.terrain.findNearestEntity('unit', gridX, gridZ, 2.5);
-                if (candidate) {
-                    text = `Age: ${Math.floor(candidate.age)}`;
-                    if (candidate.getBehaviorMode) {
-                        text += `\nMode: ${candidate.getBehaviorMode()}`;
-                    }
-                    if (candidate.action) text += `\nAct: ${candidate.action}`;
+                } else if (type === 'goblin_hut') {
+                    const pop = Math.floor(b.userData.population || 0);
+                    // Cap 5 (defined in Terrain)
+                    text = `Goblin Hut Pop: ${pop}/5\nHP: ${Math.floor(b.userData.hp)}`;
+                    found = true;
+                } else if (type === 'cave') {
+                    const pop = Math.floor(b.userData.population || 0);
+                    // Cap 20 (defined in Terrain)
+                    text = `Goblin Cave Pop: ${pop}/20\nHP: ${Math.floor(b.userData.hp)}`;
+                    found = true;
+                } else if (type === 'farm') {
+                    text = `Farm HP: ${Math.floor(b.userData.hp)}`;
                     found = true;
                 }
             }
-        }
 
-        if (found) {
-            this.tooltip.textContent = text;
-            this.tooltip.style.display = 'block';
-            this.tooltip.style.left = (clientX + 15) + 'px';
-            this.tooltip.style.top = (clientY + 15) + 'px';
-        } else {
-            this.tooltip.style.display = 'none';
+            if (!found) {
+                // 2. Check Unit / Goblin (Visual + Spatial)
+                let candidate = null;
+
+                // Visual Raycast (for exact selection of moving units)
+                // Visual Raycast (for exact selection of moving units/goblins)
+                let intersectCandidates = [];
+                if (this.game) {
+                    if (this.game.unitRenderer && this.game.unitRenderer.meshGroup) {
+                        intersectCandidates.push(...this.game.unitRenderer.meshGroup.children);
+                    }
+                    if (this.game.goblinManager && this.game.goblinManager.renderer && this.game.goblinManager.renderer.meshGroup) {
+                        intersectCandidates.push(...this.game.goblinManager.renderer.meshGroup.children);
+                    }
+                }
+
+                if (intersectCandidates.length > 0) {
+                    this.raycaster.setFromCamera(this.mouse, this.camera);
+                    const intersects = this.raycaster.intersectObjects(intersectCandidates, true);
+
+                    if (intersects.length > 0) {
+                        const p = intersects[0].point;
+
+                        const logicalW = this.terrain.logicalWidth || 80;
+                        const logicalD = this.terrain.logicalDepth || 80;
+
+                        // Normalize Hit Point to Grid Range for Search
+                        const normX = Math.round(((p.x % logicalW) + logicalW) % logicalW);
+                        const normZ = Math.round(((p.z % logicalD) + logicalD) % logicalD);
+
+                        // Search near the visualized point (using Normalized coords)
+                        // Expanded to include Sheep/Fish as requested
+                        candidate = this.terrain.findNearestEntity('unit', normX, normZ, 3.0) ||
+                            this.terrain.findNearestEntity('goblin', normX, normZ, 3.0) ||
+                            this.terrain.findNearestEntity('sheep', normX, normZ, 3.0) ||
+                            this.terrain.findNearestEntity('fish', normX, normZ, 3.0);
+                    }
+                }
+
+                // Fallback: Grid Search (using Grid Logic we calculated earlier which was already wrapped?)
+                /* Use the wrapped gridX/gridZ calculated at top of function */
+                if (!candidate) candidate = this.terrain.findNearestEntity('unit', gridX, gridZ, 4.0);
+                if (!candidate) candidate = this.terrain.findNearestEntity('goblin', gridX, gridZ, 4.0);
+                if (!candidate) candidate = this.terrain.findNearestEntity('sheep', gridX, gridZ, 4.0);
+                if (!candidate) candidate = this.terrain.findNearestEntity('fish', gridX, gridZ, 4.0);
+
+                if (candidate && candidate.getTooltip) {
+                    text = candidate.getTooltip();
+                    found = true;
+                }
+            } // End if (!found)
+
+            if (found) {
+                this.tooltip.textContent = text;
+                this.tooltip.style.display = 'block';
+                this.tooltip.style.left = (clientX + 15) + 'px';
+                this.tooltip.style.top = (clientY + 15) + 'px';
+            } else {
+                this.tooltip.style.display = 'none';
+            }
         }
     }
 
@@ -240,9 +326,11 @@ export class InputManager {
             this.cursor.position.set(snapX + distortionX, vPosBase.y + 0.5, snapZ + distortionZ);
             this.cursor.visible = true;
 
-            // Simple Mode-based Color (Reverted)
+            // Simple Mode-based Color
             if (this.mode === 'spawn') {
                 this.cursor.material.color.setHex(0x0000ff); // Blue for spawn
+            } else if (this.mode === 'view') {
+                this.cursor.material.color.setHex(0xffffff); // White for view
             } else {
                 this.cursor.material.color.setHex(0xff0000); // Red for terrain
             }
@@ -252,6 +340,9 @@ export class InputManager {
     }
 
     handleInteraction(event) {
+        // Prevent gameplay interaction if game is not active (Preview Mode)
+        if (this.game && !this.game.gameActive) return;
+
         // Calculate mouse position in normalized device coordinates
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -259,7 +350,6 @@ export class InputManager {
         this.raycaster.setFromCamera(this.mouse, this.camera);
 
         // Optimization: Use terrain.raycast exclusively for consistency with Cursor
-        // This prevents "Visual vs Logic" misalignment because Cursor uses raycast.
         const hitPoint = this.terrain.raycast(this.raycaster.ray.origin, this.raycaster.ray.direction);
 
         if (hitPoint) {
@@ -287,19 +377,22 @@ export class InputManager {
                 }
 
                 // Pass World Coords for Visualization
-                // FIX: 'intersect' is not defined here. Use 'point' (which is hitPoint vector).
                 const worldX = point.x;
                 const worldZ = point.z;
 
-                if (this.mode === 'raise') {
+                if (this.mode === 'view') {
+                    // View Mode: No Action
+                    // Optional: Select unit/building logic could go here later.
+                    return;
+                } else if (this.mode === 'raise') {
                     if (this.game) {
-                        this.game.addRequest('raise', gridX, gridZ, null, worldX, worldZ);
+                        this.game.addRequest('raise', gridX, gridZ, true, worldX, worldZ);
                         this.game.consumeMana(10);
                         console.log(`[Input] Request Queued: Raise at ${gridX},${gridZ}`);
                     }
                 } else if (this.mode === 'lower') {
                     if (this.game) {
-                        this.game.addRequest('lower', gridX, gridZ, null, worldX, worldZ);
+                        this.game.addRequest('lower', gridX, gridZ, true, worldX, worldZ);
                         this.game.consumeMana(10);
                         console.log(`[Input] Request Queued: Lower at ${gridX},${gridZ}`);
                     }
@@ -310,34 +403,50 @@ export class InputManager {
                         }
                     }
                 } else if (this.mode === 'spawn') {
-                    if (this.spawnCallback) {
-                        this.spawnCallback(gridX, gridZ, true);
-                        if (this.game) this.game.consumeMana(20);
+                    const cost = 50;
+                    if (this.game.mana >= cost) {
+                        if (this.spawnCallback) {
+                            this.spawnCallback(gridX, gridZ, true);
+                            if (this.game) this.game.consumeMana(cost);
+                        }
                     }
                 } else if (this.mode === 'barracks') {
                     if (this.game) {
-                        this.game.addRequest('build_barracks', gridX, gridZ, null, worldX, worldZ);
-                        this.game.consumeMana(50);
+                        const count = this.game.terrain ? this.game.terrain.buildings.filter(b => b.userData.type === 'barracks').length : 0;
+                        const cost = 1000 * (count + 1);
+                        if (this.game.mana >= cost) {
+                            this.game.addRequest('build_barracks', gridX, gridZ, true, worldX, worldZ);
+                            this.game.consumeMana(cost);
+                        }
                     }
                 } else if (this.mode === 'tower') {
                     if (this.game) {
-                        this.game.addRequest('build_tower', gridX, gridZ, null, worldX, worldZ);
-                        this.game.consumeMana(50);
+                        const count = this.game.terrain ? this.game.terrain.buildings.filter(b => b.userData.type === 'tower').length : 0;
+                        const cost = 1000 * (count + 1);
+                        if (this.game.mana >= cost) {
+                            this.game.addRequest('build_tower', gridX, gridZ, true, worldX, worldZ);
+                            this.game.consumeMana(cost);
+                        }
                     }
                 }
             } else if (event.button === 2) { // Right click (Lower Request)
                 if (this.game && !this.game.canAction()) return;
 
+                // Block Right Click Action in View Mode too? 
+                // User said "Map Rotation Movement" (often requires mouse buttons).
+                // Safest to block modification in View Mode.
+                if (this.mode === 'view') return;
+
                 if (this.game) {
                     const worldX = point.x;
                     const worldZ = point.z;
-                    this.game.addRequest('lower', gridX, gridZ, null, worldX, worldZ);
+                    this.game.addRequest('lower', gridX, gridZ, true, worldX, worldZ);
                     this.game.consumeMana(10);
                 }
             }
-
-            // Update cursor immediately to reflect height change
-            this.updateCursor();
         }
+
+        // Update cursor immediately to reflect height change
+        this.updateCursor();
     }
 }

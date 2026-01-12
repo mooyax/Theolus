@@ -1,0 +1,33 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/RefuseDistraction.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 20[2mms[22m[39m
+[31m     [31mﾃ・[31m should prioritize MANUAL move marker over autonomous HOUSE BUILDING[39m[32m 17[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT Switch to a better Auto-Job if Manual Job is active[39m[32m 2[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/RefuseDistraction.test.js > Refuse Distraction > should prioritize MANUAL move marker over autonomous HOUSE BUILDING
+ FAIL  src/tests/RefuseDistraction.test.js > Refuse Distraction > should NOT Switch to a better Auto-Job if Manual Job is active
+TypeError: Cannot read properties of undefined (reading 'length')
+ 笶ｯ Function.isInclusiveAncestor node_modules/happy-dom/lib/nodes/node/NodeUtility.js:35:53
+ 笶ｯ HTMLBodyElement.[appendChild] node_modules/happy-dom/lib/nodes/node/Node.js:381:29
+ 笶ｯ HTMLBodyElement.[appendChild] node_modules/happy-dom/lib/nodes/element/Element.js:999:62
+ 笶ｯ HTMLBodyElement.appendChild node_modules/happy-dom/lib/nodes/node/Node.js:297:48
+ 笶ｯ new Game src/Game.js:103:23
+    101|         this.renderer.setSize(window.innerWidth, window.innerHeight);
+    102|         this.renderer.localClippingEnabled = false;
+    103|         document.body.appendChild(this.renderer.domElement);
+       |                       ^
+    104| 
+    105|         // 3. Controls
+ 笶ｯ src/tests/RefuseDistraction.test.js:81:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 11:24:57
+[2m   Duration [22m 1.32s[2m (transform 331ms, setup 49ms, import 446ms, tests 20ms, environment 521ms)[22m
+

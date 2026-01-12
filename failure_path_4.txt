@@ -1,0 +1,91 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/JobPathFailure.test.js[2m > [22m[2mJob Pathfinding Failure Handling[2m > [22m[2mshould abandon job if smartMove fails repeatedly
+[22m[39mGame constructor called
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 117,64. Force:false
+[Terrain] Building Added: cave at (117, 64) Size:1x1. Total: 1
+GoblinManager: Cave registered at 117,64 
+[GoblinManager] Clan clan_cave_117_64 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 149,150. Force:false
+[Terrain] Building Added: cave at (149, 150) Size:1x1. Total: 2
+GoblinManager: Cave registered at 149,150 
+[GoblinManager] Clan clan_cave_149_150 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 74,133. Force:false
+[Terrain] Building Added: cave at (74, 133) Size:1x1. Total: 3
+GoblinManager: Cave registered at 74,133 
+[GoblinManager] Clan clan_cave_74_133 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 99,98. Force:false
+[Terrain] Building Added: cave at (99, 98) Size:1x1. Total: 4
+GoblinManager: Cave registered at 99,98 
+[GoblinManager] Clan clan_cave_99_98 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 25,119. Force:false
+[Terrain] Building Added: cave at (25, 119) Size:1x1. Total: 5
+GoblinManager: Cave registered at 25,119 
+[GoblinManager] Clan clan_cave_25_119 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 13 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/JobPathFailure.test.js[2m > [22m[2mJob Pathfinding Failure Handling[2m > [22m[2mshould abandon job if smartMove fails repeatedly
+[22m[39m[Game] forceAssignRequest FAILED for Req 101. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
+
+[90mstdout[2m | src/tests/JobPathFailure.test.js
+[22m[39m[ActorDebug] Grid: 2,0 Target: 7,0 Diff: 5,0
+[ActorDebug] Next: 3,0
+
+[90mstdout[2m | src/tests/JobPathFailure.test.js
+[22m[39m[ActorDebug] Grid: 2,0 Target: 7,0 Diff: 5,0
+[ActorDebug] Next: 3,0
+
+ [31m笶ｯ[39m src/tests/JobPathFailure.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1650[2mms[22m[39m
+[31m     [31mﾃ・[31m should abandon job if smartMove fails repeatedly[39m[33m 1649[2mms[22m[39m
+[90mstdout[2m | Sheep.smartMove (C:\Users\mooya\develop\test\src\Actor.js:215:17)
+[22m[39m[ActorDebug] Grid: 2,0 Target: 7,0 Diff: 5,0
+
+[90mstdout[2m | Sheep.smartMove (C:\Users\mooya\develop\test\src\Actor.js:226:17)
+[22m[39m[ActorDebug] Next: 3,0
+
+[90mstdout[2m | Sheep.smartMove (C:\Users\mooya\develop\test\src\Actor.js:215:17)
+[22m[39m[ActorDebug] Grid: 2,0 Target: 7,0 Diff: 5,0
+
+[90mstdout[2m | Sheep.smartMove (C:\Users\mooya\develop\test\src\Actor.js:226:17)
+[22m[39m[ActorDebug] Next: 3,0
+
+[90mstdout[2m | Sheep.smartMove (C:\Users\mooya\develop\test\src\Actor.js:215:17)
+[22m[39m[ActorDebug] Grid: 2,0 Target: 7,0 Diff: 5,0
+
+[90mstdout[2m | Sheep.smartMove (C:\Users\mooya\develop\test\src\Actor.js:226:17)
+[22m[39m[ActorDebug] Next: 3,0
+
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+TypeError: this.terrain.getRandomPointInRegion is not a function
+ 笶ｯ Unit.moveRandomly src/Unit.js:2023:37
+    2021| 
+    2022|         // 3. Find Valid Point in SAME Region
+    2023|         const target = this.terrain.getRandomPointInRegion(currentRegi窶ｦ
+       |                                     ^
+    2024| 
+    2025|         if (target) {
+ 笶ｯ UnitWanderState.update src/ai/states/State.js:68:24
+ 笶ｯ UnitWanderState.update src/ai/states/UnitStates.js:55:15
+ 笶ｯ Unit.updateLogic src/Actor.js:310:24
+ 笶ｯ Unit.updateLogic src/Unit.js:767:15
+ 笶ｯ src/tests/JobPathFailure.test.js:83:18
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 12:32:43
+[2m   Duration [22m 2.83s[2m (transform 331ms, setup 40ms, import 457ms, tests 1.65s, environment 461ms)[22m
+

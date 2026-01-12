@@ -1,0 +1,53 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should automatically engage a nearby goblin hut
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10
+Unit created. Game set: [33mtrue[39m
+
+stdout | src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should automatically engage a nearby goblin hut
+Mock findBestTarget called for building
+Unit 1 found Base via Spatial Search!
+[Actor 1] SmartMove Dist: 5 Path: No
+
+stdout | src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should NOT engage if worker (safeguard check)
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:10,10
+Unit created. Game set: [33mtrue[39m
+
+stdout | src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should NOT engage if worker (safeguard check)
+Unit 1 found Goblin via Spatial Search!
+[Actor 1] SmartMove Dist: NaN Path: No
+[Unit 1] Moving onto Rock at 10,NaN H:10 (Speed Penalty)
+
+ 笶ｯ src/tests/BuildingAttackAuto.test.js (2 tests | 1 failed) 41ms
+     ﾃ・should automatically engage a nearby goblin hut 36ms
+     笨・should NOT engage if worker (safeguard check) 4ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should automatically engage a nearby goblin hut
+TypeError: this.terrain.findPath is not a function
+ 笶ｯ Unit.smartMove src/Actor.js:176:54
+    174|                         }
+    175| 
+    176|                         const newPath = this.terrain.findPath(this.gri窶ｦ
+       |                                                      ^
+    177|                         if (newPath && newPath.length > 0) {
+    178|                             this.path = newPath;
+ 笶ｯ Unit.updateCombatLogic src/Unit.js:1647:18
+ 笶ｯ CombatState.update src/ai/states/UnitStates.js:518:24
+ 笶ｯ CombatState.enter src/ai/states/UnitStates.js:463:14
+ 笶ｯ Unit.changeState src/Actor.js:30:24
+ 笶ｯ UnitWanderState.update src/ai/states/UnitStates.js:58:24
+ 笶ｯ src/tests/BuildingAttackAuto.test.js:72:20
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  23:08:14
+   Duration  1.43s (transform 148ms, setup 48ms, import 211ms, tests 41ms, environment 778ms)
+

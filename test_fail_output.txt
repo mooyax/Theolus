@@ -1,0 +1,55 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/CombatVerification.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 32[2mms[22m[39m
+[31m     [31mﾃ・[31m Scenario A: Worker destroys Cave[39m[32m 24[2mms[22m[39m
+[31m     [31mﾃ・[31m Scenario B: Goblin destroys House[39m[32m 7[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario A: Worker destroys Cave
+TypeError: this.position.copy is not a function
+ 笶ｯ Unit.updatePosition src/Entity.js:55:23
+     53| 
+     54|         const pos = this.getPositionForGrid(this.gridX, this.gridZ);
+     55|         this.position.copy(pos);
+       |                       ^
+     56|     }
+     57| 
+ 笶ｯ new Entity src/Entity.js:46:14
+ 笶ｯ new Actor src/Actor.js:5:9
+ 笶ｯ new Unit src/Unit.js:153:9
+ 笶ｯ src/tests/CombatVerification.test.js:141:24
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario B: Goblin destroys House
+Error: [vitest] No "ConeGeometry" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi.mock(import("three"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    // your mocked methods
+  }
+})
+
+ 笶ｯ Function.initAssets src/Goblin.js:27:50
+     25|         // Shared
+     26|         Goblin.assets.geometries.head = new THREE.BoxGeometry(0.2, 0.2窶ｦ
+     27|         Goblin.assets.geometries.ear = new THREE.ConeGeometry(0.05, 0.窶ｦ
+       |                                                  ^
+     28|         Goblin.assets.geometries.arm = new THREE.BoxGeometry(0.08, 0.2窶ｦ
+     29|         Goblin.assets.geometries.leg = new THREE.BoxGeometry(0.1, 0.25窶ｦ
+ 笶ｯ new Goblin src/Goblin.js:64:16
+ 笶ｯ src/tests/CombatVerification.test.js:216:24
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 11:46:05
+[2m   Duration [22m 974ms[2m (transform 173ms, setup 36ms, import 200ms, tests 32ms, environment 477ms)[22m
+

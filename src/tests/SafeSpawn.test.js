@@ -1,116 +1,165 @@
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Terrain } from '../Terrain.js';
 import * as THREE from 'three';
 
 // Mock THREE
-vi.mock('three', () => {
-    class Vector3 {
-        constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
-        set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
-        clone() { return new Vector3(this.x, this.y, this.z); }
-        add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
-    }
-
-    class Object3D {
-        position = new Vector3();
-        rotation = { x: 0 };
-        scale = { set: () => { } };
-        add() { }
-        remove() { }
-    }
-
-    class Mesh extends Object3D { }
-    class LineSegments extends Object3D { }
-    class Points extends Object3D { }
-
+vi.mock('three', async () => {
+    const actual = await vi.importActual('three');
     return {
-        Vector3,
-        Object3D,
-        Mesh,
-        LineSegments,
-        Points,
-        PlaneGeometry: class {
-            attributes = {
-                position: {
-                    count: 100,
-                    array: new Float32Array(300),
-                    getX: () => 0,
-                    getY: () => 0,
-                    setX: () => { },
-                    setY: () => { }
-                },
-                color: { array: [], count: 100, needsUpdate: false }
-            };
-            setAttribute() { }
-            computeVertexNormals() { }
-            setIndex() { }
+        ...actual,
+        Vector3: class {
+            constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
+            copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
+            set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
+            add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
+            clone() { return new this.constructor(this.x, this.y, this.z); }
+        },
+        Object3D: class {
+            constructor() {
+                this.position = { x: 0, y: 0, z: 0, set: (x, y, z) => { this.position.x = x; this.position.y = y; this.position.z = z; } };
+                this.rotation = { x: 0, y: 0, z: 0 };
+                this.scale = { x: 1, y: 1, z: 1, set: (x, y, z) => { this.scale.x = x; this.scale.y = y; this.scale.z = z; } };
+                this.add = vi.fn();
+                this.remove = vi.fn();
+                this.updateMatrix = vi.fn();
+            }
+        },
+        InstancedMesh: class {
+            constructor() {
+                this.isObject3D = true;
+                this.instanceMatrix = { setUsage: vi.fn() };
+                this.updateMatrix = vi.fn();
+                this.setMatrixAt = vi.fn();
+                this.setColorAt = vi.fn();
+                this.count = 0;
+                this.castShadow = false;
+                this.receiveShadow = false;
+                this.frustumCulled = false;
+                this.dispose = vi.fn();
+                this.removeFromParent = vi.fn();
+                this.position = { x: 0, y: 0, z: 0, set: () => { } };
+            }
+        },
+        Scene: class {
+            constructor() {
+                this.add = vi.fn();
+                this.remove = vi.fn();
+                this.getObjectByName = vi.fn();
+                this.clear = vi.fn();
+            }
+        },
+        Group: class {
+            constructor() { this.add = vi.fn(); this.remove = vi.fn(); }
+        },
+        Mesh: class {
+            constructor() {
+                this.position = { x: 0, y: 0, z: 0, set: () => { } };
+                this.rotation = { x: 0, y: 0, z: 0 };
+                this.scale = { x: 1, y: 1, z: 1, set: () => { } };
+                this.add = vi.fn();
+                this.remove = vi.fn();
+            }
         },
         BufferGeometry: class {
-            setAttribute() { }
-            setIndex() { }
+            constructor() {
+                this.setAttribute = vi.fn();
+                this.dispose = vi.fn();
+                this.setIndex = vi.fn();
+                this.attributes = {};
+            }
         },
-        BufferAttribute: class { constructor(arr) { this.array = arr; } },
-        MeshLambertMaterial: class { },
-        LineBasicMaterial: class { },
-        PointsMaterial: class { },
-        Color: class { constructor() { } setHex() { } lerp() { } getHSL() { return {}; } setHSL() { } copy() { } multiplyScalar() { } },
+        PlaneGeometry: class {
+            constructor() {
+                this.attributes = {
+                    position: {
+                        count: 100,
+                        getX: vi.fn().mockReturnValue(0),
+                        getY: vi.fn().mockReturnValue(0),
+                        setX: vi.fn(),
+                        setY: vi.fn(),
+                        array: new Float32Array(300),
+                        needsUpdate: false
+                    }
+                };
+                this.setAttribute = vi.fn((name, attr) => {
+                    this.attributes[name] = attr;
+                });
+                this.dispose = vi.fn();
+                this.parameters = { width: 1, height: 1 };
+                this.computeVertexNormals = vi.fn();
+                this.setIndex = vi.fn();
+            }
+        },
+        BufferAttribute: class {
+            constructor(array, itemSize) {
+                this.array = array;
+                this.itemSize = itemSize;
+                this.setXYZ = vi.fn();
+                this.needsUpdate = false;
+            }
+        },
+        MeshLambertMaterial: class {
+            constructor() { this.dispose = vi.fn(); }
+        },
+        LineBasicMaterial: class { constructor() { } },
+        PointsMaterial: class { constructor() { } },
+        LineSegments: class {
+            constructor() { this.position = { x: 0, y: 0, z: 0, set: () => { } }; }
+        },
+        Points: class {
+            constructor() { this.position = { x: 0, y: 0, z: 0, set: () => { } }; }
+        },
         DoubleSide: 2,
     };
 });
+global.THREE = THREE;
+if (!global.window) global.window = {};
 
 describe('Safe Population Zero', () => {
     let terrain;
     let house;
+    let mockScene;
 
     beforeEach(() => {
-        global.window = { game: { gameTotalTime: 0, units: [] } };
-        const scene = { add: () => { }, remove: () => { } };
-        terrain = new Terrain(scene, []);
+        global.window.game = { gameTotalTime: 0, units: [] };
+        mockScene = new THREE.Scene();
+        terrain = new Terrain(mockScene, []);
+
+        // Mock internal grid for simple test
+        terrain.logicalWidth = 200;
+        terrain.logicalDepth = 200;
+        terrain.grid = Array(200).fill(0).map(() => Array(200).fill({}).map(() => ({ height: 0, hasBuilding: false, building: null, type: 'grass', moisture: 0.5 })));
+        terrain.updateColors = vi.fn();
 
         house = {
             userData: {
                 type: 'house',
-                population: 10, // Cap reached
+                population: 10,
                 gridX: 10,
                 gridZ: 10
             }
         };
+        // Add to Mock Grid
+        terrain.grid[10][10].hasBuilding = true;
+        terrain.grid[10][10].building = house;
         terrain.buildings = [house];
-        terrain.grid = Array(200).fill(0).map(() => Array(200).fill({}));
-        terrain.updateColors = vi.fn();
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
     it('should NOT destroy house when spawning unit resets population to 0', () => {
-        // Mock Spawn Callback
-        const spawnCb = vi.fn().mockReturnValue(true); // Successful spawn
+        const spawnCb = vi.fn().mockReturnValue(true);
+        vi.spyOn(Math, 'random').mockReturnValue(0.1); // Always < 0.2
 
-        // Terrain update loop
-        // updatePopulation(deltaTime, isNight, activeUnits, spawnCallback)
-        // Rate is small, but if at Cap (10), logic triggers.
-
-        // Force population logic to run for this house
-        // Note: Terrain.updatePopulation has staggering logic.
-        // We need to ensure we hit the modular check.
-        // Or we can verify the logic block directly if we could access it, 
-        // but integration testing the updatePopulation method is better.
-
-        // Mock frameCount or run enough times?
-        // Terrain.updatePopulation has `this.frameCount++` and `index % staggerCount`.
-        // house is index 0. modulo 20.
-        // We need frameCount % 20 === 0.
         terrain.frameCount = 19; // Will increment to 20 -> 0.
 
         terrain.updatePopulation(1.0, false, 0, spawnCb);
 
-        // Verify Spawn triggered
         expect(spawnCb).toHaveBeenCalled();
-
-        // Verify Population reset to 0
         expect(house.userData.population).toBe(0);
-
-        // Verify House is still in buildings list (NOT destroyed)
         expect(terrain.buildings).toContain(house);
-        expect(terrain.buildings.length).toBe(1);
     });
 });

@@ -130,67 +130,66 @@ export class SoundManager {
 
         const vol = this.getVolume();
         const t = this.context.currentTime;
-        const duration = 0.6 + Math.random() * 0.4; // 0.6 - 1.0s
+        const duration = 0.5 + Math.random() * 0.4; // 0.5 - 0.9s
 
         // 1. Source: Sawtooth (Rich harmonics)
         const osc = this.context.createOscillator();
         osc.type = 'sawtooth';
 
-        // Pitch: User requested higher pitch. 
-        // 220Hz was too low. Trying 350Hz (closer to original but with new quality).
-        const freq = 350 + Math.random() * 40;
+        // Pitch: 220-250Hz (Tenor/Baritone range for sheep)
+        const freq = 220 + Math.random() * 30;
         osc.frequency.setValueAtTime(freq, t);
-        // Pitch drop at end
-        osc.frequency.exponentialRampToValueAtTime(freq * 0.8, t + duration);
+        // Slight pitch drop at end (Vocal fatigue)
+        osc.frequency.linearRampToValueAtTime(freq * 0.9, t + duration);
 
-        // 2. Tremolo (Amplitude Modulation) - The "Bleat"
-        // Sheep sound is not just pitch vibrate, it's volume stutter.
-        const tremoloOsc = this.context.createOscillator();
-        const tremoloGain = this.context.createGain();
-        tremoloOsc.frequency.value = 7 + Math.random() * 2; // 7-9Hz
-        // Tremolo depth (0.5 to 1.0)
-        tremoloGain.gain.setValueAtTime(0.7, t);
-        // tremoloOsc drives the gain of the signal
-        // Signal Chain so far: osc -> ... -> tremoloGain (controlled by tremoloOsc)
+        // 2. Modulator (LFO) for Vibrato (Pitch) AND Tremolo (Volume)
+        const lfo = this.context.createOscillator();
+        lfo.type = 'sine';
+        lfo.frequency.value = 6 + Math.random() * 2; // 6-8Hz (Fast waver)
 
-        // Wait, standard Web Audio AM: Carrier -> GainNode -> Dest; Modulator -> GainNode.gain
-        // But we want the gain to oscillate around a center volume.
-        // Easiest is to put the modulator into a gain node that adds to a constant.
+        // Vibrato (Pitch Modulation)
+        const vibratoGain = this.context.createGain();
+        vibratoGain.gain.value = 10; // +/- 10Hz depth
+        lfo.connect(vibratoGain);
+        vibratoGain.connect(osc.frequency);
 
-        // Simplified AM: 
-        // Main Gain Envelope node
-        const envGain = this.context.createGain();
+        // Tremolo (Volume Modulation)
+        // Signal Chain: Osc -> VCA (Tremolo) -> Filter -> Envelope -> Master
 
-        // Tremolo effect node
-        const amGain = this.context.createGain();
-        amGain.gain.value = 1.0; // Base value
+        // VCA for Tremolo
+        const vca = this.context.createGain();
+        vca.gain.value = 0.8; // Base gain
 
-        // Connect tremolo: osc(sine) -> gain (depth) -> amGain.gain
-        const depth = this.context.createGain();
-        depth.gain.value = 0.3; // 30% modulation depth
-        tremoloOsc.connect(depth);
-        depth.connect(amGain.gain);
-        tremoloOsc.start(t);
-        tremoloOsc.stop(t + duration);
+        // Tremolo Depth
+        const amDepth = this.context.createGain();
+        amDepth.gain.value = 0.2; // +/- 0.2 around 0.8 => 0.6 to 1.0 variation
+        lfo.connect(amDepth);
+        amDepth.connect(vca.gain);
 
-        // 3. Filter (Formant for "Baaaa" / "Maaaa")
-        // "aa" vowel has formants around 700-800Hz and 1200Hz.
+        lfo.start(t);
+        lfo.stop(t + duration);
+
+        // 3. Formant Filter (The "aaaa" sound)
         const filter = this.context.createBiquadFilter();
-        filter.type = 'lowpass'; // Lowpass preserves low harmonics, cuts extreme fizz
-        filter.frequency.value = 1200;
+        // filter.type = 'bandpass'; // Too weak/quiet
+        filter.type = 'lowpass'; // Switched back to Lowpass for reliability
+        filter.frequency.value = 1500; // Open up a bit
         filter.Q.value = 1.0;
 
-        // Chain: Osc -> AM(Tremolo) -> Filter -> Envelope -> Master
-        osc.connect(amGain);
-        amGain.connect(filter);
-        filter.connect(envGain);
-        envGain.connect(this.masterGain);
+        // Chain
+        osc.connect(vca);
+        vca.connect(filter);
 
-        // Envelope
-        envGain.gain.setValueAtTime(0, t);
-        envGain.gain.linearRampToValueAtTime(vol * 0.6, t + 0.1); // Attack
-        envGain.gain.linearRampToValueAtTime(vol * 0.5, t + duration * 0.6); // Sustain
-        envGain.gain.exponentialRampToValueAtTime(0.01, t + duration); // Release
+        // Final Envelope
+        const env = this.context.createGain();
+        env.gain.setValueAtTime(0, t);
+        // Lowered volume by 50% (0.6->0.3, 0.5->0.25)
+        env.gain.linearRampToValueAtTime(vol * 0.3, t + 0.1);
+        env.gain.linearRampToValueAtTime(vol * 0.25, t + duration * 0.6);
+        env.gain.exponentialRampToValueAtTime(0.01, t + duration); // Release
+
+        filter.connect(env);
+        env.connect(this.masterGain);
 
         osc.start(t);
         osc.stop(t + duration);

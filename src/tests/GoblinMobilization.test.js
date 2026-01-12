@@ -4,6 +4,7 @@ import { Terrain } from '../Terrain.js';
 import { Entity } from '../Entity.js';
 import { GoblinManager } from '../GoblinManager.js';
 import { Goblin } from '../Goblin.js';
+import { GoblinWanderState, GoblinRaidState } from '../ai/states/GoblinStates.js';
 import * as THREE from 'three';
 
 // Mock THREE
@@ -30,6 +31,7 @@ vi.mock('three', () => {
         Group: class extends Object3D { },
         Mesh: class extends Object3D { },
         MeshLambertMaterial: class { },
+        MeshStandardMaterial: class { },
         BoxGeometry: class { },
         ConeGeometry: class { },
         CylinderGeometry: class { },
@@ -44,13 +46,18 @@ vi.mock('three', () => {
             copy(c) { return this; }
             multiplyScalar() { return this; }
         },
-        BufferAttribute: class { constructor(arr, size) { this.array = arr; this.count = arr.length / size; } },
+        BufferAttribute: class { constructor(arr, size) { this.array = arr; this.count = arr.length / size; } setXYZ() { } setX() { } setY() { } setZ() { } },
         PlaneGeometry: class {
             attributes = { position: { count: 100, array: new Float32Array(300), getX: () => 0, getY: () => 0, setX: () => { }, setY: () => { } }, color: { array: [], count: 100, needsUpdate: false } };
             setAttribute(name, attr) { this.attributes[name] = attr; }
             getAttribute(name) { return this.attributes[name]; }
             computeVertexNormals() { }
+            translate() { }
         },
+        BoxGeometry: class { translate() { } },
+        ConeGeometry: class { translate() { } },
+        CylinderGeometry: class { translate() { } },
+        SphereGeometry: class { translate() { } },
         LineBasicMaterial: class { },
         LineSegments: class extends Object3D { },
         PointsMaterial: class { },
@@ -73,9 +80,14 @@ describe('Goblin Mobilization Verification', () => {
 
     beforeEach(() => {
         // Mock window
-        global.window = { game: { gameTotalTime: 0 } };
+        // Mock window game safely
+        if (typeof window !== 'undefined') {
+            window.game = { gameTotalTime: 0 };
+        } else {
+            global.window = { game: { gameTotalTime: 0 } };
+        }
         // Mock Scene
-        const scene = { add: () => { }, remove: () => { } };
+        const scene = { add: () => { }, remove: () => { }, getObjectByName: () => ({ add: () => { }, remove: () => { }, children: [] }) };
         terrain = new Terrain(scene, []);
         terrain.logicalWidth = 80;
         terrain.logicalDepth = 80;
@@ -109,30 +121,30 @@ describe('Goblin Mobilization Verification', () => {
 
         // Add Idle Goblins of this clan
         const g1 = new Goblin(gm.scene, terrain, 10, 10, 'normal', clanId);
-        g1.state = 'idle';
+        g1.changeState(new GoblinWanderState(g1)); // Use object
         gm.goblins.push(g1);
 
         const g2 = new Goblin(gm.scene, terrain, 12, 12, 'normal', clanId);
-        g2.state = 'idle';
+        g2.changeState(new GoblinWanderState(g2));
         gm.goblins.push(g2);
 
         // Add Goblin of DIFFERENT clan
         const gOther = new Goblin(gm.scene, terrain, 15, 15, 'normal', 'other_clan');
-        gOther.state = 'idle';
+        gOther.changeState(new GoblinWanderState(gOther));
         gm.goblins.push(gOther);
 
         // Trigger Wave
         gm.triggerWave(gm.clans[clanId]);
 
         // Check if Goblins were mobilized
-        expect(g1.state).toBe('raiding');
+        expect(g1.state.constructor.name).toBe('GoblinRaidState');
         expect(g1.raidGoal.x).toBeCloseTo(50, -1);
         expect(g1.raidGoal.z).toBeCloseTo(50, -1);
 
-        expect(g2.state).toBe('raiding');
+        expect(g2.state.constructor.name).toBe('GoblinRaidState');
 
         // Other clan should NOT be mobilized
-        expect(gOther.state).toBe('idle');
+        expect(gOther.state.constructor.name).toBe('GoblinWanderState');
     });
 
     it('mobilizeClan should rely on getClanRaidTarget fallback', () => {
@@ -148,12 +160,12 @@ describe('Goblin Mobilization Verification', () => {
         };
 
         const g1 = new Goblin(gm.scene, terrain, 5, 5, 'normal', clanId);
-        g1.state = 'idle';
+        g1.changeState(new GoblinWanderState(g1));
         gm.goblins.push(g1);
 
         gm.mobilizeClan(gm.clans[clanId]);
 
-        expect(g1.state).toBe('raiding');
+        expect(g1.state.constructor.name).toBe('GoblinRaidState');
         expect(g1.raidGoal.x).toBeCloseTo(60, -1); // Approx check with randomization
     });
 

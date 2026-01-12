@@ -1,0 +1,544 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+ 笶ｯ src/tests/SimpleRegion.test.js (2 tests | 2 failed) 42ms
+     ﾃ・should identify a single island 36ms
+     ﾃ・should split two islands 4ms
+ 笶ｯ src/tests/GhostHouse.test.js (1 test | 1 failed) 36ms
+     ﾃ・should accumulate ghost buildings in entityGrid if not cleared during deserialize 33ms
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Goblin if it is much closer than Building
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Goblin if it is much closer than Building
+[Unit Debug V3] Start Logic. Night=false, Sleep=false, Action=undefined
+[ActorDebug] Grid: 0,0 Target: 10,0 Diff: 10,0
+[ActorDebug] Next: 1,0
+[ActorDebug] Check Move 1,0 -> true
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are similar (Bonus check)
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/UnitInit.test.js > Unit Initialization and Movement Start > should NOT freeze if started at time 0
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+Debug Unit: Interval = 2.5134563096862945, LastTime = 0, Role = worker 
+[ActorDebug] Grid: 10,10 Target: 5,5 Diff: -5,-5
+[ActorDebug] Next: 10,9
+[ActorDebug] Check Move 10,9 -> true
+Debug Unit: MoveRandomly Called ? 1 
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are similar (Bonus check)
+[ActorDebug] Grid: 0,0 Target: 10,0 Diff: 10,0
+[ActorDebug] Next: 1,0
+[ActorDebug] Check Move 1,0 -> true
+
+ 笶ｯ src/tests/UnitInit.test.js (1 test | 1 failed) 20ms
+     ﾃ・should NOT freeze if started at time 0 18ms
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should allow Workers to target Huts at range 25 (New Range: 30)
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+
+ 笶ｯ src/tests/TargetingPriority.test.js (3 tests | 2 failed) 29ms
+     笨・should prioritize Goblin if it is much closer than Building 8ms
+     ﾃ・should prioritize Building if distances are similar (Bonus check) 15ms
+     ﾃ・should allow Workers to target Huts at range 25 (New Range: 30) 3ms
+ 笶ｯ src/tests/CavePersistence.test.js (2 tests | 2 failed) 26ms
+     ﾃ・should update cave Y position when terrain height changes 21ms
+     ﾃ・should destroy cave if submerged (height <= 0) 2ms
+ 笶ｯ src/tests/GoblinDestruction.test.js (5 tests | 5 failed) 32ms
+     ﾃ・should damage building population 22ms
+     ﾃ・should destroy building when population drops below 1.0 2ms
+     ﾃ・should destroy building even if fractional population remains (e.g. 0.5) 1ms
+     ﾃ・should NOT destroy building if population remains >= 1.0 2ms
+     ﾃ・should take retaliation damage 3ms
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins deal population damage to player buildings
+Goblin 0 attacking house. Pop: 9.00
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins deal structural damage to empty player buildings
+Goblin 1 hitting Empty house. HP: 40
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Knight vs Single Goblin (1v1) - AI Logic Check
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+[Unit Debug V3] Start Logic. Night=false, Sleep=false, Action=undefined
+[Unit Debug] ATTACKING Goblin 0
+Goblin (normal) died. ID:0
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins destroy player buildings when HP reaches 0
+Goblin 2 hitting Empty house. HP: 0
+Goblin 2 destroyed house!
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Buildings retaliate against melee goblins
+Goblin 3 attacking house. Pop: 9.92
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Towers have massive retaliation
+Goblin 4 attacking tower. Pop: 4.92
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Wizard vs Single Goblin (1v1) - Wizard should win
+[UnitCore.js] Unit Created ID:1 Role:wizard Pos:0,0 Special:false
+[Unit Debug] ATTACKING Goblin 1
+Goblin (normal) died. ID:1
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > No retaliation for distant attackers (Shamans)
+Goblin 5 attacking house. Pop: 9.20
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Standard HP logic for Goblin buildings
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:20,20 Special:false
+Unit 0 attacking cave. HP: 150
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Knight vs Swarm (1v5) - Knight should surviving
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+[Unit Debug] ATTACKING Goblin g0
+Goblin (normal) died. ID:g0
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Load Game Persistence - Should resume movement
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0 Special:false
+[ActorDebug] Grid: 0,0 Target: 10,10 Diff: 10,10
+[ActorDebug] Next: 0,1
+[Unit 3] Moving onto Rock at 0,1 H:10 (Speed Penalty)
+[ActorDebug] Check Move 0,1 -> true
+
+ 笨・src/tests/BuildingDefense.test.js (8 tests) 26ms
+ 笶ｯ src/tests/CombatBalance.test.js (4 tests | 4 failed) 54ms
+     ﾃ・Knight vs Single Goblin (1v1) - AI Logic Check 42ms
+     ﾃ・Wizard vs Single Goblin (1v1) - Wizard should win 3ms
+     ﾃ・Knight vs Swarm (1v5) - Knight should surviving 4ms
+     ﾃ・Load Game Persistence - Should resume movement 3ms
+ 笶ｯ src/tests/StuckDebug.test.js (1 test | 1 failed) 102ms
+     ﾃ・should log reason for blockage 101ms
+stderr | src/tests/CombatRequestHandoff.test.js > Request Responsiveness & Combat Handoff > forceAssignRequest prioritizes nearby busy unit over distant idle unit
+[Game] forceAssignRequest: assignRequestSync not found.
+
+ 笶ｯ src/tests/CombatRequestHandoff.test.js (2 tests | 2 failed) 434ms
+     ﾃ・Worker releases job when engaging in combat 271ms
+     ﾃ・forceAssignRequest prioritizes nearby busy unit over distant idle unit 162ms
+ 笶ｯ src/tests/BuildingDestruction.test.js (3 tests | 3 failed) 194ms
+     ﾃ・should destroy building immediately when population hits 0 107ms
+     ﾃ・should destroy building if already 0 52ms
+     ﾃ・should NOT destroy building if population remains > 0 33ms
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should tag new requests with createdAt timestamp
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cleanup expired pending requests
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should NOT cleanup assigned requests even if old
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cancel request via Proximity Search
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should prioritize nearest request when cancelling
+Game constructor called
+
+ 笶ｯ src/tests/RequestLifecycle.test.js (5 tests | 5 failed) 202ms
+     ﾃ・should tag new requests with createdAt timestamp 83ms
+     ﾃ・should cleanup expired pending requests 35ms
+     ﾃ・should NOT cleanup assigned requests even if old 28ms
+     ﾃ・should cancel request via Proximity Search 27ms
+     ﾃ・should prioritize nearest request when cancelling 26ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 28 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/BuildingDestruction.test.js > Building Destruction Logic > should destroy building immediately when population hits 0
+ FAIL  src/tests/BuildingDestruction.test.js > Building Destruction Logic > should destroy building if already 0
+ FAIL  src/tests/BuildingDestruction.test.js > Building Destruction Logic > should NOT destroy building if population remains > 0
+TypeError: this.scene.getObjectByName is not a function
+ 笶ｯ new Goblin src/Goblin.js:73:39
+     71| 
+     72|         // Ensure mesh group exists
+     73|         if (this.scene && !this.scene.getObjectByName('GoblinGroup')) {
+       |                                       ^
+     74|             // managed by GoblinRenderer usually
+     75|         }
+ 笶ｯ src/tests/BuildingDestruction.test.js:93:18
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/28]竡ｯ
+
+ FAIL  src/tests/CavePersistence.test.js > GoblinManager Cave Persistence > should update cave Y position when terrain height changes
+ FAIL  src/tests/CavePersistence.test.js > GoblinManager Cave Persistence > should destroy cave if submerged (height <= 0)
+Error: [vitest] No "Sphere" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi.mock(import("three"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    // your mocked methods
+  }
+})
+
+ 笶ｯ new GoblinRenderer src/GoblinRenderer.js:22:41
+     20|         this._dummy = new THREE.Object3D();
+     21|         this._scratchVector = new THREE.Vector3();
+     22|         this._scratchSphere = new THREE.Sphere(new THREE.Vector3(), 2.窶ｦ
+       |                                         ^
+     23| 
+     24|         this.meshGroup = new THREE.Group();
+ 笶ｯ new GoblinManager src/GoblinManager.js:16:25
+ 笶ｯ src/tests/CavePersistence.test.js:110:19
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/28]竡ｯ
+
+ FAIL  src/tests/CombatBalance.test.js > Combat Balance Simulation > Knight vs Single Goblin (1v1) - AI Logic Check
+AssertionError: AI CRASH: window.game.reportGlobalBattle is not a function 
+ TypeError: window.game.reportGlobalBattle is not a function
+    at Unit.reportEnemy (C:/Users/mooya/develop/test/src/Unit.js:1369:25)
+    at Unit.attackGoblin (C:/Users/mooya/develop/test/src/Unit.js:418:14)
+    at Unit.updateLogic (C:/Users/mooya/develop/test/src/Unit.js:962:22)
+    at C:/Users/mooya/develop/test/src/tests/CombatBalance.test.js:132:24
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1650:37
+ 笶ｯ Unit.reportEnemy src/Unit.js:1369:25
+    1367|         } else if (window.game) {
+    1368|             // If no squad, report directly to Global
+    1369|             window.game.reportGlobalBattle(x, z);
+       |                         ^
+    1370|         }
+    1371| 
+ 笶ｯ Unit.attackGoblin src/Unit.js:418:14
+ 笶ｯ Unit.updateLogic src/Unit.js:962:22
+ 笶ｯ src/tests/CombatBalance.test.js:132:24
+ 笶ｯ src/tests/CombatBalance.test.js:145:20
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/28]竡ｯ
+
+ FAIL  src/tests/CombatBalance.test.js > Combat Balance Simulation > Wizard vs Single Goblin (1v1) - Wizard should win
+AssertionError: Wiz CRASH: window.game.reportGlobalBattle is not a function
+ 笶ｯ src/tests/CombatBalance.test.js:180:30
+    178|                 time += dt;
+    179|             }
+    180|         } catch (e) { expect.fail(`Wiz CRASH: ${e.message}`); }
+       |                              ^
+    181| 
+    182|         expect(goblin.isDead).toBe(true);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[4/28]竡ｯ
+
+ FAIL  src/tests/CombatBalance.test.js > Combat Balance Simulation > Knight vs Swarm (1v5) - Knight should surviving
+AssertionError: Swarm CRASH: window.game.reportGlobalBattle is not a function 
+ TypeError: window.game.reportGlobalBattle is not a function
+    at Unit.reportEnemy (C:/Users/mooya/develop/test/src/Unit.js:1369:25)
+    at Unit.attackGoblin (C:/Users/mooya/develop/test/src/Unit.js:418:14)
+    at C:/Users/mooya/develop/test/src/tests/CombatBalance.test.js:210:32
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1650:37
+    at Traces.$ (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/traces.U4xDYhzZ.js:115:27)
+ 笶ｯ Unit.reportEnemy src/Unit.js:1369:25
+    1367|         } else if (window.game) {
+    1368|             // If no squad, report directly to Global
+    1369|             window.game.reportGlobalBattle(x, z);
+       |                         ^
+    1370|         }
+    1371| 
+ 笶ｯ Unit.attackGoblin src/Unit.js:418:14
+ 笶ｯ src/tests/CombatBalance.test.js:210:32
+ 笶ｯ src/tests/CombatBalance.test.js:228:20
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[5/28]竡ｯ
+
+ FAIL  src/tests/CombatBalance.test.js > Combat Balance Simulation > Load Game Persistence - Should resume movement
+TypeError: this.terrain.getRegion is not a function
+ 笶ｯ Unit.moveRandomly src/Unit.js:2065:44
+    2063| 
+    2064|         // 1. Get Current Region
+    2065|         const currentRegion = this.terrain.getRegion(this.gridX, this.窶ｦ
+       |                                            ^
+    2066| 
+    2067|         // 2. Determine Patrol Radius (Larger for Knights)
+ 笶ｯ Unit.updateLogic src/Unit.js:1166:18
+ 笶ｯ src/tests/CombatBalance.test.js:247:12
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[6/28]竡ｯ
+
+ FAIL  src/tests/CombatRequestHandoff.test.js > Request Responsiveness & Combat Handoff > Worker releases job when engaging in combat
+AssertionError: expected "vi.fn()" to be called at least once
+ 笶ｯ src/tests/CombatRequestHandoff.test.js:84:41
+     82|         // Job release occurs in JobState.update (Night/Defense) OR Un窶ｦ
+     83| 
+     84|         expect(mockGame.releaseRequest).toHaveBeenCalled();
+       |                                         ^
+     85|         expect(unitInstance.targetRequest).toBeNull();
+     86|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[7/28]竡ｯ
+
+ FAIL  src/tests/CombatRequestHandoff.test.js > Request Responsiveness & Combat Handoff > forceAssignRequest prioritizes nearby busy unit over distant idle unit
+AssertionError: expected "vi.fn()" to be called at least once
+ 笶ｯ src/tests/CombatRequestHandoff.test.js:112:39
+    110|         vi.runAllTimers();
+    111| 
+    112|         expect(mockGame.claimRequest).toHaveBeenCalled();
+       |                                       ^
+    113|         // Check if Unit 1 was the one claimed (mockGame.claimRequest 窶ｦ
+    114|         const calls = mockGame.claimRequest.mock.calls;
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[8/28]竡ｯ
+
+ FAIL  src/tests/GhostHouse.test.js > Terrain Ghost House Test > should accumulate ghost buildings in entityGrid if not cleared during deserialize
+Error: [vitest] No "PlaneGeometry" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi.mock(import("three"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    // your mocked methods
+  }
+})
+
+ 笶ｯ Terrain.initTerrain src/Terrain.js:259:35
+    257|         // We want the "Center" 40x40 to be at World 0,0.
+    258|         // PlaneGeometry is centered.
+    259|         this.geometry = new THREE.PlaneGeometry(this.width, this.depth窶ｦ
+       |                                   ^
+    260|         // Rotate to XZ plane immediately to simplify logic? 
+    261|         // Or keep standard and rotate mesh. Standard is better for ut窶ｦ
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ src/tests/GhostHouse.test.js:45:19
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[9/28]竡ｯ
+
+ FAIL  src/tests/GoblinDestruction.test.js > Goblin Building Destruction > should damage building population
+TypeError: window.game.reportGlobalBattle is not a function
+ 笶ｯ Goblin.attackBuilding src/Goblin.js:896:29
+    894|             // 0. Report Attack to Global Hotspots (Help needed!)
+    895|             if (window.game) {
+    896|                 window.game.reportGlobalBattle(building.userData.gridX窶ｦ
+       |                             ^
+    897|             }
+    898| 
+ 笶ｯ src/tests/GoblinDestruction.test.js:59:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[10/28]竡ｯ
+
+ FAIL  src/tests/GoblinDestruction.test.js > Goblin Building Destruction > should destroy building when population drops below 1.0
+TypeError: window.game.reportGlobalBattle is not a function
+ 笶ｯ Goblin.attackBuilding src/Goblin.js:896:29
+    894|             // 0. Report Attack to Global Hotspots (Help needed!)
+    895|             if (window.game) {
+    896|                 window.game.reportGlobalBattle(building.userData.gridX窶ｦ
+       |                             ^
+    897|             }
+    898| 
+ 笶ｯ src/tests/GoblinDestruction.test.js:66:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[11/28]竡ｯ
+
+ FAIL  src/tests/GoblinDestruction.test.js > Goblin Building Destruction > should destroy building even if fractional population remains (e.g. 0.5)
+TypeError: window.game.reportGlobalBattle is not a function
+ 笶ｯ Goblin.attackBuilding src/Goblin.js:896:29
+    894|             // 0. Report Attack to Global Hotspots (Help needed!)
+    895|             if (window.game) {
+    896|                 window.game.reportGlobalBattle(building.userData.gridX窶ｦ
+       |                             ^
+    897|             }
+    898| 
+ 笶ｯ src/tests/GoblinDestruction.test.js:76:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[12/28]竡ｯ
+
+ FAIL  src/tests/GoblinDestruction.test.js > Goblin Building Destruction > should NOT destroy building if population remains >= 1.0
+TypeError: window.game.reportGlobalBattle is not a function
+ 笶ｯ Goblin.attackBuilding src/Goblin.js:896:29
+    894|             // 0. Report Attack to Global Hotspots (Help needed!)
+    895|             if (window.game) {
+    896|                 window.game.reportGlobalBattle(building.userData.gridX窶ｦ
+       |                             ^
+    897|             }
+    898| 
+ 笶ｯ src/tests/GoblinDestruction.test.js:85:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[13/28]竡ｯ
+
+ FAIL  src/tests/GoblinDestruction.test.js > Goblin Building Destruction > should take retaliation damage
+TypeError: window.game.reportGlobalBattle is not a function
+ 笶ｯ Goblin.attackBuilding src/Goblin.js:896:29
+    894|             // 0. Report Attack to Global Hotspots (Help needed!)
+    895|             if (window.game) {
+    896|                 window.game.reportGlobalBattle(building.userData.gridX窶ｦ
+       |                             ^
+    897|             }
+    898| 
+ 笶ｯ src/tests/GoblinDestruction.test.js:95:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[14/28]竡ｯ
+
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should tag new requests with createdAt timestamp
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cleanup expired pending requests
+TypeError: color.setHex is not a function
+ 笶ｯ Terrain.getBiomeColor src/Terrain.js:768:19
+    766|         } else {
+    767|             // Rock
+    768|             color.setHex(0x808080);
+       |                   ^
+    769|             const n = (noise + 1) * 0.5;
+    770|             color.lerp(new THREE.Color(0x606060), n * 0.2);
+ 笶ｯ Terrain.updateColors src/Terrain.js:708:36
+ 笶ｯ Terrain.calculateRegions src/Terrain.js:393:14
+ 笶ｯ Terrain.generateRandomTerrain src/Terrain.js:337:14
+ 笶ｯ Terrain.initTerrain src/Terrain.js:284:14
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ new Game src/Game.js:139:24
+ 笶ｯ src/tests/RequestLifecycle.test.js:108:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[15/28]竡ｯ
+
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should NOT cleanup assigned requests even if old
+TypeError: color.setHex is not a function
+ 笶ｯ Terrain.getBiomeColor src/Terrain.js:764:23
+    762|                 color.setHex(0x006400); // Deep Green
+    763|             } else {
+    764|                 color.setHex(0x228B22); // Spring
+       |                       ^
+    765|             }
+    766|         } else {
+ 笶ｯ Terrain.updateColors src/Terrain.js:708:36
+ 笶ｯ Terrain.calculateRegions src/Terrain.js:393:14
+ 笶ｯ Terrain.generateRandomTerrain src/Terrain.js:337:14
+ 笶ｯ Terrain.initTerrain src/Terrain.js:284:14
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ new Game src/Game.js:139:24
+ 笶ｯ src/tests/RequestLifecycle.test.js:108:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[16/28]竡ｯ
+
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cancel request via Proximity Search
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should prioritize nearest request when cancelling
+TypeError: color.setHex is not a function
+ 笶ｯ Terrain.getBiomeColor src/Terrain.js:742:23
+    740|                 color.setHex(0x00A850); // Vibrant Green
+    741|             } else if (season === 'Autumn' || season === 'Spring') {
+    742|                 color.setHex(0x88DD88); // Spring
+       |                       ^
+    743|             } else {
+    744|                 color.setHex(0x88DD88); // Default
+ 笶ｯ Terrain.updateColors src/Terrain.js:708:36
+ 笶ｯ Terrain.calculateRegions src/Terrain.js:393:14
+ 笶ｯ Terrain.generateRandomTerrain src/Terrain.js:337:14
+ 笶ｯ Terrain.initTerrain src/Terrain.js:284:14
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ new Game src/Game.js:139:24
+ 笶ｯ src/tests/RequestLifecycle.test.js:108:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[17/28]竡ｯ
+
+ FAIL  src/tests/SimpleRegion.test.js > Simple Region Connectivity > should identify a single island
+ FAIL  src/tests/SimpleRegion.test.js > Simple Region Connectivity > should split two islands
+TypeError: posAttr.setX is not a function
+ 笶ｯ Terrain.initTerrain src/Terrain.js:276:21
+    274|             const offsets = this.getVisualOffset(x, y);
+    275| 
+    276|             posAttr.setX(i, x + offsets.x);
+       |                     ^
+    277|             posAttr.setY(i, y + offsets.y);
+    278|         }
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ src/tests/SimpleRegion.test.js:40:19
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[18/28]竡ｯ
+
+ FAIL  src/tests/StuckDebug.test.js > Unit Stuck Debugging > should log reason for blockage
+TypeError: color.setHex is not a function
+ 笶ｯ Terrain.getBiomeColor src/Terrain.js:764:23
+    762|                 color.setHex(0x006400); // Deep Green
+    763|             } else {
+    764|                 color.setHex(0x228B22); // Spring
+       |                       ^
+    765|             }
+    766|         } else {
+ 笶ｯ Terrain.updateColors src/Terrain.js:708:36
+ 笶ｯ Terrain.calculateRegions src/Terrain.js:393:14
+ 笶ｯ Terrain.generateRandomTerrain src/Terrain.js:337:14
+ 笶ｯ Terrain.initTerrain src/Terrain.js:284:14
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ src/tests/StuckDebug.test.js:42:25
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[19/28]竡ｯ
+
+ FAIL  src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are similar (Bonus check)
+AssertionError: expected null to be { userData: { 窶ｦ(4) }, gridX: 12, 窶ｦ(1) } // Object.is equality
+
+- Expected: 
+{
+  "gridX": 12,
+  "gridZ": 0,
+  "userData": {
+    "gridX": 12,
+    "gridZ": 0,
+    "hp": 100,
+    "type": "goblin_hut",
+  },
+}
+
++ Received: 
+null
+
+ 笶ｯ src/tests/TargetingPriority.test.js:95:37
+     93| 
+     94|         // AI logic: If Building distance < 15, PRIORITIZE it over Uni窶ｦ
+     95|         expect(unit.targetBuilding).toBe(hut);
+       |                                     ^
+     96|         expect(unit.targetGoblin).toBeNull();
+     97|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[20/28]竡ｯ
+
+ FAIL  src/tests/TargetingPriority.test.js > Unit Targeting Priority > should allow Workers to target Huts at range 25 (New Range: 30)
+AssertionError: expected undefined to be { userData: { 窶ｦ(4) }, gridX: 25, 窶ｦ(1) } // Object.is equality
+
+- Expected: 
+{
+  "gridX": 25,
+  "gridZ": 0,
+  "userData": {
+    "gridX": 25,
+    "gridZ": 0,
+    "hp": 100,
+    "type": "goblin_hut",
+  },
+}
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/TargetingPriority.test.js:111:37
+    109|         unit.updateLogic(1000, 0.1, false, [], [], []);
+    110| 
+    111|         expect(unit.targetBuilding).toBe(hut);
+       |                                     ^
+    112|     });
+    113| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[21/28]竡ｯ
+
+ FAIL  src/tests/UnitInit.test.js > Unit Initialization and Movement Start > should NOT freeze if started at time 0
+AssertionError: expected +0 to be 6000 // Object.is equality
+
+- Expected
++ Received
+
+- 6000
++ 0
+
+ 笶ｯ src/tests/UnitInit.test.js:52:31
+     50|         expect(unit.moveRandomly).toHaveBeenCalled();
+     51|         // lastTime should be updated
+     52|         expect(unit.lastTime).toBe(6000);
+       |                               ^
+     53|     });
+     54| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[22/28]竡ｯ
+
+
+ Test Files  11 failed | 1 passed (12)
+      Tests  28 failed | 9 passed (37)
+   Start at  20:30:01
+   Duration  1.75s (transform 1.96s, setup 434ms, import 3.26s, tests 1.20s, environment 8.63s)
+

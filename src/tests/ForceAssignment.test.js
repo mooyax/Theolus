@@ -5,14 +5,26 @@ import { Unit } from '../Unit';
 
 // Mock Three.js to avoid canvas/visual issues
 vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
+    class MockVec3 {
+        constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
+        set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
+        copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
+    }
+    class MockGeometry {
+        constructor() { this.translate = vi.fn().mockReturnThis(); this.rotateX = vi.fn().mockReturnThis(); }
+        dispose() { }
+    }
     return {
-        ...actual,
+        Vector3: MockVec3,
+        Frustum: class { setFromProjectionMatrix() { } containsPoint() { return true; } },
+        Matrix4: class { set() { } copy() { } },
+        Plane: class { constructor() { this.set = vi.fn(); } },
+        Fog: class { },
         Mesh: class {
             constructor() {
-                this.position = { set: vi.fn(), copy: vi.fn(), x: 0, y: 0, z: 0 };
+                this.position = new MockVec3();
                 this.material = { clone: () => ({ uniforms: { uColor: { value: { setHex: vi.fn() } } } }), dispose: vi.fn() };
-                this.geometry = { dispose: vi.fn() };
+                this.geometry = new MockGeometry();
                 this.rotation = { y: 0 };
             }
         },
@@ -29,9 +41,18 @@ vi.mock('three', async () => {
         },
         AmbientLight: class { },
         DirectionalLight: class { position = { set: vi.fn() }; },
-        CylinderGeometry: class { },
+        BoxGeometry: class extends MockGeometry { },
+        SphereGeometry: class extends MockGeometry { },
+        CylinderGeometry: class extends MockGeometry { },
+        PlaneGeometry: class extends MockGeometry { },
+        ConeGeometry: class extends MockGeometry { },
+        CapsuleGeometry: class extends MockGeometry { },
+        MeshStandardMaterial: class { constructor() { this.setValues = vi.fn(); } },
+        MeshLambertMaterial: class { },
+        MeshBasicMaterial: class { },
+        CanvasTexture: class { },
         ShaderMaterial: class { clone() { return this; } },
-        Color: class { setHex() { } },
+        Color: class { setHex() { } set() { } },
     };
 });
 
@@ -66,6 +87,8 @@ vi.mock('../Terrain', () => {
             registerEntity() { }
             unregisterEntity() { }
             gridToWorld(v) { return v; }
+            findPath(sx, sz, ex, ez) { return [{ x: ex, z: ez }]; }
+            pathfindingCalls = 0;
         }
     };
 });
@@ -88,8 +111,16 @@ describe('Force Assignment Integration', () => {
 
     beforeEach(() => {
         // Mock Browser Globals
-        global.window = { innerWidth: 800, innerHeight: 600, devicePixelRatio: 1, addEventListener: vi.fn(), game: {} };
-        global.document = { body: { appendChild: vi.fn() }, getElementById: vi.fn(() => ({ addEventListener: vi.fn() })) };
+        if (typeof window !== 'undefined') {
+            window.innerWidth = 800;
+            window.innerHeight = 600;
+            window.devicePixelRatio = 1;
+        }
+        if (typeof document !== 'undefined') {
+            vi.spyOn(document, 'getElementById').mockReturnValue({ addEventListener: vi.fn() });
+            if (!document.body) document.body = { appendChild: vi.fn() };
+            else vi.spyOn(document.body, 'appendChild').mockImplementation(() => { });
+        }
         global.requestAnimationFrame = vi.fn();
 
         // Spy on Game prototype

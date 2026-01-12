@@ -1,0 +1,12 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+ ﾃ・src/tests/StuckAndMarker.test.js > Stuck and Marker Debugging > should preserve targetRequest while moving 28ms
+   竊・Cannot read properties of undefined (reading '0')
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+     Errors  22 errors
+   Start at  23:55:56
+   Duration  1.14s (transform 307ms, setup 39ms, import 391ms, tests 29ms, environment 446ms)
+

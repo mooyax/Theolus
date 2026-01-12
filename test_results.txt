@@ -1,0 +1,200 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould continue MANUAL job when night falls
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/ManualPriority.test.js[2m > [22m[2mManual Request Priority and Preemption[2m > [22m[2mshould allow manual request to preempt CombatState
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould continue MANUAL job when night falls
+[22m[39m[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:0
+
+[90mstdout[2m | src/tests/ManualPriority.test.js[2m > [22m[2mManual Request Priority and Preemption[2m > [22m[2mshould allow manual request to preempt CombatState
+[22m[39m[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:1
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould release AUTO job when night falls
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/ManualPriority.test.js[2m > [22m[2mManual Request Priority and Preemption[2m > [22m[2mshould allow manual request to preempt SleepState
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/ManualPriority.test.js[2m > [22m[2mManual Request Priority and Preemption[2m > [22m[2mshould allow manual request to preempt SleepState
+[22m[39m[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:None
+[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:0
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:0
+
+[90mstdout[2m | src/tests/ManualPriority.test.js[2m > [22m[2mManual Request Priority and Preemption[2m > [22m[2mshould NOT allow auto request to preempt CombatState
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould release AUTO job when night falls
+[22m[39m[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:None
+[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:0
+
+[90mstdout[2m | src/tests/ManualPriority.test.js[2m > [22m[2mManual Request Priority and Preemption[2m > [22m[2mshould NOT allow auto request to preempt CombatState
+[22m[39m[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:1
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould prefer MANUAL job over sleep in UnitWanderState at night
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+ [32m笨・[39m src/tests/ManualPriority.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould prefer MANUAL job over sleep in UnitWanderState at night
+[22m[39m[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:0
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:0
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould go to sleep if only AUTO jobs available at night
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould go to sleep if only AUTO jobs available at night
+[22m[39m[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:0
+[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:None
+[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:0
+
+ [32m笨・[39m src/tests/NightManualWork.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould save game data correctly
+[22m[39mSaving Game Data: {
+  slotId: [33m1[39m,
+  timestamp: [33m1767622895301[39m,
+  resources: { grain: [33m100[39m, fish: [33m50[39m, meat: [33m25[39m },
+  gameTime: [33m12[39m,
+  gameTotalTime: [33m0[39m,
+  currentSeasonIndex: [90mundefined[39m,
+  daysPassed: [90mundefined[39m,
+  terrain: {
+    logicalWidth: [33m160[39m,
+    logicalDepth: [33m160[39m,
+    version: [33m2[39m,
+    h: [
+       [33m8[39m,  [33m7[39m,  [33m6[39m,  [33m5[39m,  [33m3[39m,  [33m2[39m,  [33m1[39m,  [33m1[39m, [33m-0[39m, [33m-1[39m, [33m-2[39m, [33m-3[39m,
+      [33m-4[39m, [33m-4[39m, [33m-4[39m, [33m-4[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
+      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
+      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
+      [33m-5[39m, [33m-5[39m, [33m-4[39m, [33m-3[39m, [33m-2[39m, [33m-1[39m,  [33m0[39m,  [33m1[39m,  [33m2[39m,  [33m3[39m,  [33m4[39m,  [33m5[39m,
+       [33m5[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m5[39m,  [33m5[39m,  [33m4[39m,  [33m2[39m,  [33m1[39m,
+       [33m0[39m, [33m-0[39m, [33m-1[39m, [33m-2[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-4[39m, [33m-4[39m, [33m-4[39m, [33m-4[39m, [33m-4[39m,
+      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
+      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
+      ... 25500 more items
+    ],
+    n: [
+      [33m-0.01[39m,    [33m-0[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.02[39m,     [33m0[39m,  [33m0.02[39m,  [33m0.02[39m,     [33m0[39m,
+       [33m0.01[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.01[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.01[39m,
+      [33m-0.02[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.02[39m,  [33m0.01[39m,  [33m0.01[39m,  [33m0.02[39m,
+          [33m0[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m,    [33m-0[39m,     [33m0[39m,  [33m0.02[39m,    [33m-0[39m,  [33m0.02[39m,
+      [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.01[39m, [33m-0.01[39m, [33m-0.01[39m,    [33m-0[39m,  [33m0.02[39m,
+       [33m0.02[39m, [33m-0.02[39m,  [33m0.02[39m,    [33m-0[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.01[39m,
+          [33m0[39m, [33m-0.02[39m,     [33m0[39m,    [33m-0[39m,  [33m0.02[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.01[39m,
+      [33m-0.02[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.02[39m,    [33m-0[39m, [33m-0.01[39m, [33m-0.01[39m,    [33m-0[39m,     [33m0[39m,
+      [33m-0.01[39m,     [33m0[39m, [33m-0.02[39m, [33m-0.01[39m, [33m-0.01[39m,    [33m-0[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.01[39m,
+      [33m-0.02[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.02[39m, [33m-0.01[39m,
+       [33m0.02[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.01[39m,     [33m0[39m, [33m-0.01[39m,     [33m0[39m,  [33m0.02[39m,     [33m0[39m,
+         [33m-0[39m,
+      ... 25500 more items
+    ],
+    b: [],
+    m: [
+      [33m0.62[39m, [33m0.61[39m, [33m0.58[39m, [33m0.55[39m, [33m0.52[39m, [33m0.49[39m, [33m0.46[39m, [33m0.43[39m, [33m0.41[39m, [33m0.39[39m,
+      [33m0.37[39m, [33m0.36[39m, [33m0.34[39m, [33m0.33[39m, [33m0.32[39m, [33m0.31[39m,  [33m0.3[39m, [33m0.28[39m, [33m0.25[39m, [33m0.23[39m,
+      [33m0.22[39m, [33m0.22[39m, [33m0.24[39m, [33m0.25[39m, [33m0.25[39m, [33m0.24[39m, [33m0.24[39m, [33m0.24[39m, [33m0.24[39m, [33m0.25[39m,
+      [33m0.26[39m, [33m0.26[39m, [33m0.27[39m, [33m0.26[39m, [33m0.24[39m, [33m0.22[39m,  [33m0.2[39m, [33m0.18[39m, [33m0.17[39m, [33m0.17[39m,
+      [33m0.18[39m, [33m0.19[39m, [33m0.21[39m, [33m0.23[39m, [33m0.26[39m, [33m0.29[39m, [33m0.32[39m, [33m0.35[39m, [33m0.36[39m, [33m0.36[39m,
+      [33m0.35[39m, [33m0.35[39m, [33m0.35[39m, [33m0.35[39m, [33m0.36[39m, [33m0.37[39m, [33m0.38[39m,  [33m0.4[39m, [33m0.42[39m, [33m0.45[39m,
+      [33m0.47[39m, [33m0.47[39m, [33m0.48[39m, [33m0.48[39m, [33m0.48[39m, [33m0.47[39m, [33m0.45[39m, [33m0.42[39m, [33m0.39[39m, [33m0.37[39m,
+      [33m0.35[39m, [33m0.33[39m, [33m0.32[39m,  [33m0.3[39m, [33m0.29[39m, [33m0.28[39m, [33m0.27[39m, [33m0.27[39m, [33m0.28[39m, [33m0.29[39m,
+       [33m0.3[39m, [33m0.31[39m,  [33m0.3[39m, [33m0.29[39m,  [33m0.3[39m, [33m0.32[39m, [33m0.34[39m, [33m0.36[39m, [33m0.38[39m, [33m0.41[39m,
+      [33m0.44[39m, [33m0.48[39m, [33m0.51[39m, [33m0.54[39m, [33m0.58[39m, [33m0.61[39m, [33m0.62[39m, [33m0.61[39m, [33m0.59[39m, [33m0.57[39m,
+      ... 25500 more items
+    ]
+  },
+  units: [],
+  goblinManager: {},
+  camera: {
+    position: { x: [33m20[39m, y: [33m20[39m, z: [33m20[39m },
+    zoom: [33m1[39m,
+    target: { x: [90mundefined[39m, y: [90mundefined[39m, z: [90mundefined[39m }
+  },
+  requests: []
+}
+Saved to slot 1 (Compressed). Size: 23899 chars (Original: 308357)
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39mLoad Started...
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39mLoading slot 1, Raw length: 100
+Load: Decompressed successfully.
+Parsed Data for slot 1: {
+  timestamp: [33m1767622895996[39m,
+  data: {
+    resources: { grain: [33m999[39m, fish: [33m888[39m },
+    gameTime: [33m6[39m,
+    terrain: { logicalWidth: [33m10[39m, logicalDepth: [33m10[39m, grid: [], buildings: [] },
+    units: [],
+    camera: { position: [36m[Object][39m, target: [36m[Object][39m }
+  }
+}
+Load Game: Data found {
+  resources: { grain: [33m999[39m, fish: [33m888[39m },
+  gameTime: [33m6[39m,
+  terrain: { logicalWidth: [33m10[39m, logicalDepth: [33m10[39m, grid: [], buildings: [] },
+  units: [],
+  camera: { position: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m }, target: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m } }
+}
+Clearing 0 projectiles...
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[DEBUG] Terrain.setSeason: Changing from undefined to Spring
+[Game] Restored Camera Zoom: 1
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39mLoad Started...
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39mLoading slot 1, Raw length: 111
+Load: Decompressed successfully.
+Parsed Data for slot 1: {
+  timestamp: [33m1767622896842[39m,
+  data: {
+    resources: {},
+    gameTime: [33m10[39m,
+    terrain: { logicalWidth: [33m80[39m, grid: [], buildings: [] },
+    units: [],
+    requests: [ [36m[Object][39m, [36m[Object][39m ]
+  }
+}
+Load Game: Data found {
+  resources: {},
+  gameTime: [33m10[39m,
+  terrain: { logicalWidth: [33m80[39m, grid: [], buildings: [] },
+  units: [],
+  requests: [
+    { id: [32m'req_1'[39m, type: [32m'raise'[39m, x: [33m5[39m, z: [33m5[39m, status: [32m'pending'[39m },
+    { id: [32m'req_2'[39m, type: [32m'lower'[39m, x: [33m10[39m, z: [33m10[39m, status: [32m'completed'[39m }
+  ]
+}
+Clearing 0 projectiles...
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Terrain] Deserializing Legacy Format...
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[DEBUG] Terrain.setSeason: Changing from undefined to Spring
+[Game] Restoring 2 requests...
+
+ [32m笨・[39m src/tests/SaveLoad.test.js [2m([22m[2m3 tests[22m[2m)[22m[33m 2397[2mms[22m[39m
+     [33m[2m笨・[22m[39m should save game data correctly [33m 681[2mms[22m[39m
+     [33m[2m笨・[22m[39m should load game data correctly [33m 833[2mms[22m[39m
+     [33m[2m笨・[22m[39m should restore request markers with correct renderOrder [33m 880[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 23:21:33
+[2m   Duration [22m 4.08s[2m (transform 732ms, setup 106ms, import 1.37s, tests 2.44s, environment 2.07s)[22m
+

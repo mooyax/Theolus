@@ -15,15 +15,41 @@ export class SaveManager {
             const jsonString = JSON.stringify(saveData);
             // Compression
             const compressed = LZString.compressToUTF16(jsonString);
-            localStorage.setItem(key, compressed);
+
+            // Fix: Force remove old item first to free space BEFORE allocation
+            // This prevents "QuotaExceeded" when overwriting large keys due to temp buffers
+            localStorage.removeItem(key);
+
+            try {
+                localStorage.setItem(key, compressed);
+            } catch (innerE) {
+                // If setItem fails, restore empty or handle?
+                // The outer catch will handle it.
+                // But specifically note that we cleared it.
+                console.warn(`Failed to save to ${key}, slot is now empty.`);
+                throw innerE;
+            }
 
             console.log(`Saved to slot ${slotId} (Compressed). Size: ${compressed.length} chars (Original: ${jsonString.length})`);
             return true;
         } catch (e) {
             console.error('Save failed:', e);
+
+            // Debug Storage Usage
+            let total = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    total += ((localStorage[key].length * 2) / 1024 / 1024); // MB
+                    console.log(`[Storage] ${key}: ${(localStorage[key].length * 2 / 1024).toFixed(2)} KB`);
+                }
+            }
+            console.warn(`Total LocalStorage Usage: ${total.toFixed(2)} MB`);
+
             if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-                console.warn("LocalStorage Quota Exceeded!");
-                alert("Save Failed: Storage Quota Exceeded. Try deleting old saves.");
+                const dataSize = (JSON.stringify(data).length * 2 / 1024 / 1024).toFixed(2);
+                alert(`Save Failed: Storage Full!\nAttempted Size: ~${dataSize} MB\nCurrent Usage: ${total.toFixed(2)} MB\n\nPlease clear old saves or other site data.`);
+            } else {
+                alert(`Save Failed: ${e.message}`);
             }
             return false;
         }
@@ -55,6 +81,18 @@ export class SaveManager {
         } catch (e) {
             console.error('Load failed:', e);
             return null;
+        }
+    }
+
+    delete(slotId) {
+        try {
+            const key = this.prefix + slotId;
+            localStorage.removeItem(key);
+            console.log(`Deleted slot ${slotId}`);
+            return true;
+        } catch (e) {
+            console.error('Delete failed:', e);
+            return false;
         }
     }
 

@@ -1,0 +1,7 @@
+C:\Users\mooya\develop\test\src\ai\states\UnitStates.js:450
+export class CombatState extends State {
+
+SyntaxError: Identifier 'CombatState' has already been declared
+    at checkSyntax (node:internal/main/check_syntax:74:5)
+
+Node.js v22.21.1

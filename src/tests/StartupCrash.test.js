@@ -1,6 +1,6 @@
 
 /**
- * @jest-environment jsdom
+ * @vitest-environment happy-dom
  */
 import * as THREE from 'three';
 import { UnitRenderer } from '../UnitRenderer.js';

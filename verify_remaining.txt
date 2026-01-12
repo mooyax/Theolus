@@ -1,0 +1,1255 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/InterruptResume.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 7[2mms[22m[39m
+[31m     [31mﾃ・[31m should return to previous movement target after finishing a job[39m[32m 5[2mms[22m[39m
+[90mstdout[2m | src/tests/CombatVerification.test.js[2m > [22m[2mCombat Logic Verification[2m > [22m[2mScenario A: Worker destroys Cave
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:None
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+Approach Point: 11,10
+Cave HP: 190 (Was: 195)
+
+[90mstdout[2m | src/tests/CombatVerification.test.js[2m > [22m[2mCombat Logic Verification[2m > [22m[2mScenario B: Goblin destroys House
+[22m[39mGoblin 0 SPAWNED FOR RAIDING! Target: NaN,NaN
+[Goblin 0] ENTER RaidState. Goal: NaN,NaN
+[MockTerrain] Searching 1 buildings. Range:25 Center:20,20
+  - Checking Building at 22,20. Dist:2
+    -> Score: 2
+Goblin Raid: House population reduced. Rem: -2
+House Pop: -2
+
+[90mstdout[2m | src/tests/CombatVerification.test.js[2m > [22m[2mCombat Logic Verification[2m > [22m[2mScenario C: Goblin finds and destroys House
+[22m[39m[MockTerrain] Searching 1 buildings. Range:12 Center:8,8
+  - Checking Building at 10,10. Dist:2.8284271247461903
+    -> Score: 2.8284271247461903
+[Test] House HP reduced to 84
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mGoblins deal population damage to player buildings
+[22m[39mGoblin Raid: House population reduced. Rem: 9
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mGoblins destroy player buildings when HP reaches 0
+[22m[39mGoblin destroyed Building house!
+Goblin 2 destroyed house!
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mBuildings retaliate against melee goblins
+[22m[39mGoblin Raid: House population reduced. Rem: 6
+
+ [32m笨・[39m src/tests/CombatVerification.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mTowers have massive retaliation
+[22m[39mGoblin Raid: House population reduced. Rem: 4
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mNo retaliation for distant attackers (Shamans)
+[22m[39mGoblin Raid: House population reduced. Rem: -30
+Goblin destroyed Building house!
+Goblin 5 destroyed house!
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mStandard HP logic for Goblin buildings
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:knight Pos:20,20 Special:false
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:20,20
+
+ [32m笨・[39m src/tests/BuildingDefense.test.js [2m([22m[2m8 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould save game data correctly
+[22m[39mSaving Game Data: {
+  slotId: [33m1[39m,
+  timestamp: [33m1767364669470[39m,
+  resources: { grain: [33m100[39m, fish: [33m50[39m, meat: [33m25[39m },
+  gameTime: [33m12[39m,
+  gameTotalTime: [33m0[39m,
+  currentSeasonIndex: [90mundefined[39m,
+  daysPassed: [90mundefined[39m,
+  terrain: {
+    logicalWidth: [33m160[39m,
+    logicalDepth: [33m160[39m,
+    version: [33m2[39m,
+    h: [
+      [33m19[39m, [33m19[39m, [33m19[39m, [33m19[39m, [33m19[39m, [33m19[39m, [33m18[39m, [33m18[39m, [33m18[39m, [33m18[39m, [33m17[39m, [33m17[39m,
+      [33m16[39m, [33m16[39m, [33m16[39m, [33m16[39m, [33m16[39m, [33m16[39m, [33m15[39m, [33m15[39m, [33m14[39m, [33m13[39m, [33m13[39m, [33m12[39m,
+      [33m12[39m, [33m12[39m, [33m12[39m, [33m12[39m, [33m13[39m, [33m13[39m, [33m13[39m, [33m14[39m, [33m14[39m, [33m14[39m, [33m13[39m, [33m12[39m,
+      [33m11[39m, [33m11[39m, [33m10[39m,  [33m9[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m7[39m,  [33m7[39m,  [33m6[39m,  [33m6[39m,
+       [33m6[39m,  [33m6[39m,  [33m5[39m,  [33m5[39m,  [33m5[39m,  [33m5[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m7[39m,  [33m7[39m,  [33m8[39m,
+       [33m9[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m,  [33m9[39m,  [33m8[39m,  [33m7[39m,  [33m6[39m,
+       [33m5[39m,  [33m4[39m,  [33m4[39m,  [33m3[39m,  [33m2[39m,  [33m1[39m,  [33m1[39m, [33m-0[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m,
+      [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-2[39m, [33m-2[39m, [33m-3[39m, [33m-4[39m, [33m-4[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
+      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
+      ... 25500 more items
+    ],
+    n: [
+      [33m-0.01[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.01[39m,     [33m0[39m, [33m-0.01[39m,     [33m0[39m, [33m-0.01[39m,
+       [33m0.02[39m,    [33m-0[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.01[39m,  [33m0.02[39m, [33m-0.01[39m,    [33m-0[39m,  [33m0.01[39m,
+       [33m0.02[39m,    [33m-0[39m,  [33m0.02[39m,  [33m0.01[39m,    [33m-0[39m, [33m-0.01[39m, [33m-0.02[39m,     [33m0[39m,     [33m0[39m,
+       [33m0.02[39m, [33m-0.01[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.02[39m, [33m-0.01[39m,     [33m0[39m,
+         [33m-0[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.01[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.01[39m,
+       [33m0.01[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.01[39m,    [33m-0[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.01[39m,    [33m-0[39m,
+      [33m-0.01[39m,     [33m0[39m, [33m-0.02[39m,    [33m-0[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m,    [33m-0[39m, [33m-0.02[39m,
+      [33m-0.02[39m, [33m-0.02[39m,     [33m0[39m,  [33m0.01[39m,     [33m0[39m,    [33m-0[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.01[39m,
+      [33m-0.02[39m, [33m-0.01[39m,  [33m0.01[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.02[39m,
+         [33m-0[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.01[39m,    [33m-0[39m,  [33m0.02[39m, [33m-0.01[39m,
+       [33m0.01[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.01[39m,    [33m-0[39m,
+      [33m-0.01[39m,
+      ... 25500 more items
+    ],
+    b: [],
+    m: [
+      [33m0.83[39m, [33m0.82[39m, [33m0.78[39m, [33m0.73[39m, [33m0.69[39m, [33m0.65[39m, [33m0.61[39m, [33m0.57[39m, [33m0.53[39m, [33m0.51[39m,
+      [33m0.49[39m, [33m0.48[39m, [33m0.45[39m, [33m0.41[39m, [33m0.37[39m, [33m0.33[39m,  [33m0.3[39m, [33m0.29[39m,  [33m0.3[39m, [33m0.32[39m,
+      [33m0.33[39m, [33m0.32[39m, [33m0.31[39m,  [33m0.3[39m, [33m0.28[39m, [33m0.27[39m, [33m0.25[39m, [33m0.23[39m, [33m0.21[39m, [33m0.18[39m,
+      [33m0.15[39m, [33m0.13[39m, [33m0.13[39m, [33m0.13[39m, [33m0.16[39m, [33m0.19[39m, [33m0.22[39m, [33m0.26[39m,  [33m0.3[39m, [33m0.33[39m,
+      [33m0.35[39m, [33m0.36[39m, [33m0.35[39m, [33m0.34[39m, [33m0.33[39m, [33m0.33[39m, [33m0.33[39m, [33m0.32[39m, [33m0.32[39m, [33m0.32[39m,
+      [33m0.32[39m, [33m0.32[39m, [33m0.32[39m, [33m0.32[39m, [33m0.33[39m, [33m0.33[39m, [33m0.32[39m,  [33m0.3[39m, [33m0.27[39m, [33m0.25[39m,
+      [33m0.23[39m, [33m0.21[39m, [33m0.19[39m, [33m0.17[39m, [33m0.17[39m, [33m0.17[39m, [33m0.19[39m, [33m0.21[39m, [33m0.24[39m, [33m0.27[39m,
+       [33m0.3[39m, [33m0.33[39m, [33m0.37[39m,  [33m0.4[39m, [33m0.44[39m, [33m0.48[39m, [33m0.52[39m, [33m0.55[39m, [33m0.56[39m, [33m0.57[39m,
+      [33m0.59[39m,  [33m0.6[39m, [33m0.61[39m, [33m0.61[39m, [33m0.61[39m,  [33m0.6[39m, [33m0.59[39m, [33m0.59[39m,  [33m0.6[39m,  [33m0.6[39m,
+      [33m0.59[39m, [33m0.59[39m, [33m0.59[39m, [33m0.58[39m, [33m0.58[39m, [33m0.58[39m, [33m0.58[39m, [33m0.58[39m, [33m0.57[39m, [33m0.56[39m,
+      ... 25500 more items
+    ]
+  },
+  units: [],
+  goblinManager: {},
+  camera: {
+    position: { x: [33m20[39m, y: [33m20[39m, z: [33m20[39m },
+    zoom: [33m1[39m,
+    target: { x: [90mundefined[39m, y: [90mundefined[39m, z: [90mundefined[39m }
+  },
+  requests: []
+}
+Saved to slot 1 (Compressed). Size: 24795 chars (Original: 306899)
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39mLoad Started...
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39mLoading slot 1, Raw length: 101
+Load: Decompressed successfully.
+Parsed Data for slot 1: {
+  timestamp: [33m1767364669838[39m,
+  data: {
+    resources: { grain: [33m999[39m, fish: [33m888[39m },
+    gameTime: [33m6[39m,
+    terrain: { logicalWidth: [33m10[39m, logicalDepth: [33m10[39m, grid: [], buildings: [] },
+    units: [],
+    camera: { position: [36m[Object][39m, target: [36m[Object][39m }
+  }
+}
+Load Game: Data found {
+  resources: { grain: [33m999[39m, fish: [33m888[39m },
+  gameTime: [33m6[39m,
+  terrain: { logicalWidth: [33m10[39m, logicalDepth: [33m10[39m, grid: [], buildings: [] },
+  units: [],
+  camera: { position: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m }, target: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m } }
+}
+Clearing 0 projectiles...
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[DEBUG] Terrain.setSeason: Changing from undefined to Spring
+[Game] Restored Camera Zoom: 1
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould load game data correctly
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39mLoad Started...
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39mLoading slot 1, Raw length: 111
+Load: Decompressed successfully.
+Parsed Data for slot 1: {
+  timestamp: [33m1767364670435[39m,
+  data: {
+    resources: {},
+    gameTime: [33m10[39m,
+    terrain: { logicalWidth: [33m80[39m, grid: [], buildings: [] },
+    units: [],
+    requests: [ [36m[Object][39m, [36m[Object][39m ]
+  }
+}
+Load Game: Data found {
+  resources: {},
+  gameTime: [33m10[39m,
+  terrain: { logicalWidth: [33m80[39m, grid: [], buildings: [] },
+  units: [],
+  requests: [
+    { id: [32m'req_1'[39m, type: [32m'raise'[39m, x: [33m5[39m, z: [33m5[39m, status: [32m'pending'[39m },
+    { id: [32m'req_2'[39m, type: [32m'lower'[39m, x: [33m10[39m, z: [33m10[39m, status: [32m'completed'[39m }
+  ]
+}
+Clearing 0 projectiles...
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Terrain] Deserializing Legacy Format...
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[DEBUG] Terrain.setSeason: Changing from undefined to Spring
+[Game] Restoring 2 requests...
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | src/tests/SaveLoad.test.js[2m > [22m[2mSave/Load System[2m > [22m[2mshould restore request markers with correct renderOrder
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+ [32m笨・[39m src/tests/SaveLoad.test.js [2m([22m[2m3 tests[22m[2m)[22m[33m 1609[2mms[22m[39m
+     [33m[2m笨・[22m[39m should save game data correctly [33m 428[2mms[22m[39m
+     [33m[2m笨・[22m[39m should load game data correctly [33m 563[2mms[22m[39m
+     [33m[2m笨・[22m[39m should restore request markers with correct renderOrder [33m 617[2mms[22m[39m
+[90mstdout[2m | Game.animate (C:\Users\mooya\develop\test\src\Game.js:1503:21)
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | Game.animate (C:\Users\mooya\develop\test\src\Game.js:1503:21)
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+[90mstdout[2m | Game.animate (C:\Users\mooya\develop\test\src\Game.js:1503:21)
+[22m[39m[Game] calling BR.update. BR exists: true, Buildings: 0
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m14 passed[39m[22m[90m (15)[39m
+[2m   Start at [22m 23:37:46
+[2m   Duration [22m 4.23s[2m (transform 806ms, setup 200ms, import 1.11s, tests 1.64s, environment 7.07s)[22m
+

@@ -1,0 +1,4054 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign a manual request to an Idle worker
+Game constructor called
+
+stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should NOT assign to a Busy worker (already working)
+Game constructor called
+
+stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Wandering worker (Low Priority)
+Game constructor called
+
+stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Moving worker (Low Priority)
+Game constructor called
+
+ 笶ｯ src/tests/ManualAssignment.test.js (4 tests | 4 failed) 29ms
+     ﾃ・should assign a manual request to an Idle worker 20ms
+     ﾃ・should NOT assign to a Busy worker (already working) 4ms
+     ﾃ・should assign to a Wandering worker (Low Priority) 2ms
+     ﾃ・should assign to a Moving worker (Low Priority) 2ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 4 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign a manual request to an Idle worker
+ FAIL  src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should NOT assign to a Busy worker (already working)
+ FAIL  src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Wandering worker (Low Priority)
+ FAIL  src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Moving worker (Low Priority)
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ new Game src/Game.js:237:14
+ 笶ｯ src/tests/ManualAssignment.test.js:124:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/4]竡ｯ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Errors 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+Vitest caught 285 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Uncaught Exception 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: this.buildingRenderer.updateLighting is not a function
+ 笶ｯ Game.animate src/Game.js:1474:35
+    1472| 
+    1473|         if (this.buildingRenderer) {
+    1474|             this.buildingRenderer.updateLighting(isNight);
+       |                                   ^
+    1475|         }
+    1476| 
+ 笶ｯ Immediate.<anonymous> node_modules/happy-dom/lib/window/BrowserWindow.js:1354:17
+ 笶ｯ processImmediate node:internal/timers:485:21
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+Error: [vitest-worker]: Closing rpc while "onUnhandledError" was pending
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:79:28
+ 笶ｯ node_modules/vitest/dist/chunks/index.0kCJoeWi.js:133:14
+ 笶ｯ Proxy.$rejectPendingCalls node_modules/vitest/dist/chunks/index.0kCJoeWi.js:129:36
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:78:26
+ 笶ｯ node_modules/vitest/dist/chunks/init.B04saIIg.js:107:42
+ 笶ｯ execute node_modules/vitest/dist/chunks/init.B04saIIg.js:107:30
+ 笶ｯ processTicksAndRejections node:internal/process/task_queues:105:5
+ 笶ｯ process.onMessage node_modules/vitest/dist/chunks/init.B04saIIg.js:233:14
+
+This error originated in "src/tests/ManualAssignment.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+     Errors  285 errors
+   Start at  22:21:10
+   Duration  1.12s (transform 267ms, setup 34ms, import 344ms, tests 29ms, environment 417ms)
+
+stdout | Game.animate (C:\Users\mooya\develop\test\src\Game.js:1470:21)
+[Game] calling BR.update. BR exists: true, Buildings: null
+
+stdout | Game.animate (C:\Users\mooya\develop\test\src\Game.js:1470:21)
+[Game] calling BR.update. BR exists: true, Buildings: null
+
+stdout | Game.animate (C:\Users\mooya\develop\test\src\Game.js:1470:21)
+[Game] calling BR.update. BR exists: true, Buildings: null
+
+stdout | Game.animate (C:\Users\mooya\develop\test\src\Game.js:1470:21)
+[Game] calling BR.update. BR exists: true, Buildings: null
+
+stdout | Game.animate (C:\Users\mooya\develop\test\src\Game.js:1470:21)
+[Game] calling BR.update. BR exists: true, Buildings: null
+
+stdout | Game.animate (C:\Users\mooya\develop\test\src\Game.js:1470:21)
+[Game] calling BR.update. BR exists: true, Buildings: null
+
+stdout | Game.animate (C:\Users\mooya\develop\test\src\Game.js:1470:21)
+[Game] calling BR.update. BR exists: true, Buildings: null
+
+stdout | Game.animate (C:\Users\mooya\develop\test\src\Game.js:1470:21)
+[Game] calling BR.update. BR exists: true, Buildings: null
+

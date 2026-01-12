@@ -1,0 +1,51 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,0
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug] Condition Check. Role:worker State:undefined HasUpdate:undefined
+[Unit Debug V2] Start Logic. Night=true, Stag=0.0, Age=20.0, H=10, Action=undefined
+[Unit Heartbeat] ID:0 Action:undefined Moving:false T:1000.0 dt:100.0000 Int:0
+[Unit 0] Moving onto Rock at 10,1 H:10 (Speed Penalty)
+Unit 0 migrating to 11,1 (Region 1)
+[Unit 0] Moving onto Rock at 10,1 H:10 (Speed Penalty)
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug] Condition Check. Role:worker State:undefined HasUpdate:undefined
+[Unit Debug V2] Start Logic. Night=true, Stag=0.0, Age=40.0, H=10, Action=Migrating
+[Unit Heartbeat] ID:0 Action:Migrating Moving:false T:3000.0 dt:100.0000 Int:0
+Unit 0 migration timed out. Retrying.
+Unit 0 migrating to 11,1 (Region 1)
+[Unit 0] Moving onto Rock at 10,1 H:10 (Speed Penalty)
+
+ 笶ｯ src/tests/NightLogic.test.js (1 test | 1 failed) 31ms
+     ﾃ・Worker should engage pathfinding to House but is likely blocked 27ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/NightLogic.test.js:96:31
+     94|         u1.updateLogic(time + 2000, 100, isNight, [], [], [], []);
+     95| 
+     96|         expect(u1.isSleeping).toBe(true);
+       |                               ^
+     97|     });
+     98| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  20:49:41
+   Duration  1.32s (transform 189ms, setup 51ms, import 287ms, tests 31ms, environment 619ms)
+

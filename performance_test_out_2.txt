@@ -1,0 +1,40 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/UnitPerformance.test.js > Unit Performance Optimization > should throttle checkSelfDefense based on ID and Frame
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+stdout | src/tests/UnitPerformance.test.js > Unit Performance Optimization > should skip searchSurroundings for busy workers
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+stdout | src/tests/UnitPerformance.test.js > Unit Performance Optimization > should throttle searchSurroundings for idle units
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+
+ 笶ｯ src/tests/UnitPerformance.test.js (3 tests | 1 failed) 12ms
+     ﾃ・should throttle checkSelfDefense based on ID and Frame 9ms
+     笨・should skip searchSurroundings for busy workers 1ms
+     笨・should throttle searchSurroundings for idle units 1ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/UnitPerformance.test.js > Unit Performance Optimization > should throttle checkSelfDefense based on ID and Frame
+AssertionError: expected "vi.fn()" to be called at least once
+ 笶ｯ src/tests/UnitPerformance.test.js:74:45
+     72|         // But the Time Slicing is at the TOP.
+     73| 
+     74|         expect(unit.terrain.findBestTarget).toHaveBeenCalled();
+       |                                             ^
+     75|     });
+     76| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  09:33:41
+   Duration  791ms (transform 111ms, setup 32ms, import 150ms, tests 12ms, environment 422ms)
+

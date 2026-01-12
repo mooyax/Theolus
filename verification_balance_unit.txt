@@ -1,0 +1,146 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/Unit.test.js > Unit Logic > Resource Gathering > should gather fish if checking neighbors finds water
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Resource Gathering > should NOT gather fish if completely inland
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should prioritize Farm and ABORT house if farm fails during famine
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should prioritize Farm and ABORT house if farm fails during famine
+[Unit 2] Moving onto Rock at 5,6 H:10 (Speed Penalty)
+[Unit 2] Blocked by Slope at 5,6 H:1->10
+
+stdout | src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should fallback to House if NOT in famine
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should fallback to House if NOT in famine
+[Unit 3] Moving onto Rock at 5,6 H:10 (Speed Penalty)
+[Unit 3] Blocked by Slope at 5,6 H:1->10
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should accept role in constructor
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should accept role in constructor
+[UnitCore.js] Unit Created ID:5 Role:hunter Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:5 Role:hunter Pos:5,5
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:5,5
+[UnitCore.js] Unit Created ID:7 Role:true Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:7 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor (simulated)
+[UnitCore.js] Unit Created ID:8 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:8 Role:worker Pos:5,5
+
+DEBUG TEST: Moisture: 0
+stderr | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor (simulated)
+[Unit 8] Farm failed: Too dry (0). Improving land.
+[Unit 8] Farm failed: Too dry (0). Improving land.
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor (simulated)
+Unit improved land at 5,5. Moisture 0.50 -> 0.50
+[Unit 8] Moving onto Rock at 5,6 H:10 (Speed Penalty)
+[Unit 8] Blocked by Slope at 5,6 H:1->10
+[Unit 8] Moving onto Rock at 6,5 H:10 (Speed Penalty)
+[Unit 8] Blocked by Slope at 6,5 H:1->10
+Unit improved land at 5,5. Moisture 0.50 -> 0.50
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should succeed buildFarm if moisture is optimal
+[UnitCore.js] Unit Created ID:9 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:9 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should succeed buildFarm if moisture is optimal
+[Unit 9] Moving onto Rock at 5,6 H:10 (Speed Penalty)
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should check heights during moveRandomly
+[UnitCore.js] Unit Created ID:10 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:10 Role:worker Pos:5,5
+
+ 笨・src/tests/Unit.test.js (8 tests) 65ms
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Knight vs Single Goblin (1v1) - AI Logic Check
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0
+[CombatBalance Mock Check] [
+  [32m'soundManager'[39m,
+  [32m'inputManager'[39m,
+  [32m'goblinManager'[39m,
+  [32m'reportGlobalBattle'[39m,
+  [32m'findBestRequest'[39m,
+  [32m'claimRequest'[39m
+]
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug] AgeID:0 Delta:0.1 Rate:0.02 Age:20.00->20.00
+[Defense Debug 0] shouldScan:true isBusy:false force:false PassedGoblins:1
+[Unit Debug] ATTACKING Goblin 0
+Goblin (normal) died. ID:0
+[AI CHECK] KnightAction: Fighting GoblinHP: -63
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Wizard vs Single Goblin (1v1) - Wizard should win
+[UnitCore.js] Unit Created ID:1 Role:wizard Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:1 Role:wizard Pos:0,0
+[Unit Debug] ATTACKING Goblin 1
+Goblin (normal) died. ID:1
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Knight vs Swarm (1v5) - Knight should surviving
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0
+[Unit Debug] ATTACKING Goblin g0
+Goblin (normal) died. ID:g0
+[Unit Debug] ATTACKING Goblin g1
+Goblin (normal) died. ID:g1
+[Unit Debug] ATTACKING Goblin g2
+Goblin (normal) died. ID:g2
+[Unit Debug] ATTACKING Goblin g3
+Goblin (normal) died. ID:g3
+[Unit Debug] ATTACKING Goblin g4
+Goblin (normal) died. ID:g4
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Load Game Persistence - Should resume movement
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0
+[Unit 3] Moving onto Rock at 0,1 H:10 (Speed Penalty)
+[Unit Debug] AgeID:3 Delta:100 Rate:0.02 Age:20.00->22.00
+[Defense Debug 3] shouldScan:true isBusy:false force:false PassedGoblins:0
+
+ 笶ｯ src/tests/CombatBalance.test.js (4 tests | 1 failed) 49ms
+     笨・Knight vs Single Goblin (1v1) - AI Logic Check 15ms
+     笨・Wizard vs Single Goblin (1v1) - Wizard should win 3ms
+     笨・Knight vs Swarm (1v5) - Knight should surviving 4ms
+     ﾃ・Load Game Persistence - Should resume movement 24ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/CombatBalance.test.js > Combat Balance Simulation > Load Game Persistence - Should resume movement
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/CombatBalance.test.js:260:29
+    258|         u1.updateLogic(1500, 100, false, [], [], [], []); // Move 0.5s
+    259| 
+    260|         expect(u1.isMoving).toBe(true);
+       |                             ^
+    261|         expect(u1.gridX).toBe(0); // Animation only triggers later log窶ｦ
+    262| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 11 passed (12)
+   Start at  21:25:32
+   Duration  1.58s (transform 480ms, setup 103ms, import 742ms, tests 114ms, environment 1.40s)
+

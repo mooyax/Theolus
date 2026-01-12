@@ -1,0 +1,444 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+ 笶ｯ src/tests/GhostHouse.test.js (1 test | 1 failed) 130ms
+     ﾃ・should accumulate ghost buildings in entityGrid if not cleared during deserialize 128ms
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should retry migration after 30 seconds timeout
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/MinimalUnit.test.js > Minimal Unit Sanity > can instantiate Unit
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+
+ 笨・src/tests/MinimalUnit.test.js (1 test) 9ms
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should retry migration after 30 seconds timeout
+Unit test-migrant migrating to 50,50 (Region undefined)
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+
+stderr | src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+[Unit] Long-term Stuck (>20s). Forcing Reset. ID:test-migrant Pos:50,50
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+Unit test-migrant migrating to 50,50 (Region undefined)
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+
+stdout | src/tests/CombatRequestHandoff.test.js > Request Responsiveness & Combat Handoff > Worker releases job when engaging in combat
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+Run Logic...
+[JobState] Entered. Target: undefined. Resume: UnitWanderState
+Simulate Attacked...
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should stop migrating if construction succeeds
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[SleepState] Entering Sleep. Night=true
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should stop migrating if construction succeeds
+Unit test-migrant migrating to 50,50 (Region undefined)
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+Unit test-migrant built structure during migration. Stopping.
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > DEBUG: should log blockage reasons correctly
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > DEBUG: should log blockage reasons correctly
+--- DEBUG: Testing Slope Block ---
+[Unit test-migrant] Blocked by Slope at 21,20 H:2->6
+--- DEBUG: Testing Water Block ---
+--- DEBUG: Testing Building Pass ---
+
+ 笶ｯ src/tests/MigrationImprovement.test.js (4 tests | 1 failed) 39ms
+     笨・should retry migration after 30 seconds timeout 14ms
+     ﾃ・should interrupt migration if enemy is found (Priority) 19ms
+     笨・should stop migrating if construction succeeds 2ms
+     笨・DEBUG: should log blockage reasons correctly 1ms
+ 笶ｯ src/tests/NightLogic.test.js (1 test | 1 failed) 39ms
+     ﾃ・Worker should engage pathfinding to House but is likely blocked 36ms
+stdout | src/tests/CavePersistence.test.js > GoblinManager Cave Persistence > should destroy cave if submerged (height <= 0)
+[GoblinManager] Cave destroyed: SUBMERGED(H = -1)
+[GoblinRenderer] Updating 0 goblins.
+
+stderr | src/tests/CavePersistence.test.js > GoblinManager Cave Persistence > should destroy cave if submerged (height <= 0)
+[GoblinManager] Removing invalid cave at 10,10
+
+ 笶ｯ src/tests/CavePersistence.test.js (2 tests | 1 failed) 45ms
+     ﾃ・should update cave Y position when terrain height changes 26ms
+     笨・should destroy cave if submerged (height <= 0) 7ms
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario A: Worker destroys Cave
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[MockTerrain] Searching 1 buildings. Range:25 Center:10,10
+  - Checking Building at 12,10. Dist:2
+    -> Score: 2
+Unit 1 found Base via Spatial Search!
+Approach Point: 11,10
+Unit 1 attacking cave. HP: 196
+Cave HP: 196 (Was: 200)
+
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario B: Goblin destroys House
+Goblin 0 SPAWNED FOR RAIDING! Target: NaN,NaN
+[Goblin 0] ENTER RaidState. Goal: NaN,NaN
+[MockTerrain] Searching 1 buildings. Range:25 Center:20,20
+  - Checking Building at 22,20. Dist:2
+    -> Score: 2
+[ActorDebug] Grid: 20,20 Target: 21,20 Diff: 1,0
+[ActorDebug] Next: 21,20
+[ActorDebug] Check Move 21,20 -> true
+Goblin 0 attacking house. Pop: 1.92
+Goblin 0 attacking house. Pop: 1.84
+House Pop: 1.8399999999999999
+
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario C: Goblin finds and destroys House
+[MockTerrain] Searching 1 buildings. Range:12 Center:8,8
+  - Checking Building at 10,10. Dist:2.8284271247461903
+    -> Score: 2.8284271247461903
+[ActorDebug] Grid: 9,9 Target: 9,9 Diff: 0,0
+[ActorDebug] Next: 9,9
+[ActorDebug] Check Move 9,9 -> true
+Goblin 1 hitting Empty house. HP: 92
+[ActorDebug] Grid: 10,9 Target: 10,9 Diff: 0,0
+[ActorDebug] Next: 10,9
+[ActorDebug] Check Move 10,9 -> true
+Goblin 1 hitting Empty house. HP: 84
+[Test] House HP reduced to 84
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Knight vs Single Goblin (1v1) - AI Logic Check
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+[Unit Debug V3] Start Logic. Night=false, Sleep=false, Action=undefined
+[Unit Debug] ATTACKING Goblin 0
+Goblin (normal) died. ID:0
+[AI CHECK] KnightAction: Idle GoblinHP: -68
+
+ 笨・src/tests/CombatVerification.test.js (3 tests) 25ms
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Wizard vs Single Goblin (1v1) - Wizard should win
+[UnitCore.js] Unit Created ID:1 Role:wizard Pos:0,0 Special:false
+[Unit Debug] ATTACKING Goblin 1
+Goblin (normal) died. ID:1
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Knight vs Swarm (1v5) - Knight should surviving
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+[Unit Debug] ATTACKING Goblin g0
+Goblin (normal) died. ID:g0
+[Unit Debug] ATTACKING Goblin g1
+Goblin (normal) died. ID:g1
+[Unit Debug] ATTACKING Goblin g2
+Goblin (normal) died. ID:g2
+[Unit Debug] ATTACKING Goblin g3
+Goblin (normal) died. ID:g3
+[Unit Debug] ATTACKING Goblin g4
+Goblin (normal) died. ID:g4
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Load Game Persistence - Should resume movement
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0 Special:false
+[ActorDebug] Grid: 0,0 Target: 10,10 Diff: 10,10
+[ActorDebug] Next: 0,1
+[Unit 3] Moving onto Rock at 0,1 H:10 (Speed Penalty)
+[ActorDebug] Check Move 0,1 -> true
+[ActorDebug] Grid: 0,0 Target: 0,0 Diff: 0,0
+[ActorDebug] Next: 0,0
+[Unit 3] Moving onto Rock at 0,0 H:10 (Speed Penalty)
+[ActorDebug] Check Move 0,0 -> true
+Unit 3 migrating to 0,0 (Region undefined)
+[ActorDebug] Grid: 0,0 Target: 0,0 Diff: 0,0
+[ActorDebug] Next: 0,0
+[Unit 3] Moving onto Rock at 0,0 H:10 (Speed Penalty)
+[ActorDebug] Check Move 0,0 -> true
+[UnitCore.js] Unit Created ID:4 Role:knight Pos:0,0 Special:false
+
+ 笶ｯ src/tests/CombatBalance.test.js (4 tests | 1 failed) 77ms
+     笨・Knight vs Single Goblin (1v1) - AI Logic Check 18ms
+     笨・Wizard vs Single Goblin (1v1) - Wizard should win 2ms
+     笨・Knight vs Swarm (1v5) - Knight should surviving 5ms
+     ﾃ・Load Game Persistence - Should resume movement 49ms
+stdout | src/tests/SimpleRegion.test.js > Simple Region Connectivity > should identify a single island
+Running calculateRegions...
+Done.
+Region ID at 5,5: 1
+
+stdout | src/tests/StuckDebug.test.js > Unit Stuck Debugging > should log reason for blockage
+[UnitCore.js] Unit Created ID:0 Role:undefined Pos:undefined,undefined Special:false
+--- Testing Slope Block ---
+[Unit 0] Blocked by Slope at 11,10 H:2->6
+--- Testing Building Pass ---
+--- Testing Water Block ---
+
+ 笨・src/tests/StuckDebug.test.js (1 test) 207ms
+stdout | src/tests/BuildingDestruction.test.js > Building Destruction Logic > should destroy building immediately when population hits 0
+Goblin 0 attacking house. Pop: 0.00
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Game] New Battle Hotspot at 10,10 (Region:1)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Decays intensity
+[Game] New Battle Hotspot at 10,10 (Region:1)
+
+ 笶ｯ src/tests/CombatRequestHandoff.test.js (2 tests | 2 failed) 1012ms
+     ﾃ・Worker releases job when engaging in combat 749ms
+     ﾃ・forceAssignRequest prioritizes nearby busy unit over distant idle unit 259ms
+ 笨・src/tests/SimpleRegion.test.js (2 tests) 333ms
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads
+[Game] Mobilizing Squad 1 to Hotspot at 50,50 (Intensity:100.0)
+
+ 笶ｯ src/tests/Hotspot.test.js (6 tests | 1 failed) 555ms
+     笨・Clusters nearby battle reports  532ms
+     笨・Decays intensity 2ms
+     ﾃ・Mobilizes idle squads to intense hotspots (Updated Threshold) 11ms
+     笨・Triggers autonomous patrol for idle Knights 3ms
+     笨・Mobilizes idle squads 3ms
+     笨・Does not mobilize across regions 2ms
+ 笶ｯ src/tests/ManaSystem.test.js (5 tests | 1 failed) 33ms
+     笨・should block actions when mana is negative 3ms
+     笨・should allow actions when mana is positive 1ms
+     笨・should consume mana correctly 3ms
+       ﾃ・should consume mana on raise terrain 20ms
+       笨・should block raise terrain if mana is negative 3ms
+ 笶ｯ src/tests/GoblinMobilization.test.js (2 tests | 2 failed) 345ms
+     ﾃ・triggerWave should mobilize idle goblins 243ms
+     ﾃ・mobilizeClan should rely on getClanRaidTarget fallback 99ms
+stdout | src/tests/BuildingDestruction.test.js > Building Destruction Logic > should destroy building if already 0
+Goblin 1 hitting Empty house. HP: -1950
+
+stdout | src/tests/BuildingDestruction.test.js > Building Destruction Logic > should NOT destroy building if population remains > 0
+Goblin 2 attacking house. Pop: 30.00
+
+ 笶ｯ src/tests/BuildingDestruction.test.js (3 tests | 1 failed) 470ms
+     ﾃ・should destroy building immediately when population hits 0 274ms
+     笨・should destroy building if already 0 125ms
+     笨・should NOT destroy building if population remains > 0 67ms
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should tag new requests with createdAt timestamp
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cleanup expired pending requests
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should NOT cleanup assigned requests even if old
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cancel request via Proximity Search
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should prioritize nearest request when cancelling
+Game constructor called
+
+ 笶ｯ src/tests/RequestLifecycle.test.js (5 tests | 5 failed) 453ms
+     ﾃ・should tag new requests with createdAt timestamp 157ms
+     ﾃ・should cleanup expired pending requests 106ms
+     ﾃ・should NOT cleanup assigned requests even if old 71ms
+     ﾃ・should cancel request via Proximity Search 54ms
+     ﾃ・should prioritize nearest request when cancelling 61ms
+stdout | src/tests/UnitInit.test.js > Unit Initialization and Movement Start > should NOT freeze if started at time 0
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+Debug Unit Action after 6s: Wandering
+
+ 笨・src/tests/UnitInit.test.js (1 test) 6ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 17 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/BuildingDestruction.test.js > Building Destruction Logic > should destroy building immediately when population hits 0
+AssertionError: expected "vi.fn()" to be called at least once
+ 笶ｯ src/tests/BuildingDestruction.test.js:119:40
+    117| 
+    118|         expect(house.userData.population).toBeLessThanOrEqual(0);
+    119|         expect(goblin.destroyBuilding).toHaveBeenCalled();
+       |                                        ^
+    120|         expect(goblin.destroyBuilding).toHaveBeenCalledWith(house);
+    121|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/17]竡ｯ
+
+ FAIL  src/tests/CavePersistence.test.js > GoblinManager Cave Persistence > should update cave Y position when terrain height changes
+TypeError: cave.mesh.updateMatrix is not a function
+ 笶ｯ src/GoblinManager.js:260:27
+    258|                 cave.originalHeight = currentHeight;
+    259|                 cave.mesh.position.y = currentHeight;
+    260|                 cave.mesh.updateMatrix();
+       |                           ^
+    261|             }
+    262| 
+ 笶ｯ GoblinManager.update src/GoblinManager.js:221:20
+ 笶ｯ src/tests/CavePersistence.test.js:129:17
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/17]竡ｯ
+
+ FAIL  src/tests/CombatBalance.test.js > Combat Balance Simulation > Load Game Persistence - Should resume movement
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/CombatBalance.test.js:269:29
+    267|         // Verify Restoration
+    268|         // Verify Restoration
+    269|         expect(u2.isMoving).toBe(true);
+       |                             ^
+    270|         // Note: triggerMove calculates NEXT TILE, not final destinati窶ｦ
+    271|         // From 0,0 to 10,10. dx=10, dz=10. 10 > 10 is false. Z increm窶ｦ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/17]竡ｯ
+
+ FAIL  src/tests/CombatRequestHandoff.test.js > Request Responsiveness & Combat Handoff > Worker releases job when engaging in combat
+TypeError: window.game.reportGlobalBattle is not a function
+ 笶ｯ Unit.takeDamage src/Unit.js:287:29
+    285|             } else {
+    286|                 // Workers also report their distress
+    287|                 window.game.reportGlobalBattle(this.gridX, this.gridZ);
+       |                             ^
+    288|             }
+    289|         }
+ 笶ｯ src/tests/CombatRequestHandoff.test.js:117:14
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[4/17]竡ｯ
+
+ FAIL  src/tests/CombatRequestHandoff.test.js > Request Responsiveness & Combat Handoff > forceAssignRequest prioritizes nearby busy unit over distant idle unit
+AssertionError: expected "vi.fn()" to be called at least once
+ 笶ｯ src/tests/CombatRequestHandoff.test.js:147:39
+    145|         vi.runAllTimers();
+    146| 
+    147|         expect(mockGame.claimRequest).toHaveBeenCalled();
+       |                                       ^
+    148|         // Check if Unit 1 was the one claimed (mockGame.claimRequest 窶ｦ
+    149|         const calls = mockGame.claimRequest.mock.calls;
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[5/17]竡ｯ
+
+ FAIL  src/tests/GhostHouse.test.js > Terrain Ghost House Test > should accumulate ghost buildings in entityGrid if not cleared during deserialize
+TypeError: gridGeo.setIndex is not a function
+ 笶ｯ Terrain.createMesh src/Terrain.js:531:17
+    529|             }
+    530|         }
+    531|         gridGeo.setIndex(indices);
+       |                 ^
+    532| 
+    533|         const gridMat = new THREE.LineBasicMaterial({
+ 笶ｯ Terrain.initTerrain src/Terrain.js:287:14
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ src/tests/GhostHouse.test.js:66:19
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[6/17]竡ｯ
+
+ FAIL  src/tests/GoblinMobilization.test.js > Goblin Mobilization Verification > triggerWave should mobilize idle goblins
+ FAIL  src/tests/GoblinMobilization.test.js > Goblin Mobilization Verification > mobilizeClan should rely on getClanRaidTarget fallback
+TypeError: colorAttr.setXYZ is not a function
+ 笶ｯ Terrain.updateColors src/Terrain.js:709:27
+    707| 
+    708|                 const color = this.getBiomeColor(height, moisture, noi窶ｦ
+    709|                 colorAttr.setXYZ(i, color.r, color.g, color.b);
+       |                           ^
+    710|             }
+    711|         }
+ 笶ｯ Terrain.calculateRegions src/Terrain.js:393:14
+ 笶ｯ Terrain.generateRandomTerrain src/Terrain.js:337:14
+ 笶ｯ Terrain.initTerrain src/Terrain.js:284:14
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ src/tests/GoblinMobilization.test.js:79:19
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[7/17]竡ｯ
+
+ FAIL  src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads to intense hotspots (Updated Threshold)
+AssertionError: expected "vi.fn()" to be called with arguments: [ 1, 100, 20 ]
+
+Number of calls: 0
+
+ 笶ｯ src/tests/Hotspot.test.js:67:31
+     65|         mobFn(0.1);
+     66| 
+     67|         expect(reportSquadFn).toHaveBeenCalledWith(1, 100, 20);
+       |                               ^
+     68|     });
+     69| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[8/17]竡ｯ
+
+ FAIL  src/tests/ManaSystem.test.js > Mana System > InputManager Integration > should consume mana on raise terrain
+AssertionError: expected "vi.fn()" to be called at least once
+ 笶ｯ src/tests/ManaSystem.test.js:83:39
+     81|             inputManager.handleInteraction(event);
+     82| 
+     83|             expect(mockTerrain.raise).toHaveBeenCalled();
+       |                                       ^
+     84|             expect(mockGame.consumeMana).toHaveBeenCalledWith(10);
+     85|             expect(mockGame.mana).toBe(90);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[9/17]竡ｯ
+
+ FAIL  src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+AssertionError: expected 'Migrating' to be 'Idle' // Object.is equality
+
+Expected: "Idle"
+Received: "Migrating"
+
+ 笶ｯ src/tests/MigrationImprovement.test.js:134:29
+    132|         Math.random = originalRandom; // Restore
+    133| 
+    134|         expect(unit.action).toBe('Idle'); // Should reset to Idle to l窶ｦ
+       |                             ^
+    135|         expect(unit.migrationTarget).toBeNull();
+    136|         expect(unit.targetGoblin).toBeTruthy();
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[10/17]竡ｯ
+
+ FAIL  src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
+AssertionError: expected +0 to be 10 // Object.is equality
+
+- Expected
++ Received
+
+- 10
++ 0
+
+ 笶ｯ src/tests/NightLogic.test.js:84:32
+     82|         // If it moves instantly due to 0 interval, isMoving might be 窶ｦ
+     83|         // Just check action is 'Going Home' or target is correct.
+     84|         expect(u1.targetGridX).toBe(10);
+       |                                ^
+     85|         expect(u1.action).toBe('Going Home');
+     86| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[11/17]竡ｯ
+
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should tag new requests with createdAt timestamp
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cleanup expired pending requests
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should NOT cleanup assigned requests even if old
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cancel request via Proximity Search
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should prioritize nearest request when cancelling
+TypeError: Cannot convert undefined or null to object
+ 笶ｯ Points.updateMorphTargets node_modules/three/build/three.core.js:29443:23
+ 笶ｯ new Points node_modules/three/build/three.core.js:29352:8
+ 笶ｯ Terrain.createMesh src/Terrain.js:555:26
+    553| 
+    554|         // We can reuse the main geometry directly because it has vert窶ｦ
+    555|         const dotsMesh = new THREE.Points(this.geometry, dotsMaterial);
+       |                          ^
+    556|         dotsMesh.position.set(0, 0, 0.05); // Slight lift to avoid Z-f窶ｦ
+    557| 
+ 笶ｯ Terrain.initTerrain src/Terrain.js:287:14
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ new Game src/Game.js:139:24
+ 笶ｯ src/tests/RequestLifecycle.test.js:130:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[12/17]竡ｯ
+
+
+ Test Files  11 failed | 5 passed (16)
+      Tests  17 failed | 26 passed (43)
+   Start at  21:18:11
+   Duration  4.25s (transform 3.85s, setup 1.13s, import 5.84s, tests 3.78s, environment 27.89s)
+

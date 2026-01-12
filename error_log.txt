@@ -1,0 +1,12 @@
+ERROR: this.buildingRenderer.updateLighting is not a function
+STACK: TypeError: this.buildingRenderer.updateLighting is not a function
+    at Game.animate (C:/Users/mooya/develop/test/src/Game.js:1639:35)
+    at new Game (C:/Users/mooya/develop/test/src/Game.js:291:14)
+    at C:/Users/mooya/develop/test/src/tests/GoblinFixes.test.js:135:26
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1650:37
+    at Traces.$ (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/traces.U4xDYhzZ.js:115:27)

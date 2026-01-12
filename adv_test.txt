@@ -1,0 +1,40 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/AdvancedUnits.test.js > Advanced Units > should initialize Knight with high stats
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+
+stdout | src/tests/AdvancedUnits.test.js > Advanced Units > should initialize Wizard with low HP and high stats
+[UnitCore.js] Unit Created ID:1 Role:wizard Pos:10,10 Special:false
+
+stdout | src/tests/AdvancedUnits.test.js > Advanced Units > should allow Wizard to attack from range
+[UnitCore.js] Unit Created ID:2 Role:wizard Pos:10,10 Special:false
+[Unit Debug] ATTACKING Goblin g1
+
+ 笨・src/tests/AdvancedUnits.test.js > Advanced Units > should initialize Knight with high stats 3ms
+ 笨・src/tests/AdvancedUnits.test.js > Advanced Units > should initialize Wizard with low HP and high stats 1ms
+ ﾃ・src/tests/AdvancedUnits.test.js > Advanced Units > should allow Wizard to attack from range 21ms
+   竊・window.game.reportGlobalBattle is not a function
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/AdvancedUnits.test.js > Advanced Units > should allow Wizard to attack from range
+TypeError: window.game.reportGlobalBattle is not a function
+ 笶ｯ Unit.reportEnemy src/Unit.js:1368:25
+    1366|         } else if (window.game) {
+    1367|             // If no squad, report directly to Global
+    1368|             window.game.reportGlobalBattle(x, z);
+       |                         ^
+    1369|         }
+    1370| 
+ 笶ｯ Unit.attackGoblin src/Unit.js:418:14
+ 笶ｯ src/tests/AdvancedUnits.test.js:70:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  20:06:03
+   Duration  1.15s (transform 322ms, setup 41ms, import 434ms, tests 26ms, environment 445ms)
+

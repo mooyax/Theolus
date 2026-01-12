@@ -1,0 +1,23 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/AdvancedUnits.test.js > Advanced Units > should initialize Knight with high stats
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+
+stdout | src/tests/AdvancedUnits.test.js > Advanced Units > should initialize Wizard with low HP and high stats
+[UnitCore.js] Unit Created ID:1 Role:wizard Pos:10,10 Special:false
+
+stdout | src/tests/AdvancedUnits.test.js > Advanced Units > should allow Wizard to attack from range
+[UnitCore.js] Unit Created ID:2 Role:wizard Pos:10,10 Special:false
+[Unit Debug] ATTACKING Goblin g1
+
+ 笨・src/tests/AdvancedUnits.test.js > Advanced Units > should initialize Knight with high stats 4ms
+ 笨・src/tests/AdvancedUnits.test.js > Advanced Units > should initialize Wizard with low HP and high stats 1ms
+ ﾃ・src/tests/AdvancedUnits.test.js > Advanced Units > should allow Wizard to attack from range 18ms
+   竊・window.game.reportGlobalBattle is not a function
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  20:06:17
+   Duration  1.10s (transform 316ms, setup 35ms, import 435ms, tests 26ms, environment 413ms)
+

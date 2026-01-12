@@ -1,0 +1,36 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [32m笨・[39m src/tests/StuckAndFrozen.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[MockTerrain] findPath: (0,0) -> (80,80)
+[MockTerrain] findPath: (0,0) -> (30,30)
+[Unit 1] Moving onto Rock at 30,31 H:10 (Speed Penalty)
+[MockTerrain] findPath: (30,30) -> (80,80)
+[Test] Final Target: 80,80 State: UnitWanderState
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould resume MIGRATION after Combat interruption
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould resume MIGRATION after Combat interruption
+[22m[39m[MockTerrain] findPath: (10,10) -> (90,90)
+[MockTerrain] findPath: (10,10) -> (90,90)
+
+ [32m笨・[39m src/tests/InterruptResume.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+[90mstdout[2m | src/tests/Animals.test.js[2m > [22m[2mAnimal Movement Verification[2m > [22m[2mSheep should move after interval (Manual Time Step)
+[22m[39mSheepManager Refactored: Initialized with Entity-based Sheep.
+
+ [31m笶ｯ[39m src/tests/Animals.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 18[2mms[22m[39m
+[31m     [31mﾃ・[31m Sheep should move after interval (Manual Time Step)[39m[32m 14[2mms[22m[39m
+[31m     [31mﾃ・[31m Fish should move in water[39m[32m 3[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 00:52:11
+[2m   Duration [22m 1.44s[2m (transform 385ms, setup 106ms, import 635ms, tests 38ms, environment 1.95s)[22m
+

@@ -1,0 +1,61 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould correctly resume manual job when loaded at night
+[22m[39mCreating Terrain...
+Terrain creation failed: Error: [vitest] No "MeshLambertMaterial" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError [90m(file:///C:/Users/mooya/develop/test/[39mnode_modules/[4mvitest[24m/dist/chunks/startModuleRunner.Iz2V0ESw.js:311:17[90m)[39m
+    at Object.get [90m(file:///C:/Users/mooya/develop/test/[39mnode_modules/[4mvitest[24m/dist/chunks/startModuleRunner.Iz2V0ESw.js:384:16[90m)[39m
+    at Terrain.createMesh (C:/Users/mooya/develop/test/src/Terrain.js:519:36)
+    at Terrain.initTerrain (C:/Users/mooya/develop/test/src/Terrain.js:302:14)
+    at new Terrain (C:/Users/mooya/develop/test/src/Terrain.js:26:14)
+    at new Game (C:/Users/mooya/develop/test/src/Game.js:163:32)
+    at C:/Users/mooya/develop/test/src/tests/NightLoadJob.test.js:122:16
+    at [90mfile:///C:/Users/mooya/develop/test/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/mooya/develop/test/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1240:20
+    at new Promise (<anonymous>) {
+  codeFrame: [32m'vi.mock(import("three"), async (importOriginal) => {\n'[39m +
+    [32m'  const actual = await importOriginal()\n'[39m +
+    [32m'  return {\n'[39m +
+    [32m'    ...actual,\n'[39m +
+    [32m'    // your mocked methods\n'[39m +
+    [32m'  }\n'[39m +
+    [32m'})'[39m
+}
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould wake up unit if they were saved while sleeping but had a job assigned (manual)
+[22m[39mCreating Terrain...
+Terrain creation failed: Error: [vitest] No "MeshLambertMaterial" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError [90m(file:///C:/Users/mooya/develop/test/[39mnode_modules/[4mvitest[24m/dist/chunks/startModuleRunner.Iz2V0ESw.js:311:17[90m)[39m
+    at Object.get [90m(file:///C:/Users/mooya/develop/test/[39mnode_modules/[4mvitest[24m/dist/chunks/startModuleRunner.Iz2V0ESw.js:384:16[90m)[39m
+    at Terrain.createMesh (C:/Users/mooya/develop/test/src/Terrain.js:519:36)
+    at Terrain.initTerrain (C:/Users/mooya/develop/test/src/Terrain.js:302:14)
+    at new Terrain (C:/Users/mooya/develop/test/src/Terrain.js:26:14)
+    at new Game (C:/Users/mooya/develop/test/src/Game.js:163:32)
+    at C:/Users/mooya/develop/test/src/tests/NightLoadJob.test.js:122:16
+    at [90mfile:///C:/Users/mooya/develop/test/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/mooya/develop/test/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1240:20
+    at new Promise (<anonymous>) {
+  codeFrame: [32m'vi.mock(import("three"), async (importOriginal) => {\n'[39m +
+    [32m'  const actual = await importOriginal()\n'[39m +
+    [32m'  return {\n'[39m +
+    [32m'    ...actual,\n'[39m +
+    [32m'    // your mocked methods\n'[39m +
+    [32m'  }\n'[39m +
+    [32m'})'[39m
+}
+
+ [31mﾃ・[39m src/tests/NightLoadJob.test.js[2m > [22mNight Loading Job Assignment[2m > [22mshould correctly resume manual job when loaded at night[32m 169[2mms[22m[39m
+[31m   竊・Cannot read properties of undefined (reading 'width')[39m
+ [31mﾃ・[39m src/tests/NightLoadJob.test.js[2m > [22mNight Loading Job Assignment[2m > [22mshould wake up unit if they were saved while sleeping but had a job assigned (manual)[32m 117[2mms[22m[39m
+[31m   竊・Cannot read properties of undefined (reading 'width')[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 01:45:32
+[2m   Duration [22m 1.44s[2m (transform 336ms, setup 37ms, import 451ms, tests 287ms, environment 447ms)[22m
+

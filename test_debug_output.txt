@@ -1,0 +1,28 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/UnitPersistence.test.js[2m > [22m[2mUnit Persistence[2m > [22m[2mshould persist unit type and role
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:true
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:10,10 Special:true
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:10,10
+
+[90mstdout[2m | src/tests/UnitPersistence.test.js[2m > [22m[2mUnit Persistence[2m > [22m[2mshould persist worker type correctly
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5
+
+ [32m笨・[39m src/tests/UnitPersistence.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+[90mstdout[2m | src/tests/SaveLoadPopulation.test.js[2m > [22m[2mSave/Load Population Persistence[2m > [22m[2mshould persist units and building population across save/load
+[22m[39mScene created: [33mtrue[39m Pos: undefined
+Camera created: [33mtrue[39m Pos: object
+
+ [31m笶ｯ[39m src/tests/SaveLoadPopulation.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 39[2mms[22m[39m
+[31m     [31mﾃ・[31m should persist units and building population across save/load[39m[32m 37[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 15:06:19
+[2m   Duration [22m 1.54s[2m (transform 593ms, setup 105ms, import 843ms, tests 49ms, environment 1.22s)[22m
+

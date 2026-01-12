@@ -1,0 +1,756 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould correctly resume manual job when loaded at night
+[22m[39mCreating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 131,101. Force:false
+[Terrain] Building Added: cave at (131, 101) Size:1x1. Total: 1
+GoblinManager: Cave registered at 131,101 
+[GoblinManager] Clan clan_cave_131_101 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 132,108. Force:false
+[Terrain] Building Added: cave at (132, 108) Size:1x1. Total: 2
+GoblinManager: Cave registered at 132,108 
+[GoblinManager] Clan clan_cave_132_108 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 80,44. Force:false
+[Terrain] Building Added: cave at (80, 44) Size:1x1. Total: 3
+GoblinManager: Cave registered at 80,44 
+[GoblinManager] Clan clan_cave_80_44 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 41,151. Force:false
+[Terrain] Building Added: cave at (41, 151) Size:1x1. Total: 4
+GoblinManager: Cave registered at 41,151 
+[GoblinManager] Clan clan_cave_41_151 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 20,31. Force:false
+[Terrain] Building Added: cave at (20, 31) Size:1x1. Total: 5
+GoblinManager: Cave registered at 20,31 
+[GoblinManager] Clan clan_cave_20_31 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 6 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould correctly resume manual job when loaded at night
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (15,15) ID:req_0
+[Game] forceAssignRequest FOUND Unit 0 (DistSq:50). Scanned:1
+[Unit 0] Moving onto Rock at 11,11 H:12 (Speed Penalty)
+[JobState] Entered. Target: raise. ResumeCtx: Approaching Job
+[Game] Request req_0 assigned/switched to Unit 0
+Saved to slot 1 (Compressed). Size: 24904 chars (Original: 308217)
+Creating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 88,91. Force:false
+[Terrain] Building Added: cave at (88, 91) Size:1x1. Total: 1
+GoblinManager: Cave registered at 88,91 
+[GoblinManager] Clan clan_cave_88_91 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 38,18. Force:false
+[Terrain] Building Added: cave at (38, 18) Size:1x1. Total: 2
+GoblinManager: Cave registered at 38,18 
+[GoblinManager] Clan clan_cave_38_18 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 121,114. Force:false
+[Terrain] Building Added: cave at (121, 114) Size:1x1. Total: 3
+GoblinManager: Cave registered at 121,114 
+[GoblinManager] Clan clan_cave_121_114 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 42,121. Force:false
+[Terrain] Building Added: cave at (42, 121) Size:1x1. Total: 4
+GoblinManager: Cave registered at 42,121 
+[GoblinManager] Clan clan_cave_42_121 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 72,159. Force:false
+[Terrain] Building Added: cave at (72, 159) Size:1x1. Total: 5
+GoblinManager: Cave registered at 72,159 
+[GoblinManager] Clan clan_cave_72_159 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 8 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+Load Started for slot 1...
+Load Started...
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould correctly resume manual job when loaded at night
+[22m[39mLoading slot 1, Raw length: 24904
+Load: Decompressed successfully.
+Parsed Data for slot 1: {
+  timestamp: [33m1767668457712[39m,
+  data: {
+    slotId: [33m1[39m,
+    timestamp: [33m1767668457704[39m,
+    resources: { grain: [33m10[39m, fish: [33m10[39m, meat: [33m10[39m },
+    gameTime: [33m20[39m,
+    gameTotalTime: [33m0[39m,
+    terrain: {
+      logicalWidth: [33m160[39m,
+      logicalDepth: [33m160[39m,
+      version: [33m2[39m,
+      h: [36m[Array][39m,
+      n: [36m[Array][39m,
+      b: [36m[Array][39m,
+      m: [36m[Array][39m
+    },
+    units: [ [36m[Object][39m ],
+    requests: [ [36m[Object][39m ],
+    goblinManager: { plunderCount: [33m0[39m, goblins: [], clans: [36m[Array][39m, caves: [36m[Array][39m },
+    camera: { position: [36m[Object][39m, zoom: [33m1[39m, target: [36m[Object][39m }
+  }
+}
+Load Game: Data found {
+  slotId: [33m1[39m,
+  timestamp: [33m1767668457704[39m,
+  resources: { grain: [33m10[39m, fish: [33m10[39m, meat: [33m10[39m },
+  gameTime: [33m20[39m,
+  gameTotalTime: [33m0[39m,
+  terrain: {
+    logicalWidth: [33m160[39m,
+    logicalDepth: [33m160[39m,
+    version: [33m2[39m,
+    h: [
+      [33m17[39m, [33m17[39m, [33m16[39m, [33m14[39m, [33m13[39m, [33m11[39m, [33m10[39m, [33m10[39m,  [33m9[39m,  [33m8[39m,  [33m7[39m,  [33m6[39m,
+       [33m6[39m,  [33m5[39m,  [33m4[39m,  [33m3[39m,  [33m2[39m,  [33m1[39m,  [33m1[39m,  [33m2[39m,  [33m2[39m,  [33m1[39m,  [33m1[39m,  [33m1[39m,
+       [33m1[39m,  [33m1[39m,  [33m1[39m,  [33m0[39m,  [33m0[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m,
+       [33m0[39m,  [33m0[39m,  [33m2[39m,  [33m3[39m,  [33m3[39m,  [33m4[39m,  [33m4[39m,  [33m4[39m,  [33m4[39m,  [33m4[39m,  [33m5[39m,  [33m5[39m,
+       [33m6[39m,  [33m6[39m,  [33m7[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m7[39m,  [33m6[39m,  [33m5[39m,  [33m5[39m,  [33m5[39m,  [33m6[39m,
+       [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,
+       [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m8[39m,  [33m8[39m,  [33m9[39m, [33m10[39m, [33m11[39m, [33m11[39m, [33m11[39m, [33m11[39m, [33m10[39m,
+      [33m10[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m8[39m,  [33m8[39m,  [33m7[39m,  [33m8[39m,  [33m8[39m,  [33m9[39m,
+       [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m8[39m,
+      ... 25500 more items
+    ],
+    n: [
+       [33m0.01[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.01[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.02[39m,
+          [33m0[39m,  [33m0.01[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.01[39m,     [33m0[39m,
+          [33m0[39m,  [33m0.02[39m,     [33m0[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.01[39m,
+       [33m0.02[39m,     [33m0[39m,  [33m0.01[39m, [33m-0.02[39m,     [33m0[39m,     [33m0[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.02[39m,
+       [33m0.02[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.01[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.02[39m,
+      [33m-0.01[39m, [33m-0.02[39m, [33m-0.01[39m, [33m-0.01[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.01[39m,     [33m0[39m,     [33m0[39m,
+      [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m,     [33m0[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.02[39m,
+       [33m0.01[39m,     [33m0[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.01[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.01[39m, [33m-0.01[39m,
+      [33m-0.01[39m,  [33m0.01[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.02[39m,     [33m0[39m,     [33m0[39m,     [33m0[39m, [33m-0.01[39m,
+      [33m-0.01[39m,     [33m0[39m,  [33m0.02[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.01[39m, [33m-0.01[39m,  [33m0.01[39m,     [33m0[39m,
+       [33m0.01[39m,  [33m0.01[39m, [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.02[39m, [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m,
+      [33m-0.01[39m,
+      ... 25500 more items
+    ],
+    b: [ [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m ],
+    m: [
+      [33m0.33[39m, [33m0.33[39m, [33m0.35[39m, [33m0.36[39m, [33m0.37[39m, [33m0.39[39m, [33m0.41[39m, [33m0.42[39m, [33m0.43[39m, [33m0.44[39m,
+      [33m0.44[39m, [33m0.44[39m, [33m0.45[39m, [33m0.46[39m, [33m0.48[39m, [33m0.49[39m,  [33m0.5[39m,  [33m0.5[39m, [33m0.49[39m, [33m0.48[39m,
+      [33m0.48[39m, [33m0.48[39m,  [33m0.5[39m, [33m0.52[39m, [33m0.53[39m, [33m0.54[39m, [33m0.55[39m, [33m0.55[39m, [33m0.56[39m, [33m0.56[39m,
+      [33m0.57[39m, [33m0.57[39m, [33m0.57[39m, [33m0.57[39m, [33m0.57[39m, [33m0.57[39m, [33m0.56[39m, [33m0.53[39m, [33m0.51[39m, [33m0.48[39m,
+      [33m0.46[39m, [33m0.45[39m, [33m0.45[39m, [33m0.45[39m, [33m0.46[39m, [33m0.48[39m,  [33m0.5[39m, [33m0.52[39m, [33m0.53[39m, [33m0.54[39m,
+      [33m0.55[39m, [33m0.57[39m, [33m0.57[39m, [33m0.57[39m, [33m0.55[39m, [33m0.54[39m, [33m0.54[39m, [33m0.55[39m, [33m0.56[39m, [33m0.58[39m,
+      [33m0.59[39m, [33m0.59[39m, [33m0.59[39m, [33m0.59[39m, [33m0.59[39m, [33m0.59[39m,  [33m0.6[39m,  [33m0.6[39m,  [33m0.6[39m,  [33m0.6[39m,
+      [33m0.58[39m, [33m0.57[39m, [33m0.56[39m, [33m0.54[39m, [33m0.51[39m, [33m0.48[39m, [33m0.45[39m, [33m0.42[39m,  [33m0.4[39m, [33m0.38[39m,
+      [33m0.36[39m, [33m0.34[39m, [33m0.31[39m, [33m0.28[39m, [33m0.27[39m, [33m0.27[39m, [33m0.28[39m,  [33m0.3[39m, [33m0.31[39m, [33m0.32[39m,
+      [33m0.33[39m, [33m0.34[39m, [33m0.35[39m, [33m0.36[39m, [33m0.37[39m, [33m0.38[39m, [33m0.39[39m, [33m0.39[39m, [33m0.39[39m,  [33m0.4[39m,
+      ... 25500 more items
+    ]
+  },
+  units: [
+    {
+      id: [33m0[39m,
+      gridX: [33m10[39m,
+      gridZ: [33m10[39m,
+      age: [33m20[39m,
+      lifespan: [33m91.12617808613967[39m,
+      isDead: [33mfalse[39m,
+      isMoving: [33mtrue[39m,
+      targetX: [33m0[39m,
+      targetZ: [33m0[39m,
+      moveStartTime: [33m0[39m,
+      moveDuration: [33m3.9597979746446663[39m,
+      startGridX: [33m10[39m,
+      startGridZ: [33m10[39m,
+      targetGridX: [33m11[39m,
+      targetGridZ: [33m11[39m,
+      isSpecial: [33mfalse[39m,
+      role: [32m'worker'[39m,
+      hp: [33m36[39m,
+      maxHp: [33m36[39m,
+      damage: [33m4[39m,
+      xp: [33m0[39m,
+      level: [33m1[39m,
+      squadId: [1mnull[22m,
+      targetRequestId: [32m'req_0'[39m
+    }
+  ],
+  requests: [
+    {
+      id: [32m'req_0'[39m,
+      type: [32m'raise'[39m,
+      x: [33m15[39m,
+      z: [33m15[39m,
+      status: [32m'assigned'[39m,
+      assignedTo: [33m0[39m,
+      createdAt: [33m0[39m,
+      isManual: [33mtrue[39m
+    }
+  ],
+  goblinManager: {
+    plunderCount: [33m0[39m,
+    goblins: [],
+    clans: [ [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m ],
+    caves: [ [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m ]
+  },
+  camera: {
+    position: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m },
+    zoom: [33m1[39m,
+    target: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m }
+  }
+}
+Resetting GoblinManager...
+Clearing 0 projectiles...
+[BuildingRenderer] Disposing...
+[UnitRenderer] Disposing...
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+[Game] Deserializing terrain...
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould correctly resume manual job when loaded at night
+[22m[39m[Terrain] addBuilding: cave at 131,101. Force:true
+[Terrain] Building Added: cave at (131, 101) Size:1x1. Total: 1
+[Terrain] addBuilding: cave at 132,108. Force:true
+[Terrain] Building Added: cave at (132, 108) Size:1x1. Total: 2
+[Terrain] addBuilding: cave at 80,44. Force:true
+[Terrain] Building Added: cave at (80, 44) Size:1x1. Total: 3
+[Terrain] addBuilding: cave at 41,151. Force:true
+[Terrain] Building Added: cave at (41, 151) Size:1x1. Total: 4
+[Terrain] addBuilding: cave at 20,31. Force:true
+[Terrain] Building Added: cave at (20, 31) Size:1x1. Total: 5
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould correctly resume manual job when loaded at night
+[22m[39m[Game] Terrain deserialized.
+[Game] Loading resources/time...
+[Game] Updating environment...
+[DEBUG] Terrain.setSeason: Changing from undefined to Spring
+[Game] Restoring 1 units...
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[Game] Successfully restored 1 units.
+GoblinManager: Deserializing... {
+  plunderCount: [33m0[39m,
+  goblins: [],
+  clans: [
+    {
+      id: [32m'clan_cave_131_101'[39m,
+      active: [33mtrue[39m,
+      waveLevel: [33m1[39m,
+      waveTimer: [33m30[39m,
+      raidTarget: [1mnull[22m
+    },
+    {
+      id: [32m'clan_cave_132_108'[39m,
+      active: [33mtrue[39m,
+      waveLevel: [33m1[39m,
+      waveTimer: [33m30[39m,
+      raidTarget: [1mnull[22m
+    },
+    {
+      id: [32m'clan_cave_80_44'[39m,
+      active: [33mtrue[39m,
+      waveLevel: [33m1[39m,
+      waveTimer: [33m30[39m,
+      raidTarget: [1mnull[22m
+    },
+    {
+      id: [32m'clan_cave_41_151'[39m,
+      active: [33mtrue[39m,
+      waveLevel: [33m1[39m,
+      waveTimer: [33m30[39m,
+      raidTarget: [1mnull[22m
+    },
+    {
+      id: [32m'clan_cave_20_31'[39m,
+      active: [33mtrue[39m,
+      waveLevel: [33m1[39m,
+      waveTimer: [33m30[39m,
+      raidTarget: [1mnull[22m
+    }
+  ],
+  caves: [
+    {
+      x: [33m131[39m,
+      z: [33m101[39m,
+      spawnCooldown: [33m8.661843462458112[39m,
+      clanId: [32m'clan_cave_131_101'[39m
+    },
+    {
+      x: [33m132[39m,
+      z: [33m108[39m,
+      spawnCooldown: [33m9.621121516248238[39m,
+      clanId: [32m'clan_cave_132_108'[39m
+    },
+    {
+      x: [33m80[39m,
+      z: [33m44[39m,
+      spawnCooldown: [33m16.254257593578522[39m,
+      clanId: [32m'clan_cave_80_44'[39m
+    },
+    {
+      x: [33m41[39m,
+      z: [33m151[39m,
+      spawnCooldown: [33m17.10277939926522[39m,
+      clanId: [32m'clan_cave_41_151'[39m
+    },
+    {
+      x: [33m20[39m,
+      z: [33m31[39m,
+      spawnCooldown: [33m5.760041962906497[39m,
+      clanId: [32m'clan_cave_20_31'[39m
+    }
+  ]
+}
+[Terrain] Validated/Cleared 0 entities of type 'goblin'.
+GoblinManager: Restored 0 goblins.
+[Game] Restoring 1 requests...
+[Game] Re-linked Unit 0 to Request req_0
+[Unit 0] Moving onto Rock at 11,11 H:12 (Speed Penalty)
+[JobState] Entered. Target: raise. ResumeCtx: Going to Work
+[Game] Restored Camera Zoom: 1
+
+ [32m笨・[39m src/tests/NightLoadJob.test.js[2m > [22mNight Loading Job Assignment[2m > [22mshould correctly resume manual job when loaded at night[33m 1133[2mms[22m[39m
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould wake up unit if they were saved while sleeping but had a job assigned (manual)
+[22m[39mCreating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 79,74. Force:false
+[Terrain] Building Added: cave at (79, 74) Size:1x1. Total: 1
+GoblinManager: Cave registered at 79,74 
+[GoblinManager] Clan clan_cave_79_74 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 152,156. Force:false
+[Terrain] Building Added: cave at (152, 156) Size:1x1. Total: 2
+GoblinManager: Cave registered at 152,156 
+[GoblinManager] Clan clan_cave_152_156 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 153,153. Force:false
+[Terrain] Building Added: cave at (153, 153) Size:1x1. Total: 3
+GoblinManager: Cave registered at 153,153 
+[GoblinManager] Clan clan_cave_153_153 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 84,31. Force:false
+[Terrain] Building Added: cave at (84, 31) Size:1x1. Total: 4
+GoblinManager: Cave registered at 84,31 
+[GoblinManager] Clan clan_cave_84_31 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 104,108. Force:false
+[Terrain] Building Added: cave at (104, 108) Size:1x1. Total: 5
+GoblinManager: Cave registered at 104,108 
+[GoblinManager] Clan clan_cave_104_108 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 24 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould wake up unit if they were saved while sleeping but had a job assigned (manual)
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[SleepState] Entering Sleep logic.
+[Defense Debug 0] shouldScan:true isBusy:false force:false PassedGoblins:None
+[Game] Request Added: raise at (15,15) ID:req_0
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:1 (RoleSkipped:0) Busy:0 Valid:1. TotalUnits:1
+[JobState] Entered. Target: raise. ResumeCtx: Approaching Job
+Saved to slot 2 (Compressed). Size: 24600 chars (Original: 312542)
+Creating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 60,143. Force:false
+[Terrain] Building Added: cave at (60, 143) Size:1x1. Total: 1
+GoblinManager: Cave registered at 60,143 
+[GoblinManager] Clan clan_cave_60_143 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 157,64. Force:false
+[Terrain] Building Added: cave at (157, 64) Size:1x1. Total: 2
+GoblinManager: Cave registered at 157,64 
+[GoblinManager] Clan clan_cave_157_64 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 124,117. Force:false
+[Terrain] Building Added: cave at (124, 117) Size:1x1. Total: 3
+GoblinManager: Cave registered at 124,117 
+[GoblinManager] Clan clan_cave_124_117 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 92,67. Force:false
+[Terrain] Building Added: cave at (92, 67) Size:1x1. Total: 4
+GoblinManager: Cave registered at 92,67 
+[GoblinManager] Clan clan_cave_92_67 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 110,57. Force:false
+[Terrain] Building Added: cave at (110, 57) Size:1x1. Total: 5
+GoblinManager: Cave registered at 110,57 
+[GoblinManager] Clan clan_cave_110_57 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 9 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+Load Started...
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould wake up unit if they were saved while sleeping but had a job assigned (manual)
+[22m[39mLoading slot 2, Raw length: 24600
+Load: Decompressed successfully.
+Parsed Data for slot 2: {
+  timestamp: [33m1767668458702[39m,
+  data: {
+    slotId: [33m2[39m,
+    timestamp: [33m1767668458692[39m,
+    resources: { grain: [33m10[39m, fish: [33m10[39m, meat: [33m10[39m },
+    gameTime: [33m20[39m,
+    gameTotalTime: [33m0[39m,
+    terrain: {
+      logicalWidth: [33m160[39m,
+      logicalDepth: [33m160[39m,
+      version: [33m2[39m,
+      h: [36m[Array][39m,
+      n: [36m[Array][39m,
+      b: [36m[Array][39m,
+      m: [36m[Array][39m
+    },
+    units: [ [36m[Object][39m ],
+    requests: [ [36m[Object][39m ],
+    goblinManager: { plunderCount: [33m0[39m, goblins: [], clans: [36m[Array][39m, caves: [36m[Array][39m },
+    camera: { position: [36m[Object][39m, zoom: [33m1[39m, target: [36m[Object][39m }
+  }
+}
+Load Game: Data found {
+  slotId: [33m2[39m,
+  timestamp: [33m1767668458692[39m,
+  resources: { grain: [33m10[39m, fish: [33m10[39m, meat: [33m10[39m },
+  gameTime: [33m20[39m,
+  gameTotalTime: [33m0[39m,
+  terrain: {
+    logicalWidth: [33m160[39m,
+    logicalDepth: [33m160[39m,
+    version: [33m2[39m,
+    h: [
+       [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m11[39m, [33m11[39m,
+      [33m11[39m, [33m11[39m, [33m10[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m, [33m10[39m, [33m11[39m, [33m11[39m, [33m12[39m, [33m12[39m, [33m12[39m,
+      [33m11[39m, [33m11[39m, [33m10[39m,  [33m9[39m,  [33m8[39m,  [33m7[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m7[39m,
+       [33m8[39m,  [33m8[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m, [33m10[39m, [33m10[39m,
+      [33m10[39m,  [33m9[39m,  [33m8[39m,  [33m7[39m,  [33m6[39m,  [33m5[39m,  [33m4[39m,  [33m3[39m,  [33m1[39m,  [33m0[39m,  [33m0[39m, [33m-1[39m,
+      [33m-2[39m, [33m-3[39m, [33m-3[39m, [33m-4[39m, [33m-4[39m, [33m-4[39m, [33m-3[39m, [33m-2[39m, [33m-1[39m, [33m-1[39m,  [33m0[39m,  [33m0[39m,
+       [33m1[39m,  [33m1[39m,  [33m2[39m,  [33m3[39m,  [33m3[39m,  [33m4[39m,  [33m5[39m,  [33m6[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,
+       [33m7[39m,  [33m8[39m,  [33m9[39m,  [33m9[39m, [33m10[39m, [33m10[39m, [33m11[39m, [33m11[39m, [33m12[39m, [33m13[39m, [33m13[39m, [33m14[39m,
+      [33m14[39m, [33m14[39m, [33m13[39m, [33m12[39m,
+      ... 25500 more items
+    ],
+    n: [
+      [33m-0.02[39m, [33m-0.01[39m,     [33m0[39m,     [33m0[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.02[39m,     [33m0[39m,  [33m0.02[39m,
+       [33m0.02[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.02[39m,     [33m0[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.01[39m,
+      [33m-0.02[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.02[39m,     [33m0[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m, [33m-0.01[39m,
+      [33m-0.02[39m,  [33m0.01[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.01[39m, [33m-0.02[39m,
+      [33m-0.01[39m,     [33m0[39m,     [33m0[39m,     [33m0[39m,  [33m0.01[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.01[39m,
+          [33m0[39m, [33m-0.01[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.01[39m,     [33m0[39m,
+          [33m0[39m,     [33m0[39m, [33m-0.02[39m, [33m-0.01[39m,     [33m0[39m,  [33m0.02[39m,     [33m0[39m,     [33m0[39m,  [33m0.01[39m,
+       [33m0.02[39m, [33m-0.01[39m,     [33m0[39m, [33m-0.01[39m,     [33m0[39m, [33m-0.01[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.02[39m,
+      [33m-0.02[39m, [33m-0.02[39m,  [33m0.02[39m,     [33m0[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m,
+      [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.02[39m,     [33m0[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.02[39m,
+      [33m-0.01[39m, [33m-0.01[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.02[39m,     [33m0[39m,     [33m0[39m,  [33m0.02[39m,
+          [33m0[39m,
+      ... 25500 more items
+    ],
+    b: [ [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m ],
+    m: [
+      [33m0.41[39m, [33m0.42[39m, [33m0.43[39m, [33m0.46[39m, [33m0.48[39m,  [33m0.5[39m, [33m0.53[39m, [33m0.55[39m, [33m0.57[39m, [33m0.58[39m,
+      [33m0.59[39m, [33m0.59[39m, [33m0.61[39m, [33m0.62[39m, [33m0.63[39m, [33m0.64[39m, [33m0.65[39m, [33m0.66[39m, [33m0.67[39m, [33m0.68[39m,
+      [33m0.69[39m, [33m0.68[39m, [33m0.68[39m, [33m0.69[39m, [33m0.69[39m, [33m0.71[39m, [33m0.72[39m, [33m0.73[39m, [33m0.74[39m, [33m0.73[39m,
+      [33m0.72[39m, [33m0.71[39m, [33m0.71[39m, [33m0.71[39m, [33m0.72[39m, [33m0.74[39m, [33m0.75[39m, [33m0.74[39m, [33m0.73[39m, [33m0.71[39m,
+      [33m0.69[39m, [33m0.68[39m, [33m0.67[39m, [33m0.66[39m, [33m0.65[39m, [33m0.65[39m, [33m0.64[39m, [33m0.64[39m, [33m0.65[39m, [33m0.65[39m,
+      [33m0.66[39m, [33m0.66[39m, [33m0.67[39m, [33m0.68[39m, [33m0.69[39m,  [33m0.7[39m, [33m0.71[39m,  [33m0.7[39m, [33m0.69[39m, [33m0.67[39m,
+      [33m0.66[39m, [33m0.65[39m, [33m0.65[39m, [33m0.65[39m, [33m0.65[39m, [33m0.65[39m, [33m0.64[39m, [33m0.63[39m, [33m0.63[39m, [33m0.65[39m,
+      [33m0.66[39m, [33m0.67[39m, [33m0.67[39m, [33m0.67[39m, [33m0.67[39m, [33m0.66[39m, [33m0.64[39m, [33m0.62[39m, [33m0.59[39m, [33m0.57[39m,
+      [33m0.55[39m, [33m0.54[39m, [33m0.54[39m, [33m0.54[39m, [33m0.53[39m, [33m0.51[39m, [33m0.49[39m, [33m0.46[39m, [33m0.44[39m, [33m0.44[39m,
+      [33m0.44[39m, [33m0.45[39m, [33m0.45[39m, [33m0.44[39m, [33m0.44[39m, [33m0.44[39m, [33m0.44[39m, [33m0.44[39m, [33m0.44[39m, [33m0.43[39m,
+      ... 25500 more items
+    ]
+  },
+  units: [
+    {
+      id: [33m0[39m,
+      gridX: [33m10[39m,
+      gridZ: [33m10[39m,
+      age: [33m20[39m,
+      lifespan: [33m80.96094304545134[39m,
+      isDead: [33mfalse[39m,
+      isMoving: [33mfalse[39m,
+      targetX: [33m0[39m,
+      targetZ: [33m0[39m,
+      moveStartTime: [33m0[39m,
+      moveDuration: [33m1000[39m,
+      startGridX: [33m0[39m,
+      startGridZ: [33m0[39m,
+      targetGridX: [33m0[39m,
+      targetGridZ: [33m0[39m,
+      isSpecial: [33mfalse[39m,
+      role: [32m'worker'[39m,
+      hp: [33m49[39m,
+      maxHp: [33m49[39m,
+      damage: [33m4[39m,
+      xp: [33m0[39m,
+      level: [33m1[39m,
+      squadId: [1mnull[22m,
+      targetRequestId: [32m'req_0'[39m
+    }
+  ],
+  requests: [
+    {
+      id: [32m'req_0'[39m,
+      type: [32m'raise'[39m,
+      x: [33m15[39m,
+      z: [33m15[39m,
+      status: [32m'assigned'[39m,
+      assignedTo: [33m0[39m,
+      createdAt: [33m0[39m,
+      isManual: [33mtrue[39m
+    }
+  ],
+  goblinManager: {
+    plunderCount: [33m0[39m,
+    goblins: [],
+    clans: [ [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m ],
+    caves: [ [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m ]
+  },
+  camera: {
+    position: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m },
+    zoom: [33m1[39m,
+    target: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m }
+  }
+}
+Resetting GoblinManager...
+Clearing 0 projectiles...
+[BuildingRenderer] Disposing...
+[UnitRenderer] Disposing...
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+[Game] Deserializing terrain...
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould wake up unit if they were saved while sleeping but had a job assigned (manual)
+[22m[39m[Terrain] addBuilding: cave at 79,74. Force:true
+[Terrain] Building Added: cave at (79, 74) Size:1x1. Total: 1
+[Terrain] addBuilding: cave at 152,156. Force:true
+[Terrain] Building Added: cave at (152, 156) Size:1x1. Total: 2
+[Terrain] addBuilding: cave at 153,153. Force:true
+[Terrain] Building Added: cave at (153, 153) Size:1x1. Total: 3
+[Terrain] addBuilding: cave at 84,31. Force:true
+[Terrain] Building Added: cave at (84, 31) Size:1x1. Total: 4
+[Terrain] addBuilding: cave at 104,108. Force:true
+[Terrain] Building Added: cave at (104, 108) Size:1x1. Total: 5
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould wake up unit if they were saved while sleeping but had a job assigned (manual)
+[22m[39m[Game] Terrain deserialized.
+[Game] Loading resources/time...
+[Game] Updating environment...
+[DEBUG] Terrain.setSeason: Changing from undefined to Spring
+[Game] Restoring 1 units...
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+[Game] Successfully restored 1 units.
+GoblinManager: Deserializing... {
+  plunderCount: [33m0[39m,
+  goblins: [],
+  clans: [
+    {
+      id: [32m'clan_cave_79_74'[39m,
+      active: [33mtrue[39m,
+      waveLevel: [33m1[39m,
+      waveTimer: [33m30[39m,
+      raidTarget: [1mnull[22m
+    },
+    {
+      id: [32m'clan_cave_152_156'[39m,
+      active: [33mtrue[39m,
+      waveLevel: [33m1[39m,
+      waveTimer: [33m30[39m,
+      raidTarget: [1mnull[22m
+    },
+    {
+      id: [32m'clan_cave_153_153'[39m,
+      active: [33mtrue[39m,
+      waveLevel: [33m1[39m,
+      waveTimer: [33m30[39m,
+      raidTarget: [1mnull[22m
+    },
+    {
+      id: [32m'clan_cave_84_31'[39m,
+      active: [33mtrue[39m,
+      waveLevel: [33m1[39m,
+      waveTimer: [33m30[39m,
+      raidTarget: [1mnull[22m
+    },
+    {
+      id: [32m'clan_cave_104_108'[39m,
+      active: [33mtrue[39m,
+      waveLevel: [33m1[39m,
+      waveTimer: [33m30[39m,
+      raidTarget: [1mnull[22m
+    }
+  ],
+  caves: [
+    {
+      x: [33m79[39m,
+      z: [33m74[39m,
+      spawnCooldown: [33m8.980315369125549[39m,
+      clanId: [32m'clan_cave_79_74'[39m
+    },
+    {
+      x: [33m152[39m,
+      z: [33m156[39m,
+      spawnCooldown: [33m1.739648808244052[39m,
+      clanId: [32m'clan_cave_152_156'[39m
+    },
+    {
+      x: [33m153[39m,
+      z: [33m153[39m,
+      spawnCooldown: [33m16.476708126894412[39m,
+      clanId: [32m'clan_cave_153_153'[39m
+    },
+    {
+      x: [33m84[39m,
+      z: [33m31[39m,
+      spawnCooldown: [33m19.600189788003522[39m,
+      clanId: [32m'clan_cave_84_31'[39m
+    },
+    {
+      x: [33m104[39m,
+      z: [33m108[39m,
+      spawnCooldown: [33m3.905481878365573[39m,
+      clanId: [32m'clan_cave_104_108'[39m
+    }
+  ]
+}
+[Terrain] Validated/Cleared 0 entities of type 'goblin'.
+GoblinManager: Restored 0 goblins.
+[Game] Restoring 1 requests...
+[Game] Re-linked Unit 0 to Request req_0
+[JobState] Entered. Target: raise. ResumeCtx: Going to Work
+[Game] Restored Camera Zoom: 1
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould treat legacy requests (missing isManual) as manual for specific types
+[22m[39mCreating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 0,116. Force:false
+[Terrain] Building Added: cave at (0, 116) Size:1x1. Total: 1
+GoblinManager: Cave registered at 0,116 
+[GoblinManager] Clan clan_cave_0_116 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 71,46. Force:false
+[Terrain] Building Added: cave at (71, 46) Size:1x1. Total: 2
+GoblinManager: Cave registered at 71,46 
+[GoblinManager] Clan clan_cave_71_46 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 81,25. Force:false
+[Terrain] Building Added: cave at (81, 25) Size:1x1. Total: 3
+GoblinManager: Cave registered at 81,25 
+[GoblinManager] Clan clan_cave_81_25 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 92,37. Force:false
+[Terrain] Building Added: cave at (92, 37) Size:1x1. Total: 4
+GoblinManager: Cave registered at 92,37 
+[GoblinManager] Clan clan_cave_92_37 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 157,133. Force:false
+[Terrain] Building Added: cave at (157, 133) Size:1x1. Total: 5
+GoblinManager: Cave registered at 157,133 
+[GoblinManager] Clan clan_cave_157_133 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 10 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+ [31mﾃ・[39m src/tests/NightLoadJob.test.js[2m > [22mNight Loading Job Assignment[2m > [22mshould wake up unit if they were saved while sleeping but had a job assigned (manual)[33m 842[2mms[22m[39m
+[31m   竊・expected false to be true // Object.is equality[39m
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould treat legacy requests (missing isManual) as manual for specific types
+[22m[39mCreating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 39,93. Force:false
+[Terrain] Building Added: cave at (39, 93) Size:1x1. Total: 1
+GoblinManager: Cave registered at 39,93 
+[GoblinManager] Clan clan_cave_39_93 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 90,109. Force:false
+[Terrain] Building Added: cave at (90, 109) Size:1x1. Total: 2
+GoblinManager: Cave registered at 90,109 
+[GoblinManager] Clan clan_cave_90_109 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 116,19. Force:false
+[Terrain] Building Added: cave at (116, 19) Size:1x1. Total: 3
+GoblinManager: Cave registered at 116,19 
+[GoblinManager] Clan clan_cave_116_19 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 84,128. Force:false
+[Terrain] Building Added: cave at (84, 128) Size:1x1. Total: 4
+GoblinManager: Cave registered at 84,128 
+[GoblinManager] Clan clan_cave_84_128 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 94,97. Force:false
+[Terrain] Building Added: cave at (94, 97) Size:1x1. Total: 5
+GoblinManager: Cave registered at 94,97 
+[GoblinManager] Clan clan_cave_94_97 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 16 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+Load Started...
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould treat legacy requests (missing isManual) as manual for specific types
+[22m[39mLoad Game: Data found {
+  gameTime: [33m20[39m,
+  terrain: { serialize: [36m[Function: serialize][39m },
+  units: [
+    {
+      id: [33m0[39m,
+      role: [32m'worker'[39m,
+      gridX: [33m10[39m,
+      gridZ: [33m10[39m,
+      targetRequestId: [32m'req_legacy'[39m
+    }
+  ],
+  requests: [
+    {
+      id: [32m'req_legacy'[39m,
+      type: [32m'raise'[39m,
+      x: [33m15[39m,
+      z: [33m15[39m,
+      status: [32m'assigned'[39m,
+      assignedTo: [33m0[39m
+    }
+  ],
+  camera: { position: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m }, target: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m } }
+}
+Resetting GoblinManager...
+Clearing 0 projectiles...
+[BuildingRenderer] Disposing...
+[UnitRenderer] Disposing...
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+[Game] Deserializing terrain...
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould treat legacy requests (missing isManual) as manual for specific types
+[22m[39m[Game] Terrain deserialized.
+[Game] Loading resources/time...
+[Game] Updating environment...
+[DEBUG] Terrain.setSeason: Changing from undefined to Spring
+[Game] Restoring 1 units...
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[Game] Successfully restored 1 units.
+[Game] Restoring 1 requests...
+[Game] Re-linked Unit 0 to Request req_legacy
+[JobState] Entered. Target: raise. ResumeCtx: Going to Work
+[Game] Restored Camera Zoom: 1
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould treat legacy requests (missing isManual) as manual for specific types
+[22m[39m[Game] forceAssignRequest FAILED for Req req_legacy. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
+[Defense Debug 0] shouldScan:true isBusy:false force:false PassedGoblins:None
+
+ [31mﾃ・[39m src/tests/NightLoadJob.test.js[2m > [22mNight Loading Job Assignment[2m > [22mshould treat legacy requests (missing isManual) as manual for specific types[33m 635[2mms[22m[39m
+[31m   竊・expected false to be true // Object.is equality[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 12:00:56
+[2m   Duration [22m 3.79s[2m (transform 343ms, setup 38ms, import 461ms, tests 2.61s, environment 454ms)[22m
+

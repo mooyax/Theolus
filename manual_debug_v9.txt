@@ -1,0 +1,59 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign a manual request to an Idle worker
+Game constructor called
+stderr | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign a manual request to an Idle worker
+[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+
+
+stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should NOT assign to a Busy worker (already working)
+Game constructor called
+
+stderr | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should NOT assign to a Busy worker (already working)
+[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+
+stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Wandering worker (Low Priority)
+Game constructor called
+
+stderr | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Wandering worker (Low Priority)
+[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+
+stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Moving worker (Low Priority)
+Game constructor called
+
+stderr | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Moving worker (Low Priority)
+[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+
+ 笶ｯ src/tests/ManualAssignment.test.js (4 tests | 4 failed) 28ms
+     ﾃ・should assign a manual request to an Idle worker 22ms
+     ﾃ・should NOT assign to a Busy worker (already working) 2ms
+     ﾃ・should assign to a Wandering worker (Low Priority) 1ms
+     ﾃ・should assign to a Moving worker (Low Priority) 1ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 4 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign a manual request to an Idle worker
+ FAIL  src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should NOT assign to a Busy worker (already working)
+ FAIL  src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Wandering worker (Low Priority)
+ FAIL  src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Moving worker (Low Priority)
+TypeError: () => ({
+            setSize: __vite_ssr_import_0__.vi.fn(),
+            setPixelRatio: __vite_ssr_import_0__...<omitted>...}) is not a constructor
+ 笶ｯ new Game src/Game.js:101:25
+     99| 
+    100|         // 2. Setup Renderer
+    101|         this.renderer = new THREE.WebGLRenderer({ antialias: true, pow窶ｦ
+       |                         ^
+    102|         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 窶ｦ
+    103|         this.renderer.setSize(window.innerWidth, window.innerHeight);
+ 笶ｯ src/tests/ManualAssignment.test.js:95:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/4]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  22:15:38
+   Duration  1.10s (transform 326ms, setup 37ms, import 409ms, tests 28ms, environment 416ms)
+

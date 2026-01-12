@@ -74,7 +74,7 @@ describe('Unit AI Search Optimization', () => {
         unit.searchSurroundings(0, 0);
 
         // Expectation 1: Unit calls findBestTarget
-        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('goblin', 0, 0, 12, expect.any(Function));
+        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('goblin', 0, 0, 12, expect.any(Function), expect.any(Array));
 
         // Expectation 2: Unit sets target
         expect(unit.targetGoblin).toBe(goblin);
@@ -99,7 +99,7 @@ describe('Unit AI Search Optimization', () => {
         unit.searchSurroundings(0, 0);
 
         // Expectation: Calls findBestTarget for building
-        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('building', 0, 0, 12, expect.any(Function));
+        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('building', 0, 0, 25, expect.any(Function));
 
         // Expectation: Log found base (Unit.js prints "found Base via Spatial Search")
         expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('found Base via Spatial Search'));

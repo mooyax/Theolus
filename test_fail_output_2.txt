@@ -1,0 +1,56 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/CombatVerification.test.js[2m > [22m[2mCombat Logic Verification[2m > [22m[2mScenario A: Worker destroys Cave
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+
+ [31m笶ｯ[39m src/tests/CombatVerification.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 33[2mms[22m[39m
+[31m     [31mﾃ・[31m Scenario A: Worker destroys Cave[39m[32m 24[2mms[22m[39m
+[31m     [31mﾃ・[31m Scenario B: Goblin destroys House[39m[32m 8[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario A: Worker destroys Cave
+TypeError: window.game.findBestRequest is not a function
+ 笶ｯ UnitWanderState.update src/ai/states/UnitStates.js:24:37
+     22|         if (window.game) {
+     23|             // Check for jobs even while moving (e.g. wandering)
+     24|             const req = window.game.findBestRequest(this.actor, true);窶ｦ
+       |                                     ^
+     25|             if (req) {
+     26|                 if (window.game.claimRequest(this.actor, req)) {
+ 笶ｯ Unit.updateLogic src/Unit.js:657:24
+ 笶ｯ src/tests/CombatVerification.test.js:174:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario B: Goblin destroys House
+Error: [vitest] No "CylinderGeometry" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi.mock(import("three"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    // your mocked methods
+  }
+})
+
+ 笶ｯ Function.initAssets src/Goblin.js:30:51
+     28|         Goblin.assets.geometries.arm = new THREE.BoxGeometry(0.08, 0.2窶ｦ
+     29|         Goblin.assets.geometries.leg = new THREE.BoxGeometry(0.1, 0.25窶ｦ
+     30|         Goblin.assets.geometries.club = new THREE.CylinderGeometry(0.0窶ｦ
+       |                                                   ^
+     31|         // New: Staff for Shaman
+     32|         Goblin.assets.geometries.staff = new THREE.BoxGeometry(0.04, 0窶ｦ
+ 笶ｯ new Goblin src/Goblin.js:64:16
+ 笶ｯ src/tests/CombatVerification.test.js:224:24
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 11:48:00
+[2m   Duration [22m 931ms[2m (transform 164ms, setup 36ms, import 182ms, tests 33ms, environment 445ms)[22m
+

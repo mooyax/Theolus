@@ -18,9 +18,10 @@ import { Minimap } from './Minimap.js';
 import { Compass } from './Compass.js';
 import { UnitRenderer } from './UnitRenderer.js';
 import { BuildingRenderer } from './BuildingRenderer.js';
+import { UnitWanderState, JobState, CombatState, SleepState } from './ai/states/UnitStates.js';
 import { GoblinRenderer } from './GoblinRenderer.js';
 
-class BattleMemory {
+export class BattleMemory {
     constructor() {
         this.raids = []; // {x, z, time, threat}
     }
@@ -64,18 +65,17 @@ class BattleMemory {
 
     getPriorities(currentTime) {
         // Return active raids not too old (5 mins)
-        return this.raids.filter(r => (currentTime - r.time) < 300000);
+        return this.raids.filter(r => (currentTime - r.time) < 300);
     }
 }
 
 export class Game {
-    constructor() {
-        console.log("Game constructor called");
+    constructor(sceneOverride, terrainOverride, minimal = false) {
         this.saveManager = new SaveManager();
         this.soundManager = new SoundManager();
         this.mana = 100; // Initial Mana
+        this.gameActive = false; // Start Screen Gate
 
-        // Battle Memory System (Global)
         // Battle Memory System (Global used by Freelancers)
         this.battleMemory = new BattleMemory();
 
@@ -85,54 +85,115 @@ export class Game {
         window.game = this;
 
         // 1. Setup Scene & Camera
-        this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x87CEEB); // Sky blue
+        if (sceneOverride) {
+            this.scene = sceneOverride;
+            // Minimal Mock Camera/Renderer setup if needed, or skip
+            // Assuming Override handles strict needs or tests mock dependencies
+            this.camera = {
+                position: { set: () => { }, x: 0, y: 0, z: 0 },
+                lookAt: () => { },
+                updateProjectionMatrix: () => { },
+                zoom: 1.0
+            };
+            this.renderer = {
+                domElement: { addEventListener: () => { } },
+                setSize: () => { },
+                render: () => { },
+                setClearColor: () => { },
+                dispose: () => { }
+            }; // Minimal dummy
+            this.clippingPlanes = [];
+            this.scene.add = () => { }; // Dummy
+        } else {
+            this.scene = new THREE.Scene();
+            console.log("Scene created:", !!this.scene, "Pos:", typeof this.scene.position);
+            const skyColor = new THREE.Color(0x87CEEB);
+            this.scene.background = skyColor;
 
-        const aspect = window.innerWidth / window.innerHeight;
-        // User requested zoomed in view (d=20) -> Expanded to d=50 to prevent clipping
-        const d = 50;
-        this.camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
-        this.camera.position.set(20, 20, 20); // Isometric
-        this.camera.lookAt(this.scene.position);
+            const aspect = window.innerWidth / window.innerHeight;
+            // User requested zoomed in view (d=20) -> Expanded to d=50 to prevent clipping
+            const d = 50;
+            this.camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
+            console.log("Camera created:", !!this.camera, "Pos:", typeof this.camera.position);
+            this.camera.position.set(20, 20, 20); // Isometric
+            this.camera.lookAt(this.scene.position);
+            console.log("Camera setup done");
 
-        // 2. Setup Renderer
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.localClippingEnabled = false;
-        document.body.appendChild(this.renderer.domElement);
+            // 2. Setup Renderer
+            this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.renderer.localClippingEnabled = false;
+            document.body.appendChild(this.renderer.domElement);
 
-        // 3. Controls
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.enableDamping = true;
-        this.controls.dampingFactor = 0.05;
-        this.controls.screenSpacePanning = false;
-        this.controls.minZoom = 0.8;
-        this.controls.maxZoom = 4.0;
-        this.controls.maxPolarAngle = Math.PI / 2;
+            // 3. Controls
+            this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+            this.controls.enableDamping = true;
+            this.controls.dampingFactor = 0.05;
+            this.controls.screenSpacePanning = false;
+            // User Request: "Zoom rate 2x larger is fine".
+            // Expanding range to allow wider view and closer inspection.
+            this.controls.minZoom = 0.4; // Was 0.8 (Can zoom out to see larger area)
+            this.controls.maxZoom = 8.0; // Was 4.0 (Can zoom in to see details)
+            this.controls.maxPolarAngle = Math.PI / 2;
 
-        // 4. Clipping Planes (Radius 30) - Initialize EARLY
-        const viewRadius = 30;
-        this.clippingPlanes = [
-            new THREE.Plane(new THREE.Vector3(1, 0, 0), 0),
-            new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0),
-            new THREE.Plane(new THREE.Vector3(0, 0, 1), 0),
-            new THREE.Plane(new THREE.Vector3(0, 0, -1), 0)
-        ];
-        this.renderer.clippingPlanes = [];
-        this.renderer.localClippingEnabled = true; // Enable per-object clipping logic
+            // 4. Clipping Planes (Radius 30) - Initialize EARLY
+            // 4. Clipping Planes (Radius 30) - Initialize EARLY
+            this.viewRadius = 30; // Promoted to class property
+            const r = this.viewRadius;
+            this.clippingPlanes = [
+                new THREE.Plane(new THREE.Vector3(1, 0, 0), r),
+                new THREE.Plane(new THREE.Vector3(-1, 0, 0), r),
+                new THREE.Plane(new THREE.Vector3(0, 0, 1), r),
+                new THREE.Plane(new THREE.Vector3(0, 0, -1), r)
+            ];
+            // CRITICAL FIX: Use Global Clipping to avoid conflicts with shared materials (Showroom)
+            this.renderer.clippingPlanes = this.clippingPlanes;
+            this.renderer.localClippingEnabled = false; // Disable local to force global usage
 
-        this.setupLights();
+            this.setupLights();
+        }
 
-        // 7. Request System (Worker Jobs)
-        this.requestQueue = []; // { id, type, x, z, status: 'pending'|'assigned', assignedTo: unitId, data: {} }
         // 7. Request System (Worker Jobs)
         this.requestQueue = []; // { id, type, x, z, status: 'pending'|'assigned', assignedTo: unitId, data: {} }
         this.requestIdCounter = 0;
         this.projectiles = []; // Active visual projectiles
 
         // 5. Terrain
-        this.terrain = new Terrain(this.scene, this.clippingPlanes);
+        if (terrainOverride) {
+            this.terrain = terrainOverride;
+        } else if (minimal) {
+            this.terrain = {
+                logicalWidth: 160, logicalDepth: 160,
+                grid: [], buildings: [], entityGrid: [],
+                initEntityGrid: function () {
+                    this.entityGrid = Array(160).fill(0).map(() => Array(160).fill(0).map(() => []));
+                },
+                getTileHeight: () => 0, isWalkable: () => true, isReachable: () => true,
+                update: () => { }, registerEntity: () => { }, unregisterEntity: () => { }, removeBuilding: () => { },
+                updateMeshPosition: () => { },
+                updateLights: () => { },
+                getBuildingAt: () => null,
+                getRegion: () => 1,
+                isValidGrid: () => true, findPath: () => [], checkFlatArea: () => true,
+                gridToWorld: (v) => v, worldToGrid: (v) => v, setSeason: () => { },
+                addBuilding: function (type, x, z) { const b = { userData: { type, gridX: x, gridZ: z }, gridX: x, gridZ: z }; this.buildings.push(b); if (this.grid && this.grid[x] && this.grid[x][z]) this.grid[x][z].hasBuilding = true; return b; },
+                getRandomPointInRegion: () => ({ x: 10, z: 10 }),
+                serialize: function () { return { h: [], n: [], b: this.buildings || [], logicalWidth: 160, logicalDepth: 160, version: 2 }; },
+                deserialize: function (d) { if (d && d.b) this.buildings = d.b; },
+                grid: Array(160).fill(0).map(() => Array(160).fill(0).map(() => ({ height: 1, regionId: 1 })))
+            };
+            this.terrain.initEntityGrid();
+        } else {
+            try {
+                this.terrain = new Terrain(this.scene, this.clippingPlanes);
+                console.log("Terrain created:", !!this.terrain);
+            } catch (e) {
+                console.log("Terrain creation failed:", e);
+                // throw e; // Let it bubble
+            }
+        }
+
         this.units = [];
         this.resources = {
             grain: 0,
@@ -160,37 +221,11 @@ export class Game {
         // Initialize Marker Shader Material
         this.initMarkerMaterial();
 
-        // Spawn initial unit on Land
+        // REMOVED INITIAL SPAWN FROM CONSTRUCTOR (Moved to startNewGame)
+        /*
         let sx = 10, sz = 10;
-        let foundSpot = false;
-        let attempts = 0;
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
-
-        while (!foundSpot && attempts < 1000) {
-            const rx = Math.floor(Math.random() * logicalW);
-            const rz = Math.floor(Math.random() * logicalD);
-            const h = this.terrain.getTileHeight(rx, rz);
-            if (h > 1.0) {
-                sx = rx;
-                sz = rz;
-                foundSpot = true;
-            }
-            attempts++;
-        }
-
-        this.spawnUnit(sx, sz, true);
-
-        // Move camera to spawn
-        if (foundSpot) {
-            const wx = sx - (logicalW / 2);
-            const wz = sz - (logicalD / 2);
-            if (this.controls) {
-                this.controls.target.set(wx, 0, wz);
-                this.camera.position.set(wx + 20, 20, wz + 20);
-                this.controls.update();
-            }
-        }
+        ...
+        */
 
         this.statsDisplay = document.getElementById('stats-container');
         window.addEventListener('resize', this.onWindowResize.bind(this));
@@ -303,8 +338,7 @@ export class Game {
             // Manual Spawn (God Mode) without specific role requested
             // User requested NO Proximity search fallback for Knights/Wizards.
             // Defaults to Citizen/Worker logic or simple random citizen.
-            role = Math.random() > 0.5 ? 'worker' : 'worker'; // Just worker for now? Or keep vague.
-            role = Math.random() > 0.5 ? 'worker' : 'worker'; // Just worker for now? Or keep vague.
+            role = 'worker'; // Just worker for now? Or keep vague.
         }
 
         const unit = new Unit(this.scene, this.terrain, x, z, role, isSpecial, squadId);
@@ -312,6 +346,12 @@ export class Game {
         unit.homeBase = homeBase; // Link
 
         this.units.push(unit);
+
+        // TRIGGER: Newly spawned unit immediately checks for work!
+        if (unit.role === 'worker') {
+            this.processAssignments();
+        }
+
         return unit;
     }
 
@@ -360,12 +400,13 @@ export class Game {
         let isNight = false;
         if (this.gameTime >= 18 || this.gameTime < 6) {
             isNight = true;
-            this.scene.background.setHex(0x000033);
-            this.directionalLight.intensity = 0.2;
+            if (this.scene.background && this.scene.background.setHex) this.scene.background.setHex(0x000033);
+            if (this.directionalLight) this.directionalLight.intensity = 0.2;
         } else {
-            this.scene.background.setHex(0x87CEEB);
-            this.directionalLight.intensity = 1.0;
+            if (this.scene.background && this.scene.background.setHex) this.scene.background.setHex(0x87CEEB);
+            if (this.directionalLight) this.directionalLight.intensity = 1.0;
         }
+        this.isNight = isNight;
         return isNight;
     }
 
@@ -480,23 +521,27 @@ export class Game {
     }
 
     // --- Request System ---
-    addRequest(type, x, z, assignedUnit = null, visX = null, visZ = null) {
+    addRequest(type, x, z, building = null, visX = null, visZ = null, isManual = true) {
         // Mana Check (Consume Upfront? Or on completion?)
         // User requested: "Instruct workers... they operate."
         // Consuming upfront prevents spamming without resources.
         // Costs are handled in InputManager currently, but should ideally optionally be here.
         // For now, assume Mana is already checked/consumed by InputManager for visual feedback.
 
+        // User requested: "Instruct workers... they operate."
+        // MANUAL JOBS are special: High Priority & Sticky
         const id = `req_${this.requestIdCounter++}`;
         const req = {
             id: id,
-            type: type, // 'raise', 'lower', 'build_tower', 'build_barracks'
+            type: type, // 'raise', 'lower', 'build_tower', 'build_barracks', 'migration'
             x: x,
             z: z,
             status: 'pending',
             assignedTo: null,
             mesh: null,
-            createdAt: Date.now()
+            createdAt: this.simTotalTimeSec || 0,
+            isManual: isManual, // Manual marker flag
+            building: (building && typeof building === 'object' && building.id) ? building : null
         };
 
         // VISUAL MARKER (Rising Light Particles)
@@ -535,34 +580,118 @@ export class Game {
         console.log(`[Game] Request Added: ${type} at (${x},${z}) ID:${id}`);
 
         // FORCE ASSIGNMENT (User Request: "Nearby workers should accept")
-        this.forceAssignRequest(req);
+        // Fixed: Use the renamed        // Initial Assign Try
+        this.assignRequestSync(req);
 
         return req;
     }
 
-    findBestRequest(unit) {
+    findBestRequest(unit, allowSnatch = false) {
         if (!unit) return null;
         let bestReq = null;
         let minDistSq = Infinity;
 
         const logicalW = this.terrain.logicalWidth || 160;
-        const logicalD = this.terrain.logicalDepth || 160;
+        const logicalD = this.terrain.logicalDepth || 160; // Added logicalD
+        const now = this.simTotalTimeSec;
+        const ux = (unit.getVisualX) ? unit.getVisualX(now) : unit.gridX;
+        const uz = (unit.getVisualZ) ? unit.getVisualZ(now) : unit.gridZ;
 
         for (const req of this.requestQueue) {
-            if (req.status !== 'pending') continue;
+            if (req.status === 'completed') continue;
+            if (unit.role !== 'worker') continue;
+
+            if (unit.role !== 'worker') continue;
+
+            // Priority: Pending first. 
+            // Snatch: If allowSnatch is true, we can steal 'assigned' jobs if we are very close.
+            if (req.status !== 'pending') {
+                if (!allowSnatch) continue;
+                if (req.status !== 'assigned') continue;
+                if (req.assignedTo === unit.id) continue; // Already ours
+            }
 
             // WRAP-AWARE DISTANCE
-            let dx = Math.abs(req.x - unit.gridX);
-            let dz = Math.abs(req.z - unit.gridZ);
+            let dx = Math.abs(req.x - ux);
+            let dz = Math.abs(req.z - uz);
 
             if (dx > logicalW / 2) dx = logicalW - dx;
-            if (dz > logicalD / 2) dz = logicalD - dz;
+            if (dz > logicalD / 2) dz = logicalD - dz; // Corrected to logicalD
 
             const distSq = dx * dx + dz * dz;
 
-            if (distSq < minDistSq) {
-                minDistSq = distSq;
-                bestReq = req;
+            if (unit.ignoredTargets && unit.ignoredTargets.has(req.id)) {
+                const expiry = unit.ignoredTargets.get(req.id);
+                // Fix: findBestRequest should probably take 'time' or use a logic-consistent time
+                // For now, let's use the unit's lastTime or game's sim time
+                // Use internal sim time
+                const currentTime = this.simTotalTimeSec;
+                if (currentTime < expiry) {
+                    console.error(`[Game] Skipping ignored request ${req.id} for Unit ${unit.id}. Exp: ${expiry} Now: ${currentTime}`);
+                    continue;
+                } else {
+                    console.error(`[Game] Ignored request ${req.id} EXPIRED for Unit ${unit.id}. Exp: ${expiry} Now: ${currentTime} - Re-allowing.`);
+                    unit.ignoredTargets.delete(req.id);
+                }
+            }
+
+            // SNATCH RULE: Only snatch if DISTANCE is VERY small (e.g. < 3 tiles)
+            if (req.status === 'assigned') {
+                // NEVER snatch a Manual job from its owner
+                if (req.isManual) continue;
+
+                // For Auto jobs, check if we are closer by a significant margin
+                const currentOwner = this.units.find(u => u.id === req.assignedTo);
+                if (currentOwner) {
+                    let dOwner = Math.abs(currentOwner.gridX - req.x);
+                    let dzOwner = Math.abs(currentOwner.gridZ - req.z);
+                    if (dOwner > logicalW / 2) dOwner = logicalW - dOwner;
+                    if (dzOwner > logicalD / 2) dzOwner = logicalD - dzOwner;
+                    const dSqOwner = dOwner * dOwner + dzOwner * dzOwner;
+
+                    // Only snatch if we are at least 30% closer
+                    if (distSq < dSqOwner * 0.7) {
+                        // This unit is significantly closer, allow snatching
+                        // Continue to the general bestReq comparison below
+                    } else {
+                        // Owner is still reasonably close or closer, don't snatch
+                        continue;
+                    }
+                }
+            }
+
+
+            if (distSq < minDistSq || (req.isManual && !bestReq?.isManual)) {
+                // REGIONAL REACHABILITY CHECK
+                if (unit.isReachable) {
+                    if (!unit.isReachable(req.x, req.z)) {
+                        continue;
+                    }
+                }
+
+                // Manual Override: If this is manual, and bestReq wasn't, TAKE IT.
+                // If both are manual, take closer.
+                if (req.isManual) {
+                    // If we already had a manual one, only switch if this one is closer
+                    if (bestReq && bestReq.isManual) {
+                        if (distSq < minDistSq) {
+                            minDistSq = distSq;
+                            bestReq = req;
+                        }
+                    } else {
+                        // Previous best wasn't manual, so this wins automatically
+                        minDistSq = distSq;
+                        bestReq = req;
+                    }
+                } else {
+                    // This is normal auto-job.
+                    // If we already found a manual job, IGNORE this one.
+                    if (bestReq && bestReq.isManual) continue;
+
+                    // Standard closest wins
+                    minDistSq = distSq;
+                    bestReq = req;
+                }
             }
         }
 
@@ -573,86 +702,165 @@ export class Game {
         return bestReq;
     }
 
-    forceAssignRequest(req) {
+    processAssignments(batchSize = 100) {
+        if (!this.requestQueue) return;
+        let processed = 0;
+        const now = this.simTotalTimeSec;
+
+        for (const req of this.requestQueue) {
+            if (req.status === 'pending') {
+                // Throttle: Don't retry same request too often (e.g., every 0.2s)
+                if (req.lastAttempt && (now - req.lastAttempt < 0.2)) continue;
+
+                if (processed >= batchSize) break;
+
+                this.assignRequestSync(req);
+                req.lastAttempt = now;
+                processed++;
+            }
+        }
+    }
+
+    // Renamed from forceAssignRequest (Old Async) to Sync Helper
+    assignRequestSync(req) {
         if (!req || req.status !== 'pending') return;
 
-        // Async to prevent UI Freeze / Stack recursion
-        setTimeout(() => {
-            try {
-                // Safeguard against race conditions
-                if (!this.units || !req || req.status !== 'pending') return;
+        // Synchronous Logic (No Timeout)
+        try {
+            // Safeguard
+            if (!this.units || !req || req.status !== 'pending') return;
 
-                // Find nearest capable worker who is NOT already working/busy
-                let bestUnit = null;
-                let minDistSq = Infinity; // GLOBAL SEARCH
+            // Find nearest capable worker who is NOT already working/busy
+            let bestUnit = null;
+            let minDistSq = Infinity; // GLOBAL SEARCH
 
-                const logicalW = this.terrain.logicalWidth || 80;
-                const logicalD = this.terrain.logicalDepth || 80;
+            const logicalW = this.terrain.logicalWidth || 160;
+            const logicalD = this.terrain.logicalDepth || 160;
 
-                let debugScanned = 0;
-                let debugBusy = 0;
-                let debugRole = 0;
-                let debugValid = 0;
+            let debugScanned = 0;
+            let debugBusy = 0;
+            let debugRole = 0;
+            let debugValid = 0;
 
-                for (const unit of this.units) {
-                    if (unit.role !== 'worker') { debugRole++; continue; }
-                    debugScanned++;
+            for (const unit of this.units) {
+                console.log(`[Assign] Checking Unit ${unit.id} (Dead:${unit.isDead})`);
+                if (unit.isDead) continue;
+                if (unit.role !== 'worker') {
+                    console.log(`[Assign] Unit ${unit.id} skipped - Role: ${unit.role}`);
+                    debugRole++; continue;
+                }
+                debugScanned++;
 
-                    // Preemption Logic: Prefer FREE units, but accept BUSY ones if necessary.
-                    let scorePenalty = 0;
-                    if (unit.targetRequest) {
+                let scorePenalty = 0;
+                console.log(`[Assign] Unit ${unit.id} Action: ${unit.action}, TargetReq: ${unit.targetRequest ? unit.targetRequest.id : 'none'}`);
+
+                // Preemption Logic: STRICTLY Prefer FREE units.
+                // MODIFIED: Allow interrupting units in low-priority states (Wander, Moving, Idle) if Request is MANUAL.
+                // If Request is AUTO (Low Priority), respect "Moving" (Approaching) units to prevent juggling.
+
+                // Strictly Busy States (Never Interrupt)
+                // MODIFIED: 'Migrating' is now interruptible by MANUAL requests.
+                // 'Building' is also interruptible if it just started or is low priority? 
+                // No, 'Building' is a finished action.
+                if (unit.action === 'Working' || unit.action === 'Building' || unit.action === 'Harvesting') {
+                    debugBusy++;
+                    continue;
+                }
+
+                // Fighting and Sleeping are normally busy, but can be preempted by MANUAL requests
+                const isFightingOrSleeping = unit.action === 'Fighting' || unit.action === 'Sleeping';
+                if (isFightingOrSleeping && !req.isManual) {
+                    debugBusy++;
+                    continue;
+                }
+
+                // Soft Busy States (Approaching Job / Migrating)
+                // If unit has a target request, it is "Approaching".
+                // We only interrupt "Approaching" or "Migrating" if the NEW request is MANUAL (High Priority).
+                const isSoftBusy = unit.targetRequest || unit.action === 'Migrating';
+                if (isSoftBusy) {
+                    // Prevent ping-pong: Do not interrupt a Manual job with another Manual job
+                    if (unit.targetRequest && unit.targetRequest.isManual && req.isManual) {
                         debugBusy++;
-                        scorePenalty = 1000000; // Prefer free unit ANYWHERE over busy unit
-                    } else if (unit.action === 'Working') {
-                        scorePenalty = 1000000; // Busy working
+                        continue;
+                    }
+
+                    if (req.isManual) {
+                        // Allow preemption for Manual markers.
+                        // Add distance penalty to prefer idle units if multiple units are reachable.
+                        scorePenalty += 1000;
                     } else {
-                        debugValid++;
-                    }
-
-                    // WRAP-AWARE DISTANCE
-                    let dx = Math.abs(unit.gridX - req.x);
-                    let dz = Math.abs(unit.gridZ - req.z);
-
-                    if (dx > logicalW / 2) dx = logicalW - dx;
-                    if (dz > logicalD / 2) dz = logicalD - dz;
-
-                    const dSq = dx * dx + dz * dz;
-                    const finalScore = dSq + scorePenalty;
-
-                    if (finalScore < minDistSq) {
-                        minDistSq = finalScore;
-                        bestUnit = unit;
+                        debugBusy++;
+                        continue;
                     }
                 }
 
-                // DEBUG LOG: Why is no one picked?
-                if (!bestUnit) {
-                    console.log(`[Game] forceAssignRequest FAILED for Req ${req.id}. Scanned:${debugScanned} (RoleSkipped:${debugRole}) Busy:${debugBusy} Valid:${debugValid}. TotalUnits:${this.units.length}`);
-                } else {
-                    console.log(`[Game] forceAssignRequest FOUND Unit ${bestUnit.id} (DistSq:${minDistSq}). Scanned:${debugScanned}`);
+                // If we get here, unit is either:
+                // 1. Free (Idle/Wander)
+                // 2. Approaching (targetRequest set) BUT req is MANUAL (so we interrupt)
+                debugValid++;
+
+                // WRAP-AWARE DISTANCE
+                let dx = Math.abs(unit.gridX - req.x);
+                let dz = Math.abs(unit.gridZ - req.z);
+                if (dx > logicalW / 2) dx = logicalW - dx;
+                if (dz > logicalD / 2) dz = logicalD - dz;
+
+                const dSq = dx * dx + dz * dz;
+                const finalScore = dSq + scorePenalty;
+
+                // REGIONAL REACHABILITY CHECK
+                if (unit.isReachable && !unit.isReachable(req.x, req.z)) continue;
+
+                // BLACKLIST CHECK (New)
+                if (unit.ignoredTargets && unit.ignoredTargets.has(req.id)) {
+                    const expiry = unit.ignoredTargets.get(req.id);
+                    if (this.simTotalTimeSec < expiry) continue;
                 }
 
-                if (bestUnit) {
-                    // INTERRUPT IF BUSY
-                    if (bestUnit.targetRequest) {
-                        // console.log(`[Game] INTERRUPTING Unit ${bestUnit.id} (Job: ${bestUnit.targetRequest.id}) for Priority Request ${req.id}`);
-                        this.releaseRequest(bestUnit, bestUnit.targetRequest); // Return old job to pool
-                        bestUnit.targetRequest = null;
-                        bestUnit.action = 'Idle';
-                    }
-
-                    if (this.claimRequest(bestUnit, req)) {
-                        bestUnit.targetRequest = req;
-                        bestUnit.action = 'Approaching Job';
-                        console.log(`[Game] Force-Assigned Request ${req.id} to Unit ${bestUnit.id} (Score: ${minDistSq.toFixed(1)})`);
-                    }
-                } else {
-                    // console.warn(`[Game] Force Assign FAILED for ${req.id}. Scanned:${this.units.length} (Workers:${debugScanned} Busy:${debugBusy} Valid:${debugValid})`);
+                if (finalScore < minDistSq) {
+                    minDistSq = finalScore;
+                    bestUnit = unit;
                 }
-            } catch (e) {
-                console.error("[Game] Force Assignment Error:", e);
             }
-        }, 10);
+
+            // DEBUG LOG: Why is no one picked?
+            if (!bestUnit) {
+                console.log(`[Game] forceAssignRequest FAILED for Req ${req.id}. Scanned:${debugScanned} (RoleSkipped:${debugRole}) Busy:${debugBusy} Valid:${debugValid}. TotalUnits:${this.units.length}`);
+            } else {
+                console.log(`[Game] forceAssignRequest FOUND Unit ${bestUnit.id} (DistSq:${minDistSq}). Scanned:${debugScanned}`);
+            }
+
+            if (bestUnit) {
+                // If bestUnit is already doing a Manual job, we ONLY switch if new req is MUCH closer (efficiency)
+                if (bestUnit.targetRequest && bestUnit.targetRequest.isManual) {
+                    let oldDx = Math.abs(bestUnit.gridX - bestUnit.targetRequest.x);
+                    let oldDz = Math.abs(bestUnit.gridZ - bestUnit.targetRequest.z);
+                    if (oldDx > logicalW / 2) oldDx = logicalW - oldDx;
+                    if (oldDz > logicalD / 2) oldDz = logicalD - oldDz;
+                    const oldDistSq = oldDx * oldDx + oldDz * oldDz;
+
+                    if (minDistSq > oldDistSq * 0.25) { // Switch only if 2x closer (4x distSq)
+                        return; // Stick to A
+                    }
+                }
+
+                if (this.claimRequest(bestUnit, req)) {
+                    console.log(`[Game] Request ${req.id} assigned/switched to Unit ${bestUnit.id}`);
+                }
+            }
+        } catch (e) {
+            console.error("[Game] Assignment Error:", e);
+        }
+    }
+
+    // Legacy method name support
+    forceAssignRequest(req) {
+        if (this.assignRequestSync) {
+            this.assignRequestSync(req);
+        } else {
+            console.warn("[Game] forceAssignRequest: assignRequestSync not found.");
+        }
     }
 
     detectZombieRequests() {
@@ -689,18 +897,54 @@ export class Game {
 
 
     claimRequest(unit, req) {
-        if (!req || req.status !== 'pending') return false;
+        if (!req || (req.status !== 'pending' && req.status !== 'assigned')) return false;
+        if (unit.role !== 'worker') return false;
 
-        // Check if unit is capable
-        if (unit.role !== 'worker') return false; // Only workers
+        // IDEMPOTENCY CHECK: If already assigned to this unit, do nothing & confirm success
+        if (req.status === 'assigned' && req.assignedTo === unit.id && unit.targetRequest === req) {
+            return true;
+        }
 
+        // 1. DETACH OLD OWNER (Safe Handoff)
+        if (req.status === 'assigned' && req.assignedTo !== unit.id) {
+            const oldUnit = this.units.find(u => u.id === req.assignedTo);
+            if (oldUnit) {
+                if (oldUnit.resetToDefaultState) {
+                    oldUnit.resetToDefaultState();
+                } else {
+                    oldUnit.targetRequest = null;
+                    oldUnit.isMoving = false;
+                    if (oldUnit.changeState) {
+                        const nextState = oldUnit.getDefaultState ? oldUnit.getDefaultState() : "Wander";
+                        oldUnit.changeState(nextState);
+                    }
+                }
+            }
+        }
+
+        // 2. DETACH SELF FROM OLD JOBS
+        if (unit.targetRequest && unit.targetRequest.id !== req.id) {
+            this.releaseRequest(unit, unit.targetRequest);
+        }
+
+        // 3. ATOMIC ASSIGNMENT
         req.status = 'assigned';
         req.assignedTo = unit.id;
+        req.assignedAt = this.simTotalTimeSec; // Track when it was assigned for Watchdog
+        unit.targetRequest = req;
 
         // COMBAT CLEAR: Stop fighting to work
         unit.targetGoblin = null;
         unit.targetBuilding = null;
-        unit.action = 'Idle'; // Reset action to ensure smooth transition
+        unit.isSleeping = false; // Awake when assigned a job
+        unit.action = 'Approaching Job';
+        unit.isMoving = false; // INTERRUPT: Stop any current walk (Wander/Patrol) to react to Job!
+        unit.lastPathTime = 0; // Force immediate pathfinding for new job
+
+        // CRITICAL: Ensure JobState is active and fresh
+        if (unit.changeState) {
+            unit.changeState(new JobState(unit));
+        }
 
         // console.log(`[Game] Request ${req.id} assigned to Unit ${unit.id}`);
         return true;
@@ -709,10 +953,11 @@ export class Game {
     releaseRequest(unit, req) {
         if (!req) return;
         if (req.assignedTo === unit.id) {
-            req.status = 'pending';
             req.assignedTo = null;
-            console.log(`[Game] Request ${req.id} released by Unit ${unit.id}. Searching for replacement...`);
-            this.forceAssignRequest(req);
+            if (req.status === 'assigned') {
+                req.status = 'pending';
+                this.forceAssignRequest(req);
+            }
         }
     }
 
@@ -725,10 +970,71 @@ export class Game {
             const actualReq = this.requestQueue[idx];
             this.requestQueue.splice(idx, 1);
             if (actualReq.mesh) this.scene.remove(actualReq.mesh);
-            console.log(`[Game] Request ${actualReq.id} COMPLETED and removed.`);
+
+            // Notify units assigned to this request
+            if (actualReq.assignedTo !== null && actualReq.assignedTo !== undefined) {
+                const u = this.units.find(unit => unit.id === actualReq.assignedTo);
+                if (u && u.targetRequest && u.targetRequest.id === actualReq.id) {
+                    u.targetRequest = null;
+                    if (u.changeState) u.changeState(u.getDefaultState ? u.getDefaultState() : "Wander");
+                }
+            }
+
+            console.log(`[Game] Request ${actualReq.id} removed and assignments cleared.`);
         }
     }
 
+    tryCancelRequest(x, z) {
+        if (!this.requestQueue) return false;
+        const radius = 3.0; // Search radius
+
+        const idx = this.requestQueue.findIndex(r => {
+            let dx = Math.abs(r.x - x);
+            let dz = Math.abs(r.z - z);
+            if (this.terrain) {
+                if (dx > this.terrain.logicalWidth / 2) dx = this.terrain.logicalWidth - dx;
+                if (dz > this.terrain.logicalDepth / 2) dz = this.terrain.logicalDepth - dz;
+            }
+            return (dx * dx + dz * dz) < (radius * radius);
+        });
+
+        if (idx !== -1) {
+            const req = this.requestQueue[idx];
+            console.log(`[Game] Cancelling Request ${req.id} at ${req.x},${req.z}`);
+
+            // 1. Release assigned unit
+            if (req.assignedTo !== null && req.assignedTo !== undefined) {
+                const unit = this.units.find(u => u.id === req.assignedTo);
+                if (unit) {
+                    unit.targetRequest = null;
+                    if (unit.resetToDefaultState) {
+                        unit.resetToDefaultState();
+                    } else if (unit.changeState) {
+                        const nextState = unit.getDefaultState ? unit.getDefaultState() : new UnitWanderState(unit);
+                        unit.changeState(nextState);
+                    }
+                }
+            }
+
+            // 2. Visual cleanup
+            if (req.mesh) {
+                if (req.mesh.parent) req.mesh.parent.remove(req.mesh);
+                else if (this.scene) this.scene.remove(req.mesh);
+
+                if (req.mesh.geometry) req.mesh.geometry.dispose();
+                if (req.mesh.material) {
+                    const mats = Array.isArray(req.mesh.material) ? req.mesh.material : [req.mesh.material];
+                    mats.forEach(m => { if (m && m.dispose) m.dispose(); });
+                }
+            }
+
+            // 3. Remove and Refund
+            this.requestQueue.splice(idx, 1);
+            if (this.consumeMana) this.consumeMana(-10); // Refund
+            return true;
+        }
+        return false;
+    }
     updateRequestMarkers() {
         if (!this.scene || !this.camera) return;
         const logicalW = this.terrain.logicalWidth || 80;
@@ -764,52 +1070,11 @@ export class Game {
     }
 
     // Cancel Request at specific location (Proximity Search)
-    tryCancelRequest(x, z) {
-        // Find nearest request within radius (User Request: "Nearby")
-        const searchRadius = 3.0;
-        let bestIdx = -1;
-        let minDistSq = searchRadius * searchRadius;
-
-        for (let i = 0; i < this.requestQueue.length; i++) {
-            const r = this.requestQueue[i];
-            if (r.status !== 'pending' && r.status !== 'assigned') continue; // Can cancel assigned too? Let's allow pending only for now to act as "Cleanup"
-
-            const dx = r.x - x;
-            const dz = r.z - z;
-            const distSq = dx * dx + dz * dz;
-
-            if (distSq < minDistSq) {
-                minDistSq = distSq;
-                bestIdx = i;
-            }
-        }
-
-        if (bestIdx !== -1) {
-            const req = this.requestQueue[bestIdx];
-
-            // Remove Visuals
-            if (req.mesh) {
-                this.scene.remove(req.mesh);
-                if (req.mesh.geometry) req.mesh.geometry.dispose();
-                if (req.mesh.material) req.mesh.material.dispose();
-            }
-
-            // Remove from queue
-            this.requestQueue.splice(bestIdx, 1);
-            console.log(`[Game] Request Canceled at ${req.x},${req.z} (Target: ${x},${z})`);
-
-            // Refund Mana
-            this.consumeMana(-10);
-
-            return true;
-        }
-        return false;
-    }
 
     checkExpiredRequests(currentTime) {
         // Timeout: 300s (5 Minutes) - User wants orders to persist until done.
         // Was 45s, which is too short for a queue of 10+ items with few workers.
-        const TIMEOUT = 300000;
+        const TIMEOUT = 300;
 
         // Iterate backwards to safe splice
         for (let i = this.requestQueue.length - 1; i >= 0; i--) {
@@ -829,8 +1094,17 @@ export class Game {
                         // Unit dropped job (e.g. interruption) without Releasing?
                         // Or unit has a different job?
                         isBroken = true;
+                    } else if (unit.targetGoblin || (unit.targetBuilding && unit.targetBuilding.userData && unit.targetBuilding.userData.hp > 0)) {
+                        // ZOMBIE CHECK ENHANCEMENT: Unit is busy fighting!
+                        // FIX: Only reset if they have been assigned FOR OVER 60s and still haven't reached.
+                        // And check assignedAt, not createdAt!
+                        const assignedAt = req.assignedAt || req.createdAt;
+                        if (currentTime - assignedAt > 60.0) isBroken = true;
+                    } else if (unit.action === 'Going to Work' || unit.action === 'Approaching Job') {
+                        // Movement Watchdog
+                        const assignedAt = req.assignedAt || req.createdAt;
+                        if (currentTime - assignedAt > 120.0) isBroken = true; // 2 Minute travel timeout
                     }
-
                     if (isBroken) {
                         console.warn(`[Game] Detected ZOMBIE Request ${req.id} (Assigned to ${assigneeId}). Resetting.`);
                         req.status = 'pending';
@@ -846,9 +1120,9 @@ export class Game {
             if (req.status === 'pending') {
                 if (!req.lastAttempt) req.lastAttempt = req.createdAt;
 
-                if (currentTime - req.lastAttempt > 1000) {
+                if (currentTime - req.lastAttempt > 0.2) {
                     const pendingDuration = currentTime - req.createdAt;
-                    if (pendingDuration > 60000 && pendingDuration % 10000 < 1000) {
+                    if (pendingDuration > 60.0 && pendingDuration % 10.0 < 1.0) {
                         // Warn every ~10s after 60s of waiting (Reduced spam)
                         console.log(`[Game] Request ${req.id} pending for ${(pendingDuration / 1000).toFixed(1)}s.`);
                     }
@@ -861,13 +1135,16 @@ export class Game {
             if (req.status === 'completed') {
                 if (!req.completedAt) req.completedAt = currentTime; // Should be set by completeRequest, but safety.
 
-                // Keep for 2 seconds to show "Green" success state
-                if (currentTime - req.completedAt > 2000) {
+                // Keep for 0.2 seconds to show "Green" success state (Reduced from 0.5s)
+                if (currentTime - req.completedAt > 0.2) {
                     // console.log(`[Game] Removing Completed Request ${req.id}`);
                     if (req.mesh) {
                         this.scene.remove(req.mesh);
                         if (req.mesh.geometry) req.mesh.geometry.dispose();
-                        if (req.mesh.material) req.mesh.material.dispose();
+                        if (req.mesh.material) {
+                            const materials = Array.isArray(req.mesh.material) ? req.mesh.material : [req.mesh.material];
+                            materials.forEach(m => { if (m && typeof m.dispose === 'function') m.dispose(); });
+                        }
                         req.mesh = null;
                     }
                     this.requestQueue.splice(i, 1);
@@ -883,13 +1160,19 @@ export class Game {
                 if (req.mesh) {
                     this.scene.remove(req.mesh);
                     if (req.mesh.geometry) req.mesh.geometry.dispose();
-                    if (req.mesh.material) req.mesh.material.dispose();
+                    if (req.mesh.material) {
+                        const materials = Array.isArray(req.mesh.material) ? req.mesh.material : [req.mesh.material];
+                        materials.forEach(m => { if (m && typeof m.dispose === 'function') m.dispose(); });
+                    }
                     req.mesh = null; // Prevent dangling ref
                 }
 
                 this.requestQueue.splice(i, 1);
             }
         }
+
+        // BATCH ASSIGNMENT: Process up to 50 pending requests per frame
+        this.processAssignments(50);
     }
 
     clearProjectiles() {
@@ -901,7 +1184,8 @@ export class Game {
                 if (p.mesh.geometry) p.mesh.geometry.dispose();
                 // Material might be shared (markerMaterial), so don't dispose shared material
                 if (p.mesh.material && p.mesh.material !== this.markerMaterial) {
-                    p.mesh.material.dispose();
+                    const materials = Array.isArray(p.mesh.material) ? p.mesh.material : [p.mesh.material];
+                    materials.forEach(m => { if (m && typeof m.dispose === 'function') m.dispose(); });
                 }
             }
         }
@@ -973,7 +1257,10 @@ export class Game {
             if (dist < 0.5) {
                 // Hit/Arrived
                 this.scene.remove(p.mesh);
-                if (p.mesh.material) p.mesh.material.dispose();
+                if (p.mesh.material) {
+                    const materials = Array.isArray(p.mesh.material) ? p.mesh.material : [p.mesh.material];
+                    materials.forEach(m => { if (m && typeof m.dispose === 'function') m.dispose(); });
+                }
                 this.projectiles.splice(i, 1);
             } else {
                 dir.normalize();
@@ -989,19 +1276,24 @@ export class Game {
 
     completeRequest(unit, req) {
         if (!req) return;
-        // console.log(`[Game] Completing Request ${req.type} at ${req.x},${req.z} `);
+        if (unit.id === 0 || Math.random() < 0.1) {
+            console.log(`[Game] Unit ${unit.id} completing Request ${req.type} at ${req.x},${req.z}`);
+        }
 
         // Execute Action (Safely)
         let success = true;
         try {
+            const tx = Math.round(req.x);
+            const tz = Math.round(req.z);
+
             if (req.type === 'raise') {
-                this.terrain.raise(req.x, req.z);
+                this.terrain.raise(tx, tz);
             } else if (req.type === 'lower') {
-                this.terrain.lower(req.x, req.z);
+                this.terrain.lower(tx, tz);
             } else if (req.type === 'build_tower') {
-                this.terrain.addBuilding('tower', req.x, req.z);
+                this.terrain.addBuilding('tower', tx, tz);
             } else if (req.type === 'build_barracks') {
-                this.terrain.addBuilding('barracks', req.x, req.z);
+                this.terrain.addBuilding('barracks', tx, tz);
             }
         } catch (e) {
             console.error(`[Game] Request Execution Failed for ${req.type} at ${req.x},${req.z}:`, e);
@@ -1011,7 +1303,7 @@ export class Game {
         if (success) {
             // Mark as Completed (Handled by checkExpiredRequests for visual delay + removal)
             req.status = 'completed';
-            req.completedAt = Date.now();
+            req.completedAt = this.simTotalTimeSec;
 
             // Visual Feedback: Turn Green immediately
             if (req.mesh) {
@@ -1020,11 +1312,8 @@ export class Game {
                 }
             }
         } else {
-            // If failed (e.g. invalid location), remove immediately? Or retry?
-            // For now, remove to prevent getting stuck
-            const idx = this.requestQueue.indexOf(req);
-            if (idx !== -1) this.requestQueue.splice(idx, 1);
-            if (req.mesh) this.scene.remove(req.mesh);
+            // If failed (e.g. invalid location), remove immediately to prevent getting stuck
+            this.removeRequest(req);
         }
     }
 
@@ -1032,9 +1321,18 @@ export class Game {
         if (this.controls) this.controls.update();
 
         // Update clipping planes
-        const cx = this.camera.position.x;
-        const cz = this.camera.position.z;
-        const viewRadius = 30;
+        // Sync with Controls Target (LookAt point) instead of Camera Position
+        // This ensures clipping is centered on what the user is actually looking at
+        let cx, cz;
+        if (this.controls && this.controls.target) {
+            cx = this.controls.target.x;
+            cz = this.controls.target.z;
+        } else {
+            cx = this.camera.position.x;
+            cz = this.camera.position.z;
+        }
+
+        const viewRadius = 150; // Increased from 120 to provide buffer against renderer culling (120)
 
         if (this.clippingPlanes) {
             this.clippingPlanes[0].constant = -(cx - viewRadius);
@@ -1090,47 +1388,136 @@ export class Game {
             // Change color if negative
             elMana.style.color = this.mana < 0 ? '#ff4444' : 'white';
         }
+
+        this.updateButtonStates();
+    }
+
+    updateButtonStates() {
+        const mana = this.mana || 0;
+
+        // 1. Barracks Logic
+        const barracksCount = this.terrain ? this.terrain.buildings.filter(b => b.userData.type === 'barracks').length : 0;
+        // Threshold: 0 -> 1000, 1 -> 2000, 2 -> 3000... (Example Scaling)
+        // User said: "1000 for first, 2000 for next (if 1 exists)".
+        const barracksCost = 1000 * (barracksCount + 1);
+
+        const btnBarracks = document.getElementById('btn-barracks');
+        if (btnBarracks) {
+            // Check if affordable
+            if (mana < barracksCost) {
+                btnBarracks.disabled = true;
+                btnBarracks.style.opacity = '0.5';
+                btnBarracks.style.pointerEvents = 'none';
+            } else {
+                btnBarracks.disabled = false;
+                btnBarracks.style.opacity = '1.0';
+                btnBarracks.style.pointerEvents = 'auto';
+            }
+        }
+
+        // 2. Tower Logic (Same as Barracks?)
+        // User: "Barracks, Tower... if restricted". Assuming same logic for now.
+        const towerCount = this.terrain ? this.terrain.buildings.filter(b => b.userData.type === 'tower').length : 0;
+        const towerCost = 1000 * (towerCount + 1);
+
+        const btnTower = document.getElementById('btn-tower');
+        if (btnTower) {
+            if (mana < towerCost) {
+                btnTower.disabled = true;
+                btnTower.style.opacity = '0.5';
+                btnTower.style.pointerEvents = 'none';
+            } else {
+                btnTower.disabled = false;
+                btnTower.style.opacity = '1.0';
+                btnTower.style.pointerEvents = 'auto';
+            }
+        }
+
+        // 3. Worker Spawn Logic
+        // "Worker generation... cannot press if mana restricted"
+        // Let's assume a cost of 50 for manual spawn.
+        const spawnCost = 50;
+        const btnSpawn = document.getElementById('btn-spawn');
+        if (btnSpawn) {
+            if (mana < spawnCost) {
+                btnSpawn.disabled = true;
+                btnSpawn.style.opacity = '0.5';
+                btnSpawn.style.pointerEvents = 'none';
+            } else {
+                btnSpawn.disabled = false;
+                btnSpawn.style.opacity = '1.0';
+                btnSpawn.style.pointerEvents = 'auto';
+            }
+        }
     }
 
     animate() {
-        requestAnimationFrame(this.animate.bind(this));
+        if (!this.gameActive && this.stopped) return; // Prevent restart if stopped
+        this.animationFrameId = requestAnimationFrame(this.animate.bind(this));
+
+        // Performance: Frame Counter for Time Slicing
+        this.frameCounter = (this.frameCounter || 0) + 1;
 
         const time = performance.now();
         // Cap max deltaTime to prevent explosion on tab switch, but apply timeScale
         let deltaTime = Math.min((time - this.lastTime) / 1000, 0.1);
         this.lastTime = time;
 
-        // Pathfinding Budget Reset (Performance Safety)
-        if (this.terrain && this.terrain.resetPathfindingBudget) {
-            this.terrain.resetPathfindingBudget();
-        }
+        this.lastTime = time;
 
-        // Apply Speed Multiplier
-        deltaTime *= (this.timeScale || 1.0);
-
-        // Accumulate SIMULATED time in MILLISECONDS
-        this.gameTotalTime += deltaTime * 1000;
-        const simTime = this.gameTotalTime;
-        const simTimeSec = simTime / 1000; // Legacy seconds for managers
+        // --- START SCREEN GATE ---
+        // if (!this.gameActive) ... (Removed early return to allow preview)
 
         // Heartbeat
         if (!this.lastHeartbeat || time - this.lastHeartbeat > 5000) {
-            // console.log("Game Loop OK. FPS:", Math.round(1 / deltaTime), "Units:", this.units.length);
             this.lastHeartbeat = time;
         }
 
         let isNight = false;
-        try {
-            isNight = this.updateEnvironment(deltaTime);
-            this.updateSeasons(deltaTime);
-            if (this.terrain) {
-                this.terrain.update(deltaTime, this.handleBuildingSpawn.bind(this), isNight);
-            }
-        } catch (e) { console.error("Env/Season Error:", e); }
 
-        // Check for Request Timeouts
-        this.checkExpiredRequests(Date.now());
-        this.updateRequestMarkers();
+        if (this.gameActive) {
+            // Apply Speed Multiplier
+            deltaTime *= (this.timeScale || 1.0);
+
+            // Accumulate SIMULATED time in SECONDS
+            if (this.simTotalTimeSec === undefined) this.simTotalTimeSec = (this.gameTotalTime || 0) / 1000;
+            this.simTotalTimeSec += deltaTime;
+            const simTimeSec = this.simTotalTimeSec;
+
+            try {
+                isNight = this.updateEnvironment(deltaTime);
+                this.updateSeasons(deltaTime);
+                if (this.terrain) {
+                    this.terrain.update(deltaTime, this.handleBuildingSpawn.bind(this), isNight);
+                    // NEW: Update all buildings (Population growth, repair, etc.)
+                    if (this.terrain.buildings) {
+                        this.terrain.buildings.forEach(b => {
+                            if (b.update) b.update(simTimeSec, deltaTime);
+                        });
+                    }
+                }
+            } catch (e) { console.error("Env/Season Error:", e); }
+
+            // Check for Request Timeouts
+            this.checkExpiredRequests(simTimeSec);
+            this.updateRequestMarkers();
+
+            // --- ZOMBIE WATCHDOG (Fix: Ghost Assignments) ---
+            if (this.frameCount % 60 === 0) { // Approx once per second
+                this.detectZombieRequests();
+            }
+
+            // --- BATTLE HOTSPOTS & MOBILIZATION ---
+            this.updateBattleHotspots(deltaTime);
+            this.updateSquadMobilization(deltaTime);
+        } else {
+            // Preview Mode: Just update lights/visuals sparingly
+            if (this.terrain) {
+                // Force static time or slow rotation? Just basic update for visuals (water shader)
+                // Pass 0 delta to avoid simulation updates if any
+                this.terrain.update(0.01, null, false);
+            }
+        }
 
         try {
             this.updateCameraControls();
@@ -1140,26 +1527,18 @@ export class Game {
             this.updateStats();
         } catch (e) { console.error("Stats Error:", e); }
 
-        // --- MANA SYSTEM ---
-        // --- MANA SYSTEM ---
-        // Use Game's totalPopulation (Active Units + Housing) calculated in updateStats
-        const pop = (this.totalPopulation || 0);
-        // Debug
-        // if (Math.random() < 0.01) console.log("Mana Delta:", pop * 0.1 * deltaTime, "Pop:", pop);
-        // Mana Gain: 0.1 per person per second. 
-        // 10 Pop = 1 Mana/sec
-        // 100 Pop = 10 Mana/sec
-        const manaDelta = pop * 0.1 * deltaTime;
-        this.mana += manaDelta;
-        // No Cap? "Statistical info shows accumultated sin" - maybe limitless.
+        if (this.gameActive) {
+            // --- MANA SYSTEM ---
+            const pop = (this.totalPopulation || 0);
+            const manaDelta = pop * 0.1 * deltaTime;
+            this.mana += manaDelta;
 
-        try {
-            this.inputManager.update(deltaTime);
-        } catch (e) { console.error("Input Error:", e); }
+            try {
+                this.inputManager.update(deltaTime);
+            } catch (e) { console.error("Input Error:", e); }
+        }
 
-        try {
-            this.cloudManager.update(deltaTime, this.camera);
-        } catch (e) { console.error("Cloud Error:", e); }
+        // Cloud update moved to consolidated block later
 
         // Calculate Frustum for Culling
         this.camera.updateMatrixWorld();
@@ -1170,22 +1549,7 @@ export class Game {
         projScreenMatrix.multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
         frustum.setFromProjectionMatrix(projScreenMatrix);
 
-        try {
-            this.birdManager.update(deltaTime, simTimeSec, frustum);
-        } catch (e) { console.error("Bird Error:", e); }
-
-        try {
-            this.sheepManager.update(simTimeSec, deltaTime);
-        } catch (e) { console.error("Sheep Error:", e); }
-
-        try {
-            // Pass timeScale for dynamic staggering inside GoblinManager
-            this.goblinManager.update(simTime, deltaTime, isNight, this.units, this.timeScale, this.camera);
-        } catch (e) { console.error("Goblin Manager Error:", e); }
-
-        try {
-            this.fishManager.update(simTime, deltaTime, frustum);
-        } catch (e) { console.error("Fish Error:", e); }
+        // Manager updates moved to consolidated block later
 
         if (this.minimap) {
             try {
@@ -1209,13 +1573,18 @@ export class Game {
         } catch (e) { console.error("RequestMarkers Error:", e); }
 
         // Animate Shader Uniforms
-        const timeVal = simTimeSec;
+        const timeVal = this.simTotalTimeSec || 0;
         if (this.markerTime === undefined) this.markerTime = 0;
         this.markerTime += deltaTime;
         try {
             for (const req of this.requestQueue) {
-                if (req.mesh && req.mesh.material.uniforms) {
-                    req.mesh.material.uniforms.uTime.value = this.markerTime;
+                if (req.mesh) {
+                    const materials = Array.isArray(req.mesh.material) ? req.mesh.material : [req.mesh.material];
+                    materials.forEach(m => {
+                        if (m && m.uniforms && m.uniforms.uTime) {
+                            m.uniforms.uTime.value = this.markerTime;
+                        }
+                    });
                 }
             }
         } catch (e) { console.error("Shader Uniforms Error:", e); }
@@ -1229,44 +1598,72 @@ export class Game {
         if (this.frameCount === undefined) this.frameCount = 0;
         this.frameCount++;
 
-        // Staggered Unit Updates
-        const stagger = Math.max(1, Math.floor(4 / this.timeScale));
-        const parity = this.frameCount % stagger;
+        if (this.gameActive) {
+            // Staggered Unit Updates
+            const stagger = Math.max(1, Math.floor(4 / this.timeScale));
+            const parity = this.frameCount % stagger;
 
-        try {
-            for (let i = this.units.length - 1; i >= 0; i--) {
-                const unit = this.units[i];
-                // 1. Always Update Movement (Visuals)
-                if (unit.updateMovement) unit.updateMovement(simTime);
+            try {
+                for (let i = this.units.length - 1; i >= 0; i--) {
+                    const unit = this.units[i];
+                    // 1. Always Update Movement (Visuals)
+                    if (unit.updateMovement) unit.updateMovement(this.simTotalTimeSec);
 
-                // 2. Staggered Logic Update
-                if (i % stagger === parity) {
-                    try {
-                        unit.updateLogic(simTime, deltaTime * stagger, isNight, this.goblinManager.goblins);
-                    } catch (e) {
-                        console.error("Unit Logic Error:", e, unit);
-                    }
-                    if (unit.isDead && unit.isFinished) {
-                        this.units.splice(i, 1);
+                    // 2. Staggered Logic Update
+                    if (i % stagger === parity) {
+                        try {
+                            unit.updateLogic(this.simTotalTimeSec, deltaTime * stagger, isNight, this.goblinManager.goblins);
+                        } catch (e) {
+                            console.error("Unit Logic Error:", e, unit);
+                        }
+                        if (unit.isDead && unit.isFinished) {
+                            this.units.splice(i, 1);
+                        }
                     }
                 }
+            } catch (e) { console.error("Unit Loop Error:", e); }
+        }
+
+        try {
+            if (this.gameActive) {
+                // Consolidate Manager Updates
+                this.frustum = frustum; // Store for other uses
+                if (this.cloudManager) this.cloudManager.update(deltaTime, this.camera);
+                if (this.birdManager) this.birdManager.update(deltaTime, this.simTotalTimeSec, frustum);
+                if (this.sheepManager) this.sheepManager.update(this.simTotalTimeSec, deltaTime);
+                if (this.fishManager) this.fishManager.update(this.simTotalTimeSec, deltaTime, frustum);
+                if (this.goblinManager) this.goblinManager.update(this.simTotalTimeSec, deltaTime, false, this.units, this.timeScale, this.camera);
+
+                // Terrain update already happened above line 1350, but let's ensure it's not double updated if possible.
+                // Wait, if terrain.update happens twice, that's bad for building timers.
+                // Removing this one.
             }
-        } catch (e) { console.error("Unit Loop Error:", e); }
+        } catch (e) { console.error("Manager Update Error:", e); }
 
         try {
-            this.terrain.update(deltaTime, this.handleBuildingSpawn.bind(this), isNight);
-        } catch (e) { console.error("Terrain Update Error:", e); }
-
-        try {
+            // ALWAYS update visual mesh position and lights for preview
             this.terrain.updateMeshPosition(this.camera);
             this.terrain.updateLights(this.gameTime);
+
+            // Update Clipping Planes to Follow Camera
+            if (this.clippingPlanes && this.clippingPlanes.length === 4) {
+                const cx = this.camera.position.x;
+                const cz = this.camera.position.z;
+                const r = this.viewRadius || 30;
+
+                // Planes:
+                // 0: (1,0,0) -> x + d > 0 -> x > -d. We want x > cx - r. So -d = cx - r => d = -cx + r.
+                // 1: (-1,0,0)-> -x + d > 0 -> x < d. We want x < cx + r. So d = cx + r.
+                // 2: (0,0,1) -> z + d > 0 -> z > -d. We want z > cz - r. So d = -cz + r.
+                // 3: (0,0,-1)-> -z + d > 0 -> z < d. We want z < cz + r. So d = cz + r.
+
+                this.clippingPlanes[0].constant = -cx + r;
+                this.clippingPlanes[1].constant = cx + r;
+                this.clippingPlanes[2].constant = -cz + r;
+                this.clippingPlanes[3].constant = cz + r;
+            }
         } catch (e) { console.error("Terrain Visuals Error:", e); }
 
-        // Debug BuildingRenderer Call
-        if (this.frameCount % 120 === 0) {
-            const bLen = this.terrain.buildings ? this.terrain.buildings.length : 'null';
-            console.log(`[Game] calling BR.update. BR exists: ${!!this.buildingRenderer}, Buildings: ${bLen}`);
-        }
 
         if (this.buildingRenderer) {
             this.buildingRenderer.updateLighting(isNight);
@@ -1275,47 +1672,22 @@ export class Game {
         // Update Unit Renderer
         if (this.unitRenderer) {
             try {
-                this.unitRenderer.update(this.units, frustum, this.camera);
+                this.unitRenderer.update(this.units, frustum, this.controls ? this.controls.target : this.camera.position);
             } catch (e) { console.error("UnitRenderer Error:", e); }
         }
 
         // Update Building Renderer
         if (this.buildingRenderer) {
             try {
-                this.buildingRenderer.update(this.terrain.buildings, frustum, this.camera);
+                this.buildingRenderer.update(this.terrain.buildings, frustum, this.controls ? this.controls.target : this.camera.position);
             } catch (e) { console.error("BuildingRenderer Error:", e); }
-            // Scene Audit (Repeat every 300 frames - approx 5s)
-            if (this.frameCount % 300 === 0) {
-                const counts = {};
-                this.scene.traverse(obj => {
-                    if (obj.isMesh) {
-                        let key = obj.name || 'Unnamed';
-                        if (obj.isInstancedMesh) {
-                            const geoType = (obj.geometry) ? obj.geometry.type : 'UnknownGeo';
-                            // Log the count (active instances) and max capacity
-                            key = `[Instanced] ${geoType} (Active:${obj.count}/${obj.instanceMatrix.count})`;
-                        } else if (key === 'Unnamed') {
-                            // Fingerprint Geometry (Mesh)
-                            if (obj.geometry) {
-                                const geo = obj.geometry;
-                                const type = geo.type;
-                                let params = '';
-                                if (type === 'BoxGeometry' && geo.parameters) {
-                                    const p = geo.parameters;
-                                    params = `(${p.width.toFixed(1)},${p.height.toFixed(1)},${p.depth.toFixed(1)})`;
-                                } else if (type === 'SphereGeometry' && geo.parameters) {
-                                    params = `(R${geo.parameters.radius.toFixed(1)})`;
-                                } else if (type === 'ConeGeometry') {
-                                    params = '(Cone)';
-                                }
-                                key = `Unnamed_${type}${params}`;
-                            }
-                        }
-                        counts[key] = (counts[key] || 0) + 1;
-                    }
-                });
-                console.log(`[Scene Audit] Objects:`, JSON.stringify(counts));
-            }
+        }
+
+        // Update Goblin Renderer
+        if (this.goblinManager && this.goblinManager.renderer) {
+            try {
+                this.goblinManager.renderer.update(this.goblinManager.goblins, this.controls ? this.controls.target : this.camera.position);
+            } catch (e) { console.error("GoblinRenderer Error:", e); }
         }
 
         this.renderer.render(this.scene, this.camera);
@@ -1323,44 +1695,162 @@ export class Game {
 
     saveGame(slotId) {
         if (!this.saveManager) return false;
-        const saveData = {
-            slotId: slotId,
-            timestamp: Date.now(),
-            resources: this.resources,
-            gameTime: this.gameTime,
-            gameTotalTime: this.gameTotalTime,
-            // Season Persistence
-            currentSeasonIndex: this.currentSeasonIndex,
-            daysPassed: this.daysPassed,
+        try {
+            const saveData = {
+                slotId: slotId,
+                timestamp: Date.now(),
+                resources: this.resources,
+                gameTime: this.gameTime,
+                gameTotalTime: this.gameTotalTime,
+                // Season Persistence
+                currentSeasonIndex: this.currentSeasonIndex,
+                daysPassed: this.daysPassed,
 
-            terrain: this.terrain.serialize(),
-            units: this.units.filter(u => !u.isDead).map(u => u.serialize()),
-            goblinManager: this.goblinManager ? this.goblinManager.serialize() : null,
-            // Camera State
-            camera: {
-                position: { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z },
-                zoom: this.camera.zoom,
-                target: { x: this.controls.target.x, y: this.controls.target.y, z: this.controls.target.z }
-            },
-            // Request Persistence
-            requests: this.requestQueue.map(req => ({
-                id: req.id,
-                type: req.type,
-                x: req.x,
-                z: req.z,
-                status: req.status,
-                assignedTo: req.assignedTo,
-                createdAt: req.createdAt,
-                // Do NOT save mesh
-            }))
-        };
-        console.log("Saving Game Data:", saveData);
-        if (!saveData.terrain) console.error("Save Error: Terrain data is missing!");
-        return this.saveManager.save(slotId, saveData);
+                terrain: this.terrain.serialize(),
+                units: this.units.map(u => u.serialize()),
+                requests: this.requestQueue.map(req => ({
+                    id: req.id,
+                    type: req.type,
+                    x: req.x,
+                    z: req.z,
+                    status: req.status,
+                    assignedTo: req.assignedTo,
+                    createdAt: req.createdAt,
+                    isManual: req.isManual,
+                })),
+                gameTime: this.gameTime,
+                goblinManager: this.goblinManager ? this.goblinManager.serialize() : null,
+                // Camera State
+                camera: {
+                    position: { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z },
+                    zoom: this.camera.zoom,
+                    target: this.controls && this.controls.target ?
+                        { x: this.controls.target.x, y: this.controls.target.y, z: this.controls.target.z } :
+                        { x: 0, y: 0, z: 0 }
+                },
+            };
+            return this.saveManager.save(slotId, saveData);
+        } catch (e) {
+            console.error('Save failed:', e);
+            return false;
+        }
+    }
+
+    startNewGame() {
+        if (this.gameActive) return;
+
+        // Spawn initial unit on Land
+        let sx = 10, sz = 10;
+        let foundSpot = false;
+        let attempts = 0;
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        while (!foundSpot && attempts < 1000) {
+            const rx = Math.floor(Math.random() * logicalW);
+            const rz = Math.floor(Math.random() * logicalD);
+            const h = this.terrain.getTileHeight(rx, rz);
+            if (h > 1.0) {
+                sx = rx;
+                sz = rz;
+                foundSpot = true;
+            }
+            attempts++;
+        }
+
+        this.spawnUnit(sx, sz, true);
+
+        // Move camera to spawn
+        if (foundSpot) {
+            const wx = sx - (logicalW / 2);
+            const wz = sz - (logicalD / 2);
+            if (this.controls) {
+                this.controls.target.set(wx, 0, wz);
+                this.camera.position.set(wx + 20, 20, wz + 20);
+                this.controls.update();
+            }
+        }
+
+        this.gameActive = true;
+        this.lastTime = performance.now(); // Reset lastTime to avoid huge delta
+
+        // Show UI
+        const ui = document.getElementById('ui');
+        if (ui) ui.style.display = 'flex';
+
+        console.log("[Game] Start New Game!");
+    }
+
+    regenerateWorld() {
+        console.log("[Game] Regenerating World...");
+        this.gameActive = false; // Pause sim
+
+        // 1. Reset Terrain
+        if (this.terrain) {
+            this.terrain.buildings = [];
+            this.terrain.generateRandomTerrain();
+            // Force visual update
+            this.terrain.updateMesh();
+            this.terrain.updateColors(this.season || 'Spring', false);
+        }
+
+        // 2. Clear Units / Goblins
+        if (this.units) {
+            this.units.forEach(u => {
+                if (u.dispose) u.dispose();
+                this.scene.remove(u.mesh);
+                if (u.crossMesh) this.scene.remove(u.crossMesh);
+            });
+            this.units = [];
+        }
+
+        if (this.goblinManager) {
+            this.goblinManager.reset();
+            // Note: generateRandomTerrain also nukes buildings, but goblinManager tracks caves too?
+            // Need to rescan/regen caves maybe?
+            // GoblinManager has 'scanForCaves' but terrain is fresh. 
+            // In fact, generateRandomTerrain only makes land. 
+            // We should let GoblinManager init caves if needed, or leave empty until Start.
+            // Actually, for PREVIEW, maybe we want to see caves?
+            // Let's call generateCaves!
+            if (this.goblinManager.generateCaves) this.goblinManager.generateCaves();
+        }
+
+        // 3. Clear Requests
+        if (this.requestQueue) {
+            this.requestQueue.forEach(req => {
+                if (req.mesh) this.scene.remove(req.mesh);
+            });
+            this.requestQueue = [];
+        }
+
+        // 4. Reset Camera (Preview Angle)
+        // Find a nice spot? Center is usually safe.
+        // Or pick a random spot like Spawn?
+        const rW = this.terrain.logicalWidth || 80;
+        const rD = this.terrain.logicalDepth || 80;
+        const cx = Math.floor(Math.random() * rW);
+        const cz = Math.floor(Math.random() * rD);
+        const h = this.terrain.getTileHeight(cx, cz);
+
+        const wx = cx - (rW / 2);
+        const wz = cz - (rD / 2);
+
+        if (this.controls) {
+            this.controls.target.set(wx, h, wz);
+            this.camera.position.set(wx + 30, h + 30, wz + 30);
+            this.controls.update();
+        }
+
+        console.log("[Game] World Regenerated.");
     }
 
     async loadGame(slotId) {
         if (!this.saveManager) return false;
+
+        // Simulation Guard: Disable updates during async load
+        const wasActive = this.gameActive;
+        this.gameActive = false;
 
         // Show Loading Screen
         const loadingScreen = document.getElementById('loading-screen');
@@ -1387,6 +1877,10 @@ export class Game {
         }
         console.log("Load Game: Data found", saveData);
 
+        // Show UI
+        const ui = document.getElementById('ui');
+        if (ui) ui.style.display = 'flex';
+
         // Reset Systems
         if (this.goblinManager) this.goblinManager.reset();
         this.clearProjectiles();
@@ -1397,7 +1891,10 @@ export class Game {
                 if (req.mesh) {
                     this.scene.remove(req.mesh);
                     if (req.mesh.geometry) req.mesh.geometry.dispose();
-                    if (req.mesh.material) req.mesh.material.dispose();
+                    if (req.mesh.material) {
+                        const materials = Array.isArray(req.mesh.material) ? req.mesh.material : [req.mesh.material];
+                        materials.forEach(m => { if (m && typeof m.dispose === 'function') m.dispose(); });
+                    }
                 }
             });
             this.requestQueue = [];
@@ -1425,15 +1922,22 @@ export class Game {
         if (this.inputManager) this.inputManager.unitRenderer = this.unitRenderer;
 
         // Chunked / Async Deserialization to prevent freeze
+        console.log('[Game] Deserializing terrain...');
         await this.terrain.deserialize(saveData.terrain, (pct) => {
             if (loadingBar) loadingBar.style.width = pct + '%';
             if (loadingText) loadingText.innerText = pct + '%';
         });
+        console.log('[Game] Terrain deserialized.');
 
-        // Continue Restoration
+        console.log('[Game] Loading resources/time...');
         this.resources = saveData.resources || { grain: 0, fish: 0, meat: 0 };
         this.gameTime = saveData.gameTime || 8;
         this.gameTotalTime = saveData.gameTotalTime || 0;
+        this.simTotalTimeSec = this.gameTotalTime / 1000; // FIX: Sync runtime timer with saved time
+
+        console.log('[Game] Updating environment...');
+        // Immediate isNight update to ensure state consistency before unit logic runs
+        this.updateEnvironment(0);
 
         // Restore Season
         this.currentSeasonIndex = saveData.currentSeasonIndex || 0;
@@ -1454,6 +1958,7 @@ export class Game {
         this.units = [];
 
         if (saveData.units) {
+            console.log(`[Game] Restoring ${saveData.units.length} units...`);
             try {
                 // Pre-import Unit to ensure availability if needed, mainly for reference. 
                 // It is imported at module level, so should be fine.
@@ -1465,6 +1970,7 @@ export class Game {
                 });
             } catch (e) { console.error("Unit restore failed:", e); }
         }
+        console.log(`[Game] Successfully restored ${this.units.length} units.`);
 
         // Restore Goblin Manager
         if (this.goblinManager) {
@@ -1490,10 +1996,22 @@ export class Game {
                 if (h === undefined || isNaN(h)) h = 10;
 
                 const geometry = new THREE.CylinderGeometry(0.5, 0.5, 5, 16, 1, true);
-                // geometry.translate(0, 2, 0); // Removed translation to match addRequest (which sets pos directly)
-                const material = this.markerMaterial.clone();
+
+                // Clone material with safety and color restoration
+                let material;
+                if (this.markerMaterial && this.markerMaterial.clone) {
+                    material = this.markerMaterial.clone();
+                    if (material.uniforms && material.uniforms.uColor) {
+                        const colorHex = (rData.status === 'completed') ? 0x00FF00 : 0xFFFF00;
+                        material.uniforms.uColor.value.setHex(colorHex);
+                    }
+                } else {
+                    console.warn("[Game] Warning: markerMaterial missing on Load. Using fallback.");
+                    material = new THREE.MeshBasicMaterial({ color: 0xFFFF00, transparent: true, opacity: 0.8 });
+                }
 
                 const mesh = new THREE.Mesh(geometry, material);
+                mesh.renderOrder = 2000; // CRITICAL: Ensure visibility over terrain
                 mesh.position.set(rData.x, h + 2, rData.z);
                 this.scene.add(mesh);
 
@@ -1505,6 +2023,9 @@ export class Game {
                     status: rData.status,
                     assignedTo: rData.assignedTo,
                     createdAt: rData.createdAt || Date.now(),
+                    // BACKWARD COMPATIBILITY: 
+                    // If isManual matches, good. If missing (legacy save), auto-detect based on type.
+                    isManual: (rData.isManual !== undefined) ? !!rData.isManual : ['raise', 'lower', 'flatten', 'wall', 'door'].includes(rData.type),
                     mesh: mesh
                 };
                 this.requestQueue.push(req);
@@ -1516,7 +2037,10 @@ export class Game {
 
         // RE-LINK UNITS (Restoration)
         if (this.units) {
+            let maxUnitId = -1;
             this.units.forEach(u => {
+                if (u.id > maxUnitId) maxUnitId = u.id;
+
                 // Link HomeBase
                 if (u.savedHomeBaseX !== undefined) {
                     const hb = this.terrain.getBuildingAt(u.savedHomeBaseX, u.savedHomeBaseZ);
@@ -1525,18 +2049,44 @@ export class Game {
 
                 // Link Request (Persistent)
                 if (u.savedTargetRequestId) {
-                    const req = this.requestQueue.find(r => r.id === u.savedTargetRequestId);
+                    // Type-safe comparison using String() to handle JSON string/number mismatch
+                    const req = this.requestQueue.find(r => String(r.id) === String(u.savedTargetRequestId));
                     if (req) {
                         u.targetRequest = req;
                         console.log(`[Game] Re-linked Unit ${u.id} to Request ${req.id}`);
 
                         // Fix Status
                         if (req.status === 'pending') req.status = 'assigned';
-                        if (req.assignedTo !== u.id) req.assignedTo = u.id; // Override
+                        // Typed comparison: stringify for safety or use loose equality
+                        if (String(req.assignedTo) !== String(u.id)) {
+                            console.log(`[Game] Correcting Request ownership for ${req.id} ( ${req.assignedTo} -> ${u.id} )`);
+                            req.assignedTo = u.id;
+                        }
+
+                        // Force Action Reset and STATE transition so StateMachine (JobState) picks it up
+                        u.action = 'Going to Work';
+                        if (u.changeState && typeof JobState !== 'undefined') {
+                            u.changeState(new JobState(u));
+                        }
                     } else {
                         u.targetRequest = null;
                     }
                     u.savedTargetRequestId = null;
+                }
+            });
+
+            // Restore Unit ID Counter
+            Unit.nextId = maxUnitId + 1;
+
+            // SANITY CHECK: Reset requests that are 'assigned' but owner is missing/mismatched
+            this.requestQueue.forEach(req => {
+                if (req.status === 'assigned') {
+                    const owner = this.units.find(u => String(u.id) === String(req.assignedTo));
+                    if (!owner || owner.targetRequest !== req) {
+                        console.log(`[Game] Ghost Assignment Cleaned: Request ${req.id} (assigned to ${req.assignedTo}) reset to pending.`);
+                        req.status = 'pending';
+                        req.assignedTo = null;
+                    }
                 }
             });
         }
@@ -1568,6 +2118,8 @@ export class Game {
             loadingScreen.style.display = 'none';
         }
 
+        this.gameActive = true;
+        this.lastTime = performance.now();
         return true;
     }
 
@@ -1579,7 +2131,7 @@ export class Game {
             id: id,
             type: type,
             target: null, // {x, z, time}
-            lastUpdate: Date.now()
+            lastUpdate: this.simTotalTimeSec || 0
         });
         console.log(`[Game] Registered Squad ${id} (${type})`);
         return id;
@@ -1597,11 +2149,11 @@ export class Game {
             // Update target if new or different
             if (!squad.target || squad.target.x !== x || squad.target.z !== z) {
                 console.log(`[Squad ${squadId}] Target Updated: ${x},${z}`);
-                squad.target = { x: x, z: z, time: Date.now() };
-                squad.lastUpdate = Date.now();
+                squad.target = { x: x, z: z, time: this.simTotalTimeSec };
+                squad.lastUpdate = this.simTotalTimeSec;
             } else {
                 // Refresh time
-                if (squad.target) squad.target.time = Date.now();
+                if (squad.target) squad.target.time = this.simTotalTimeSec;
             }
         }
 
@@ -1609,33 +2161,154 @@ export class Game {
         this.reportGlobalBattle(x, z);
     }
 
+    updateBattleHotspots(deltaTime) {
+        if (!this.battleHotspots) return;
+
+        const now = this.simTotalTimeSec;
+        const decayRate = 2.0; // intensity per second (Reduced from 5.0 for longer pursuit)
+
+        this.battleHotspots = this.battleHotspots.filter(h => {
+            // Intensity Decay
+            h.intensity -= decayRate * deltaTime;
+
+            // Age Decay (Timeout if no activity for 60s)
+            const isTooOld = (now - h.time > 60.0);
+
+            return h.intensity > 0 && !isTooOld;
+        });
+    }
+
     reportGlobalBattle(x, z) {
         if (!this.battleHotspots) this.battleHotspots = [];
 
-        const now = Date.now();
-        // Cleanup old hotspots (> 30s)
-        this.battleHotspots = this.battleHotspots.filter(h => now - h.time < 30000);
+        const now = this.simTotalTimeSec;
+        const groupingDist = 15.0; // Max distance to group skirmishes
 
-        // Check if close hotspot exists
-        const existing = this.battleHotspots.find(h => {
-            const dx = Math.abs(h.x - x);
-            const dz = Math.abs(h.z - z); // Simple dist check (Manhattan approx)
-            return dx < 10 && dz < 10;
-        });
+        // Find existing hotspot
+        let existing = null;
+        for (const h of this.battleHotspots) {
+            const dx = h.x - x;
+            const dz = h.z - z;
+            if (Math.sqrt(dx * dx + dz * dz) < groupingDist) {
+                existing = h;
+                break;
+            }
+        }
 
         if (existing) {
-            existing.time = now; // Refresh
-            existing.x = x; // Update centering
-            existing.z = z;
+            // Update Centroid (Weighted move towards new report)
+            const weight = 0.2;
+            existing.x = existing.x * (1 - weight) + x * weight;
+            existing.z = existing.z * (1 - weight) + z * weight;
+
+            // Increase Intensity (Cap at 100)
+            existing.intensity = Math.min(100, (existing.intensity || 10) + 15); // Increased from 10
+            existing.time = now;
         } else {
-            this.battleHotspots.push({ x: x, z: z, time: now });
-            console.log(`[Game] New Global Battle Hotspot reported at ${x},${z}`);
+            // New Hotspot
+            const regionId = this.terrain ? this.terrain.getRegion(x, z) : 0;
+            this.battleHotspots.push({
+                x: x,
+                z: z,
+                intensity: 40.0, // Initial intensity (Increased from 20)
+                time: now,
+                regionId: regionId
+            });
+            console.log(`[Game] New Battle Hotspot at ${x.toFixed(0)},${z.toFixed(0)} (Region:${regionId})`);
+        }
+    }
+
+    updateSquadMobilization(deltaTime) {
+        // Run mobilization check every 2 seconds to save CPU
+        this.mobilizationTimer = (this.mobilizationTimer || 0) + deltaTime;
+        if (this.mobilizationTimer < 2.0) return;
+        this.mobilizationTimer = 0;
+
+        if (!this.battleHotspots || this.battleHotspots.length === 0) return;
+        if (!this.squads) return;
+
+        const now = this.simTotalTimeSec;
+
+        for (const [squadId, squad] of this.squads) {
+            // Consider squad "Idle" if it has no target or target is very old (> 5s)
+            // Reduced from 15s to 5s for faster response to new hotspots.
+            const isIdle = !squad.target || (now - squad.target.time > 5.0);
+
+            if (isIdle) {
+                // Find best hotspot
+                let bestHotspot = null;
+                let maxScore = -Infinity;
+
+                // Find a representative member for distance/region check
+                const firstMember = this.units.find(u => u.squadId === squadId && !u.isDead);
+                if (!firstMember) continue;
+
+                const myRegion = this.terrain ? this.terrain.getRegion(firstMember.gridX, firstMember.gridZ) : 0;
+
+                for (const h of this.battleHotspots) {
+                    // REACHABILITY CHECK
+                    if (h.regionId !== myRegion && h.regionId > 0 && myRegion > 0) continue;
+
+                    const dist = Math.sqrt(Math.pow(h.x - firstMember.gridX, 2) + Math.pow(h.z - firstMember.gridZ, 2));
+
+                    // Score = Intensity / Dist (Prefer intense nearby battles)
+                    const score = h.intensity / (dist + 5.0);
+
+                    if (score > maxScore) {
+                        maxScore = score;
+                        bestHotspot = h;
+                    }
+                }
+
+                if (bestHotspot && maxScore > 0.2) { // Minimum threshold to mobilize (Lowered from 0.5)
+                    console.log(`[Game] Mobilizing Squad ${squadId} to Hotspot at ${bestHotspot.x.toFixed(0)},${bestHotspot.z.toFixed(0)} (Intensity:${bestHotspot.intensity.toFixed(1)})`);
+                    this.reportSquadTarget(squadId, bestHotspot.x, bestHotspot.z);
+                }
+            }
         }
     }
 
 
+    getRegion(x, z) {
+        if (!this.terrain || !this.terrain.grid) return -1;
+        const logicalW = this.terrain.logicalWidth || 160;
+        const logicalD = this.terrain.logicalDepth || 160;
+        let rx = Math.floor(x);
+        let rz = Math.floor(z);
+        if (rx < 0) rx = (rx % logicalW + logicalW) % logicalW;
+        else if (rx >= logicalW) rx = rx % logicalW;
+        if (rz < 0) rz = (rz % logicalD + logicalD) % logicalD;
+        else if (rz >= logicalD) rz = rz % logicalD;
 
+        const c = this.terrain.grid[rx] ? this.terrain.grid[rx][rz] : null;
+        return c ? c.regionId : -1;
+    }
 
+    stop() {
+        this.gameActive = false;
+        this.stopped = true;
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+    }
 
-
+    dispose() {
+        this.stop();
+        if (this.renderer) {
+            this.renderer.dispose();
+            if (this.renderer.domElement && this.renderer.domElement.parentNode) {
+                this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
+            }
+        }
+        if (this.inputManager && this.inputManager.dispose) {
+            this.inputManager.dispose();
+        }
+        if (this.controls && this.controls.dispose) {
+            this.controls.dispose();
+        }
+        if (this.minimap && this.minimap.dispose) {
+            this.minimap.dispose();
+        }
+    }
 }

@@ -1,0 +1,60 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/MigrationFailure.test.js[2m > [22m[2mMigration Failure Handling[2m > [22m[2mshould abandon migrating if pathfinding repeatedly fails
+[22m[39mGame constructor called
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 154,120. Force:false
+[Terrain] Building Added: cave at (154, 120) Size:1x1. Total: 1
+GoblinManager: Cave registered at 154,120 
+[GoblinManager] Clan clan_cave_154_120 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 127,134. Force:false
+[Terrain] Building Added: cave at (127, 134) Size:1x1. Total: 2
+GoblinManager: Cave registered at 127,134 
+[GoblinManager] Clan clan_cave_127_134 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 33,141. Force:false
+[Terrain] Building Added: cave at (33, 141) Size:1x1. Total: 3
+GoblinManager: Cave registered at 33,141 
+[GoblinManager] Clan clan_cave_33_141 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 106,149. Force:false
+[Terrain] Building Added: cave at (106, 149) Size:1x1. Total: 4
+GoblinManager: Cave registered at 106,149 
+[GoblinManager] Clan clan_cave_106_149 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 116,149. Force:false
+[Terrain] Building Added: cave at (116, 149) Size:1x1. Total: 5
+GoblinManager: Cave registered at 116,149 
+[GoblinManager] Clan clan_cave_116_149 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 5 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/MigrationFailure.test.js[2m > [22m[2mMigration Failure Handling[2m > [22m[2mshould abandon migrating if pathfinding repeatedly fails
+[22m[39mBug Confirmed: Unit still Migrating after 20 failures.
+
+ [31m笶ｯ[39m src/tests/MigrationFailure.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 2672[2mms[22m[39m
+[31m     [31mﾃ・[31m should abandon migrating if pathfinding repeatedly fails[39m[33m 2670[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/MigrationFailure.test.js > Migration Failure Handling > should abandon migrating if pathfinding repeatedly fails
+AssertionError: expected 'Migrating' not to be 'Migrating' // Object.is equality
+ 笶ｯ src/tests/MigrationFailure.test.js:71:33
+     69|         }
+     70| 
+     71|         expect(unit.action).not.toBe('Migrating');
+       |                                 ^
+     72|         expect(unit.migrationTarget).toBeNull();
+     73|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 13:04:46
+[2m   Duration [22m 3.95s[2m (transform 373ms, setup 39ms, import 514ms, tests 2.67s, environment 495ms)[22m
+

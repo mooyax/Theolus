@@ -17,6 +17,9 @@ export class Entity {
         this.gridX = x;
         this.gridZ = z;
         this.type = type || 'entity';
+        // NEW: Separate spatial indexing type from logical entity type
+        // This allows 'hobgoblin' to be indexed as 'goblin' if passed to super() constructor
+        this.spatialType = type || 'entity';
 
         this.position = new THREE.Vector3();
         this.rotationY = 0;
@@ -24,7 +27,7 @@ export class Entity {
         // Movement State
         this.isMoving = false;
         this.moveTimer = 0;
-        this.moveDuration = 1000;
+        this.moveDuration = 1.0;
         this.moveStartTime = 0;
         this.startGridX = 0;
         this.startGridZ = 0;
@@ -36,7 +39,7 @@ export class Entity {
 
         // Register in Spatial Grid
         if (this.terrain && this.terrain.registerEntity) {
-            this.terrain.registerEntity(this, this.gridX, this.gridZ, this.type);
+            this.terrain.registerEntity(this, this.gridX, this.gridZ, this.spatialType);
         }
 
         // Initial visual sync
@@ -53,8 +56,8 @@ export class Entity {
     }
 
     getPositionForGrid(x, z) {
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
+        const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
+        const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
 
         // Center check
         const rawX = x - logicalW / 2 + 0.5;
@@ -85,12 +88,14 @@ export class Entity {
         );
     }
 
-    getDistance(tx, tz) {
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
+    getDistance(tx, tz, ox = null, oz = null) {
+        const sx = (ox !== null) ? ox : this.gridX;
+        const sz = (oz !== null) ? oz : this.gridZ;
+        const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
+        const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
 
-        let dx = Math.abs(this.gridX - tx);
-        let dz = Math.abs(this.gridZ - tz);
+        let dx = Math.abs(sx - tx);
+        let dz = Math.abs(sz - tz);
 
         if (dx > logicalW / 2) dx = logicalW - dx;
         if (dz > logicalD / 2) dz = logicalD - dz;
@@ -99,6 +104,32 @@ export class Entity {
     }
 
     // --- MOVEMENT ENGINE ---
+
+    getVisualX(time) {
+        if (!this.isMoving) return this.gridX;
+        const progress = Math.max(0, Math.min(1, (time - this.moveStartTime) / this.moveDuration));
+        // Simple Lerp (Wrap aware)
+        let sx = this.startGridX;
+        let tx = this.targetGridX;
+        const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
+        if (tx - sx > logicalW / 2) sx += logicalW;
+        if (sx - tx > logicalW / 2) sx -= logicalW;
+        let x = sx + (tx - sx) * progress;
+        return ((x % logicalW) + logicalW) % logicalW;
+    }
+
+    getVisualZ(time) {
+        if (!this.isMoving) return this.gridZ;
+        const progress = Math.max(0, Math.min(1, (time - this.moveStartTime) / this.moveDuration));
+        // Simple Lerp (Wrap aware)
+        let sz = this.startGridZ;
+        let tz = this.targetGridZ;
+        const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
+        if (tz - sz > logicalD / 2) sz += logicalD;
+        if (sz - tz > logicalD / 2) sz -= logicalD;
+        let z = sz + (tz - sz) * progress;
+        return ((z % logicalD) + logicalD) % logicalD;
+    }
 
     startMove(tx, tz, time) {
         // Validation handled by caller usually, but we can do basic checks here
@@ -118,8 +149,8 @@ export class Entity {
             let oldTz = this.targetGridZ;
 
             // Wrap adjustment (matches updateMovement)
-            const logicalW = this.terrain.logicalWidth || 80;
-            const logicalD = this.terrain.logicalDepth || 80;
+            const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
+            const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
             if (oldTx - sx > logicalW / 2) sx += logicalW;
             if (sx - oldTx > logicalW / 2) sx -= logicalW;
             if (oldTz - sz > logicalD / 2) sz += logicalD;
@@ -143,9 +174,12 @@ export class Entity {
         this.targetGridX = tx;
         this.targetGridZ = tz;
 
+        // Immediate Animation Sync
+        if (this.onMoveStep) this.onMoveStep(0);
+
         // Rotation
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
+        const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
+        const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
 
         let dx = tx - this.gridX;
         let dz = tz - this.gridZ;
@@ -162,7 +196,8 @@ export class Entity {
 
 
 
-        const progress = (time - this.moveStartTime) / this.moveDuration;
+        let progress = (time - this.moveStartTime) / this.moveDuration;
+        if (isNaN(progress)) progress = 0;
 
         if (progress >= 1) {
             // ARRIVAL
@@ -170,7 +205,7 @@ export class Entity {
 
             // Spatial Update
             if (this.terrain && this.terrain.moveEntity) {
-                this.terrain.moveEntity(this, this.gridX, this.gridZ, this.targetGridX, this.targetGridZ, this.type);
+                this.terrain.moveEntity(this, this.gridX, this.gridZ, this.targetGridX, this.targetGridZ, this.spatialType);
             }
 
             this.gridX = this.targetGridX;
@@ -185,8 +220,8 @@ export class Entity {
             }
         } else {
             // LERP
-            const logicalW = this.terrain.logicalWidth || 80;
-            const logicalD = this.terrain.logicalDepth || 80;
+            const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
+            const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
 
             let sx = this.startGridX;
             let sz = this.startGridZ;
@@ -220,5 +255,15 @@ export class Entity {
         if (this.terrain && this.terrain.unregisterEntity) {
             this.terrain.unregisterEntity(this);
         }
+    }
+
+    // --- SHARED TOOLTIP LOGIC ---
+    getTooltip() {
+        let text = `ID: ${this.id}`;
+
+        if (this.age !== undefined) {
+            text += `\nAge: ${Math.floor(this.age)}`;
+        }
+        return text;
     }
 }

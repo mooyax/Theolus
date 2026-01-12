@@ -1,0 +1,13 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+ ﾃ・src/tests/LoadUpdateLoop.test.js > Load Update Loop Integration > should maintain JobState after first update loop post-load 22ms
+   竊・[vitest] No "WebGLRenderer" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  23:53:44
+   Duration  1.19s (transform 315ms, setup 39ms, import 377ms, tests 23ms, environment 492ms)
+

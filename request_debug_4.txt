@@ -1,0 +1,234 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould tag new requests with createdAt timestamp
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 125,52. Force:false
+[Terrain] Building Added: cave at (125, 52) Size:1x1. Total: 1
+GoblinManager: Cave registered at 125,52 
+[GoblinManager] Clan clan_cave_125_52 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 15,14. Force:false
+[Terrain] Building Added: cave at (15, 14) Size:1x1. Total: 2
+GoblinManager: Cave registered at 15,14 
+[GoblinManager] Clan clan_cave_15_14 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 110,92. Force:false
+[Terrain] Building Added: cave at (110, 92) Size:1x1. Total: 3
+GoblinManager: Cave registered at 110,92 
+[GoblinManager] Clan clan_cave_110_92 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 111,98. Force:false
+[Terrain] Building Added: cave at (111, 98) Size:1x1. Total: 4
+GoblinManager: Cave registered at 111,98 
+[GoblinManager] Clan clan_cave_111_98 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 132,71. Force:false
+[Terrain] Building Added: cave at (132, 71) Size:1x1. Total: 5
+GoblinManager: Cave registered at 132,71 
+[GoblinManager] Clan clan_cave_132_71 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 23 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Geometry Initialized (Split Mode)
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould cleanup expired pending requests
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 67,62. Force:false
+[Terrain] Building Added: cave at (67, 62) Size:1x1. Total: 1
+GoblinManager: Cave registered at 67,62 
+[GoblinManager] Clan clan_cave_67_62 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 4,36. Force:false
+[Terrain] Building Added: cave at (4, 36) Size:1x1. Total: 2
+GoblinManager: Cave registered at 4,36 
+[GoblinManager] Clan clan_cave_4_36 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 60,22. Force:false
+[Terrain] Building Added: cave at (60, 22) Size:1x1. Total: 3
+GoblinManager: Cave registered at 60,22 
+[GoblinManager] Clan clan_cave_60_22 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 33,28. Force:false
+[Terrain] Building Added: cave at (33, 28) Size:1x1. Total: 4
+GoblinManager: Cave registered at 33,28 
+[GoblinManager] Clan clan_cave_33_28 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 47,39. Force:false
+[Terrain] Building Added: cave at (47, 39) Size:1x1. Total: 5
+GoblinManager: Cave registered at 47,39 
+[GoblinManager] Clan clan_cave_47_39 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 6 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Geometry Initialized (Split Mode)
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould NOT cleanup assigned requests even if old
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 62,82. Force:false
+[Terrain] Building Added: cave at (62, 82) Size:1x1. Total: 1
+GoblinManager: Cave registered at 62,82 
+[GoblinManager] Clan clan_cave_62_82 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 62,15. Force:false
+[Terrain] Building Added: cave at (62, 15) Size:1x1. Total: 2
+GoblinManager: Cave registered at 62,15 
+[GoblinManager] Clan clan_cave_62_15 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 149,20. Force:false
+[Terrain] Building Added: cave at (149, 20) Size:1x1. Total: 3
+GoblinManager: Cave registered at 149,20 
+[GoblinManager] Clan clan_cave_149_20 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 159,58. Force:false
+[Terrain] Building Added: cave at (159, 58) Size:1x1. Total: 4
+GoblinManager: Cave registered at 159,58 
+[GoblinManager] Clan clan_cave_159_58 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 7,65. Force:false
+[Terrain] Building Added: cave at (7, 65) Size:1x1. Total: 5
+GoblinManager: Cave registered at 7,65 
+[GoblinManager] Clan clan_cave_7_65 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 10 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Geometry Initialized (Split Mode)
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould cancel request via Proximity Search
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 74,113. Force:false
+[Terrain] Building Added: cave at (74, 113) Size:1x1. Total: 1
+GoblinManager: Cave registered at 74,113 
+[GoblinManager] Clan clan_cave_74_113 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 108,92. Force:false
+[Terrain] Building Added: cave at (108, 92) Size:1x1. Total: 2
+GoblinManager: Cave registered at 108,92 
+[GoblinManager] Clan clan_cave_108_92 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 115,88. Force:false
+[Terrain] Building Added: cave at (115, 88) Size:1x1. Total: 3
+GoblinManager: Cave registered at 115,88 
+[GoblinManager] Clan clan_cave_115_88 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 58,93. Force:false
+[Terrain] Building Added: cave at (58, 93) Size:1x1. Total: 4
+GoblinManager: Cave registered at 58,93 
+[GoblinManager] Clan clan_cave_58_93 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 54,80. Force:false
+[Terrain] Building Added: cave at (54, 80) Size:1x1. Total: 5
+GoblinManager: Cave registered at 54,80 
+[GoblinManager] Clan clan_cave_54_80 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 7 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Geometry Initialized (Split Mode)
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould prioritize nearest request when cancelling
+[22m[39mGame constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 22,111. Force:false
+[Terrain] Building Added: cave at (22, 111) Size:1x1. Total: 1
+GoblinManager: Cave registered at 22,111 
+[GoblinManager] Clan clan_cave_22_111 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 28,39. Force:false
+[Terrain] Building Added: cave at (28, 39) Size:1x1. Total: 2
+GoblinManager: Cave registered at 28,39 
+[GoblinManager] Clan clan_cave_28_39 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 149,119. Force:false
+[Terrain] Building Added: cave at (149, 119) Size:1x1. Total: 3
+GoblinManager: Cave registered at 149,119 
+[GoblinManager] Clan clan_cave_149_119 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 87,85. Force:false
+[Terrain] Building Added: cave at (87, 85) Size:1x1. Total: 4
+GoblinManager: Cave registered at 87,85 
+[GoblinManager] Clan clan_cave_87_85 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 23,69. Force:false
+[Terrain] Building Added: cave at (23, 69) Size:1x1. Total: 5
+GoblinManager: Cave registered at 23,69 
+[GoblinManager] Clan clan_cave_23_69 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 13 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Geometry Initialized (Split Mode)
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+ [31m笶ｯ[39m src/tests/RequestLifecycle.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[33m 923[2mms[22m[39m
+[31m     [31mﾃ・[31m should tag new requests with createdAt timestamp[39m[32m 255[2mms[22m[39m
+[31m     [31mﾃ・[31m should cleanup expired pending requests[39m[32m 187[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT cleanup assigned requests even if old[39m[32m 166[2mms[22m[39m
+[31m     [31mﾃ・[31m should cancel request via Proximity Search[39m[32m 162[2mms[22m[39m
+[31m     [31mﾃ・[31m should prioritize nearest request when cancelling[39m[32m 152[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 5 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should tag new requests with createdAt timestamp
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cleanup expired pending requests
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should NOT cleanup assigned requests even if old
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cancel request via Proximity Search
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should prioritize nearest request when cancelling
+TypeError: this.assets.farmGeo.rotateX is not a function
+ 笶ｯ BuildingRenderer.initAssets src/BuildingRenderer.js:182:29
+    180|         // Size 2x2 tiles. Visual size ~1.8
+    181|         this.assets.farmGeo = new THREE.PlaneGeometry(1.8, 1.8);
+    182|         this.assets.farmGeo.rotateX(-Math.PI / 2);
+       |                             ^
+    183|         this.assets.farmGeo.translate(0, 0.05, 0);
+    184| 
+ 笶ｯ new BuildingRenderer src/BuildingRenderer.js:13:14
+ 笶ｯ new Game src/Game.js:158:33
+ 笶ｯ src/tests/RequestLifecycle.test.js:221:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/5]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m5 failed[39m[22m[90m (5)[39m
+[2m   Start at [22m 22:41:51
+[2m   Duration [22m 1.98s[2m (transform 324ms, setup 35ms, import 437ms, tests 923ms, environment 397ms)[22m
+

@@ -1,0 +1,32 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould damage building population
+[22m[39mGoblin Raid: House population reduced. Rem: 9.92
+
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould destroy building when Population AND HP are depleted
+[22m[39mGoblin Raid: House population reduced. Rem: -3.95
+Goblin destroyed Building house!
+
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould destroy building even if fractional population remains (e.g. 0.5)
+[22m[39mGoblin Raid: House population reduced. Rem: -4.95
+Goblin destroyed Building house!
+
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould NOT destroy building if population remains >= 1.0
+[22m[39mGoblin Raid: House population reduced. Rem: 3
+
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould take retaliation damage
+[22m[39mGoblin Raid: House population reduced. Rem: 16
+
+ [31m笶ｯ[39m src/tests/GoblinDestruction.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 49[2mms[22m[39m
+     [32m笨・[39m should damage building population[32m 13[2mms[22m[39m
+[31m     [31mﾃ・[31m should destroy building when Population AND HP are depleted[39m[32m 19[2mms[22m[39m
+[31m     [31mﾃ・[31m should destroy building even if fractional population remains (e.g. 0.5)[39m[32m 3[2mms[22m[39m
+     [32m笨・[39m should NOT destroy building if population remains >= 1.0[32m 2[2mms[22m[39m
+     [32m笨・[39m should take retaliation damage[32m 6[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 00:09:54
+[2m   Duration [22m 1.43s[2m (transform 146ms, setup 52ms, import 217ms, tests 49ms, environment 682ms)[22m
+

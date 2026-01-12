@@ -1,0 +1,78 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Movement.test.js[2m > [22m[2mTerrain Movement and Logic Tests[2m > [22m[2mshould set very long moveDuration for Unit on Rock
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+
+stderr | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should set very long moveDuration for Unit on Rock
+DEBUG: MoveDur=5.8
+DEBUG: Heights Cur=10 Next=12
+
+[90mstdout[2m | src/tests/Movement.test.js[2m > [22m[2mTerrain Movement and Logic Tests[2m > [22m[2mshould set normal moveDuration on Flat
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+
+stderr | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should set normal moveDuration on Flat
+DEBUG: Normal MoveDur=0.8
+
+[90mstdout[2m | src/tests/Movement.test.js[2m > [22m[2mTerrain Movement and Logic Tests[2m > [22m[2mshould prevent Unit from moving/building on Rock checks?
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+
+[90mstdout[2m | src/tests/Movement.test.js[2m > [22m[2mTerrain Movement and Logic Tests[2m > [22m[2mshould increase Goblin Hut population and spawn goblin
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10 Special:false
+
+stderr | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should increase Goblin Hut population and spawn goblin
+[GoblinManager] Aborting spawn: Grid cell has no building. Self-healing/Destroying Cave.
+[GoblinManager] Removing invalid cave at 10,10
+MOVEMENT TEST CRASH: TypeError: this.terrain.removeBuilding is not a function
+    at GoblinManager.destroyCave (C:/Users/mooya/develop/test/src/GoblinManager.js:729:26)
+    at GoblinManager.spawnGoblinAtCave (C:/Users/mooya/develop/test/src/GoblinManager.js:492:18)
+    at GoblinManager.spawnGoblinAtCave (file:///C:/Users/mooya/develop/test/node_modules/@vitest/spy/dist/index.js:285:34)
+    at C:/Users/mooya/develop/test/src/GoblinManager.js:638:26
+    at Array.forEach (<anonymous>)
+    at GoblinManager.checkHutSpawns (C:/Users/mooya/develop/test/src/GoblinManager.js:614:19)
+    at C:/Users/mooya/develop/test/src/tests/Movement.test.js:121:16
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+
+[90mstdout[2m | src/tests/Movement.test.js[2m > [22m[2mTerrain Movement and Logic Tests[2m > [22m[2mshould increase Goblin Hut population and spawn goblin
+[22m[39mGoblinManager: Generation started...
+GoblinManager: Cave registered at 50,50 
+[GoblinManager] Clan clan_cave_50_50 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Generated 5 goblin caves after 5 attempts.
+GoblinManager: Force spawning Debug Goblin
+
+ [31m笶ｯ[39m src/tests/Movement.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 48[2mms[22m[39m
+     [32m笨・[39m should set very long moveDuration for Unit on Rock[32m 8[2mms[22m[39m
+     [32m笨・[39m should set normal moveDuration on Flat[32m 3[2mms[22m[39m
+     [32m笨・[39m should prevent Unit from moving/building on Rock checks?[32m 2[2mms[22m[39m
+[31m     [31mﾃ・[31m should increase Goblin Hut population and spawn goblin[39m[32m 33[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Movement.test.js > Terrain Movement and Logic Tests > should increase Goblin Hut population and spawn goblin
+TypeError: this.terrain.removeBuilding is not a function
+ 笶ｯ GoblinManager.destroyCave src/GoblinManager.js:729:26
+    727|         // Also remove from terrain if it's still there (e.g. submerge窶ｦ
+    728|         if (cave.building && this.terrain.buildings.includes(cave.buil窶ｦ
+    729|             this.terrain.removeBuilding(cave.building);
+       |                          ^
+    730|         }
+    731|         this.caves.splice(index, 1);
+ 笶ｯ GoblinManager.spawnGoblinAtCave src/GoblinManager.js:492:18
+ 笶ｯ src/GoblinManager.js:638:26
+ 笶ｯ GoblinManager.checkHutSpawns src/GoblinManager.js:614:19
+ 笶ｯ src/tests/Movement.test.js:121:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 17:36:32
+[2m   Duration [22m 1.06s[2m (transform 194ms, setup 36ms, import 258ms, tests 48ms, environment 487ms)[22m
+

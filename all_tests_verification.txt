@@ -1,0 +1,95 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/UnitInit.test.js > Unit Initialization and Movement Start > should NOT freeze if started at time 0
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+Debug Unit: Interval = 2.578851930476417, LastTime = 0, Role = worker 
+[ActorDebug] Grid: 10,10 Target: 5,5 Diff: -5,-5
+[ActorDebug] Next: 10,9
+[ActorDebug] Check Move 10,9 -> true
+Debug Unit: MoveRandomly Called ? 1 
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Goblin if it is much closer than Building
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+
+ 笶ｯ src/tests/UnitInit.test.js (1 test | 1 failed) 13ms
+     ﾃ・should NOT freeze if started at time 0 12ms
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Goblin if it is much closer than Building
+[DEBUG] Calling updateLogic...
+[Unit Debug V3] Start Logic. Night=false, Sleep=false, Action=undefined
+[ActorDebug] Grid: 0,0 Target: 10,0 Diff: 10,0
+[ActorDebug] Next: 1,0
+[Unit 0] Moving onto Rock at 1,0 H:10 (Speed Penalty)
+[ActorDebug] Check Move 1,0 -> true
+[DEBUG] updateLogic finished.
+[DEBUG] Targets: G=g1, B=undefined
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are very close (Siege Mode)
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are very close (Siege Mode)
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+[ActorDebug] Grid: 0,0 Target: 7,0 Diff: 7,0
+[ActorDebug] Next: 1,0
+[Unit 2] Moving onto Rock at 1,0 H:10 (Speed Penalty)
+[ActorDebug] Check Move 1,0 -> true
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should NOT auto-target Huts without orders (Workers are passive)
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should NOT auto-target Huts without orders (Workers are passive)
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:0,0 Special:false
+
+ 笨・src/tests/TargetingPriority.test.js (3 tests) 11ms
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins deal population damage to player buildings
+Goblin 0 attacking house. Pop: 9.00
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins deal structural damage to empty player buildings
+Goblin 1 hitting Empty house. HP: 40
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins destroy player buildings when HP reaches 0
+Goblin 2 hitting Empty house. HP: 0
+Goblin 2 destroyed house!
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Buildings retaliate against melee goblins
+Goblin 3 attacking house. Pop: 9.92
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Towers have massive retaliation
+Goblin 4 attacking tower. Pop: 4.92
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > No retaliation for distant attackers (Shamans)
+Goblin 5 attacking house. Pop: 9.20
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Standard HP logic for Goblin buildings
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:20,20 Special:false
+Unit 0 attacking cave. HP: 150
+
+ 笨・src/tests/BuildingDefense.test.js (8 tests) 16ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/UnitInit.test.js > Unit Initialization and Movement Start > should NOT freeze if started at time 0
+AssertionError: expected +0 to be 6 // Object.is equality
+
+- Expected
++ Received
+
+- 6
++ 0
+
+ 笶ｯ src/tests/UnitInit.test.js:52:31
+     50|         expect(unit.moveRandomly).toHaveBeenCalled();
+     51|         // lastTime should be updated (to seconds)
+     52|         expect(unit.lastTime).toBe(6);
+       |                               ^
+     53|     });
+     54| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 11 passed (12)
+   Start at  20:45:33
+   Duration  987ms (transform 438ms, setup 102ms, import 587ms, tests 40ms, environment 1.50s)
+

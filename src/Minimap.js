@@ -3,6 +3,10 @@ export class Minimap {
         this.game = game;
         this.terrain = game.terrain;
         this.canvas = document.getElementById('minimap');
+        if (!this.canvas) {
+            console.warn('Minimap: canvas "#minimap" not found. Minimap disabled.');
+            return;
+        }
         this.ctx = this.canvas.getContext('2d');
 
         // Map size
@@ -15,9 +19,25 @@ export class Minimap {
         this.isDragging = false;
 
         // Bind events
-        this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-        window.addEventListener('mousemove', this.onMouseMove.bind(this));
-        window.addEventListener('mouseup', this.onMouseUp.bind(this));
+        this._binds = {
+            onMouseDown: this.onMouseDown.bind(this),
+            onMouseMove: this.onMouseMove.bind(this),
+            onMouseUp: this.onMouseUp.bind(this)
+        };
+
+        if (this.canvas) {
+            this.canvas.addEventListener('mousedown', this._binds.onMouseDown);
+        }
+        window.addEventListener('mousemove', this._binds.onMouseMove);
+        window.addEventListener('mouseup', this._binds.onMouseUp);
+    }
+
+    dispose() {
+        if (this._binds) {
+            this.canvas.removeEventListener('mousedown', this._binds.onMouseDown);
+            window.removeEventListener('mousemove', this._binds.onMouseMove);
+            window.removeEventListener('mouseup', this._binds.onMouseUp);
+        }
     }
 
     onMouseDown(e) {
@@ -114,49 +134,44 @@ export class Minimap {
         // Or just iterate. 25k is small for canvas.
 
         // Create buffer once if possible, or check if size changed.
-        if (!this.imgData) {
+        if (!this.imgData || this.imgData.width !== this.canvas.width || this.imgData.height !== this.canvas.height) {
             this.imgData = this.ctx.createImageData(this.canvas.width, this.canvas.height);
         }
         const imgData = this.imgData;
         const data = imgData.data;
 
-        // Fill background black (manually, faster than fillRect + getImageData)
-        // Actually we over-write opaque pixels anyway.
-        // But for safety let's fill alpha 255.
-        // Or just fillRect context first? 
-        // If we use putImageData, it overwrites everything.
-        // So we just need to fill 'data' array.
+        const cw = this.canvas.width;
+        const ch = this.canvas.height;
 
-        // Loop terrain
-        const grid = this.terrain.grid;
+        // Loop Canvas Pixels (Fixed Size) and Sample Grid (Variable Size)
+        // This ensures the minimap always fits the UI container.
+        for (let y = 0; y < ch; y++) {
+            for (let x = 0; x < cw; x++) {
 
-        for (let x = 0; x < this.logicalW; x++) {
-            for (let z = 0; z < this.logicalD; z++) {
-                // ... same logic ...
-                const cell = grid[x][z];
+                // Map Pixel (x,y) -> Grid (gx, gz)
+                // logicalW/D might be 240. cw/ch might be 160.
+                const gx = Math.floor(x / scaleX); // x * (logicalW / cw)
+                const gz = Math.floor(y / scaleY); // y * (logicalD / ch)
+
+                // Safety Clamp/Wrap
+                const safeGx = Math.min(Math.max(gx, 0), this.logicalW - 1);
+                const safeGz = Math.min(Math.max(gz, 0), this.logicalD - 1);
+
+                const cell = this.terrain.grid[safeGx][safeGz];
+                // Safety check if resizing happens mid-frame
+                if (!cell) continue;
+
                 const h = cell.height;
-
-                let r, g, b;
-
-                // USE HELPER from Terrain with correct parameters
-                // getBiomeColor(height, moisture, noise, leadsNight, season, lx, lz)
-                // We need to access terrain's private properties if they are not exposed, or just pass simple values.
-                // Terrain.getBiomeColor relies on: height, moisture, noise, isNight, season, lx, lz.
-
-                // height is 'h', moisture is cell.moisture. noise is cell.noise.
-                // isNight? We can get from game or terrain.
-                const isNight = this.game.terrain._lastIsNight || false;
-                const season = this.game.terrain.currentSeason || 'Spring';
-
                 const noise = cell.noise;
                 const moisture = cell.moisture || 0.5;
 
-                // Pass true for forMinimap
-                const color = this.terrain.getBiomeColor(h, moisture, noise, isNight, season, x, z, true);
+                // Color Logic
+                const isNight = this.game.terrain._lastIsNight || false;
+                const season = this.game.terrain.currentSeason || 'Spring';
 
-                // Optimization: direct index mapping without scale if 1:1
-                // 160 width.
-                const index = (z * 160 + x) * 4;
+                const color = this.terrain.getBiomeColor(h, moisture, noise, isNight, season, safeGx, safeGz, true);
+
+                const index = (y * cw + x) * 4;
                 data[index] = color.r * 255;
                 data[index + 1] = color.g * 255;
                 data[index + 2] = color.b * 255;

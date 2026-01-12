@@ -1,0 +1,1941 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should retry migration after 30 seconds timeout
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should retry migration after 30 seconds timeout
+Unit test-migrant migrating to 50,50 (Region undefined)
+Unit test-migrant migration timed out. Retrying.
+Unit test-migrant migrating to 50,50 (Region undefined)
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+Unit test-migrant migrating to 50,50 (Region undefined)
+Unit test-migrant interrupted migration for combat.
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should stop migrating if construction succeeds
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should stop migrating if construction succeeds
+Unit test-migrant migrating to 50,50 (Region undefined)
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > DEBUG: should log blockage reasons correctly
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > DEBUG: should log blockage reasons correctly
+[Unit test-migrant] Blocked by Slope at 21,20 H:2->6
+
+ 笶ｯ src/tests/MigrationImprovement.test.js (4 tests | 1 failed) 37ms
+     笨・should retry migration after 30 seconds timeout 11ms
+     ﾃ・should interrupt migration if enemy is found (Priority) 18ms
+     笨・should stop migrating if construction succeeds 2ms
+     笨・DEBUG: should log blockage reasons correctly 2ms
+stdout | src/tests/MigrationConflict.test.js > Migration Conflict Regression (Jitabata Bug) > should handle basic Unit update without crash
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:20,20 Special:false
+
+stdout | src/tests/RubberBanding.test.js > Rubber-banding and Chaining Verification > should NOT snap back when arriving at a job during mid-move
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+
+stdout | src/tests/MigrationConflict.test.js > Migration Conflict Regression (Jitabata Bug) > should handle basic Unit update without crash
+[Unit.js] ENTERED updateLogic. Dead=false
+[UnitWanderState] Update. ID:0 Action:Idle Target:No
+[UnitWanderState] Check Migration. ID:0 Action:Idle Target:false 
+
+stdout | src/tests/RubberBanding.test.js > Rubber-banding and Chaining Verification > should NOT snap back when arriving at a job during mid-move
+[JobState] smartMove failed(Wait).Budget ? undefined 
+[JobState] Entered.Target: build.Resume: None 
+
+stdout | src/tests/MigrationConflict.test.js > Migration Conflict Regression (Jitabata Bug) > should NOT allow WanderState to interfere with Migration Movement
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:20,20 Special:false
+
+stdout | src/tests/RubberBanding.test.js > Rubber-banding and Chaining Verification > should use visual position for chaining the next job
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+
+stdout | src/tests/MigrationConflict.test.js > Migration Conflict Regression (Jitabata Bug) > should NOT allow WanderState to interfere with Migration Movement
+Unit 1 migrating to 30,30 (Region 1)
+[UnitWanderState] Update. ID:1 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:1 Action:Migrating Target:true 
+
+stdout | src/tests/MigrationConflict.test.js > Migration Conflict Regression (Jitabata Bug) > should allow Migration Logic to control repeated movement
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:20,20 Special:false
+
+stdout | src/tests/MigrationConflict.test.js > Migration Conflict Regression (Jitabata Bug) > should allow Migration Logic to control repeated movement
+Unit 2 migrating to 30,30 (Region 1)
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+[UnitWanderState] Update. ID:2 Action:Migrating Target:No
+[UnitWanderState] Check Migration. ID:2 Action:Migrating Target:true 
+Unit 2 built structure during migration. Stopping.
+[Test Fail] Action changed to Idle at frame 51
+
+ 笶ｯ src/tests/RubberBanding.test.js (2 tests | 1 failed) 29ms
+     笨・should NOT snap back when arriving at a job during mid-move 11ms
+     ﾃ・should use visual position for chaining the next job 15ms
+ 笶ｯ src/tests/MigrationConflict.test.js (3 tests | 1 failed) 41ms
+     笨・should handle basic Unit update without crash 8ms
+     笨・should NOT allow WanderState to interfere with Migration Movement 4ms
+     ﾃ・should allow Migration Logic to control repeated movement 25ms
+Cannot parse C:/Users/mooya/develop/test/src/tests/Unit.test.js:
+Expected '}', got '<eof>'.
+stdout | src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug V2] Start Logic. Night=true, Stag=0.0, Age=20.0, H=10, Action=undefined
+[Unit Heartbeat] ID:0 Action:undefined Moving:false T:1000.0 dt:100.0000 Int:0
+[Unit 0] Moving onto Rock at 0,1 H:10 (Speed Penalty)
+Unit 0 migrating to 1,1 (Region 1)
+[Unit 0] Moving onto Rock at 0,1 H:10 (Speed Penalty)
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug V2] Start Logic. Night=true, Stag=0.0, Age=40.0, H=10, Action=Migrating
+[Unit Heartbeat] ID:0 Action:Migrating Moving:false T:3000.0 dt:100.0000 Int:0
+Unit 0 migration timed out. Retrying.
+Unit 0 migrating to 11,1 (Region 1)
+[Unit 0] Moving onto Rock at 10,1 H:10 (Speed Penalty)
+
+ 笶ｯ src/tests/NightLogic.test.js (1 test | 1 failed) 33ms
+     ﾃ・Worker should engage pathfinding to House but is likely blocked 30ms
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Knight vs Single Goblin (1v1) - AI Logic Check
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug V2] Start Logic. Night=false, Stag=0.0, Age=20.0, H=10, Action=undefined
+[Unit Heartbeat] ID:0 Action:undefined Moving:false T:0.0 dt:0.1000 Int:0
+[Unit Debug] ATTACKING Goblin 0
+Goblin (normal) died. ID:0
+[Unit Debug] Targeted: None
+[Unit Debug] Executing Logic. Role: knight
+[AI CHECK] KnightAction: Idle GoblinHP: -70
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Wizard vs Single Goblin (1v1) - Wizard should win
+[UnitCore.js] Unit Created ID:1 Role:wizard Pos:0,0 Special:false
+[Unit Debug] ATTACKING Goblin 1
+Goblin (normal) died. ID:1
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Knight vs Swarm (1v5) - Knight should surviving
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+[Unit Debug] ATTACKING Goblin g0
+Goblin (normal) died. ID:g0
+[Unit Debug] ATTACKING Goblin g1
+Goblin (normal) died. ID:g1
+[Unit Debug] ATTACKING Goblin g2
+Goblin (normal) died. ID:g2
+[Unit Debug] ATTACKING Goblin g3
+Goblin (normal) died. ID:g3
+[Unit Debug] ATTACKING Goblin g4
+Goblin (normal) died. ID:g4
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Simulation > Load Game Persistence - Should resume movement
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0 Special:false
+[Unit 3] Moving onto Rock at 0,1 H:10 (Speed Penalty)
+[Unit 3] Moving onto Rock at 0,0 H:10 (Speed Penalty)
+[UnitCore.js] Unit Created ID:4 Role:knight Pos:0,0 Special:false
+
+ 笶ｯ src/tests/CombatBalance.test.js (4 tests | 1 failed) 44ms
+     笨・Knight vs Single Goblin (1v1) - AI Logic Check 12ms
+     笨・Wizard vs Single Goblin (1v1) - Wizard should win 2ms
+     笨・Knight vs Swarm (1v5) - Knight should surviving 4ms
+     ﾃ・Load Game Persistence - Should resume movement 22ms
+stdout | src/tests/JobIdempotency.test.js > Job Assignment Idempotency > should NOT reset movement if claiming the same job twice
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+Game constructor called
+
+ 笶ｯ src/tests/JobIdempotency.test.js (1 test | 1 failed) 71ms
+     ﾃ・should NOT reset movement if claiming the same job twice 67ms
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should tag new requests with createdAt timestamp
+Game constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 135,79. Force:false
+[Terrain] Building Added: cave at (135, 79) Size:1x1. Total: 1
+GoblinManager: Cave registered at 135,79 
+[GoblinManager] Clan clan_cave_135_79 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 74,5. Force:false
+[Terrain] Building Added: cave at (74, 5) Size:1x1. Total: 2
+GoblinManager: Cave registered at 74,5 
+[GoblinManager] Clan clan_cave_74_5 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 135,82. Force:false
+[Terrain] Building Added: cave at (135, 82) Size:1x1. Total: 3
+GoblinManager: Cave registered at 135,82 
+[GoblinManager] Clan clan_cave_135_82 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 37,38. Force:false
+[Terrain] Building Added: cave at (37, 38) Size:1x1. Total: 4
+GoblinManager: Cave registered at 37,38 
+[GoblinManager] Clan clan_cave_37_38 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 92,86. Force:false
+[Terrain] Building Added: cave at (92, 86) Size:1x1. Total: 5
+GoblinManager: Cave registered at 92,86 
+[GoblinManager] Clan clan_cave_92_86 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 11 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Geometry Initialized (Split Mode)
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should tag new requests with createdAt timestamp
+[Game] Request Added: raise at (10,10) ID:req_0
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:0 (RoleSkipped:0) Busy:0 Valid:0. TotalUnits:0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should save game data correctly
+Game constructor called
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should save game data correctly
+Saving Game Data: {
+  slotId: [33m1[39m,
+  timestamp: [33m1767086852240[39m,
+  resources: { grain: [33m100[39m, fish: [33m50[39m, meat: [33m25[39m },
+  gameTime: [33m12[39m,
+  gameTotalTime: [33m0[39m,
+  currentSeasonIndex: [90mundefined[39m,
+  daysPassed: [90mundefined[39m,
+  terrain: {
+    logicalWidth: [33m160[39m,
+    logicalDepth: [33m160[39m,
+    version: [33m2[39m,
+    h: [
+      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-4[39m, [33m-4[39m, [33m-3[39m, [33m-3[39m, [33m-2[39m,
+      [33m-2[39m, [33m-1[39m,  [33m0[39m,  [33m1[39m,  [33m2[39m,  [33m2[39m,  [33m1[39m,  [33m1[39m,  [33m0[39m,  [33m1[39m,  [33m1[39m,  [33m1[39m,
+       [33m1[39m,  [33m1[39m,  [33m2[39m,  [33m3[39m,  [33m4[39m,  [33m5[39m,  [33m6[39m,  [33m6[39m,  [33m7[39m,  [33m6[39m,  [33m6[39m,  [33m5[39m,
+       [33m4[39m,  [33m3[39m,  [33m2[39m,  [33m1[39m, [33m-0[39m, [33m-0[39m, [33m-1[39m, [33m-1[39m, [33m-2[39m, [33m-2[39m, [33m-2[39m, [33m-2[39m,
+      [33m-2[39m, [33m-2[39m, [33m-2[39m, [33m-1[39m, [33m-1[39m,  [33m0[39m,  [33m2[39m,  [33m3[39m,  [33m4[39m,  [33m4[39m,  [33m5[39m,  [33m5[39m,
+       [33m6[39m,  [33m6[39m,  [33m7[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m7[39m,  [33m6[39m,  [33m6[39m,  [33m5[39m,  [33m5[39m,  [33m5[39m,
+       [33m4[39m,  [33m3[39m,  [33m2[39m,  [33m1[39m, [33m-0[39m, [33m-2[39m, [33m-4[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
+      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
+      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
+      ... 25500 more items
+    ],
+    n: [
+       [33m0.01[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.01[39m,
+      [33m-0.01[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.02[39m,    [33m-0[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.02[39m,
+       [33m0.01[39m,    [33m-0[39m,     [33m0[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.01[39m, [33m-0.02[39m,     [33m0[39m, [33m-0.02[39m,
+      [33m-0.01[39m,     [33m0[39m,    [33m-0[39m,  [33m0.02[39m,     [33m0[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.01[39m,
+       [33m0.02[39m,     [33m0[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.02[39m,
+          [33m0[39m,  [33m0.01[39m,    [33m-0[39m, [33m-0.01[39m,    [33m-0[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m,
+      [33m-0.02[39m,  [33m0.02[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.01[39m,     [33m0[39m,    [33m-0[39m,  [33m0.02[39m,    [33m-0[39m,
+       [33m0.01[39m, [33m-0.01[39m,     [33m0[39m,    [33m-0[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.02[39m,    [33m-0[39m,
+       [33m0.02[39m,  [33m0.01[39m,     [33m0[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.02[39m,    [33m-0[39m, [33m-0.01[39m, [33m-0.02[39m,
+      [33m-0.01[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.01[39m,    [33m-0[39m, [33m-0.02[39m, [33m-0.01[39m,
+      [33m-0.01[39m, [33m-0.02[39m, [33m-0.01[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.01[39m, [33m-0.01[39m,     [33m0[39m,     [33m0[39m,
+          [33m0[39m,
+      ... 25500 more items
+    ],
+    b: [],
+    m: [
+      [33m0.23[39m, [33m0.24[39m, [33m0.25[39m, [33m0.27[39m, [33m0.29[39m,  [33m0.3[39m, [33m0.32[39m, [33m0.33[39m, [33m0.34[39m, [33m0.36[39m,
+      [33m0.39[39m, [33m0.41[39m, [33m0.43[39m, [33m0.43[39m, [33m0.43[39m, [33m0.42[39m, [33m0.43[39m, [33m0.44[39m, [33m0.45[39m, [33m0.47[39m,
+      [33m0.49[39m, [33m0.51[39m, [33m0.54[39m, [33m0.56[39m, [33m0.57[39m, [33m0.56[39m, [33m0.53[39m,  [33m0.5[39m, [33m0.48[39m, [33m0.48[39m,
+      [33m0.49[39m,  [33m0.5[39m,  [33m0.5[39m,  [33m0.5[39m,  [33m0.5[39m, [33m0.51[39m, [33m0.51[39m, [33m0.53[39m, [33m0.54[39m, [33m0.56[39m,
+      [33m0.57[39m, [33m0.58[39m, [33m0.58[39m, [33m0.59[39m,  [33m0.6[39m, [33m0.62[39m, [33m0.63[39m, [33m0.64[39m, [33m0.64[39m, [33m0.64[39m,
+      [33m0.62[39m,  [33m0.6[39m, [33m0.57[39m, [33m0.54[39m, [33m0.51[39m, [33m0.49[39m, [33m0.47[39m, [33m0.46[39m, [33m0.46[39m, [33m0.46[39m,
+      [33m0.47[39m, [33m0.48[39m, [33m0.48[39m, [33m0.48[39m, [33m0.48[39m, [33m0.47[39m, [33m0.47[39m, [33m0.46[39m, [33m0.46[39m, [33m0.46[39m,
+      [33m0.46[39m, [33m0.47[39m, [33m0.47[39m,  [33m0.5[39m, [33m0.53[39m, [33m0.57[39m, [33m0.59[39m,  [33m0.6[39m, [33m0.61[39m, [33m0.61[39m,
+      [33m0.61[39m, [33m0.63[39m, [33m0.65[39m, [33m0.67[39m, [33m0.68[39m, [33m0.69[39m,  [33m0.7[39m, [33m0.71[39m, [33m0.72[39m, [33m0.75[39m,
+      [33m0.77[39m,  [33m0.8[39m, [33m0.82[39m, [33m0.83[39m, [33m0.83[39m, [33m0.82[39m, [33m0.82[39m, [33m0.82[39m, [33m0.81[39m, [33m0.81[39m,
+      ... 25500 more items
+    ]
+  },
+  units: [],
+  goblinManager: {},
+  camera: {
+    position: { x: [33m20[39m, y: [33m20[39m, z: [33m20[39m },
+    zoom: [33m1[39m,
+    target: { x: [90mundefined[39m, y: [90mundefined[39m, z: [90mundefined[39m }
+  },
+  requests: []
+}
+Saved to slot 1 (Compressed). Size: 23918 chars (Original: 308422)
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cleanup expired pending requests
+Game constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 10,89. Force:false
+[Terrain] Building Added: cave at (10, 89) Size:1x1. Total: 1
+GoblinManager: Cave registered at 10,89 
+[GoblinManager] Clan clan_cave_10_89 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 149,98. Force:false
+[Terrain] Building Added: cave at (149, 98) Size:1x1. Total: 2
+GoblinManager: Cave registered at 149,98 
+[GoblinManager] Clan clan_cave_149_98 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 158,15. Force:false
+[Terrain] Building Added: cave at (158, 15) Size:1x1. Total: 3
+GoblinManager: Cave registered at 158,15 
+[GoblinManager] Clan clan_cave_158_15 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 28,73. Force:false
+[Terrain] Building Added: cave at (28, 73) Size:1x1. Total: 4
+GoblinManager: Cave registered at 28,73 
+[GoblinManager] Clan clan_cave_28_73 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 141,30. Force:false
+[Terrain] Building Added: cave at (141, 30) Size:1x1. Total: 5
+GoblinManager: Cave registered at 141,30 
+[GoblinManager] Clan clan_cave_141_30 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 17 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Geometry Initialized (Split Mode)
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cleanup expired pending requests
+[Game] Request Added: raise at (10,10) ID:req_0
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:0 (RoleSkipped:0) Busy:0 Valid:0. TotalUnits:0
+[Game] Request Added: raise at (20,20) ID:req_1
+[Game] forceAssignRequest FAILED for Req req_1. Scanned:0 (RoleSkipped:0) Busy:0 Valid:0. TotalUnits:0
+[Game] forceAssignRequest FAILED for Req req_1. Scanned:0 (RoleSkipped:0) Busy:0 Valid:0. TotalUnits:0
+[Game] Request req_0 pending for 0.3s.
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:0 (RoleSkipped:0) Busy:0 Valid:0. TotalUnits:0
+[Game] Request Timed Out: raise ID:req_0
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should NOT cleanup assigned requests even if old
+Game constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 48,156. Force:false
+[Terrain] Building Added: cave at (48, 156) Size:1x1. Total: 1
+GoblinManager: Cave registered at 48,156 
+[GoblinManager] Clan clan_cave_48_156 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 92,115. Force:false
+[Terrain] Building Added: cave at (92, 115) Size:1x1. Total: 2
+GoblinManager: Cave registered at 92,115 
+[GoblinManager] Clan clan_cave_92_115 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 137,98. Force:false
+[Terrain] Building Added: cave at (137, 98) Size:1x1. Total: 3
+GoblinManager: Cave registered at 137,98 
+[GoblinManager] Clan clan_cave_137_98 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 73,149. Force:false
+[Terrain] Building Added: cave at (73, 149) Size:1x1. Total: 4
+GoblinManager: Cave registered at 73,149 
+[GoblinManager] Clan clan_cave_73_149 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 66,35. Force:false
+[Terrain] Building Added: cave at (66, 35) Size:1x1. Total: 5
+GoblinManager: Cave registered at 66,35 
+[GoblinManager] Clan clan_cave_66_35 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 11 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Geometry Initialized (Split Mode)
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should NOT cleanup assigned requests even if old
+[Game] Request Added: raise at (10,10) ID:req_0
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:0 (RoleSkipped:0) Busy:0 Valid:0. TotalUnits:0
+
+stdout | src/tests/SimpleRegion.test.js > Simple Region Connectivity > should identify a single island
+Running calculateRegions...
+Done.
+Region ID at 5,5: 1
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+Game constructor called
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+Load Started...
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+Loading slot 1, Raw length: 100
+Load: Decompressed successfully.
+Parsed Data for slot 1: {
+  timestamp: [33m1767086853770[39m,
+  data: {
+    resources: { grain: [33m999[39m, fish: [33m888[39m },
+    gameTime: [33m6[39m,
+    terrain: { logicalWidth: [33m10[39m, logicalDepth: [33m10[39m, grid: [], buildings: [] },
+    units: [],
+    camera: { position: [36m[Object][39m, target: [36m[Object][39m }
+  }
+}
+Load Game: Data found {
+  resources: { grain: [33m999[39m, fish: [33m888[39m },
+  gameTime: [33m6[39m,
+  terrain: { logicalWidth: [33m10[39m, logicalDepth: [33m10[39m, grid: [], buildings: [] },
+  units: [],
+  camera: { position: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m }, target: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m } }
+}
+Clearing 0 projectiles...
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+[DEBUG] Terrain.setSeason: Changing from undefined to Spring
+[Game] Restored Camera Zoom: 1
+
+ 笨・src/tests/SimpleRegion.test.js (2 tests) 757ms
+     笨・should identify a single island  470ms
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/BuildingDestruction.test.js > Building Destruction Logic > should successfully remove a building from the list
+[Terrain] addBuilding: house at 10,10. Force:true
+[Terrain] Building Added: house at (10, 10) Size:2x2. Total: 1
+[Terrain] Building removed at 10,10
+
+ 笨・src/tests/WorkerReachability.test.js (2 tests) 373ms
+     笨・findBestRequest filters out unreachable jobs  356ms
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cancel request via Proximity Search
+Game constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 117,117. Force:false
+[Terrain] Building Added: cave at (117, 117) Size:1x1. Total: 1
+GoblinManager: Cave registered at 117,117 
+[GoblinManager] Clan clan_cave_117_117 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 47,62. Force:false
+[Terrain] Building Added: cave at (47, 62) Size:1x1. Total: 2
+GoblinManager: Cave registered at 47,62 
+[GoblinManager] Clan clan_cave_47_62 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 123,115. Force:false
+[Terrain] Building Added: cave at (123, 115) Size:1x1. Total: 3
+GoblinManager: Cave registered at 123,115 
+[GoblinManager] Clan clan_cave_123_115 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 138,90. Force:false
+[Terrain] Building Added: cave at (138, 90) Size:1x1. Total: 4
+GoblinManager: Cave registered at 138,90 
+[GoblinManager] Clan clan_cave_138_90 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 74,73. Force:false
+[Terrain] Building Added: cave at (74, 73) Size:1x1. Total: 5
+GoblinManager: Cave registered at 74,73 
+[GoblinManager] Clan clan_cave_74_73 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 17 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Geometry Initialized (Split Mode)
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cancel request via Proximity Search
+[Game] Request Added: raise at (10,10) ID:req_0
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:0 (RoleSkipped:0) Busy:0 Valid:0. TotalUnits:0
+[Game] Request Added: raise at (20,20) ID:req_1
+[Game] forceAssignRequest FAILED for Req req_1. Scanned:0 (RoleSkipped:0) Busy:0 Valid:0. TotalUnits:0
+[Game] Request Canceled at 10,10 (Target: 11,11)
+
+stdout | src/tests/BuildingDestruction.test.js > Building Destruction Logic > should allow a goblin to destroy a building
+[Terrain] addBuilding: house at 10,10. Force:true
+[Terrain] Building Added: house at (10, 10) Size:2x2. Total: 1
+Goblin 0 hitting Empty house. HP: 2
+Goblin 0 hitting Empty house. HP: -7
+[Terrain] Building removed at 10,10
+Goblin 0 destroyed house!
+
+stdout | src/tests/GoblinMobilization.test.js > Goblin Mobilization Verification > triggerWave should mobilize idle goblins
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+
+stdout | src/tests/GoblinMobilization.test.js > Goblin Mobilization Verification > triggerWave should mobilize idle goblins
+[GoblinManager] TRIGGERING WAVE Level 1 for Clan test_clan!
+[Wave] Spawning 1 goblins at cave 10,10 (Lvl 1)
+[GoblinManager] Mobilized 2 idle goblins from Clan test_clan to raid target!
+
+stdout | src/tests/GoblinFixes.test.js > Goblin Fixes Verification > GoblinManager difficulty scaling increases stronger goblin probability
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+Lvl 1 - King: 13, Shaman: 49, Hob: 104
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+荘 Goblin King Spawned!
+Lvl 20 - King: 53, Shaman: 143, Hob: 254
+
+ 笨・src/tests/GoblinFixes.test.js (4 tests) 1111ms
+     笨・Entity.getDistance should handle wrapping  357ms
+     笨・Terrain.findBestTarget should find wrapped targets  347ms
+     笨・GoblinManager difficulty scaling increases stronger goblin probability  303ms
+stdout | src/tests/BuildingDestruction.test.js > Building Destruction Logic > should handle identity mismatch (Ghost Building)
+[Terrain] addBuilding: house at 20,20. Force:true
+[Terrain] Building Added: house at (20, 20) Size:2x2. Total: 1
+[Terrain] removeBuilding: Identity mismatch! searching by coord 20,20
+[Terrain] Swapping ghost building object for authoritative one.
+[Terrain] Building removed at 20,20
+
+ 笨・src/tests/BuildingDestruction.test.js (3 tests) 780ms
+     笨・should successfully remove a building from the list  450ms
+stdout | src/tests/GoblinMobilization.test.js > Goblin Mobilization Verification > mobilizeClan should rely on getClanRaidTarget fallback
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+
+stdout | src/tests/GoblinMobilization.test.js > Goblin Mobilization Verification > mobilizeClan should rely on getClanRaidTarget fallback
+[GoblinManager] Mobilized 1 idle goblins from Clan test_clan_fallback to raid target!
+
+stderr | src/tests/GoblinMobilization.test.js
+[GoblinManager] Aborting spawn: Grid cell has no building. Self-healing/Destroying Cave.
+[GoblinManager] Removing invalid cave at 10,10
+
+ 笨・src/tests/GoblinMobilization.test.js (2 tests) 543ms
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Game] New Battle Hotspot at 10,10 (Region:1)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Decays intensity
+[Game] New Battle Hotspot at 10,10 (Region:1)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads to intense hotspots (Updated Threshold)
+[Game] Mobilizing Squad 1 to Hotspot at 100,20 (Intensity:100.0)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads
+[Game] Mobilizing Squad 1 to Hotspot at 50,50 (Intensity:100.0)
+
+ 笨・src/tests/Hotspot.test.js (6 tests) 355ms
+ 笨・src/tests/SpatialSearch.test.js (4 tests) 4798ms
+     笨・should register and retrieve an entity  1434ms
+     笨・should move entity correctly between cells  1298ms
+     笨・should unregister entity  812ms
+     笨・should find nearest entity using spatial search  1250ms
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should prioritize nearest request when cancelling
+Game constructor called
+[Mock] createElement called with tag: canvas
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 74,130. Force:false
+[Terrain] Building Added: cave at (74, 130) Size:1x1. Total: 1
+GoblinManager: Cave registered at 74,130 
+[GoblinManager] Clan clan_cave_74_130 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 58,131. Force:false
+[Terrain] Building Added: cave at (58, 131) Size:1x1. Total: 2
+GoblinManager: Cave registered at 58,131 
+[GoblinManager] Clan clan_cave_58_131 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 126,11. Force:false
+[Terrain] Building Added: cave at (126, 11) Size:1x1. Total: 3
+GoblinManager: Cave registered at 126,11 
+[GoblinManager] Clan clan_cave_126_11 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 101,156. Force:false
+[Terrain] Building Added: cave at (101, 156) Size:1x1. Total: 4
+GoblinManager: Cave registered at 101,156 
+[GoblinManager] Clan clan_cave_101_156 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 74,8. Force:false
+[Terrain] Building Added: cave at (74, 8) Size:1x1. Total: 5
+GoblinManager: Cave registered at 74,8 
+[GoblinManager] Clan clan_cave_74_8 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 6 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Mock] createElement called with tag: div
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Geometry Initialized (Split Mode)
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+[Mock] createElement called with tag: canvas
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should prioritize nearest request when cancelling
+[Game] Request Added: raise at (10,10) ID:req_0
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:0 (RoleSkipped:0) Busy:0 Valid:0. TotalUnits:0
+[Game] Request Added: raise at (12,12) ID:req_1
+[Game] forceAssignRequest FAILED for Req req_1. Scanned:0 (RoleSkipped:0) Busy:0 Valid:0. TotalUnits:0
+[Game] Request Canceled at 10,10 (Target: 10,11)
+
+ 笨・src/tests/RequestLifecycle.test.js (5 tests) 4474ms
+     笨・should tag new requests with createdAt timestamp  1282ms
+     笨・should cleanup expired pending requests  912ms
+     笨・should NOT cleanup assigned requests even if old  945ms
+     笨・should cancel request via Proximity Search  747ms
+     笨・should prioritize nearest request when cancelling  583ms
+ 笨・src/tests/UnitVisibility.test.js (2 tests) 167ms
+stdout | src/tests/ForceBuild.test.js > Terrain Force Build Logic > should clear existing buildings when placing a new one
+[Terrain] addBuilding: house at 10,10. Force:false
+[Terrain] Building Added: house at (10, 10) Size:2x2. Total: 1
+[Terrain] Clearing obstacle: house for new construction.
+[Terrain] Building removed at 10,10
+[Terrain] addBuilding: barracks at 10,10. Force:false
+[Terrain] Building Added: barracks at (10, 10) Size:3x3. Total: 1
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+Game constructor called
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+Load Started...
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+Loading slot 1, Raw length: 110
+Load: Decompressed successfully.
+Parsed Data for slot 1: {
+  timestamp: [33m1767086855267[39m,
+  data: {
+    resources: {},
+    gameTime: [33m10[39m,
+    terrain: { logicalWidth: [33m80[39m, grid: [], buildings: [] },
+    units: [],
+    requests: [ [36m[Object][39m, [36m[Object][39m ]
+  }
+}
+Load Game: Data found {
+  resources: {},
+  gameTime: [33m10[39m,
+  terrain: { logicalWidth: [33m80[39m, grid: [], buildings: [] },
+  units: [],
+  requests: [
+    { id: [32m'req_1'[39m, type: [32m'raise'[39m, x: [33m5[39m, z: [33m5[39m, status: [32m'pending'[39m },
+    { id: [32m'req_2'[39m, type: [32m'lower'[39m, x: [33m10[39m, z: [33m10[39m, status: [32m'completed'[39m }
+  ]
+}
+Clearing 0 projectiles...
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Terrain] Deserializing Legacy Format...
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[DEBUG] Terrain.setSeason: Changing from undefined to Spring
+[Game] Restoring 2 requests...
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1,"Unnamed_CylinderGeometry":2}
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2}
+
+stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+[Game] calling BR.update. BR exists: true, Buildings: 0
+[Scene Audit] Objects: {"Unnamed_PlaneGeometry":2,"[Instanced] BoxGeometry (Active:50000/50000)":3,"[Instanced] ConeGeometry (Active:100000/100000)":1,"[Instanced] BoxGeometry (Active:100000/100000)":2,"[Instanced] CylinderGeometry (Active:50000/50000)":1}
+
+ 笨・src/tests/SaveLoad.test.js (3 tests) 5206ms
+     笨・should save game data correctly  2160ms
+     笨・should load game data correctly  1461ms
+     笨・should restore request markers with correct renderOrder  1579ms
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+Game constructor called
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 131,22. Force:false
+[Terrain] Building Added: cave at (131, 22) Size:1x1. Total: 1
+GoblinManager: Cave registered at 131,22 
+[GoblinManager] Clan clan_cave_131_22 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 124,67. Force:false
+[Terrain] Building Added: cave at (124, 67) Size:1x1. Total: 2
+GoblinManager: Cave registered at 124,67 
+[GoblinManager] Clan clan_cave_124_67 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 7,106. Force:false
+[Terrain] Building Added: cave at (7, 106) Size:1x1. Total: 3
+GoblinManager: Cave registered at 7,106 
+[GoblinManager] Clan clan_cave_7_106 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 98,144. Force:false
+[Terrain] Building Added: cave at (98, 144) Size:1x1. Total: 4
+GoblinManager: Cave registered at 98,144 
+[GoblinManager] Clan clan_cave_98_144 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 156,123. Force:false
+[Terrain] Building Added: cave at (156, 123) Size:1x1. Total: 5
+GoblinManager: Cave registered at 156,123 
+[GoblinManager] Clan clan_cave_156_123 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 12 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Game] forceAssignRequest FAILED for Req 101. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
+[UnitWanderState] Update. ID:1 Action:Idle Target:Yes
+[UnitWanderState] Update. ID:1 Action:Idle Target:No
+[UnitWanderState] Check Migration. ID:1 Action:Idle Target:false 
+[UnitWanderState] Update. ID:1 Action:Idle Target:No
+[UnitWanderState] Check Migration. ID:1 Action:Idle Target:false 
+[UnitWanderState] Update. ID:1 Action:Idle Target:No
+[UnitWanderState] Check Migration. ID:1 Action:Idle Target:false 
+[UnitWanderState] Update. ID:1 Action:Idle Target:No
+[UnitWanderState] Check Migration. ID:1 Action:Idle Target:false 
+[UnitWanderState] Update. ID:1 Action:Idle Target:No
+[UnitWanderState] Check Migration. ID:1 Action:Idle Target:false 
+Success: Job released after repeated failures.
+
+ 笨・src/tests/JobPathFailure.test.js (1 test) 5512ms
+     笨・should abandon job if smartMove fails repeatedly  5509ms
+stdout | src/tests/ForceBuild.test.js > Terrain Force Build Logic > should clear buildings partially in the way
+[Terrain] addBuilding: house at 10,10. Force:false
+[Terrain] Building Added: house at (10, 10) Size:2x2. Total: 1
+Pre-Barracks Buildings: [ [32m'house'[39m ]
+[Terrain] Clearing obstacle: house for new construction.
+[Terrain] Building removed at 10,10
+[Terrain] addBuilding: barracks at 9,9. Force:false
+[Terrain] Building Added: barracks at (9, 9) Size:3x3. Total: 1
+Post-Barracks Buildings: [ [32m'barracks'[39m ]
+
+ 笨・src/tests/ForceBuild.test.js (2 tests) 3512ms
+     笨・should clear existing buildings when placing a new one  1800ms
+     笨・should clear buildings partially in the way  1696ms
+stdout | src/tests/GhostHouse.test.js > Terrain Ghost House Test > should NOT accumulate ghost buildings (cleared during deserialize)
+[Terrain] addBuilding: house at 5,5. Force:false
+[Terrain] Building Added: house at (5, 5) Size:2x2. Total: 1
+Debug: Buildings Count: 1
+
+stdout | src/tests/GhostHouse.test.js > Terrain Ghost House Test > should NOT accumulate ghost buildings (cleared during deserialize)
+[Terrain] Deserializing Legacy Format...
+
+stdout | src/tests/GhostHouse.test.js > Terrain Ghost House Test > should NOT accumulate ghost buildings (cleared during deserialize)
+[Terrain] addBuilding: house at 5,5. Force:true
+[Terrain] Building Added: house at (5, 5) Size:2x2. Total: 1
+
+ 笨・src/tests/GhostHouse.test.js (1 test) 403ms
+     笨・should NOT accumulate ghost buildings (cleared during deserialize)  399ms
+ 笨・src/tests/SafeSpawn.test.js (1 test) 268ms
+stdout | src/tests/StuckDebug.test.js > Unit Stuck Debugging > should log reason for blockage
+[UnitCore.js] Unit Created ID:0 Role:undefined Pos:undefined,undefined Special:false
+--- Testing Slope Block ---
+[Unit 0] Blocked by Slope at 11,10 H:2->6
+--- Testing Building Pass ---
+--- Testing Water Block ---
+[Unit 0] Blocked by Water at 30,30 H:0
+
+ 笨・src/tests/StuckDebug.test.js (1 test) 358ms
+     笨・should log reason for blockage  354ms
+stdout | src/tests/Pathfinding.test.js > Terrain Pathfinding Costs > Prefers a longer flat route over a shorter mountain route
+Path Length: 31
+Goes through gap: true
+Goes through mountain: false
+
+ 笨・src/tests/Pathfinding.test.js (1 test) 135ms
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins deal population damage to player buildings
+Goblin 0 attacking house. Pop: 9.00
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins deal structural damage to empty player buildings
+Goblin 1 hitting Empty house. HP: 40
+
+stdout | src/tests/GoblinTypes.test.js > Goblin Types & Stats > should correctly spawn types based on random probability
+GoblinManager: Generation started...
+GoblinManager: Cave registered at 50,50 
+[GoblinManager] Clan clan_cave_50_50 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Generated 5 goblin caves after 5 attempts.
+GoblinManager: Force spawning Debug Goblin
+荘 Goblin King Spawned!
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Goblins destroy player buildings when HP reaches 0
+Goblin 2 hitting Empty house. HP: 0
+Goblin 2 destroyed house!
+
+ 笨・src/tests/GoblinTypes.test.js (4 tests) 52ms
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Buildings retaliate against melee goblins
+Goblin 3 attacking house. Pop: 9.92
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Towers have massive retaliation
+Goblin 4 attacking tower. Pop: 4.92
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > No retaliation for distant attackers (Shamans)
+Goblin 5 attacking house. Pop: 9.20
+
+stdout | src/tests/BuildingDefense.test.js > Building Defense Logic > Standard HP logic for Goblin buildings
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:20,20 Special:false
+
+ 笨・src/tests/BuildingDefense.test.js (8 tests) 124ms
+stdout | src/tests/StartupCrash.test.js > Startup Crash Verification > UnitRenderer update should not crash with active units
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+
+ 笨・src/tests/StartupCrash.test.js (3 tests) 142ms
+stdout | src/tests/WorkerRequest.test.js > Worker Job Logic (Unit.js + States) > Unit finds and claims request when idle
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+
+stdout | src/tests/WorkerRequest.test.js > Worker Job Logic (Unit.js + States) > Unit finds and claims request when idle
+[UnitWanderState] Update. ID:worker_1 Action:Idle Target:No
+
+stdout | src/tests/WorkerRequest.test.js > Worker Job Logic (Unit.js + States) > Unit moves to target request
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0 Special:false
+
+stdout | src/tests/WorkerRequest.test.js > Worker Job Logic (Unit.js + States) > Unit completes request upon arrival
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:0,0 Special:false
+
+stdout | src/tests/WorkerDiversity.test.js > Worker Diversity Spawning > should spawn diverse roles (Worker/Hunter/Fisher) from a House
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:0 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:2 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:5 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:7 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:8 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:9 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:10 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:11 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:12 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:13 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:14 Role:hunter Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:15 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:16 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:17 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:18 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:19 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:20 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:21 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:22 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:23 Role:fisher Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:24 Role:hunter Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:25 Role:hunter Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:26 Role:hunter Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:27 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:28 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:29 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:30 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:31 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:32 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:33 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:34 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:35 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:36 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:37 Role:fisher Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:38 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:39 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:40 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:41 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:42 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:43 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:44 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:45 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:46 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:47 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:48 Role:fisher Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:49 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:50 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:51 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:52 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:53 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:54 Role:fisher Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:55 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:56 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:57 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:58 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:59 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:60 Role:fisher Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:61 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:62 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:63 Role:fisher Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:64 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:65 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:66 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:67 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:68 Role:hunter Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:69 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:70 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:71 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:72 Role:fisher Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:73 Role:fisher Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:74 Role:fisher Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:75 Role:fisher Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:76 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:77 Role:fisher Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:78 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:79 Role:fisher Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:80 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:81 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:82 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:83 Role:fisher Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:84 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:85 Role:fisher Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:86 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:87 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:88 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:89 Role:worker Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:90 Role:fisher Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:91 Role:fisher Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:92 Role:fisher Pos:10,10 Special:false
+Spawned fisher linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:93 Role:fisher Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:94 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:95 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:96 Role:hunter Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:97 Role:worker Pos:10,10 Special:false
+Spawned worker linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:98 Role:worker Pos:10,10 Special:false
+Spawned hunter linked to house at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:99 Role:hunter Pos:10,10 Special:false
+Spawn Distribution (100 runs): { worker: [33m61[39m, hunter: [33m21[39m, fisher: [33m18[39m }
+
+ 笨・src/tests/WorkerRequest.test.js (3 tests) 27ms
+stdout | src/tests/WorkerDiversity.test.js > Worker Diversity Spawning > should spawn Knights from Barracks
+Spawned knight linked to barracks at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:100 Role:knight Pos:10,10 Special:false
+
+stdout | src/tests/WorkerDiversity.test.js > Worker Diversity Spawning > should spawn Wizards from Towers
+Spawned wizard linked to tower at 10,10 SquadID:null
+[UnitCore.js] Unit Created ID:101 Role:wizard Pos:10,10 Special:false
+
+ 笨・src/tests/WorkerDiversity.test.js (3 tests) 22ms
+stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should immediately stop unit when job is cancelled mid-approach
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+Game constructor called
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 115,155. Force:false
+[Terrain] Building Added: cave at (115, 155) Size:1x1. Total: 1
+GoblinManager: Cave registered at 115,155 
+[GoblinManager] Clan clan_cave_115_155 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 85,104. Force:false
+[Terrain] Building Added: cave at (85, 104) Size:1x1. Total: 2
+GoblinManager: Cave registered at 85,104 
+[GoblinManager] Clan clan_cave_85_104 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 15,64. Force:false
+[Terrain] Building Added: cave at (15, 64) Size:1x1. Total: 3
+GoblinManager: Cave registered at 15,64 
+[GoblinManager] Clan clan_cave_15_64 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 125,100. Force:false
+[Terrain] Building Added: cave at (125, 100) Size:1x1. Total: 4
+GoblinManager: Cave registered at 125,100 
+[GoblinManager] Clan clan_cave_125_100 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 157,74. Force:false
+[Terrain] Building Added: cave at (157, 74) Size:1x1. Total: 5
+GoblinManager: Cave registered at 157,74 
+[GoblinManager] Clan clan_cave_157_74 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 10 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should immediately stop unit when job is cancelled mid-approach
+[Game] Request Added: build at (20,0) ID:req_0
+[Game] forceAssignRequest FOUND Unit 1 (DistSq:400). Scanned:1
+[Game] Force-Assigned Request req_0 to Unit 1 (Score: 400.0)
+[Game] Cancelling active job for Unit 1
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
+[Game] Request Canceled at 20,0 (Target: 20,0)
+[Unit 1] Moving onto Rock at 19,0 H:10 (Speed Penalty)
+DEBUG: TargetRequest: [1mnull[22m
+DEBUG: Queue Length: [33m0[39m
+
+stdout | src/tests/GoblinSpawn.test.js > Goblin Hut Spawning > should spawn goblin when hut population reaches 10
+GoblinManager: Generation started...
+GoblinManager: Cave registered at 90,30 
+[GoblinManager] Clan clan_cave_90_30 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 88,26 
+[GoblinManager] Clan clan_cave_88_26 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 58,65 
+[GoblinManager] Clan clan_cave_58_65 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 84,54 
+[GoblinManager] Clan clan_cave_84_54 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 90,70 
+[GoblinManager] Clan clan_cave_90_70 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 5 attempts.
+GoblinManager: Force spawning Debug Goblin
+
+stdout | src/tests/GoblinSpawn.test.js > Goblin Hut Spawning > should spawn goblin when hut population reaches 10
+Goblin born from Hut! Clan: clan_hut_10_10. Global Pop: 0
+
+stdout | src/tests/GoblinSpawn.test.js > Goblin Hut Spawning > should NOT spawn if Global Cap is reached
+GoblinManager: Generation started...
+GoblinManager: Cave registered at 74,2 
+[GoblinManager] Clan clan_cave_74_2 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 90,80 
+[GoblinManager] Clan clan_cave_90_80 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 78,66 
+[GoblinManager] Clan clan_cave_78_66 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 62,51 
+[GoblinManager] Clan clan_cave_62_51 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 69,80 
+[GoblinManager] Clan clan_cave_69_80 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 5 attempts.
+GoblinManager: Force spawning Debug Goblin
+
+ 笨・src/tests/GoblinSpawn.test.js (2 tests) 69ms
+stdout | src/tests/MultiJob.test.js > Multi-Job Juggling Verification > should NOT interrupt busy units when a new job is added
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0 Special:false
+Game constructor called
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 119,150. Force:false
+[Terrain] Building Added: cave at (119, 150) Size:1x1. Total: 1
+GoblinManager: Cave registered at 119,150 
+[GoblinManager] Clan clan_cave_119_150 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 69,67. Force:false
+[Terrain] Building Added: cave at (69, 67) Size:1x1. Total: 2
+GoblinManager: Cave registered at 69,67 
+[GoblinManager] Clan clan_cave_69_67 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 122,109. Force:false
+[Terrain] Building Added: cave at (122, 109) Size:1x1. Total: 3
+GoblinManager: Cave registered at 122,109 
+[GoblinManager] Clan clan_cave_122_109 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 121,148. Force:false
+[Terrain] Building Added: cave at (121, 148) Size:1x1. Total: 4
+GoblinManager: Cave registered at 121,148 
+[GoblinManager] Clan clan_cave_121_148 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 154,77. Force:false
+[Terrain] Building Added: cave at (154, 77) Size:1x1. Total: 5
+GoblinManager: Cave registered at 154,77 
+[GoblinManager] Clan clan_cave_154_77 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 13 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+stdout | src/tests/MultiJob.test.js > Multi-Job Juggling Verification > should NOT interrupt busy units when a new job is added
+[Game] forceAssignRequest FOUND Unit 1 (DistSq:400). Scanned:2
+[Game] Force-Assigned Request 101 to Unit 1 (Score: 400.0)
+[Game] forceAssignRequest FOUND Unit 2 (DistSq:400). Scanned:2
+[Game] Force-Assigned Request 102 to Unit 2 (Score: 400.0)
+[Game] Request Added: build at (10,10) ID:req_0
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:2 (RoleSkipped:0) Busy:2 Valid:0. TotalUnits:2
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:2 (RoleSkipped:0) Busy:2 Valid:0. TotalUnits:2
+
+ 笨・src/tests/MultiJob.test.js (1 test) 8971ms
+     笨・should NOT interrupt busy units when a new job is added  8966ms
+stdout | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should set very long moveDuration for Unit on Rock
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+
+stderr | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should set very long moveDuration for Unit on Rock
+DEBUG: MoveDur=4.8
+DEBUG: Heights Cur=10 Next=12
+
+stdout | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should set normal moveDuration on Flat
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+
+stderr | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should set normal moveDuration on Flat
+DEBUG: Normal MoveDur=0.8
+
+stdout | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should prevent Unit from moving/building on Rock checks?
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+
+stdout | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should increase Goblin Hut population and spawn goblin
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10 Special:false
+
+stdout | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should increase Goblin Hut population and spawn goblin
+GoblinManager: Generation started...
+GoblinManager: Cave registered at 50,50 
+[GoblinManager] Clan clan_cave_50_50 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Generated 5 goblin caves after 5 attempts.
+GoblinManager: Force spawning Debug Goblin
+Goblin born from Hut! Clan: test. Global Pop: 1
+
+ 笨・src/tests/Movement.test.js (4 tests) 138ms
+ 笨・src/tests/Terrain.test.js (9 tests) 10035ms
+       笨・should correctly sum housing population excluding farms  1409ms
+       笨・should handle massive population overflow loop correctly  1519ms
+       笨・should grow crops using simDeltaTime (Not raw deltaTime)  1182ms
+       笨・should preserve overflow when harvesting  903ms
+       笨・should scale farm yield based on moisture  925ms
+       笨・should reduce food consumption at night  933ms
+       笨・should consume normal amount during day  1138ms
+         笨・should return different colors for seasons  792ms
+         笨・should keep rock color even if dry (desert override check)  1222ms
+stdout | src/tests/SquadAi.test.js > Squad AI & Region Logic > should share targets among squad members
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:20,20 Special:false
+
+stdout | src/tests/SquadAi.test.js > Squad AI & Region Logic > Regression: Migration Stagnation Fix (Knight)
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:10,10 Special:false
+Unit 2 (knight) finished migrating. Resuming Idle.
+
+stdout | src/tests/SquadAi.test.js > Squad AI & Region Logic > Regression: Migration Stagnation Fix (Worker)
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10 Special:false
+Unit 3 (Worker) migration target invalid for build. Searching nearby...
+
+stdout | src/tests/SquadAi.test.js > Squad AI & Region Logic > should allow cross-region movement if target is very close (Self Defense)
+[UnitCore.js] Unit Created ID:4 Role:knight Pos:10,10 Special:false
+
+ 笨・src/tests/SquadAi.test.js (5 tests) 31ms
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Goblin if it is much closer than Building
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Goblin if it is much closer than Building
+[DEBUG] Calling updateLogic...
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug V2] Start Logic. Night=false, Stag=0.0, Age=20.0, H=10, Action=undefined
+[Unit Heartbeat] ID:0 Action:undefined Moving:false T:1000.0 dt:0.1000 Int:0
+[Unit 0] Moving onto Rock at 1,0 H:10 (Speed Penalty)
+[Unit Debug] Executing Logic. Role: knight
+[DEBUG] updateLogic finished.
+[DEBUG] Targets: G=g1, B=undefined
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are very close (Siege Mode)
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are very close (Siege Mode)
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+[Unit 2] Moving onto Rock at 1,0 H:10 (Speed Penalty)
+
+stdout | src/tests/UnitAISearch.test.js > Unit AI Search Optimization > should use Spatial Search to find goblin
+[UnitCore.js] Unit Created ID:0 Role:guard Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should NOT auto-target distant Huts (Workers are passive)
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should NOT auto-target distant Huts (Workers are passive)
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should auto-target CLOSE Huts for self-defense (Workers)
+[UnitCore.js] Unit Created ID:5 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should auto-target CLOSE Huts for self-defense (Workers)
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:0,0 Special:false
+
+ 笨・src/tests/TargetingPriority.test.js (4 tests) 26ms
+ 笨・src/tests/UnitAISearch.test.js (2 tests) 24ms
+stdout | src/tests/GoblinDestruction.test.js > Goblin Building Destruction > should damage building population
+Goblin 0 attacking house. Pop: 9.92
+
+stdout | src/tests/GoblinDestruction.test.js > Goblin Building Destruction > should destroy building when Population AND HP are depleted
+Goblin 1 attacking house. Pop: 0.00
+Goblin 1 hitting Empty house. HP: -5
+Goblin 1 destroyed house!
+
+stdout | src/tests/GoblinDestruction.test.js > Goblin Building Destruction > should destroy building even if fractional population remains (e.g. 0.5)
+Goblin 2 attacking house. Pop: 0.00
+Goblin 2 hitting Empty house. HP: -5
+Goblin 2 destroyed house!
+
+stdout | src/tests/GoblinDestruction.test.js > Goblin Building Destruction > should NOT destroy building if population remains >= 1.0
+Goblin 3 attacking house. Pop: 6.92
+
+stdout | src/tests/GoblinDestruction.test.js > Goblin Building Destruction > should take retaliation damage
+Goblin 4 attacking house. Pop: 19.92
+
+ 笨・src/tests/GoblinDestruction.test.js (5 tests) 26ms
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario A: Worker destroys Cave
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+Approach Point: 11,10
+Cave HP: 196 (Was: 200)
+
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario B: Goblin destroys House
+Goblin 0 SPAWNED FOR RAIDING! Target: NaN,NaN
+[Goblin 0] ENTER RaidState. Goal: NaN,NaN
+[MockTerrain] Searching 1 buildings. Range:25 Center:20,20
+  - Checking Building at 22,20. Dist:2
+    -> Score: 2
+Goblin 0 attacking house. Pop: 1.92
+Goblin 0 attacking house. Pop: 1.84
+House Pop: 1.8399999999999999
+
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario C: Goblin finds and destroys House
+[MockTerrain] Searching 1 buildings. Range:12 Center:8,8
+  - Checking Building at 10,10. Dist:2.8284271247461903
+    -> Score: 2.8284271247461903
+Goblin 1 hitting Empty house. HP: 92
+Goblin 1 hitting Empty house. HP: 84
+[Test] House HP reduced to 84
+
+ 笨・src/tests/CombatVerification.test.js (3 tests) 26ms
+stdout | src/tests/Lighting.test.js > BuildingRenderer Lighting > should turn on barracks lights at night
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+ 笨・src/tests/Lighting.test.js (1 test) 48ms
+stdout | src/tests/UnitMigration.test.js > Unit Migration Logic > should return true on successful build
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/UnitMigration.test.js > Unit Migration Logic > should increment stagnation on failed build
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/UnitMigration.test.js > Unit Migration Logic > should migrate after 20 seconds of stagnation
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/UnitMigration.test.js > Unit Migration Logic > should migrate after 20 seconds of stagnation
+Unit 1 migrating to 51,51 (Region 1)
+
+ 笨・src/tests/UnitMigration.test.js (3 tests) 85ms
+stdout | src/tests/ReproductionJitabata.test.js > Jitabata Bug Reproduction (Interrupt Loop) > should NOT trigger Jitabata (Stop-and-Go) when a distant Raid Point appears during Migration
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+
+stdout | src/tests/ReproductionJitabata.test.js > Jitabata Bug Reproduction (Interrupt Loop) > should NOT trigger Jitabata (Stop-and-Go) when a distant Raid Point appears during Migration
+[Unit.js] ENTERED updateLogic. Dead=false
+[UnitWanderState] Update. ID:0 Action:Migrating Target:No
+[Test] Frame 1 Post-logic isMoving: true, action: Reinforcing
+[Unit.js] ENTERED updateLogic. Dead=false
+[Test] Frame 2 Post-logic isMoving: true, action: Reinforcing
+
+ 笨・src/tests/ReproductionJitabata.test.js (1 test) 15ms
+stdout | src/tests/ManaSystem.test.js > Mana System > InputManager Integration > should consume mana on raise terrain
+[Input] Request Queued: Raise at 0,0
+
+stderr | src/tests/ManaSystem.test.js > Mana System > InputManager Integration > should consume mana on raise terrain
+THREE.Raycaster: Unsupported camera type: undefined
+THREE.Raycaster: Unsupported camera type: undefined
+
+stderr | src/tests/ManaSystem.test.js > Mana System > InputManager Integration > should block raise terrain if mana is negative
+THREE.Raycaster: Unsupported camera type: undefined
+Action Blocked: Not enough Mana (Negative)
+
+ 笨・src/tests/ManaSystem.test.js (5 tests) 24ms
+stdout | src/tests/UnitSnatch.test.js > Unit Snatching and Race Conditions > should stop and wander if another unit snatches its job
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] Moving onto Rock at 11,10 H:10 (Speed Penalty)
+[JobState] smartMove failed(Wait).Budget ? undefined 
+[JobState] Entered.Target: build.Resume: None 
+[Unit.js] ENTERED updateLogic. Dead=false
+[JobState] Ownership LOST for Job job1.Someone snatched it or it was unassigned.Switching to Wander.
+
+stdout | src/tests/UnitSnatch.test.js > Unit Snatching and Race Conditions > should stop if the job is completed by someone else
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] Moving onto Rock at 11,10 H:10 (Speed Penalty)
+[JobState] smartMove failed(Wait).Budget ? undefined 
+[JobState] Entered.Target: build.Resume: None 
+[Unit.js] ENTERED updateLogic. Dead=false
+[JobState] Job job1 is completed.Resuming.
+
+ 笨・src/tests/UnitSnatch.test.js (2 tests) 21ms
+stderr | src/tests/CombatFixes.test.js > Combat and Logic Fixes > should find target goblin
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+DEBUG: Heights: 10 10
+DEBUG: Distance: 10
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug V2] Start Logic. Night=false, Stag=0.0, Age=20.0, H=10, Action=undefined
+[Unit Heartbeat] ID:0 Action:undefined Moving:false T:1100.0 dt:0.1000 Int:5000
+[Unit 0] Moving onto Rock at 1,0 H:10 (Speed Penalty)
+[Unit Debug] Executing Logic. Role: knight
+DEBUG: Target Found: g1
+DEBUG: Action: Chasing
+
+ 笨・src/tests/CombatFixes.test.js (1 test) 18ms
+stdout | src/tests/AdvancedUnits.test.js > Advanced Units > should initialize Knight with high stats
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+
+stdout | src/tests/AdvancedUnits.test.js > Advanced Units > should initialize Wizard with low HP and high stats
+[UnitCore.js] Unit Created ID:1 Role:wizard Pos:10,10 Special:false
+
+stdout | src/tests/AdvancedUnits.test.js > Advanced Units > should allow Wizard to attack from range
+[UnitCore.js] Unit Created ID:2 Role:wizard Pos:10,10 Special:false
+[Unit Debug] ATTACKING Goblin g1
+
+stdout | src/tests/UnitLifecycle.test.js > Unit Lifecycle and Aging > should initialize with age 20
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+
+ 笨・src/tests/AdvancedUnits.test.js (3 tests) 19ms
+stdout | src/tests/UnitLifecycle.test.js > Unit Lifecycle and Aging > should increment age when updateLogic is called
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0 Special:false
+
+stdout | src/tests/UnitLifecycle.test.js > Unit Lifecycle and Aging > should die when age exceeds lifespan
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:0,0 Special:false
+
+stdout | src/tests/UnitLifecycle.test.js > Unit Lifecycle and Aging > should age slower for Knights and Wizards (0.02 rate)
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:0,0 Special:false
+
+stdout | src/tests/UnitLifecycle.test.js > Unit Lifecycle and Aging > should age slower for Knights and Wizards (0.02 rate)
+[UnitCore.js] Unit Created ID:4 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:5 Role:wizard Pos:0,0 Special:false
+
+stdout | src/tests/UnitLifecycle.test.js > Unit Lifecycle and Aging > should have longer lifespan for Special units
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:0,0 Special:false
+
+stdout | src/tests/UnitLifecycle.test.js > Unit Lifecycle and Aging > should have longer lifespan for Special units
+[UnitCore.js] Unit Created ID:7 Role:worker Pos:0,0 Special:false
+
+ 笨・src/tests/UnitLifecycle.test.js (5 tests) 54ms
+stdout | src/tests/ForceAssignment.test.js > Force Assignment Integration > should successfully triggerMove without infinite loop
+Game constructor called
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+
+stdout | src/tests/ForceAssignment.test.js > Force Assignment Integration > should handle Force Assignment logic block
+Game constructor called
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+
+ 笨・src/tests/ForceAssignment.test.js (2 tests) 18ms
+stdout | src/tests/UnitWrapping.test.js > Unit Movement Wrapping > should move normally for short distances
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+
+stdout | src/tests/UnitWrapping.test.js > Unit Movement Wrapping > should wrap LEFT if target is across right boundary
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0 Special:false
+
+stdout | src/tests/UnitWrapping.test.js > Unit Movement Wrapping > should wrap RIGHT if target is across left boundary
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:0,0 Special:false
+
+stdout | src/tests/UnitWrapping.test.js > Unit Movement Wrapping > should handle Z axis wrapping
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:0,0 Special:false
+
+ 笨・src/tests/UnitWrapping.test.js (4 tests) 14ms
+stdout | src/tests/WanderBehavior.test.js > Wander Behavior Verification > UnitWanderState should trigger moveRandomly after interval
+[UnitWanderState] Update. ID:1 Action:Idle Target:No
+[UnitWanderState] Check Migration. ID:1 Action:Idle Target:false 
+[UnitWanderState] Update. ID:1 Action:Idle Target:No
+[UnitWanderState] Check Migration. ID:1 Action:Idle Target:false 
+
+ 笨・src/tests/WanderBehavior.test.js (2 tests) 15ms
+stdout | src/tests/UnitBehavior.test.js > Unit Behavior Mode > should return Patrol for Knight/Wizard when idle
+[UnitCore.js] Unit Created ID:0 Role:undefined Pos:5,5 Special:false
+
+stdout | src/tests/UnitBehavior.test.js > Unit Behavior Mode > should return Wander for Worker when idle
+[UnitCore.js] Unit Created ID:1 Role:undefined Pos:5,5 Special:false
+
+stdout | src/tests/UnitBehavior.test.js > Unit Behavior Mode > should return Combat when targetGoblin is set
+[UnitCore.js] Unit Created ID:2 Role:undefined Pos:5,5 Special:false
+
+stdout | src/tests/UnitBehavior.test.js > Unit Behavior Mode > should return Siege when targetBuilding is set
+[UnitCore.js] Unit Created ID:3 Role:undefined Pos:5,5 Special:false
+
+stdout | src/tests/UnitBehavior.test.js > Unit Behavior Mode > should return Working when targetRequest is set
+[UnitCore.js] Unit Created ID:4 Role:undefined Pos:5,5 Special:false
+
+stdout | src/tests/UnitBehavior.test.js > Unit Behavior Mode > should return Patrolling with coords when targetRaidPoint is set
+[UnitCore.js] Unit Created ID:5 Role:undefined Pos:5,5 Special:false
+
+stdout | src/tests/UnitBehavior.test.js > Unit Behavior Mode > should return Migrating when action is Migrating
+[UnitCore.js] Unit Created ID:6 Role:undefined Pos:5,5 Special:false
+
+stdout | src/tests/UnitBehavior.test.js > Unit Behavior Mode > should prioritize Combat over Exploration
+[UnitCore.js] Unit Created ID:7 Role:undefined Pos:5,5 Special:false
+
+ 笨・src/tests/UnitBehavior.test.js (8 tests) 18ms
+stdout | src/tests/CavePersistence.test.js > GoblinManager Cave Persistence > should update cave Y position when terrain height changes
+[GoblinRenderer] Updating 0 goblins.
+
+stdout | src/tests/CavePersistence.test.js > GoblinManager Cave Persistence > should destroy cave if submerged (height <= 0)
+[GoblinManager] Cave destroyed: SUBMERGED(H = -1)
+[GoblinRenderer] Updating 0 goblins.
+
+stderr | src/tests/CavePersistence.test.js > GoblinManager Cave Persistence > should destroy cave if submerged (height <= 0)
+[GoblinManager] Removing invalid cave at 10,10
+
+ 笨・src/tests/CavePersistence.test.js (2 tests) 16ms
+stdout | src/tests/UnitInit.test.js > Unit Initialization and Movement Start > should NOT freeze if started at time 0
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug V2] Start Logic. Night=false, Stag=0.0, Age=20.0, H=1, Action=undefined
+[Unit Heartbeat] ID:0 Action:undefined Moving:false T:1.0 dt:1.0000 Int:4131
+[Unit Debug] Executing Logic. Role: worker
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug V2] Start Logic. Night=false, Stag=1.0, Age=20.2, H=1, Action=Idle
+[Unit Heartbeat] ID:0 Action:Idle Moving:false T:6.0 dt:1.0000 Int:3196
+[Unit Debug] Executing Logic. Role: worker
+Debug Unit Action after 6s: Idle
+
+stdout | src/tests/UnitInit.test.js > Unit Initialization and Movement Start > should NOT freeze if started at time 0
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug V2] Start Logic. Night=false, Stag=2.0, Age=20.4, H=1, Action=Idle
+[Unit Heartbeat] ID:0 Action:Idle Moving:false T:0.0 dt:0.1000 Int:4715
+[Unit Debug] Executing Logic. Role: worker
+[Unit.js] ENTERED updateLogic. Dead=false
+[Unit Debug V2] Start Logic. Night=false, Stag=2.1, Age=20.4, H=1, Action=Idle
+[Unit Heartbeat] ID:0 Action:Idle Moving:false T:5.0 dt:0.1000 Int:3915
+[Unit Debug] Executing Logic. Role: worker
+
+ 笨・src/tests/UnitInit.test.js (1 test) 14ms
+ 笨・src/tests/JobAssignment.test.js (3 tests) 10ms
+stdout | src/tests/ShorelineLoop.test.js > Shoreline Loop Reproduction > should NOT target unrelated region goblin via findTargetGoblin
+[UnitCore.js] Unit Created ID:0 Role:soldier Pos:5,5 Special:false
+
+stdout | src/tests/ShorelineLoop.test.js > Shoreline Loop Reproduction > should NOT target land goblin when unit is in water (Region 0)
+[UnitCore.js] Unit Created ID:1 Role:soldier Pos:5,5 Special:false
+
+ 笨・src/tests/ShorelineLoop.test.js (2 tests) 17ms
+stdout | src/tests/WrapDistance.test.js > Unit Distance Wrap Logic > should calculate short distance across wrap (0,0 -> 79,0)
+[UnitCore.js] Unit Created ID:0 Role:undefined Pos:0,0 Special:false
+
+stdout | src/tests/WrapDistance.test.js > Unit Distance Wrap Logic > should calculate diagonal wrap correctly (0,0 -> 79,79)
+[UnitCore.js] Unit Created ID:1 Role:undefined Pos:0,0 Special:false
+
+ 笨・src/tests/WrapDistance.test.js (2 tests) 12ms
+stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should pickup NEXT job if current is cancelled
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0 Special:false
+Game constructor called
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 129,41. Force:false
+[Terrain] Building Added: cave at (129, 41) Size:1x1. Total: 1
+GoblinManager: Cave registered at 129,41 
+[GoblinManager] Clan clan_cave_129_41 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 96,0. Force:false
+[Terrain] Building Added: cave at (96, 0) Size:1x1. Total: 2
+GoblinManager: Cave registered at 96,0 
+[GoblinManager] Clan clan_cave_96_0 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 159,79. Force:false
+[Terrain] Building Added: cave at (159, 79) Size:1x1. Total: 3
+GoblinManager: Cave registered at 159,79 
+[GoblinManager] Clan clan_cave_159_79 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 27,75. Force:false
+[Terrain] Building Added: cave at (27, 75) Size:1x1. Total: 4
+GoblinManager: Cave registered at 27,75 
+[GoblinManager] Clan clan_cave_27_75 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 148,101. Force:false
+[Terrain] Building Added: cave at (148, 101) Size:1x1. Total: 5
+GoblinManager: Cave registered at 148,101 
+[GoblinManager] Clan clan_cave_148_101 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 9 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should pickup NEXT job if current is cancelled
+[Game] Request Added: build at (20,0) ID:req_0
+[Game] forceAssignRequest FOUND Unit 1 (DistSq:400). Scanned:1
+[Game] Force-Assigned Request req_0 to Unit 1 (Score: 400.0)
+[Game] Request Added: build at (-20,0) ID:req_1
+[Game] forceAssignRequest FAILED for Req req_1. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
+[Game] forceAssignRequest FAILED for Req req_1. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
+[Game] Cancelling active job for Unit 1
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
+[Game] Request Canceled at 20,0 (Target: 20,0)
+[Unit 1] Moving onto Rock at 19,0 H:10 (Speed Penalty)
+
+ 笨・src/tests/GoblinStats.test.js (2 tests) 14ms
+ 笨・src/tests/MovementReset.test.js (2 tests) 9ms
+ 笨・src/tests/SquadMemory.test.js (2 tests) 8ms
+ 笨・src/tests/Minimal.test.js (1 test) 6ms
+stdout | src/tests/MinimalUnit.test.js > Minimal Unit Sanity > can instantiate Unit
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+
+ 笨・src/tests/MinimalUnit.test.js (1 test) 7ms
+stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should handle cancellation while Working (arrived)
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:0,0 Special:false
+Game constructor called
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 76,140. Force:false
+[Terrain] Building Added: cave at (76, 140) Size:1x1. Total: 1
+GoblinManager: Cave registered at 76,140 
+[GoblinManager] Clan clan_cave_76_140 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 47,113. Force:false
+[Terrain] Building Added: cave at (47, 113) Size:1x1. Total: 2
+GoblinManager: Cave registered at 47,113 
+[GoblinManager] Clan clan_cave_47_113 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 140,159. Force:false
+[Terrain] Building Added: cave at (140, 159) Size:1x1. Total: 3
+GoblinManager: Cave registered at 140,159 
+[GoblinManager] Clan clan_cave_140_159 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 124,152. Force:false
+[Terrain] Building Added: cave at (124, 152) Size:1x1. Total: 4
+GoblinManager: Cave registered at 124,152 
+[GoblinManager] Clan clan_cave_124_152 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 86,112. Force:false
+[Terrain] Building Added: cave at (86, 112) Size:1x1. Total: 5
+GoblinManager: Cave registered at 86,112 
+[GoblinManager] Clan clan_cave_86_112 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 8 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should handle cancellation while Working (arrived)
+[Game] Request Added: build at (20,0) ID:req_0
+[Game] forceAssignRequest FOUND Unit 1 (DistSq:400). Scanned:1
+[Game] Force-Assigned Request req_0 to Unit 1 (Score: 400.0)
+
+ 笨・src/tests/ComplexInteraction.test.js (3 tests) 19156ms
+     笨・should immediately stop unit when job is cancelled mid-approach  8503ms
+     笨・should pickup NEXT job if current is cancelled  6526ms
+     笨・should handle cancellation while Working (arrived)  4123ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Suites 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/CombatRequestHandoff.test.js [ src/tests/CombatRequestHandoff.test.js ]
+ FAIL  src/tests/Unit.test.js [ src/tests/Unit.test.js ]
+Error: Failed to parse source for import analysis because the content contains invalid JS syntax. If you are using JSX, make sure to name the file with the .jsx or .tsx extension.
+  Plugin: vite:import-analysis
+  File: C:/Users/mooya/develop/test/src/tests/CombatRequestHandoff.test.js:140:0
+ 笶ｯ TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/config.js:29647:43
+ 笶ｯ TransformPluginContext.error node_modules/vite/dist/node/chunks/config.js:29644:14
+ 笶ｯ TransformPluginContext.transform node_modules/vite/dist/node/chunks/config.js:27730:10
+ 笶ｯ EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/config.js:29445:14
+ 笶ｯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:23316:26
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/8]竡ｯ
+
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 6 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/CombatBalance.test.js > Combat Balance Simulation > Load Game Persistence - Should resume movement
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/CombatBalance.test.js:269:29
+    267|         // Verify Restoration
+    268|         // Verify Restoration
+    269|         expect(u2.isMoving).toBe(true); // Should resume movement
+       |                             ^
+    270|         // Note: triggerMove calculates NEXT TILE, not final destinati窶ｦ
+    271|         // From 0,0 to 10,10. dx=10, dz=10. 10 > 10 is false. Z increm窶ｦ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/8]竡ｯ
+
+ FAIL  src/tests/JobIdempotency.test.js > Job Assignment Idempotency > should NOT reset movement if claiming the same job twice
+TypeError: this.domElement.removeEventListener is not a function
+ 笶ｯ OrbitControls.disconnect node_modules/three/examples/jsm/controls/OrbitControls.js:484:19
+ 笶ｯ OrbitControls.connect node_modules/three/build/three.core.js:58613:40
+ 笶ｯ OrbitControls.connect node_modules/three/examples/jsm/controls/OrbitControls.js:467:9
+ 笶ｯ new OrbitControls node_modules/three/examples/jsm/controls/OrbitControls.js:457:9
+ 笶ｯ new Game src/Game.js:108:25
+    106| 
+    107|         // 3. Controls
+    108|         this.controls = new OrbitControls(this.camera, this.renderer.d窶ｦ
+       |                         ^
+    109|         this.controls.enableDamping = true;
+    110|         this.controls.dampingFactor = 0.05;
+ 笶ｯ src/tests/JobIdempotency.test.js:124:20
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/8]竡ｯ
+
+ FAIL  src/tests/MigrationConflict.test.js > Migration Conflict Regression (Jitabata Bug) > should allow Migration Logic to control repeated movement
+AssertionError: expected 'Idle' to be 'Migrating' // Object.is equality
+
+Expected: "Migrating"
+Received: "Idle"
+
+ 笶ｯ src/tests/MigrationConflict.test.js:116:33
+    114|                 console.log(`[Test Fail] Action changed to ${unit.acti窶ｦ
+    115|             }
+    116|             expect(unit.action).toBe('Migrating');
+       |                                 ^
+    117| 
+    118|             // Should NOT be Random Point (which mock returns as 30,30窶ｦ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[4/8]竡ｯ
+
+ FAIL  src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+AssertionError: expected 'Idle' to be 'Fighting' // Object.is equality
+
+Expected: "Fighting"
+Received: "Idle"
+
+ 笶ｯ src/tests/MigrationImprovement.test.js:138:29
+    136|         unit.updateLogic(1, 1.0, false, [], [], []);
+    137| 
+    138|         expect(unit.action).toBe('Fighting');
+       |                             ^
+    139|         expect(unit.migrationTarget).toBeNull();
+    140| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[5/8]竡ｯ
+
+ FAIL  src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/NightLogic.test.js:92:31
+     90|         u1.updateLogic(time + 2000, 100, isNight, [], [], [], []);
+     91| 
+     92|         expect(u1.isSleeping).toBe(true);
+       |                               ^
+     93|     });
+     94| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[6/8]竡ｯ
+
+ FAIL  src/tests/RubberBanding.test.js > Rubber-banding and Chaining Verification > should use visual position for chaining the next job
+AssertionError: expected "vi.fn()" to be called with arguments: [ Unit{ id: 1, 窶ｦ(59) }, 窶ｦ(1) ]
+
+Number of calls: 0
+
+ 笶ｯ src/tests/RubberBanding.test.js:114:39
+    112| 
+    113|         // expect(mockGame.completeRequest).toHaveBeenCalledWith(unit,窶ｦ
+    114|         expect(mockGame.claimRequest).toHaveBeenCalledWith(unit, job2);
+       |                                       ^
+    115|         expect(unit.targetRequest).toBe(job2);
+    116|         expect(unit.gridX).toBe(18); // Stayed at arrival point for ne窶ｦ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[7/8]竡ｯ
+
+
+ Test Files  8 failed | 53 passed (61)
+      Tests  6 failed | 163 passed (169)
+   Start at  18:27:26
+   Duration  22.83s (transform 5.23s, setup 2.62s, import 15.69s, tests 68.34s, environment 128.21s)
+

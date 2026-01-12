@@ -1,0 +1,44 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mGoblins deal population damage to player buildings
+[22m[39mGoblin 0 attacking house. Pop: 0.00 (Lost 50)
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mGoblins deal structural damage to empty player buildings
+[22m[39mGoblin 1 hitting Empty house. HP: 40
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mGoblins destroy player buildings when HP reaches 0
+[22m[39mGoblin 2 hitting Empty house. HP: 0
+Goblin 2 destroyed house!
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mBuildings retaliate against melee goblins
+[22m[39mGoblin 3 attacking house. Pop: 6.00 (Lost 4)
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mTowers have massive retaliation
+[22m[39mGoblin 4 attacking tower. Pop: 1.00 (Lost 4)
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mNo retaliation for distant attackers (Shamans)
+[22m[39mGoblin 5 attacking house. Pop: 0.00 (Lost 40)
+
+[90mstdout[2m | src/tests/BuildingDefense.test.js[2m > [22m[2mBuilding Defense Logic[2m > [22m[2mStandard HP logic for Goblin buildings
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:knight Pos:20,20 Special:false
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:20,20
+Unit 0 attacking cave. HP: 150
+
+ [31mﾃ・[39m src/tests/BuildingDefense.test.js[2m > [22mBuilding Defense Logic[2m > [22mGoblins deal population damage to player buildings[32m 15[2mms[22m[39m
+[31m   竊・expected +0 to be 9 // Object.is equality[39m
+ [32m笨・[39m src/tests/BuildingDefense.test.js[2m > [22mBuilding Defense Logic[2m > [22mGoblins deal structural damage to empty player buildings[32m 2[2mms[22m[39m
+ [32m笨・[39m src/tests/BuildingDefense.test.js[2m > [22mBuilding Defense Logic[2m > [22mGoblins destroy player buildings when HP reaches 0[32m 2[2mms[22m[39m
+ [31mﾃ・[39m src/tests/BuildingDefense.test.js[2m > [22mBuilding Defense Logic[2m > [22mBuildings retaliate against melee goblins[32m 2[2mms[22m[39m
+[31m   竊・expected 94 to be 91 // Object.is equality[39m
+ [31mﾃ・[39m src/tests/BuildingDefense.test.js[2m > [22mBuilding Defense Logic[2m > [22mTowers have massive retaliation[32m 1[2mms[22m[39m
+[31m   竊・expected 90 to be 51 // Object.is equality[39m
+ [32m笨・[39m src/tests/BuildingDefense.test.js[2m > [22mBuilding Defense Logic[2m > [22mNo retaliation for distant attackers (Shamans)[32m 1[2mms[22m[39m
+ [32m笨・[39m src/tests/BuildingDefense.test.js[2m > [22mBuilding Defense Logic[2m > [22mGoblins can target buildings with 0 population but > 0 structural HP[32m 1[2mms[22m[39m
+ [32m笨・[39m src/tests/BuildingDefense.test.js[2m > [22mBuilding Defense Logic[2m > [22mStandard HP logic for Goblin buildings[32m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 17:21:24
+[2m   Duration [22m 1000ms[2m (transform 159ms, setup 34ms, import 218ms, tests 27ms, environment 476ms)[22m
+

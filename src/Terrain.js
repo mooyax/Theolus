@@ -1,11 +1,13 @@
 import * as THREE from 'three';
+import { Building } from './Building.js';
 
 export class Terrain {
     constructor(scene, clippingPlanes) {
         this.scene = scene;
         this.clippingPlanes = clippingPlanes || [];
-        this.logicalWidth = 160;
-        this.logicalDepth = 160;
+        // Expanded Map 160 -> 240
+        this.logicalWidth = 240;
+        this.logicalDepth = 240;
         this.width = this.logicalWidth * 3; // Visual size (3x3 grid)
         this.depth = this.logicalDepth * 3;
 
@@ -43,23 +45,32 @@ export class Terrain {
     }
 
     registerEntity(entity, x, z, type) {
-        if (!this.isValidGrid(x, z)) return;
+        const ix = Math.floor(x);
+        const iz = Math.floor(z);
+        if (!this.isValidGrid(ix, iz)) return;
 
         // Add metadata to entity if not present (handled by caller mostly, but useful here)
-        entity._spatial = { x, z, type };
+        entity._spatial = { x: ix, z: iz, type };
 
-        this.entityGrid[x][z].push(entity);
+        if (!this.entityGrid[ix]) this.entityGrid[ix] = []; // Safety
+        if (!this.entityGrid[ix][iz]) this.entityGrid[ix][iz] = []; // Safety
+
+        this.entityGrid[ix][iz].push(entity);
     }
 
     unregisterEntity(entity) {
         if (!entity._spatial) return;
         const { x, z } = entity._spatial;
+        const ix = Math.floor(x);
+        const iz = Math.floor(z);
 
-        if (this.isValidGrid(x, z)) {
-            const cell = this.entityGrid[x][z];
-            const idx = cell.indexOf(entity);
-            if (idx !== -1) {
-                cell.splice(idx, 1);
+        if (this.isValidGrid(ix, iz)) {
+            if (this.entityGrid[ix] && this.entityGrid[ix][iz]) {
+                const cell = this.entityGrid[ix][iz];
+                const idx = cell.indexOf(entity);
+                if (idx !== -1) {
+                    cell.splice(idx, 1);
+                }
             }
         }
         entity._spatial = null;
@@ -74,9 +85,14 @@ export class Terrain {
     }
 
     moveEntity(entity, oldX, oldZ, newX, newZ, type) {
-        if (Math.floor(oldX) === Math.floor(newX) && Math.floor(oldZ) === Math.floor(newZ)) {
+        const iOldX = Math.floor(oldX);
+        const iOldZ = Math.floor(oldZ);
+        const iNewX = Math.floor(newX);
+        const iNewZ = Math.floor(newZ);
+
+        if (iOldX === iNewX && iOldZ === iNewZ) {
             // Still in same cell, no need to update grid
-            entity._spatial = { x: newX, z: newZ, type }; // Update pos in metadata though
+            entity._spatial = { x: iNewX, z: iNewZ, type }; // Update pos in metadata though
             return;
         }
         this.unregisterEntity(entity);
@@ -99,10 +115,11 @@ export class Terrain {
                 const distSq = dx * dx + dz * dz;
                 if (distSq > maxRadius * maxRadius) continue;
 
-                const x = (centerX + dx + W) % W;
-                const z = (centerZ + dz + H) % H;
+                const ix = Math.floor((centerX + dx + W) % W);
+                const iz = Math.floor((centerZ + dz + H) % H);
 
-                const cell = this.entityGrid[x][z];
+                if (!this.entityGrid[ix] || !this.entityGrid[ix][iz]) continue;
+                const cell = this.entityGrid[ix][iz];
                 for (let i = 0; i < cell.length; i++) {
                     const e = cell[i];
                     if (e._spatial && e._spatial.type === type) {
@@ -151,7 +168,9 @@ export class Terrain {
                 if (e.isDead || e.isFinished) continue;
 
                 // Region Filter
-                if (sourceRegion > 0) {
+                // Buildings (multi-tile) might be reachable even if anchor is in different region.
+                // Units self-verify reachability via Pathing/CostFn.
+                if (type !== 'building' && sourceRegion > 0) {
                     const tCell = this.grid[e.gridX][e.gridZ];
                     if (!tCell || tCell.regionId !== sourceRegion) continue;
                 }
@@ -198,24 +217,24 @@ export class Terrain {
                 const dist = Math.sqrt(dx * dx + dz * dz);
                 if (dist > maxRadius) continue;
 
-                const x = (centerX + dx + W) % W;
-                const z = (centerZ + dz + H) % H;
+                const ix = Math.floor((centerX + dx + W) % W);
+                const iz = Math.floor((centerZ + dz + H) % H);
 
                 // Safety check for EntityGrid
-                if (!this.entityGrid || !this.entityGrid[x] || !this.entityGrid[x][z]) continue;
+                if (!this.entityGrid || !this.entityGrid[ix] || !this.entityGrid[ix][iz]) continue;
 
                 // Region Check (Grid Optimization: Skip entire cell if region mismatch? No, cell might span regions? No, cell is 1 tile)
                 // So YES, we can skip the CELL if region mismatches!
                 if (sourceRegion > 0) {
-                    const cellData = this.grid[x][z];
+                    const cellData = this.grid[ix][iz];
                     if (cellData.regionId !== sourceRegion) continue;
                 } else {
                     // Source is Water (Region 0). Block Land Cells (Region > 0).
-                    const cellData = this.grid[x][z];
+                    const cellData = this.grid[ix][iz];
                     if (cellData.regionId > 0) continue;
                 }
 
-                const cell = this.entityGrid[x][z];
+                const cell = this.entityGrid[ix][iz];
 
                 for (let i = 0; i < cell.length; i++) {
                     const e = cell[i];
@@ -347,11 +366,13 @@ export class Terrain {
             }
         }
 
-        // Flood Fill
+        // Flood Fill (Updated to 8-Way to match A* movement)
         const queue = [];
         const directions = [
             { x: 1, z: 0 }, { x: -1, z: 0 },
-            { x: 0, z: 1 }, { x: 0, z: -1 }
+            { x: 0, z: 1 }, { x: 0, z: -1 },
+            { x: 1, z: 1 }, { x: 1, z: -1 },
+            { x: -1, z: 1 }, { x: -1, z: -1 }
         ];
 
         for (let x = 0; x < W; x++) {
@@ -633,40 +654,13 @@ export class Terrain {
         this.geometry.attributes.color.needsUpdate = true;
     }
     // SHARED HELPER for Main View & Minimap
-    getBiomeColor(height, moisture, noise, isNight, season, lx, lz, forMinimap = false) {
-        const color = new THREE.Color();
 
-        // 1. Sea Logic (RESTORED)
-        if (height <= 0) {
-            if (forMinimap) {
-                // Minimap: Lighter "Mizuiro" Gradient
-                const shallow = new THREE.Color(0x88CCFF);
-                const deep = new THREE.Color(0x0066CC);
-                let depthFactor = Math.abs(height) / 10.0;
-                depthFactor = Math.min(1.0, depthFactor);
-                color.copy(shallow).lerp(deep, depthFactor);
-                return color;
-            }
-
-            // Terrain (3D View): SEABED COLOR
-            color.setHex(0xF4A460); // Sand base
-            // Texture variation using noise (0.9 to 1.1)
-            const texture = 0.9 + (noise * 0.2);
-            color.multiplyScalar(texture);
-            return color;
-        }
-    }
-
-    update(deltaTime, spawnCallback, isNight) {
-        // Reset Pathfinding Budget for this frame
-        this.pathfindingCalls = 0;
-
-        // Visual Water Animation
-        if (this.waterMesh && this.waterMesh.material.uniforms) {
-            this.waterMesh.material.uniforms.uTime.value += deltaTime;
-        }
-
-        // ... reserved for dynamic terrain updates ...
+    isReachable(sx, sz, tx, tz) {
+        const startCell = this.grid[sx % this.logicalWidth][sz % this.logicalDepth];
+        const targetCell = this.grid[tx % this.logicalWidth][tz % this.logicalDepth];
+        if (!startCell || !targetCell) return false;
+        if (targetCell.height <= 0) return false; // In water
+        return startCell.regionId === targetCell.regionId;
     }
 
     updateColors(season = 'Spring', isNight = false) {
@@ -951,6 +945,7 @@ export class Terrain {
 
         this.updateMesh();
         this.updateColors();
+        this.needsRegionRecalc = true; // Set flag for deferred recalculation
 
         return totalChange;
     }
@@ -977,54 +972,14 @@ export class Terrain {
         return null; // or scan this.buildings if grid logic unreliable?
     }
 
-    findBestTarget(type, gridX, gridZ, maxDist, scoreFn, candidates) {
-        let bestEntity = null;
-        let minScore = Infinity;
-        const maxDistSq = maxDist * maxDist;
 
-        // Use provided candidates list if available (O(N) but safe)
-        // Or use this.entityGrid? 
-        // Candidates list is passed by caller (Game.js or Goblin.js), likely filterd or global list.
-
-        const list = candidates || []; // Fallback empty
-
-        // Support Wrap Distance
-        const W = this.logicalWidth;
-        const D = this.logicalDepth;
-
-        for (const entity of list) {
-            if (entity.isDead || entity.isFinished) continue;
-
-            // Manual Distance with Wrap
-            let dx = Math.abs(entity.gridX - gridX);
-            let dz = Math.abs(entity.gridZ - gridZ);
-
-            if (dx > W / 2) dx = W - dx;
-            if (dz > D / 2) dz = D - dz;
-
-            const dSq = dx * dx + dz * dz;
-
-            if (dSq > maxDistSq) continue;
-
-            const dist = Math.sqrt(dSq);
-
-            // Calculate Score
-            const score = scoreFn(entity, dist);
-
-            if (score < minScore) {
-                minScore = score;
-                bestEntity = entity;
-            }
-        }
-        return bestEntity;
-    }
 
     // Helper for Visual Alignment
     getVisualOffset(localX, localY) {
         // Suppress visual distortion under buildings
         if (this.grid) {
-            const W = this.logicalWidth || 80;
-            const D = this.logicalDepth || 80;
+            const W = this.logicalWidth || 160;
+            const D = this.logicalDepth || 160;
 
             // Map Plane Coords to Grid
             const gx = Math.round(localX + W / 2);
@@ -1111,11 +1066,38 @@ export class Terrain {
         const h01 = this.grid[x0][z1].height;
         const h11 = this.grid[x1][z1].height;
 
-        // Bilinear interpolation
-        const h0 = h00 * (1 - dx) + h10 * dx;
-        const h1 = h01 * (1 - dx) + h11 * dx;
+        // Triangle Grid Interpolation (Matches PlaneGeometry triangulation)
+        // Splits are typically along (0,1) -> (1,0) diagonal??
+        // Default Three.js PlaneGeometry:
+        // Quad vertices: (x,z), (x+1,z), (x,z+1), (x+1,z+1)
+        // Indices usually: (TL, BL, TR) and (TR, BL, BR) ... wait.
+        // Let's assume (0,0)-(1,0)-(0,1) is Tri 1 (Top-Left / Bottom-Left depending on coord system)
+        // And (1,0)-(1,1)-(0,1) is Tri 2.
 
-        return h0 * (1 - dz) + h1 * dz;
+        // This corresponds to checking if dx + dz <= 1
+
+        // However, Three.js coordinates (X, -Z) in PlaneGeometry? 
+        // Let's assume standard Grid logic:
+        // h00 (0,0), h10 (1,0), h01 (0,1), h11 (1,1)
+
+        let h;
+        if (dx + dz <= 1) {
+            // Triangle 1: (0,0), (1,0), (0,1)
+            // Plane defined by h00, h10, h01
+            // h = h00 + (h10 - h00)*dx + (h01 - h00)*dz
+            h = h00 + (h10 - h00) * dx + (h01 - h00) * dz;
+        } else {
+            // Triangle 2: (1,1), (1,0), (0,1)
+            // Interpolate from (1,1) back?
+            // h = h11 + (h10 - h11)*(1-dz) + (h01 - h11)*(1-dx)
+            // Let's verify:
+            // At dx=1, dz=0 (h10): h11 + (h10-h11)*1 + 0 = h10. OK.
+            // At dx=0, dz=1 (h01): h11 + 0 + (h01-h11)*1 = h01. OK.
+            // At dx=1, dz=1 (h11): h11 + 0 + 0 = h11. OK.
+            h = h11 + (h10 - h11) * (1 - dz) + (h01 - h11) * (1 - dx);
+        }
+
+        return h;
     }
 
     isValidGrid(x, z) {
@@ -1225,25 +1207,22 @@ export class Terrain {
         if (!this.grid[gridX] || !this.grid[gridX][gridZ]) return null;
         const h = this.grid[gridX][gridZ].height;
 
-        const building = {
-            type: type,
-            gridX: gridX,
-            gridZ: gridZ,
-            y: h,
-            rotation: Math.random() * Math.PI * 2,
-            population: 0,
-            id: Math.random().toString(36).substr(2, 9),
-            userData: {
-                type: type,
-                gridX: gridX,
-                gridZ: gridZ,
-                population: 0,
-                hp: (type === 'goblin_hut') ? 100 : (type === 'cave' ? 200 : 50),
-                squadId: (type === 'barracks' || type === 'tower') ?
-                    (window.game && window.game.registerSquad ? window.game.registerSquad(type) : null)
-                    : null
+        // Use Building Class
+        const building = new Building(this.scene, this, type, gridX, gridZ);
+        // Adjust Y (Building constructor does updatePosition, but using tile height)
+        // Building constructor sets position from grid using getPositionForGrid.
+        // We might need to sync the specific rotation logic if needed, but visually Entity handles it.
+        // Custom Rotation (legacy had random rotation)
+        building.rotation = Math.random() * Math.PI * 2;
+
+        // Squad Registration (Legacy Logic - moved here or inside Building?)
+        // Building.js doesn't have Game instance access easily unless passed.
+        // Let's keep squad logic here for now using compatibility userData.
+        if (type === 'barracks' || type === 'tower') {
+            if (window.game && window.game.registerSquad) {
+                building.userData.squadId = window.game.registerSquad(type);
             }
-        };
+        }
 
         const W = this.logicalWidth;
         const D = this.logicalDepth;
@@ -1274,7 +1253,8 @@ export class Terrain {
 
         console.log(`[Terrain] Building Added: ${type} at (${gridX}, ${gridZ}) Size:${size}x${size}. Total: ${this.buildings.length}`);
 
-        this.registerEntity(building, gridX, gridZ, 'building');
+        // Entity constructor already registers it!
+        // this.registerEntity(building, gridX, gridZ, 'building');
         this.updateMesh();
 
         return building;
@@ -1361,7 +1341,6 @@ export class Terrain {
         }
 
         // 3. Remove from Spatial Grid
-        // 3. Remove from Spatial Grid
         if (this.entityGrid) {
             // Check if unregisterEntity exists, otherwise manual splice
             if (this.unregisterEntity) {
@@ -1384,6 +1363,10 @@ export class Terrain {
         building.userData.hp = 0; // Ensure units know it is destroyed
 
         console.log(`[Terrain] Building removed at ${startX},${startZ}`);
+    }
+
+    invalidatePathCache() {
+        this.pathCache = [];
     }
 
     // --- Terrain Analysis ---
@@ -1536,6 +1519,8 @@ export class Terrain {
 
         let foodNeed = totalPopulation * consumptionRate * deltaTime;
 
+
+
         // Make window.game.resources check safe
         const resources = (window.game && window.game.resources) ? window.game.resources : { grain: 0, fish: 0, meat: 0 };
         let hasFood = true;
@@ -1591,7 +1576,7 @@ export class Terrain {
         if (variety === 2) multiplier = 2.5;
         if (variety === 3) multiplier = 5.0;
 
-        const baseRate = 0.05 * multiplier; // Slower growth (Populous style)
+        const baseRate = 0.05 * multiplier; // Tuned: 0.05 base = ~3m. With Variety(5x) = ~36s.
 
         if (this.frameCount === undefined) this.frameCount = 0;
         this.frameCount++;
@@ -1618,7 +1603,7 @@ export class Terrain {
                 let cap = 10; // House Cap (User Request)
 
                 if (type === 'barracks') {
-                    rate *= 5; // Faster than house, but not instant
+                    rate *= 20; // Significantly faster (User Request)
                     cap = 200; // Aligned with UI
                 }
 
@@ -1626,20 +1611,33 @@ export class Terrain {
                 const diminishingFactor = 200000 / (200000 + totalPopulation);
                 rate *= diminishingFactor;
 
-                if (!hasFood) rate = 0;
+                if (!hasFood) rate *= 0.25; // Starvation slows growth but doesn't stop it (Legacy compatibility)
 
-                building.userData.population += rate * simDeltaTime;
+                // SYNC FIX: Update Class Property if available
+                if (typeof building.population === 'number') {
+                    building.population += rate * simDeltaTime;
+                    // Building.update() will sync this back to userData later
+                    // But we keep userData in sync now just in case
+                    building.userData.population = building.population;
+                } else {
+                    // Legacy Fallback (Object literal)
+                    building.userData.population += rate * simDeltaTime;
+                }
+
 
                 // Spawning Logic (When full)
+                const currentPop = (typeof building.population === 'number') ? building.population : building.userData.population;
 
-                if (building.userData.population >= cap) {
+                if (currentPop >= cap) {
                     if (spawnCallback) {
                         if (type === 'house') {
                             // House: Spawn 1 unit, Reset to 0 (User Request)
                             const spawned = spawnCallback(bx, bz, type, building);
                             if (spawned) {
+                                if (typeof building.population === 'number') building.population = 0;
                                 building.userData.population = 0;
                             } else {
+                                if (typeof building.population === 'number') building.population = cap;
                                 building.userData.population = cap; // Wait if blocked
                             }
                         } else if (type === 'barracks') {
@@ -1650,19 +1648,23 @@ export class Terrain {
                                 if (spawnCallback(bx, bz, type, building, building.userData.squadId)) spawnedCount++;
                             }
                             if (spawnedCount > 0) {
+                                if (typeof building.population === 'number') building.population = 0;
                                 building.userData.population = 0;
                             } else {
+                                if (typeof building.population === 'number') building.population = cap;
                                 building.userData.population = cap;
                             }
                         } else {
                             // Just clamp
-                            if (building.userData.population > cap) building.userData.population = cap;
+                            const clampVal = (currentPop > cap) ? cap : currentPop;
+                            if (typeof building.population === 'number') building.population = clampVal;
+                            building.userData.population = clampVal;
                         }
                     }
                 }
             } else if (type === 'tower') {
                 // TOWER SPAWN LOGIC
-                const rate = baseRate * 5;
+                const rate = baseRate * 20; // Significantly faster
                 const cap = 300; // Aligned with UI
 
                 building.userData.population += rate * simDeltaTime;
@@ -1711,101 +1713,90 @@ export class Terrain {
     }
 
     update(deltaTime, spawnCallback, isNight) {
+        // 1. Visual Updates
         if (this.colorsDirty) {
             this.updateColors();
             this.colorsDirty = false;
         }
-        // Get active units from Global or verify
-        const activeUnits = window.game && window.game.units ? window.game.units.length : 0;
 
-        // Pass correct arguments: deltaTime, isNight, activeUnits, spawnCallback
-        this.updatePopulation(deltaTime, isNight, activeUnits, spawnCallback);
+        if (this.waterMesh && this.waterMesh.material.uniforms) {
+            this.waterMesh.material.uniforms.uTime.value += deltaTime;
+        }
+
+        // 2. Deferred Region Recalculation (Performance Optimization)
+        if (this.needsRegionRecalc) {
+            if (this.regionRecalcTimer === undefined) this.regionRecalcTimer = 0;
+            this.regionRecalcTimer += deltaTime;
+            if (this.regionRecalcTimer > 2.0) { // 2.0 second debounce
+                this.calculateRegions();
+                this.needsRegionRecalc = false;
+                this.regionRecalcTimer = 0;
+                console.log("[Terrain] Deferred Regions Recalculated");
+            }
+        }
+
+        // 3. Logic: Pathfinding Budget
+        this.pathfindingCalls = 0;
+
+        // 4. Logic: Population Growth
+        // Use the advanced logic (Food, Diversity, Stagger) inside updatePopulation
+        // activeUnits approximated as 0 here (or we could track it, but for now 0 is safe/optimistic)
+        this.updatePopulation(deltaTime, isNight, 0, spawnCallback);
     }
 
     updateLights(time) {
         // Obsolete: BuildingRenderer handles lighting via material uniforms
         return;
-        /*
-        // Night: 19-24, 0-5.
-        const isNight = (time >= 18 || time < 6);
-     
-        // Optimization: Only update if state changed
-        if (this._lastIsNight === isNight) return;
-        this._lastIsNight = isNight;
-     
-        const colorHex = isNight ? 0xFFFF00 : 0x000000;
-        // console.log("Updating lights. Time:", time, "IsNight:", isNight);
-     
-        this.buildings.forEach(building => {
-            // Windows
-            if (building.userData.windows) {
-                building.userData.windows.forEach(win => {
-                    if (win.material) {
-                        win.material.color.setHex(colorHex);
-                        // win.material.needsUpdate = true; // REMOVED: Expensive and unnecessary for color change
-                    }
-                });
-            }
-            // PointLight
-            if (building.userData.light) {
-                building.userData.light.intensity = isNight ? 1.0 : 0.0;
-            }
-        });
-        */
     }
 
     serialize() {
-        // Optimization: Reduce Precision and JSON structure overhead
-        const data = {
-            logicalWidth: this.logicalWidth,
-            logicalDepth: this.logicalDepth,
-            // Flattened or simplified? Keeping structure but optimizing entries.
-            grid: []
-        };
+        // Optimized Serialization V2 (Structure of Arrays)
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+        const total = W * D;
 
-        const savedBuildingIds = new Set();
+        // Use flat lists for massive size reduction (no keys repeated)
+        const hList = new Array(total);
+        const nList = new Array(total);
+        const mList = new Array(total);
 
-        for (let x = 0; x < this.logicalWidth; x++) {
-            data.grid[x] = [];
-            for (let z = 0; z < this.logicalDepth; z++) {
+        let hasMoisture = false;
+
+        for (let x = 0; x < W; x++) {
+            for (let z = 0; z < D; z++) {
+                const idx = x * D + z;
                 const cell = this.grid[x][z];
-                // Only save non-default check
-                const cellData = {};
-
-                // Truncate Precision (2 decimal places)
-                // Math.round(num * 100) / 100
-                cellData.h = Math.round(cell.height * 100) / 100;
-                cellData.n = Math.round(cell.noise * 100) / 100;
+                hList[idx] = Math.round(cell.height * 100) / 100;
+                nList[idx] = Math.round(cell.noise * 100) / 100;
                 if (cell.moisture !== undefined) {
-                    cellData.m = Math.round(cell.moisture * 100) / 100;
+                    mList[idx] = Math.round(cell.moisture * 100) / 100;
+                    hasMoisture = true;
+                } else {
+                    mList[idx] = 0;
                 }
-
-                if (cell.hasBuilding) {
-                    cellData.hb = 1;
-                    if (cell.building) {
-                        // Optimization: Verify building hasn't been saved yet
-                        // Robust deduplication using ID
-                        if (!savedBuildingIds.has(cell.building.id)) {
-                            savedBuildingIds.add(cell.building.id);
-
-                            // Save at current cell (effectively the "origin" for this save)
-                            const bx = (cell.building.gridX !== undefined) ? cell.building.gridX : cell.building.userData.gridX;
-                            const bz = (cell.building.gridZ !== undefined) ? cell.building.gridZ : cell.building.userData.gridZ;
-
-                            cellData.b = {
-                                t: cell.building.userData.type, // type
-                                p: cell.building.userData.population, // population
-                                x: bx,
-                                z: bz,
-                                r: (cell.building.rotation !== undefined) ? Math.round(cell.building.rotation * 100) / 100 : 0
-                            };
-                        }
-                    }
-                }
-
-                data.grid[x][z] = cellData;
             }
         }
+
+        // Buildings separated from Grid
+        const encodedBuildings = this.buildings.map(b => ({
+            t: b.userData.type,
+            p: b.userData.population,
+            l: b.userData.level || 1,
+            x: b.gridX !== undefined ? b.gridX : b.userData.gridX,
+            z: b.gridZ !== undefined ? b.gridZ : b.userData.gridZ,
+            r: (b.rotation !== undefined) ? Math.round(b.rotation * 100) / 100 : 0
+        }));
+
+        const data = {
+            logicalWidth: W,
+            logicalDepth: D,
+            version: 2,
+            h: hList,
+            n: nList,
+            b: encodedBuildings
+        };
+
+        if (hasMoisture) data.m = mList;
         return data;
     }
 
@@ -1823,111 +1814,134 @@ export class Terrain {
             }
         });
         this.buildings = [];
-
-        // Fix: Clear Entity Grid to prevent "Ghost Houses"
         this.initEntityGrid();
 
-        // Clear grid buildings references - Fast synchronous clear is fine usually, 
-        // but if map is huge, might need chunking too. Let's chunk logic width.
-        const yieldInterval = 10; // Yield every 10 rows
+        const yieldInterval = 10;
 
+        // Fast Clear Grid State
         for (let x = 0; x < this.logicalWidth; x++) {
-            // Yield periodically
             if (x % yieldInterval === 0) await new Promise(resolve => setTimeout(resolve, 0));
-
             for (let z = 0; z < this.logicalDepth; z++) {
                 const cell = this.grid[x][z];
-                if (cell.hasBuilding && cell.building) {
-                    this.scene.remove(cell.building);
-                }
+                if (cell.hasBuilding && cell.building) this.scene.remove(cell.building);
                 cell.hasBuilding = false;
                 cell.building = null;
             }
         }
 
-        // Restore Grid
         this.logicalWidth = data.logicalWidth;
         this.logicalDepth = data.logicalDepth;
 
-        for (let x = 0; x < this.logicalWidth; x++) {
-            // Yield periodically (Loading Bar effect?)
-            if (x % yieldInterval === 0) {
-                await new Promise(resolve => setTimeout(resolve, 0));
-                if (onProgress) {
-                    const pct = Math.floor((x / this.logicalWidth) * 100);
-                    onProgress(pct);
+        // V2 Optimized Format Check (Structure of Arrays)
+        // If data.h is Array, use V2.
+        if ((data.version === 2) || (data.h && Array.isArray(data.h))) {
+            const hList = data.h;
+            const nList = data.n;
+            const mList = data.m;
+            const D = this.logicalDepth;
+
+            for (let x = 0; x < this.logicalWidth; x++) {
+                // Yield periodically
+                if (x % yieldInterval === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                    if (onProgress) onProgress(Math.floor((x / this.logicalWidth) * 100));
+                }
+
+                for (let z = 0; z < this.logicalDepth; z++) {
+                    const idx = x * D + z;
+                    this.grid[x][z].height = hList[idx];
+                    this.grid[x][z].noise = nList[idx];
+                    if (mList) this.grid[x][z].moisture = mList[idx];
                 }
             }
 
-            for (let z = 0; z < this.logicalDepth; z++) {
-                const cellData = data.grid[x][z];
-                // Support legacy format check? 
-                // Checks if 'h' exists, otherwise use 'height'.
-                const h = (cellData.h !== undefined) ? cellData.h : cellData.height;
-                const n = (cellData.n !== undefined) ? cellData.n : cellData.noise;
+            // Restore Buildings from Separate List
+            if (data.b && Array.isArray(data.b)) {
+                data.b.forEach(bd => {
+                    const restoreData = {
+                        gridX: bd.x,
+                        gridZ: bd.z,
+                        type: bd.t,
+                        population: bd.p,
+                        level: bd.l || 1,
+                        rotation: bd.r
+                    };
 
-                this.grid[x][z].height = h;
-                this.grid[x][z].noise = n;
-                if (cellData.m !== undefined) {
-                    this.grid[x][z].moisture = cellData.m;
-                } else if (cellData.moisture !== undefined) {
-                    this.grid[x][z].moisture = cellData.moisture;
+                    switch (bd.t) {
+                        case 'house': this.restoreHouse(restoreData); break;
+                        case 'mansion': this.restoreMansion(restoreData); break;
+                        case 'castle': this.restoreCastle(restoreData); break;
+                        case 'tower': this.restoreTower(restoreData); break;
+                        case 'barracks': this.restoreBarracks(restoreData); break;
+                        case 'goblin_hut': this.restoreGoblinHut(restoreData); break;
+                        case 'cave': this.restoreCave(restoreData); break;
+                        case 'farm': this.restoreFarm(restoreData); break;
+                        default: console.warn("Unknown building type:", bd.t);
+                    }
+                });
+            }
+
+        } else {
+            // Legacy V1 Format (Grid Objects)
+            console.log("[Terrain] Deserializing Legacy Format...");
+            for (let x = 0; x < this.logicalWidth; x++) {
+                if (x % yieldInterval === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                    if (onProgress) onProgress(Math.floor((x / this.logicalWidth) * 100));
                 }
 
-                // Restore Buildings
-                // Optimized format: hb (hasBuilding), b (building object with t, p, x, z, r)
-                // Legacy: hasBuilding, building (type, population...)
+                for (let z = 0; z < this.logicalDepth; z++) {
+                    const cellData = data.grid[x][z];
+                    const h = (cellData.h !== undefined) ? cellData.h : cellData.height;
+                    const n = (cellData.n !== undefined) ? cellData.n : cellData.noise;
 
-                let hasB = cellData.hb || cellData.hasBuilding;
-                let bData = cellData.b || cellData.building;
+                    this.grid[x][z].height = h;
+                    this.grid[x][z].noise = n;
 
-                if (hasB && bData) {
-                    // Only restore if we are at the origin of the building to prevent duplication
-                    // Check coords
-                    const bx = (bData.x !== undefined) ? bData.x : bData.gridX;
-                    const bz = (bData.z !== undefined) ? bData.z : bData.gridZ;
+                    if (cellData.m !== undefined) this.grid[x][z].moisture = cellData.m;
+                    else if (cellData.moisture !== undefined) this.grid[x][z].moisture = cellData.moisture;
 
-                    if (bx === x && bz === z) {
-                        const type = bData.t || bData.type;
-                        // Map simplified keys to full expected object
-                        const fullData = {
-                            gridX: bx,
-                            gridZ: bz,
-                            type: type,
-                            population: (bData.p !== undefined) ? bData.p : bData.population,
-                            rotation: (bData.r !== undefined) ? bData.r : bData.rotation
-                        };
+                    // Legacy embedded buildings
+                    let hasB = cellData.hb || cellData.hasBuilding;
+                    let bData = cellData.b || cellData.building;
 
-                        if (type === 'house') {
-                            this.restoreHouse(fullData);
-                        } else if (type === 'farm') {
-                            this.restoreFarm(fullData);
-                        } else if (type === 'mansion') {
-                            this.restoreMansion(fullData);
-                        } else if (type === 'castle') {
-                            // Legacy: Convert to Mansion or House?
-                            // User said "Abolish House/Farm, Rename Castle to House".
-                            // If loading OLD castle, convert to NEW House (visual reuse).
-                            // But old castle was 2x2. New House is 1x1.
-                            // Safe fallback: Convert to Mansion (3x3)? Or keep as 'castle' legacy?
-                            // Better: `restoreCastle` (Legacy) kept for compatibility, OR mapped to Mansion?
-                            // Let's keep `restoreCastle` but maybe deprecate it.
-                            this.restoreCastle(fullData);
-                        } else if (type === 'goblin_hut') {
-                            this.restoreGoblinHut(fullData);
-                        } else if (type === 'tower') {
-                            // Backward Compat: Generate Squad ID if missing
-                            if (fullData.userData && !fullData.userData.squadId) {
-                                fullData.userData.squadId = window.game.registerSquad('tower');
+                    if (hasB && bData) {
+                        const bx = (bData.x !== undefined) ? bData.x : bData.gridX;
+                        const bz = (bData.z !== undefined) ? bData.z : bData.gridZ;
+
+                        if (bx === x && bz === z) {
+                            const type = bData.t || bData.type;
+                            const fullData = {
+                                gridX: bx,
+                                gridZ: bz,
+                                type: type,
+                                population: (bData.p !== undefined) ? bData.p : bData.population,
+                                rotation: (bData.r !== undefined) ? bData.r : bData.rotation
+                            };
+
+                            if (type === 'house') {
+                                this.restoreHouse(fullData);
+                            } else if (type === 'farm') {
+                                this.restoreFarm(fullData);
+                            } else if (type === 'mansion') {
+                                this.restoreMansion(fullData);
+                            } else if (type === 'castle') {
+                                this.restoreCastle(fullData);
+                            } else if (type === 'goblin_hut') {
+                                this.restoreGoblinHut(fullData);
+                            } else if (type === 'tower') {
+                                if (fullData.userData && !fullData.userData.squadId) {
+                                    fullData.userData.squadId = window.game.registerSquad('tower');
+                                }
+                                this.restoreTower(fullData);
+                            } else if (type === 'barracks') {
+                                if (fullData.userData && !fullData.userData.squadId) {
+                                    fullData.userData.squadId = window.game.registerSquad('barracks');
+                                }
+                                this.restoreBarracks(fullData);
+                            } else if (type === 'cave') {
+                                this.restoreCave(fullData);
                             }
-                            this.restoreTower(fullData);
-                        } else if (type === 'barracks') {
-                            if (fullData.userData && !fullData.userData.squadId) {
-                                fullData.userData.squadId = window.game.registerSquad('barracks');
-                            }
-                            this.restoreBarracks(fullData);
-                        } else if (type === 'cave') {
-                            this.restoreCave(fullData);
                         }
                     }
                 }
@@ -1945,6 +1959,8 @@ export class Terrain {
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
+            building.level = data.level || 1;
+            building.userData.level = data.level || 1;
             if (data.rotation !== undefined) building.rotation = data.rotation;
         }
     }
@@ -1962,15 +1978,21 @@ export class Terrain {
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
+            building.level = data.level || 1;
+            building.userData.level = data.level || 1;
             if (data.rotation !== undefined) building.rotation = data.rotation;
         }
     }
 
     // Legacy support
     restoreCastle(data) {
-        // Keep old logic for old saves, or try to upgrade
-        // For now, minimal support to prevent crash
-        this.restoreMansion(data); // Upgrade to Mansion?
+        const b = this.addBuilding('castle', data.gridX, data.gridZ, true);
+        if (b) {
+            b.population = data.population || 0;
+            b.userData.population = data.population || 0;
+            b.level = data.level || 2;
+            b.userData.level = data.level || 2;
+        }
     }
 
     updateMeshPosition(camera) {
@@ -2052,7 +2074,7 @@ export class Terrain {
         this.pathCache = [];
     }
 
-    findPath(sx, sz, ex, ez) {
+    findPath(sx, sz, ex, ez, maxStepsParam = 0) {
         // Budget Check
         this.pathfindingCalls = (this.pathfindingCalls || 0) + 1;
 
@@ -2080,9 +2102,7 @@ export class Terrain {
 
         // --- 2. BUDGET CHECK (Skip Calculation if overloaded) ---
         // Only applies if we didn't find a cache.
-        // --- 2. BUDGET CHECK (Skip Calculation if overloaded) ---
-        // Only applies if we didn't find a cache.
-        if (this.pathfindingCalls > 10) { // Reduced from 50 to 10 to fix lag
+        if (this.pathfindingCalls > 50) { // Reduced from 100 to 50 to balance with higher maxSteps
             return null;
         }
 
@@ -2091,6 +2111,7 @@ export class Terrain {
         // Validate Start/End
         const W = this.logicalWidth;
         const H = this.logicalDepth;
+        if (maxStepsParam) console.log(`[Terrain] findPath with custom limit: ${maxStepsParam}`);
 
         sx = Math.round(sx); sz = Math.round(sz);
         ex = Math.round(ex); ez = Math.round(ez);
@@ -2101,7 +2122,61 @@ export class Terrain {
         ez = ((ez % H) + H) % H;
 
         if (sx < 0 || sx >= W || sz < 0 || sz >= H) return null;
-        if (!this.grid[sx] || !this.grid[sx][sz] || !this.grid[ex] || !this.grid[ex][ez]) return null;
+
+        // FIX: Invalid Start Node Recovery (If unit is slightly on water/grid edge)
+        if (!this.grid[sx] || !this.grid[sx][sz] || this.grid[sx][sz].height <= 0) {
+            // Search radius 1 for valid land
+            let found = false;
+            for (let dx = -1; dx <= 1; dx++) {
+                for (let dz = -1; dz <= 1; dz++) {
+                    if (dx === 0 && dz === 0) continue;
+                    let nsx = sx + dx;
+                    let nsz = sz + dz;
+                    // Wrap
+                    if (nsx < 0) nsx += W; if (nsx >= W) nsx -= W;
+                    if (nsz < 0) nsz += H; if (nsz >= H) nsz -= H;
+
+                    if (this.grid[nsx] && this.grid[nsx][nsz] && this.grid[nsx][nsz].height > 0) {
+                        sx = nsx;
+                        sz = nsz;
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+            if (!found) return null; // Truly in water
+        }
+
+        if (!this.grid[ex] || !this.grid[ex][ez]) return null;
+
+        // FIX: Start Node already fixed above.
+        // FIX: End Node Recovery (If target is slightly on water)
+        if (this.grid[ex][ez].height <= 0) {
+            let found = false;
+            // Radius 2 search (slightly wider for landing spots)
+            for (let r = 1; r <= 2; r++) {
+                for (let dx = -r; dx <= r; dx++) {
+                    for (let dz = -r; dz <= r; dz++) {
+                        if (dx === 0 && dz === 0) continue;
+                        let nex = ex + dx;
+                        let nez = ez + dz;
+                        if (nex < 0) nex += W; if (nex >= W) nex -= W;
+                        if (nez < 0) nez += H; if (nez >= H) nez -= H;
+
+                        if (this.grid[nex] && this.grid[nex][nez] && this.grid[nex][nez].height > 0) {
+                            ex = nex;
+                            ez = nez;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) break;
+                }
+                if (found) break;
+            }
+            if (!found) return null; // Target is deep water
+        }
 
         const startNode = { x: sx, z: sz, g: 0, h: 0, f: 0, parent: null };
         const openList = [startNode];
@@ -2111,16 +2186,36 @@ export class Terrain {
         const closedSet = new Set(); // Stores "x,z" keys
 
         let steps = 0;
-        const maxSteps = 3000; // Reduced from 10000 to 3000 to prevent main thread blocking
+        const maxSteps = maxStepsParam > 0 ? maxStepsParam : 40000; // Increased to 40000 to escape deep traps
+
+        let bestNode = startNode;
+        let minH = Infinity;
 
         while (openList.length > 0) {
             steps++;
-            if (steps > maxSteps) return null; // Too complex
+            if (steps > maxSteps) {
+                console.log(`[Terrain] findPath MAX STEPS (${maxSteps}) Exceeded. Returning Partial Path to closest node (${bestNode.x},${bestNode.z} h:${bestNode.h.toFixed(1)}).`);
+
+                // Reconstruct Partial Path
+                const path = [];
+                let curr = bestNode;
+                while (curr) {
+                    path.push({ x: curr.x, z: curr.z });
+                    curr = curr.parent;
+                }
+                return path.reverse();
+            }
 
             // Sort (Optimizable with Heap, but Array.sort is fast for small N)
             // Tip: Insert in order to avoid full sort? For now, sort is fine.
             openList.sort((a, b) => a.f - b.f);
             const current = openList.shift();
+
+            // Track Best Node (Closest to Target by Heuristic)
+            if (current.h < minH) {
+                minH = current.h;
+                bestNode = current;
+            }
 
             const key = `${current.x},${current.z}`;
             openMap.delete(key);
@@ -2147,9 +2242,12 @@ export class Terrain {
                 return resultPath;
             }
 
+            // 8-Way Movement (Supports Diagonal Traversal)
             const neighbors = [
-                { x: 1, z: 0 }, { x: -1, z: 0 },
-                { x: 0, z: 1 }, { x: 0, z: -1 }
+                { x: 1, z: 0, cost: 1 }, { x: -1, z: 0, cost: 1 },
+                { x: 0, z: 1, cost: 1 }, { x: 0, z: -1, cost: 1 },
+                { x: 1, z: 1, cost: 1.414 }, { x: 1, z: -1, cost: 1.414 },
+                { x: -1, z: 1, cost: 1.414 }, { x: -1, z: -1, cost: 1.414 }
             ];
 
             for (const n of neighbors) {
@@ -2163,17 +2261,26 @@ export class Terrain {
 
                 const nKey = `${nx},${nz}`;
                 if (closedSet.has(nKey)) continue;
-                if (!this.grid[nx][nz]) continue;
+                if (!this.grid[nx] || !this.grid[nx][nz]) continue; // Guard against undefined grid
 
                 const hStart = this.grid[current.x][current.z].height;
                 const hEnd = this.grid[nx][nz].height;
 
                 if (hEnd <= 0) continue; // Water
-                if (Math.abs(hEnd - hStart) > 2.0) continue; // Too steep
-                // if (this.grid[nx][nz].hasBuilding) continue; // Blocked by Building (Removed to allow traversing owned territory)
+                // DEBUG: Log if blocked by wall
+                // if (hEnd > 8) console.log(`[Terrain] Wall at ${nx},${nz} (H:${hEnd})`);
 
                 const slope = Math.abs(hEnd - hStart);
-                const moveCost = 1 + (slope * 2);
+                if (slope > 2.0) continue; // Restore steepness limit
+
+                // SYNCHRONIZED COST MODEL (Matches Unit.js/Actor.js speed logic)
+                // We calculate cost in "virtual Seconds" to allow A* to find the fastest time path.
+                // Include Diagonal Distance Logic:
+                const distCost = (n.cost || 1.0);
+                let moveCost = 0.8 * distCost; // Base move time scaled by distance
+
+                if (hEnd > 8) moveCost += 2.0; // High Mountain Penalty (+2.0s)
+                moveCost += slope * 1.0; // Slope Penalty (+1.0s per height unit)
 
                 const gScore = current.g + moveCost;
 
@@ -2182,12 +2289,15 @@ export class Terrain {
 
                 if (existing && existing.g <= gScore) continue;
 
-                // Heuristic
+                // Heuristic (Scaled by base moveCost 800)
                 let dx = Math.abs(nx - ex);
                 let dz = Math.abs(nz - ez);
                 if (dx > W / 2) dx = W - dx;
                 if (dz > H / 2) dz = H - dz;
-                const hScore = dx + dz;
+
+                // Use Euclidean or Octile for 8-Way Admissibility
+                // Euclidean is safe and simple for terrain.
+                const hScore = Math.sqrt(dx * dx + dz * dz) * 0.8;
 
                 if (existing) {
                     // Update existing
@@ -2208,6 +2318,40 @@ export class Terrain {
         return null; // No path found
     }
 
+    unregisterAll(type) {
+        if (!this.entityGrid) return;
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+        let count = 0;
+        for (let x = 0; x < W; x++) {
+            for (let z = 0; z < D; z++) {
+                const cell = this.entityGrid[x][z];
+                if (!cell || cell.length === 0) continue;
+
+                for (let i = cell.length - 1; i >= 0; i--) {
+                    const e = cell[i];
+                    // Strict type check or sloppy check for goblins
+                    let isMatch = (type === 'goblin' && (e.type === 'goblin' || e.constructor.name === 'Goblin'));
+                    if (type !== 'goblin') isMatch = (e.type === type); // Generic
+
+                    if (isMatch) {
+                        // Dispose Visuals (Ghost Busting)
+                        if (e.mesh && e.mesh.parent) {
+                            e.mesh.parent.remove(e.mesh);
+                        }
+                        if (e.crossMesh && e.crossMesh.parent) {
+                            e.crossMesh.parent.remove(e.crossMesh);
+                        }
+                        // Remove from grid
+                        cell.splice(i, 1);
+                        count++;
+                    }
+                }
+            }
+        }
+        console.log(`[Terrain] Validated/Cleared ${count} entities of type '${type}'.`);
+    }
+
     // --- REGION HELPERS ---
 
     getRegion(x, z) {
@@ -2216,6 +2360,37 @@ export class Terrain {
     }
 
     // Efficiently find a valid point in a specific region
+    isAdjacentToRegion(cx, cz, targetRegionId) {
+        if (!this.grid) return false;
+
+        const neighbors = [
+            { x: cx + 1, z: cz },
+            { x: cx - 1, z: cz },
+            { x: cx, z: cz + 1 },
+            { x: cx, z: cz - 1 }
+        ];
+
+        const W = this.logicalWidth || 160;
+        const D = this.logicalDepth || 160;
+
+        for (const n of neighbors) {
+            let nx = n.x;
+            let nz = n.z;
+
+            // Wrap
+            if (nx < 0) nx = W - 1;
+            else if (nx >= W) nx = 0;
+            if (nz < 0) nz = D - 1;
+            else if (nz >= D) nz = 0;
+
+            const cell = this.grid[nx] ? this.grid[nx][nz] : null;
+            if (cell && cell.regionId === targetRegionId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     getRandomPointInRegion(regionId, centerX, centerZ, radius) {
         // Try N times to find a valid spot
         const W = this.logicalWidth;

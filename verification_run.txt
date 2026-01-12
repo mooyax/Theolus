@@ -1,0 +1,151 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/MinimalUnit.test.js > Minimal Unit Sanity > can instantiate Unit
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should retry migration after 30 seconds timeout
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+
+ 笨・src/tests/MinimalUnit.test.js (1 test) 4ms
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should retry migration after 30 seconds timeout
+Unit test-migrant migrating to 50,50 (Region undefined)
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+Unit test-migrant migrating to 50,50 (Region undefined)
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+
+stderr | src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+[Unit] Long-term Stuck (>20s). Forcing Reset. ID:test-migrant Pos:50,50
+
+stdout | src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[SleepState] Entering Sleep. Night=true
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should stop migrating if construction succeeds
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should stop migrating if construction succeeds
+Unit test-migrant migrating to 50,50 (Region undefined)
+[ActorDebug] Grid: 50,50 Target: 50,50 Diff: 0,0
+[ActorDebug] Next: 50,50
+[ActorDebug] Check Move 50,50 -> true
+Unit test-migrant built structure during migration. Stopping.
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > DEBUG: should log blockage reasons correctly
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:50,50 Special:false
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > DEBUG: should log blockage reasons correctly
+--- DEBUG: Testing Slope Block ---
+[Unit test-migrant] Blocked by Slope at 21,20 H:2->6
+--- DEBUG: Testing Water Block ---
+--- DEBUG: Testing Building Pass ---
+
+ 笶ｯ src/tests/MigrationImprovement.test.js (4 tests | 1 failed) 25ms
+     笨・should retry migration after 30 seconds timeout 9ms
+     ﾃ・should interrupt migration if enemy is found (Priority) 12ms
+     笨・should stop migrating if construction succeeds 1ms
+     笨・DEBUG: should log blockage reasons correctly 1ms
+ 笶ｯ src/tests/NightLogic.test.js (1 test | 1 failed) 19ms
+     ﾃ・Worker should engage pathfinding to House but is likely blocked 17ms
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should tag new requests with createdAt timestamp
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cleanup expired pending requests
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should NOT cleanup assigned requests even if old
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cancel request via Proximity Search
+Game constructor called
+
+stdout | src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should prioritize nearest request when cancelling
+Game constructor called
+
+ 笶ｯ src/tests/RequestLifecycle.test.js (5 tests | 5 failed) 326ms
+     ﾃ・should tag new requests with createdAt timestamp 97ms
+     ﾃ・should cleanup expired pending requests 77ms
+     ﾃ・should NOT cleanup assigned requests even if old 58ms
+     ﾃ・should cancel request via Proximity Search 50ms
+     ﾃ・should prioritize nearest request when cancelling 42ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 7 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+AssertionError: expected 'Migrating' to be 'Idle' // Object.is equality
+
+Expected: "Idle"
+Received: "Migrating"
+
+ 笶ｯ src/tests/MigrationImprovement.test.js:134:29
+    132|         Math.random = originalRandom; // Restore
+    133| 
+    134|         expect(unit.action).toBe('Idle'); // Should reset to Idle to l窶ｦ
+       |                             ^
+    135|         expect(unit.migrationTarget).toBeNull();
+    136|         expect(unit.targetGoblin).toBeTruthy();
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/7]竡ｯ
+
+ FAIL  src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
+AssertionError: expected +0 to be 10 // Object.is equality
+
+- Expected
++ Received
+
+- 10
++ 0
+
+ 笶ｯ src/tests/NightLogic.test.js:84:32
+     82|         // If it moves instantly due to 0 interval, isMoving might be 窶ｦ
+     83|         // Just check action is 'Going Home' or target is correct.
+     84|         expect(u1.targetGridX).toBe(10);
+       |                                ^
+     85|         expect(u1.action).toBe('Going Home');
+     86| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/7]竡ｯ
+
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should tag new requests with createdAt timestamp
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cleanup expired pending requests
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should NOT cleanup assigned requests even if old
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should cancel request via Proximity Search
+ FAIL  src/tests/RequestLifecycle.test.js > Game Request Lifecycle > should prioritize nearest request when cancelling
+TypeError: Cannot convert undefined or null to object
+ 笶ｯ Points.updateMorphTargets node_modules/three/build/three.core.js:29443:23
+ 笶ｯ new Points node_modules/three/build/three.core.js:29352:8
+ 笶ｯ Terrain.createMesh src/Terrain.js:555:26
+    553| 
+    554|         // We can reuse the main geometry directly because it has vert窶ｦ
+    555|         const dotsMesh = new THREE.Points(this.geometry, dotsMaterial);
+       |                          ^
+    556|         dotsMesh.position.set(0, 0, 0.05); // Slight lift to avoid Z-f窶ｦ
+    557| 
+ 笶ｯ Terrain.initTerrain src/Terrain.js:287:14
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ new Game src/Game.js:139:24
+ 笶ｯ src/tests/RequestLifecycle.test.js:130:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/7]竡ｯ
+
+
+ Test Files  3 failed | 1 passed (4)
+      Tests  7 failed | 4 passed (11)
+   Start at  21:19:27
+   Duration  1.82s (transform 960ms, setup 161ms, import 1.28s, tests 374ms, environment 2.70s)
+

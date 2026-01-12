@@ -1,0 +1,76 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/JobPathFailure.test.js[2m > [22m[2mJob Pathfinding Failure Handling[2m > [22m[2mshould abandon job if smartMove fails repeatedly
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 104,2. Force:false
+[Terrain] Building Added: cave at (104, 2) Size:1x1. Total: 1
+GoblinManager: Cave registered at 104,2 
+[GoblinManager] Clan clan_cave_104_2 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 6,156. Force:false
+[Terrain] Building Added: cave at (6, 156) Size:1x1. Total: 2
+GoblinManager: Cave registered at 6,156 
+[GoblinManager] Clan clan_cave_6_156 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 60,155. Force:false
+[Terrain] Building Added: cave at (60, 155) Size:1x1. Total: 3
+GoblinManager: Cave registered at 60,155 
+[GoblinManager] Clan clan_cave_60_155 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 70,56. Force:false
+[Terrain] Building Added: cave at (70, 56) Size:1x1. Total: 4
+GoblinManager: Cave registered at 70,56 
+[GoblinManager] Clan clan_cave_70_56 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 23,157. Force:false
+[Terrain] Building Added: cave at (23, 157) Size:1x1. Total: 5
+GoblinManager: Cave registered at 23,157 
+[GoblinManager] Clan clan_cave_23_157 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 9 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/JobPathFailure.test.js[2m > [22m[2mJob Pathfinding Failure Handling[2m > [22m[2mshould abandon job if smartMove fails repeatedly
+[22m[39m[Unit 1] Moving onto Rock at 1,0 H:10 (Speed Penalty)
+[Test Debug] unit.canMoveTo is: [Function: canMoveTo] {
+  _isMockFunction: [33mtrue[39m,
+  getMockImplementation: [36m[Function (anonymous)][39m,
+  mock: {
+    calls: [],
+    contexts: [],
+    instances: [],
+    invocationCallOrder: [],
+    settledResults: [],
+    results: [],
+    lastCall: [36m[Getter][39m
+  },
+  mockImplementation: [36m[Function: mockImplementation][39m,
+  mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+  withImplementation: [36m[Function: withImplementation][39m,
+  mockReturnThis: [36m[Function: mockReturnThis][39m,
+  mockReturnValue: [36m[Function: mockReturnValue][39m,
+  mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+  mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+  mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+  mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+  mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+  mockClear: [36m[Function: mockClear][39m,
+  mockReset: [36m[Function: mockReset][39m,
+  mockRestore: [36m[Function: mockRestore][39m,
+  mockName: [36m[Function: mockName][39m,
+  getMockName: [36m[Function: getMockName][39m,
+  [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+}
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+
+ [31m笶ｯ[39m src/tests/JobPathFailure.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 2140[2mms[22m[39m
+[31m     [31mﾃ・[31m should abandon job if smartMove fails repeatedly[39m[33m 2138[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 20:37:46
+[2m   Duration [22m 3.39s[2m (transform 365ms, setup 41ms, import 498ms, tests 2.14s, environment 474ms)[22m
+

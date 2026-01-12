@@ -1,0 +1,66 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Hotspot.test.js[2m > [22m[2mGlobal Battle Hotspots Logic[2m > [22m[2mClusters nearby battle reports
+[22m[39m[Game] New Battle Hotspot at 10,10 (Region:1)
+
+[90mstdout[2m | src/tests/Hotspot.test.js[2m > [22m[2mGlobal Battle Hotspots Logic[2m > [22m[2mDecays intensity
+[22m[39m[Game] New Battle Hotspot at 10,10 (Region:1)
+
+[90mstdout[2m | src/tests/Hotspot.test.js[2m > [22m[2mGlobal Battle Hotspots Logic[2m > [22m[2mMobilizes idle squads to intense hotspots (Updated Threshold)
+[22m[39m[Game] Mobilizing Squad 1 to Hotspot at 100,20 (Intensity:100.0)
+
+[90mstdout[2m | src/tests/Hotspot.test.js[2m > [22m[2mGlobal Battle Hotspots Logic[2m > [22m[2mMobilizes idle squads
+[22m[39m[Game] Mobilizing Squad 1 to Hotspot at 50,50 (Intensity:100.0)
+
+ [32m笨・[39m src/tests/Hotspot.test.js [2m([22m[2m6 tests[22m[2m)[22m[33m 469[2mms[22m[39m
+     [33m[2m笨・[22m[39m Clusters nearby battle reports [33m 458[2mms[22m[39m
+[90mstdout[2m | src/tests/JobIdempotency.test.js[2m > [22m[2mJob Assignment Idempotency[2m > [22m[2mshould NOT reset movement if claiming the same job twice
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 15,49. Force:false
+[Terrain] Building Added: cave at (15, 49) Size:1x1. Total: 1
+GoblinManager: Cave registered at 15,49 
+[GoblinManager] Clan clan_cave_15_49 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 36,92. Force:false
+[Terrain] Building Added: cave at (36, 92) Size:1x1. Total: 2
+GoblinManager: Cave registered at 36,92 
+[GoblinManager] Clan clan_cave_36_92 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 137,28. Force:false
+[Terrain] Building Added: cave at (137, 28) Size:1x1. Total: 3
+GoblinManager: Cave registered at 137,28 
+[GoblinManager] Clan clan_cave_137_28 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 147,54. Force:false
+[Terrain] Building Added: cave at (147, 54) Size:1x1. Total: 4
+GoblinManager: Cave registered at 147,54 
+[GoblinManager] Clan clan_cave_147_54 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 11,14. Force:false
+[Terrain] Building Added: cave at (11, 14) Size:1x1. Total: 5
+GoblinManager: Cave registered at 11,14 
+[GoblinManager] Clan clan_cave_11_14 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 11 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+
+[90mstdout[2m | src/tests/JobIdempotency.test.js[2m > [22m[2mJob Assignment Idempotency[2m > [22m[2mshould NOT reset movement if claiming the same job twice
+[22m[39m--- Test Start ---
+Calling first claim...
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+First claim finished. Success: [33mtrue[39m
+Simulating movement...
+Calling second claim...
+Second claim finished. Success: [33mtrue[39m
+Checking expectations...
+--- Test End ---
+
+ [32m笨・[39m src/tests/JobIdempotency.test.js [2m([22m[2m1 test[22m[2m)[22m[33m 2175[2mms[22m[39m
+     [33m[2m笨・[22m[39m should NOT reset movement if claiming the same job twice [33m 2172[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m7 passed[39m[22m[90m (7)[39m
+[2m   Start at [22m 14:12:57
+[2m   Duration [22m 3.61s[2m (transform 676ms, setup 85ms, import 578ms, tests 2.64s, environment 1.14s)[22m
+

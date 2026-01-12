@@ -1,0 +1,52 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/RefuseDistraction.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 157[2mms[22m[39m
+[31m     [31mﾃ・[31m should prioritize MANUAL move marker over autonomous HOUSE BUILDING[39m[32m 102[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT Switch to a better Auto-Job if Manual Job is active[39m[32m 53[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/RefuseDistraction.test.js > Refuse Distraction > should prioritize MANUAL move marker over autonomous HOUSE BUILDING
+TypeError: color.lerp is not a function
+ 笶ｯ Terrain.getBiomeColor src/Terrain.js:767:19
+    765|             let sandFactor = 1.0;
+    766|             if (moisture > 0.35) sandFactor = 1.0 - ((moisture - 0.35)窶ｦ
+    767|             color.lerp(sandColor, sandFactor);
+       |                   ^
+    768|         }
+    769| 
+ 笶ｯ Terrain.updateColors src/Terrain.js:696:36
+ 笶ｯ Terrain.calculateRegions src/Terrain.js:408:14
+ 笶ｯ Terrain.generateRandomTerrain src/Terrain.js:352:14
+ 笶ｯ Terrain.initTerrain src/Terrain.js:299:14
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ new Game src/Game.js:135:24
+ 笶ｯ src/tests/RefuseDistraction.test.js:119:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/RefuseDistraction.test.js > Refuse Distraction > should NOT Switch to a better Auto-Job if Manual Job is active
+TypeError: colorAttr.setXYZ is not a function
+ 笶ｯ Terrain.updateColors src/Terrain.js:697:27
+    695| 
+    696|                 const color = this.getBiomeColor(height, moisture, noi窶ｦ
+    697|                 colorAttr.setXYZ(i, color.r, color.g, color.b);
+       |                           ^
+    698|             }
+    699|         }
+ 笶ｯ Terrain.calculateRegions src/Terrain.js:408:14
+ 笶ｯ Terrain.generateRandomTerrain src/Terrain.js:352:14
+ 笶ｯ Terrain.initTerrain src/Terrain.js:299:14
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ new Game src/Game.js:135:24
+ 笶ｯ src/tests/RefuseDistraction.test.js:119:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 11:43:45
+[2m   Duration [22m 1.53s[2m (transform 450ms, setup 38ms, import 577ms, tests 157ms, environment 490ms)[22m
+

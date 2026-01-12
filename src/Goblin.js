@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 
 import { Actor } from './Actor.js';
+import { GoblinRaidState, GoblinCombatState, GoblinWanderState, GoblinBuildState } from './ai/states/GoblinStates.js';
+import { WanderState } from './ai/states/State.js';
+import { GoblinRetreatState } from './ai/states/GoblinStates.js';
 
 export class Goblin extends Actor {
     static nextId = 0;
@@ -8,6 +11,7 @@ export class Goblin extends Actor {
     static assets = {
         geometries: {},
         materials: {},
+        textures: {},
         initialized: false
     };
 
@@ -23,8 +27,15 @@ export class Goblin extends Actor {
         // Shared
         Goblin.assets.geometries.head = new THREE.BoxGeometry(0.2, 0.2, 0.2);
         Goblin.assets.geometries.ear = new THREE.ConeGeometry(0.05, 0.15, 4);
-        Goblin.assets.geometries.arm = new THREE.BoxGeometry(0.08, 0.25, 0.08);
-        Goblin.assets.geometries.leg = new THREE.BoxGeometry(0.1, 0.25, 0.1);
+
+        const armGeo = new THREE.BoxGeometry(0.08, 0.25, 0.08);
+        armGeo.translate(0, -0.1, 0); // Pivot at Top (Shoulder)
+        Goblin.assets.geometries.arm = armGeo;
+
+        const legGeo = new THREE.BoxGeometry(0.1, 0.25, 0.1);
+        legGeo.translate(0, -0.1, 0); // Pivot at Top (Hip)
+        Goblin.assets.geometries.leg = legGeo;
+
         Goblin.assets.geometries.club = new THREE.CylinderGeometry(0.03, 0.05, 0.4, 6);
         // New: Staff for Shaman
         Goblin.assets.geometries.staff = new THREE.BoxGeometry(0.04, 0.8, 0.04);
@@ -55,7 +66,58 @@ export class Goblin extends Actor {
             opacity: 1.0
         });
 
+        // Faces
+        Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0.15, 0.15);
+        Goblin.assets.geometries.facePlane.translate(0, 0, 0.105); // Just in front of head (0.2 depth / 2 + bias)
+
+        Goblin.assets.textures.face = Goblin.createFaceTexture();
+        Goblin.assets.materials.face = new THREE.MeshStandardMaterial({
+            map: Goblin.assets.textures.face,
+            transparent: true
+        });
+
         Goblin.assets.initialized = true;
+    }
+
+    static createFaceTexture() {
+        // Goblin Face: Greenish skin, angry eyes
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+
+        // Base Skin (Matches Normal Skin 0x55AA55 generally, but let's make it compatible with all)
+        // Actually Face Plane sits ON TOP of Head.
+        // If we want it to blend, we need transparent background?
+        // Unit uses specific skin color background.
+        // Goblins have different skin colors (Green, Dark Green, Blue, Red).
+        // Transparent background is best so head color shows through!
+        // Unit uses filled background. Let's try transparent first.
+
+        // Eyes (Yellow/Red)
+        ctx.fillStyle = '#FFFF00'; // Yellow Sclera
+        ctx.fillRect(10, 20, 15, 12); // Left Eye
+        ctx.fillRect(39, 20, 15, 12); // Right Eye
+
+        // Pupils (Black Slits)
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(16, 22, 3, 8);
+        ctx.fillRect(45, 22, 3, 8);
+
+        // Mouth (Jagged/Teeth)
+        ctx.fillStyle = '#330000'; // Dark mouth
+        ctx.beginPath();
+        ctx.moveTo(15, 45);
+        ctx.lineTo(49, 45);
+        ctx.lineTo(32, 55);
+        ctx.fill();
+
+        // Teeth (White)
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(18, 45, 4, 4);
+        ctx.fillRect(42, 45, 4, 4);
+
+        return new THREE.CanvasTexture(canvas);
     }
 
     constructor(scene, terrain, x, z, type = 'normal', clanId = null, raidTarget = null) {
@@ -63,19 +125,14 @@ export class Goblin extends Actor {
 
         super(scene, terrain, x, z, 'goblin');
 
-        this.type = type; // Entity sets type, but we override or enhance? 
-        // Entity ctor(..., type) sets this.type. 
-        // We passed 'goblin'. But we want 'normal'/'hobgoblin' as sub-type?
-        // Entity.type is used for Spatial Grid. 'goblin' is correct for Grid.
-        // We should store sub-type in another var if needed, or overwrite this.type.
-        // But Goblin.js uses this.type for stats.
-        // Let's store 'goblin' in super, and keep this.type as subType?
-        // Or just overwrite this.type = type.
-        this.type = type;
+        this.type = type || 'goblin';
+        this.clanId = clanId || 0;
+        this.scale = 1.0;
 
-        this.clanId = clanId;
-        // this.id = Goblin.nextId++; // Use Entity's ID or Goblin's?
-        // Let's stick to Goblin's ID sequence for now to avoid ID conflict fears.
+        // Ensure mesh group exists
+        if (this.scene && !this.scene.getObjectByName('GoblinGroup')) {
+            // managed by GoblinRenderer usually
+        }
         this.id = Goblin.nextId++;
 
         // Stats
@@ -83,12 +140,12 @@ export class Goblin extends Actor {
         this.isRanged = false;
 
         if (this.type === 'king') {
-            // King: 2x Knight (Knight HP ~600 -> King 1200)
+            // King: Boss Unit
             this.hp = 1200 + Math.floor(Math.random() * 200);
             this.maxHp = this.hp;
-            this.lifespan = 300; // Was 200. Now 5 mins.
-            this.damage = 200;
-            this.scale = 1.8;
+            this.lifespan = 300;
+            this.damage = 80; // NERF: 200 -> 80 (Prevent 1-shotting Workers/3-shotting Knights)
+            this.scale = 2.0; // King Size (Clear difference)
             this.attackRate = 1.5;
         } else if (this.type === 'shaman') {
             this.hp = 500 + Math.floor(Math.random() * 100);
@@ -98,42 +155,51 @@ export class Goblin extends Actor {
             this.scale = 1.2;
             this.isRanged = true;
             this.attackRate = 2.0;
+            this.attackRange = 8.0; // Standardized Ranged
         } else if (this.type === 'hobgoblin') {
             this.hp = 60 + Math.floor(Math.random() * 30);
             this.maxHp = this.hp;
             this.lifespan = 200 + Math.random() * 40; // Was 80
             this.damage = 15;
-            this.scale = 1.2;
+            this.scale = 1.4; // Hobgoblin Size
         } else {
             // Normal
             this.hp = 30 + Math.floor(Math.random() * 10);
             this.maxHp = this.hp;
             // NERF: Lifespan reduced slightly from 120 to 100 to reduce swarm accumulation.
             // Still enough to reach base (travel time ~80s now).
+            // Pacing: Realtime duration ~500s matched via aging rate.
             this.lifespan = 100 + Math.random() * 20;
             this.damage = 8;
         }
 
-        this.age = 0;
+        this.age = 20; // Starts at 20 (Adult) to match Units
         this.isDead = false;
         this.isFinished = false;
 
         // AI State
-        this.state = 'idle';
+        // AI State
+        this.attackCooldown = 0;
+        this.targetUnit = null; // Current target unit
+        this.targetBuilding = null; // Current target building
+        this.ignoredTargets = new Map(); // id -> timestamp until ignored (Blacklist)
+
+        // Initialize State properly
         if (raidTarget) {
-            this.state = 'raiding';
             this.raidGoal = { ...raidTarget };
             // Add randomness to spread out raids
             this.raidGoal.x += (Math.random() - 0.5) * 8;
             this.raidGoal.z += (Math.random() - 0.5) * 8;
             console.log(`Goblin ${this.id} SPAWNED FOR RAIDING! Target: ${this.raidGoal.x.toFixed(0)},${this.raidGoal.z.toFixed(0)}`);
+            this.changeState(new GoblinRaidState(this));
+        } else {
+            this.changeState(new GoblinWanderState(this));
         }
-        this.attackCooldown = 0;
-        this.targetUnit = null; // Current target unit
-        this.targetBuilding = null; // Current target building
-        this.ignoredTargets = new Map(); // id -> timestamp until ignored (Blacklist)
-        // this.attackRate set above or default
         if (!this.attackRate) this.attackRate = 1.0;
+
+        // Visual Props
+        this.hasStaff = (this.type === 'shaman');
+        this.hasClub = (this.type === 'goblin' || this.type === 'hobgoblin');
 
         // RENDER STATE (Data Only)
         this.position = new THREE.Vector3(); // For smooth visual movement
@@ -156,242 +222,123 @@ export class Goblin extends Actor {
         this.moveTimer = 0;
         // NERF: Speed reduced. 800ms -> 1000ms. (Was originally 1600ms).
         // Middle ground to make them catchable by workers but not snails.
-        this.moveInterval = 1000;
-        this.lastTime = -9999; // Force immediate logic update on first frame
-        this.baseMoveDuration = 500; // Animation speed adjusted
+        this.moveInterval = 1.0;
+        this.lastTime = -99.0; // Force immediate logic update on first frame
+        this.baseMoveDuration = 1.0; // Matched to Interval for continuous walking
         this.moveDuration = this.baseMoveDuration;
 
         // Register in Spatial Grid
         this.terrain.registerEntity(this, this.gridX, this.gridZ, 'goblin');
     }
 
-    // Legacy methods removed.
-    // See lines 900+ for canonical implementation of takeDamage and die.
-
-    // Attack Methods are defined below (lines ~760) to keep file structure clean.
-
-    // REMOVED: createMesh, updateVisuals, updatePosition (visual part)
-
+    // --- LOGIC UPDATE ---
     updateLogic(time, deltaTime, units, buildings) {
         if (this.isDead || this.isFinished) return;
 
-        this.age += deltaTime;
+        // Aging: Slower for 100-Day Progression (0.2 years per sec)
+        this.age += deltaTime * 0.2;
+
         if (this.age >= this.lifespan) {
             this.die();
             return;
         }
-
-        // Freeze Diagnostic
-        if (!this.isMoving && this.age > 5.0 && this.age < 5.5) {
-            console.log(`[Goblin Debug ${this.id}] 5s Check: State=${this.state} Pos=${this.gridX},${this.gridZ} TargetU=${!!this.targetUnit} TargetB=${!!this.targetBuilding} LastTimeDiff=${time - this.lastTime}`);
+        // FAILSAFE: If age is corrupted or die() failed, force logic.
+        if (this.age > 400 && this.type !== 'king') {
+            console.warn(`Goblin ${this.id} exceeded max lifespan (${this.age}). Forcing death.`);
+            this.die("Exceeded Lifespan");
+            return;
         }
 
-        // Water Death Check
+        // --- PHYSICAL UPDATES (Run before AI State) ---
+        // 1. Water Death Check
         const currentH = this.terrain.getTileHeight(this.gridX, this.gridZ);
         if (currentH <= 0) {
             this.die();
             return;
         }
 
-        // Update Animation State
-        if (this.isMoving) {
+        // 2. Update Animation State & Position
+        // CRITICAL: updateMovement must be called EVERY frame for visuals and arrival logic.
+        // It is now also called in GoblinManager, but we keep it here as a safety fallback
+        // or ensure it's not blocked by early returns.
+        if (this.updateMovement) {
             this.updateMovement(time);
         }
 
-        // If attacking, maybe swing arm?
+        // 3. Cooldowns
         if (this.attackCooldown > 0) {
             this.attackCooldown -= deltaTime;
-            // Simple strike anim: Lift and swing.
         }
 
-        // ... Existing AI Logic ...
-        // Debug Log only for one goblin occasionally
-        if (Math.random() < 0.005) {
-            console.log(`[GoblinAI] ID:${this.id} State:${this.state} Moving:${this.isMoving} TargetU:${!!this.targetUnit} TargetB:${!!this.targetBuilding} Pos:${this.gridX.toFixed(1)},${this.gridZ.toFixed(1)}`);
-        }
-
-        // AI Logic
-        if (!this.isMoving) {
-            // Migration Step
-            if (this.state === 'migrating' && this.migrationTarget) {
-                // STAGNATION CHECK (Migration)
-                const dist = this.getDistance(this.migrationTarget.x, this.migrationTarget.z);
-                const currentMin = this.minDistToTarget || Infinity;
-                if (dist < currentMin - 0.5) {
-                    this.minDistToTarget = dist;
-                    this.pathStagnation = 0;
-                } else {
-                    this.pathStagnation = (this.pathStagnation || 0) + deltaTime;
-                }
-
-                if (this.pathStagnation > 5.0) {
-                    console.log(`[Goblin ${this.id}] Migration Stagnation. Force Re-path.`);
-                    this.path = null;
-                    this.lastPathTime = 0; // Force A*
-                    this.pathStagnation = 0;
-                    this.minDistToTarget = dist;
-                }
-
-                // USE ACTOR SMART MOVE
-                const moved = this.smartMove(this.migrationTarget.x, this.migrationTarget.z, time);
-                if (!moved && !this.isMoving) {
-                    // Blocked?
-                    // handleMoveFailure?
-                }
-
-                // Check if arrived
-                if (dist < 2.0) {
-                    console.log(`Goblin ${this.id} finished migrating.`);
-                    this.state = 'idle';
-                    this.migrationTarget = null;
-                }
-
-                // Check for opportunistic targets
-                this.findTarget(units, buildings, time);
-                if (this.targetUnit || this.targetBuilding) {
-                    console.log(`Goblin ${this.id} interrupted migration for target!`);
-                    this.state = 'idle';
-                    this.migrationTarget = null;
-                }
-                return;
-            }
-
-            // 1. Look for targets
-            this.findTarget(units, buildings);
-
-            // Safety: Check if target died meanwhile
-            if (this.targetUnit && this.targetUnit.isDead) {
-                this.targetUnit = null;
-                this.chaseTimer = 0;
-            }
-
-            // Memory Failure Check
-            if (this.currentMemoryTarget && !this.targetUnit && !this.targetBuilding) {
-                const dist = this.getDistance(this.currentMemoryTarget.x, this.currentMemoryTarget.z);
-                // STAGNATION CHECK (Memory)
-                const currentMin = this.minDistToTarget || Infinity;
-                if (dist < currentMin - 0.5) {
-                    this.minDistToTarget = dist;
-                    this.pathStagnation = 0;
-                } else {
-                    this.pathStagnation = (this.pathStagnation || 0) + deltaTime;
-                }
-                if (this.pathStagnation > 5.0) {
-                    console.log(`[Goblin ${this.id}] Memory Target Stagnation. Abort.`);
-                    this.currentMemoryTarget = null; // Give up
-                    this.pathStagnation = 0;
-                    this.moveRandomly(time); // Wander away
-                    return;
-                }
-
-                // Existing Arrival Check
-                if (dist < 5.0) {
-                    if (window.game && window.game.goblinManager) {
-                        window.game.goblinManager.reportRaidFailure(this.clanId, this.currentMemoryTarget.x, this.currentMemoryTarget.z);
-                    }
-                    this.currentMemoryTarget = null;
-                }
-            }
-
-            // 2. Act based on target
-            if (this.targetUnit) {
-                this.chaseTimer = (this.chaseTimer || 0) + deltaTime;
-                if (this.chaseTimer > 10.0) {
-                    // Give up chasing if takes too long
-                    this.targetUnit = null;
-                    this.chaseTimer = 0;
-                    this.moveRandomly(time);
-                } else {
-                    // USE ACTOR SMART MOVE
-                    this.smartMove(this.targetUnit.gridX, this.targetUnit.gridZ, time);
-
-                    if (!this.targetUnit) return; // Safety check if target voided during move
-
-                    // Attack if close
-                    // Castle range 2.5, Normal 1.5. Unit is small.
-                    if (this.getDistance(this.targetUnit.gridX, this.targetUnit.gridZ) <= 1.8) {
-                        this.attackTarget(time, deltaTime); // Call attackTarget
-                        this.chaseTimer = 0; // Reset on successful attack
-                    }
-                }
-            } else if (this.targetBuilding) {
-                // console.log(`[GoblinAI] ${this.id} Moving to Building ${this.targetBuilding.userData.type}`);
-                this.smartMove(this.targetBuilding.gridX, this.targetBuilding.gridZ, time);
-                // Destroy if close (Perimeter check)
-                // Fix: Increased range to 2.5 to allow swarming/crowding goblins to attack
-                if (this.getDistanceToBuilding(this.targetBuilding) <= 2.5) {
-                    this.attackTarget(time, deltaTime); // Call attackTarget
-                }
-            } else {
-                // No current target.
-
-                // RAIDING STATE LOGIC
-                if (this.state === 'raiding' && this.raidGoal) {
-                    const dist = this.getDistance(this.raidGoal.x, this.raidGoal.z);
-
-                    // STAGNATION CHECK (Raiding)
-                    const currentMin = this.minDistToTarget || Infinity;
-                    if (dist < currentMin - 0.5) {
-                        this.minDistToTarget = dist;
-                        this.pathStagnation = 0;
-                    } else {
-                        this.pathStagnation = (this.pathStagnation || 0) + deltaTime;
-                    }
-
-                    if (this.pathStagnation > 5.0) {
-                        console.log(`[Goblin ${this.id}] Raid Stagnation. Force Re-path.`);
-                        this.path = null;
-                        this.lastPathTime = 0;
-                        this.pathStagnation = 0;
-                        this.minDistToTarget = dist;
-                    }
-
-                    // Check arrival
-                    if (dist < 5.0) {
-                        console.log(`Goblin ${this.id} arrived at Raid Target. Switch to IDLE (Hunt).`);
-                        this.state = 'idle';
-                        this.raidGoal = null;
-                    } else {
-                        // Move towards goal
-                        this.smartMove(this.raidGoal.x, this.raidGoal.z, time);
-                        return; // Skip wandering
-                    }
-                }
-
-                // Wander
-                if (!this.isMoving && time - this.lastTime > this.moveInterval) {
-                    // Stagnation Check
-                    this.wanderCount = (this.wanderCount || 0) + 1;
-
-                    // Try to build Hut (Rarely)
-                    // Balance: Reduced to 1.0% (was 2.0%, originally 0.5%)
-                    let built = false;
-                    if (Math.random() < 0.02) { // Increased chance slightly to reset wanderCount?
-                        built = this.tryBuildHut();
-                    }
-
-                    if (built) {
-                        this.wanderCount = 0;
-                    } else if (this.wanderCount > 10) { // Approx 20-30s of idleness
-                        console.log(`Goblin ${this.id} bored. Migrating...`);
-                        this.migrate(time);
-                        this.wanderCount = 0;
-                        this.lastTime = time; // Reset timer so we don't spam migrate
-                        return; // Skip standard wander
-                    }
-
-                    this.moveRandomly(time);
-                    this.lastTime = time;
-                } else {
-                    // console.log(`[GoblinAI] ${this.id} Waiting...`);
-                }
-            }
+        // --- AI STATE MACHINE ---
+        if (this.state && typeof this.state.update === 'function') {
+            this.state.update(time, deltaTime, units, buildings);
+            return;
         }
     }
 
+    executeCombatLogic(time, deltaTime) {
+        const target = this.targetUnit || this.targetBuilding;
+        if (!target) return;
+
+        // 1. Distance Check
+        let dist = 999;
+        if (this.targetUnit) {
+            dist = this.getDistance(this.targetUnit.gridX, this.targetUnit.gridZ);
+        } else if (this.targetBuilding) {
+            dist = this.getDistanceToBuilding(this.targetBuilding);
+        }
+
+
+        // 2. Range Logic
+        let range = 1.5; // Default Melee (Standardized)
+        if (this.isRanged) range = this.attackRange || 8.0;
+
+        // Adjust range for buildings (hitbox)
+        // getDistanceToBuilding usually calculates to EDGE.
+        // So generic range 2.5 is fine for edge-to-edge logic if implemented correctly.
+        // But checking Line 566: attackUnit uses center distance check.
+
+        if (dist > range) {
+            // Chase
+            let tx = target.gridX;
+            let tz = target.gridZ;
+
+            // Optimization: Only recalc approach point occasionally?
+            // Or use smartMove's linear interpolation if target hasn't changed much.
+            // But simple:
+            const approach = this.getApproachPoint(target);
+            if (approach) {
+                tx = approach.x;
+                tz = approach.z;
+            }
+
+            if (!this.smartMove(tx, tz, time)) {
+                // FAILED TO MOVE (Stuck/Unreachable)
+                const now = window.game ? window.game.simTotalTimeSec : time;
+                if (this.targetUnit) {
+                    console.log(`Goblin ${this.id} stuck reaching target ${this.targetUnit.id}. Blacklisting.`);
+                    // Blacklist for 10 seconds
+                    this.ignoredTargets.set(this.targetUnit.id, now + 10);
+                    this.targetUnit = null;
+                } else if (this.targetBuilding) {
+                    // Building unreachable? Maybe just skip turn or random move.
+                    // But strictly, we should probably ignore it too.
+                }
+            }
+        } else {
+            // Attack
+            // Ensure we stop moving to attack clearly (visuals)
+            // this.isMoving = false; // Optional, smartMove handles it if we don't call it? 
+            // Stick to attackTarget logic.
+            this.attackTarget(time, deltaTime);
+        }
+    }
+
+
     findTarget(units, buildings) {
         // Frustration Check
-        const time = window.game ? window.game.gameTotalTime : Date.now();
+        const time = window.game ? window.game.simTotalTimeSec : 0;
         if (this.frustratedUntil && time < this.frustratedUntil) return;
 
         // If we have a target, check if valid
@@ -406,12 +353,16 @@ export class Goblin extends Actor {
 
         // Find Unit
         // Reduced ranges per User Request (Too fast detection)
-        const searchDistUnits = (this.state === 'raiding') ? 20.0 : 10.0;
+        // Find Unit
+        // Reduced ranges per User Request (Too fast detection)
+        // Check for raiding state (can be string or state object)
+        const isRaiding = (this.state === 'raiding' || this.state instanceof GoblinRaidState);
+        const searchDistUnits = isRaiding ? 25.0 : 12.0; // Increased range
         // Optimization: Pass 'units' list to avoid expensive Grid Search for large radius
         const closestUnit = this.terrain.findBestTarget('unit', this.gridX, this.gridZ, searchDistUnits, (entity, dist) => {
             if (entity.isSleeping) return Infinity; // Ignore sleeping
             // Blacklist Check
-            const now = window.game ? window.game.gameTotalTime : Date.now();
+            const now = window.game ? window.game.simTotalTimeSec : Date.now() / 1000;
             if (this.ignoredTargets.has(entity.id) && this.ignoredTargets.get(entity.id) > now) return Infinity;
 
             const h = this.terrain.getTileHeight(entity.gridX, entity.gridZ);
@@ -421,12 +372,16 @@ export class Goblin extends Actor {
         }, units);
 
         // Find Building
-        const bldDist = (this.state === 'raiding') ? 30.0 : 20.0;
+        // User Request: Match building range to unit range (Reduced from 20/30)
+        const bldDist = searchDistUnits;
         // Optimization: Pass 'buildings' list
         const closestBuilding = this.terrain.findBestTarget('building', this.gridX, this.gridZ, bldDist, (entity, dist) => {
             if (!entity.userData || entity.userData.type === 'goblin_hut' || entity.userData.type === 'cave') return Infinity;
             if (entity.userData.hp !== undefined && entity.userData.hp <= 0) return Infinity;
-            if (entity.userData.population !== undefined && entity.userData.population <= 0) return Infinity; // Ignore Dead
+            // Bug Fix: Only ignore if BOTH population and hp are depleted (for Player buildings)
+            const pop = entity.userData.population || 0;
+            const hp = (entity.userData.hp === undefined) ? 50 : entity.userData.hp; // Default HP if not hit yet
+            if (pop <= 0 && hp <= 0) return Infinity;
             return dist;
         }, buildings);
 
@@ -601,7 +556,7 @@ export class Goblin extends Actor {
     handleMoveFailure(time) {
         this.pathFailCount = (this.pathFailCount || 0) + 1;
         if (this.pathFailCount > 3) {
-            console.log(`Goblin ${this.id} gave up target! Stuck/Coast.`);
+            console.log(`Goblin ${this.id} gave up target! Stuck / Coast.`);
             this.targetUnit = null;
             this.targetBuilding = null;
             this.currentMemoryTarget = null;
@@ -614,7 +569,7 @@ export class Goblin extends Actor {
     startMove(tx, tz, time) {
         // Safety: Ensure we have valid coords
         if (this.gridX === undefined || isNaN(this.gridX)) {
-            console.error(`Goblin ${this.id} startMove failed: Invalid gridX (${this.gridX})`);
+            console.error(`Goblin ${this.id} startMove failed: Invalid gridX(${this.gridX})`);
             this.isMoving = false;
             return;
         }
@@ -640,11 +595,11 @@ export class Goblin extends Actor {
         // Speed Logic
         const heightDiff = Math.abs(targetH - currentH);
         if (targetH > 8) {
-            this.moveDuration = 6000; // Rock: Very Slow
+            this.moveDuration = 6.0; // Rock: Very Slow
         } else if (heightDiff > 0.1) {
-            this.moveDuration = 3000; // Slope: Slow
+            this.moveDuration = 3.0; // Slope: Slow
         } else {
-            this.moveDuration = this.baseMoveDuration || 800;
+            this.moveDuration = this.baseMoveDuration || 0.8;
         }
 
         this.stuckCount = 0;
@@ -654,32 +609,35 @@ export class Goblin extends Actor {
     // updateMovement inherited
 
     onMoveFinished(time) {
-        // Final Snap handled by Entity
-        // Logic for Goblin on arrival?
-        // Just reset animation?
-        this.walkAnimTimer = 0;
+        // Reset Limbs
         this.limbs.leftArm.x = 0;
         this.limbs.rightArm.x = 0;
         this.limbs.leftLeg.x = 0;
         this.limbs.rightLeg.x = 0;
+
+        // Final Snap handled by Entity (if called via super)
+        if (super.onMoveFinished) super.onMoveFinished(time);
+        else if (this.onMoveFinishedSuper) this.onMoveFinishedSuper(time);
     }
 
     onMoveStep(progress) {
-        // Walk anim
-        this.walkAnimTimer += 0.1; // Simple increment
-        const armSwing = Math.sin(this.walkAnimTimer) * 0.5;
-        const legSwing = Math.sin(this.walkAnimTimer) * 0.5;
-        this.limbs.leftArm.x = armSwing;
-        this.limbs.rightArm.x = -armSwing;
-        this.limbs.leftLeg.x = -legSwing;
-        this.limbs.rightLeg.x = legSwing;
-    }
+        // Walk anim (Phase-locked DO NOT use manual timer)
+        const freq = Math.PI * 4;
+        const amp = 0.5;
+        const swing = Math.sin(progress * freq) * amp;
 
+        this.limbs.leftArm.x = swing;
+        this.limbs.rightArm.x = -swing;
+        this.limbs.leftLeg.x = -swing;
+        this.limbs.rightLeg.x = swing;
+    }
 
 
     // updatePosition inherited from Entity
 
     attackTarget(time, deltaTime) {
+        // console.log(`[Goblin DEBUG]attackTarget.Unit:${ !!this.targetUnit } Bldg:${ !!this.targetBuilding } `);
+
         // Trigger Wave System logic (Call for help!)
         if (window.game && window.game.goblinManager) {
             const currentTarget = this.targetUnit || this.targetBuilding;
@@ -721,162 +679,190 @@ export class Goblin extends Actor {
         }
 
         // Synced Damage
-        setTimeout(() => {
-            if (!this.isRanged) this.limbs.rightArm.x = 0; // Swing
+        if (!this.isRanged) this.limbs.rightArm.x = 0; // Swing
 
-            // Range Check safety
-            const dist = this.getDistance(unit.gridX, unit.gridZ);
-            if (!unit.isDead && (this.isRanged || dist <= 2.5)) {
-                unit.takeDamage(this.damage);
-                console.log(`Goblin hit Unit! Dmg: ${this.damage} UnitHP: ${unit.hp}`);
-
-                if (unit.isDead) {
-                    // Plunder Bonus!
-                    if (window.game && window.game.goblinManager) {
-                        window.game.goblinManager.increasePlunder();
-                        // Record Memory
-                        window.game.goblinManager.recordRaidLocation(this.clanId, unit.gridX, unit.gridZ);
-                    }
-                }
-            }
-        }, 200);
+        // Range Check safety
+        const dist = this.getDistance(unit.gridX, unit.gridZ);
+        if (!unit.isDead && (this.isRanged || dist <= 1.5)) {
+            unit.takeDamage(this.damage, this);
+            console.log(`Goblin hit Unit! Dmg: ${this.damage} UnitHP: ${unit.hp} `);
+        }
 
         this.attackCooldown = this.attackRate;
     }
 
     attackBuilding(building) {
+        if (!building) return;
         if (this.attackCooldown > 0) return;
 
-        // Visuals
+        // --- Visuals ---
         if (this.isRanged) {
             this.limbs.rightArm.x = -Math.PI;
             setTimeout(() => { if (!this.isDead) this.limbs.rightArm.x = 0; }, 500);
 
             if (window.game && window.game.spawnProjectile) {
                 const startPos = this.position.clone().add(new THREE.Vector3(0, 0.8 * this.scale, 0));
-                // Fix: Convert Grid to World
-                const tx = this.terrain.gridToWorld(building.userData.gridX);
-                const tz = this.terrain.gridToWorld(building.userData.gridZ);
-                const targetPos = new THREE.Vector3(tx, building.y + 1, tz);
-
+                let tx, tz;
+                if (this.terrain && this.terrain.gridToWorld) {
+                    tx = this.terrain.gridToWorld(building.userData.gridX);
+                    tz = this.terrain.gridToWorld(building.userData.gridZ);
+                } else {
+                    tx = building.userData.gridX;
+                    tz = building.userData.gridZ;
+                }
+                const targetPos = new THREE.Vector3(tx, (building.y || 0) + 1, tz);
                 window.game.spawnProjectile(startPos, targetPos, 0x00FFFF);
             }
         } else {
             this.limbs.rightArm.x = -Math.PI / 2;
             setTimeout(() => {
-                this.limbs.rightArm.x = 0;
+                if (!this.isDead) this.limbs.rightArm.x = 0;
             }, 200);
         }
 
-        // Damage building population
-        if (!building || !building.userData) {
-            console.error(`Goblin ${this.id} attackBuilding failed: Invalid building data`, building);
-            this.targetBuilding = null;
+        // --- Damage Logic ---
+        // NEW: Use Building.js method if available (Encapsulated Logic)
+        if (building.takeDamage) {
+            const retaliation = building.takeDamage(this.damage || 10);
+
+            // Apply Retaliation
+            if (retaliation > 0 && !this.isRanged) {
+                this.takeDamage(retaliation, null);
+            }
+
+            // Check Destruction
+            if (building.hp <= 0) {
+                console.log(`Goblin destroyed Building ${building.userData.type} !`);
+                this.destroyBuilding(building);
+                this.targetBuilding = null;
+            } else {
+                this.attackCooldown = this.attackRate || 1.5;
+            }
             return;
         }
 
-        if (building.userData.population === undefined) building.userData.population = 10;
+        // --- FALLBACK (Legacy Object) ---
+        const damage = this.damage || 10;
+        if (building.userData.population > 0) {
+            // NERF: Limit population reduction.
+            const popDamage = Math.max(1, Math.floor(damage * 0.1));
+            building.userData.population -= popDamage;
+            if (building.population !== undefined) building.population = building.userData.population;
+            console.log(`Goblin Raid: House population reduced.Rem: ${building.userData.population} `);
 
-        const isCastle = (building.userData.type === 'castle');
-        const isFarm = (building.userData.type === 'farm');
+            // Retaliation
+            const typeFactor = (building.userData.type === 'tower') ? 10.0 : 4.0;
+            const effectivePop = Math.max(0, building.userData.population);
+            const retaliation = Math.floor(effectivePop * typeFactor);
 
-        // Damage Logic
-        // Damage Logic
-        if (isFarm && building.userData.hp !== undefined) {
-            // Farm uses HP
-            building.userData.hp -= 5; // Fast destroy for farm
-            if (building.userData.hp <= 0) {
-                this.destroyBuilding(building);
+            if (retaliation > 0 && !this.isRanged) {
+                this.takeDamage(retaliation, null);
+            }
+
+            if (building.userData.population > 0) {
+                this.attackCooldown = this.attackRate || 1.5;
                 return;
             }
         }
 
-        // Retaliation Logic (Reduced)
-        if (!isFarm && building.userData.population > 0) {
-            const factor = isCastle ? 0.2 : 0.1;
-            const retaliation = Math.floor(building.userData.population * factor);
-
-            if (retaliation > 0) {
-                this.takeDamage(retaliation);
-            }
+        building.userData.hp = (building.userData.hp || 100) - damage;
+        if (building.userData.hp <= 0) {
+            console.log(`Goblin destroyed Building ${building.userData.type} !`);
+            this.destroyBuilding(building);
+            this.targetBuilding = null;
         }
 
-        this.attackCooldown = this.attackRate;
+        this.attackCooldown = this.attackRate || 1.5;
     }
 
     destroyBuilding(building) {
         if (!building) return;
         this.terrain.removeBuilding(building);
-        console.log(`Goblin ${this.id} destroyed ${building.userData.type}!`);
 
-        // Plunder Bonus
+        // Proper Cleanup for Entities
+        if (typeof building.die === 'function') {
+            building.die();
+        } else {
+            // Legacy or Object: Mark as dead for checks
+            building.userData.isDead = true;
+        }
+
+        console.log(`Goblin ${this.id} destroyed ${building.userData.type} !`);
         if (window.game && window.game.goblinManager) {
             window.game.goblinManager.increasePlunder();
         }
-
-        // Reset Target
         this.targetBuilding = null;
     }
 
-    takeDamage(amount) {
-        if (this.isDead) return; // Ignore damage if already dead
-        this.hp -= amount;
-        // Animation update removed from here. Handled in updateLogic.
-        if (this.isMoving) {
-            // No-op for limb updates here, rely on updateLogic
-        } else {
-            // Reset limbs if needed, or leave for updateLogic
-        }
 
-        // Attack Animation Override
-        if (this.attackCooldown > 0) {
-            const progress = this.attackCooldown / this.attackRate; // 1.0 -> 0.0
-            // Swing around 0.8
-            if (progress < 0.9 && progress > 0.5) {
-                this.limbs.rightArm.x = -Math.PI / 2 + (Math.sin(progress * Math.PI * 4) * 0.5); // Chop
-            }
-        } else {
-            // Flash red logic removed
-        }
-        if (this.hp <= 0) {
-            this.die();
-        }
-    }
 
-    die() {
-        if (this.isDead) return; // Prevent double death
+
+
+    die(reason = "Unknown") {
+        if (this.isDead) return;
+        // console.log(`[Goblin] Goblin ${this.id} DIED. Reason: ${reason}...`);
         this.isDead = true;
         this.terrain.unregisterEntity(this);
 
-        // Report death to Clan Memory?
-        if (this.clanId && window.goblinManager) {
-            // window.goblinManager.reportCasualty(this.clanId, this.gridX, this.gridZ); 
+        if (this.clanId && window.game && window.game.goblinManager) {
+            // window.game.goblinManager.reportCasualty(this.clanId, this.gridX, this.gridZ); 
         }
 
         this.createCross();
-        console.log(`Goblin (${this.type}) died. ID:${this.id}`);
+        console.log(`Goblin(${this.type}) died.ID:${this.id} `);
 
-        // King Drops huge Mana
         if (this.type === 'king' && window.game) {
             window.game.mana += 500;
             console.log("King Defeated! +500 Mana");
 
-            // Fix: UI is updated in Game.updateStats(), no explicit call needed.
-            // window.game.uiManager.updateMana(window.game.mana);
-
-            // Floating Text is fine if scene exists
             if (this.terrain && this.terrain.createFloatingText) {
                 this.terrain.scene.add(this.terrain.createFloatingText("+500", this.mesh.position, 0xFFFF00));
             }
         }
     }
 
-    // Explicit Cleanup
+    // --- COMBAT LOGIC (RESTORED) ---
+    // Fixes Passive Goblins
+
+    takeDamage(amount, attacker) {
+        if (this.isDead || this.isFinished) return;
+
+        this.hp -= amount;
+        if (this.hp <= 0) {
+            this.hp = 0;
+            this.die();
+            // XP or Score logic here
+        } else {
+            // Reaction
+            this.lastHitTime = window.game ? window.game.simTotalTimeSec : 0;
+
+            // Retaliate if not already locked on a high prio target
+            if (attacker && (!this.targetUnit || Math.random() < 0.3)) {
+                if (attacker.hp > 0) {
+                    this.targetUnit = attacker;
+                    // State machine usually updates on next tick:
+                    // GoblinCombatState checks target. If we are in Wander, next scan will pick it up?
+                    // Or force switch?
+                    // Ideally force switch if damaged.
+                    if (this.state && this.state.constructor.name !== 'GoblinCombatState') {
+                        this.changeState(new GoblinCombatState(this));
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
     dispose() {
         if (this.crossMesh) {
             this.scene.remove(this.crossMesh);
             this.crossMesh.traverse(c => {
-                if (c.material && c.userData.clonedMat) c.material.dispose();
+                if (c.material && c.userData.clonedMat && typeof c.material.dispose === 'function') {
+                    c.material.dispose();
+                }
             });
             this.crossMesh = null;
         }
@@ -885,11 +871,7 @@ export class Goblin extends Actor {
 
     createCross() {
         const group = new THREE.Group();
-        // Use shared cross material/geo
-        if (!Goblin.assets.geometries.crossV) {
-            // Fallback if not init for some reason, or just use what we have
-            // Should be init.
-        }
+        if (!Goblin.assets.geometries.crossV) return;
 
         const vMesh = new THREE.Mesh(Goblin.assets.geometries.crossV, Goblin.assets.materials.cross);
         vMesh.position.y = 0.4;
@@ -899,7 +881,6 @@ export class Goblin extends Actor {
         hMesh.position.y = 0.6;
         group.add(hMesh);
 
-        // Position
         const vPos = this.terrain.getVisualPosition(this.gridX, this.gridZ, true);
         group.position.set(vPos.x, vPos.y + 0.2, vPos.z);
 
@@ -907,15 +888,13 @@ export class Goblin extends Actor {
         this.crossMesh = group;
         this.deathTimer = 0;
 
-        // FAILSAFE: Force remove after 1.5s regardless of update loop
-        // This handles cases where manager culls the goblin or updates stop
         setTimeout(() => {
             if (this.crossMesh) {
-                console.log(`[Goblin] Failsafe removing cross ID:${this.id}`);
                 this.scene.remove(this.crossMesh);
-                // Clean materials
                 this.crossMesh.traverse(c => {
-                    if (c.material && c.userData.clonedMat) c.material.dispose();
+                    if (c.material && c.userData.clonedMat && typeof c.material.dispose === 'function') {
+                        c.material.dispose();
+                    }
                 });
                 this.crossMesh = null;
             }
@@ -924,70 +903,62 @@ export class Goblin extends Actor {
 
     updateDeathAnimation(deltaTime) {
         if (!this.crossMesh) {
-            // Already cleaned up (by failsafe?), so mark finished
             this.isFinished = true;
             return;
         }
 
-        // Console Log to debug "Never Disappearing"
-        // if (Math.random() < 0.05) console.log(`[Goblin] Death Update ID:${this.id} Timer:${this.deathTimer.toFixed(2)}/${1.0}`);
-
-        // Safety
         if (isNaN(this.deathTimer)) this.deathTimer = 0;
         const safeDt = (deltaTime > 0) ? deltaTime : 0.016;
         this.deathTimer += safeDt;
 
-        const duration = 1.0; // 1 second animation (Faster removal)
+        const duration = 1.0;
 
         if (this.deathTimer >= duration) {
-            console.log(`[Goblin] Death Animation Finished ID:${this.id}. Removing Cross.`);
             this.scene.remove(this.crossMesh);
 
-            // Remove from Spatial Grid
             if (this.terrain && this.terrain.unregisterEntity) {
                 this.terrain.unregisterEntity(this);
             }
 
-            // CRITICAL: Dispose of materials to prevent memory leak
-            this.crossMesh.children.forEach(child => {
-                if (child.material && child.userData.clonedMat) {
-                    child.material.dispose();
-                }
-            });
-            this.crossMesh = null; // Help GC
-
-            this.isFinished = true;
-        } else {
-            // Rise up
-            this.crossMesh.position.y += deltaTime * 1.0;
-
-            // Fade out
-            const progress = this.deathTimer / duration;
             this.crossMesh.children.forEach(child => {
                 if (child.material) {
-                    // Shared material opacity! Caution: Modifying shared material affects ALL dying goblins.
-                    // If we want individual fade, we MUST clone the material.
-                    // For performance, maybe we just don't fade? Or we clone only on death.
-                    // Cloning 1 material on death is cheap compared to 300 live ones.
                     if (!child.userData.clonedMat) {
                         child.material = child.material.clone();
                         child.userData.clonedMat = true;
                     }
-                    child.material.opacity = 1.0 - progress;
+                    child.material.opacity = Math.max(0, 1.0 - (this.deathTimer / duration));
+                }
+            });
+
+            this.crossMesh.children.forEach(child => {
+                if (child.material && child.userData.clonedMat && this.deathTimer >= duration) {
+                    if (typeof child.material.dispose === 'function') {
+                        child.material.dispose();
+                    }
+                }
+            });
+            this.crossMesh = null;
+            this.isFinished = true;
+        } else {
+            this.crossMesh.position.y += deltaTime * 1.0;
+            // Progressive Fade
+            this.crossMesh.children.forEach(child => {
+                if (child.material) {
+                    if (!child.userData.clonedMat) {
+                        child.material = child.material.clone();
+                        child.userData.clonedMat = true;
+                    }
+                    child.material.opacity = Math.max(0, 1.0 - (this.deathTimer / duration));
                 }
             });
         }
     }
 
     migrate(time) {
-        // Move far away (20-30 tiles) - Step by step!
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
-
-        // Random direction
         const angle = Math.random() * Math.PI * 2;
         const dist = 20 + Math.random() * 20;
-
         let tx = Math.floor(this.gridX + Math.cos(angle) * dist);
         let tz = Math.floor(this.gridZ + Math.sin(angle) * dist);
 
@@ -997,82 +968,184 @@ export class Goblin extends Actor {
         if (tz < 0) tz += logicalD;
         if (tz >= logicalD) tz -= logicalD;
 
-        // Validate target (Water check)
         const h = this.terrain.getTileHeight(tx, tz);
-        if (h <= 0) {
-            tx = (tx + 5) % logicalW;
-        }
+        if (h <= 0) tx = (tx + 5) % logicalW;
 
-        console.log(`Goblin ${this.id} migrating to ${tx},${tz} (Walking)`);
-        this.state = 'migrating';
+        console.log(`Goblin ${this.id} attempting migration to ${tx},${tz} `);
+
         this.migrationTarget = { x: tx, z: tz };
+        const moved = this.smartMove(tx, tz, time);
 
-        // Start first step
-        this.smartMove(tx, tz, time);
+        if (moved) {
+            this.action = 'migrating';
+        } else {
+            console.log(`Goblin ${this.id} migration path blocked.Resetting.`);
+            this.migrationTarget = null;
+            this.action = 'wandering'; // Reset action
+            this.wanderCount = 0; // Reset counter so we don't spam migrate
+        }
     }
 
     tryBuildHut() {
-        // 1. Check constraints
         const x = Math.round(this.gridX);
         const z = Math.round(this.gridZ);
-
-        // Safety Check: Grid bounds
-        if (!this.terrain.grid[x] || !this.terrain.grid[x][z]) {
-            // console.warn(`Goblin ${this.id} attempted build at invalid coords ${x},${z}`);
-            return false;
-        }
-
-        // Check if building already exists
+        if (!this.terrain.grid[x] || !this.terrain.grid[x][z]) return false;
         if (this.terrain.grid[x][z].hasBuilding) return false;
-
-        // Rock check (Height > 8)
         const h = this.terrain.getTileHeight(x, z);
-        if (h > 8) return false; // Cannot build on Rock
-        if (h <= 0) return false; // Cannot build on Water
-
-        // Space Check (Don't build too close to other huts? Optional, but good for distribution)
-        // User Request: Check for surrounding space.
+        if (h > 8 || h <= 0) return false;
         const allBuildings = this.terrain.buildings || [];
-        const minSpacing = 6.0; // Balance: Increased to 6.0 (was 4.0, originally 8.0)
-
+        const minSpacing = 6.0;
         for (const b of allBuildings) {
             if (b.userData.type === 'goblin_hut') {
                 const dx = b.userData.gridX - x;
                 const dz = b.userData.gridZ - z;
-                const distSq = dx * dx + dz * dz;
-
-                // If within spacing radius, abort
-                if (distSq < minSpacing * minSpacing) {
-                    return false;
-                }
+                if (dx * dx + dz * dz < minSpacing * minSpacing) return false;
             }
         }
-
-        // Build!
         const hut = this.terrain.addBuilding('goblin_hut', x, z);
         if (hut) {
             hut.userData.clanId = this.clanId;
-            console.log(`Goblin (Clan: ${this.clanId}) built a Hut!`);
+            console.log(`[Goblin] ID:${this.id} built a Hut at ${x},${z}`);
             return true;
         }
         return false;
     }
 
+
+    // --- PERSISTENCE ---
     serialize() {
         return {
             id: this.id,
-            type: this.type,
             gridX: this.gridX,
             gridZ: this.gridZ,
+            type: this.type,
+            clanId: this.clanId,
             hp: this.hp,
             maxHp: this.maxHp,
-            clanId: this.clanId,
-            age: this.age,
+            age: this.age, // FIX: Ensure age is persisted
             lifespan: this.lifespan,
-            state: this.state,
+            isDead: this.isDead,
+            isFinished: this.isFinished,
+            state: this.state ? this.state.constructor.name : 'GoblinWanderState',
+            // Raid Goal Persistence
+            raidTargetX: this.raidGoal ? this.raidGoal.x : null,
+            raidTargetY: this.raidGoal ? this.raidGoal.y : (this.raidGoal ? (this.raidGoal.z) : null), // Supporting both Y and Z
+            raidTargetZ: this.raidGoal ? this.raidGoal.z : null,
+            raidTargetTS: this.raidGoal ? this.raidGoal.timestamp : null, // Restoration FIX
             migrationTarget: this.migrationTarget,
-            scale: this.scale // Save scale just in case
+            scale: this.scale
         };
     }
-}
 
+    // --- TOOLTIP OVERRIDE ---
+
+    updateCombatLogic(time, deltaTime) {
+        // Cooldown Management
+        if (this.attackCooldown > 0) this.attackCooldown -= deltaTime;
+
+        // 1. Target Validation
+        if (this.targetUnit && this.targetUnit.isDead) this.targetUnit = null;
+        if (this.targetBuilding && this.targetBuilding.userData.hp <= 0) this.targetBuilding = null;
+
+        if (!this.targetUnit && !this.targetBuilding) return;
+
+        // 2. Act based on target
+        if (this.targetUnit) {
+            this.chaseTimer = (this.chaseTimer || 0) + deltaTime;
+            if (this.chaseTimer > 10.0) {
+                // Give up
+                this.targetUnit = null;
+                this.chaseTimer = 0;
+            } else {
+                const moved = this.smartMove(this.targetUnit.gridX, this.targetUnit.gridZ, time);
+                if (moved === false) {
+                    // Unreachable
+                    if (!this.ignoredTargets) this.ignoredTargets = new Map(); // Ensure Map exists
+                    this.ignoredTargets.set(this.targetUnit.id, time + 10.0);
+                    this.targetUnit = null;
+                    this.chaseTimer = 0;
+                    return;
+                }
+
+                if (!this.targetUnit) return;
+
+                if (this.getDistance(this.targetUnit.gridX, this.targetUnit.gridZ) <= 1.8) {
+                    this.attackTarget(time, deltaTime);
+                    this.chaseTimer = 0;
+                }
+            }
+        } else if (this.targetBuilding) {
+            const approach = this.getApproachPoint(this.targetBuilding);
+            const moved = this.smartMove(approach.x, approach.z, time);
+
+            if (moved === false) {
+                this.ignoredTargets.set(this.targetBuilding.id, time + 10.0);
+                this.targetBuilding = null;
+                return;
+            }
+
+            if (this.getDistanceToBuilding(this.targetBuilding) <= 2.5) {
+                this.attackTarget(time, deltaTime);
+            }
+        }
+    }
+
+
+    static deserialize(data, scene, terrain) {
+        // Map Legacy Keys
+        const type = data.type || data.t || 'normal';
+        const clanId = data.clanId || data.c || 0;
+        let raidTarget = null;
+
+        // Legacy RG
+        if (data.rg) {
+            raidTarget = { x: data.rg.x, z: data.rg.z };
+        }
+        // Modern Raid Target
+        else if (data.raidTargetX !== null && data.raidTargetX !== undefined) {
+            // Fix: Add timestamp (defaults to current time or restored value)
+            const now = (window.game && window.game.simTotalTimeSec) ? window.game.simTotalTimeSec : 0;
+            const ts = (data.raidTargetTS !== undefined) ? data.raidTargetTS : now;
+            raidTarget = { x: data.raidTargetX, z: data.raidTargetZ, timestamp: ts };
+        }
+
+        const goblin = new Goblin(scene, terrain, data.gridX !== undefined ? data.gridX : data.x, data.gridZ !== undefined ? data.gridZ : data.z, type, clanId, raidTarget);
+        goblin.id = (data.id !== undefined) ? Number(data.id) : goblin.id;
+
+        // Restore Stats (Legacy h/m/a/l)
+        if (data.hp !== undefined) goblin.hp = data.hp;
+        else if (data.h !== undefined) goblin.hp = data.h;
+
+        if (data.maxHp !== undefined) goblin.maxHp = data.maxHp;
+        else if (data.m !== undefined) goblin.maxHp = data.m;
+
+        if (data.lifespan !== undefined) goblin.lifespan = data.lifespan;
+        else if (data.l !== undefined) goblin.lifespan = data.l;
+
+        if (data.age !== undefined) goblin.age = data.age;
+        else if (data.a !== undefined) goblin.age = data.a;
+
+        goblin.isDead = data.isDead || false;
+        goblin.isFinished = data.isFinished || false;
+
+        // Restore State Name
+        const sName = (data.state || data.s || 'idle').toLowerCase();
+
+        if (sName.includes('raid')) {
+            goblin.changeState(new GoblinRaidState(goblin));
+            if (raidTarget) goblin.state.raidGoal = raidTarget;
+        } else if (sName.includes('combat') || sName.includes('fight')) {
+            goblin.changeState(new GoblinCombatState(goblin));
+        } else if (!sName.includes('idle') && !sName.includes('wander')) {
+            goblin.changeState(new GoblinWanderState(goblin));
+        } else {
+            goblin.changeState(new GoblinWanderState(goblin));
+        }
+
+        // Migration
+        if (data.migrationTarget || data.mt) goblin.migrationTarget = data.migrationTarget || data.mt;
+        if (data.scale) goblin.scale = data.scale;
+
+        return goblin;
+    }
+}

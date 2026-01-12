@@ -14,25 +14,40 @@ export class Actor extends Entity {
         // Stagnation
         this.minDistToTarget = Infinity;
         this.pathStagnation = 0;
+
+        // State Machine
+        this.state = null;
+        this.simTime = 0; // Track simulation time
+
+        // Job Management
+        this.ignoredTargets = new Map(); // ID -> ExpiryTime
+    }
+
+    changeState(newState) {
+        if (this.state && typeof this.state.exit === 'function') {
+            this.state.exit(newState);
+        }
+        const prev = this.state;
+        this.state = newState;
+        if (this.state && typeof this.state.enter === 'function') {
+            this.state.enter(prev);
+        }
     }
 
     // Shared Reachability Check (The "Region Map" Logic)
     isReachable(tx, tz) {
         if (!this.terrain || !this.terrain.grid) return true; // Fallback
 
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
+        const logicalW = (this.terrain && this.terrain.logicalWidth) ? this.terrain.logicalWidth : 160;
+        const logicalD = (this.terrain && this.terrain.logicalDepth) ? this.terrain.logicalDepth : 160;
 
         // Wrap Logic for Check
         let checkX = Math.round(tx);
         let checkZ = Math.round(tz);
 
         // Check Wrapping for safe array access
-        if (checkX < 0) checkX = (checkX % logicalW + logicalW) % logicalW;
-        else if (checkX >= logicalW) checkX = checkX % logicalW;
-
-        if (checkZ < 0) checkZ = (checkZ % logicalD + logicalD) % logicalD;
-        else if (checkZ >= logicalD) checkZ = checkZ % logicalD;
+        checkX = ((checkX % logicalW) + logicalW) % logicalW;
+        checkZ = ((checkZ % logicalD) + logicalD) % logicalD;
 
         // Get Cells
         const mCell = this.terrain.grid[this.gridX] ? this.terrain.grid[this.gridX][this.gridZ] : null;
@@ -42,189 +57,301 @@ export class Actor extends Entity {
             const mRegion = mCell.regionId;
             const tRegion = tCell.regionId;
 
-            // 0 = Water, >0 = Land
-            // Rule 1: Water Blindness (Water cannot go to Land directly? or just restricted?)
-            // Assuming Units/Goblins walk on Land (Region > 0).
-            // If I am on Land, I cannot reach different Land Region.
-            if (mRegion > 0 && tRegion > 0 && mRegion !== tRegion) {
-                // EXCEPTION: If the target is VERY close (Visual Range / Glitch), allow it.
-                // This prevents units getting stuck on region boundaries (bridges/ramps)
-                const dx = tx - this.gridX;
-                const dz = tz - this.gridZ; // Note: using grid coords
-                const distSq = dx * dx + dz * dz;
-                if (distSq < 25.0) { // Sqrt(25) = 5.0 tiles.
-                    // console.log("Allowing Cross-Region Move (Close Range)");
-                    return true;
+            // SPECIAL CASE: Region 0 but Height > 0 (Pending Re-calculation)
+            // If either cell is on land (h > 0) but has no region ID (0), 
+            // and we are within the debounce window of Terrain.js (needsRegionRecalc),
+            // we assume it's reachable for "Manual" or "Urgent" tasks to prevent job drops.
+            if (this.terrain.needsRegionRecalc) {
+                const targetH = tCell.height;
+                const myH = mCell.height;
+                if (targetH > 0 && myH > 0) {
+                    // Both on land. If one is region 0, it's likely a fresh terrain change.
+                    if (mRegion === 0 || tRegion === 0) return true;
                 }
+            }
+
+            // Same region is reachable
+            if (mRegion === tRegion && mRegion !== undefined) return true;
+
+            // Different Regions: 0 = Water, >0 = Land
+            const dist = this.getDistance(tx, tz);
+            if (mRegion > 0 && tRegion > 0) {
+                if (dist < 5.0) return true;
                 return false;
             }
 
-            // If I am in Water (0), I can't reach Land? (Maybe swimming?)
-            // For now, strict check to prevent shore loop:
+            // SPECIAL RULE: Land (>0) to Water (0) (e.g. Raise Land Task)
+            if (mRegion > 0 && tRegion === 0) {
+                if (dist < 3.0) return true;
+                if (this.terrain.isAdjacentToRegion(checkX, checkZ, mRegion)) return true;
+                return false;
+            }
+
             if (mRegion === 0 && tRegion > 0) return false;
         }
         return true;
     }
 
+    // Compatibility for tests and legacy calls
+    triggerMove(tx, tz, time) {
+        // Map to smartMove which handles pathfinding and linear fallback
+        // If smartMove returns false (blocked), we might want to force it for tests?
+        // But smartMove is the source of truth for movement logic now.
+        return this.smartMove(tx, tz, time);
+    }
+
     // Unified Move Logic (The "Smart Move")
     // Tries to follow path -> Tries to pathfind -> Fallback to Linear
     // Returns: true if move execution started (or path processing), false if blocked/failed
-    smartMove(tx, tz, time) {
+    smartMove(tx, tz, time, depth = 0) {
+        if (depth > 5) return false; // Prevent infinite recursion if multiple nodes are at same spot
+        this.isPathfindingThrottled = false;
         // 1. Path Following
         if (this.path && this.path.length > 0) {
-            // We have a path.
-            // Check if we reached the next node?
-            // Usually we move towards path[0].
-            // But we need to verify if path[0] is still valid?
-
-            // In Unit.js `triggerMove`, it consumes path[0] IF it executes move.
-            // In Goblin.js, it tracks `pathIndex`.
-
-            // Let's use the 'consume' approach: path[0] is IMMEDIATE target.
-            const node = this.path[0];
-
-            // Execute
-            if (this.canMoveTo(node.x, node.z)) {
-                this.executeMove(node.x, node.z, time);
-                this.path.shift(); // Consumed
-                if (this.path.length === 0) this.path = null;
-                return true;
-            } else {
-                // Blocked. Dynamic obstacle?
-                // console.log("Path Blocked");
-                this.path = null; // Recalculate
+            // Check if path is stale (Target changed)
+            const lastNode = this.path[this.path.length - 1];
+            // FIX: Relaxed threshold from 0.5 to 2.0 to allow for "best effort" paths 
+            // from A* (e.g. adjacent tile if target blocked) without stuttering re-calc.
+            if (Math.abs(lastNode.x - tx) > 2.0 || Math.abs(lastNode.z - tz) > 2.0) {
+                // Path destination does not match request. Discard.
+                if (this.id === 0) console.log(`[Actor] Discarding stale path. Target changed to ${tx},${tz} from ${lastNode.x},${lastNode.z}`);
+                this.path = null;
             }
         }
 
-        // 2. Pathfinding Calculation (if no path)
-        if (!this.path) {
-            const dist = this.getDistance(tx, tz);
-            // Threshold for A* (Don't A* for short dists unless blocked?)
-            // Unit.js uses A* for dist > 15 (or when stuck). Actor should be smart.
-            if (dist > 15.0) {
-                // Attempt Pathfinding
-                // Add random jitter to throttle to prevent synchronized "wake up" of all units
-                const throttle = 1000 + (this.id % 20) * 100; // Spread over 1-3s based on ID
+        if (this.path && this.path.length > 0) {
+            // Check if we are already at path[0] (e.g. Start Node from A*)
+            // Or if we arrived from previous move
+            const node = this.path[0];
+            const dx = Math.abs(this.gridX - node.x);
+            const dz = Math.abs(this.gridZ - node.z);
 
-                if (time - this.lastPathTime > throttle) {
-
-                    // PRE-CHECK BUDGET: Don't consume throttle if we can't search
-                    if (this.terrain.pathfindingCalls > 10) {
-                        return true; // Wait for next frame, keep priority
-                    }
-
-                    this.lastPathTime = time;
-
-                    // Check Reachability First!
-                    if (!this.isReachable(tx, tz)) {
-                        return false; // Failure (Unreachable Region)
-                    }
-
-                    // Wrapper for findPath that handles wrapping? 
-                    // Usually Terrain.findPath handles coords?
-                    // Let's assume passed coords are correct.
-                    const newPath = this.terrain.findPath(this.gridX, this.gridZ, tx, tz);
-                    if (newPath && newPath.length > 0) {
-                        this.path = newPath;
-                        // Skip move this frame, wait for next frame to consume path
-                        return true; // "Processed"
-                    } else {
-                        // PATHFINDING FAILED (Complexity or Impossible)
-                        // Do NOT pretend to wait. Fall through to Linear Move logic.
-                        // If Linear Move also fails, we return false, triggering "Stuck" logic in Unit.js.
-                        console.warn(`[Actor ${this.id}] Pathfinding Failed. Falling back to Linear.`);
-                    }
+            // "Arrived" threshold (0.1 is safe for integer grid)
+            if (dx < 0.1 && dz < 0.1) {
+                // We are at this node. Advance.
+                this.path.shift();
+                if (this.path.length === 0) {
+                    this.path = null;
                 } else {
-                    // Throttled. Wait.
+                    // Immediately process next node
+                    return this.smartMove(tx, tz, time, depth + 1);
+                }
+            } else {
+                // Not at node. Move towards it.
+                if (this.canMoveTo(node.x, node.z)) {
+                    // Check if already heading there
+                    const isHeadingToWaypoint = this.isMoving &&
+                        Math.abs(this.targetGridX - node.x) < 0.01 &&
+                        Math.abs(this.targetGridZ - node.z) < 0.01;
+
+                    if (!isHeadingToWaypoint) {
+                        this.executeMove(node.x, node.z, time);
+                    }
                     return true;
+                } else {
+                    // Path Blocked
+                    // console.log("Path Blocked");
+                    this.path = null; // Recalculate
                 }
             }
         }
 
-        // 3. Linear Fallback (If Pathfinding failed or close enough)
-        // Check Reachability First!
-        if (!this.isReachable(tx, tz)) {
-            return false;
-        }
+        // 2. Pathfinding Calculation (if no path)
+        if (!this.path || this.path.length === 0) {
+            const dist = this.getDistance(tx, tz);
+            //  console.log(`[Actor ${this.id}] SmartMove Dist: ${dist} Path: ${this.path ? 'Yes' : 'No'}`);
 
-        // Linear Move Logic with Wrap
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
+            // Debug test flicker
+            // console.log("SmartMove Internal Dist Check:", dist);
+            // throw new Error(`SMARTMOVE CALLED. Dist: ${dist}`);
 
-        let dx = tx - this.gridX;
-        let dz = tz - this.gridZ;
+            // Threshold for A* (Reduced from 15.0 to 4.0 because "Linear" fails on C-shapes)
+            // If distance is > 4 (just outside immediate proximity), we prefer A* for accuracy.
+            // Unit.js uses A* for dist > 15 (or when stuck). Actor should be smart.
+            if (dist > 4.0) {
+                // Attempt Pathfinding
+                // Add random jitter to throttle in Seconds (1.0s - 3.0s)
+                const throttle = 1.0 + (this.id % 20) * 0.1;
 
-        // Wrap shortest path
-        if (Math.abs(dx) > logicalW / 2) dx -= Math.sign(dx) * logicalW;
-        if (Math.abs(dz) > logicalD / 2) dz -= Math.sign(dz) * logicalD;
+                if (time === 0 || this.lastPathTime === 0 || time - this.lastPathTime > throttle) {
+                    // PRE-CHECK BUDGET (Was 100)
+                    // If we have budget, use it!
+                    const calls = this.terrain.pathfindingCalls || 0;
+                    if (calls < 100) {
+                        this.lastPathTime = time;
 
-        // Primary Axis
-        let nextX = this.gridX;
-        let nextZ = this.gridZ;
+                        if (!this.isReachable(tx, tz)) {
+                            return false;
+                        }
 
-        if (Math.abs(dx) > Math.abs(dz)) nextX += Math.sign(dx);
-        else nextZ += Math.sign(dz);
+                        const newPath = this.terrain.findPath(this.gridX, this.gridZ, tx, tz);
+                        if (newPath && newPath.length > 0) {
+                            this.path = newPath;
 
-        // Wrap Next Check
-        if (nextX < 0) nextX = logicalW - 1;
-        if (nextX >= logicalW) nextX = 0;
-        if (nextZ < 0) nextZ = logicalD - 1;
-        if (nextZ >= logicalD) nextZ = 0;
+                            // FIX: Skip start node
+                            if (this.path.length > 0) {
+                                const first = this.path[0];
+                                if (Math.abs(this.gridX - first.x) < 0.5 && Math.abs(this.gridZ - first.z) < 0.5) {
+                                    this.path.shift();
+                                }
+                            }
 
-        if (this.canMoveTo(nextX, nextZ)) {
-            this.executeMove(nextX, nextZ, time);
-            return true;
-        } else {
-            // FALLBACK: Try Secondary Axis (Slide along obstacle)
-            // Try moving along the other axis only
-            let altX = this.gridX;
-            let altZ = this.gridZ;
+                            if (this.path.length > 0) {
+                                const next = this.path.shift();
+                                if (this.canMoveTo(next.x, next.z)) {
+                                    this.executeMove(next.x, next.z, time);
+                                    return true;
+                                } else {
+                                    this.path = null; // Blocked at start, discard path
+                                    return false;
+                                }
+                            }
+                        } else {
+                            // Pathfinding Failed (Unreachable).
+                            if (this.terrain.pathfindingCalls < 100) {
+                                // If we HAD budget and still failed, it's truly blocked.
+                                // DO NOT FALLBACK TO LINEAR.
+                                this.isUnreachable = true;
+                                return false;
+                            }
+                            // If throttled/budget-fail, we wait (return false or try linear? Wait is safer).
+                            this.isPathfindingThrottled = true; // Budget Exceeded
+                            return false;
+                        }
+                    } else {
+                        // Budget Exceeded (Pre-check)
+                        this.isPathfindingThrottled = true;
+                    }
+                } else {
+                    // Throttled.
+                    this.isPathfindingThrottled = true;
+                }
 
-            if (Math.abs(dx) > Math.abs(dz)) {
-                // Primary was X. Try Z.
-                if (dz !== 0) altZ += Math.sign(dz);
-            } else {
-                // Primary was Z. Try X.
-                if (dx !== 0) altX += Math.sign(dx);
+                // If we are here (dist > 4) and have no path, DO NOT Fallback to Linear.
+                // Linear is only for short range (<4).
+                if (!this.path) return false;
             }
 
-            // Wrap Alt
-            if (altX < 0) altX = logicalW - 1;
-            else if (altX >= logicalW) altX = 0;
-            if (altZ < 0) altZ = logicalD - 1;
-            else if (altZ >= logicalD) altZ = 0;
+            // 3. Linear Fallback (Only if dist <= 4.0)
+            if (!this.isReachable(tx, tz)) return false;
 
-            if (this.canMoveTo(altX, altZ)) {
-                this.executeMove(altX, altZ, time);
+            const logicalW = this.terrain ? this.terrain.logicalWidth : 160;
+            const logicalD = this.terrain ? this.terrain.logicalDepth : 160;
+
+            let dx = tx - this.gridX;
+            let dz = tz - this.gridZ;
+
+            // Wrap shortest path
+            if (Math.abs(dx) > logicalW / 2) dx -= Math.sign(dx) * logicalW;
+            if (Math.abs(dz) > logicalD / 2) dz -= Math.sign(dz) * logicalD;
+
+            let nx = Math.round(this.gridX);
+            let nz = Math.round(this.gridZ);
+
+            // Try Diagonal First (8-way movement if delta is large enough on both axes)
+            const canDiagonal = Math.abs(dx) > 0.5 && Math.abs(dz) > 0.5;
+            if (canDiagonal) {
+                const diagX = ((nx + Math.sign(dx) % logicalW) + logicalW) % logicalW;
+                const diagZ = ((nz + Math.sign(dz) % logicalD) + logicalD) % logicalD;
+                if (this.canMoveTo(diagX, diagZ)) {
+                    if (!this.isMoving || Math.abs(this.targetGridX - diagX) > 0.01 || Math.abs(this.targetGridZ - diagZ) > 0.01) {
+                        this.executeMove(diagX, diagZ, time);
+                    }
+                    return true;
+                }
+            }
+
+            // Try Primary Axis
+            let primaryX = nx;
+            let primaryZ = nz;
+            if (Math.abs(dx) > Math.abs(dz)) primaryX = ((nx + Math.sign(dx) % logicalW) + logicalW) % logicalW;
+            else primaryZ = ((nz + Math.sign(dz) % logicalD) + logicalD) % logicalD;
+
+            if (this.canMoveTo(primaryX, primaryZ)) {
+                if (!this.isMoving || Math.abs(this.targetGridX - primaryX) > 0.01 || Math.abs(this.targetGridZ - primaryZ) > 0.01) {
+                    this.executeMove(primaryX, primaryZ, time);
+                }
                 return true;
             }
-        }
 
-        // FALLBACK 2: Force Pathfinding (Linear Blocked by Terrain/Water)
-        // If we failed linear move, and we don't have a path, and throttle allows...
-        // We should try A* even for short distances if we are stuck.
-        const dist = this.getDistance(tx, tz);
-        if (!this.path && dist <= 15.0) {
-            const throttle = 1000 + (this.id % 20) * 100;
-            if (time - this.lastPathTime > throttle) {
-                // Check Budget
-                if (this.terrain.pathfindingCalls > 10) return false;
+            // Try Secondary Axis (Sliding)
+            let secondaryX = nx;
+            let secondaryZ = nz;
+            if (Math.abs(dx) > Math.abs(dz)) {
+                if (dz !== 0) secondaryZ = ((nz + Math.sign(dz) % logicalD) + logicalD) % logicalD;
+            } else {
+                if (dx !== 0) secondaryX = ((nx + Math.sign(dx) % logicalW) + logicalW) % logicalW;
+            }
 
-                this.lastPathTime = time;
+            if (this.canMoveTo(secondaryX, secondaryZ)) {
+                if (!this.isMoving || Math.abs(this.targetGridX - secondaryX) > 0.01 || Math.abs(this.targetGridZ - secondaryZ) > 0.01) {
+                    this.executeMove(secondaryX, secondaryZ, time);
+                }
+                return true;
+            }
 
-                // Check Reachability (Again, just in case)
-                if (!this.isReachable(tx, tz)) return false;
+            // FALLBACK 2: Force Pathfinding (Linear Blocked by Terrain/Water)
+            // If we failed linear move, and we don't have a path, and throttle allows...
 
-                const newPath = this.terrain.findPath(this.gridX, this.gridZ, tx, tz);
-                if (newPath && newPath.length > 0) {
-                    console.log(`[Actor ${this.id}] Linear Failed. A* Found Path (Len:${newPath.length})`);
-                    this.path = newPath;
-                    return true; // "Processed" (will move next frame)
+            // Critical Fix: If we stuck repeatedly, allow pathfinding immediately regardless of throttle
+            // Using "stuckCount" from Unit.js or inferring from failure? 
+            // We lack "stuckCount" here in Actor, but JobState might track it.
+            // Let's use a local random chance if blocked to break throttle for urgent cases.
+
+            const dist2 = this.getDistance(tx, tz);
+            // Expanded range (was 15.0/30.0) and random urgency
+            if (!this.path && dist2 <= 80.0) {
+                const throttle = 1.0 + (this.id % 20) * 0.1;
+                // Urgent bypass: Increased to 40% chance per frame if blocked (was 10%)
+                // This ensures they don't look "dumb" for too long when hitting a wall
+                const urgent = Math.random() < 0.4;
+
+                if (urgent || time - this.lastPathTime > throttle) {
+                    this.isPathfindingThrottled = false;
+                    // Check Budget
+                    if (this.terrain.pathfindingCalls >= 30) {
+                        this.isPathfindingThrottled = true;
+                        return false;
+                    }
+
+                    this.lastPathTime = time;
+
+                    // Check Reachability (Again, just in case)
+                    if (!this.isReachable(tx, tz)) return false;
+
+                    const newPath = this.terrain.findPath(this.gridX, this.gridZ, tx, tz);
+                    if (newPath && newPath.length > 0) {
+                        // console.log(`[Actor ${this.id}] Pathfinding Success (Len:${newPath.length}). Executing immediately.`);
+                        this.path = newPath;
+                        // RECURSIVE CALL: Execute first step immediately to prevent 3s delay
+                        return this.smartMove(tx, tz, time);
+                    } else {
+                        if (this.terrain.pathfindingCalls < 100) this.isUnreachable = true;
+                        return false;
+                    }
+                } else {
+                    // Throttled
+                    this.isPathfindingThrottled = true;
                 }
             }
         }
 
         return false; // Blocked
+    }
+
+    updateLogic(time, deltaTime, units, buildings) {
+        this.simTime = time;
+        // State Machine Override
+        if (this.state) {
+            this.state.update(time, deltaTime, units, buildings);
+            return;
+        }
+
+        // Default Behavior (if no state)
+        if (!this.isMoving) {
+            // ... (Existing primitive wander moved to WanderState, 
+            // but keep basic random move here for backward compatibility or simple actors)
+        }
     }
 
     // Basic Validation (Can override)
@@ -250,10 +377,13 @@ export class Actor extends Entity {
     executeMove(x, z, time) {
         // Wrapper for Entity startMove
         super.startMove(x, z, time);
+        // Force Fix for Test Stability/Legacy Issues
+        if (this.targetGridX !== x) this.targetGridX = x;
+        if (this.targetGridZ !== z) this.targetGridZ = z;
 
         // DISTANCE SCALING FIX (Same as Unit.js)
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
+        const logicalW = this.terrain ? this.terrain.logicalWidth : 160;
+        const logicalD = this.terrain ? this.terrain.logicalDepth : 160;
 
         // FIX: Calculate from current VISUAL position if already moving
         let startX = this.gridX;
@@ -261,6 +391,14 @@ export class Actor extends Entity {
 
         if (this.isMoving) {
             const progress = (time - this.moveStartTime) / this.moveDuration;
+            const dist = this.getDistance(this.targetGridX, this.targetGridZ);
+            if (dist < 1.0) {
+                this.isMoving = false;
+                this.gridX = this.targetGridX;
+                this.gridZ = this.targetGridZ;
+                return;
+            }
+
             const p = Math.max(0, Math.min(1, progress));
 
             let sx = this.startGridX;
@@ -288,13 +426,138 @@ export class Actor extends Entity {
         const targetHeight = this.terrain.getTileHeight(x, z);
         const heightDiff = Math.abs(targetHeight - currentHeight);
 
-        let base = 600;
-        if (targetHeight > 8) base += 2000;
+        let base = 0.6;
+        if (targetHeight > 8) base += 2.0;
 
-        // Apply
-        this.moveDuration = (base * Math.max(1.0, dist2D)) + (heightDiff * 1000);
+        // Apply: Scale by distance to prevent Zeno's Paradox reset issues
+        this.moveDuration = (base + (heightDiff * 1.5)) * Math.max(0.25, dist2D);
 
         // Reset counters?
         this.stuckCount = 0;
+    }
+    // --- TOOLTIP OVERRIDE ---
+    getTooltip() {
+        let text = super.getTooltip();
+
+        // State Inspection
+        if (this.state && this.state.constructor) {
+            let sName = this.state.constructor.name;
+            // CLEANUP: Strip unnecessary prefixes for UI
+            sName = sName.replace('Goblin', '').replace('Unit', '').replace('State', '');
+            text += `\nState: ${sName}`;
+        }
+        else if (this.getBehaviorMode) {
+            text += `\nMode: ${this.getBehaviorMode()}`;
+        }
+
+        if (this.action) text += `\nAct: ${this.action}`;
+
+        // Status Flags
+        if (this.isDead) text += `\n[DEAD]`;
+        if (this.isFinished) text += `\n[FINISHED]`;
+        if (this.raidGoal) text += `\nRaid: ${this.raidGoal.x.toFixed(0)},${this.raidGoal.z.toFixed(0)}`;
+
+        return text;
+    }
+    // --- UTILS ---
+    getDistanceToBuilding(b) {
+        if (!b) return Infinity;
+        let size = 1;
+        // Hardcode sizes or check terrain? Terrain reference is better.
+        if (this.terrain && this.terrain.getBuildingSize) {
+            size = this.terrain.getBuildingSize(b.type || (b.userData ? b.userData.type : 'house'));
+        } else {
+            // Fallback
+            const t = b.type || (b.userData ? b.userData.type : 'house');
+            if (t === 'house' || t === 'farm' || t === 'goblin_hut' || t === 'cave') size = 2;
+            if (t === 'mansion' || t === 'barracks' || t === 'tower') size = 3;
+            if (t === 'castle') size = 4;
+            // Note: Cave size? Usually 2x2.
+        }
+
+        // Handling both Mesh based 'b' or userData based 'b'
+        const gx = (b.userData) ? b.userData.gridX : b.gridX;
+        const gz = (b.userData) ? b.userData.gridZ : b.gridZ;
+
+        if (gx === undefined || gz === undefined) return this.getDistance(b.x, b.z); // Fallback
+
+        const minX = gx;
+        const maxX = gx + size - 1;
+        const minZ = gz;
+        const maxZ = gz + size - 1;
+
+        const dx = Math.max(minX - this.gridX, 0, this.gridX - maxX);
+        const dz = Math.max(minZ - this.gridZ, 0, this.gridZ - maxZ);
+
+        return Math.sqrt(dx * dx + dz * dz);
+    }
+
+    getDistance(tx, tz) {
+        if (!this.terrain) return 0;
+        const W = this.terrain.logicalWidth || 160;
+        const D = this.logicalDepth || this.terrain.logicalDepth || 160;
+
+        let dx = Math.abs(this.gridX - tx);
+        let dz = Math.abs(this.gridZ - tz);
+
+        // Word-wrap awareness (Torus geometry)
+        if (dx > W / 2) dx = W - dx;
+        if (dz > D / 2) dz = D - dz;
+
+        return Math.sqrt(dx * dx + dz * dz);
+    }
+
+
+    getApproachPoint(target) {
+        if (!target) return null;
+        if (target.gridX === undefined || (target.userData && target.userData.gridX !== undefined)) {
+            // Check if it's a building with userData or simple entity
+            const b = target.userData ? target.userData : target;
+
+            // Check if it IS a building (Static/Obstacle)
+            // If it's a dynamic unit (Actor), simple center tracking is fine.
+            // If it's a Building (grid-based obstacle), we need perimeter.
+            // Assuming 'type' check or just geometry check.
+
+            if (b.type && (b.type === 'house' || b.type === 'farm' || b.type === 'goblin_hut' || b.type === 'cave' || b.type === 'tower' || b.type === 'barracks' || b.type === 'castle')) {
+                const size = (this.terrain && this.terrain.getBuildingSize) ? this.terrain.getBuildingSize(b.type) : 1;
+
+                // Scan perimeter
+                let bestPoint = null;
+                let minDist = Infinity;
+
+                const minX = b.gridX - 1;
+                const maxX = b.gridX + size;
+                const minZ = b.gridZ - 1;
+                const maxZ = b.gridZ + size;
+
+                const W = (this.terrain && this.terrain.logicalWidth) || 80;
+                const D = (this.terrain && this.terrain.logicalDepth) || 80;
+
+                for (let x = minX; x <= maxX; x++) {
+                    for (let z = minZ; z <= maxZ; z++) {
+                        // Skip internal cells
+                        if (x >= b.gridX && x < b.gridX + size && z >= b.gridZ && z < b.gridZ + size) continue;
+
+                        // Wrap coords for check
+                        const wx = (x % W + W) % W;
+                        const wz = (z % D + D) % D;
+
+                        // Check Walkability (isValidGrid handled by grid check)
+                        // But for pathfinding target, we just want a VALID cell.
+                        if (this.terrain.getTileHeight(wx, wz) > 0) { // Land check? Or specific isWalkable?
+                            // Simple dist check
+                            const dist = this.getDistance(wx, wz);
+                            if (dist < minDist) {
+                                minDist = dist;
+                                bestPoint = { x: wx, z: wz };
+                            }
+                        }
+                    }
+                }
+                return bestPoint || { x: b.gridX, z: b.gridZ }; // Fallback
+            }
+        }
+        return { x: target.gridX, z: target.gridZ }; // Default
     }
 }

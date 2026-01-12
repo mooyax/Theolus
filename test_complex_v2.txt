@@ -1,0 +1,147 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 43,6. Force:false
+[Terrain] Building Added: cave at (43, 6) Size:1x1. Total: 1
+GoblinManager: Cave registered at 43,6 
+[GoblinManager] Clan clan_cave_43_6 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 6,45. Force:false
+[Terrain] Building Added: cave at (6, 45) Size:1x1. Total: 2
+GoblinManager: Cave registered at 6,45 
+[GoblinManager] Clan clan_cave_6_45 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 127,83. Force:false
+[Terrain] Building Added: cave at (127, 83) Size:1x1. Total: 3
+GoblinManager: Cave registered at 127,83 
+[GoblinManager] Clan clan_cave_127_83 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 126,150. Force:false
+[Terrain] Building Added: cave at (126, 150) Size:1x1. Total: 4
+GoblinManager: Cave registered at 126,150 
+[GoblinManager] Clan clan_cave_126_150 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 17,1. Force:false
+[Terrain] Building Added: cave at (17, 1) Size:1x1. Total: 5
+GoblinManager: Cave registered at 17,1 
+[GoblinManager] Clan clan_cave_17_1 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 20 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
+[22m[39m[Game] Request Added: build at (20,0) ID:req_0
+[Game] forceAssignRequest FOUND Unit 1 (DistSq:400). Scanned:1
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Game] Force-Assigned Request req_0 to Unit 1 (Score: 400.0)
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Unit 1] Moving onto Rock at 19,0 H:10 (Speed Penalty)
+[Game] Cancelling active job for Unit 1
+[Game] Request Canceled at 20,0 (Target: 20,0)
+[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:None
+DEBUG: TargetRequest: [1mnull[22m
+DEBUG: Queue Length: [33m0[39m
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 135,80. Force:false
+[Terrain] Building Added: cave at (135, 80) Size:1x1. Total: 1
+GoblinManager: Cave registered at 135,80 
+[GoblinManager] Clan clan_cave_135_80 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 4,87. Force:false
+[Terrain] Building Added: cave at (4, 87) Size:1x1. Total: 2
+GoblinManager: Cave registered at 4,87 
+[GoblinManager] Clan clan_cave_4_87 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 128,78. Force:false
+[Terrain] Building Added: cave at (128, 78) Size:1x1. Total: 3
+GoblinManager: Cave registered at 128,78 
+[GoblinManager] Clan clan_cave_128_78 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 50,57. Force:false
+[Terrain] Building Added: cave at (50, 57) Size:1x1. Total: 4
+GoblinManager: Cave registered at 50,57 
+[GoblinManager] Clan clan_cave_50_57 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 120,155. Force:false
+[Terrain] Building Added: cave at (120, 155) Size:1x1. Total: 5
+GoblinManager: Cave registered at 120,155 
+[GoblinManager] Clan clan_cave_120_155 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 10 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
+[22m[39m[Game] Request Added: build at (20,0) ID:req_0
+[Game] forceAssignRequest FOUND Unit 1 (DistSq:400). Scanned:1
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Game] Force-Assigned Request req_0 to Unit 1 (Score: 400.0)
+[Game] Request Added: build at (-20,0) ID:req_1
+[Game] forceAssignRequest FAILED for Req req_1. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
+[Game] forceAssignRequest FAILED for Req req_1. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Unit 1] Moving onto Rock at 19,0 H:10 (Speed Penalty)
+[Game] Cancelling active job for Unit 1
+[Game] Request Canceled at 20,0 (Target: 20,0)
+[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:None
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Unit 1] Moving onto Rock at 19,0 H:10 (Speed Penalty)
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould handle cancellation while Working (arrived)
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:0,0
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 6,10. Force:false
+[Terrain] Building Added: cave at (6, 10) Size:1x1. Total: 1
+GoblinManager: Cave registered at 6,10 
+[GoblinManager] Clan clan_cave_6_10 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 58,132. Force:false
+[Terrain] Building Added: cave at (58, 132) Size:1x1. Total: 2
+GoblinManager: Cave registered at 58,132 
+[GoblinManager] Clan clan_cave_58_132 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 22,144. Force:false
+[Terrain] Building Added: cave at (22, 144) Size:1x1. Total: 3
+GoblinManager: Cave registered at 22,144 
+[GoblinManager] Clan clan_cave_22_144 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 7,10. Force:false
+[Terrain] Building Added: cave at (7, 10) Size:1x1. Total: 4
+GoblinManager: Cave registered at 7,10 
+[GoblinManager] Clan clan_cave_7_10 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 33,17. Force:false
+[Terrain] Building Added: cave at (33, 17) Size:1x1. Total: 5
+GoblinManager: Cave registered at 33,17 
+[GoblinManager] Clan clan_cave_33_17 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 11 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould handle cancellation while Working (arrived)
+[22m[39m[Game] Request Added: build at (20,0) ID:req_0
+[Game] forceAssignRequest FOUND Unit 1 (DistSq:400). Scanned:1
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Game] Force-Assigned Request req_0 to Unit 1 (Score: 400.0)
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Unit 1] Moving onto Rock at 19,0 H:10 (Speed Penalty)
+[Game] Unit 1 completing Request build at 20,0
+
+ [32m笨・[39m src/tests/ComplexInteraction.test.js [2m([22m[2m3 tests[22m[2m)[22m[33m 10543[2mms[22m[39m
+     [33m[2m笨・[22m[39m should immediately stop unit when job is cancelled mid-approach [33m 3703[2mms[22m[39m
+     [33m[2m笨・[22m[39m should pickup NEXT job if current is cancelled [33m 3652[2mms[22m[39m
+     [33m[2m笨・[22m[39m should handle cancellation while Working (arrived) [33m 3186[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 14:15:37
+[2m   Duration [22m 12.14s[2m (transform 429ms, setup 46ms, import 600ms, tests 10.54s, environment 601ms)[22m
+

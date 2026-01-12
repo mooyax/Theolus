@@ -1,0 +1,52 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/JobIdempotency.test.js[2m > [22m[2mJob Assignment Idempotency[2m > [22m[2mshould NOT reset movement if claiming the same job twice
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 79,46. Force:false
+[Terrain] Building Added: cave at (79, 46) Size:1x1. Total: 1
+GoblinManager: Cave registered at 79,46 
+[GoblinManager] Clan clan_cave_79_46 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 143,40. Force:false
+[Terrain] Building Added: cave at (143, 40) Size:1x1. Total: 2
+GoblinManager: Cave registered at 143,40 
+[GoblinManager] Clan clan_cave_143_40 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 42,60. Force:false
+[Terrain] Building Added: cave at (42, 60) Size:1x1. Total: 3
+GoblinManager: Cave registered at 42,60 
+[GoblinManager] Clan clan_cave_42_60 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 142,17. Force:false
+[Terrain] Building Added: cave at (142, 17) Size:1x1. Total: 4
+GoblinManager: Cave registered at 142,17 
+[GoblinManager] Clan clan_cave_142_17 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 24,150. Force:false
+[Terrain] Building Added: cave at (24, 150) Size:1x1. Total: 5
+GoblinManager: Cave registered at 24,150 
+[GoblinManager] Clan clan_cave_24_150 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 10 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+
+[90mstdout[2m | src/tests/JobIdempotency.test.js[2m > [22m[2mJob Assignment Idempotency[2m > [22m[2mshould NOT reset movement if claiming the same job twice
+[22m[39m--- Test Start ---
+Calling first claim...
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+First claim finished. Success: [33mtrue[39m
+Simulating movement...
+Calling second claim...
+Second claim finished. Success: [33mtrue[39m
+Checking expectations...
+--- Test End ---
+
+ [32m笨・[39m src/tests/JobIdempotency.test.js [2m([22m[2m1 test[22m[2m)[22m[33m 2236[2mms[22m[39m
+     [33m[2m笨・[22m[39m should NOT reset movement if claiming the same job twice [33m 2234[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 14:06:17
+[2m   Duration [22m 3.76s[2m (transform 381ms, setup 42ms, import 533ms, tests 2.24s, environment 651ms)[22m
+

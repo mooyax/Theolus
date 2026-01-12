@@ -1,0 +1,135 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould correctly resume manual job when loaded at night
+[22m[39mCreating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 44,1. Force:false
+[Terrain] Building Added: cave at (44, 1) Size:1x1. Total: 1
+GoblinManager: Cave registered at 44,1 
+[GoblinManager] Clan clan_cave_44_1 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 31,15. Force:false
+[Terrain] Building Added: cave at (31, 15) Size:1x1. Total: 2
+GoblinManager: Cave registered at 31,15 
+[GoblinManager] Clan clan_cave_31_15 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 24,38. Force:false
+[Terrain] Building Added: cave at (24, 38) Size:1x1. Total: 3
+GoblinManager: Cave registered at 24,38 
+[GoblinManager] Clan clan_cave_24_38 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 67,153. Force:false
+[Terrain] Building Added: cave at (67, 153) Size:1x1. Total: 4
+GoblinManager: Cave registered at 67,153 
+[GoblinManager] Clan clan_cave_67_153 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 137,95. Force:false
+[Terrain] Building Added: cave at (137, 95) Size:1x1. Total: 5
+GoblinManager: Cave registered at 137,95 
+[GoblinManager] Clan clan_cave_137_95 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 7 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould correctly resume manual job when loaded at night
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (15,15) ID:req_0
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:1 (RoleSkipped:0) Busy:0 Valid:1. TotalUnits:1
+[JobState] Entered. Target: raise. ResumeCtx: Approaching Job
+[Game] saveGame: Starting serialization...
+[Terrain] serialize: Starting...
+[Terrain] serialize: Grid Size 160x160
+[Terrain] serialize: Grid processed. Processing buildings...
+[Terrain] serialize: Done.
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould wake up unit if they were saved while sleeping but had a job assigned (manual)
+[22m[39mCreating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 135,46. Force:false
+[Terrain] Building Added: cave at (135, 46) Size:1x1. Total: 1
+GoblinManager: Cave registered at 135,46 
+[GoblinManager] Clan clan_cave_135_46 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 113,72. Force:false
+[Terrain] Building Added: cave at (113, 72) Size:1x1. Total: 2
+GoblinManager: Cave registered at 113,72 
+[GoblinManager] Clan clan_cave_113_72 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 113,2. Force:false
+[Terrain] Building Added: cave at (113, 2) Size:1x1. Total: 3
+GoblinManager: Cave registered at 113,2 
+[GoblinManager] Clan clan_cave_113_2 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 40,37. Force:false
+[Terrain] Building Added: cave at (40, 37) Size:1x1. Total: 4
+GoblinManager: Cave registered at 40,37 
+[GoblinManager] Clan clan_cave_40_37 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 100,2. Force:false
+[Terrain] Building Added: cave at (100, 2) Size:1x1. Total: 5
+GoblinManager: Cave registered at 100,2 
+[GoblinManager] Clan clan_cave_100_2 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 9 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+ [31mﾃ・[39m src/tests/NightLoadJob.test.js[2m > [22mNight Loading Job Assignment[2m > [22mshould correctly resume manual job when loaded at night[33m 342[2mms[22m[39m
+[31m   竊・expected false to be true // Object.is equality[39m
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould wake up unit if they were saved while sleeping but had a job assigned (manual)
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[SleepState] Entering Sleep logic.
+[Defense Debug 0] shouldScan:true isBusy:false force:false PassedGoblins:None
+[Game] Request Added: raise at (15,15) ID:req_0
+[Game] forceAssignRequest FOUND Unit 0 (DistSq:50). Scanned:1
+[JobState] Entered. Target: raise. ResumeCtx: Approaching Job
+[Game] Request req_0 assigned/switched to Unit 0
+[Game] saveGame: Starting serialization...
+[Terrain] serialize: Starting...
+[Terrain] serialize: Grid Size 160x160
+[Terrain] serialize: Grid processed. Processing buildings...
+[Terrain] serialize: Done.
+Creating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 88,64. Force:false
+[Terrain] Building Added: cave at (88, 64) Size:1x1. Total: 1
+GoblinManager: Cave registered at 88,64 
+[GoblinManager] Clan clan_cave_88_64 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 59,25. Force:false
+[Terrain] Building Added: cave at (59, 25) Size:1x1. Total: 2
+GoblinManager: Cave registered at 59,25 
+[GoblinManager] Clan clan_cave_59_25 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 136,42. Force:false
+[Terrain] Building Added: cave at (136, 42) Size:1x1. Total: 3
+GoblinManager: Cave registered at 136,42 
+[GoblinManager] Clan clan_cave_136_42 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 114,115. Force:false
+[Terrain] Building Added: cave at (114, 115) Size:1x1. Total: 4
+GoblinManager: Cave registered at 114,115 
+[GoblinManager] Clan clan_cave_114_115 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 120,135. Force:false
+[Terrain] Building Added: cave at (120, 135) Size:1x1. Total: 5
+GoblinManager: Cave registered at 120,135 
+[GoblinManager] Clan clan_cave_120_135 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 8 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+Load Started...
+
+ [31mﾃ・[39m src/tests/NightLoadJob.test.js[2m > [22mNight Loading Job Assignment[2m > [22mshould wake up unit if they were saved while sleeping but had a job assigned (manual)[33m 588[2mms[22m[39m
+[31m   竊・Cannot read properties of undefined (reading 'state')[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 10:45:22
+[2m   Duration [22m 2.17s[2m (transform 377ms, setup 47ms, import 515ms, tests 932ms, environment 462ms)[22m
+

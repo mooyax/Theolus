@@ -1,0 +1,39 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/RefuseDistraction.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 21[2mms[22m[39m
+[31m     [31mﾃ・[31m should prioritize MANUAL move marker over autonomous HOUSE BUILDING[39m[32m 18[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT Switch to a better Auto-Job if Manual Job is active[39m[32m 2[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/RefuseDistraction.test.js > Refuse Distraction > should prioritize MANUAL move marker over autonomous HOUSE BUILDING
+ FAIL  src/tests/RefuseDistraction.test.js > Refuse Distraction > should NOT Switch to a better Auto-Job if Manual Job is active
+Error: [vitest] No "Scene" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi.mock(import("three"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    // your mocked methods
+  }
+})
+
+ 笶ｯ new Game src/Game.js:88:32
+     86| 
+     87|         // 1. Setup Scene & Camera
+     88|         this.scene = new THREE.Scene();
+       |                                ^
+     89|         this.scene.background = new THREE.Color(0x87CEEB); // Sky blue
+     90| 
+ 笶ｯ src/tests/RefuseDistraction.test.js:69:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 11:07:34
+[2m   Duration [22m 1.44s[2m (transform 380ms, setup 55ms, import 508ms, tests 21ms, environment 530ms)[22m
+

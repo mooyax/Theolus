@@ -1,6 +1,7 @@
 
 // @vitest-environment happy-dom
 import { Unit } from '../Unit.js';
+import { JobState, UnitWanderState } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 
@@ -9,11 +10,10 @@ vi.mock('three', async () => {
     const originalModule = await vi.importActual('three');
     return {
         ...originalModule,
-        // Keep Vector3 and basic math for logic
     };
 });
 
-describe('Worker Job Logic (Unit.js)', () => {
+describe('Worker Job Logic (Unit.js + States)', () => {
     let mockGame;
     let unit;
     let mockTerrain;
@@ -32,30 +32,36 @@ describe('Worker Job Logic (Unit.js)', () => {
             updateMesh: vi.fn(),
             updateColors: vi.fn(),
             registerEntity: vi.fn(),
+            checkFlatArea: vi.fn().mockReturnValue(true), // Added for WorkerRequest test
+            getRandomPointInRegion: vi.fn().mockReturnValue({ x: 10, z: 10 }), // Added for WorkerRequest test
             unregisterEntity: vi.fn(),
             findBestTarget: vi.fn(),
-            getBuildingSize: vi.fn().mockReturnValue(1)
+            getBuildingSize: vi.fn().mockReturnValue(1),
+            isWalkable: vi.fn().mockReturnValue(true),
+            getRegion: vi.fn().mockReturnValue(1),
+            findPath: vi.fn(), // Mock findPath
+            pathfindingCalls: 0 // Mock Budget
         };
         // Setup grid
         for (let x = 0; x < 40; x++) {
             mockTerrain.grid[x] = [];
             for (let z = 0; z < 40; z++) {
-                mockTerrain.grid[x][z] = { height: 0, hasBuilding: false };
+                mockTerrain.grid[x][z] = { height: 0, hasBuilding: false, regionId: 1 };
             }
         }
 
-        // Mock Game Object (Simulating Game.js Request System)
+        // Mock Game Object
         mockGame = {
             requestQueue: [],
             requestIdCounter: 0,
+            isNight: false,
             addRequest: function (type, x, z) {
                 const req = { id: `req_${this.requestIdCounter++}`, type, x, z, status: 'pending' };
                 this.requestQueue.push(req);
                 return req;
             },
             findBestRequest: function (unit) {
-                // Simple First-Come-First-Serve for test
-                return this.requestQueue.find(r => r.status === 'pending');
+                return this.requestQueue.find(r => r.status === 'pending') || null;
             },
             claimRequest: function (unit, req) {
                 if (req.status !== 'pending') return false;
@@ -63,24 +69,29 @@ describe('Worker Job Logic (Unit.js)', () => {
                 req.assignedTo = unit.id;
                 return true;
             },
+            releaseRequest: vi.fn((unit, req) => {
+                req.status = 'pending';
+                req.assignedTo = null;
+            }),
             completeRequest: vi.fn(function (unit, req) {
-                // Execute mock terrain
                 if (req.type === 'raise') mockTerrain.raise(req.x, req.z);
-                // Remove
                 const idx = this.requestQueue.indexOf(req);
                 if (idx !== -1) this.requestQueue.splice(idx, 1);
             }),
             units: [],
             scene: { add: vi.fn(), remove: vi.fn() },
             terrain: mockTerrain,
-            raidPoints: [] // Needed for Unit logic
+            raidPoints: []
         };
 
         // Create Unit
-        // Unit constructor needs real Scene/Terrain? We gave mockTerrain. Scene mock is basic.
         unit = new Unit(mockGame.scene, mockTerrain, 0, 0, 'worker');
         unit.id = 'worker_1';
         unit.game = mockGame;
+        unit.isReachable = vi.fn().mockReturnValue(true);
+
+        // Initial state
+        unit.changeState(new UnitWanderState(unit));
 
         // GLOBAL MOUNT
         window.game = mockGame;
@@ -89,56 +100,56 @@ describe('Worker Job Logic (Unit.js)', () => {
     test('Unit finds and claims request when idle', () => {
         const req = mockGame.addRequest('raise', 5, 5);
 
-        // Mock random
-        vi.spyOn(Math, 'random').mockReturnValue(0.05);
-
-        // Tick Logic
-        unit.updateLogic(100, 0.016, false, [], [], []);
+        // Tick Logic (Actor.update calls currentState.update)
+        unit.updateLogic(2000, 0.016);
 
         expect(unit.targetRequest).toBe(req);
         expect(req.status).toBe('assigned');
         expect(req.assignedTo).toBe(unit.id);
+        expect(unit.state).toBeInstanceOf(JobState);
     });
 
     test('Unit moves to target request', () => {
         const req = mockGame.addRequest('raise', 10, 10);
 
-        // Setup Unit State
+        // Spy on smartMove (which JobState uses) - MOVED BEFORE State Change to catch 'enter' call
+        vi.spyOn(unit, 'smartMove').mockReturnValue(true);
+
+        // Setup Unit State initially
         unit.targetRequest = req;
         req.status = 'assigned';
         req.assignedTo = unit.id;
-        unit.gridX = 0; unit.gridZ = 0; // Far away
+        unit.changeState(new JobState(unit));
+        unit.gridX = 0; unit.gridZ = 0;
 
-        // Spy on Move
-        unit.triggerMove = vi.fn();
+        // Update
+        unit.updateLogic(2000, 0.016);
 
-        // Tick (Time must be > 1000 to bypass throttle)
-        unit.updateLogic(2000, 0.016, false, [], [], []);
-
-        // Logic sets action='Working' initially, then tries triggerMove. 
-        // If triggerMove succeeds (sets isMoving), action becomes 'Approaching Job'.
-        // Since triggerMove is MOCKED and doesn't set isMoving, action stays 'Working'.
-        expect(unit.action).toBe('Working');
-        expect(unit.triggerMove).toHaveBeenCalledWith(10, 10, 2000);
+        // In JobState, action is set to 'Approaching Job' when moving
+        expect(unit.action).toBe('Approaching Job');
+        expect(unit.smartMove).toHaveBeenCalled();
     });
 
     test('Unit completes request upon arrival', () => {
         const req = mockGame.addRequest('raise', 10, 10);
         unit.targetRequest = req;
         req.status = 'assigned';
+        req.assignedTo = unit.id;
+        unit.changeState(new JobState(unit));
 
-        // Place Unit AT location
+        // Place Unit AT location (within approach distance 3.0 for raise)
         unit.gridX = 10;
         unit.gridZ = 10;
 
         // Spy on Game.completeRequest
         const spyComplete = vi.spyOn(mockGame, 'completeRequest');
 
-        // Tick (Time irrelevant for completion check, but consistent)
-        unit.updateLogic(2000, 0.016, false, [], [], []);
+        // Update
+        unit.updateLogic(2000, 0.016);
 
-        expect(spyComplete).toHaveBeenCalledWith(unit, req);
+        expect(spyComplete).toHaveBeenCalled();
         expect(unit.targetRequest).toBeNull();
+        // UnitWanderState starts as Idle
         expect(unit.action).toBe('Idle');
         expect(mockTerrain.raise).toHaveBeenCalledWith(10, 10);
     });

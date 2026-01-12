@@ -1,0 +1,72 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould correctly resume manual job when loaded at night
+[22m[39mCreating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 96,96. Force:false
+[Terrain] Building Added: cave at (96, 96) Size:1x1. Total: 1
+GoblinManager: Cave registered at 96,96 
+[GoblinManager] Clan clan_cave_96_96 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 140,62. Force:false
+[Terrain] Building Added: cave at (140, 62) Size:1x1. Total: 2
+GoblinManager: Cave registered at 140,62 
+[GoblinManager] Clan clan_cave_140_62 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 97,99. Force:false
+[Terrain] Building Added: cave at (97, 99) Size:1x1. Total: 3
+GoblinManager: Cave registered at 97,99 
+[GoblinManager] Clan clan_cave_97_99 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 51,95. Force:false
+[Terrain] Building Added: cave at (51, 95) Size:1x1. Total: 4
+GoblinManager: Cave registered at 51,95 
+[GoblinManager] Clan clan_cave_51_95 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 16,8. Force:false
+[Terrain] Building Added: cave at (16, 8) Size:1x1. Total: 5
+GoblinManager: Cave registered at 16,8 
+[GoblinManager] Clan clan_cave_16_8 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 11 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould wake up unit if they were saved while sleeping but had a job assigned (manual)
+[22m[39mCreating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 82,41. Force:false
+[Terrain] Building Added: cave at (82, 41) Size:1x1. Total: 1
+GoblinManager: Cave registered at 82,41 
+[GoblinManager] Clan clan_cave_82_41 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 81,123. Force:false
+[Terrain] Building Added: cave at (81, 123) Size:1x1. Total: 2
+GoblinManager: Cave registered at 81,123 
+[GoblinManager] Clan clan_cave_81_123 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 123,87. Force:false
+[Terrain] Building Added: cave at (123, 87) Size:1x1. Total: 3
+GoblinManager: Cave registered at 123,87 
+[GoblinManager] Clan clan_cave_123_87 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 141,124. Force:false
+[Terrain] Building Added: cave at (141, 124) Size:1x1. Total: 4
+GoblinManager: Cave registered at 141,124 
+[GoblinManager] Clan clan_cave_141_124 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 84,112. Force:false
+[Terrain] Building Added: cave at (84, 112) Size:1x1. Total: 5
+GoblinManager: Cave registered at 84,112 
+[GoblinManager] Clan clan_cave_84_112 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 11 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+
+ [31m笶ｯ[39m src/tests/NightLoadJob.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 3445[2mms[22m[39m
+[31m     [31mﾃ・[31m should correctly resume manual job when loaded at night[39m[33m 1839[2mms[22m[39m
+[31m     [31mﾃ・[31m should wake up unit if they were saved while sleeping but had a job assigned (manual)[39m[33m 1603[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 01:32:15
+[2m   Duration [22m 4.62s[2m (transform 337ms, setup 41ms, import 469ms, tests 3.44s, environment 446ms)[22m
+

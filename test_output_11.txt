@@ -1,0 +1,25 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/StuckAndMarker.test.js > Stuck and Marker Debugging > should move IMMEDIATELY when assigned a job (no 3s delay)
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Unit.js] ENTERED updateLogic. Dead=false
+[Defense Debug 0] shouldScan:true isBusy:false force:false PassedGoblins:0
+[Game] Request Added: move at (50,50) ID:req_0
+[Game] forceAssignRequest FOUND Unit 0 (DistSq:3200). Scanned:1
+[JobState] Enter calling proactive update(0,0).
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Actor 0] Throttling Passed. Time:0 Last:0 Throttle:1
+[JobState] smartMove failed(Wait).Budget ? 0 
+[JobState] Entered.Target: move.Resume: UnitWanderState 
+[Game] Force-Assigned Request req_0 to Unit 0 (Score: 3200.0)
+
+ ﾃ・src/tests/StuckAndMarker.test.js > Stuck and Marker Debugging > should move IMMEDIATELY when assigned a job (no 3s delay) 22ms
+   竊・expected 'req_0' to be 'manual_path_test' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  02:01:23
+   Duration  1.14s (transform 297ms, setup 40ms, import 378ms, tests 23ms, environment 466ms)
+

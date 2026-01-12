@@ -1,0 +1,41 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/MovingFlicker.test.js[2m > [22m[2mMoving Flicker Check[2m > [22m[2mshould NOT flicker to Idle while moving to a distant job
+[22m[39mCreating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 109,96. Force:false
+[Terrain] Building Added: cave at (109, 96) Size:1x1. Total: 1
+GoblinManager: Cave registered at 109,96 
+[GoblinManager] Clan clan_cave_109_96 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 146,44. Force:false
+[Terrain] Building Added: cave at (146, 44) Size:1x1. Total: 2
+GoblinManager: Cave registered at 146,44 
+[GoblinManager] Clan clan_cave_146_44 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 88,46. Force:false
+[Terrain] Building Added: cave at (88, 46) Size:1x1. Total: 3
+GoblinManager: Cave registered at 88,46 
+[GoblinManager] Clan clan_cave_88_46 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 114,158. Force:false
+[Terrain] Building Added: cave at (114, 158) Size:1x1. Total: 4
+GoblinManager: Cave registered at 114,158 
+[GoblinManager] Clan clan_cave_114_158 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 53,95. Force:false
+[Terrain] Building Added: cave at (53, 95) Size:1x1. Total: 5
+GoblinManager: Cave registered at 53,95 
+[GoblinManager] Clan clan_cave_53_95 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 7 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+
+ [31m笶ｯ[39m src/tests/MovingFlicker.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1293[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT flicker to Idle while moving to a distant job[39m[33m 1292[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 23:23:57
+[2m   Duration [22m 2.56s[2m (transform 370ms, setup 36ms, import 511ms, tests 1.29s, environment 483ms)[22m
+

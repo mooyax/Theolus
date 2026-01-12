@@ -2,13 +2,13 @@ import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 export class BuildingRenderer {
-    constructor(scene, terrain, clippingPlanes) {
+    constructor(scene, terrain, clippingPlanes, maxInstances = 10000) {
         this.scene = scene;
         this.terrain = terrain; // Store reference to Terrain
         this.terrainWidth = terrain.logicalWidth;
         this.terrainDepth = terrain.logicalDepth;
         this.clippingPlanes = clippingPlanes || [];
-        this.MAX_INSTANCES = 10000;
+        this.MAX_INSTANCES = maxInstances;
         this.meshes = {};
         this.initAssets();
         this.initInstancedMeshes();
@@ -271,9 +271,48 @@ export class BuildingRenderer {
             map: new THREE.CanvasTexture(canvasG),
             color: 0xAAAAAA
         });
+        // --- CAVE (Goblin Lair) ---
+        // Rock Mound (Hemisphere) - Radius 0.8
+        // this.assets.caveGeo = new THREE.SphereGeometry(0.8, 7, 7, 0, Math.PI * 2, 0, Math.PI * 0.48);
+        // this.assets.caveGeo.scale(1, 0.8, 1);
+        // caveGeo: Flat circular hole
+        // Reduced radius from 0.8 to 0.45 to fit within 1.0 grid tile
+        this.assets.caveGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.05, 16);
+        this.assets.caveGeo.translate(0, 0, 0);
+        // Note: Sphere centers at 0. Since we used top hemisphere, base is at 0.
+
+        const canvasK = document.createElement('canvas');
+        canvasK.width = 64; canvasK.height = 64;
+        const ctxK = canvasK.getContext('2d');
+
+        // Draw a dark hole with a textured rim
+        if (ctxK.createRadialGradient) {
+            const grad = ctxK.createRadialGradient(32, 32, 5, 32, 32, 30);
+            grad.addColorStop(0, '#000000'); // Center: pitch black hole
+            grad.addColorStop(0.7, '#1a1a1a'); // Inner shadow
+            grad.addColorStop(1, '#404040'); // Rim: rocky dark gray
+            ctxK.fillStyle = grad;
+        } else {
+            ctxK.fillStyle = '#101010'; // Fallback
+        }
+        ctxK.fillRect(0, 0, 64, 64);
+
+        // Add some noise/cracks to the rim
+        ctxK.fillStyle = '#101010';
+        for (let i = 0; i < 30; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 28 + Math.random() * 4;
+            ctxK.fillRect(32 + Math.cos(angle) * dist, 32 + Math.sin(angle) * dist, 2, 2);
+        }
+
+        this.assets.caveMat = new THREE.MeshLambertMaterial({
+            ...matOptions,
+            map: new THREE.CanvasTexture(canvasK),
+            color: 0x808080
+        });
 
         // Needed for updates
-        [this.assets.houseWallMat, this.assets.barracksMat, this.assets.towerMat].forEach(m => {
+        [this.assets.houseWallMat, this.assets.barracksMat, this.assets.towerMat, this.assets.caveMat].forEach(m => {
             if (m) { m.clippingPlanes = this.clippingPlanes; m.needsUpdate = true; }
         });
     }
@@ -302,11 +341,12 @@ export class BuildingRenderer {
         // New: Barracks
         this.meshes.barracksWalls = make(this.assets.barracksGeo, this.assets.barracksMat);
         this.meshes.barracksRoofs = make(this.assets.barracksRoofGeo, this.assets.barracksRoofMat);
+        this.meshes.caves = make(this.assets.caveGeo, this.assets.caveMat);
     }
 
 
-    update(buildings, frustum, camera) {
-        if (!buildings) return;
+    update(buildings, frustum, viewCenter) {
+        if (!buildings || !viewCenter) return;
 
         // Debug Log (Moved to Top)
         if (!this._debugTimer) this._debugTimer = 0;
@@ -321,14 +361,14 @@ export class BuildingRenderer {
             console.log(`[BuildingRenderer] ListSize=${buildings.length}. Types:`, JSON.stringify(counts));
         }
 
-        const logicalW = this.terrainWidth || 80;
-        const logicalD = this.terrainDepth || 80;
+        const logicalW = this.terrain.logicalWidth || 240;
+        const logicalD = this.terrain.logicalDepth || 240;
 
         let baseGridX = 0;
         let baseGridZ = 0;
-        if (camera) {
-            baseGridX = Math.round(camera.position.x / logicalW);
-            baseGridZ = Math.round(camera.position.z / logicalD);
+        if (viewCenter) {
+            baseGridX = Math.round(viewCenter.x / logicalW);
+            baseGridZ = Math.round(viewCenter.z / logicalD);
         }
 
         // Optimization: Only update if Camera Chunk changed OR Building Count changed OR Force Update
@@ -344,7 +384,7 @@ export class BuildingRenderer {
         this._lastBuildingCount = buildings.length;
         this.forceUpdate = false;
 
-        let hIdx = 0, fIdx = 0, gIdx = 0, mIdx = 0, tIdx = 0;
+        let hIdx = 0, fIdx = 0, gIdx = 0, mIdx = 0, tIdx = 0, cIdx = 0;
         const dummy = this._dummy;
 
         const offsets = [
@@ -436,6 +476,9 @@ export class BuildingRenderer {
                     this.meshes.towers.setMatrixAt(tIdx, dummy.matrix);
                     this.meshes.towerRims.setMatrixAt(tIdx, dummy.matrix);
                     tIdx++;
+                } else if (b.type === 'cave' && cIdx < this.MAX_INSTANCES) {
+                    this.meshes.caves.setMatrixAt(cIdx, dummy.matrix);
+                    cIdx++;
                 }
             }
         }
@@ -466,6 +509,8 @@ export class BuildingRenderer {
         if (this.meshes.barracksRoofs.instanceColor) this.meshes.barracksRoofs.instanceColor.needsUpdate = true;
         this.meshes.towers.instanceMatrix.needsUpdate = true;
         this.meshes.towerRims.instanceMatrix.needsUpdate = true;
+        this.meshes.caves.count = cIdx;
+        this.meshes.caves.instanceMatrix.needsUpdate = true;
     }
 
     updateLighting(isNight) {
@@ -523,6 +568,7 @@ export class BuildingRenderer {
         remove(this.meshes.towerRims);
         remove(this.meshes.barracksWalls);
         remove(this.meshes.barracksRoofs);
+        remove(this.meshes.caves);
 
         // Clear assets
         Object.values(this.assets).forEach(a => {

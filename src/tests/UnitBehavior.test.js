@@ -12,6 +12,7 @@ global.window = {
 global.THREE = THREE;
 
 import { Unit } from '../Unit.js';
+import { UnitWanderState, CombatState, JobState } from '../ai/states/UnitStates.js';
 
 describe('Unit Behavior Mode', () => {
     let unit;
@@ -39,6 +40,12 @@ describe('Unit Behavior Mode', () => {
 
         unit = new Unit(mockScene, mockTerrain, 5, 5);
         unit.id = 1;
+
+        // Mock game for behavior logic
+        global.window.game = {
+            gameTotalTime: 0,
+            findBestRequest: vi.fn().mockReturnValue(null)
+        };
     });
 
     it('should return Patrol for Knight/Wizard when idle', () => {
@@ -56,33 +63,46 @@ describe('Unit Behavior Mode', () => {
 
     it('should return Combat when targetGoblin is set', () => {
         unit.targetGoblin = { id: 99 };
+        unit.changeState(new CombatState(unit));
         expect(unit.getBehaviorMode()).toBe('Combat');
+        expect(unit.state).toBeInstanceOf(CombatState);
     });
 
     it('should return Siege when targetBuilding is set', () => {
-        unit.targetBuilding = { id: 88, type: 'goblin_hut' };
+        const building = { id: 88, type: 'goblin_hut', userData: { hp: 100 } };
+        mockTerrain.buildings = [building]; // Fix: Add to terrain so CombatState accepts it
+        unit.targetBuilding = building;
+        unit.changeState(new CombatState(unit));
         expect(unit.getBehaviorMode()).toBe('Siege');
+        expect(unit.state).toBeInstanceOf(CombatState);
     });
 
     it('should return Working when targetRequest is set', () => {
-        unit.targetRequest = { id: 77, type: 'build_house' };
+        const req = { id: 77, type: 'build_house', assignedTo: unit.id };
+        unit.targetRequest = req;
+        unit.changeState(new JobState(unit));
         expect(unit.getBehaviorMode()).toBe('Working');
+        expect(unit.state).toBeInstanceOf(JobState);
     });
 
-    it('should return Exploration with coords when targetRaidPoint is set', () => {
+    it('should return Patrolling with coords when targetRaidPoint is set', () => {
         unit.targetRaidPoint = { x: 10, z: 20 };
-        expect(unit.getBehaviorMode()).toBe('Exploration (10,20)');
+        unit.changeState(new CombatState(unit));
+        expect(unit.getBehaviorMode()).toBe('Patrolling (10,20)');
+        expect(unit.state).toBeInstanceOf(CombatState);
     });
 
-    it('should return Migrating when action is Migrating', () => {
+    it('should return Wander for Migrating if action is Migrating but state is Wander', () => {
+        unit.role = 'worker';
         unit.action = 'Migrating';
-        expect(unit.getBehaviorMode()).toBe('Migrating');
+        expect(unit.getBehaviorMode()).toBe('Wander');
     });
 
-    it('should prioritize Combat over Exploration', () => {
+    it('should prioritize Combat mode when in CombatState', () => {
         unit.targetGoblin = { id: 99 };
         unit.targetRaidPoint = { x: 10, z: 20 };
-        // Combat is higher up in the function
+        unit.changeState(new CombatState(unit));
+        // CombatState logic prioritizes Target over RaidPoint
         expect(unit.getBehaviorMode()).toBe('Combat');
     });
 });

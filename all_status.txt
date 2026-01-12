@@ -1,0 +1,81 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mResource Gathering[2m > [22m[2mshould gather fish if checking neighbors finds water
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mResource Gathering[2m > [22m[2mshould NOT gather fish if completely inland
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould prioritize Farm and ABORT house if farm fails during famine
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould prioritize Farm and ABORT house if farm fails during famine
+[22m[39m[ActorDebug] Grid: 5,5 Target: 6,6 Diff: 1,1
+[ActorDebug] Next: 5,6
+[Unit 2] Moving onto Rock at 5,6 H:10 (Speed Penalty)
+[Unit 2] Blocked by Slope at 5,6 H:1->10
+[ActorDebug] Check Move 5,6 -> false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould fallback to House if NOT in famine
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5 Special:false
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould fallback to House if NOT in famine
+[22m[39m[ActorDebug] Grid: 5,5 Target: 6,6 Diff: 1,1
+[ActorDebug] Next: 5,6
+[Unit 3] Moving onto Rock at 5,6 H:10 (Speed Penalty)
+[Unit 3] Blocked by Slope at 5,6 H:1->10
+[ActorDebug] Check Move 5,6 -> false
+
+ [32m笨・[39m src/tests/Unit.test.js [2m([22m[2m8 tests[22m[2m | [22m[33m4 skipped[39m[2m)[22m[32m 16[2mms[22m[39m
+[90mstdout[2m | src/tests/Movement.test.js[2m > [22m[2mTerrain Movement and Logic Tests[2m > [22m[2mshould set very long moveDuration for Unit on Rock
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+
+stderr | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should set very long moveDuration for Unit on Rock
+DEBUG: MoveDur=5.8
+DEBUG: Heights Cur=10 Next=12
+
+[90mstdout[2m | src/tests/Movement.test.js[2m > [22m[2mTerrain Movement and Logic Tests[2m > [22m[2mshould set normal moveDuration on Flat
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+
+stderr | src/tests/Movement.test.js > Terrain Movement and Logic Tests > should set normal moveDuration on Flat
+DEBUG: Normal MoveDur=0.8
+
+[90mstdout[2m | src/tests/Movement.test.js[2m > [22m[2mTerrain Movement and Logic Tests[2m > [22m[2mshould prevent Unit from moving/building on Rock checks?
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+
+[90mstdout[2m | src/tests/Movement.test.js[2m > [22m[2mTerrain Movement and Logic Tests[2m > [22m[2mshould increase Goblin Hut population and spawn goblin
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10 Special:false
+
+[90mstdout[2m | src/tests/GoblinTypes.test.js[2m > [22m[2mGoblin Types & Stats[2m > [22m[2mshould correctly spawn types based on random probability
+[22m[39mGoblinManager: Generation started...
+GoblinManager: Cave registered at 50,50 
+[GoblinManager] Clan clan_cave_50_50 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Generated 5 goblin caves after 5 attempts.
+GoblinManager: Force spawning Debug Goblin
+荘 Goblin King Spawned!
+
+ [32m笨・[39m src/tests/GoblinTypes.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+[90mstdout[2m | src/tests/Movement.test.js[2m > [22m[2mTerrain Movement and Logic Tests[2m > [22m[2mshould increase Goblin Hut population and spawn goblin
+[22m[39mGoblinManager: Generation started...
+GoblinManager: Cave registered at 50,50 
+[GoblinManager] Clan clan_cave_50_50 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Cave registered at 50,50 
+GoblinManager: Generated 5 goblin caves after 5 attempts.
+GoblinManager: Force spawning Debug Goblin
+Goblin born from Hut! Clan: test. Global Pop: 1
+
+ [32m笨・[39m src/tests/Movement.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m12 passed[39m[22m[2m | [22m[33m4 skipped[39m[90m (16)[39m
+[2m   Start at [22m 18:31:53
+[2m   Duration [22m 1.06s[2m (transform 434ms, setup 114ms, import 583ms, tests 58ms, environment 1.79s)[22m
+

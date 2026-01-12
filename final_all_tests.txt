@@ -1,0 +1,601 @@
+[Test] ReleaseRequest Calls: 1
+[Test] Unit HP: 0. isDead: true. TargetReq: null
+DEBUG TEST: Moisture: 0
+TAP version 13
+1..64
+ok 1 - src/tests/AdvancedUnits.test.js # time=22.03ms {
+    1..1
+    ok 1 - Advanced Units # time=20.79ms {
+        1..3
+        ok 1 - should initialize Knight with high stats # time=10.93ms
+        ok 2 - should initialize Wizard with low HP and high stats # time=1.79ms
+        ok 3 - should allow Wizard to attack from range # time=6.67ms
+    }
+}
+ok 2 - src/tests/BuildingDefense.test.js # time=34.50ms {
+    1..1
+    ok 1 - Building Defense Logic # time=33.06ms {
+        1..8
+        ok 1 - Goblins deal population damage to player buildings # time=15.23ms
+        ok 2 - Goblins deal structural damage to empty player buildings # time=2.15ms
+        ok 3 - Goblins destroy player buildings when HP reaches 0 # time=4.88ms
+        ok 4 - Buildings retaliate against melee goblins # time=1.44ms
+        ok 5 - Towers have massive retaliation # time=1.11ms
+        ok 6 - No retaliation for distant attackers (Shamans) # time=1.42ms
+        ok 7 - Goblins can target buildings with 0 population but > 0 structural HP # time=1.71ms
+        ok 8 - Standard HP logic for Goblin buildings # time=3.47ms
+    }
+}
+ok 3 - src/tests/BuildingDestruction.test.js # time=552.66ms {
+    1..1
+    ok 1 - Building Destruction Logic # time=550.43ms {
+        1..3
+        ok 1 - should successfully remove a building from the list # time=209.93ms
+        ok 2 - should allow a goblin to destroy a building # time=208.05ms
+        ok 3 - should handle identity mismatch (Ghost Building) # time=130.92ms
+    }
+}
+ok 4 - src/tests/CavePersistence.test.js # time=14.82ms {
+    1..1
+    ok 1 - GoblinManager Cave Persistence # time=13.64ms {
+        1..2
+        ok 1 - should update cave Y position when terrain height changes # time=8.89ms
+        ok 2 - should destroy cave if submerged (height <= 0) # time=3.43ms
+    }
+}
+ok 5 - src/tests/CombatBalance.test.js # time=31.78ms {
+    1..1
+    ok 1 - Combat Balance Simulation # time=30.53ms {
+        1..4
+        ok 1 - Knight vs Single Goblin (1v1) - AI Logic Check # time=13.74ms
+        ok 2 - Wizard vs Single Goblin (1v1) - Wizard should win # time=3.59ms
+        ok 3 - Knight vs Swarm (1v5) - Knight should surviving # time=5.36ms
+        ok 4 - Load Game Persistence - Should resume movement # time=6.28ms
+    }
+}
+ok 6 - src/tests/CombatFixes.test.js # time=19.47ms {
+    1..1
+    ok 1 - Combat and Logic Fixes # time=17.68ms {
+        1..1
+        ok 1 - should find target goblin # time=15.38ms
+    }
+}
+ok 7 - src/tests/CombatRequestHandoff.test.js # time=557.58ms {
+    1..1
+    ok 1 - Request Responsiveness & Combat Handoff # time=555.99ms {
+        1..2
+        ok 1 - Worker releases job when died # time=278.44ms
+        ok 2 - forceAssignRequest prioritizes idle unit over busy unit # time=276.61ms
+    }
+}
+ok 8 - src/tests/CombatVerification.test.js # time=27.42ms {
+    1..1
+    ok 1 - Combat Logic Verification # time=25.92ms {
+        1..3
+        ok 1 - Scenario A: Worker destroys Cave # time=11.89ms
+        ok 2 - Scenario B: Goblin destroys House # time=7.67ms
+        ok 3 - Scenario C: Goblin finds and destroys House # time=5.00ms
+    }
+}
+ok 9 - src/tests/ComplexInteraction.test.js # time=15182.88ms {
+    1..1
+    ok 1 - Complex Job Interaction and Cancellation # time=15181.52ms {
+        1..3
+        ok 1 - should immediately stop unit when job is cancelled mid-approach # time=7319.63ms
+        ok 2 - should pickup NEXT job if current is cancelled # time=5838.64ms
+        ok 3 - should handle cancellation while Working (arrived) # time=2021.64ms
+    }
+}
+ok 10 - src/tests/ForceAssignment.test.js # time=17.05ms {
+    1..1
+    ok 1 - Force Assignment Integration # time=15.84ms {
+        1..2
+        ok 1 - should successfully triggerMove without infinite loop # time=11.11ms
+        ok 2 - should handle Force Assignment logic block # time=3.44ms
+    }
+}
+ok 11 - src/tests/ForceBuild.test.js # time=3745.08ms {
+    1..1
+    ok 1 - Terrain Force Build Logic # time=3743.56ms {
+        1..2
+        ok 1 - should clear existing buildings when placing a new one # time=2143.72ms
+        ok 2 - should clear buildings partially in the way # time=1598.27ms
+    }
+}
+ok 12 - src/tests/GhostHouse.test.js # time=202.56ms {
+    1..1
+    ok 1 - Terrain Ghost House Test # time=201.09ms {
+        1..1
+        ok 1 - should NOT accumulate ghost buildings (cleared during deserialize) # time=199.86ms
+    }
+}
+ok 13 - src/tests/GoblinDestruction.test.js # time=27.74ms {
+    1..1
+    ok 1 - Goblin Building Destruction # time=25.61ms {
+        1..5
+        ok 1 - should damage building population # time=11.99ms
+        ok 2 - should destroy building when Population AND HP are depleted # time=7.20ms
+        ok 3 - should destroy building even if fractional population remains (e.g. 0.5) # time=2.09ms
+        ok 4 - should NOT destroy building if population remains >= 1.0 # time=1.29ms
+        ok 5 - should take retaliation damage # time=1.52ms
+    }
+}
+ok 14 - src/tests/GoblinFixes.test.js # time=783.76ms {
+    1..1
+    ok 1 - Goblin Fixes Verification # time=782.37ms {
+        1..4
+        ok 1 - Entity.getDistance should handle wrapping # time=203.27ms
+        ok 2 - Terrain.findBestTarget should find wrapped targets # time=264.02ms
+        ok 3 - Terrain.findBestTarget should handle non-wrapping case correctly (sanity) # time=187.29ms
+        ok 4 - GoblinManager difficulty scaling increases stronger goblin probability # time=125.42ms
+    }
+}
+ok 15 - src/tests/GoblinMobilization.test.js # time=480.28ms {
+    1..1
+    ok 1 - Goblin Mobilization Verification # time=478.66ms {
+        1..2
+        ok 1 - triggerWave should mobilize idle goblins # time=234.74ms
+        ok 2 - mobilizeClan should rely on getClanRaidTarget fallback # time=240.93ms
+    }
+}
+ok 16 - src/tests/GoblinSpawn.test.js # time=38.32ms {
+    1..1
+    ok 1 - Goblin Hut Spawning # time=36.60ms {
+        1..2
+        ok 1 - should spawn goblin when hut population reaches 10 # time=20.37ms
+        ok 2 - should NOT spawn if Global Cap is reached # time=14.24ms
+    }
+}
+ok 17 - src/tests/GoblinStats.test.js # time=14.67ms {
+    1..1
+    ok 1 - Goblin Stats Verification # time=13.53ms {
+        1..2
+        ok 1 - Normal Goblin should have sufficient lifespan and speed # time=8.87ms
+        ok 2 - King Goblin should be long lived # time=2.89ms
+    }
+}
+ok 18 - src/tests/GoblinStuckness.test.js # time=22.53ms {
+    1..1
+    ok 1 - Goblin Combat and Stagnation # time=21.04ms {
+        1..3
+        ok 1 - should blacklist unreachable targets and transition state # time=14.72ms
+        ok 2 - should respect blacklist in findTarget # time=3.48ms
+        ok 3 - should not stop movement if already fighting # time=1.47ms
+    }
+}
+ok 19 - src/tests/GoblinTypes.test.js # time=90.10ms {
+    1..1
+    ok 1 - Goblin Types & Stats # time=88.33ms {
+        1..4
+        ok 1 - should create Goblin King with correct stats # time=11.95ms
+        ok 2 - should create Goblin Shaman with correct stats # time=4.32ms
+        ok 3 - should correctly spawn types based on random probability # time=26.55ms
+        ok 4 - should use staff visual for Shaman in Renderer logic # time=7.22ms
+    }
+}
+ok 20 - src/tests/Hotspot.test.js # time=572.03ms {
+    1..1
+    ok 1 - Global Battle Hotspots Logic # time=570.27ms {
+        1..6
+        ok 1 - Clusters nearby battle reports # time=558.29ms
+        ok 2 - Decays intensity # time=1.25ms
+        ok 3 - Mobilizes idle squads to intense hotspots (Updated Threshold) # time=3.45ms
+        ok 4 - Triggers autonomous patrol for idle Knights # time=3.22ms
+        ok 5 - Mobilizes idle squads # time=1.76ms
+        ok 6 - Does not mobilize across regions # time=0.75ms
+    }
+}
+ok 21 - src/tests/JobAssignment.test.js # time=11.47ms {
+    1..1
+    ok 1 - Job Assignment & Continuation # time=10.02ms {
+        1..3
+        ok 1 - should release old job when a new job is claimed (Sequential assignment) # time=4.72ms
+        ok 2 - should continue to the next nearby job after completing current one (Chaining) # time=1.57ms
+        ok 3 - should properly interrupt and change state if a job is snatched by another unit # time=2.36ms
+    }
+}
+ok 22 - src/tests/JobIdempotency.test.js # time=6020.98ms {
+    1..1
+    ok 1 - Job Assignment Idempotency # time=6019.71ms {
+        1..1
+        ok 1 - should NOT reset movement if claiming the same job twice # time=6018.27ms
+    }
+}
+ok 23 - src/tests/JobPathFailure.test.js # time=5922.37ms {
+    1..1
+    ok 1 - Job Pathfinding Failure Handling # time=5920.40ms {
+        1..1
+        ok 1 - should abandon job if smartMove fails repeatedly # time=5918.80ms
+    }
+}
+ok 24 - src/tests/Lighting.test.js # time=46.65ms {
+    1..1
+    ok 1 - BuildingRenderer Lighting # time=45.01ms {
+        1..1
+        ok 1 - should turn on barracks lights at night # time=43.68ms
+    }
+}
+ok 25 - src/tests/ManaSystem.test.js # time=27.32ms {
+    1..1
+    ok 1 - Mana System # time=26.16ms {
+        1..4
+        ok 1 - should block actions when mana is negative # time=3.52ms
+        ok 2 - should allow actions when mana is positive # time=3.60ms
+        ok 3 - should consume mana correctly # time=5.87ms
+        ok 4 - InputManager Integration # time=11.70ms {
+            1..2
+            ok 1 - should consume mana on raise terrain # time=9.37ms
+            ok 2 - should block raise terrain if mana is negative # time=2.02ms
+        }
+    }
+}
+ok 26 - src/tests/ManualAssignment.test.js # time=54.88ms {
+    1..1
+    ok 1 - Manual Assignment Debugging # time=53.24ms {
+        1..5
+        ok 1 - should assign a manual request to an Idle worker # time=28.52ms
+        ok 2 - should NOT assign to a Busy worker (already working) # time=9.44ms
+        ok 3 - should assign to a Wandering worker (Low Priority) # time=5.78ms
+        ok 4 - should assign to a Moving worker (Low Priority) # time=4.38ms
+        ok 5 - should re-assign a unit that is "Moving" to a job (Not yet Working) # time=3.70ms
+    }
+}
+ok 27 - src/tests/MigrationConflict.test.js # time=24.46ms {
+    1..1
+    ok 1 - Migration Conflict Regression (Jitabata Bug) # time=22.10ms {
+        1..3
+        ok 1 - should handle basic Unit update without crash # time=7.80ms
+        ok 2 - should NOT allow WanderState to interfere with Migration Movement # time=4.22ms
+        ok 3 - should allow Migration Logic to control repeated movement # time=7.90ms
+    }
+}
+ok 28 - src/tests/MigrationImprovement.test.js # time=25.05ms {
+    1..1
+    ok 1 - Migration Improvements # time=23.84ms {
+        1..4
+        ok 1 - should retry migration after 30 seconds timeout # time=14.47ms
+        ok 2 - should interrupt migration if enemy is found (Priority) # time=4.11ms
+        ok 3 - should stop migrating if construction succeeds # time=1.68ms
+        ok 4 - DEBUG: should log blockage reasons correctly # time=2.13ms
+    }
+}
+ok 29 - src/tests/Minimal.test.js # time=4.42ms {
+    1..1
+    ok 1 - Minimal Test # time=3.02ms {
+        1..1
+        ok 1 - should pass # time=2.08ms
+    }
+}
+ok 30 - src/tests/MinimalUnit.test.js # time=7.29ms {
+    1..1
+    ok 1 - Minimal Unit Sanity # time=6.49ms {
+        1..1
+        ok 1 - can instantiate Unit # time=5.71ms
+    }
+}
+ok 31 - src/tests/Movement.test.js # time=74.56ms {
+    1..1
+    ok 1 - Terrain Movement and Logic Tests # time=73.27ms {
+        1..4
+        ok 1 - should set very long moveDuration for Unit on Rock # time=11.09ms
+        ok 2 - should set normal moveDuration on Flat # time=3.64ms
+        ok 3 - should prevent Unit from moving/building on Rock checks? # time=3.60ms
+        ok 4 - should increase Goblin Hut population and spawn goblin # time=52.66ms
+    }
+}
+ok 32 - src/tests/MovementReset.test.js # time=9.28ms {
+    1..1
+    ok 1 - Actor Movement Reset # time=7.65ms {
+        1..2
+        ok 1 - should NOT reset movement timer when calling smartMove frequently for the same target # time=5.10ms
+        ok 2 - should progress visually even with frequent smartMove calls # time=1.54ms
+    }
+}
+ok 33 - src/tests/MultiJob.test.js # time=7128.00ms {
+    1..1
+    ok 1 - Multi-Job Juggling Verification # time=7122.97ms {
+        1..1
+        ok 1 - should NOT interrupt busy units when a new job is added # time=7121.30ms
+    }
+}
+ok 34 - src/tests/NightLogic.test.js # time=15.32ms {
+    1..1
+    ok 1 - Night Logic - Shelter Entry # time=13.88ms {
+        1..1
+        ok 1 - Worker should engage pathfinding to House but is likely blocked # time=12.00ms
+    }
+}
+ok 35 - src/tests/Pathfinding.test.js # time=190.50ms {
+    1..1
+    ok 1 - Terrain Pathfinding Costs # time=188.50ms {
+        1..1
+        ok 1 - Prefers a longer flat route over a shorter mountain route # time=186.58ms
+    }
+}
+ok 36 - src/tests/ReproductionJitabata.test.js # time=16.86ms {
+    1..1
+    ok 1 - Jitabata Bug Reproduction (Interrupt Loop) # time=15.47ms {
+        1..1
+        ok 1 - should NOT trigger Jitabata (Stop-and-Go) when a distant Raid Point appears during Migration # time=14.24ms
+    }
+}
+ok 37 - src/tests/RequestLifecycle.test.js # time=3351.49ms {
+    1..1
+    ok 1 - Game Request Lifecycle # time=3349.93ms {
+        1..5
+        ok 1 - should tag new requests with createdAt timestamp # time=913.59ms
+        ok 2 - should cleanup expired pending requests # time=693.46ms
+        ok 3 - should NOT cleanup assigned requests even if old # time=699.67ms
+        ok 4 - should cancel request via Proximity Search # time=544.16ms
+        ok 5 - should prioritize nearest request when cancelling # time=497.36ms
+    }
+}
+ok 38 - src/tests/RubberBanding.test.js # time=25.07ms {
+    1..1
+    ok 1 - Rubber-banding and Chaining Verification # time=23.64ms {
+        1..2
+        ok 1 - should NOT snap back when arriving at a job during mid-move # time=11.08ms
+        ok 2 - should use visual position for chaining the next job # time=11.05ms
+    }
+}
+ok 39 - src/tests/SafeSpawn.test.js # time=283.59ms {
+    1..1
+    ok 1 - Safe Population Zero # time=282.25ms {
+        1..1
+        ok 1 - should NOT destroy house when spawning unit resets population to 0 # time=280.44ms
+    }
+}
+ok 40 - src/tests/SaveLoad.test.js # time=4902.31ms {
+    1..1
+    ok 1 - Save/Load System # time=4900.49ms {
+        1..3
+        ok 1 - should save game data correctly # time=1890.77ms
+        ok 2 - should load game data correctly # time=1373.85ms
+        ok 3 - should restore request markers with correct renderOrder # time=1631.09ms
+    }
+}
+ok 41 - src/tests/ShorelineLoop.test.js # time=12.72ms {
+    1..1
+    ok 1 - Shoreline Loop Reproduction # time=11.22ms {
+        1..2
+        ok 1 - should NOT target unrelated region goblin via findTargetGoblin # time=8.03ms
+        ok 2 - should NOT target land goblin when unit is in water (Region 0) # time=1.47ms
+    }
+}
+ok 42 - src/tests/SimpleRegion.test.js # time=354.75ms {
+    1..1
+    ok 1 - Simple Region Connectivity # time=352.77ms {
+        1..2
+        ok 1 - should identify a single island # time=170.18ms
+        ok 2 - should split two islands # time=180.82ms
+    }
+}
+ok 43 - src/tests/SpatialSearch.test.js # time=3915.89ms {
+    1..1
+    ok 1 - Spatial Partitioning # time=3914.38ms {
+        1..4
+        ok 1 - should register and retrieve an entity # time=1217.68ms
+        ok 2 - should move entity correctly between cells # time=921.61ms
+        ok 3 - should unregister entity # time=888.18ms
+        ok 4 - should find nearest entity using spatial search # time=885.26ms
+    }
+}
+ok 44 - src/tests/SquadAi.test.js # time=24.17ms {
+    1..1
+    ok 1 - Squad AI & Region Logic # time=22.59ms {
+        1..5
+        ok 1 - should register a squad and assign valid ID # time=5.65ms
+        ok 2 - should share targets among squad members # time=8.78ms
+        ok 3 - Regression: Migration Stagnation Fix (Knight) # time=1.96ms
+        ok 4 - Regression: Migration Stagnation Fix (Worker) # time=3.32ms
+        ok 5 - should allow cross-region movement if target is very close (Self Defense) # time=1.44ms
+    }
+}
+ok 45 - src/tests/SquadMemory.test.js # time=5.47ms {
+    1..1
+    ok 1 - Squad-Based Memory (Decoupled) # time=4.34ms {
+        1..2
+        ok 1 - should link manually spawned units to nearby barracks # time=1.87ms
+        ok 2 - should report enemy immediately on hit # time=1.24ms
+    }
+}
+ok 46 - src/tests/StartupCrash.test.js # time=121.15ms {
+    1..1
+    ok 1 - Startup Crash Verification # time=119.79ms {
+        1..3
+        ok 1 - UnitRenderer should initialize without null materials # time=68.30ms
+        ok 2 - UnitRenderer update should not crash with active units # time=29.85ms
+        ok 3 - FaceMesh should be present if split logic is active # time=0.65ms
+    }
+}
+ok 47 - src/tests/StuckAndMarker.test.js # time=48.41ms {
+    1..1
+    ok 1 - Stuck and Marker Debugging # time=46.76ms {
+        1..1
+        ok 1 - should move IMMEDIATELY when assigned a job (no 3s delay) # time=45.30ms
+    }
+}
+ok 48 - src/tests/StuckDebug.test.js # time=176.46ms {
+    1..1
+    ok 1 - Unit Stuck Debugging # time=172.80ms {
+        1..1
+        ok 1 - should log reason for blockage # time=170.51ms
+    }
+}
+ok 49 - src/tests/TargetingPriority.test.js # time=27.54ms {
+    1..1
+    ok 1 - Unit Targeting Priority # time=25.94ms {
+        1..4
+        ok 1 - should prioritize Goblin if it is much closer than Building # time=12.21ms
+        ok 2 - should prioritize Building if distances are very close (Siege Mode) # time=4.07ms
+        ok 3 - should NOT auto-target distant Huts (Workers are passive) # time=3.01ms
+        ok 4 - should auto-target CLOSE Huts for self-defense (Workers) # time=3.90ms
+    }
+}
+ok 50 - src/tests/Terrain.test.js # time=8164.67ms {
+    1..1
+    ok 1 - Terrain Logic # time=8163.22ms {
+        1..3
+        ok 1 - Population Update # time=2055.61ms {
+            1..2
+            ok 1 - should correctly sum housing population excluding farms # time=1142.16ms
+            ok 2 - should handle massive population overflow loop correctly # time=910.11ms
+        }
+        ok 2 - Farm Logic # time=1628.82ms {
+            1..2
+            ok 1 - should grow crops using simDeltaTime (Not raw deltaTime) # time=815.73ms
+            ok 2 - should preserve overflow when harvesting # time=812.85ms
+        }
+        ok 3 - Advanced Mechanics # time=4478.25ms {
+            1..4
+            ok 1 - should scale farm yield based on moisture # time=854.50ms
+            ok 2 - should reduce food consumption at night # time=813.41ms
+            ok 3 - should consume normal amount during day # time=774.35ms
+            ok 4 - Seasonal Colors # time=2035.45ms {
+                1..2
+                ok 1 - should return different colors for seasons # time=1092.90ms
+                ok 2 - should keep rock color even if dry (desert override check) # time=942.24ms
+            }
+        }
+    }
+}
+ok 51 - src/tests/Unit.test.js # time=177.68ms {
+    1..1
+    ok 1 - Unit Logic # time=176.23ms {
+        1..3
+        ok 1 - Resource Gathering # time=15.87ms {
+            1..2
+            ok 1 - should gather fish if checking neighbors finds water # time=9.66ms
+            ok 2 - should NOT gather fish if completely inland # time=4.78ms
+        }
+        ok 2 - Build Priority (Famine) # time=88.75ms {
+            1..2
+            ok 1 - should prioritize Farm and ABORT house if farm fails during famine # time=5.12ms
+            ok 2 - should fallback to House if NOT in famine # time=83.50ms
+        }
+        ok 3 - Advanced Mechanics - Unit # time=70.27ms {
+            1..4
+            ok 1 - should accept role in constructor # time=6.15ms
+            ok 2 - should FAIL buildFarm and IMPROVE LAND if moisture is poor (simulated) # time=19.75ms
+            ok 3 - should succeed buildFarm if moisture is optimal # time=5.07ms
+            ok 4 - should check heights during moveRandomly # time=38.94ms
+        }
+    }
+}
+ok 52 - src/tests/UnitAISearch.test.js # time=27.18ms {
+    1..1
+    ok 1 - Unit AI Search Optimization # time=22.55ms {
+        1..2
+        ok 1 - should use Spatial Search to find goblin # time=15.62ms
+        ok 2 - should find Base using Spatial Search # time=5.11ms
+    }
+}
+ok 53 - src/tests/UnitBehavior.test.js # time=25.00ms {
+    1..1
+    ok 1 - Unit Behavior Mode # time=23.51ms {
+        1..8
+        ok 1 - should return Patrol for Knight/Wizard when idle # time=7.59ms
+        ok 2 - should return Wander for Worker when idle # time=1.18ms
+        ok 3 - should return Combat when targetGoblin is set # time=3.47ms
+        ok 4 - should return Siege when targetBuilding is set # time=1.87ms
+        ok 5 - should return Working when targetRequest is set # time=3.72ms
+        ok 6 - should return Patrolling with coords when targetRaidPoint is set # time=1.83ms
+        ok 7 - should return Wander for Migrating if action is Migrating but state is Wander # time=1.19ms
+        ok 8 - should prioritize Combat mode when in CombatState # time=0.97ms
+    }
+}
+ok 54 - src/tests/UnitInit.test.js # time=13.18ms {
+    1..1
+    ok 1 - Unit Initialization and Movement Start # time=11.67ms {
+        1..1
+        ok 1 - should NOT freeze if started at time 0 # time=10.43ms
+    }
+}
+ok 55 - src/tests/UnitLifecycle.test.js # time=19.99ms {
+    1..1
+    ok 1 - Unit Lifecycle and Aging # time=18.52ms {
+        1..5
+        ok 1 - should initialize with age 20 # time=7.09ms
+        ok 2 - should increment age when updateLogic is called # time=3.33ms
+        ok 3 - should die when age exceeds lifespan # time=1.10ms
+        ok 4 - should age slower for Knights and Wizards (0.02 rate) # time=3.17ms
+        ok 5 - should have longer lifespan for Special units # time=1.23ms
+    }
+}
+ok 56 - src/tests/UnitMigration.test.js # time=44.00ms {
+    1..1
+    ok 1 - Unit Migration Logic # time=41.23ms {
+        1..3
+        ok 1 - should return true on successful build # time=13.94ms
+        ok 2 - should increment stagnation on failed build # time=4.82ms
+        ok 3 - should migrate after 20 seconds of stagnation # time=20.86ms
+    }
+}
+ok 57 - src/tests/UnitSnatch.test.js # time=19.75ms {
+    1..1
+    ok 1 - Unit Snatching and Race Conditions # time=18.50ms {
+        1..2
+        ok 1 - should stop and wander if another unit snatches its job # time=13.30ms
+        ok 2 - should stop if the job is completed by someone else # time=3.82ms
+    }
+}
+ok 58 - src/tests/UnitVisibility.test.js # time=173.61ms {
+    1..1
+    ok 1 - UnitRenderer Visibility # time=171.96ms {
+        1..2
+        ok 1 - should set matrix with valid scale when unit is visible # time=74.74ms
+        ok 2 - should render correct count of instances # time=95.49ms
+    }
+}
+ok 59 - src/tests/UnitWrapping.test.js # time=20.23ms {
+    1..1
+    ok 1 - Unit Movement Wrapping # time=18.76ms {
+        1..4
+        ok 1 - should move normally for short distances # time=9.44ms
+        ok 2 - should wrap LEFT if target is across right boundary # time=2.06ms
+        ok 3 - should wrap RIGHT if target is across left boundary # time=3.56ms
+        ok 4 - should handle Z axis wrapping # time=1.62ms
+    }
+}
+ok 60 - src/tests/WanderBehavior.test.js # time=11.54ms {
+    1..1
+    ok 1 - Wander Behavior Verification # time=10.21ms {
+        1..2
+        ok 1 - UnitWanderState should trigger moveRandomly after interval # time=7.46ms
+        ok 2 - GoblinWanderState should also wander and scan for targets # time=1.51ms
+    }
+}
+ok 61 - src/tests/WorkerDiversity.test.js # time=24.96ms {
+    1..1
+    ok 1 - Worker Diversity Spawning # time=21.97ms {
+        1..3
+        ok 1 - should spawn diverse roles (Worker/Hunter/Fisher) from a House # time=17.84ms
+        ok 2 - should spawn Knights from Barracks # time=1.72ms
+        ok 3 - should spawn Wizards from Towers # time=0.98ms
+    }
+}
+ok 62 - src/tests/WorkerReachability.test.js # time=338.99ms {
+    1..1
+    ok 1 - Worker Job Reachability # time=337.32ms {
+        1..2
+        ok 1 - findBestRequest filters out unreachable jobs # time=315.66ms
+        ok 2 - forceAssignRequest skips unreachable units # time=19.19ms
+    }
+}
+ok 63 - src/tests/WorkerRequest.test.js # time=25.20ms {
+    1..1
+    ok 1 - Worker Job Logic (Unit.js + States) # time=23.66ms {
+        1..3
+        ok 1 - Unit finds and claims request when idle # time=13.43ms
+        ok 2 - Unit moves to target request # time=2.93ms
+        ok 3 - Unit completes request upon arrival # time=5.77ms
+    }
+}
+ok 64 - src/tests/WrapDistance.test.js # time=11.08ms {
+    1..1
+    ok 1 - Unit Distance Wrap Logic # time=9.90ms {
+        1..2
+        ok 1 - should calculate short distance across wrap (0,0 -> 79,0) # time=6.97ms
+        ok 2 - should calculate diagonal wrap correctly (0,0 -> 79,79) # time=1.63ms
+    }
+}

@@ -1,0 +1,82 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/StuckAndMarker.test.js[2m > [22m[2mStuck and Marker Debugging[2m > [22m[2mshould move IMMEDIATELY when assigned a job (no 3s delay)
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Defense Debug 0] shouldScan:true isBusy:false force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:true isBusy:false force:false PassedGoblins:0
+[Game] Request Added: move at (50,50) ID:req_0
+[Game] forceAssignRequest FOUND Unit 0 (DistSq:3200). Scanned:1
+[Actor 0] smartMove attempting path. Time:0 Last:-100
+[Actor 0] smartMove found path Len:3
+[JobState] Entered. Target: move. Resume: UnitWanderState
+[Game] Force-Assigned Request req_0 to Unit 0 (Score: 3200.0)
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:false PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+[Defense Debug 0] shouldScan:false isBusy:true force:true PassedGoblins:0
+
+ [32m笨・[39m src/tests/StuckAndMarker.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 34[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 22:58:14
+[2m   Duration [22m 1.65s[2m (transform 409ms, setup 47ms, import 538ms, tests 34ms, environment 656ms)[22m
+

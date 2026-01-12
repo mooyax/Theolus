@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
+import { CombatState } from '../ai/states/UnitStates.js';
 import { Game } from '../Game.js';
 import * as THREE from 'three';
 
@@ -21,7 +22,10 @@ describe('Advanced Units', () => {
             unregisterEntity: vi.fn(),
             moveEntity: vi.fn(),
             getInterpolatedHeight: () => 0,
-            logicalWidth: 100, logicalDepth: 100
+            logicalWidth: 100, logicalDepth: 100,
+            grid: [],
+            findPath: vi.fn(),
+            pathfindingCalls: 0
         };
 
         // Mock Game Singleton for BattleMemory
@@ -31,6 +35,7 @@ describe('Advanced Units', () => {
                 reportVictory: vi.fn(),
                 getPriorities: vi.fn(() => [])
             },
+            reportGlobalBattle: vi.fn(),
             projectiles: []
         };
         global.window = { game: mockGame };
@@ -48,8 +53,8 @@ describe('Advanced Units', () => {
     it('should initialize Wizard with low HP and high stats', () => {
         const wizard = new Unit(mockScene, mockTerrain, 10, 10, 'wizard');
 
-        // Base HP ~30-50. Wizard 0.5x ~15-25.
-        expect(wizard.hp).toBeLessThan(40);
+        // Base HP ~30-50. Wizard 3.0x Buff ~90-150.
+        expect(wizard.hp).toBeGreaterThan(100);
         expect(wizard.damage).toBeGreaterThan(50); // Same as Knight
         expect(wizard.role).toBe('wizard');
     });
@@ -64,19 +69,14 @@ describe('Advanced Units', () => {
             position: new THREE.Vector3(14, 0, 10)
         };
 
-        // Mock getDistance
+        wizard.targetGoblin = goblin;
         wizard.getDistance = () => 4.0;
+        wizard.changeState(new CombatState(wizard));
 
         wizard.attackGoblin(goblin);
 
-        // Wizard attacks trigger damage (fireball logic might be delayed/projectile, 
-        // but verify method call or cooldown set)
-
-        // If projectile is used, cooldown is set.
         expect(wizard.attackCooldown).toBeGreaterThan(0);
-
-        // Check if Game.projectiles grew or goblin didn't take damage immediately (if projectile).
-        // If "Instant" for now:
         expect(goblin.takeDamage).toHaveBeenCalled();
+        expect(wizard.state).toBeInstanceOf(CombatState);
     });
 });

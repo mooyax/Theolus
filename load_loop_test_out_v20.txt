@@ -1,0 +1,23 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/LoadUpdateLoop.test.js > Load Update Loop Integration > should maintain JobState after first update loop post-load
+Scene created: [33mtrue[39m Pos: object
+Camera created: [33mtrue[39m Pos: object
+Camera setup done
+Creating Terrain...
+Terrain created: [33mtrue[39m
+
+stdout | src/tests/LoadUpdateLoop.test.js > Load Update Loop Integration > should maintain JobState after first update loop post-load
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+Setup Unit update type: undefined
+
+ ﾃ・src/tests/LoadUpdateLoop.test.js > Load Update Loop Integration > should maintain JobState after first update loop post-load 12ms
+   竊・expected undefined to be defined
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  00:06:47
+   Duration  1.22s (transform 313ms, setup 40ms, import 362ms, tests 13ms, environment 533ms)
+

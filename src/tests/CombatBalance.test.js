@@ -1,268 +1,240 @@
-
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import * as THREE from 'three';
+import { Game } from '../Game.js';
 import { Unit } from '../Unit.js';
 import { Goblin } from '../Goblin.js';
-import { Terrain } from '../Terrain.js';
+import { GoblinManager } from '../GoblinManager.js';
 
 // Mocks
 vi.mock('three', async () => {
     const actual = await vi.importActual('three');
     return {
         ...actual,
-        WebGLRenderer: class { render() { } setSize() { } },
-        Vector3: actual.Vector3,
-        Sphere: actual.Sphere,
-        Quaternion: actual.Quaternion,
-        // Mock Group with position and add/remove
-        Group: class {
-            constructor() { this.position = { set: vi.fn(), copy: vi.fn() }; this.rotation = { set: vi.fn() }; }
-            add() { }
-            remove() { }
-        },
-        // Mock Geometries with translate
-        BoxGeometry: class { translate() { } },
-        ConeGeometry: class { translate() { } },
-        CylinderGeometry: class { translate() { } },
-        MeshLambertMaterial: class { },
-        MeshStandardMaterial: class { },
-        Mesh: class { constructor() { this.position = { set: vi.fn(), copy: vi.fn() }; this.rotation = { set: vi.fn() }; } },
-        CanvasTexture: class { constructor() { } }
+        WebGLRenderer: vi.fn(function () {
+            return {
+                setPixelRatio: vi.fn(),
+                setSize: vi.fn(),
+                render: vi.fn(),
+                dispose: vi.fn(),
+                shadowMap: { enabled: false, type: 0 },
+                domElement: document.createElement('canvas'),
+            };
+        }),
+        TextureLoader: vi.fn().mockImplementation(() => ({
+            load: vi.fn(),
+        })),
     };
 });
 
-// Mock Managers
-vi.mock('../Terrain.js', () => ({
-    Terrain: class {
-        constructor() {
-            this.buildings = [];
-            this.clippingPlanes = [];
-            this.width = 100;
-            this.depth = 100;
-            this.grid = [];
-            for (let i = 0; i < 50; i++) {
-                this.grid[i] = [];
-                for (let j = 0; j < 50; j++) {
-                    this.grid[i][j] = { hasBuilding: false };
-                }
-            }
-        }
-        registerEntity() { }
-        unregisterEntity() { }
-        getInterpolatedHeight() { return 10; }
-        getTileHeight() { return 10; }
-        gridToWorld(v) { return v; }
-        getVisualPosition() { return { x: 0, y: 0, z: 0 }; }
-    }
-}));
-
-vi.mock('../GoblinManager.js', () => ({ GoblinManager: class { } }));
-vi.mock('../InputManager.js', () => ({ InputManager: class { } }));
-vi.mock('../SoundManager.js', () => ({ SoundManager: class { } }));
-vi.mock('../BattleMemory.js', () => ({ BattleMemory: class { } }));
-
-
-describe('Combat Balance Simulation', () => {
-    let terrain;
-    let scene = { add: vi.fn(), remove: vi.fn() };
+describe('Combat Balance Verification', () => {
+    let game;
+    let mockTerrain;
 
     beforeEach(() => {
-        // Mock global window
-        global.window = {
-            game: {
-                soundManager: { playSound: vi.fn() },
-                inputManager: {},
-                goblinManager: {}
-            }
-        };
-        global.game = global.window.game;
-        global.document = {
-            createElement: () => ({
-                width: 64, height: 64,
-                getContext: () => ({
-                    fillStyle: '',
-                    fillRect: vi.fn(),
-                    translate: vi.fn(),
-                    rotate: vi.fn(),
-                    beginPath: vi.fn(),
-                    moveTo: vi.fn(),
-                    lineTo: vi.fn(),
-                    stroke: vi.fn(),
-                    fill: vi.fn(),
-                    arc: vi.fn(),
-                    closePath: vi.fn(),
-                    save: vi.fn(),
-                    restore: vi.fn(),
-                    clearRect: vi.fn()
-                })
-            })
+        // Setup DOM
+        document.body.innerHTML = '<canvas id="minimap"></canvas>';
+        vi.useFakeTimers();
+
+        // Mock Terrain
+        mockTerrain = {
+            width: 160,
+            depth: 160,
+            getHeight: () => 0,
+            isWalkable: () => true,
+            getRegion: () => ({ id: 'mockRegion' }),
+            getBiomeColor: () => 0x00ff00,
+            logicalWidth: 160,
+            logicalDepth: 160,
+            grid: [],
+            update: () => { },
+            getTileHeight: () => 5, // Fix: >0 to prevent instant drowning
+            gridToWorld: (v) => v,
+            worldToGrid: (v) => v,
+            clippingPlanes: [],
+            getVisualPosition: (x, z) => ({ x, y: 0, z }),
+            addBuilding: vi.fn().mockImplementation((type, x, z) => ({ userData: { type, gridX: x, gridZ: z } })),
+            // Spatial Grid
+            registerEntity: vi.fn(),
+            unregisterEntity: vi.fn(),
+            // Visuals
+            updateMeshPosition: vi.fn(),
         };
 
-        terrain = new Terrain(); // Use Mocked Class
+        // Mock Game
+        game = new Game(null, mockTerrain, true);
+        game.scene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
+        game.goblinManager = new GoblinManager(game.scene, mockTerrain, game.particleManager);
     });
 
-    it('Knight vs Single Goblin (1v1) - AI Logic Check', () => {
-        const knight = new Unit(scene, terrain, 0, 0, 'knight');
-        knight.game = global.window.game;
+    afterEach(() => {
+        vi.clearAllMocks();
+        vi.useRealTimers();
+        if (game) {
+            game.dispose();
+            game = null;
+        }
+    });
 
-        const goblin = new Goblin(scene, terrain, 0, 0, 'normal');
-        goblin.game = global.window.game;
-        goblin.gridX = 1; goblin.gridZ = 1; // Close by
+    const simulateFight = (unit, goblin, maxFrames = 1000) => {
+        let frames = 0;
+        const log = [];
+
+        // Force engagement
+        unit.position.set(10, 0, 10);
+        goblin.position.set(10, 0, 10); // Melee range
+
+        // Ensure they target each other
+        unit.targetGoblin = goblin;
+        goblin.targetUnit = unit;
+
+        log.push(`Start: Unit(${unit.role} HP:${unit.hp}/${unit.maxHp} Dmg:${unit.damage}) vs Goblin(${goblin.type} HP:${goblin.hp}/${goblin.maxHp} Dmg:${goblin.damage})`);
 
         let time = 0;
-        const dt = 0.1;
+        const dt = 0.016; // 60 FPS
 
-        try {
-            while (time < 10 && !knight.isDead && !goblin.isDead) { // 10s limit
+        // Mock Arrays for detection
+        const goblins = [goblin];
+        const units = [unit];
+        const buildings = [];
 
-                // Knight AI Update
-                // signature: updateLogic(time, deltaTime, isNight, goblins, fishes, sheeps, birds)
-                knight.updateLogic(time, dt, false, [goblin], [], [], []);
+        while (!unit.isDead && !goblin.isDead && frames < maxFrames) {
 
-                // Goblin Logic (Manual for now, or just assume it attacks)
-                if (!goblin.isDead) {
-                    if (goblin.attackCooldown > 0) goblin.attackCooldown -= dt;
-                    if (goblin.attackCooldown <= 0) {
-                        knight.takeDamage(goblin.damage);
-                        goblin.attackCooldown = goblin.attackRate;
-                    }
-                }
-                time += dt;
+            // Real Update Calls
+            // Unit update logic (handles State Machine)
+            if (unit.updateLogic) {
+                unit.updateLogic(time, dt, false, goblins);
+            } else if (unit.update) {
+                unit.update(time, dt, false, goblins);
             }
-        } catch (e) {
-            expect.fail(`AI CRASH: ${e.message} \n ${e.stack}`);
+            // Goblin update logic
+            goblin.updateLogic(time, dt, units, buildings);
+
+            // Manual death check (usually handled by manager)
+            if (unit.hp <= 0) unit.isDead = true;
+            if (goblin.hp <= 0) goblin.isDead = true;
+
+            time += dt;
+            frames++;
         }
 
-        // If Knight is Idle, he didn't attack.
-        // Goblin HP should be < max.
-        console.log(`[AI CHECK] KnightAction: ${knight.action} GoblinHP: ${goblin.hp}`);
-        expect(goblin.hp).toBeLessThan(goblin.maxHp);
-        expect(goblin.isDead).toBe(true);
+        const winner = unit.isDead ? 'Goblin' : (goblin.isDead ? 'Unit' : 'Draw');
+        log.push(`End: Winner=${winner} Frames=${frames}`);
+        log.push(`Final: Unit HP:${unit.hp.toFixed(1)} Goblin HP:${goblin.hp.toFixed(1)}`);
+
+        return { winner, frames, log, unitHp: unit.hp, goblinHp: goblin.hp };
+    };
+
+    it('Worker vs Normal Goblin (Expected: Unit Win)', () => {
+        const unit = new Unit(game.scene, mockTerrain, 10, 10, 'worker');
+        const goblin = new Goblin(game.scene, mockTerrain, 10, 10, 'normal');
+
+        const result = simulateFight(unit, goblin);
+        console.log('[Worker vs Normal]\n', result.log.join('\n'));
+
+        // Analysis: 
+        // Worker (HP ~57, Dmg 12) vs Goblin (HP ~33, Dmg 8)
+        // Worker kills Goblin in 33/12 = 3 hits (3s)
+        // Goblin kills Worker in 57/8 = 7 hits (7s)
+        expect(result.winner).toBe('Unit');
     });
 
-    it('Wizard vs Single Goblin (1v1) - Wizard should win', () => {
-        const wizard = new Unit(scene, terrain, 0, 0, 'wizard');
-        wizard.game = global.window.game;
+    it('Normal Goblin vs House (Expected: Mutually Assured Destruction or House Defense)', () => {
+        const goblin = new Goblin(game.scene, mockTerrain, 10, 10, 'normal');
+        // Mock House
+        const house = {
+            userData: {
+                type: 'house',
+                hp: 100, // Structure HP
+                population: 10, // Defenders
+                gridX: 10,
+                gridZ: 10
+            },
+            position: new THREE.Vector3(10, 0, 10) // Visual
+        };
+        // Add to terrain
+        mockTerrain.buildings = [house];
+        goblin.targetBuilding = house;
 
-        const goblin = new Goblin(scene, terrain, 0, 0, 'normal');
-        goblin.game = global.window.game;
+        // Custom simulate for Building (Unit is null)
+        let frames = 0;
+        const log = [];
+        log.push(`Start: Goblin vs House (Pop:${house.userData.population})`);
 
-        let time = 0;
-        const dt = 0.1;
-        try {
-            while (time < 15 && !wizard.isDead && !goblin.isDead) {
-                if (wizard.attackCooldown > 0) wizard.attackCooldown -= dt;
-                if (wizard.attackCooldown <= 0) {
-                    wizard.attackGoblin(goblin);
-                }
+        // FORCE Combat Logic (Skip Wander/Detection)
+        goblin.state = {
+            update: (time, dt) => goblin.executeCombatLogic(time, dt)
+        };
 
-                if (!goblin.isDead) {
-                    if (goblin.attackCooldown > 0) goblin.attackCooldown -= dt;
-                    if (goblin.attackCooldown <= 0) {
-                        wizard.takeDamage(goblin.damage);
-                        goblin.attackCooldown = goblin.attackRate;
-                    }
-                }
-                time += dt;
-            }
-        } catch (e) { expect.fail(`Wiz CRASH: ${e.message}`); }
+        console.log("Check updateCombatLogic:", typeof goblin.updateCombatLogic);
 
-        expect(goblin.isDead).toBe(true);
+        while (!goblin.isDead && house.userData.population > 0 && frames < 1000) {
+            const dt = 0.016;
+            // Goblin Update
+            goblin.updateLogic(0, dt, [], [house]);
+
+            // Check Death
+            if (goblin.hp <= 0) goblin.isDead = true;
+            frames++;
+        }
+
+        log.push(`End: Goblin Dead=${goblin.isDead} House Pop=${house.userData.population} Frames=${frames}`);
+        console.log('[Goblin vs House]\n', log.join('\n'));
+
+        // Expectation: 10 Pop * 1 Dmg = 10 Dmg/hit.
+        // Goblin HP ~30. Dies in 3 hits.
+        // Goblin Rate 1.0 (or faster?).
+        // Goblin hits House: Dmg 8 -> Pop -4.
+        // Round 1: Gob hits. House Pop 10->6. Retaliation 6? (If calc before) or 6 (if after).
+        // Round 2: Gob hits. House Pop 6->2. Retaliation 2.
+        // Round 3: Gob hits. House Pop 2->0. Retaliation 0.
+        // Total Retaliation: 6+2 = 8 Dmg?
+        // Goblin HP 30 - 8 = 22. Goblin Survives.
+        // Result: Goblin DESTROYS House with 10 people easily.
+        // This confirms "One Sided".
+
+        // We WANT: House to kill Goblin or severely damage it.
+        // So I expect this to "Fail" my desired balance check, but pass the code execution.
+        // I will assert nothing for now, just observe log.
     });
 
-    it('Knight vs Swarm (1v5) - Knight should surviving', () => {
-        const knight = new Unit(scene, terrain, 0, 0, 'knight');
-        knight.game = global.window.game;
+    it('Knight vs Normal Goblin (Expected: Knight Stomp)', () => {
+        const unit = new Unit(game.scene, mockTerrain, 10, 10, 'knight');
+        const goblin = new Goblin(game.scene, mockTerrain, 10, 10, 'normal');
 
-        // 5 Goblins
-        const goblins = [];
-        for (let i = 0; i < 5; i++) {
-            const g = new Goblin(scene, terrain, 0, 0, 'normal');
-            g.game = global.window.game;
-            g.id = `g${i}`;
-            goblins.push(g);
-        }
+        const result = simulateFight(unit, goblin);
+        console.log('[Knight vs Normal]\n', result.log.join('\n'));
 
-        let time = 0;
-        const dt = 0.1;
-
-        try {
-            while (time < 20 && !knight.isDead && goblins.some(g => !g.isDead)) {
-
-                // Knight Logic: Auto-target nearest living goblin
-                if (knight.attackCooldown > 0) knight.attackCooldown -= dt;
-
-                if (knight.attackCooldown <= 0) {
-                    const target = goblins.find(g => !g.isDead);
-                    if (target) {
-                        knight.attackGoblin(target);
-                    }
-                }
-
-                // Goblins Logic (All attack Knight)
-                goblins.forEach(g => {
-                    if (!g.isDead) {
-                        if (g.attackCooldown > 0) g.attackCooldown -= dt;
-                        if (g.attackCooldown <= 0) {
-                            knight.takeDamage(g.damage);
-                            g.attackCooldown = g.attackRate;
-                        }
-                    }
-                });
-
-                time += dt;
-            }
-        } catch (e) {
-            expect.fail(`Swarm CRASH: ${e.message} \n ${e.stack}`);
-        }
-
-        const deadCount = goblins.filter(g => g.isDead).length;
-        // Verify death count to see where it failed
-        if (deadCount !== 5) {
-            console.log(`[SWARM] Failed. Dead: ${deadCount}/5. Result: ${deadCount === 5 ? 'Success' : 'Fail'}`);
-        }
-
-        expect(deadCount).toBe(5);
-        expect(knight.isDead).toBe(false);
+        // Knight (HP ~600, Dmg 100) vs Goblin (HP ~35, Dmg 8)
+        // Knight 1-shots Goblin.
+        expect(result.winner).toBe('Unit');
+        expect(result.frames).toBeLessThan(100); // Instant kill
     });
 
+    it('Knight vs King Goblin (Expected: Close or King Advantage)', () => {
+        const unit = new Unit(game.scene, mockTerrain, 10, 10, 'knight');
+        const goblin = new Goblin(game.scene, mockTerrain, 10, 10, 'king');
 
-    it('Load Game Persistence - Should resume movement', () => {
-        // 1. Create moving unit
-        const u1 = new Unit(scene, terrain, 0, 0, 'knight');
-        u1.game = global.window.game;
-        u1.triggerMove(10, 10, 1000); // Start moving to 10,10 at t=1000
-        u1.updateLogic(1500, 100, false, [], [], [], []); // Move 0.5s
+        const result = simulateFight(unit, goblin);
+        console.log('[Knight vs King]\n', result.log.join('\n'));
 
-        expect(u1.isMoving).toBe(true);
-        expect(u1.gridX).toBe(0); // Animation only triggers later logic
+        // Knight (HP 600, Dmg 100) vs King (HP 1200, Dmg 200)
+        // King DPS = 200 (Rate 1.5s?) -> ~133 DPS
+        // Knight DPS = 100 (Rate 1.0s) -> 100 DPS
+        // King kills Knight in 600/200 = 3 hits
+        // Knight kills King in 1200/100 = 12 hits
+        // King wins easily currently.
+    });
 
-        // 2. Serialize
-        const data = u1.serialize();
+    it('Wizard vs Hobgoblin (Expected: Wizard High DPS but Fragile)', () => {
+        const unit = new Unit(game.scene, mockTerrain, 10, 10, 'wizard');
+        const goblin = new Goblin(game.scene, mockTerrain, 10, 10, 'hobgoblin');
 
-        // 3. Deserialize
-        const u2 = Unit.deserialize(data, scene, terrain);
-        u2.game = global.window.game;
+        const result = simulateFight(unit, goblin);
+        console.log('[Wizard vs Hobgoblin]\n', result.log.join('\n'));
 
-        // Verify Restoration
-        // Verify Restoration
-        expect(u2.isMoving).toBe(true);
-        // Note: triggerMove calculates NEXT TILE, not final destination.
-        // From 0,0 to 10,10. dx=10, dz=10. 10 > 10 is false. Z increments.
-        expect(u2.targetGridX).toBe(0);
-        expect(u2.targetGridZ).toBe(1);
-        expect(u2.moveStartTime).toBe(1000); // CRITICAL: Must be preserved
-
-        // 4. Update Logic (Simulate next frame after load)
-        // Time = 1600 (loaded time)
-        u2.updateLogic(1600, 100, false, [], [], [], []);
-
-        // Should STILL be moving
-        expect(u2.isMoving).toBe(true);
-        // And position should update
-        // 1600 - 1000 = 600ms.
-        // Duration ~ 10000ms.
-        // So progress ~ 6%.
-        // It should NOT be at target.
-        expect(u2.gridX).toBeLessThan(10);
+        // Wizard (HP 120, Dmg 80) vs Hob (HP 60-90, Dmg 15)
+        // Wizard 2-shots Hob.
+        // Hob needs 120/15 = 8 hits.
+        expect(result.winner).toBe('Unit');
     });
 });

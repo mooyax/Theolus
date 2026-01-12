@@ -1,0 +1,113 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Patrol for Knight/Wizard when idle
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Wander for Worker when idle
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Combat when targetGoblin is set
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Siege when targetBuilding is set
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Siege when targetBuilding is set
+[22m[39mUnit 1 attacking undefined. HP: 95
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Working when targetRequest is set
+[22m[39m[UnitCore.js] Unit Created ID:4 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Working when targetRequest is set
+[22m[39m[Actor 1] SmartMove Dist: NaN Path: No
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Patrolling with coords when targetRaidPoint is set
+[22m[39m[UnitCore.js] Unit Created ID:5 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:5 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Wander for Migrating if action is Migrating but state is Wander
+[22m[39m[UnitCore.js] Unit Created ID:6 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould prioritize Combat mode when in CombatState
+[22m[39m[UnitCore.js] Unit Created ID:7 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:7 Role:worker Pos:5,5
+
+ [31m笶ｯ[39m src/tests/UnitBehavior.test.js [2m([22m[2m8 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 46[2mms[22m[39m
+     [32m笨・[39m should return Patrol for Knight/Wizard when idle[32m 8[2mms[22m[39m
+     [32m笨・[39m should return Wander for Worker when idle[32m 2[2mms[22m[39m
+     [32m笨・[39m should return Combat when targetGoblin is set[32m 3[2mms[22m[39m
+     [32m笨・[39m should return Siege when targetBuilding is set[32m 3[2mms[22m[39m
+     [32m笨・[39m should return Working when targetRequest is set[32m 5[2mms[22m[39m
+[31m     [31mﾃ・[31m should return Patrolling with coords when targetRaidPoint is set[39m[32m 18[2mms[22m[39m
+     [32m笨・[39m should return Wander for Migrating if action is Migrating but state is Wander[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m should prioritize Combat mode when in CombatState[39m[32m 2[2mms[22m[39m
+[90mstdout[2m | src/tests/JobPathFailure.test.js[2m > [22m[2mJob Pathfinding Failure Handling[2m > [22m[2mshould abandon job if smartMove fails repeatedly
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+Creating Terrain...
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+GoblinManager: Cave registered at 96,5 
+[GoblinManager] Clan clan_cave_96_5 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 49,71 
+[GoblinManager] Clan clan_cave_49_71 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 59,27 
+[GoblinManager] Clan clan_cave_59_27 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 49,94 
+[GoblinManager] Clan clan_cave_49_94 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Cave registered at 76,82 
+[GoblinManager] Clan clan_cave_76_82 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 5 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/JobPathFailure.test.js[2m > [22m[2mJob Pathfinding Failure Handling[2m > [22m[2mshould abandon job if smartMove fails repeatedly
+[22m[39m[Test Debug] unit.canMoveTo is: [Function: canMoveTo] {
+  _isMockFunction: [33mtrue[39m,
+  getMockImplementation: [36m[Function (anonymous)][39m,
+  mock: {
+    calls: [],
+    contexts: [],
+    instances: [],
+    invocationCallOrder: [],
+    settledResults: [],
+    results: [],
+    lastCall: [36m[Getter][39m
+  },
+  mockImplementation: [36m[Function: mockImplementation][39m,
+  mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+  withImplementation: [36m[Function: withImplementation][39m,
+  mockReturnThis: [36m[Function: mockReturnThis][39m,
+  mockReturnValue: [36m[Function: mockReturnValue][39m,
+  mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+  mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+  mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+  mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+  mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+  mockClear: [36m[Function: mockClear][39m,
+  mockReset: [36m[Function: mockReset][39m,
+  mockRestore: [36m[Function: mockRestore][39m,
+  mockName: [36m[Function: mockName][39m,
+  getMockName: [36m[Function: getMockName][39m,
+  [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+}
+[Actor 1] SmartMove Dist: 20 Path: No
+
+ [31m笶ｯ[39m src/tests/JobPathFailure.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 278[2mms[22m[39m
+[31m     [31mﾃ・[31m should abandon job if smartMove fails repeatedly[39m[32m 275[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (9)[39m
+[2m   Start at [22m 21:32:38
+[2m   Duration [22m 2.43s[2m (transform 803ms, setup 171ms, import 1.30s, tests 324ms, environment 1.64s)[22m
+

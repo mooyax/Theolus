@@ -1,0 +1,134 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/JobReassignment.test.js[2m > [22m[2mJob Reassignment on Death[2m > [22m[2mshould reassign job when original worker dies
+[22m[39mScene created: [33mtrue[39m Pos: object
+Camera created: [33mtrue[39m Pos: object
+Camera setup done
+Creating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 138,75. Force:false
+[Terrain] Building Added: cave at (138, 75) Size:1x1. Total: 1
+GoblinManager: Cave registered at 138,75 
+[GoblinManager] Clan clan_cave_138_75 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 107,66. Force:false
+[Terrain] Building Added: cave at (107, 66) Size:1x1. Total: 2
+GoblinManager: Cave registered at 107,66 
+[GoblinManager] Clan clan_cave_107_66 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 143,100. Force:false
+[Terrain] Building Added: cave at (143, 100) Size:1x1. Total: 3
+GoblinManager: Cave registered at 143,100 
+[GoblinManager] Clan clan_cave_143_100 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 81,114. Force:false
+[Terrain] Building Added: cave at (81, 114) Size:1x1. Total: 4
+GoblinManager: Cave registered at 81,114 
+[GoblinManager] Clan clan_cave_81_114 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 81,0. Force:false
+[Terrain] Building Added: cave at (81, 0) Size:1x1. Total: 5
+GoblinManager: Cave registered at 81,0 
+[GoblinManager] Clan clan_cave_81_0 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 11 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/JobReassignment.test.js[2m > [22m[2mJob Reassignment on Death[2m > [22m[2mshould reassign job when original worker dies
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50
+[Game] Request Added: raise at (12,12) ID:req_0
+[Assign] Checking Unit 0 (Dead:false)
+[Assign] Unit 0 Action: Idle, TargetReq: none
+[Assign] Checking Unit 1 (Dead:false)
+[Assign] Unit 1 Action: Idle, TargetReq: none
+[Game] forceAssignRequest FOUND Unit 0 (DistSq:8). Scanned:2
+[Actor 0] SmartMove Dist: 2.8284271247461903 Path: No
+[JobState] Entered. Target: raise. ResumeCtx: Approaching Job
+[Game] Request req_0 assigned/switched to Unit 0
+[Test] Killing unit1 (ID:0)...
+Unit 0 (worker) DIED. R.I.P.
+[Unit 0] Releasing request via this.game
+[Assign] Checking Unit 0 (Dead:true)
+[Assign] Checking Unit 1 (Dead:false)
+[Assign] Unit 1 Action: Idle, TargetReq: none
+[Game] forceAssignRequest FOUND Unit 1 (DistSq:2888). Scanned:1
+[Actor 1] SmartMove Dist: 53.74011537017761 Path: No
+[Game] Request req_0 assigned/switched to Unit 1
+[Test] Request Status: assigned, AssignedTo: 1
+
+ [31m笶ｯ[39m src/tests/JobReassignment.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 4224[2mms[22m[39m
+[31m     [31mﾃ・[31m should reassign job when original worker dies[39m[33m 4221[2mms[22m[39m
+[90mstdout[2m | src/tests/StuckReassignment.test.js[2m > [22m[2mStuck/Throttled Job Reassignment[2m > [22m[2mshould release job if throttled and not moving for 45s
+[22m[39mScene created: [33mtrue[39m Pos: object
+Camera created: [33mtrue[39m Pos: object
+Camera setup done
+Creating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 88,40. Force:false
+[Terrain] Building Added: cave at (88, 40) Size:1x1. Total: 1
+GoblinManager: Cave registered at 88,40 
+[GoblinManager] Clan clan_cave_88_40 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 88,128. Force:false
+[Terrain] Building Added: cave at (88, 128) Size:1x1. Total: 2
+GoblinManager: Cave registered at 88,128 
+[GoblinManager] Clan clan_cave_88_128 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 79,71. Force:false
+[Terrain] Building Added: cave at (79, 71) Size:1x1. Total: 3
+GoblinManager: Cave registered at 79,71 
+[GoblinManager] Clan clan_cave_79_71 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 123,17. Force:false
+[Terrain] Building Added: cave at (123, 17) Size:1x1. Total: 4
+GoblinManager: Cave registered at 123,17 
+[GoblinManager] Clan clan_cave_123_17 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 118,25. Force:false
+[Terrain] Building Added: cave at (118, 25) Size:1x1. Total: 5
+GoblinManager: Cave registered at 118,25 
+[GoblinManager] Clan clan_cave_118_25 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 11 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/StuckReassignment.test.js[2m > [22m[2mStuck/Throttled Job Reassignment[2m > [22m[2mshould release job if throttled and not moving for 45s
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50
+[Game] Request Added: raise at (80,80) ID:req_0
+[Assign] Checking Unit 0 (Dead:false)
+[Assign] Unit 0 Action: Idle, TargetReq: none
+[Assign] Checking Unit 1 (Dead:false)
+[Assign] Unit 1 Action: Idle, TargetReq: none
+[Game] forceAssignRequest FOUND Unit 0 (DistSq:1800). Scanned:2
+[Actor 0] SmartMove Dist: 42.42640687119285 Path: No
+[JobState] Entered. Target: raise. ResumeCtx: Approaching Job
+[Game] Request req_0 assigned/switched to Unit 0
+[Assign] Checking Unit 0 (Dead:false)
+[Assign] Unit 0 Action: Approaching Job, TargetReq: req_0
+[Assign] Checking Unit 1 (Dead:false)
+[Assign] Unit 1 Action: Idle, TargetReq: none
+[Game] forceAssignRequest FOUND Unit 1 (DistSq:1800). Scanned:2
+[Actor 1] SmartMove Dist: 42.42640687119285 Path: No
+[Game] Request req_0 assigned/switched to Unit 1
+[Terrain] addBuilding: house at 10,10. Force:false
+[Terrain] Building Added: house at (10, 10) Size:2x2. Total: 6
+[Actor] Discarding stale path. Target changed to 4,23
+[Actor 0] SmartMove Dist: 14.317821063276353 Path: No
+
+ [31m笶ｯ[39m src/tests/StuckReassignment.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 5451[2mms[22m[39m
+[31m     [31mﾃ・[31m should release job if throttled and not moving for 45s[39m[33m 5447[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 21:47:05
+[2m   Duration [22m 7.84s[2m (transform 1.40s, setup 133ms, import 2.01s, tests 9.67s, environment 1.79s)[22m
+

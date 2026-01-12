@@ -1,0 +1,78 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould correctly resume manual job when loaded at night
+[22m[39mCreating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 13,114. Force:false
+[Terrain] Building Added: cave at (13, 114) Size:1x1. Total: 1
+GoblinManager: Cave registered at 13,114 
+[GoblinManager] Clan clan_cave_13_114 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 46,129. Force:false
+[Terrain] Building Added: cave at (46, 129) Size:1x1. Total: 2
+GoblinManager: Cave registered at 46,129 
+[GoblinManager] Clan clan_cave_46_129 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 19,62. Force:false
+[Terrain] Building Added: cave at (19, 62) Size:1x1. Total: 3
+GoblinManager: Cave registered at 19,62 
+[GoblinManager] Clan clan_cave_19_62 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 56,114. Force:false
+[Terrain] Building Added: cave at (56, 114) Size:1x1. Total: 4
+GoblinManager: Cave registered at 56,114 
+[GoblinManager] Clan clan_cave_56_114 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 129,86. Force:false
+[Terrain] Building Added: cave at (129, 86) Size:1x1. Total: 5
+GoblinManager: Cave registered at 129,86 
+[GoblinManager] Clan clan_cave_129_86 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 9 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/NightLoadJob.test.js[2m > [22m[2mNight Loading Job Assignment[2m > [22m[2mshould wake up unit if they were saved while sleeping but had a job assigned (manual)
+[22m[39mCreating Terrain...
+Terrain created: [33mtrue[39m
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 38,59. Force:false
+[Terrain] Building Added: cave at (38, 59) Size:1x1. Total: 1
+GoblinManager: Cave registered at 38,59 
+[GoblinManager] Clan clan_cave_38_59 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 13,46. Force:false
+[Terrain] Building Added: cave at (13, 46) Size:1x1. Total: 2
+GoblinManager: Cave registered at 13,46 
+[GoblinManager] Clan clan_cave_13_46 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 20,83. Force:false
+[Terrain] Building Added: cave at (20, 83) Size:1x1. Total: 3
+GoblinManager: Cave registered at 20,83 
+[GoblinManager] Clan clan_cave_20_83 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 158,91. Force:false
+[Terrain] Building Added: cave at (158, 91) Size:1x1. Total: 4
+GoblinManager: Cave registered at 158,91 
+[GoblinManager] Clan clan_cave_158_91 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 58,16. Force:false
+[Terrain] Building Added: cave at (58, 16) Size:1x1. Total: 5
+GoblinManager: Cave registered at 58,16 
+[GoblinManager] Clan clan_cave_58_16 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 10 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+ [31mﾃ・[39m src/tests/NightLoadJob.test.js[2m > [22mNight Loading Job Assignment[2m > [22mshould correctly resume manual job when loaded at night[33m 1850[2mms[22m[39m
+[31m   竊・this.camera.updateMatrixWorld is not a function[39m
+ [31mﾃ・[39m src/tests/NightLoadJob.test.js[2m > [22mNight Loading Job Assignment[2m > [22mshould wake up unit if they were saved while sleeping but had a job assigned (manual)[33m 2149[2mms[22m[39m
+[31m   竊・this.camera.updateMatrixWorld is not a function[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m     Errors [22m [1m[31m81 errors[39m[22m
+[2m   Start at [22m 01:41:59
+[2m   Duration [22m 5.51s[2m (transform 393ms, setup 47ms, import 543ms, tests 4.00s, environment 585ms)[22m
+

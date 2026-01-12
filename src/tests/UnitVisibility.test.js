@@ -64,7 +64,7 @@ describe('UnitRenderer Visibility', () => {
             }
         };
 
-        renderer.update([unit], mockFrustum, mockCamera);
+        renderer.update([unit], mockFrustum, mockCamera.position);
 
         // Check calls
         const callCount = renderer.torsoMesh.setMatrixAt.mock.calls.length;
@@ -89,7 +89,7 @@ describe('UnitRenderer Visibility', () => {
             });
         }
 
-        renderer.update(units, mockFrustum, mockCamera);
+        renderer.update(units, mockFrustum, mockCamera.position);
 
         expect(renderer.torsoMesh.count).toBeGreaterThanOrEqual(5);
     });

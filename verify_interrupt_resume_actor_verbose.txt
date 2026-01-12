@@ -1,0 +1,24 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[Actor Debug] Path check. Path: null Dist: 28.284271247461902 Grid: 0,0
+[Actor Debug] smartMove 80,80. Last: 0 Time: 100 Throttle: 1.1. Dist: 28.284271247461902
+[MockTerrain] findPath: (0,0) -> (80,80)
+[Unit 1] Moving onto Rock at 0,1 H:10 (Speed Penalty)
+[Unit 1] Moving onto Rock at 30,31 H:10 (Speed Penalty)
+[Unit 1] Moving onto Rock at 30,31 H:10 (Speed Penalty)
+[Test] Final Target: 30,31 State: UnitWanderState
+
+ [31m笶ｯ[39m src/tests/InterruptResume.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 23[2mms[22m[39m
+[31m     [31mﾃ・[31m should return to previous movement target after finishing a job[39m[32m 22[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 12:53:55
+[2m   Duration [22m 1.24s[2m (transform 159ms, setup 44ms, import 238ms, tests 23ms, environment 643ms)[22m
+

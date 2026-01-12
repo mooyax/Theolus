@@ -1,0 +1,13 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+ ﾃ・src/tests/LoadUpdateLoop.test.js > Load Update Loop Integration > should maintain JobState after first update loop post-load 24ms
+   竊・[vitest] No "Color" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  23:50:15
+   Duration  1.20s (transform 298ms, setup 37ms, import 358ms, tests 26ms, environment 522ms)
+

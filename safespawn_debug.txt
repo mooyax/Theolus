@@ -1,0 +1,29 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/SafeSpawn.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 71[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT destroy house when spawning unit resets population to 0[39m[32m 70[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/SafeSpawn.test.js > Safe Population Zero > should NOT destroy house when spawning unit resets population to 0
+TypeError: Cannot set properties of undefined (setting 'x')
+ 笶ｯ Terrain.createMesh src/Terrain.js:512:30
+    510| 
+    511|         this.mesh = new THREE.Mesh(this.geometry, material);
+    512|         this.mesh.rotation.x = -Math.PI / 2;
+       |                              ^
+    513|         this.mesh.position.set(0, 0, 0); // Centered
+    514| 
+ 笶ｯ Terrain.initTerrain src/Terrain.js:287:14
+ 笶ｯ new Terrain src/Terrain.js:26:14
+ 笶ｯ src/tests/SafeSpawn.test.js:121:19
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 23:45:48
+[2m   Duration [22m 827ms[2m (transform 100ms, setup 43ms, import 128ms, tests 71ms, environment 398ms)[22m
+

@@ -12,6 +12,7 @@ class MockGame {
             reportClear: vi.fn()
         };
         this.gameTotalTime = 1000;
+        this.simTotalTimeSec = 1000; // Fix: Add sim time for Unit.js age checks
         this.resources = { fish: 0, meat: 0, grain: 0 };
     }
 
@@ -197,7 +198,8 @@ describe('Squad AI & Region Logic', () => {
         // Mock getRegion to return diff for 12,12
         vi.spyOn(terrain, 'getRegion').mockImplementation((x, z) => {
             if (x === 10 && z === 10) return 1;
-            if (x === 12 && z === 12) return 2; // Different Region
+            if (x === 12 && z === 12) return 2; // Different Region (Close)
+            if (x === 20 && z === 20) return 2; // Different Region (Far)
             return 1;
         });
 

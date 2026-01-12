@@ -1,0 +1,30 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/LoadUpdateLoop.test.js > Load Update Loop Integration > should maintain JobState after first update loop post-load
+Scene created: [33mtrue[39m Pos: object
+Camera created: [33mtrue[39m Pos: object
+Camera setup done
+Creating Terrain...
+Terrain created: [33mtrue[39m
+
+stdout | src/tests/LoadUpdateLoop.test.js > Load Update Loop Integration > should maintain JobState after first update loop post-load
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+Setup Unit updateLogic type: function
+[Game] Request Added: raise at (15,15) ID:req_0
+[Game] forceAssignRequest FOUND Unit 100 (DistSq:50). Scanned:1
+[Game] Request req_0 assigned/switched to Unit 100
+Game SaveManager present: [33mtrue[39m
+Game SaveManager save method: function
+saveGame result: [33mfalse[39m
+localStorage setItem calls: [33m0[39m
+
+ ﾃ・src/tests/LoadUpdateLoop.test.js > Load Update Loop Integration > should maintain JobState after first update loop post-load 31ms
+   竊・localStorage.setItem was NOT called!
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  00:19:37
+   Duration  1.43s (transform 360ms, setup 41ms, import 414ms, tests 33ms, environment 631ms)
+

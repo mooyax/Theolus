@@ -1,0 +1,78 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/CombatBalance.test.js[2m > [22m[2mCombat Balance Simulation[2m > [22m[2mKnight vs Single Goblin (1v1) - AI Logic Check
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+[Unit Debug V3] Start Logic. Night=false, Sleep=false, Action=undefined
+[Unit Debug] ATTACKING Goblin 0
+Goblin (normal) died. ID:0
+[AI CHECK] KnightAction: Idle GoblinHP: -68
+
+[90mstdout[2m | src/tests/CombatBalance.test.js[2m > [22m[2mCombat Balance Simulation[2m > [22m[2mWizard vs Single Goblin (1v1) - Wizard should win
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:wizard Pos:0,0 Special:false
+[Unit Debug] ATTACKING Goblin 1
+Goblin (normal) died. ID:1
+
+[90mstdout[2m | src/tests/CombatBalance.test.js[2m > [22m[2mCombat Balance Simulation[2m > [22m[2mKnight vs Swarm (1v5) - Knight should surviving
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+[Unit Debug] ATTACKING Goblin g0
+Goblin (normal) died. ID:g0
+[Unit Debug] ATTACKING Goblin g1
+Goblin (normal) died. ID:g1
+[Unit Debug] ATTACKING Goblin g2
+Goblin (normal) died. ID:g2
+[Unit Debug] ATTACKING Goblin g3
+Goblin (normal) died. ID:g3
+[Unit Debug] ATTACKING Goblin g4
+Goblin (normal) died. ID:g4
+
+[90mstdout[2m | src/tests/CombatBalance.test.js[2m > [22m[2mCombat Balance Simulation[2m > [22m[2mLoad Game Persistence - Should resume movement
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0 Special:false
+[ActorDebug] Grid: 0,0 Target: 10,10 Diff: 10,10
+[ActorDebug] Next: 0,1
+[Unit 3] Moving onto Rock at 0,1 H:10 (Speed Penalty)
+[ActorDebug] Check Move 0,1 -> true
+[ActorDebug] Grid: 0,0 Target: 0,0 Diff: 0,0
+[ActorDebug] Next: 0,0
+[Unit 3] Moving onto Rock at 0,0 H:10 (Speed Penalty)
+[ActorDebug] Check Move 0,0 -> true
+Unit 3 migrating to 0,0 (Region undefined)
+[ActorDebug] Grid: 0,0 Target: 0,0 Diff: 0,0
+[ActorDebug] Next: 0,0
+[Unit 3] Moving onto Rock at 0,0 H:10 (Speed Penalty)
+[ActorDebug] Check Move 0,0 -> true
+[UnitCore.js] Unit Created ID:4 Role:knight Pos:0,0 Special:false
+
+ [31m笶ｯ[39m src/tests/CombatBalance.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 22[2mms[22m[39m
+     [32m笨・[39m Knight vs Single Goblin (1v1) - AI Logic Check[32m 7[2mms[22m[39m
+     [32m笨・[39m Wizard vs Single Goblin (1v1) - Wizard should win[32m 1[2mms[22m[39m
+     [32m笨・[39m Knight vs Swarm (1v5) - Knight should surviving[32m 2[2mms[22m[39m
+[31m     [31mﾃ・[31m Load Game Persistence - Should resume movement[39m[32m 11[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/CombatBalance.test.js > Combat Balance Simulation > Load Game Persistence - Should resume movement
+AssertionError: expected 1500 to be 1000 // Object.is equality
+
+- Expected
++ Received
+
+- 1000
++ 1500
+
+ 笶ｯ src/tests/CombatBalance.test.js:274:34
+    272|         expect(u2.targetGridX).toBe(0);
+    273|         expect(u2.targetGridZ).toBe(0);
+    274|         expect(u2.moveStartTime).toBe(1000); // CRITICAL: Must be pres窶ｦ
+       |                                  ^
+    275| 
+    276|         // 4. Update Logic (Simulate next frame after load)
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 22:45:53
+[2m   Duration [22m 944ms[2m (transform 206ms, setup 38ms, import 274ms, tests 22ms, environment 413ms)[22m
+

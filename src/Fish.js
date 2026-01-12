@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Actor } from './Actor.js';
+import { WanderState } from './ai/states/State.js';
 
 export class Fish extends Actor {
     static assets = {
@@ -31,7 +32,7 @@ export class Fish extends Actor {
         Fish.initAssets();
         super(scene, terrain, x, z, 'fish');
 
-        this.moveInterval = 500 + Math.random() * 1500;
+        this.moveInterval = 0.5 + Math.random() * 1.5;
         this.lastTime = 0;
         this.wiggleOffset = Math.random() * 100;
 
@@ -40,6 +41,9 @@ export class Fish extends Actor {
         this.scene.add(this.mesh);
 
         this.updatePosition();
+
+        // Init State
+        this.changeState(new WanderState(this));
     }
 
     createMesh() {
@@ -59,6 +63,7 @@ export class Fish extends Actor {
 
     // Override Default Logic
     updateLogic(time, deltaTime) {
+        this.simTime = time;
         // 1. Land Death Check (Beached)
         const h = this.terrain.getTileHeight(this.gridX, this.gridZ);
         if (h > 0.5) {
@@ -67,18 +72,17 @@ export class Fish extends Actor {
             return;
         }
 
-        // 2. Movement
+        // 2. State Machine Override
+        if (this.state) {
+            this.state.update(time, deltaTime);
+        }
+
+        // 3. Visuals (Wiggle if Idle)
         if (!this.isMoving) {
-            if (time - this.lastTime > this.moveInterval) {
-                this.moveRandomly(time);
-                this.lastTime = time;
-                this.moveInterval = 500 + Math.random() * 1500;
-            } else {
-                // Idle Wiggle
-                if (this.mesh) {
-                    const wiggle = Math.sin((time * 0.003) + this.wiggleOffset) * 0.15;
-                    this.mesh.rotation.z = wiggle;
-                }
+            // Idle Wiggle
+            if (this.mesh) {
+                const wiggle = Math.sin((time * 3.0) + this.wiggleOffset) * 0.15;
+                this.mesh.rotation.z = wiggle;
             }
         }
     }

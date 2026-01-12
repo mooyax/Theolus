@@ -1,0 +1,678 @@
+8:    static assets = {
+13:    static nextId = 0;
+20:        const bodyGeo = new THREE.BoxGeometry(0.3, 0.35, 0.2);
+22:        Unit.assets.geometries.body = bodyGeo;
+24:        const headGeo = new THREE.BoxGeometry(0.25, 0.25, 0.25);
+26:        Unit.assets.geometries.head = headGeo;
+29:        const faceGeo = new THREE.PlaneGeometry(0.2, 0.2);
+30:        faceGeo.translate(0, 0.6, 0.126); // Slightly in front of Head Box (Z=0.125)
+31:        Unit.assets.geometries.facePlane = faceGeo;
+33:        const limbGeo = new THREE.BoxGeometry(0.1, 0.25, 0.1);
+35:        Unit.assets.geometries.limb = limbGeo;
+39:        const swordGeo = new THREE.BoxGeometry(0.05, 0.5, 0.05);
+41:        Unit.assets.geometries.sword = swordGeo;
+44:        const staffGeo = new THREE.BoxGeometry(0.05, 0.8, 0.05);
+46:        Unit.assets.geometries.staff = staffGeo;
+50:        const brimGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.02, 16);
+53:        const coneGeo = new THREE.ConeGeometry(0.15, 0.4, 16);
+71:        const hatGeo = new THREE.ConeGeometry(0.2, 0.5, 16);
+73:        Unit.assets.geometries.wizardHat = hatGeo;
+76:        const hatBrimGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.02, 16);
+77:        Unit.assets.geometries.wizardHatBrim = hatBrimGeo;
+80:        const indicatorTopGeo = new THREE.CylinderGeometry(0.04, 0.02, 0.25, 8);
+82:        Unit.assets.geometries.jobIndicatorTop = indicatorTopGeo;
+84:        const indicatorDotGeo = new THREE.SphereGeometry(0.04, 8, 8);
+86:        Unit.assets.geometries.jobIndicatorDot = indicatorDotGeo;
+90:        Unit.assets.materials.skin = new THREE.MeshStandardMaterial({ color: 0xffccaa, roughness: 0.8 });
+91:        Unit.assets.materials.clothes = new THREE.MeshStandardMaterial({ color: 0x885533, roughness: 1.0 });
+92:        Unit.assets.materials.tool = new THREE.MeshStandardMaterial({ color: 0x555555, metalness: 0.5 });
+93:        Unit.assets.materials.hat = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 1.0 });
+96:        Unit.assets.materials.armor = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.8, roughness: 0.2 });
+97:        Unit.assets.materials.helmet = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.9, roughness: 0.1 });
+101:        Unit.assets.materials.robe = new THREE.MeshStandardMaterial({ color: 0x444499, roughness: 1.0 });
+102:        Unit.assets.materials.wizardHat = new THREE.MeshStandardMaterial({ color: 0x333388, roughness: 1.0 });
+105:        Unit.assets.materials.metal = new THREE.MeshStandardMaterial({ color: 0xDDDDDD, metalness: 0.9, roughness: 0.2 });
+106:        Unit.assets.materials.wood = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 0.9 });
+107:        Unit.assets.materials.darkMagic = new THREE.MeshStandardMaterial({ color: 0x330033, roughness: 1.0 });
+110:        Unit.assets.materials.redIndicator = new THREE.MeshStandardMaterial({
+119:        Unit.assets.textures.face = Unit.createFaceTexture();
+120:        Unit.assets.materials.face = new THREE.MeshStandardMaterial({ map: Unit.assets.textures.face, transparent: true });
+122:        Unit.assets.textures.hair = Unit.createHairTexture();
+124:        Unit.assets.materials.hair = new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair, transparent: true });
+126:        Unit.assets.materials.heads = null; // Deprecated (Split meshes)
+128:        Unit.assets.initialized = true;
+132:        const canvas = document.createElement('canvas');
+133:        canvas.width = 64;
+134:        canvas.height = 64;
+135:        const ctx = canvas.getContext('2d');
+136:        ctx.fillStyle = '#FFCCAA'; ctx.fillRect(0, 0, 64, 64);
+137:        ctx.fillStyle = '#4A3000'; ctx.fillRect(0, 0, 64, 15);
+138:        ctx.fillStyle = '#000000'; ctx.fillRect(15, 25, 8, 8); ctx.fillRect(41, 25, 8, 8);
+139:        ctx.fillStyle = '#A0522D'; ctx.fillRect(20, 45, 24, 4);
+144:        const canvas = document.createElement('canvas');
+145:        canvas.width = 64;
+146:        canvas.height = 64;
+147:        const ctx = canvas.getContext('2d');
+149:        ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, 64, 64); // White Base
+150:        ctx.fillStyle = '#DDDDDD'; // Very Light Grey Noise
+151:        for (let i = 0; i < 40; i++) {
+157:    constructor(scene, terrain, x, z, role, isSpecial = false, squadId = null) {
+162:        // Let's use Base ID. BUT Unit has static nextId=0. 
+171:        this.id = Unit.nextId++;
+174:        this.gridX = (x !== undefined) ? x : 20;
+175:        this.gridZ = (z !== undefined) ? z : 20;
+179:        let specialFlag = isSpecial;
+180:        if (typeof role === 'boolean') {
+181:            specialFlag = role;
+182:            role = 'worker';
+185:        this.role = role || 'worker';
+186:        this.role = role || 'worker';
+187:        this.isSpecial = specialFlag;
+188:        this.squadId = squadId; // Squad ID for coordinated attacks
+190:        this.lastGridX = this.gridX;
+191:        this.lastGridZ = this.gridZ;
+192:        this.lastGridX = this.gridX;
+193:        this.lastGridZ = this.gridZ;
+194:        this.stagnationTimer = 0;
+195:        this.buildStagnationCount = 0;
+196:        this.lastTime = 0; // Fix: Undefined caused logic failure
+197:        this.lastGatherTime = -Math.random() * 30; // Stagger gathering
+200:        this.position = new THREE.Vector3();
+201:        this.rotationY = 0;
+202:        this.limbs = {
+212:        // Special Unit = 6-9 mins.
+214:        // Aging Rate remains same (Worker=1yr/s, Soldier=1yr/10s).
+215:        const baseLifespan = 80 + Math.random() * 20;
+216:        this.lifespan = baseLifespan;
+218:        this.age = 20; // Starts at 20 years old
+219:        this.isSleeping = false;
+220:        this.isNight = false; // Sync flag for states
+221:        this.isDead = false;
+222:        this.isMoving = false; // Entity base normally sets this, but be sure
+223:        this.debugFrame = 0; // Initialize for logic gatesr)
+224:        this.hp = 35 + Math.floor(Math.random() * 15); // Nerfed (Avg 42)
+225:        this.maxHp = this.hp;
+226:        this.attackCooldown = 0;
+227:        this.attackRate = 1.0;
+228:        this.damage = 4; // Nerfed (Goblin has 30HP -> 8 hits)
+229:        this.targetGoblin = null;
+232:        if (this.role === 'knight') {
+233:            this.hp *= 15; // Massive HP (40x15 = 600) - Overwhelming
+234:            this.maxHp = this.hp;
+235:            this.damage *= 25; // 100 Dmg (Definitely 1-shot Normal Goblin)
+236:        } else if (this.role === 'wizard') {
+237:            this.hp *= 3; // Buffed (40x3 = 120) - Strong enough to survive
+238:            this.maxHp = this.hp;
+239:            this.damage *= 20; // 80 Dmg (1-shot Normal, 2-shot Hob)
+240:            this.attackRate = 2.0; // Slower attack? Or faster? "Multi-target"
+246:        this.moveTimer = 0;
+247:        this.moveDuration = 1000;
+248:        this.moveStartTime = 0;
+249:        this.startGridX = 0;
+250:        this.startGridZ = 0;
+251:        this.targetGridX = 0;
+252:        this.targetGridZ = 0;
+255:        this.ignoredTargets = new Map(); // id -> expiryTime
+258:        this.lastTime = 0;
+260:        this.moveInterval = 2000 + Math.random() * 3000;
+261:        if (this.role === 'knight' || this.role === 'wizard') {
+262:            this.moveInterval = 0; // Soldiers act immediately on spawn
+265:        this.stagnationTimer = 0;
+266:        this.huntingCooldown = 0;
+267:        this.target = null; // Assuming 'Target' was a typo for 'this.target'
+270:        this.targetX = 0;
+271:        this.targetZ = 0;
+275:        if (typeof UnitWanderState !== 'undefined') {
+284:        // this.moveStartTime = 0; // Already defined above
+285:        // this.moveDuration = 1000; // Already defined above
+293:        this.wanderCount = 0;
+294:        this.migrationTarget = null;
+297:        this.ignoredTargets = new Map(); // id -> timestamp until ignored
+298:        this.debugFrame = 0;
+304:        this.hp -= amount;
+305:        if (isNaN(this.hp)) this.hp = 0;
+307:        if (this.hp <= 0) {
+308:            this.hp = 0;
+313:            this.lastHitTime = this.simTime || 0;
+318:                this.targetGoblin = attacker;
+325:        this.isDead = true;
+330:        const g = this.game || window.game;
+332:            console.log(`[Unit ${this.id}] Releasing request via ${g === this.game ? 'this.game' : 'window.game'}`);
+334:            this.targetRequest = null;
+348:            this.targetGoblin = null;
+353:        if (this.role === 'wizard') {
+355:            this.limbs.leftArm.x = -Math.PI; // Raise staff
+356:            this.limbs.rightArm.x = -Math.PI;
+360:                const startPos = this.position.clone().add(new THREE.Vector3(0, 0.9, 0)); // Head/Staff level
+363:                const h = this.terrain.getTileHeight(goblin.gridX, goblin.gridZ);
+366:                const logicalW = this.terrain.logicalWidth || 80;
+367:                const logicalD = this.terrain.logicalDepth || 80;
+371:                const targetPos = new THREE.Vector3(
+380:            setTimeout(() => {
+382:                    this.limbs.leftArm.x = 0;
+383:                    this.limbs.rightArm.x = 0;
+388:            this.limbs.rightArm.x = -Math.PI / 2;
+389:            setTimeout(() => {
+390:                if (!this.isDead) this.limbs.rightArm.x = 0;
+398:        if (this.role === 'knight' || this.role === 'wizard') {
+402:        if (goblin.hp <= 0) {
+403:            goblin.isDead = true;
+404:            this.targetGoblin = null;
+406:            if (window.game && (this.role === 'knight' || this.role === 'wizard')) {
+411:        this.attackCooldown = this.attackRate;
+418:        const damage = (damageOverride !== undefined) ? damageOverride : (this.damage || 10);
+421:        if (this.role === 'wizard') {
+422:            this.limbs.leftArm.x = -Math.PI;
+423:            this.limbs.rightArm.x = -Math.PI;
+424:            setTimeout(() => {
+426:                    this.limbs.leftArm.x = 0;
+427:                    this.limbs.rightArm.x = 0;
+431:            this.limbs.rightArm.x = -Math.PI / 2;
+432:            setTimeout(() => {
+433:                if (!this.isDead) this.limbs.rightArm.x = 0;
+437:        const bType = building.userData.type;
+440:        if (bType === 'farm') {
+442:            if (building.userData.hp === undefined) building.userData.hp = 5;
+444:            if (building.userData.hp > 5) building.userData.hp = 5;
+446:            building.userData.hp -= damage;
+449:            if (building.userData.hp <= 0) {
+452:                this.targetBuilding = null;
+456:        // --- POPULATED BUILDING LOGIC (Pop = HP + Counter Attack) ---
+457:        else if (bType === 'house' || bType === 'mansion' || bType === 'castle' || bType === 'tower' || bType === 'barracks') {
+461:            let pop = building.userData.population || 0;
+463:            if (pop <= 0) {
+467:                this.targetBuilding = null;
+469:                this.attackCooldown = this.attackRate;
+473:            // Damage formulation: 1 Damage = 1 Population ?
+477:            building.userData.population -= Math.ceil(damage / 2); // Halve damage so populations last a bit longer?
+482:            building.population = building.userData.population;
+486:            if (building.userData.population <= 0) {
+489:                this.targetBuilding = null;
+494:                let retaliationFactor = 0.5; // Default (House/Worker)
+496:                if (bType === 'tower') retaliationFactor = 2.0; // Wizards (Strong)
+497:                if (bType === 'barracks') retaliationFactor = 1.5; // Knights (Medium-Strong)
+498:                if (bType === 'castle') retaliationFactor = 2.0; // Elite
+501:                // Cap effective output to avoid 1-shotting the attacker instantly if pop is huge (100 pop * 2 = 200 dmg!)
+504:                // Let's dampen slightly: damage = sqrt(pop) * factor?
+508:                const retaliationDamage = Math.floor(pop * retaliationFactor * 0.5);
+519:            if (building.userData.hp === undefined) {
+520:                building.userData.hp = (building.userData.type === 'cave' ? 200 : 100);
+522:            building.userData.hp -= damage;
+525:            if (building.userData.hp <= 0) {
+527:                this.targetBuilding = null;
+532:        this.attackCooldown = this.attackRate;
+551:        let bestTarget = null;
+552:        let bestScore = Infinity; // Lower is better
+555:        const hasValidGoblin = this.targetGoblin && !this.targetGoblin.isDead;
+556:        const hasValidBuilding = this.targetBuilding && this.targetBuilding.userData && this.targetBuilding.userData.hp > 0;
+558:        let isBusy = (this.action === 'Chasing' || this.action === 'Fighting' || this.action === 'Sieging' || this.action === 'Unstuck' || this.action === 'Reinforcing');
+561:        if (this.role === 'worker' && this.targetRequest) isBusy = true;
+563:        this.scanTimer = (this.scanTimer || 0) + 1;
+566:        let scanInterval = 30;
+568:            scanInterval = 300; // 5 seconds commitment
+571:        const forceScan = (this.scanTimer > scanInterval);
+574:        let shouldScan = (!isBusy || (!hasValidGoblin && !hasValidBuilding) || forceScan);
+575:        if (this.role === 'worker' && this.targetRequest) shouldScan = false;
+578:        if ((this.action === 'Reinforcing' || this.action === 'Migrating' || this.migrationTarget) && !forceScan) return false;
+582:        const frame = (window.game && window.game.frameCounter) ? window.game.frameCounter : 0;
+583:        if (!forceScan && (frame + this.id) % 20 !== 0) {
+586:            if ((this.role === 'knight' || this.role === 'wizard') && (frame + this.id) % 10 !== 0) {
+588:            } else if (this.role === 'worker') {
+599:            if (forceScan) this.scanTimer = 0;
+602:            const currentTargetId = this.targetGoblin ? this.targetGoblin.id :
+606:            const goblins = passedGoblins || (window.game && window.game.goblinManager ? window.game.goblinManager.goblins : []);
+610:                const maxDist = (this.role === 'knight' || this.role === 'wizard') ? 50 : 15;
+616:                    const d = this.getDistance(g.gridX, g.gridZ);
+619:                    const myRegion = (this.terrain.grid[this.gridX] && this.terrain.grid[this.gridX][this.gridZ]) ? this.terrain.grid[this.gridX][this.gridZ].regionId : 1;
+620:                    const gRegion = (this.terrain.grid[g.gridX] && this.terrain.grid[g.gridX][g.gridZ]) ? this.terrain.grid[g.gridX][g.gridZ].regionId : 1;
+622:                    if (myRegion !== gRegion) {
+627:                    let limit = maxDist;
+628:                    if (g.id === currentTargetId) limit = maxDist * 2.0;
+633:                    const myH = this.terrain.getTileHeight(this.gridX, this.gridZ);
+634:                    const targetH = this.terrain.getTileHeight(g.gridX, g.gridZ);
+637:                    let h = 0;
+639:                    if (this.terrain.getTileHeight) h = this.terrain.getTileHeight(g.gridX, g.gridZ);
+641:                    let score = d - 1000.0; // Base priority for Goblins (High)
+642:                    if (h > 8) score += 20;
+645:                    if (g.id === currentTargetId) score -= 500.0;
+648:                        bestScore = score;
+649:                        bestTarget = { type: 'goblin', obj: g };
+656:                const range = (this.role === 'knight' || this.role === 'wizard') ? Infinity : 10;
+658:                    if (this.role === 'worker' && b.userData.type !== 'goblin_hut' && b.userData.type !== 'cave') continue;
+659:                    if (b.userData.type === 'goblin_hut' || b.userData.type === 'cave') {
+660:                        if (b.userData && b.userData.hp <= 0) continue;
+662:                        const d = this.getDistance(b.gridX, b.gridZ);
+665:                        let score = d - 5.0; // Lower priority than goblins (-1000)
+666:                        if (b.id === currentTargetId) score -= 500.0; // Sticky Bonus
+668:                        if (d < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 2000.0; // Sieging Logic Override
+671:                            bestScore = score;
+672:                            bestTarget = { type: 'building', obj: b };
+679:            this.targetGoblin = null;
+680:            this.targetBuilding = null;
+683:                if (bestTarget.type === 'goblin') this.targetGoblin = bestTarget.obj;
+684:                else this.targetBuilding = bestTarget.obj;
+688:            const hasRaidTarget = this.findRaidTarget();
+692:                const d = this.getDistance(this.targetGoblin.gridX, this.targetGoblin.gridZ);
+694:                    this.targetGoblin = null;
+715:        const buildings = this.terrain.buildings;
+716:        let nearest = null;
+717:        let minDist = Infinity; // Global Search (Soldiers travel far)
+718:        let foundType = null;
+720:        const limitRange = (range !== undefined) ? range : Infinity;
+725:            if (this.role === 'worker' && b.type !== 'goblin_hut') continue;
+727:            if (b.type === 'goblin_hut' || b.type === 'cave') {
+728:                const dist = this.getDistance(b.gridX, b.gridZ);
+734:                    minDist = dist;
+735:                    nearest = b;
+736:                    foundType = b.type;
+742:        if (this.role === 'knight' && Math.random() < 0.001) {
+748:            this.targetBuilding = nearest;
+756:        const x = target.gridX;
+757:        const z = target.gridZ;
+777:            const squad = window.game.getSquad(this.squadId);
+781:                const now = window.game.simTotalTimeSec || 0;
+782:                const age = now - squad.target.time;
+785:                if (Math.random() < 0.05 && this.role === 'knight') {
+786:                    const d = this.getDistance(squad.target.x, squad.target.z);
+792:                    const d = this.getDistance(squad.target.x, squad.target.z);
+797:                            this.targetRaidPoint = { x: squad.target.x, z: squad.target.z };
+802:                            const myCell = this.terrain.grid[this.gridX][this.gridZ];
+804:                                const proxy = this.terrain.findClosestReachablePoint(squad.target.x, squad.target.z, myCell.regionId);
+807:                                    this.targetRaidPoint = { x: proxy.x, z: proxy.z };
+819:        if ((this.role === 'knight' || this.role === 'wizard') && window.game && window.game.battleHotspots && window.game.battleHotspots.length > 0) {
+820:            const now = window.game.simTotalTimeSec || 0;
+822:            let bestSpot = null;
+823:            let minD = Infinity;
+828:                let targetX = spot.x;
+829:                let targetZ = spot.z;
+830:                let d = this.getDistance(targetX, targetZ);
+835:                    let proxyFound = false;
+836:                    const myCell = this.terrain.grid[this.gridX][this.gridZ];
+838:                        const proxy = this.terrain.findClosestReachablePoint(targetX, targetZ, myCell.regionId);
+840:                            targetX = proxy.x;
+841:                            targetZ = proxy.z;
+842:                            d = this.getDistance(targetX, targetZ);
+843:                            proxyFound = true;
+852:                    minD = d;
+853:                    bestSpot = { x: targetX, z: targetZ };
+858:                this.targetRaidPoint = { x: bestSpot.x, z: bestSpot.z };
+864:        let memories = [];
+865:        const currentTime = (this.game) ? this.game.simTotalTimeSec : 0;
+868:            memories = this.game.battleMemory.getPriorities(currentTime);
+871:        if (!memories || memories.length === 0) {
+875:        let nearest = null;
+876:        let minDist = Infinity;
+878:        memories.forEach(p => {
+879:            let targetX = p.x;
+880:            let targetZ = p.z;
+881:            let dist = this.getDistance(targetX, targetZ);
+893:                const W = this.terrain.logicalWidth || 80;
+894:                const D = this.terrain.logicalDepth || 80;
+897:                let px = Math.round(targetX);
+898:                let pz = Math.round(targetZ);
+899:                px = ((px % W) + W) % W;
+900:                pz = ((pz % D) + D) % D;
+902:                const mCell = this.terrain.grid[this.gridX][this.gridZ];
+903:                const tCell = (this.terrain.grid[px]) ? this.terrain.grid[px][pz] : null;
+905:                if (mCell && tCell && mCell.regionId !== tCell.regionId && mCell.regionId > 0 && tCell.regionId > 0) {
+907:                    const proxy = this.terrain.findClosestReachablePoint(targetX, targetZ, mCell.regionId);
+909:                        targetX = proxy.x;
+910:                        targetZ = proxy.z;
+911:                        dist = this.getDistance(targetX, targetZ);
+919:                minDist = dist;
+920:                nearest = { x: targetX, z: targetZ };
+925:            this.targetRaidPoint = nearest;
+934:        let nearest = null;
+935:        let minDist = Infinity;
+942:            if (b.type === 'house' || b.type === 'castle') {
+944:                    const d = this.getDistance(b.gridX, b.gridZ);
+946:                        minDist = d;
+947:                        nearest = b;
+959:        const dist = this.getDistance(this.targetRaidPoint.x, this.targetRaidPoint.z);
+960:        if (dist <= 2.0) { // Standardized to 2.0 (was 3.0)
+974:                this.targetRaidPoint = null;
+984:        if (this.role === 'worker' && this.targetRequest) return;
+988:        const frame = (window.game && window.game.frameCounter) ? window.game.frameCounter : 0;
+989:        if ((frame + this.id + 5) % 20 !== 0) {
+992:            if ((this.role === 'knight' || this.role === 'wizard') && (frame + this.id + 5) % 10 !== 0) {
+994:            } else if (this.role === 'worker') {
+1000:        const goblinCandidates = goblins || (window.game && window.game.goblinManager ? window.game.goblinManager.goblins : []);
+1005:            const range = (this.role === 'knight' || this.role === 'wizard') ? 50 : 12;
+1007:            const goblin = this.terrain.findBestTarget('goblin', x, z, range, (g, dist) => {
+1008:                const now = window.game ? window.game.gameTotalTime : Date.now();
+1011:                const isVeryClose = (dist < 5.0);
+1020:                const myH = this.terrain.getTileHeight(this.gridX, this.gridZ);
+1021:                const targetH = this.terrain.getTileHeight(g.gridX, g.gridZ);
+1026:                    const mCell = this.terrain.grid[this.gridX][this.gridZ];
+1027:                    const tCell = this.terrain.grid[g.gridX][g.gridZ];
+1028:                    if (mCell && tCell && mCell.regionId !== tCell.regionId && mCell.regionId > 0 && tCell.regionId > 0) {
+1035:                    const mCell = this.terrain.grid[this.gridX][this.gridZ];
+1036:                    const tCell = this.terrain.grid[g.gridX][g.gridZ];
+1037:                    if (mCell && tCell && mCell.regionId !== tCell.regionId && mCell.regionId > 0 && tCell.regionId > 0) {
+1046:                this.targetGoblin = goblin;
+1054:            const building = this.terrain.findBestTarget('building', x, z, 25, (b, dist) => {
+1055:                const now = window.game ? window.game.gameTotalTime : Date.now();
+1056:                const id = b.userData ? (b.userData.id || b.id) : b.id;
+1059:                if (b.userData.type === 'goblin_hut' || b.userData.type === 'cave') {
+1062:                        const mCell = this.terrain.grid[this.gridX][this.gridZ];
+1063:                        const tCell = this.terrain.grid[b.gridX][b.gridZ];
+1064:                        if (mCell && tCell && mCell.regionId !== tCell.regionId && mCell.regionId > 0 && tCell.regionId > 0) {
+1075:                this.targetBuilding = building;
+1090:            const r = Math.floor(Math.random() * this.terrain.buildings.length);
+1091:            const b = this.terrain.buildings[r];
+1097:            const dx = Math.abs(this.gridX - b.gridX);
+1098:            const dz = Math.abs(this.gridZ - b.gridZ);
+1116:        this.limbs.leftArm.x = 0;
+1117:        this.limbs.rightArm.x = 0;
+1118:        this.limbs.leftLeg.x = 0;
+1119:        this.limbs.rightLeg.x = 0;
+1121:        const built = this.tryBuildStructure(time);
+1124:            if (this.action === 'Migrating') {
+1126:                this.action = 'Idle';
+1127:                this.migrationTarget = null;
+1128:                this.migrationTimer = 0;
+1129:            } else if (this.action === 'Going to Work' || this.action === 'Approaching Job') {
+1132:            this.buildStagnationCount = 0;
+1136:                if (this.role === 'worker') {
+1143:                        this.action = 'Idle';
+1149:                    this.action = 'Idle';
+1150:                    this.migrationTarget = null;
+1152:                this.buildStagnationCount = 0;
+1156:                this.buildStagnationCount = (this.buildStagnationCount || 0) + 1;
+1160:                    this.buildStagnationCount = 0;
+1164:                this.buildStagnationCount = 0;
+1171:        const limbAngle = Math.sin(progress * Math.PI * 4) * 0.5;
+1172:        this.limbs.leftArm.x = limbAngle;
+1173:        this.limbs.rightArm.x = -limbAngle;
+1174:        this.limbs.leftLeg.x = -limbAngle;
+1175:        this.limbs.rightLeg.x = limbAngle;
+1180:            if (this.rotationY !== undefined) this.mesh.rotation.y = this.rotationY;
+1187:        const moved = this.smartMove(tx, tz, time);
+1191:            this.stuckCount = 0;
+1196:                this.stuckCount = (this.stuckCount || 0) + 1;
+1208:        const time = (window.game) ? window.game.gameTotalTime : 0;
+1211:        this.path = null;
+1214:        const ignoreDuration = time + 5000;
+1218:            this.targetGoblin = null;
+1223:            this.targetBuilding = null;
+1227:            this.targetRaidPoint = null;
+1230:        this.stuckCount = 0;
+1231:        this.action = "Idle";
+1232:        this.isMoving = false;
+1239:        const logicalW = this.terrain.logicalWidth || 80;
+1240:        const logicalD = this.terrain.logicalDepth || 80;
+1244:        let checkX = x;
+1245:        let checkZ = z;
+1246:        if (checkX < 0) checkX = logicalW - 1;
+1247:        if (checkX >= logicalW) checkX = 0;
+1248:        if (checkZ < 0) checkZ = logicalD - 1;
+1249:        if (checkZ >= logicalD) checkZ = 0;
+1252:        const currentHeight = this.terrain.getTileHeight(this.gridX, this.gridZ);
+1253:        const targetHeight = this.terrain.getTileHeight(checkX, checkZ);
+1255:        if (targetHeight <= 0) {
+1256:            const now = (this.game) ? this.game.gameTotalTime : Date.now();
+1259:                this.lastWaterLogTime = now;
+1276:        const col = this.terrain.grid[checkX];
+1278:        const cell = col[checkZ];
+1299:        const logicalW = this.terrain.logicalWidth || 80;
+1300:        const logicalD = this.terrain.logicalDepth || 80;
+1301:        if (nextX < 0) nextX = logicalW - 1;
+1302:        if (nextX >= logicalW) nextX = 0;
+1303:        if (nextZ < 0) nextZ = logicalD - 1;
+1304:        if (nextZ >= logicalD) nextZ = 0;
+1309:        const protectedActions = ["Migrating", "Reinforcing", "Going to Work", "Approaching Job", "Working", "Harvesting", "Fighting", "Sieging", "Chasing"];
+1314:        if (!this.action || this.action === "Idle" || this.action === "Wandering" || this.action === "Patrolling") {
+1315:            this.action = "Moving";
+1319:        const currentHeight = this.terrain.getTileHeight(this.gridX, this.gridZ);
+1320:        const targetHeight = this.terrain.getTileHeight(nextX, nextZ);
+1321:        const heightDiff = Math.abs(targetHeight - currentHeight);
+1326:        let base = 0.8;
+1327:        if (targetHeight > 8) base += 2.0;
+1333:        let startX = this.gridX;
+1334:        let startZ = this.gridZ;
+1337:            const progress = (time - this.moveStartTime) / this.moveDuration;
+1339:            const p = Math.max(0, Math.min(1, progress));
+1342:            let sx = this.startGridX;
+1343:            let sz = this.startGridZ;
+1344:            let tx = this.targetGridX;
+1345:            let tz = this.targetGridZ; // Use actual memory targets
+1348:            if (tx - sx > logicalW / 2) sx += logicalW;
+1349:            if (sx - tx > logicalW / 2) sx -= logicalW;
+1350:            if (tz - sz > logicalD / 2) sz += logicalD;
+1351:            if (sz - tz > logicalD / 2) sz -= logicalD;
+1353:            startX = sx + (tx - sx) * p;
+1354:            startZ = sz + (tz - sz) * p;
+1357:        let dx = Math.abs(nextX - startX);
+1358:        let dz = Math.abs(nextZ - startZ);
+1359:        if (dx > logicalW / 2) dx = logicalW - dx; // Wrap logic
+1360:        if (dz > logicalD / 2) dz = logicalD - dz;
+1361:        const dist2D = Math.sqrt(dx * dx + dz * dz);
+1365:        this.moveDuration = (base * Math.max(0.1, dist2D)) + (heightDiff * 1.0);
+1368:        this.stuckCount = 0;
+1373:        this.lastGatherTime = time;
+1375:        const logicalW = this.terrain.logicalWidth || 80;
+1376:        const logicalD = this.terrain.logicalDepth || 80;
+1378:        let foundWater = false;
+1379:        let foundForest = false;
+1381:        const sampleOffsets = [
+1388:            let nx = this.gridX + off.x;
+1389:            let nz = this.gridZ + off.z;
+1392:            if (nx < 0) nx = logicalW + nx;
+1393:            if (nx >= logicalW) nx = nx - logicalW;
+1394:            if (nz < 0) nz = logicalD + nz;
+1395:            if (nz >= logicalD) nz = nz - logicalD;
+1397:            nx = (nx % logicalW + logicalW) % logicalW;
+1398:            nz = (nz % logicalD + logicalD) % logicalD;
+1400:            const h = this.terrain.getTileHeight(nx, nz);
+1402:            if (h <= 0) foundWater = true;
+1403:            else if (h > 4 && h <= 8) foundForest = true;
+1412:                    window.game.resources.fish = (window.game.resources.fish || 0) + 1;
+1416:                const amount = (this.role === 'hunter') ? 3.0 : 1.0;
+1417:                window.game.resources.meat += amount;
+1423:        if (!goblins || goblins.length === 0) return;
+1425:        let nearest = null;
+1426:        let minScore = Infinity;
+1428:        const maxDist = (this.role === 'knight' || this.role === 'wizard') ? 50 : 15;
+1435:            const myCell = this.terrain.grid[this.gridX][this.gridZ];
+1436:            const targetCell = this.terrain.grid[goblin.gridX][goblin.gridZ];
+1439:                const myRegion = myCell.regionId;
+1440:                const targetRegion = targetCell.regionId;
+1444:                    if (targetRegion !== myRegion) continue;
+1452:            const dx = this.gridX - goblin.gridX;
+1453:            const dz = this.gridZ - goblin.gridZ;
+1454:            const dist = Math.sqrt(dx * dx + dz * dz);
+1458:            const targetH = this.terrain.getTileHeight(goblin.gridX, goblin.gridZ);
+1459:            let score = dist;
+1462:                score += 20.0;
+1466:                minScore = score;
+1467:                nearest = goblin;
+1470:        this.targetGoblin = nearest;
+1474:        let dx = Math.abs(this.gridX - tx);
+1475:        let dz = Math.abs(this.gridZ - tz);
+1477:        const logicalW = this.terrain.logicalWidth || 80;
+1478:        const logicalD = this.terrain.logicalDepth || 80;
+1480:        if (dx > logicalW / 2) dx = logicalW - dx;
+1481:        if (dz > logicalD / 2) dz = logicalD - dz;
+1490:        const currentRegion = this.terrain.getRegion(this.gridX, this.gridZ);
+1493:        const radius = (this.role === 'knight') ? 30 : 15;
+1496:        const target = this.terrain.getRandomPointInRegion(currentRegion, this.gridX, this.gridZ, radius);
+1520:        const logicalW = this.terrain.logicalWidth || 80;
+1521:        const logicalD = this.terrain.logicalDepth || 80;
+1523:        let found = false;
+1524:        let attempts = 0;
+1526:            const rx = Math.floor(Math.random() * 7) - 3;
+1527:            const rz = Math.floor(Math.random() * 7) - 3;
+1528:            if (rx === 0 && rz === 0) continue;
+1530:            let tx = this.gridX + rx;
+1531:            let tz = this.gridZ + rz;
+1533:            if (tx < 0) tx = logicalW - 1;
+1534:            if (tx >= logicalW) tx = 0;
+1535:            if (tz < 0) tz = logicalD - 1;
+1536:            if (tz >= logicalD) tz = 0;
+1538:            const h = this.terrain.getTileHeight(tx, tz);
+1539:            const cell = this.terrain.grid[tx][tz];
+1543:                const oldX = this.gridX;
+1544:                const oldZ = this.gridZ;
+1545:                this.gridX = tx;
+1546:                this.gridZ = tz;
+1550:                found = true;
+1557:        this.action = 'Migrating';
+1560:            this.state = new UnitWanderState(this); // Direct set to avoid 'enter' overriding action if not careful
+1562:        this.migrationTimer = 0;
+1567:        const logicalW = (this.terrain && this.terrain.logicalWidth) || 80;
+1568:        const logicalD = (this.terrain && this.terrain.logicalDepth) || 80;
+1569:        let found = false;
+1570:        let attempts = 0;
+1572:            const r = 20 + Math.random() * 20;
+1573:            const ang = Math.random() * Math.PI * 2;
+1574:            let tx = this.gridX + Math.cos(ang) * r;
+1575:            let tz = this.gridZ + Math.sin(ang) * r;
+1578:            if (tx < 0) tx = (tx % logicalW + logicalW) % logicalW;
+1579:            else if (tx >= logicalW) tx = tx % logicalW;
+1581:            if (tz < 0) tz = (tz % logicalD + logicalD) % logicalD;
+1582:            else if (tz >= logicalD) tz = tz % logicalD;
+1585:                this.migrationTarget = { x: tx, z: tz };
+1587:                found = true;
+1598:            const stateName = this.state.constructor.name;
+1601:            if (stateName === "UnitWanderState") {
+1602:                return (this.role === 'knight' || this.role === 'wizard') ? "Patrol" : "Wander";
+1604:            if (stateName === "CombatState") {
+1610:            if (stateName === "JobState") return 'Working';
+1611:            if (stateName === "SleepState") return 'Sleeping';
+1620:        if (this.role === 'knight' || this.role === 'wizard') return 'Patrol';
+1625:        this.simTime = time;
+1633:        const ageRate = (this.role === 'knight' || this.role === 'wizard') ? 0.02 : 0.2;
+1634:        this.age += deltaTime * ageRate;
+1635:        if (this.age >= this.lifespan && !this.isDead) { // Redundant !isDead check but safe
+1675:        if (this.role !== 'worker') return false;
+1683:        const logicalW = this.terrain.logicalWidth || 80;
+1684:        const logicalD = this.terrain.logicalDepth || 80;
+1686:        const x = this.gridX;
+1687:        const z = this.gridZ;
+1688:        const cell = this.terrain.grid[x][z];
+1694:        const buildings = (this.terrain && this.terrain.buildings) ? this.terrain.buildings : [];
+1695:        const houseCount = buildings.filter(b => b.type === 'house').length;
+1696:        const farmCount = buildings.filter(b => b.type === 'farm').length;
+1697:        const mansionCount = buildings.filter(b => b.type === 'mansion').length;
+1698:        const totalPop = window.game ? window.game.totalPopulation : 0;
+1701:        const towers = buildings.filter(b => b.type === 'tower');
+1702:        const towerTarget = Math.floor(totalPop / 3000);
+1713:        const barracksCount = buildings.filter(b => b.type === 'barracks').length;
+1715:        const barracksTarget = Math.floor(totalPop / 1000);
+1727:        const res = (window.game && window.game.resources) ? window.game.resources : { grain: 100 };
+1728:        const food = res.grain || 0;
+1729:        const lowFood = food < totalPop * 2;
+1730:        const lowFarms = farmCount < (houseCount / 2) + 1;
+1756:        const cell = this.terrain.grid[this.gridX][this.gridZ];
+1757:        const currentM = cell.moisture || 0.5;
+1758:        const targetM = 0.5;
+1760:        let diff = targetM - currentM;
+1761:        let change = diff * 0.4;
+1764:            change = (diff > 0) ? 0.1 : -0.1;
+1767:        if (Math.abs(change) > Math.abs(diff)) change = diff;
+1777:                this.targetRequest = null;
+1785:        let cell = null;
+1787:            cell = this.terrain.grid[this.gridX][this.gridZ];
+1798:            const m = cell.moisture || 0.5;
+1800:            const diff = Math.abs(m - 0.5);
+1801:            let successChance = 1.0 - (diff * 2.5);
+1802:            if (successChance < 0) successChance = 0;
+1819:            Unit.assets.geometries.crossV = new THREE.BoxGeometry(0.2, 1.0, 0.2);
+1820:            Unit.assets.geometries.crossH = new THREE.BoxGeometry(0.8, 0.2, 0.2);
+1826:        const group = new THREE.Group();
+1827:        const GEO = Unit.getCrossAssets();
+1829:        const material = new THREE.MeshLambertMaterial({
+1835:        const vMesh = new THREE.Mesh(GEO.crossV, material);
+1836:        vMesh.position.y = 0.5;
+1839:        const hMesh = new THREE.Mesh(GEO.crossH, material);
+1840:        hMesh.position.y = 0.7;
+1843:        const pos = this.getPositionForGrid(this.gridX, this.gridZ);
+1847:        this.crossMesh = group;
+1848:        this.deathTimer = 0;
+1854:        if (isNaN(this.deathTimer)) this.deathTimer = 0;
+1856:        const safeDt = (deltaTime > 0) ? deltaTime : 0.016;
+1857:        this.deathTimer += safeDt;
+1859:        const duration = 3.0;
+1861:        if (this.deathTimer >= duration) {
+1863:            this.crossMesh.children.forEach(child => {
+1866:            this.crossMesh = null;
+1868:            this.isFinished = true;
+1870:            this.crossMesh.position.y += deltaTime * 1.0;
+1871:            const progress = this.deathTimer / duration;
+1872:            this.crossMesh.children.forEach(child => {
+1873:                child.material.opacity = 1.0 - progress;
+1879:        const canvas = document.createElement('canvas');
+1880:        canvas.width = 64;
+1881:        canvas.height = 64;
+1882:        const ctx = canvas.getContext('2d');
+1884:        ctx.fillStyle = '#8B4513';
+1887:        ctx.strokeStyle = '#5D2906';
+1888:        ctx.lineWidth = 2;
+1889:        for (let i = 0; i < 8; i++) {
+1903:        const canvas = document.createElement('canvas');
+1904:        canvas.width = 64;
+1905:        canvas.height = 64;
+1906:        const ctx = canvas.getContext('2d');
+1908:        ctx.fillStyle = '#A52A2A';
+1911:        ctx.fillStyle = '#800000';
+1912:        for (let y = 0; y < 64; y += 8) {
+1913:            for (let x = 0; x < 64; x += 8) {
+1914:                if ((x + y) % 16 === 0) ctx.fillRect(x, y, 7, 7);
+1923:        let hbx = undefined, hbz = undefined;
+1925:            hbx = this.homeBase.userData.gridX;
+1926:            hbz = this.homeBase.userData.gridZ;
+1968:            this.mesh = null;
+1973:            this.crossMesh.traverse(c => {
+1976:            this.crossMesh = null;
+1988:            tx = this.targetGoblin.gridX;
+1989:            tz = this.targetGoblin.gridZ;
+1991:            tx = this.targetBuilding.gridX;
+1992:            tz = this.targetBuilding.gridZ;
+1994:            tx = this.targetRaidPoint.x;
+1995:            tz = this.targetRaidPoint.z;
+1997:            tx = this.migrationTarget.x;
+1998:            tz = this.migrationTarget.z;
+2007:        this.lastPathAttempt = time;
+2009:        const path = this.terrain.findPath(this.gridX, this.gridZ, tx, tz);
+2013:            this.path = path;
+2014:            this.stuckCount = 0; // Reset stuck since we found a solution
+2019:            if (this.id === 0 || Math.random() < 0.05) console.log(`[Unit ${this.id}] Pathfinding Failed (UNREACHABLE). Blocked by terrain/water? Aborting & Blacklisting.`);
+2021:            const now = (this.game) ? this.game.simTotalTimeSec : 0;
+2027:                const id = this.targetBuilding.userData ? (this.targetBuilding.userData.id || this.targetBuilding.id) : this.targetBuilding.id;
+2035:            this.targetUnit = null;
+2036:            this.targetGoblin = null; // Ensure this is cleared too
+2037:            this.targetBuilding = null;
+2038:            this.targetRaidPoint = null;
+2039:            this.migrationTarget = null;
+2040:            this.targetRequest = null; // Drop job if unreachable
+2041:            this.path = null;
+2046:        const unit = new Unit(scene, terrain, data.gridX, data.gridZ, data.role || data.isSpecial, data.isSpecial);
+2047:        unit.id = (data.id !== undefined) ? Number(data.id) : unit.id; // Restore ID as Number
+2048:        unit.age = data.age || 20;
+2052:        // Assuming default constructor sets WanderState which makes isMoving=false
+2055:            unit.isMoving = true;
+2059:            unit.moveDuration = data.moveDuration;
+2064:        if (typeof data.lifespan === 'number' && data.lifespan > 0) {
+2065:            unit.lifespan = data.lifespan;
+2068:        if (data.lifespan) unit.lifespan = data.lifespan;
+2070:        unit.isDead = data.isDead || false;
+2071:        unit.isDead = data.isDead || false;
+2072:        unit.isFinished = data.isFinished || false;
+2075:        if (data.hp !== undefined) unit.hp = data.hp;
+2076:        if (data.maxHp !== undefined) unit.maxHp = data.maxHp;
+2077:        if (data.damage !== undefined) unit.damage = data.damage;
+2078:        if (data.xp !== undefined) unit.xp = data.xp;
+2079:        if (data.level !== undefined) unit.level = data.level;
+2080:        if (data.level !== undefined) unit.level = data.level;
+2081:        if (data.name !== undefined) unit.name = data.name;
+2084:        if (data.homeBaseGridX !== undefined && data.homeBaseGridZ !== undefined) {
+2085:            unit.savedHomeBaseX = data.homeBaseGridX;
+2086:            unit.savedHomeBaseZ = data.homeBaseGridZ;
+2090:        if (data.squadId !== undefined) {
+2091:            unit.squadId = data.squadId;
+2093:            unit.squadId = null; // Default for legacy saves
+2098:            unit.savedTargetRequestId = data.targetRequestId;
+2107:            if (data.targetGridX !== undefined) unit.targetGridX = data.targetGridX;
+2108:            if (data.targetGridZ !== undefined) unit.targetGridZ = data.targetGridZ;
+2111:            unit.isMoving = false;
+2112:            unit.action = "Idle"; // or leave as is if saved

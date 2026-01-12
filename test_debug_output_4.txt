@@ -1,0 +1,94 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/MultiJob.test.js > Multi-Job Juggling Verification > should NOT interrupt busy units when a new job is added
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 118,89. Force:false
+[Terrain] Building Added: cave at (118, 89) Size:1x1. Total: 1
+GoblinManager: Cave registered at 118,89 
+[GoblinManager] Clan clan_cave_118_89 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 128,13. Force:false
+[Terrain] Building Added: cave at (128, 13) Size:1x1. Total: 2
+GoblinManager: Cave registered at 128,13 
+[GoblinManager] Clan clan_cave_128_13 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 111,8. Force:false
+[Terrain] Building Added: cave at (111, 8) Size:1x1. Total: 3
+GoblinManager: Cave registered at 111,8 
+[GoblinManager] Clan clan_cave_111_8 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 89,2. Force:false
+[Terrain] Building Added: cave at (89, 2) Size:1x1. Total: 4
+GoblinManager: Cave registered at 89,2 
+[GoblinManager] Clan clan_cave_89_2 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 149,75. Force:false
+[Terrain] Building Added: cave at (149, 75) Size:1x1. Total: 5
+GoblinManager: Cave registered at 149,75 
+[GoblinManager] Clan clan_cave_149_75 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 6 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+stdout | src/tests/MultiJob.test.js > Multi-Job Juggling Verification > should NOT interrupt busy units when a new job is added
+[Game] forceAssignRequest FOUND Unit 1 (DistSq:400). Scanned:2
+[Game Debug] claimRequest Idempotency FAILED. Req:101 Status:pending AssignedTo:undefined UnitID:1 TargetReqID:null Match:false
+[Game Debug] claimRequest Setting isMoving=false for Unit 1
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Game] Force-Assigned Request 101 to Unit 1 (Score: 400.0)
+[Game] forceAssignRequest FOUND Unit 2 (DistSq:400). Scanned:2
+[Game Debug] claimRequest Setting isMoving=false for Unit 2
+[Defense Debug 2] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Game] Force-Assigned Request 102 to Unit 2 (Score: 400.0)
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+[Defense Debug 2] shouldScan:false isBusy:true force:false PassedGoblins:None
+
+ ﾃ・src/tests/MultiJob.test.js > Multi-Job Juggling Verification > should NOT interrupt busy units when a new job is added 1995ms
+   竊・expected false to be true // Object.is equality
+stdout | src/tests/JobIdempotency.test.js > Job Assignment Idempotency > should NOT reset movement if claiming the same job twice
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 96,126. Force:false
+[Terrain] Building Added: cave at (96, 126) Size:1x1. Total: 1
+GoblinManager: Cave registered at 96,126 
+[GoblinManager] Clan clan_cave_96_126 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 153,61. Force:false
+[Terrain] Building Added: cave at (153, 61) Size:1x1. Total: 2
+GoblinManager: Cave registered at 153,61 
+[GoblinManager] Clan clan_cave_153_61 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 146,86. Force:false
+[Terrain] Building Added: cave at (146, 86) Size:1x1. Total: 3
+GoblinManager: Cave registered at 146,86 
+[GoblinManager] Clan clan_cave_146_86 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 76,75. Force:false
+[Terrain] Building Added: cave at (76, 75) Size:1x1. Total: 4
+GoblinManager: Cave registered at 76,75 
+[GoblinManager] Clan clan_cave_76_75 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 143,52. Force:false
+[Terrain] Building Added: cave at (143, 52) Size:1x1. Total: 5
+GoblinManager: Cave registered at 143,52 
+[GoblinManager] Clan clan_cave_143_52 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 12 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+
+stdout | src/tests/JobIdempotency.test.js > Job Assignment Idempotency > should NOT reset movement if claiming the same job twice
+[Game Debug] claimRequest Idempotency FAILED. Req:101 Status:pending AssignedTo:undefined UnitID:1 TargetReqID:null Match:false
+[Game Debug] claimRequest Setting isMoving=false for Unit 1
+[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:None
+
+ 笨・src/tests/JobIdempotency.test.js > Job Assignment Idempotency > should NOT reset movement if claiming the same job twice 2048ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 1 passed (2)
+   Start at  02:12:55
+   Duration  3.41s (transform 643ms, setup 71ms, import 931ms, tests 4.05s, environment 1.15s)
+

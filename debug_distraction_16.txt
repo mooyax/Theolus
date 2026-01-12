@@ -1,0 +1,41 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/RefuseDistraction.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 134[2mms[22m[39m
+[31m     [31mﾃ・[31m should prioritize MANUAL move marker over autonomous HOUSE BUILDING[39m[32m 75[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT Switch to a better Auto-Job if Manual Job is active[39m[32m 57[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/RefuseDistraction.test.js > Refuse Distraction > should prioritize MANUAL move marker over autonomous HOUSE BUILDING
+ FAIL  src/tests/RefuseDistraction.test.js > Refuse Distraction > should NOT Switch to a better Auto-Job if Manual Job is active
+Error: [vitest] No "ConeGeometry" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi.mock(import("three"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    // your mocked methods
+  }
+})
+
+ 笶ｯ Function.initAssets src/BirdManager.js:14:35
+     12| 
+     13|         // Body
+     14|         const bodyGeo = new THREE.ConeGeometry(0.05, 0.2, 4);
+       |                                   ^
+     15|         bodyGeo.rotateX(Math.PI / 2); // Point forward
+     16|         BirdManager.assets.geometries.body = bodyGeo;
+ 笶ｯ new BirdManager src/BirdManager.js:37:21
+ 笶ｯ new Game src/Game.js:161:28
+ 笶ｯ src/tests/RefuseDistraction.test.js:152:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 12:12:47
+[2m   Duration [22m 1.47s[2m (transform 320ms, setup 34ms, import 431ms, tests 134ms, environment 562ms)[22m
+

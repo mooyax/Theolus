@@ -1,0 +1,77 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Goblin if it is much closer than Building
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Goblin if it is much closer than Building
+[DEBUG] Calling updateLogic...
+[Unit Debug V3] Start Logic. Night=false, Sleep=false, Action=undefined
+[ActorDebug] Grid: 0,0 Target: 10,0 Diff: 10,0
+[ActorDebug] Next: 1,0
+[Unit 0] Moving onto Rock at 1,0 H:10 (Speed Penalty)
+[ActorDebug] Check Move 1,0 -> true
+[DEBUG] updateLogic finished.
+[DEBUG] Targets: G=g1, B=undefined
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are very close (Siege Mode)
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Building if distances are very close (Siege Mode)
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+[ActorDebug] Grid: 0,0 Target: 7,0 Diff: 7,0
+[ActorDebug] Next: 1,0
+[Unit 2] Moving onto Rock at 1,0 H:10 (Speed Penalty)
+[ActorDebug] Check Move 1,0 -> true
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should allow Workers to target Huts at short range
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0 Special:false
+
+stdout | src/tests/TargetingPriority.test.js > Unit Targeting Priority > should allow Workers to target Huts at short range
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:0,0 Special:false
+[WorkerTest] Before Update: Request=undefined, Role=worker
+[WorkerTest] Buildings Count: 1
+[WorkerTest] After Update: TargetB=undefined
+
+ 笶ｯ src/tests/TargetingPriority.test.js (3 tests | 1 failed) 18ms
+     笨・should prioritize Goblin if it is much closer than Building 5ms
+     笨・should prioritize Building if distances are very close (Siege Mode) 2ms
+     ﾃ・should allow Workers to target Huts at short range 10ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/TargetingPriority.test.js > Unit Targeting Priority > should allow Workers to target Huts at short range
+AssertionError: expected undefined to be { userData: { 窶ｦ(4) }, gridX: 2, 窶ｦ(2) } // Object.is equality
+
+- Expected: 
+{
+  "gridX": 2,
+  "gridZ": 0,
+  "id": "hut_2",
+  "userData": {
+    "gridX": 2,
+    "gridZ": 0,
+    "hp": 100,
+    "type": "goblin_hut",
+  },
+}
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/TargetingPriority.test.js:162:41
+    160|         console.log(`[WorkerTest] After Update: TargetB=${testUnit.tar窶ｦ
+    161| 
+    162|         expect(testUnit.targetBuilding).toBe(hut);
+       |                                         ^
+    163|     });
+    164| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  20:43:52
+   Duration  801ms (transform 143ms, setup 38ms, import 153ms, tests 18ms, environment 403ms)
+

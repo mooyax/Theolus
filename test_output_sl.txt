@@ -1,0 +1,33 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+stderr | src/tests/SaveLoadPopulation.test.js > Save/Load Population Persistence > should persist units and building population across save/load
+[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+
+ [31m笶ｯ[39m src/tests/SaveLoadPopulation.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 121[2mms[22m[39m
+[31m     [31mﾃ・[31m should persist units and building population across save/load[39m[32m 115[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/SaveLoadPopulation.test.js > Save/Load Population Persistence > should persist units and building population across save/load
+TypeError: () => ({
+            add: __vite_ssr_import_0__.vi.fn(),
+            remove: __vite_ssr_import_0__.vi.fn(),
+...<omitted>...}) is not a constructor
+ 笶ｯ new Game src/Game.js:107:26
+    105|             this.scene.add = () => { }; // Dummy
+    106|         } else {
+    107|             this.scene = new THREE.Scene();
+       |                          ^
+    108|             console.log("Scene created:", !!this.scene, "Pos:", typeof窶ｦ
+    109|             this.scene.background = new THREE.Color(0x87CEEB); // Sky 窶ｦ
+ 笶ｯ src/tests/SaveLoadPopulation.test.js:32:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 14:13:28
+[2m   Duration [22m 4.74s[2m (transform 1.71s, setup 142ms, import 1.88s, tests 121ms, environment 1.53s)[22m
+

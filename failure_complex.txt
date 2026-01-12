@@ -1,0 +1,66 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
+[22m[39mGame constructor called
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+[Terrain] addBuilding: cave at 59,33. Force:false
+[Terrain] Building Added: cave at (59, 33) Size:1x1. Total: 1
+GoblinManager: Cave registered at 59,33 
+[GoblinManager] Clan clan_cave_59_33 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 115,75. Force:false
+[Terrain] Building Added: cave at (115, 75) Size:1x1. Total: 2
+GoblinManager: Cave registered at 115,75 
+[GoblinManager] Clan clan_cave_115_75 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 69,111. Force:false
+[Terrain] Building Added: cave at (69, 111) Size:1x1. Total: 3
+GoblinManager: Cave registered at 69,111 
+[GoblinManager] Clan clan_cave_69_111 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 62,65. Force:false
+[Terrain] Building Added: cave at (62, 65) Size:1x1. Total: 4
+GoblinManager: Cave registered at 62,65 
+[GoblinManager] Clan clan_cave_62_65 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+[Terrain] addBuilding: cave at 44,152. Force:false
+[Terrain] Building Added: cave at (44, 152) Size:1x1. Total: 5
+GoblinManager: Cave registered at 44,152 
+[GoblinManager] Clan clan_cave_44_152 ACTIVATED! Wave 1 in 30s. Target: [1mnull[22m
+GoblinManager: Generated 5 goblin caves after 11 attempts.
+GoblinManager: Force spawning Debug Goblin
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+Tower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
+[22m[39m[Game] Request Added: build at (20,0) ID:req_0
+[Game] forceAssignRequest FOUND Unit 1 (DistSq:400). Scanned:1
+[Game] Force-Assigned Request req_0 to Unit 1 (Score: 400.0)
+
+ [31m笶ｯ[39m src/tests/ComplexInteraction.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 2043[2mms[22m[39m
+[31m     [31mﾃ・[31m should immediately stop unit when job is cancelled mid-approach[39m[33m 2042[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should immediately stop unit when job is cancelled mid-approach
+AssertionError: expected 'Moving' to be 'Going to Work' // Object.is equality
+
+Expected: "Going to Work"
+Received: "Moving"
+
+ 笶ｯ src/tests/ComplexInteraction.test.js:60:29
+     58|         // 3. Move (Unit sees request)
+     59|         unit.updateLogic(1000, 0.1);
+     60|         expect(unit.action).toBe("Going to Work");
+       |                             ^
+     61|         expect(unit.isMoving).toBe(true);
+     62| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 12:37:44
+[2m   Duration [22m 3.20s[2m (transform 313ms, setup 35ms, import 432ms, tests 2.04s, environment 463ms)[22m
+

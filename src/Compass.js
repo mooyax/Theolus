@@ -23,7 +23,9 @@ export class Compass {
 
         this.ctx = this.canvas.getContext('2d');
 
-        document.body.appendChild(this.wrapper);
+        if (document.body) {
+            document.body.appendChild(this.wrapper);
+        }
     }
 
     update() {
@@ -33,6 +35,7 @@ export class Compass {
         const angle = -azimuth; // Counter-rotate
 
         const ctx = this.ctx;
+        if (!ctx) return;
         const w = this.canvas.width;
         const h = this.canvas.height;
         const cx = w / 2;

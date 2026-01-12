@@ -1,0 +1,28 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[DEBUG] Calling updateLogic...
+[ActorDebug] Grid: 0,0 Target: 10,0 Diff: 10,0
+[ActorDebug] Next: 1,0
+[Unit 0] Moving onto Rock at 1,0 H:10 (Speed Penalty)
+[ActorDebug] Check Move 1,0 -> true
+[DEBUG] updateLogic finished.
+[DEBUG] Targets: G=g1, B=undefined
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[ActorDebug] Grid: 0,0 Target: 7,0 Diff: 7,0
+[ActorDebug] Next: 1,0
+[Unit 2] Moving onto Rock at 1,0 H:10 (Speed Penalty)
+[ActorDebug] Check Move 1,0 -> true
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould auto-target CLOSE Huts for self-defense (Workers)
+[22m[39mUnit 6 attacking goblin_hut. HP: 96
+
+ [32m笨・[39m src/tests/TargetingPriority.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 11:37:34
+[2m   Duration [22m 798ms[2m (transform 146ms, setup 35ms, import 156ms, tests 12ms, environment 405ms)[22m
+
