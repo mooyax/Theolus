@@ -528,36 +528,68 @@ export class GoblinManager {
         // Reduce spawn per wave per cave to prevent explosion
         // User requested lower spawn rate to rely on mobilization
         // Reduce spawn per wave per cave: Start at 1, max 1 in early levels, transition to max 2 later.
-        const count = level < 15 ? 1 : Math.min(1 + Math.floor(level / 20), 2);
+        // REFACTOR: Stronger Waves (User Request)
+        // Level 1: 1
+        // Level 5: 2
+        // Level 10: 4
+        // Logic: 1 + Math.floor(level / 3)
+        const count = 1 + Math.floor(level / 3);
 
         console.log(`[Wave] Spawning ${count} goblins at cave ${cave.gridX},${cave.gridZ} (Lvl ${level})`);
 
         for (let i = 0; i < count; i++) {
             // Slight stagger to avoid stacking
             setTimeout(() => {
-                this.spawnGoblinAtCave(cave, level);
+                this.spawnGoblinAtCave(cave, level, true); // ignoreCost = true
             }, i * 200);
         }
     }
 
-    spawnGoblinAtCave(cave, difficultyLevel = 1) {
+    spawnGoblinAtCave(cave, difficultyLevel = 1, ignoreCost = false) {
         if (!cave) return;
 
         // POPULATION CHECK (New)
+        // RAID OVERRIDE: If part of a Wave (difficultyLevel passed?), ignore population check?
+        // spawnWaveAtCave passes 'level'. spawnGoblinAtCave uses it as 'difficultyLevel' defaulting to 1.
+        // We can distinguish "Normal Spawn" vs "Wave Spawn"?
+        // Actually, normal spawn calls this with no args (undefined -> 1).
+        // Let's assume if called from spawnWaveAtCave, we want to force it?
+        // But normal spawn also calls it.
+        // Let's rely on the Population Check logic itself.
+        // IF we want "Free Spawns" for Waves, we can skip consumption.
+
+        let forceSpawn = false;
+        // Hack: If difficultyLevel is explicitly high (wave logic passes level), we force it?
+        // Or better, passed arguments.
+        // Since I cannot change signature easily across all calls without verify,
+        // let's check if the caller is the Wave loop.
+        // Actually, we can just say "Waves don't care". 
+        // But how do we know it is a wave?
+        // We can check if `cave.spawnCooldown` is active? No.
+
+        // Let's look at `checkHutSpawns` which calls `spawnGoblinAtCave(fakeCave)`.
+        // That is the "Normal" spawn.
+        // `spawnWaveAtCave` calls `spawnGoblinAtCave(cave, level)`.
+
+        // We can infer: If cave is a "fakeCave" (from checkHutSpawns), it relies on pop.
+        // If it is a real cave object from `this.caves`, it might be a wave.
+        // However, checkHutSpawns constructs a fake object.
+
         if (cave.building && cave.building.userData) {
             const pop = cave.building.userData.population || 0;
-            if (pop < 1.0) {
-                // Not enough population to spawn
-                if (Math.random() < 0.05) console.log(`[GoblinManager] Cave at ${cave.gridX},${cave.gridZ} has insufficient pop: ${pop.toFixed(2)}`);
-                return;
+
+            if (!ignoreCost) {
+                // Normal Spawn: Require Population
+                if (pop < 1.0) {
+                    if (Math.random() < 0.05) console.log(`[GoblinManager] Cave at ${cave.gridX},${cave.gridZ} has insufficient pop: ${pop.toFixed(2)}`);
+                    return;
+                }
+
+                console.log(`[GoblinManager] SPAWN START: Cave at ${cave.gridX},${cave.gridZ}, Pop: ${pop.toFixed(2)}`);
+                // Consume population
+                cave.building.userData.population -= 1.0;
             }
-            console.log(`[GoblinManager] SPAWN START: Cave at ${cave.gridX},${cave.gridZ}, Pop: ${pop.toFixed(2)}`);
-            // Consume population
-            cave.building.userData.population -= 1.0;
-        } else {
-            // Fallback for independent caves (if any): No check? Or assume free?
-            // Let's enforce check if we can, but legacy caves might not have building link properly?
-            // GoblinManager ensures link in 'createCave'.
+            // Else: Free spawn (ignoreCost = true)
         }
 
         // Validation: Verify Cave Still Exists
@@ -659,8 +691,8 @@ export class GoblinManager {
         buildings.forEach(b => {
             // Cave または Goblin Hut の両方を処理
             if (b.userData.type === 'goblin_hut' || b.userData.type === 'cave') {
-                // Spawn Threshold: population >= 5.0
-                if (b.userData.population >= 5.0) {
+                // Spawn Threshold: population >= 10.0 (Raised from 5.0 per User Request to reduce normal density)
+                if (b.userData.population >= 10.0) {
                     // Check Global Cap
                     if (this.goblins.length >= (this.MAX_GOBLINS || 20000)) {
                         console.log(`[GoblinManager] MAX_GOBLINS reached: ${this.goblins.length}`);

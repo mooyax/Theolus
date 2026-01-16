@@ -64,6 +64,33 @@ export class GoblinRaidState extends State {
             const dist = this.actor.getDistance(this.actor.raidGoal.x, this.actor.raidGoal.z);
             if (dist < 5.0) {
                 // Arrived at Raid Goal.
+                // CHAIN ATTACK LOGIC: Don't just wander. Scan area immediately.
+                if (this.actor.findTarget) {
+                    const u = units || (window.game ? window.game.units : []);
+                    const b = buildings || (window.game ? window.game.buildings : []);
+                    this.actor.findTarget(u, b);
+
+                    if (this.actor.targetUnit || this.actor.targetBuilding) {
+                        this.actor.changeState(new GoblinCombatState(this.actor));
+                        return;
+                    }
+                }
+
+                // If no local target, try to find a NEW raid goal from Clan Memory
+                // (e.g. adjacent building we didn't see?)
+                if (window.game && window.game.goblinManager) {
+                    const newTarget = window.game.goblinManager.getClanRaidTarget(this.actor.clanId);
+                    if (newTarget) {
+                        // Is it different/far enough?
+                        const d2 = this.actor.getDistance(newTarget.x, newTarget.z);
+                        if (d2 > 10.0) {
+                            this.actor.raidGoal = newTarget;
+                            console.log(`[Goblin ${this.actor.id}] Chain Attack! Moving to new target.`);
+                            return; // Continue Raiding
+                        }
+                    }
+                }
+
                 this.actor.changeState(new GoblinWanderState(this.actor));
                 return;
             }

@@ -76,7 +76,7 @@ describe('Goblin Hut Spawning', () => {
         const hut = {
             userData: {
                 type: 'goblin_hut',
-                population: 9.9,
+                population: 10.5,
                 gridX: 10,
                 gridZ: 10,
                 id: 'hut_1'
@@ -94,13 +94,13 @@ describe('Goblin Hut Spawning', () => {
         const deltaTime = 1.0;
         goblinManager.checkHutSpawns(deltaTime);
 
-        expect(hut.userData.population).toBeLessThan(9.0); // Should be 8.9
+        expect(hut.userData.population).toBeLessThan(10.0); // Should be 9.5
         expect(spawnSpy).toHaveBeenCalled();
     });
 
     it('should NOT spawn if Global Cap is reached', () => {
         const hut = {
-            userData: { type: 'goblin_hut', population: 9.9, gridX: 10, gridZ: 10 }
+            userData: { type: 'goblin_hut', population: 10.5, gridX: 10, gridZ: 10 }
         };
         mockTerrain.buildings = [hut];
         goblinManager.goblins = Array(300).fill({});
@@ -111,7 +111,7 @@ describe('Goblin Hut Spawning', () => {
         goblinManager.checkHutSpawns(1.0); // Correct method name
 
         expect(spawnSpy).not.toHaveBeenCalled();
-        expect(hut.userData.population).toBe(9.9);
+        expect(hut.userData.population).toBe(10.5);
     });
 });
 
