@@ -31,6 +31,7 @@ describe('Unit Snatching and Race Conditions', () => {
             getTileHeight: vi.fn(() => 10),
             isAdjacentToRegion: vi.fn(() => true),
             findPath: vi.fn(() => [{ x: 10, z: 10 }, { x: 11, z: 10 }]),
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 10, z: 10 }, { x: 11, z: 10 }]),
         };
         mockGame = {
             simTotalTimeSec: 100,

@@ -1,0 +1,65 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/WorkerAggression.test.js[2m > [22m[2mWorker Aggression Debug[2m > [22m[2mshould attack nearby Goblin while in WanderState
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/WorkerAggression.test.js[2m > [22m[2mWorker Aggression Debug[2m > [22m[2mshould attack nearby Goblin while in JobState (Self Defense)
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/WorkerAggression.test.js[2m > [22m[2mWorker Aggression Debug[2m > [22m[2mshould attack nearby Goblin while in JobState (Self Defense)
+[22m[39m[JobState 1] Worker found threat/target on path!
+[Unit Debug] ATTACKING Goblin undefined
+
+[90mstdout[2m | src/tests/WorkerAggression.test.js[2m > [22m[2mWorker Aggression Debug[2m > [22m[2mshould attack nearby Goblin Hut (Building) when idle
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+
+ [31m笶ｯ[39m src/tests/WorkerAggression.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 52[2mms[22m[39m
+[31m     [31mﾃ・[31m should attack nearby Goblin while in WanderState[39m[32m 35[2mms[22m[39m
+[31m     [31mﾃ・[31m should attack nearby Goblin while in JobState (Self Defense)[39m[32m 11[2mms[22m[39m
+     [32m笨・[39m should attack nearby Goblin Hut (Building) when idle[32m 4[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/WorkerAggression.test.js > Worker Aggression Debug > should attack nearby Goblin while in WanderState
+TypeError: this.terrain.getRandomPointInRegion is not a function
+ 笶ｯ Unit.moveRandomly src/Unit.js:1637:37
+    1635| 
+    1636|         // 3. Find Valid Point in SAME Region
+    1637|         const target = this.terrain.getRandomPointInRegion(currentRegi窶ｦ
+       |                                     ^
+    1638| 
+    1639|         if (target) {
+ 笶ｯ UnitWanderState.update src/ai/states/UnitStates.js:186:24
+ 笶ｯ Unit.updateLogic src/Unit.js:1784:24
+ 笶ｯ src/tests/WorkerAggression.test.js:104:18
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/WorkerAggression.test.js > Worker Aggression Debug > should attack nearby Goblin while in JobState (Self Defense)
+TypeError: goblin.takeDamage is not a function
+ 笶ｯ Unit.attackGoblin src/Unit.js:444:16
+    442| 
+    443|         // DAMAGE LOGIC
+    444|         goblin.takeDamage(this.damage);
+       |                ^
+    445| 
+    446|         // Report Combat to Squad/Global Memory (Every hit matches "In窶ｦ
+ 笶ｯ CombatState.update src/ai/states/UnitStates.js:665:28
+ 笶ｯ CombatState.enter src/ai/states/UnitStates.js:534:14
+ 笶ｯ Unit.changeState src/Actor.js:35:24
+ 笶ｯ JobState.update src/ai/states/UnitStates.js:306:32
+ 笶ｯ Unit.updateLogic src/Unit.js:1784:24
+ 笶ｯ src/tests/WorkerAggression.test.js:135:18
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 17:20:11
+[2m   Duration [22m 1.37s[2m (transform 171ms, setup 67ms, import 217ms, tests 52ms, environment 677ms)[22m
+

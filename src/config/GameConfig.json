@@ -1,0 +1,101 @@
+{
+    "terrain": {
+        "logicalWidth": 240,
+        "logicalDepth": 240
+    },
+    "render": {
+        "viewRadius": 40
+    },
+    "units": {
+        "worker": {
+            "hp": 50,
+            "damage": 12,
+            "attackRate": 1.0,
+            "lifespanBase": 80,
+            "lifespanVariance": 20,
+            "specialMultiplier": {
+                "hp": 1.5,
+                "damage": 2.0,
+                "lifespan": 4.0
+            }
+        },
+        "knight": {
+            "hpMultiplier": 20,
+            "damageMultiplier": 25,
+            "attackRate": 1.0,
+            "lifespanBase": 80,
+            "lifespanVariance": 20
+        },
+        "wizard": {
+            "hpMultiplier": 3,
+            "damage": 240,
+            "attackRate": 1.0,
+            "lifespanBase": 80,
+            "lifespanVariance": 20
+        }
+    },
+    "goblins": {
+        "normal": {
+            "hp": 30,
+            "damage": 8,
+            "attackRate": 2.0,
+            "lifespan": 100
+        },
+        "hobgoblin": {
+            "hp": 120,
+            "damage": 20,
+            "attackRate": 2.5,
+            "lifespan": 150
+        },
+        "shaman": {
+            "hp": 80,
+            "damage": 35,
+            "attackRate": 3.0,
+            "lifespan": 120,
+            "attackRange": 8.0
+        },
+        "king": {
+            "hp": 1500,
+            "damage": 80,
+            "attackRate": 1.5,
+            "lifespan": 300
+        }
+    },
+    "buildings": {
+        "house": {
+            "hp": 100,
+            "capacity": 5,
+            "defense": 4.0
+        },
+        "mansion": {
+            "hp": 300,
+            "capacity": 10,
+            "defense": 2.0
+        },
+        "tower": {
+            "hp": 500,
+            "capacity": 5,
+            "defense": 10.0
+        },
+        "barracks": {
+            "hp": 800,
+            "capacity": 10,
+            "defense": 2.0
+        },
+        "castle": {
+            "hp": 2000,
+            "capacity": 50,
+            "defense": 2.0
+        },
+        "cave": {
+            "hp": 200,
+            "capacity": 20,
+            "growthRate": 0.125
+        },
+        "goblin_hut": {
+            "hp": 100,
+            "capacity": 5,
+            "growthRate": 0.25
+        }
+    }
+}

@@ -12,6 +12,7 @@ describe('Actor Movement Reset', () => {
             getTileHeight: vi.fn().mockReturnValue(10),
             pathfindingCalls: 0,
             findPath: vi.fn(),
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 20, z: 10 }]),
             isReachable: vi.fn(() => true)
         };
         mockScene = { add: vi.fn(), getObjectByName: vi.fn().mockReturnValue({ add: vi.fn(), remove: vi.fn(), children: [] }) };

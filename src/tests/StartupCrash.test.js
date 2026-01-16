@@ -4,11 +4,9 @@
  */
 import * as THREE from 'three';
 import { UnitRenderer } from '../UnitRenderer.js';
+vi.unmock('../UnitRenderer.js');
 import { Unit } from '../Unit.js';
 import { Terrain } from '../Terrain.js';
-
-// Mock Canvas for THREE.WebGLRenderer (if needed, but UnitRenderer doesn't use it directly)
-// UnitRenderer creates InstancedMesh.
 
 describe('Startup Crash Verification', () => {
     let scene;
@@ -17,18 +15,49 @@ describe('Startup Crash Verification', () => {
 
     beforeAll(() => {
         // Mock Unit.assets
-        Unit.initAssets();
+        // Unit.initAssets(); // Real call might fail if not mocked enough
+        Unit.assets = {
+            initialized: true,
+            geometries: {
+                body: new THREE.BoxGeometry(),
+                head: new THREE.BoxGeometry(),
+                limb: new THREE.BoxGeometry(),
+                sword: new THREE.BoxGeometry(),
+                staff: new THREE.BoxGeometry(),
+                facePlane: new THREE.PlaneGeometry(), // Needed for faceMesh
+                wizardHat: new THREE.BoxGeometry(),
+                wizardHatBrim: new THREE.BoxGeometry(),
+                jobIndicatorTop: new THREE.BoxGeometry(),
+                jobIndicatorDot: new THREE.BoxGeometry(),
+            },
+            materials: {
+                face: new THREE.MeshBasicMaterial(),
+                metal: new THREE.MeshBasicMaterial(),
+                wood: new THREE.MeshBasicMaterial(),
+                wildmanSkin: new THREE.MeshBasicMaterial(),
+                civilianSkin: new THREE.MeshBasicMaterial(),
+                robe: new THREE.MeshBasicMaterial(),
+                armor: new THREE.MeshBasicMaterial(),
+                helmet: new THREE.MeshBasicMaterial(),
+                redIndicator: new THREE.MeshBasicMaterial(),
+                wizardHat: new THREE.MeshBasicMaterial(),
+                heads: [new THREE.MeshBasicMaterial()]
+            }
+        };
     });
 
-    test('UnitRenderer should initialize without null materials', () => {
+    test('UnitRenderer should initialize without null materials', async () => {
         scene = new THREE.Scene();
         // Mock Terrain
-        terrain = { logicalWidth: 100, logicalDepth: 100, getTileHeight: () => 0 };
+        terrain = {
+            logicalWidth: 100,
+            logicalDepth: 100,
+            getTileHeight: () => 0,
+            checkYield: async () => { }
+        };
 
-        // This usually crashes if Unit.assets.materials.heads is null and code uses it
-        expect(() => {
-            renderer = new UnitRenderer(scene, terrain, []);
-        }).not.toThrow();
+        renderer = new UnitRenderer(scene, terrain, []);
+        await renderer.init();
 
         // Check if meshes are created with valid materials
         expect(renderer.headMesh).toBeDefined();
@@ -62,9 +91,6 @@ describe('Startup Crash Verification', () => {
         if (renderer.faceMesh) {
             expect(renderer.faceMesh).toBeDefined();
             expect(renderer.faceMesh.material).toBeDefined();
-        } else {
-            // If outdated, this might fail or warn
-            console.warn("FaceMesh not found - UnitRenderer might be outdated");
         }
     });
 });

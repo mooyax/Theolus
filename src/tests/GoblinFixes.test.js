@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Building } from '../Building.js';
 import { Game } from '../Game.js';
+import GameConfig from '../config/GameConfig.json';
 
 // --- Global Mocks/Setup ---
 if (typeof HTMLCanvasElement !== 'undefined') {
@@ -38,9 +39,9 @@ vi.mock('../BirdManager.js', () => ({ BirdManager: class { update() { } } }));
 vi.mock('../SheepManager.js', () => ({ SheepManager: class { update() { } } }));
 vi.mock('../FishManager.js', () => ({ FishManager: class { update() { } } }));
 vi.mock('../SoundManager.js', () => ({ SoundManager: class { init() { } play() { } initialized = true; } }));
-vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { update() { } dispose() { } initAssets() { } initInstancedMeshes() { } updateLighting() { } assets = { caveGeo: { parameters: { radiusTop: 0.45 } } }; } }));
-vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { update() { } dispose() { } initAssets() { } updateLighting() { } } }));
-vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { update() { } dispose() { } initAssets() { } updateLighting() { } } }));
+vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { init() { return Promise.resolve(); } update() { } dispose() { } initAssets() { } initInstancedMeshes() { } updateLighting() { } assets = { caveGeo: { parameters: { radiusTop: 0.45 } } }; } }));
+vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { init() { return Promise.resolve(); } update() { } dispose() { } initAssets() { } updateLighting() { } } }));
+vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { init() { return Promise.resolve(); } update() { } dispose() { } initAssets() { } updateLighting() { } } }));
 vi.mock('../InputManager.js', () => ({ InputManager: class { update() { } } }));
 vi.mock('../ParticleManager.js', () => ({ ParticleManager: class { update() { } } }));
 vi.mock('three/examples/jsm/controls/OrbitControls.js', () => ({ OrbitControls: class { update() { } } }));
@@ -82,6 +83,7 @@ vi.mock('../Goblin.js', async () => {
 });
 
 const mockTerrain = {
+    findBestTarget: vi.fn(() => null),
     logicalWidth: 240,
     logicalDepth: 240,
     width: 720,
@@ -106,7 +108,11 @@ const mockTerrain = {
         return b;
     }),
     findBestTarget: () => null,
-    clippingPlanes: []
+    clippingPlanes: [],
+    updateMeshPosition: vi.fn(),
+    updateLights: vi.fn(),
+    findPathAsync: () => Promise.resolve([]),
+    checkYield: () => Promise.resolve()
 };
 
 describe('Goblin Spawning Logic', () => {
@@ -124,8 +130,8 @@ describe('Goblin Spawning Logic', () => {
         const deltaTime = 1.0;
         cave.update(0, deltaTime);
 
-        // Cave growth rate is 0.3
-        expect(cave.userData.population).toBeCloseTo(0.3, 2);
+        // Cave growth rate is 0.125 (original balanced rate)
+        expect(cave.userData.population).toBeCloseTo(0.125, 2);
     });
 
     it('should synchronize clipping planes with controls.target when available', () => {
@@ -141,7 +147,7 @@ describe('Goblin Spawning Logic', () => {
         game.camera.position.set(100, 100, 100); // Camera follows target but is far away
         game.updateCameraControls();
 
-        const viewRadius = 150;
+        const viewRadius = GameConfig.render.viewRadius; // Updated to match User Config (currently 40)
         // Should use target (500) instead of camera position (100)
         expect(game.clippingPlanes[1].constant).toBe(500 + viewRadius);
         expect(game.clippingPlanes[1].constant).not.toBe(100 + viewRadius);

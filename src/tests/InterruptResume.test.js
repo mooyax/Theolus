@@ -24,6 +24,7 @@ class MockTerrain {
         this.logicalDepth = 100;
         this.grid = Array(100).fill(0).map(() => Array(100).fill(0).map(() => ({ regionId: 1 })));
     }
+    findBestTarget() { return null; }
     getTileHeight(x, z) { return 10; } // Above 8 = Rock
     isReachable() { return true; }
     checkFlatArea() { return true; }
@@ -32,6 +33,10 @@ class MockTerrain {
     findPath(x1, z1, x2, z2) {
         console.log(`[MockTerrain] findPath: (${x1},${z1}) -> (${x2},${z2})`);
         return [{ x: x1, z: z1 }, { x: x2, z: z2 }]; // Simple direct path
+    }
+    findPathAsync(x1, z1, x2, z2) {
+        // console.log(`[MockTerrain] findPathAsync: (${x1},${z1}) -> (${x2},${z2})`);
+        return Promise.resolve([{ x: x1, z: z1 }, { x: x2, z: z2 }]);
     }
     findClosestReachablePoint() { return null; }
     getRegion() { return 1; }
@@ -79,7 +84,7 @@ describe('Unit Interrupt and Resume', () => {
         vi.restoreAllMocks();
     });
 
-    it('should return to previous movement target after finishing a job', () => {
+    it('should return to previous movement target after finishing a job', async () => {
         // 1. Initial Move (Long distance)
         const initialTargetX = 80;
         const initialTargetZ = 80;
@@ -88,6 +93,10 @@ describe('Unit Interrupt and Resume', () => {
         unit.gridZ = 0;
         unit.smartMove(initialTargetX, initialTargetZ, game.simTotalTimeSec);
 
+        // Wait for async pathfinding (Microtasks need to flush)
+        await new Promise(resolve => setTimeout(resolve, 10));
+
+        // console.log(`[Test] Post-SmartMove Target: ${unit.targetGridX},${unit.targetGridZ}`);
         expect(unit.targetGridX).toBe(initialTargetX);
         expect(unit.targetGridZ).toBe(initialTargetZ);
 

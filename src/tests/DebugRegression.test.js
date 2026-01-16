@@ -33,6 +33,7 @@ describe('Debug Regression', () => {
             isAdjacentToRegion: vi.fn(() => true),
             // Mock findPath to return a dummy path
             findPath: vi.fn(() => [{ x: 10, z: 10 }, { x: 11, z: 10 }]),
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 10, z: 10 }, { x: 11, z: 10 }]),
             moveEntity: vi.fn((actor, ox, oz, nx, nz) => {
                 console.log(`[DebugMove] Moving ${actor.id} to ${nx},${nz}`);
                 console.trace('Move Trace');
@@ -76,6 +77,11 @@ describe('Debug Regression', () => {
         unit.updateLogic(100.16, 0.16, false, []);
         console.log('--- END UPDATE ---');
 
-        expect(unit.isMoving).toBe(false);
+        // If Job snitched, unit should abandon job.
+        // It transitions to Wander, which MIGHT start moving again (random wander).
+        // So checking isMoving is unreliable. Check targetRequest instead.
+        // expect(unit.isMoving).toBe(false); 
+        expect(unit.targetRequest).toBeNull();
+        expect(unit.action).not.toContain('Job');
     });
 });

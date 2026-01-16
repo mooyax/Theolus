@@ -1,0 +1,28 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/UnitVisibility.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 11[2mms[22m[39m
+[31m     [31mﾃ・[31m should set matrix with valid scale when unit is visible[39m[32m 8[2mms[22m[39m
+[31m     [31mﾃ・[31m should render correct count of instances[39m[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/UnitVisibility.test.js > UnitRenderer Visibility > should set matrix with valid scale when unit is visible
+ FAIL  src/tests/UnitVisibility.test.js > UnitRenderer Visibility > should render correct count of instances
+Error: The vi.spyOn() function could not find an object to spy upon. The first argument must be defined.
+ 笶ｯ src/tests/UnitVisibility.test.js:62:12
+     60| 
+     61|         // Spy on setMatrixAt
+     62|         vi.spyOn(renderer.torsoMesh, 'setMatrixAt');
+       |            ^
+     63|         vi.spyOn(renderer.torsoMesh, 'setColorAt');
+     64|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 12:20:04
+[2m   Duration [22m 1.17s[2m (transform 172ms, setup 65ms, import 218ms, tests 11ms, environment 582ms)[22m
+

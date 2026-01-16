@@ -26,6 +26,20 @@ vi.mock('three', async () => {
     };
 });
 
+// Mock UI Components to prevent canvas context errors during Game.animate
+vi.mock('../Minimap.js', () => ({
+    Minimap: class {
+        update() { }
+        serialize() { return {}; }
+        deserialize() { }
+    }
+}));
+vi.mock('../Compass.js', () => ({
+    Compass: class {
+        update() { }
+    }
+}));
+
 describe('Combat Balance Verification', () => {
     let game;
     let mockTerrain;
@@ -58,6 +72,7 @@ describe('Combat Balance Verification', () => {
             unregisterEntity: vi.fn(),
             // Visuals
             updateMeshPosition: vi.fn(),
+            updateLights: vi.fn(),
         };
 
         // Mock Game

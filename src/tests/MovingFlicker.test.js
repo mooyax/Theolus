@@ -71,6 +71,7 @@ describe('Moving Flicker Check', () => {
         // Mock terrain for pathfinding
         game.terrain = {
             grid: Array(100).fill(null).map(() => Array(100).fill({ type: 'ground', height: 1 })),
+            findBestTarget() { return null; },
             getTileHeight: () => 1,
             getWidth: () => 100,
             getDepth: () => 100,
@@ -88,10 +89,25 @@ describe('Moving Flicker Check', () => {
                 }
                 return path;
             }),
+            findPathAsync: vi.fn().mockImplementation((x1, z1, x2, z2) => {
+                const path = [];
+                const dx = Math.sign(x2 - x1);
+                const dz = Math.sign(z2 - z1);
+                let cx = x1, cz = z1;
+                while (Math.abs(cx - x2) > 0.5 || Math.abs(cz - z2) > 0.5) {
+                    cx += dx;
+                    cz += dz;
+                    path.push({ x: cx, z: cz });
+                }
+                return Promise.resolve(path);
+            }),
+            updateCurrentRegions: () => { },
             update: () => { },
             getBuildingAt: () => null,
             moveEntity: () => { },
-            initEntityGrid: () => { }
+            initEntityGrid: () => { },
+            checkYield: () => Promise.resolve(),
+            isReachable: () => true
         };
     });
 
@@ -104,12 +120,12 @@ describe('Moving Flicker Check', () => {
         vi.restoreAllMocks();
     });
 
-    it('should NOT flicker to Idle while moving to a distant job', () => {
+    it('should NOT flicker to Idle while moving to a distant job', async () => {
         unit = game.spawnUnit(10, 10, 'worker');
         unit.id = 0;
 
         // Add a manual request far away
-        const req = game.addRequest('raise', 50, 50, null, null, null, true);
+        const req = game.addRequest('raise', 50, 50, true);
 
         // Assign
         const claimed = game.claimRequest(unit, req);
@@ -128,6 +144,9 @@ describe('Moving Flicker Check', () => {
 
             // Manually update unit logic
             unit.updateLogic(time, 0.1);
+
+            // ALLOW ASYNC RESOLUTION
+            await new Promise(r => setTimeout(r, 0));
 
             actions.push(unit.action);
             states.push(unit.state.constructor.name);
@@ -159,7 +178,7 @@ describe('Moving Flicker Check', () => {
         expect(idleFrames.length).toBe(0);
     });
 
-    it('should reproduce flicker when pathfinding budget is exhausted', () => {
+    it('should reproduce flicker when pathfinding budget is exhausted', async () => {
         // Mock budget exhaustion
         game.terrain.pathfindingCalls = 100;
 
@@ -167,7 +186,7 @@ describe('Moving Flicker Check', () => {
         unit.id = 0;
 
         // Add an AUTOMATIC request (threshold = 5)
-        const req = game.addRequest('raise', 50, 50, null, null, null, false); // isManual = false
+        const req = game.addRequest('raise', 50, 50, false); // isManual = false
 
         // Assign
         const claimed = game.claimRequest(unit, req);
@@ -182,6 +201,7 @@ describe('Moving Flicker Check', () => {
         for (let i = 0; i < 10; i++) {
             game.frameCounter = i;
             unit.updateLogic(i * 0.1, 0.1);
+            await new Promise(r => setTimeout(r, 0));
             states.push(unit.state.constructor.name);
         }
 
@@ -195,17 +215,18 @@ describe('Moving Flicker Check', () => {
         expect(unit.action).toBe('Approaching Job');
     });
 
-    it('should NOT drop manual job if temporarily blocked mid-move', () => {
+    it('should NOT drop manual job if temporarily blocked mid-move', async () => {
         unit = game.spawnUnit(10, 10, 'worker');
         unit.id = 0;
 
         // Manual request (High tolerance = 100)
-        const req = game.addRequest('raise', 50, 50, null, null, null, true);
+        const req = game.addRequest('raise', 50, 50, true);
         game.claimRequest(unit, req);
 
         // Frame 0-10: Moving fine
         for (let i = 0; i < 10; i++) {
             unit.updateLogic(i * 0.1, 0.1);
+            await new Promise(r => setTimeout(r, 0));
             expect(unit.state).toBeInstanceOf(JobState);
         }
 
@@ -215,6 +236,7 @@ describe('Moving Flicker Check', () => {
 
         for (let i = 11; i < 40; i++) {
             unit.updateLogic(i * 0.1, 0.1);
+            await new Promise(r => setTimeout(r, 0));
             // Should stay in JobState even if blocked for 30 frames
             expect(unit.state).toBeInstanceOf(JobState);
             expect(unit.action).toBe('Approaching Job');
@@ -233,7 +255,7 @@ describe('Moving Flicker Check', () => {
         unit.id = 0;
         unit.hp = 100;
 
-        const req = game.addRequest('raise', 50, 50, null, null, null, true);
+        const req = game.addRequest('raise', 50, 50, true);
         game.claimRequest(unit, req);
 
         // Start moving

@@ -1,19 +1,189 @@
 
-[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+ RUN  v4.0.15 C:/Users/mooya/develop/test
 
-[90mstdout[2m | src/tests/GoblinActivity.test.js[2m > [22m[2mGoblin Activity & Persistence[2m > [22m[2mshould spawn a goblin at a cave and persist effectively
-[22m[39mGoblinManager: Generation started...
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
 GoblinManager: Generated 0 goblin caves after 5000 attempts.
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
 
-[90mstdout[2m | src/tests/GoblinActivity.test.js[2m > [22m[2mGoblin Activity & Persistence[2m > [22m[2mshould spawn a goblin at a cave and persist effectively
-[22m[39m[GoblinManager] SPAWN START: Cave at 50,50, Pop: 10.00
-Spawn called. Goblins count: [33m1[39m
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: cultivate at (20,20) ID:req_0
+[Assign] Checking Unit 0 (Dead:false)
+[Assign] Unit 0 Action: Idle, TargetReq: none
+[Game] forceAssignRequest FOUND Unit 0 (DistSq:200). Scanned:1
+[JobState] Entered. Target: cultivate. ResumeCtx: Approaching Job
+[Game] Request req_0 assigned/switched to Unit 0
+[JobState 0] Target building destroyed. Releasing job.
+[Assign] Checking Unit 0 (Dead:false)
+[Assign] Unit 0 Action: Approaching Job, TargetReq: req_0
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
 
- [31m笶ｯ[39m src/tests/GoblinActivity.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 17[2mms[22m[39m
-[31m     [31mﾃ・[31m should spawn a goblin at a cave and persist effectively[39m[32m 16[2mms[22m[39m
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
 
-[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m   Start at [22m 23:03:16
-[2m   Duration [22m 952ms[2m (transform 145ms, setup 36ms, import 197ms, tests 17ms, environment 447ms)[22m
+ 笨・src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed 86ms
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (50,50) ID:req_0
+[Assign] Checking Unit 0 (Dead:false)
+[Assign] Unit 0 Action: Idle, TargetReq: none
+[Game] forceAssignRequest FOUND Unit 0 (DistSq:3200). Scanned:1
+[JobState] Entered. Target: raise. ResumeCtx: Approaching Job
+[Game] Request req_0 assigned/switched to Unit 0
+[Game] Request Added: raise at (11,11) ID:req_1
+[Assign] Checking Unit 0 (Dead:false)
+[Assign] Unit 0 Action: Approaching Job, TargetReq: req_0
+[Game] forceAssignRequest FAILED for Req req_1. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to SleepState at night
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to SleepState at night
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (50,50) ID:req_0
+[Assign] Checking Unit 0 (Dead:false)
+[Assign] Unit 0 Action: Idle, TargetReq: none
+[Game] forceAssignRequest FOUND Unit 0 (DistSq:3200). Scanned:1
+[JobState] Entered. Target: raise. ResumeCtx: Approaching Job
+[Game] Request req_0 assigned/switched to Unit 0
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should ignore unreachable job to prevent flicker (Regression Test)
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+
+stderr | src/tests/ComplexAI.test.js > Complex AI Scenarios > should ignore unreachable job to prevent flicker (Regression Test)
+[Game] Skipping ignored request req_0 for Unit 0. Exp: 10.1 Now: 0.2
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should ignore unreachable job to prevent flicker (Regression Test)
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (90,90) ID:req_0
+[Assign] Checking Unit 0 (Dead:false)
+[Assign] Unit 0 Action: Idle, TargetReq: none
+[Game] forceAssignRequest FOUND Unit 0 (DistSq:800). Scanned:1
+[JobState] Entered. Target: raise. ResumeCtx: Approaching Job
+[Game] Request req_0 assigned/switched to Unit 0
+[JobState 0] Request Unreachable (No Path). Releasing Job.
+[Assign] Checking Unit 0 (Dead:false)
+[Assign] Unit 0 Action: Approaching Job, TargetReq: req_0
+[Game] forceAssignRequest FAILED for Req req_0. Scanned:1 (RoleSkipped:0) Busy:1 Valid:0. TotalUnits:1
+
+ 笨・src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear 60ms
+ 笨・src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to SleepState at night 47ms
+ 笨・src/tests/ComplexAI.test.js > Complex AI Scenarios > should ignore unreachable job to prevent flicker (Regression Test) 44ms
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Errors 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+Vitest caught 4 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Cannot read properties of undefined (reading 'bind')
+ 笶ｯ GoblinRenderer.init src/GoblinRenderer.js:22:57
+     20|     async init() {
+     21|         // Ensure assets are ready
+     22|         await Goblin.initAssets(this.terrain.checkYield.bind(this.terr窶ｦ
+       |                                                         ^
+     23| 
+     24|         // Apply clipping to shared materials
+ 笶ｯ new GoblinManager src/GoblinManager.js:19:23
+ 笶ｯ new Game src/Game.js:211:30
+ 笶ｯ src/tests/ComplexAI.test.js:44:16
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:145:11
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:1240:20
+ 笶ｯ runWithTimeout node_modules/@vitest/runner/dist/index.js:1206:10
+ 笶ｯ runHook node_modules/@vitest/runner/dist/index.js:1511:51
+ 笶ｯ callSuiteHook node_modules/@vitest/runner/dist/index.js:1517:25
+
+This error originated in "src/tests/ComplexAI.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "should drop job gracefully if target building is destroyed". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Cannot read properties of undefined (reading 'bind')
+ 笶ｯ GoblinRenderer.init src/GoblinRenderer.js:22:57
+     20|     async init() {
+     21|         // Ensure assets are ready
+     22|         await Goblin.initAssets(this.terrain.checkYield.bind(this.terr窶ｦ
+       |                                                         ^
+     23| 
+     24|         // Apply clipping to shared materials
+ 笶ｯ new GoblinManager src/GoblinManager.js:19:23
+ 笶ｯ new Game src/Game.js:211:30
+ 笶ｯ src/tests/ComplexAI.test.js:44:16
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:145:11
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:1240:20
+ 笶ｯ runWithTimeout node_modules/@vitest/runner/dist/index.js:1206:10
+ 笶ｯ runHook node_modules/@vitest/runner/dist/index.js:1511:51
+ 笶ｯ callSuiteHook node_modules/@vitest/runner/dist/index.js:1517:25
+
+This error originated in "src/tests/ComplexAI.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "should prioritize manual jobs even when closer auto jobs appear". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Cannot read properties of undefined (reading 'bind')
+ 笶ｯ GoblinRenderer.init src/GoblinRenderer.js:22:57
+     20|     async init() {
+     21|         // Ensure assets are ready
+     22|         await Goblin.initAssets(this.terrain.checkYield.bind(this.terr窶ｦ
+       |                                                         ^
+     23| 
+     24|         // Apply clipping to shared materials
+ 笶ｯ new GoblinManager src/GoblinManager.js:19:23
+ 笶ｯ new Game src/Game.js:211:30
+ 笶ｯ src/tests/ComplexAI.test.js:44:16
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:145:11
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:1240:20
+ 笶ｯ runWithTimeout node_modules/@vitest/runner/dist/index.js:1206:10
+ 笶ｯ runHook node_modules/@vitest/runner/dist/index.js:1511:51
+ 笶ｯ callSuiteHook node_modules/@vitest/runner/dist/index.js:1517:25
+
+This error originated in "src/tests/ComplexAI.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Cannot read properties of undefined (reading 'bind')
+ 笶ｯ GoblinRenderer.init src/GoblinRenderer.js:22:57
+     20|     async init() {
+     21|         // Ensure assets are ready
+     22|         await Goblin.initAssets(this.terrain.checkYield.bind(this.terr窶ｦ
+       |                                                         ^
+     23| 
+     24|         // Apply clipping to shared materials
+ 笶ｯ new GoblinManager src/GoblinManager.js:19:23
+ 笶ｯ new Game src/Game.js:211:30
+ 笶ｯ src/tests/ComplexAI.test.js:44:16
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:145:11
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:1240:20
+ 笶ｯ runWithTimeout node_modules/@vitest/runner/dist/index.js:1206:10
+ 笶ｯ runHook node_modules/@vitest/runner/dist/index.js:1511:51
+ 笶ｯ callSuiteHook node_modules/@vitest/runner/dist/index.js:1517:25
+
+This error originated in "src/tests/ComplexAI.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+     Errors  4 errors
+   Start at  01:59:56
+   Duration  1.33s (transform 391ms, setup 35ms, import 492ms, tests 237ms, environment 380ms)
 

@@ -41,8 +41,18 @@ describe('Unit Movement Wrapping', () => {
                     ];
                 }
                 return [{ x: ex, z: ez }];
+                return [{ x: ex, z: ez }];
             },
-            pathfindingCalls: 0
+            findPathAsync: async function (sx, sz, ex, ez) {
+                // Mock async wrapper
+                return this.findPath(sx, sz, ex, ez);
+            },
+            pathfindingCalls: 0,
+            getRegion: (x, z) => 1,
+            isAdjacentToRegion: () => true,
+            isValidGrid: (x, z) => x >= 0 && x < 80 && z >= 0 && z < 80,
+            updateMeshPosition: vi.fn(),
+            updateLights: vi.fn()
         };
 
         unit = new Unit({ add: vi.fn() }, mockTerrain, 0, 0, 'worker');
@@ -50,22 +60,26 @@ describe('Unit Movement Wrapping', () => {
         unit.targetGridX = 0; unit.targetGridZ = 0;
     });
 
-    it('should move normally for short distances', () => {
+    it('should move normally for short distances', async () => {
         // Actor.js: executeMove sets targetGridX/Z immediately to the calculated next step.
         // For short distances, smartMove calculates the next tile.
         unit.gridX = 10;
         unit.gridZ = 10;
         unit.triggerMove(15, 10, 1000);
+        await new Promise(r => setTimeout(r, 0));
+        unit.triggerMove(15, 10, 1001); // Retry with path
 
         expect(unit.targetGridX).toBe(11);
         expect(unit.targetGridZ).toBe(10);
     });
 
-    it('should wrap LEFT if target is across right boundary', () => {
+    it('should wrap LEFT if target is across right boundary', async () => {
         // Unit at 10. Target at 70 (Shortest path is wrapping: -20 steps)
         unit.gridX = 10;
         unit.gridZ = 10;
         unit.triggerMove(70, 10, 1000);
+        await new Promise(r => setTimeout(r, 0));
+        unit.triggerMove(70, 10, 1001);
 
         // Dist (60) > 15.0 -> A* triggers immediately.
         // My recent change in Actor.js makes it consume the FIRST point of the path.
@@ -76,20 +90,24 @@ describe('Unit Movement Wrapping', () => {
         expect(unit.targetGridZ).toBe(10);
     });
 
-    it('should wrap RIGHT if target is across left boundary', () => {
+    it('should wrap RIGHT if target is across left boundary', async () => {
         // Unit at 70. Target at 10
         unit.gridX = 70;
         unit.gridZ = 10;
         unit.triggerMove(10, 10, 1000);
+        await new Promise(r => setTimeout(r, 0));
+        unit.triggerMove(10, 10, 1001);
 
         expect(unit.targetGridX).toBe(10);
         expect(unit.targetGridZ).toBe(10);
     });
 
-    it('should handle Z axis wrapping', () => {
+    it('should handle Z axis wrapping', async () => {
         unit.gridX = 10;
         unit.gridZ = 10;
         unit.triggerMove(10, 70, 1000);
+        await new Promise(r => setTimeout(r, 0));
+        unit.triggerMove(10, 70, 1001);
 
         expect(unit.targetGridX).toBe(10);
         expect(unit.targetGridZ).toBe(70);

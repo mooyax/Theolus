@@ -1,0 +1,30 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould continue MANUAL job when night falls
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould release AUTO job when night falls
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould prefer MANUAL job over sleep in UnitWanderState at night
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould go to sleep if only AUTO jobs available at night
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+ [31m笶ｯ[39m src/tests/NightManualWork.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 47[2mms[22m[39m
+[31m     [31mﾃ・[31m should continue MANUAL job when night falls[39m[32m 18[2mms[22m[39m
+[31m     [31mﾃ・[31m should release AUTO job when night falls[39m[32m 3[2mms[22m[39m
+[31m     [31mﾃ・[31m should prefer MANUAL job over sleep in UnitWanderState at night[39m[32m 23[2mms[22m[39m
+     [32m笨・[39m should go to sleep if only AUTO jobs available at night[32m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 10:21:01
+[2m   Duration [22m 902ms[2m (transform 127ms, setup 49ms, import 158ms, tests 47ms, environment 436ms)[22m
+

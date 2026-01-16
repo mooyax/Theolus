@@ -18,7 +18,7 @@ vi.mock('three', async () => {
         Vector3: MockVec3,
         Frustum: class { setFromProjectionMatrix() { } containsPoint() { return true; } },
         Matrix4: class { set() { } copy() { } },
-        Plane: class { constructor() { this.set = vi.fn(); } },
+        Plane: class { constructor() { this.set = vi.fn(); } clone() { return new this.constructor(); } },
         Fog: class { },
         Mesh: class {
             constructor() {
@@ -88,6 +88,8 @@ vi.mock('../Terrain', () => {
             unregisterEntity() { }
             gridToWorld(v) { return v; }
             findPath(sx, sz, ex, ez) { return [{ x: ex, z: ez }]; }
+            findPathAsync(sx, sz, ex, ez) { return Promise.resolve([{ x: ex, z: ez }]); }
+            isReachable() { return true; }
             pathfindingCalls = 0;
         }
     };
@@ -101,8 +103,8 @@ vi.mock('../GoblinManager', () => ({ GoblinManager: class { } }));
 vi.mock('../FishManager', () => ({ FishManager: class { } }));
 vi.mock('../Minimap', () => ({ Minimap: class { } }));
 vi.mock('../Compass', () => ({ Compass: class { } }));
-vi.mock('../UnitRenderer', () => ({ UnitRenderer: class { } }));
-vi.mock('../BuildingRenderer', () => ({ BuildingRenderer: class { } }));
+vi.mock('../UnitRenderer', () => ({ UnitRenderer: class { init() { return Promise.resolve(); } } }));
+vi.mock('../BuildingRenderer', () => ({ BuildingRenderer: class { init() { return Promise.resolve(); } } }));
 vi.mock('../InputManager', () => ({ InputManager: class { update() { } } }));
 
 describe('Force Assignment Integration', () => {
@@ -149,9 +151,15 @@ describe('Force Assignment Integration', () => {
         vi.restoreAllMocks();
     });
 
-    it('should successfully triggerMove without infinite loop', () => {
+    it('should successfully triggerMove without infinite loop', async () => {
         // Test triggerMove specifically
-        worker.triggerMove(15, 15, 100);
+        worker.triggerMove(15, 15, 1.0);
+
+        // Wait for async pathfinding
+        await new Promise(r => setTimeout(r, 20));
+
+        // FIX: Actor.js requires another smartMove call to pick up the resolvd path
+        worker.smartMove(0);
 
         expect(worker.isMoving).toBe(true);
         // Path is not defined for greedy moves
@@ -159,7 +167,7 @@ describe('Force Assignment Integration', () => {
         // If this finishes, no infinite loop.
     });
 
-    it('should handle Force Assignment logic block', () => {
+    it('should handle Force Assignment logic block', async () => {
         const req = { type: 'raise', x: 12, z: 12, status: 'pending' };
 
         // Use the logic block we plan to enable
@@ -183,8 +191,14 @@ describe('Force Assignment Integration', () => {
             bestUnit.action = 'Approaching Job';
 
             // Critical Move
-            bestUnit.triggerMove(req.x, req.z, 200);
+            bestUnit.triggerMove(req.x, req.z, 1.0);
         }
+
+        // Wait for async pathfinding
+        await new Promise(r => setTimeout(r, 20));
+
+        // FIX: Actor.js requires another keyframe/update to process the path
+        if (bestUnit) bestUnit.smartMove(0);
 
         expect(bestUnit).toBe(worker);
         expect(worker.targetRequest).toBe(req);

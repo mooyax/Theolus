@@ -48,6 +48,12 @@ export class CloudManager {
                 const edgeFade = Math.max(0, 1 - Math.pow(d, 4));
                 alpha *= edgeFade;
 
+                // FORCE EDGE TRANSPARENCY
+                // Ensure the absolute 2px border of the texture is transparent to prevent clamping artifacts
+                if (x < 2 || x >= width - 2 || y < 2 || y >= height - 2) {
+                    alpha = 0;
+                }
+
                 const idx = (y * width + x) * 4;
                 data[idx] = 255;     // R - ALWAYS WHITE (Safari Fix)
                 data[idx + 1] = 255; // G - ALWAYS WHITE
@@ -70,7 +76,9 @@ export class CloudManager {
             opacity: 0.9,
             color: 0xFFFFFF,
             depthWrite: false,
-            blending: THREE.NormalBlending
+            blending: THREE.NormalBlending,
+            clippingPlanes: [], // Explicitly disable clipping
+            fog: false          // Ignore fog
         });
 
         // Initialize Clouds

@@ -68,7 +68,7 @@ describe('Unit Targeting Priority', () => {
 
         // Ensure squads map exists
         if (!mockGame.squads) mockGame.squads = new Map();
-        mockGame.frameCounter = 0;
+        mockGame.frameCount = 0;
 
         global.window.game = mockGame;
 
@@ -81,7 +81,7 @@ describe('Unit Targeting Priority', () => {
     // Helper to run logic through Time Slicing
     const runUpdateLoop = (testUnit, goblins) => {
         for (let i = 0; i < 25; i++) {
-            mockGame.frameCounter = i;
+            mockGame.frameCount = i;
             testUnit.updateLogic(1000 + i, 0.1, false, goblins, [], []);
             if (testUnit.targetGoblin || testUnit.targetBuilding) break;
         }
@@ -93,6 +93,7 @@ describe('Unit Targeting Priority', () => {
 
         mockTerrain.buildings = [hut];
         const goblins = [goblin];
+        mockGame.goblinManager.goblins = goblins; // Register globally for findBestTarget
 
         runUpdateLoop(unit, goblins);
 

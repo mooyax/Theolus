@@ -1,19 +1,38 @@
 
 [1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
 
-[90mstdout[2m | src/tests/GoblinActivity.test.js[2m > [22m[2mGoblin Activity & Persistence[2m > [22m[2mshould spawn a goblin at a cave and persist effectively
-[22m[39mGoblinManager: Generation started...
-GoblinManager: Generated 0 goblin caves after 5000 attempts.
+[90mstdout[2m | src/tests/WorkerOscillation.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould blacklist unreachable jobs and NOT pick them up immediately
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
 
-[90mstdout[2m | src/tests/GoblinActivity.test.js[2m > [22m[2mGoblin Activity & Persistence[2m > [22m[2mshould spawn a goblin at a cave and persist effectively
-[22m[39m[GoblinManager] SPAWN START: Cave at 50,50, Pop: 10.00
-Spawn called. Goblins count: [33m1[39m
+[90mstdout[2m | src/tests/WorkerOscillation.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould NOT oscillate (Ping Pong) between Job and Idle
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
 
- [31m笶ｯ[39m src/tests/GoblinActivity.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 20[2mms[22m[39m
-[31m     [31mﾃ・[31m should spawn a goblin at a cave and persist effectively[39m[32m 18[2mms[22m[39m
+[90mstdout[2m | src/tests/WorkerOscillation.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould NOT oscillate (Ping Pong) between Job and Idle
+[22m[39m[JobState 1] Request Unreachable (No Path). Releasing Job.
+
+ [31m笶ｯ[39m src/tests/WorkerOscillation.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 19[2mms[22m[39m
+[31m     [31mﾃ・[31m should blacklist unreachable jobs and NOT pick them up immediately[39m[32m 14[2mms[22m[39m
+     [32m笨・[39m should NOT oscillate (Ping Pong) between Job and Idle[32m 4[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/WorkerOscillation.test.js > Worker Oscillation Debug > should blacklist unreachable jobs and NOT pick them up immediately
+TypeError: unit.update is not a function
+ 笶ｯ src/tests/WorkerOscillation.test.js:102:14
+    100| 
+    101|         // 5. Next Update - JobState should Handle Failure
+    102|         unit.update(time + 0.1, 0.1);
+       |              ^
+    103| 
+    104|         // Should release job and set blacklist
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m   Start at [22m 23:02:08
-[2m   Duration [22m 994ms[2m (transform 170ms, setup 39ms, import 233ms, tests 20ms, environment 486ms)[22m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m   Start at [22m 11:46:16
+[2m   Duration [22m 1.22s[2m (transform 185ms, setup 71ms, import 232ms, tests 19ms, environment 600ms)[22m
 

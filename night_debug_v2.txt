@@ -1,23 +1,30 @@
 
- RUN  v4.0.15 C:/Users/mooya/develop/test
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
 
-stdout | src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,0 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,0
-[Unit.js] ENTERED updateLogic. Dead=false
-[Unit Debug] Condition Check. Role:worker State:UnitWanderState HasUpdate:function
-[UnitWanderState] Update. ID:0 Action:Idle Target:No
-[SleepState] Entering Sleep logic.
-[SleepState] Dist to Shelter: 0.00. Target: 10,0
-[Unit Debug] Early Return for worker. State: SleepState
-[Unit.js] ENTERED updateLogic. Dead=false
-[Unit Debug] Condition Check. Role:worker State:SleepState HasUpdate:function
-[Unit Debug] Early Return for worker. State: SleepState
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould continue MANUAL job when night falls
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
 
- 笨・src/tests/NightLogic.test.js (1 test) 12ms
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould release AUTO job when night falls
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
 
- Test Files  1 passed (1)
-      Tests  1 passed (1)
-   Start at  20:51:04
-   Duration  1.55s (transform 225ms, setup 70ms, import 293ms, tests 12ms, environment 868ms)
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould prefer MANUAL job over sleep in UnitWanderState at night
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould go to sleep if only AUTO jobs available at night
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+ [31m笶ｯ[39m src/tests/NightManualWork.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 34[2mms[22m[39m
+[31m     [31mﾃ・[31m should continue MANUAL job when night falls[39m[32m 15[2mms[22m[39m
+[31m     [31mﾃ・[31m should release AUTO job when night falls[39m[32m 5[2mms[22m[39m
+[31m     [31mﾃ・[31m should prefer MANUAL job over sleep in UnitWanderState at night[39m[32m 11[2mms[22m[39m
+     [32m笨・[39m should go to sleep if only AUTO jobs available at night[32m 1[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 10:20:04
+[2m   Duration [22m 826ms[2m (transform 131ms, setup 50ms, import 162ms, tests 34ms, environment 395ms)[22m
 

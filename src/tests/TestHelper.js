@@ -1,46 +1,37 @@
-
-import { vi } from 'vitest';
+import * as THREE from 'three';
 
 export class MockGame {
     constructor() {
+        this.simTotalTimeSec = 100;
         this.units = [];
-        this.buildings = [];
-        this.requests = [];
+        this.requestQueue = [];
         this.squads = new Map();
-
-        // Time simulation
-        this.gameTotalTime = 1000;
-        this.simTotalTimeSec = 1000;
-
-        // Resources
-        this.resources = { fish: 0, meat: 0, grain: 0 };
-        this.mana = 100;
-        this.isNight = false;
-
-        // Managers (Mocked to prevent "is not a function" errors)
-        this.cloudManager = { update: vi.fn(), draw: vi.fn() };
-        this.birdManager = { update: vi.fn(), draw: vi.fn() };
-        this.sheepManager = { update: vi.fn(), draw: vi.fn() };
-        this.goblinManager = { update: vi.fn(), draw: vi.fn(), goblins: [], caves: [] };
-        this.particleSystem = { emit: vi.fn(), update: vi.fn() };
-        this.inputManager = { updateCursor: vi.fn() };
-        this.battleMemory = { reportRaid: vi.fn(), getPriorities: vi.fn().mockReturnValue([]) };
-
-        // Scene
+        this.mana = 1000;
+        this.resources = { grain: 0, fish: 0, meat: 0 };
+        this.frameCount = 0;
+        this.terrain = null;
         this.scene = {
             add: vi.fn(),
             remove: vi.fn(),
-            getObjectByName: vi.fn((name) => {
-                if (name === 'GoblinGroup' || name === 'UnitGroup') return { add: vi.fn(), remove: vi.fn(), children: [] };
-                return null;
-            }),
-            clear: vi.fn(),
-            children: []
+            getObjectByName: vi.fn().mockReturnValue({ add: vi.fn(), remove: vi.fn(), children: [] })
         };
+        this.goblinManager = { goblins: [] };
     }
 
-    findBestRequest(unit) { return null; }
-    claimRequest(unit, req) { return true; }
+    spawnUnit(x, z, roleOrSpecial) {
+        const unit = {
+            id: this.units.length,
+            gridX: x,
+            gridZ: z,
+            role: roleOrSpecial || 'worker',
+            isDead: false,
+            targetRequest: null,
+            action: 'Idle',
+            ignoredTargets: new Map()
+        };
+        this.units.push(unit);
+        return unit;
+    }
 
     registerSquad(type) {
         const id = Math.floor(Math.random() * 1000000);
@@ -60,27 +51,52 @@ export class MockGame {
         }
     }
 
-    addRequest(type, x, z) {
-        const req = { id: `req_${this.requests.length}`, type, x, z, status: 'pending' };
-        this.requests.push(req);
+    addRequest(type, x, z, building, assignedTo, id, isManual = false) {
+        const req = {
+            id: id || `req_${this.requestQueue.length}`,
+            type, x, z,
+            status: 'pending',
+            isManual,
+            building,
+            assignedTo: assignedTo || null,
+            excludedUntil: 0
+        };
+        this.requestQueue.push(req);
         return req;
     }
 
-    findBestRequest(unit) {
-        return this.requests.find(r => r.status === 'pending') || null;
-    }
+    findBestRequest(unit, allowSnatch = false) {
+        for (const req of this.requestQueue) {
+            if (req.status === 'completed') continue;
+            if (req.excludedUntil && req.excludedUntil > this.simTotalTimeSec) continue;
 
-    assignRequestSync(req) {
-        // Mock
+            if (unit.ignoredTargets && unit.ignoredTargets.has(req.id)) {
+                if (this.simTotalTimeSec < unit.ignoredTargets.get(req.id)) continue;
+            }
+
+            if (req.status === 'pending') return req;
+            if (allowSnatch && req.status === 'assigned' && req.assignedTo !== unit.id && !req.isManual) {
+                return req;
+            }
+        }
+        return null;
     }
 
     claimRequest(unit, req) {
-        if (req.status === 'pending') {
+        if (req.status === 'pending' || (req.status === 'assigned' && req.assignedTo !== unit.id)) {
             req.status = 'assigned';
             req.assignedTo = unit.id;
+            unit.targetRequest = req;
             return true;
         }
         return false;
+    }
+
+    deferRequest(req, duration) {
+        if (!req) return;
+        req.status = 'pending';
+        req.assignedTo = null;
+        req.excludedUntil = this.simTotalTimeSec + duration;
     }
 
     releaseRequest(unit, req) {
@@ -93,18 +109,21 @@ export class MockGame {
     }
 
     completeRequest(unit, req) {
+        if (!req) return;
         req.status = 'completed';
         req.assignedTo = null;
-        const idx = this.requests.indexOf(req);
-        if (idx !== -1) this.requests.splice(idx, 1);
+        const idx = this.requestQueue.indexOf(req);
+        if (idx !== -1) this.requestQueue.splice(idx, 1);
+    }
+
+    assignRequestSync(req) {
+        // Simple mock assign
+        const unit = this.units.find(u => u.action === 'Idle' && u.role === 'worker');
+        if (unit) this.claimRequest(unit, req);
     }
 
     canAction() { return true; }
-    reportGlobalBattle(x, z) {
-        if (this.battleMemory && this.battleMemory.reportRaid) {
-            this.battleMemory.reportRaid(x, z, 'global', 10);
-        }
-    }
+    reportGlobalBattle(x, z) { }
     consumeMana(amount) { this.mana -= amount; }
 }
 
@@ -118,7 +137,6 @@ export class MockTerrain {
         this.pathfindingCalls = 0;
         this.seed = 0;
 
-        // Initialize grid (REALLY 2D this time)
         for (let x = 0; x < width; x++) {
             this.grid[x] = [];
             for (let z = 0; z < depth; z++) {
@@ -127,8 +145,10 @@ export class MockTerrain {
         }
     }
 
-    getVisualPosition(x, z) { return { x: x * 10, y: 10, z: z * 10 }; }
+    getVisualPosition(x, z, isCentered = true) { return { x: x * 10, y: 10, z: z * 10 }; }
     gridToWorld(v) { return v * 10; }
+    updateMeshPosition(camera) { }
+    updateLights(gameTime) { }
     getTileHeight(x, z) {
         const lx = Math.round(x);
         const lz = Math.round(z);
@@ -146,31 +166,38 @@ export class MockTerrain {
     }
 
     registerCave(x, z, cave) {
-        if (this.grid[x] && this.grid[x][z]) {
-            this.buildings.push(cave);
-            return true;
-        }
-        return false;
+        this.buildings.push(cave);
+        return true;
     }
 
-    raycast(origin, direction) {
-        return { x: 50, z: 50, y: 10 };
-    }
-
+    raycast(origin, direction) { return { x: 50, z: 50, y: 10 }; }
     registerEntity(entity) { }
     unregisterEntity(entity) { }
 
-    findBestTarget(type, x, z, range) {
-        if (type === 'building') {
-            return this.buildings.find(b => {
-                const bx = b.userData ? b.userData.gridX : b.gridX;
-                const bz = b.userData ? b.userData.gridZ : b.gridZ;
-                const dx = bx - x;
-                const dz = bz - z;
-                return Math.sqrt(dx * dx + dz * dz) <= range;
-            }) || null;
+    findBestTarget(type, x, z, range, costFn) {
+        let candidates = [];
+        if (type === 'building') candidates = this.buildings;
+        else if (type === 'goblin' && window.game) candidates = window.game.goblinManager.goblins || [];
+        else if (type === 'unit' && window.game) candidates = window.game.units || [];
+
+        let best = null;
+        let bestScore = Infinity;
+        for (const c of candidates) {
+            const cx = c.userData ? c.userData.gridX : c.gridX;
+            const cz = c.userData ? c.userData.gridZ : c.gridZ;
+            if (cx === undefined || cz === undefined) continue;
+            const dx = cx - x;
+            const dz = cz - z;
+            const dist = Math.sqrt(dx * dx + dz * dz);
+            if (dist <= range) {
+                const score = costFn ? costFn(c, dist) : dist;
+                if (score < bestScore) {
+                    bestScore = score;
+                    best = c;
+                }
+            }
         }
-        return null;
+        return best;
     }
 
     findClosestReachablePoint(x, z) { return { x, z }; }
@@ -188,7 +215,6 @@ export class MockTerrain {
     removeBuilding(b) {
         const idx = this.buildings.indexOf(b);
         if (idx !== -1) this.buildings.splice(idx, 1);
-
         const x = b.userData ? b.userData.gridX : b.gridX;
         const z = b.userData ? b.userData.gridZ : b.gridZ;
         if (this.grid[x] && this.grid[x][z]) {
@@ -197,42 +223,16 @@ export class MockTerrain {
         }
     }
 
-    modifyMoisture(x, z, amount) {
-        if (this.grid[x] && this.grid[x][z]) this.grid[x][z].moisture += amount;
-    }
-
-    checkFlatArea(x, z, size) {
-        return true;
-    }
-
-    getRandomPointInRegion(regionId, x, z, range) {
-        // Return a valid point nearby
-        const tx = Math.min(this.grid.length - 1, Math.max(0, x + 1));
-        const tz = Math.min(this.grid[0].length - 1, Math.max(0, z + 1));
-        return { x: tx, z: tz };
-    }
-
-    checkCollision(x, z) { return false; }
-
-    checkFlatArea(x, z, size) {
-        return true;
-    }
-
-    getBuildingSize(type) {
-        if (type === 'house' || type === 'farm' || type === 'goblin_hut' || type === 'cave') return 2;
-        if (type === 'barracks' || type === 'tower' || type === 'town_hall') return 3;
-        return 1;
-    }
-    getRandomPointInRegion(regionId, x, z, radius) {
-        return { x: x + 1, z: z + 1 };
-    }
-
-    getRegion(x, z) {
-        if (this.grid[x] && this.grid[x][z]) return this.grid[x][z].regionId;
-        return 1;
-    }
-
-    findPath(sx, sz, ex, ez) {
-        return [{ x: sx, z: sz }, { x: ex, z: ez }];
-    }
+    getRegion(x, z) { return 1; }
+    findPath(sx, sz, ex, ez) { return [{ x: ex, z: ez }]; }
+    async findPathAsync(sx, sz, ex, ez) { return [{ x: ex, z: ez }]; }
+    getInterpolatedHeight(x, z) { return this.getTileHeight(x, z); }
+    isValidGrid(x, z) { return x >= 0 && x < this.logicalWidth && z >= 0 && z < this.logicalDepth; }
+    async checkYield() { return Promise.resolve(); }
+    initEntityGrid() { }
+    checkFlatArea(x, z, size) { return true; }
+    getRandomPointInRegion(regionId, cx, cz, radius) { return { x: cx, z: cz }; }
+    getRandomPassablePointInRegion(regionId, cx, cz, radius) { return { x: cx, z: cz }; }
+    modifyMoisture(x, z, amount) { }
+    getBuildingSize(type) { return 2; }
 }

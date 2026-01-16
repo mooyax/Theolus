@@ -1,0 +1,63 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mResource Gathering[2m > [22m[2mshould gather fish if checking neighbors finds water
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mResource Gathering[2m > [22m[2mshould NOT gather fish if completely inland
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould prioritize Farm and ABORT house if farm fails during famine
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould fallback to House if NOT in famine
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould accept role in constructor
+[22m[39m[UnitCore.js] Unit Created ID:4 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould accept role in constructor
+[22m[39m[UnitCore.js] Unit Created ID:5 Role:hunter Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:5 Role:hunter Pos:5,5
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:5,5
+[UnitCore.js] Unit Created ID:7 Role:true Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:7 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould FAIL buildFarm and IMPROVE LAND if moisture is poor
+[22m[39m[UnitCore.js] Unit Created ID:8 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:8 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould FAIL buildFarm and IMPROVE LAND if moisture is poor
+[22m[39mUnit improved land at 5,5. Moisture 0.50 -> 0.50
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould succeed buildFarm if moisture is optimal
+[22m[39m[UnitCore.js] Unit Created ID:9 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:9 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould succeed buildFarm if moisture is optimal
+[22m[39m[Unit 9] Moving onto Rock at 5,5 H:10 (Speed Penalty)
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould check heights during moveRandomly
+[22m[39m[UnitCore.js] Unit Created ID:10 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:10 Role:worker Pos:5,5
+
+ [32m笨・[39m src/tests/Unit.test.js[2m > [22mUnit Logic[2m > [22mResource Gathering[2m > [22mshould gather fish if checking neighbors finds water[32m 6[2mms[22m[39m
+ [32m笨・[39m src/tests/Unit.test.js[2m > [22mUnit Logic[2m > [22mResource Gathering[2m > [22mshould NOT gather fish if completely inland[32m 2[2mms[22m[39m
+ [32m笨・[39m src/tests/Unit.test.js[2m > [22mUnit Logic[2m > [22mBuild Priority (Famine)[2m > [22mshould prioritize Farm and ABORT house if farm fails during famine[32m 3[2mms[22m[39m
+ [32m笨・[39m src/tests/Unit.test.js[2m > [22mUnit Logic[2m > [22mBuild Priority (Famine)[2m > [22mshould fallback to House if NOT in famine[32m 5[2mms[22m[39m
+ [32m笨・[39m src/tests/Unit.test.js[2m > [22mUnit Logic[2m > [22mAdvanced Mechanics - Unit[2m > [22mshould accept role in constructor[32m 2[2mms[22m[39m
+ [32m笨・[39m src/tests/Unit.test.js[2m > [22mUnit Logic[2m > [22mAdvanced Mechanics - Unit[2m > [22mshould FAIL buildFarm and IMPROVE LAND if moisture is poor[32m 2[2mms[22m[39m
+ [32m笨・[39m src/tests/Unit.test.js[2m > [22mUnit Logic[2m > [22mAdvanced Mechanics - Unit[2m > [22mshould succeed buildFarm if moisture is optimal[32m 1[2mms[22m[39m
+ [32m笨・[39m src/tests/Unit.test.js[2m > [22mUnit Logic[2m > [22mAdvanced Mechanics - Unit[2m > [22mshould check heights during moveRandomly[32m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 00:57:08
+[2m   Duration [22m 934ms[2m (transform 180ms, setup 68ms, import 218ms, tests 27ms, environment 419ms)[22m
+

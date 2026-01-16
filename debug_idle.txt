@@ -1,0 +1,37 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/IdleRegression.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 22[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT abandon JobState when smartMove is throttled (Time Slicing)[39m[32m 17[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT increment stuckTimer when smartMove is throttled[39m[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT revert action to "Moving" if already "Approaching Job"[39m[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT execute updateCombatLogic if State Machine is active[39m[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 4 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/IdleRegression.test.js > Job/Moving Idle Regression > should NOT abandon JobState when smartMove is throttled (Time Slicing)
+ FAIL  src/tests/IdleRegression.test.js > Job/Moving Idle Regression > should NOT increment stuckTimer when smartMove is throttled
+ FAIL  src/tests/IdleRegression.test.js > Job/Moving Idle Regression > should NOT revert action to "Moving" if already "Approaching Job"
+ FAIL  src/tests/IdleRegression.test.js > Job/Moving Idle Regression > should NOT execute updateCombatLogic if State Machine is active
+TypeError: target.set is not a function
+ 笶ｯ Unit.getPositionForGrid src/Entity.js:86:20
+     84| 
+     85|         if (target) {
+     86|             target.set(rawX + ox, height, rawZ - oy);
+       |                    ^
+     87|             return target;
+     88|         }
+ 笶ｯ Unit.updatePosition src/Entity.js:53:14
+ 笶ｯ new Entity src/Entity.js:46:14
+ 笶ｯ new Actor src/Actor.js:5:9
+ 笶ｯ new Unit src/Unit.js:158:9
+ 笶ｯ src/tests/IdleRegression.test.js:67:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/4]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[90m (4)[39m
+[2m   Start at [22m 14:11:34
+[2m   Duration [22m 1.18s[2m (transform 348ms, setup 38ms, import 463ms, tests 22ms, environment 464ms)[22m
+

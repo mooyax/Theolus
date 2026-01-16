@@ -17,6 +17,7 @@ vi.mock('three', () => {
         copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
         dot(v) { return this.x * v.x + this.y * v.y + this.z * v.z; }
         normalize() { return this; }
+        set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
     };
     return {
         Vector3: Vector3,
@@ -55,10 +56,14 @@ describe('Job/Moving Idle Regression', () => {
             grid: Array(100).fill(null).map(() => Array(100).fill({ regionId: 1, height: 1 })),
             getTileHeight: vi.fn().mockReturnValue(1),
             getRegion: vi.fn().mockReturnValue(1),
+            findBestTarget: vi.fn(() => null),
             moveEntity: vi.fn(),
             registerEntity: vi.fn(),
             unregisterEntity: vi.fn(),
             findPath: vi.fn().mockReturnValue([{ x: 50, z: 50 }]), // Simple path
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 50, z: 50 }]),
+            isReachable: vi.fn().mockReturnValue(true),
+            checkYield: () => Promise.resolve(),
             logicalWidth: 100,
             logicalDepth: 100,
             getVisualX: (t) => t, // Simple mock
@@ -112,8 +117,8 @@ describe('Job/Moving Idle Regression', () => {
     });
 
     it('should NOT increment stuckTimer when smartMove is throttled', () => {
-        // Setup Job
-        const request = { id: 'req2', type: 'build', x: 50, z: 50, assignedTo: unit.id, isManual: false };
+        // Setup Job (Manual = Higher Tolerance 45s)
+        const request = { id: 'req2', type: 'build', x: 50, z: 50, assignedTo: unit.id, isManual: true };
         unit.targetRequest = request;
         unit.changeState(new JobState(unit));
 
@@ -130,17 +135,11 @@ describe('Job/Moving Idle Regression', () => {
         // Update loop
         for (let i = 0; i < 20; i++) {
             unit.updateLogic(i * 0.1, 0.1, false, [], [], []);
-            // Advance stuck check timer manually if needed, or rely on updateLogic calling state.update
-            // JobState checkStuckInterval is 2.0s usually. We need to simulate time passing.
         }
 
-        // Checking internal property (might need to expose or infer from behavior)
-        // If stuckTimer increased, it would eventually trigger release.
-        // Let's verify we are NOT releasing request even after long "simulated" delay if throttled.
-
-        // Simulate LONG time passing with throttle
-        // We iterate with large time steps
-        for (let t = 0; t < 50; t += 2.0) {
+        // Simulate LONG time passing with throttle (BUT < 45s threshold)
+        // We iterate with large time steps up to 40s
+        for (let t = 0; t < 40; t += 2.0) {
             unit.simTime = t;
             state.update(t, 2.0, false, []);
         }

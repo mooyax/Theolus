@@ -77,6 +77,9 @@ vi.mock('../Terrain.js', () => ({
             this.isWalkable = vi.fn().mockReturnValue(true);
             this.getTileType = vi.fn().mockReturnValue('grass');
             this.setSeason = vi.fn();
+            this.findPathAsync = vi.fn((sx, sz, ex, ez) => Promise.resolve([{ x: ex, z: ez }]));
+            this.isReachable = vi.fn().mockReturnValue(true);
+            this.checkYield = () => Promise.resolve();
         }
         update() { }
         updateMeshPosition() { }
@@ -91,9 +94,9 @@ vi.mock('../BirdManager.js', () => ({ BirdManager: class { update() { } } }));
 vi.mock('../SheepManager.js', () => ({ SheepManager: class { update() { } } }));
 vi.mock('../GoblinManager.js', () => ({ GoblinManager: class { update() { } } }));
 vi.mock('../FishManager.js', () => ({ FishManager: class { update() { } } }));
-vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { update() { } } }));
-vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { update() { } updateLighting() { } } }));
-vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { update() { } } }));
+vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { init() { return Promise.resolve(); } update() { } } }));
+vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { init() { return Promise.resolve(); } update() { } updateLighting() { } } }));
+vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { init() { return Promise.resolve(); } update() { } } }));
 vi.mock('../InputManager.js', () => ({ InputManager: class { update() { } } }));
 vi.mock('../SaveManager.js', () => ({ SaveManager: class { update() { } } }));
 vi.mock('../SoundManager.js', () => ({

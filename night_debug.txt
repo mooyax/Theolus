@@ -1,51 +1,30 @@
 
- RUN  v4.0.15 C:/Users/mooya/develop/test
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
 
-stdout | src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,0 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,0
-[Unit.js] ENTERED updateLogic. Dead=false
-[Unit Debug] Condition Check. Role:worker State:undefined HasUpdate:undefined
-[Unit Debug V2] Start Logic. Night=true, Stag=0.0, Age=20.0, H=10, Action=undefined
-[Unit Heartbeat] ID:0 Action:undefined Moving:false T:1000.0 dt:100.0000 Int:0
-[Unit 0] Moving onto Rock at 10,1 H:10 (Speed Penalty)
-Unit 0 migrating to 11,1 (Region 1)
-[Unit 0] Moving onto Rock at 10,1 H:10 (Speed Penalty)
-[Unit.js] ENTERED updateLogic. Dead=false
-[Unit Debug] Condition Check. Role:worker State:undefined HasUpdate:undefined
-[Unit Debug V2] Start Logic. Night=true, Stag=0.0, Age=40.0, H=10, Action=Migrating
-[Unit Heartbeat] ID:0 Action:Migrating Moving:false T:3000.0 dt:100.0000 Int:0
-Unit 0 migration timed out. Retrying.
-Unit 0 migrating to 11,1 (Region 1)
-[Unit 0] Moving onto Rock at 10,1 H:10 (Speed Penalty)
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould continue MANUAL job when night falls
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
 
- 笶ｯ src/tests/NightLogic.test.js (1 test | 1 failed) 31ms
-     ﾃ・Worker should engage pathfinding to House but is likely blocked 27ms
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould release AUTO job when night falls
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
 
-竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould prefer MANUAL job over sleep in UnitWanderState at night
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
 
- FAIL  src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
-AssertionError: expected false to be true // Object.is equality
+[90mstdout[2m | src/tests/NightManualWork.test.js[2m > [22m[2mNight Manual Work Priority[2m > [22m[2mshould go to sleep if only AUTO jobs available at night
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
 
-- Expected
-+ Received
+ [31m笶ｯ[39m src/tests/NightManualWork.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 30[2mms[22m[39m
+[31m     [31mﾃ・[31m should continue MANUAL job when night falls[39m[32m 13[2mms[22m[39m
+[31m     [31mﾃ・[31m should release AUTO job when night falls[39m[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m should prefer MANUAL job over sleep in UnitWanderState at night[39m[32m 13[2mms[22m[39m
+     [32m笨・[39m should go to sleep if only AUTO jobs available at night[32m 1[2mms[22m[39m
 
-- true
-+ false
-
- 笶ｯ src/tests/NightLogic.test.js:96:31
-     94|         u1.updateLogic(time + 2000, 100, isNight, [], [], [], []);
-     95| 
-     96|         expect(u1.isSleeping).toBe(true);
-       |                               ^
-     97|     });
-     98| });
-
-竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
-
-
- Test Files  1 failed (1)
-      Tests  1 failed (1)
-   Start at  20:49:41
-   Duration  1.32s (transform 189ms, setup 51ms, import 287ms, tests 31ms, environment 619ms)
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 10:18:44
+[2m   Duration [22m 808ms[2m (transform 122ms, setup 47ms, import 152ms, tests 30ms, environment 389ms)[22m
 

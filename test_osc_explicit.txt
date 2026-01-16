@@ -1,0 +1,79 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/WorkerOscillation.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould blacklist unreachable jobs and NOT pick them up immediately
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/WorkerOscillationStale.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould clear isUnreachable flag when entering new job
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/WorkerOscillation.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould NOT oscillate (Ping Pong) between Job and Idle
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+ [31m笶ｯ[39m src/tests/WorkerOscillationStale.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 26[2mms[22m[39m
+[31m     [31mﾃ・[31m should clear isUnreachable flag when entering new job[39m[32m 23[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/WorkerOscillation.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 29[2mms[22m[39m
+[31m     [31mﾃ・[31m should blacklist unreachable jobs and NOT pick them up immediately[39m[32m 20[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT oscillate (Ping Pong) between Job and Idle[39m[32m 6[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 3 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/WorkerOscillation.test.js > Worker Oscillation Debug > should blacklist unreachable jobs and NOT pick them up immediately
+AssertionError: expected 'JobState' not to be 'JobState' // Object.is equality
+ 笶ｯ src/tests/WorkerOscillation.test.js:105:37
+    103| 
+    104|         // Should release job and set blacklist
+    105|         expect(unit.state.name).not.toBe('JobState'); // Should be Wan窶ｦ
+       |                                     ^
+    106|         expect(unit.targetRequest).toBeNull();
+    107|         expect(unit.ignoredTargets.has(req.id)).toBe(true);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/3]竡ｯ
+
+ FAIL  src/tests/WorkerOscillation.test.js > Worker Oscillation Debug > should NOT oscillate (Ping Pong) between Job and Idle
+AssertionError: expected 'JobState' not to be 'JobState' // Object.is equality
+ 笶ｯ src/tests/WorkerOscillation.test.js:131:37
+    129|         // Handle Fail
+    130|         unit.updateLogic(game.simTotalTimeSec, 0.1);
+    131|         expect(unit.state.name).not.toBe('JobState');
+       |                                     ^
+    132| 
+    133|         // Sim 1 second later (Still blacklisted)
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/3]竡ｯ
+
+ FAIL  src/tests/WorkerOscillationStale.test.js > Worker Oscillation Debug > should clear isUnreachable flag when entering new job
+AssertionError: expected { id: 101, type: 'build', x: 50, 窶ｦ(3) } to be null
+
+- Expected: 
+null
+
++ Received: 
+{
+  "assignedTo": 1,
+  "id": 101,
+  "status": "assigned",
+  "type": "build",
+  "x": 50,
+  "z": 50,
+}
+
+ 笶ｯ src/tests/WorkerOscillationStale.test.js:88:36
+     86|         // This confirms that the system naturally clears the flag, pr窶ｦ
+     87|         expect(unit.isUnreachable).toBe(false);
+     88|         expect(unit.targetRequest).toBeNull(); // Dropped
+       |                                    ^
+     89| 
+     90|         // 2. Assign Job B (Reachable)
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/3]竡ｯ
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[90m (3)[39m
+[2m   Start at [22m 12:20:13
+[2m   Duration [22m 1.75s[2m (transform 428ms, setup 192ms, import 534ms, tests 54ms, environment 1.98s)[22m
+

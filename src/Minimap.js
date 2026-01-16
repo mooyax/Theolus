@@ -1,3 +1,5 @@
+import GameConfig from './config/GameConfig.json';
+
 export class Minimap {
     constructor(game) {
         this.game = game;
@@ -9,9 +11,7 @@ export class Minimap {
         }
         this.ctx = this.canvas.getContext('2d');
 
-        // Map size
-        this.logicalW = this.terrain.logicalWidth;
-        this.logicalD = this.terrain.logicalDepth;
+        // Map size will be fetched dynamically from terrain in update()
 
         // Draw every frame? Or interval? Start with every frame.
 
@@ -116,6 +116,7 @@ export class Minimap {
     }
 
     update() {
+        if (!this.terrain || !this.terrain.grid) return;
         if (!this.ctx) return;
 
         // Clear
@@ -125,8 +126,12 @@ export class Minimap {
         // Scale
         // Map is 160x160. Canvas is 160x160. 1:1 pixel mapping.
         // If map size changes, we should scale.
-        const scaleX = this.canvas.width / this.logicalW;
-        const scaleY = this.canvas.height / this.logicalD;
+        const logicalW = this.terrain.logicalWidth;
+        const logicalD = this.terrain.logicalDepth;
+
+        // Scale
+        const scaleX = this.canvas.width / logicalW;
+        const scaleY = this.canvas.height / logicalD;
 
         // Draw Terrain (Optimization: Could cache this to an image/canvas and only redraw on change)
         // For now, redraw every frame might be expensive iterating 160x160 = 25600 pixels.
@@ -154,8 +159,10 @@ export class Minimap {
                 const gz = Math.floor(y / scaleY); // y * (logicalD / ch)
 
                 // Safety Clamp/Wrap
-                const safeGx = Math.min(Math.max(gx, 0), this.logicalW - 1);
-                const safeGz = Math.min(Math.max(gz, 0), this.logicalD - 1);
+                const safeGx = Math.min(Math.max(gx, 0), logicalW - 1);
+                const safeGz = Math.min(Math.max(gz, 0), logicalD - 1);
+
+                if (!this.terrain.grid || !this.terrain.grid[safeGx]) continue;
 
                 const cell = this.terrain.grid[safeGx][safeGz];
                 // Safety check if resizing happens mid-frame
@@ -218,16 +225,30 @@ export class Minimap {
         let wz = cz;
 
         // Logical Grid coord
-        let gx = wx + this.logicalW / 2;
-        let gz = wz + this.logicalD / 2;
+        let gx = wx + logicalW / 2;
+        let gz = wz + logicalD / 2;
 
         // Modulo wrapping
-        gx = ((gx % this.logicalW) + this.logicalW) % this.logicalW;
-        gz = ((gz % this.logicalD) + this.logicalD) % this.logicalD;
+        gx = ((gx % logicalW) + logicalW) % logicalW;
+        gz = ((gz % logicalD) + logicalD) % logicalD;
 
         const mx = gx * scaleX;
         const my = gz * scaleY;
-        const r = 30 * scaleX; // Radius in pixels
+        const viewRadius = GameConfig.render && GameConfig.render.viewRadius ? GameConfig.render.viewRadius : 40;
+        const r = viewRadius * scaleX; // Radius in pixels
+
+        // Debug Log (Once)
+        if (!this._loggedDebug) {
+            console.log("Minimap Debug:", {
+                canvasW: this.canvas.width,
+                logicalW: logicalW,
+                scaleX: scaleX,
+                viewRadius: viewRadius,
+                pixelRadius: r,
+                frameSize: r * 2
+            });
+            this._loggedDebug = true;
+        }
 
         this.ctx.strokeStyle = 'white';
         this.ctx.lineWidth = 1;

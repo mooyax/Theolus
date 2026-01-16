@@ -9,9 +9,11 @@ describe('Terrain Force Build Logic', () => {
 
     beforeEach(() => {
         // Mock Browser Globals
-        global.window = {};
-        global.window.game = {
-            units: []
+        global.window = {
+            location: { search: '' },
+            game: {
+                units: []
+            }
         };
         // Also set on global for direct access if code uses `game` (though usually it's window.game)
         global.game = global.window.game;

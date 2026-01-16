@@ -1,0 +1,18 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31mﾃ・[39m src/tests/CombatRequestHandoff.test.js[2m > [22mRequest Responsiveness & Combat Handoff[2m > [22mWorker releases job when died[32m 146[2mms[22m[39m
+[31m   竊・Failed to parse source for import analysis because the content contains invalid JS syntax. If you are using JSX, make sure to name the file with the .jsx or .tsx extension.[39m
+[90mstdout[2m | src/tests/CombatRequestHandoff.test.js[2m > [22m[2mRequest Responsiveness & Combat Handoff[2m > [22m[2mforceAssignRequest prioritizes idle unit over busy unit
+[22m[39m[Assign] Checking Unit 1 (Dead:undefined)
+[Assign] Unit 1 Action: Working, TargetReq: req_other
+[Assign] Checking Unit 2 (Dead:undefined)
+[Assign] Unit 2 Action: Idle, TargetReq: none
+
+ [32m笨・[39m src/tests/CombatRequestHandoff.test.js[2m > [22mRequest Responsiveness & Combat Handoff[2m > [22mforceAssignRequest prioritizes idle unit over busy unit[33m 315[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m   Start at [22m 00:11:17
+[2m   Duration [22m 1.24s[2m (transform 365ms, setup 49ms, import 18ms, tests 463ms, environment 494ms)[22m
+

@@ -33,17 +33,19 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
             findPath: vi.fn((sx, sz, ex, ez) => {
                 return [{ x: sx, z: sz }, { x: ex, z: ez }];
             }),
+            findPathAsync: vi.fn((sx, sz, ex, ez) => Promise.resolve([{ x: sx, z: sz }, { x: ex, z: ez }])),
             pathfindingCalls: 0,
             isReachable: vi.fn((sx, sz, tx, tz) => true),
             getRegion: vi.fn(() => 1),
             getRandomPointInRegion: vi.fn(() => ({ x: 5, z: 5 }))
         };
 
-        unit = new Unit(1, 'worker', 5, 5, terrain);
+        // FIX: Constructor signature is (scene, terrain, x, z, role)
+        // Unit(scene, terrain, gridX, gridZ, type/role)
+        unit = new Unit({ add: vi.fn(), remove: vi.fn() }, terrain, 5, 5, 'worker');
         unit.id = 1;
-        unit.role = 'worker';
         unit.simTime = 100;
-        unit.terrain = terrain;
+        unit.game = null; // Will be set below
 
         game = {
             terrain,
@@ -53,6 +55,7 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
             requestQueue: [],
             requestIdCounter: 0,
             releaseRequest: vi.fn((u, r) => {
+                console.log(`[MockGame] Releasing Request ${r.id} for Unit ${u.id}`);
                 if (u.targetRequest === r) u.targetRequest = null;
                 if (r.assignedTo === u.id) r.assignedTo = null;
                 r.status = 'pending';
@@ -68,10 +71,15 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
                     u.targetRequest.status = 'pending';
                 }
 
+                console.log(`[MockGame] Claiming ${r.id} for Unit ${u.id}`);
                 r.status = 'assigned';
                 r.assignedTo = u.id;
                 u.targetRequest = r;
-                u.changeState(new JobState(u));
+                try {
+                    u.changeState(new JobState(u));
+                } catch (e) {
+                    console.error('JobState Error:', e);
+                }
                 return true;
             }),
             addRequest: function (type, x, z, manual = true) {
@@ -128,7 +136,10 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
                 }
 
                 if (bestUnit) {
+                    console.log(`[MockGame] Assigning ${req.id} to Unit ${bestUnit.id} (DistSq: ${minDistSq})`);
                     this.claimRequest(bestUnit, req);
+                } else {
+                    console.log(`[MockGame] No unit found for ${req.id}`);
                 }
             },
             tryCancelRequest: function (x, z) {
@@ -147,15 +158,17 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
                 return false;
             },
             spawnUnit: function (x, z) {
-                const u = new Unit(1, 'worker', x, z, terrain);
+                // FIX: Constructor signature match
+                const u = new Unit({ add: vi.fn(), remove: vi.fn() }, terrain, x, z, 'worker');
                 u.id = this.units.length + 100;
-                u.role = 'worker';
-                u.terrain = terrain;
+                u.game = this;
                 this.units.push(u);
                 this.processAssignments();
                 return u;
             }
         };
+        // FIX: Assign game to unit!
+        unit.game = game;
         window.game = game;
     });
 
@@ -174,10 +187,18 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
         unit.isPathfindingThrottled = true;
         vi.spyOn(unit, 'smartMove').mockReturnValue(true);
 
+        console.log('[Test] Loop Start');
         for (let i = 0; i < 30; i++) {
             state.update(100 + i * 0.1, 0.1);
+            if (i % 10 === 0) console.log(`[Test] Iter ${i}: State=${unit.state ? unit.state.name : 'None'} Target=${unit.targetRequest ? 'Yes' : 'No'}`);
+            if (!unit.targetRequest) {
+                console.log(`[Test] Request Lost at iteration ${i}`);
+                break;
+            }
         }
+        console.log('[Test] Loop End');
 
+        console.log(`[Test] Unit TargetReq: ${unit.targetRequest ? unit.targetRequest.id : 'null'}`);
         expect(unit.targetRequest).not.toBeNull();
         expect(unit.targetRequest.id).toBe('req_manual');
     });

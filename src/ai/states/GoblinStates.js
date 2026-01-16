@@ -7,7 +7,6 @@ export class GoblinRaidState extends State {
     }
 
     enter() {
-        if (this.actor.id % 20 === 0) console.log(`[Goblin ${this.actor.id}] ENTER RaidState. Goal: ${this.actor.raidGoal?.x},${this.actor.raidGoal?.z}`);
         this.actor.action = "Raiding";
         this.actor.isMoving = false; // Trigger pathfinding
     }
@@ -51,8 +50,11 @@ export class GoblinRaidState extends State {
 
             // --- CLAN ACTIVITY CHECK (NEW) ---
             const manager = window.game ? window.game.goblinManager : null;
-            if (manager && manager.clans && this.actor.clanId) {
+
+            // Debug Logs
+            if (manager && manager.clans) {
                 const clan = manager.clans[this.actor.clanId];
+
                 if (clan && !clan.active) {
                     this.actor.changeState(new GoblinRetreatState(this.actor));
                     return;
@@ -191,7 +193,6 @@ export class GoblinCombatState extends State {
         if (this.actor.targetBuilding) {
             const terrain = this.actor.terrain || (window.game ? window.game.terrain : null);
             if (terrain && terrain.buildings && !terrain.buildings.includes(this.actor.targetBuilding)) {
-                console.log(`[GoblinCombatState] Target Building at ${this.actor.targetBuilding.gridX},${this.actor.targetBuilding.gridZ} vanished from Terrain.`);
                 this.actor.targetBuilding = null;
                 this.actor.changeState(new GoblinRaidState(this.actor));
                 return;

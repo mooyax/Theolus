@@ -21,6 +21,7 @@ vi.mock('../CloudManager.js', () => ({
 vi.mock('../BuildingRenderer.js', () => ({
     BuildingRenderer: class {
         constructor() { }
+        init() { return Promise.resolve(); }
         update() { }
         draw() { }
         dispose() { }
@@ -78,6 +79,7 @@ describe('Job Assignment Idempotency', () => {
         // Mock Scene for Unit
         const mockScene = { add: vi.fn(), getObjectByName: vi.fn().mockReturnValue({ add: vi.fn(), remove: vi.fn(), children: [] }) };
         const mockTerrain = {
+            findBestTarget: vi.fn(() => null),
             getTileHeight: vi.fn().mockReturnValue(10),
             logicalWidth: 100,
             logicalDepth: 100,
@@ -98,7 +100,9 @@ describe('Job Assignment Idempotency', () => {
             getRegion: vi.fn().mockReturnValue(1),
             isAdjacentToRegion: vi.fn().mockReturnValue(true),
             getBuildingSize: vi.fn().mockReturnValue(1),
-            clippingPlanes: []
+            clippingPlanes: [],
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 20, z: 0 }]),
+            checkYield: () => Promise.resolve()
         };
 
 

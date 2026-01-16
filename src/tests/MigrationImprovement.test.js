@@ -15,6 +15,7 @@ class MockTerrain {
         }
         this.buildings = [];
     }
+    findBestTarget() { return null; }
     getTileHeight(x, z) { return 1; }
     getInterpolatedHeight(x, z) { return 1; }
     registerEntity() { }
@@ -26,6 +27,7 @@ class MockTerrain {
     getRegion(x, z) { return 1; }
     getRandomPointInRegion(regionId, x, z, range) { return { x: 50, z: 50 }; }
     findPath(sx, sz, tx, tz) { return [{ x: tx, z: tz }]; } // Added mock findPath
+    findPathAsync(sx, sz, tx, tz) { return Promise.resolve(this.findPath(sx, sz, tx, tz)); }
 } // End of MockTerrain
 
 const mockScene = { add: () => { }, remove: () => { } };

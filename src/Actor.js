@@ -9,7 +9,9 @@ export class Actor extends Entity {
         this.pathIndex = 0;
         this.stuckCount = 0;
         this.pathFailCount = 0;
+        this.pathFailCount = 0;
         this.lastPathTime = 0;
+        this.isPathfinding = false; // ASYNC FLAG
 
         // Stagnation
         this.minDistToTarget = Infinity;
@@ -20,7 +22,7 @@ export class Actor extends Entity {
         this.simTime = 0; // Track simulation time
 
         // Job Management
-        this.ignoredTargets = new Map(); // ID -> ExpiryTime
+        // this.ignoredTargets = new Map(); // Deprecated in favor of Game-side exclusion
     }
 
     changeState(newState) {
@@ -104,7 +106,8 @@ export class Actor extends Entity {
     // Tries to follow path -> Tries to pathfind -> Fallback to Linear
     // Returns: true if move execution started (or path processing), false if blocked/failed
     smartMove(tx, tz, time, depth = 0) {
-        if (depth > 5) return false; // Prevent infinite recursion if multiple nodes are at same spot
+
+        if (depth > 5) return false;
         this.isPathfindingThrottled = false;
         // 1. Path Following
         if (this.path && this.path.length > 0) {
@@ -174,54 +177,43 @@ export class Actor extends Entity {
                 const throttle = 1.0 + (this.id % 20) * 0.1;
 
                 if (time === 0 || this.lastPathTime === 0 || time - this.lastPathTime > throttle) {
-                    // PRE-CHECK BUDGET (Was 100)
-                    // If we have budget, use it!
-                    const calls = this.terrain.pathfindingCalls || 0;
-                    if (calls < 100) {
-                        this.lastPathTime = time;
+                    // ASYNC PATHFINDING
 
-                        if (!this.isReachable(tx, tz)) {
-                            return false;
-                        }
+                    if (this.isPathfinding) return false; // Already requested
 
-                        const newPath = this.terrain.findPath(this.gridX, this.gridZ, tx, tz);
-                        if (newPath && newPath.length > 0) {
-                            this.path = newPath;
+                    this.isUnreachable = false; // FIX: Reset flag before new attempt
 
-                            // FIX: Skip start node
-                            if (this.path.length > 0) {
-                                const first = this.path[0];
-                                if (Math.abs(this.gridX - first.x) < 0.5 && Math.abs(this.gridZ - first.z) < 0.5) {
-                                    this.path.shift();
+                    this.lastPathTime = time;
+                    if (!this.isReachable(tx, tz)) return false;
+
+                    this.isPathfinding = true;
+
+                    // Request Path from Worker
+                    this.terrain.findPathAsync(this.gridX, this.gridZ, tx, tz)
+                        .then(newPath => {
+                            this.isPathfinding = false;
+                            if (newPath && newPath.length > 0) {
+                                this.path = newPath;
+                                // Fix: Skip start node
+                                if (this.path.length > 0) {
+                                    const first = this.path[0];
+                                    if (Math.abs(this.gridX - first.x) < 0.5 && Math.abs(this.gridZ - first.z) < 0.5) {
+                                        this.path.shift();
+                                    }
                                 }
-                            }
-
-                            if (this.path.length > 0) {
-                                const next = this.path.shift();
-                                if (this.canMoveTo(next.x, next.z)) {
-                                    this.executeMove(next.x, next.z, time);
-                                    return true;
-                                } else {
-                                    this.path = null; // Blocked at start, discard path
-                                    return false;
-                                }
-                            }
-                        } else {
-                            // Pathfinding Failed (Unreachable).
-                            if (this.terrain.pathfindingCalls < 100) {
-                                // If we HAD budget and still failed, it's truly blocked.
-                                // DO NOT FALLBACK TO LINEAR.
+                                // Trigger immediate move (with depth protection)
+                                this.smartMove(tx, tz, this.lastPathTime, depth + 1);
+                            } else {
+                                // Pathfinding Failed
                                 this.isUnreachable = true;
-                                return false;
                             }
-                            // If throttled/budget-fail, we wait (return false or try linear? Wait is safer).
-                            this.isPathfindingThrottled = true; // Budget Exceeded
-                            return false;
-                        }
-                    } else {
-                        // Budget Exceeded (Pre-check)
-                        this.isPathfindingThrottled = true;
-                    }
+                        })
+                        .catch(e => {
+                            this.isPathfinding = false;
+                            console.error(`[Actor] Pathfinding Error:`, e);
+                        });
+
+                    return false; // Wait for result
                 } else {
                     // Throttled.
                     this.isPathfindingThrottled = true;
@@ -301,6 +293,7 @@ export class Actor extends Entity {
             const dist2 = this.getDistance(tx, tz);
             // Expanded range (was 15.0/30.0) and random urgency
             if (!this.path && dist2 <= 80.0) {
+
                 const throttle = 1.0 + (this.id % 20) * 0.1;
                 // Urgent bypass: Increased to 40% chance per frame if blocked (was 10%)
                 // This ensures they don't look "dumb" for too long when hitting a wall

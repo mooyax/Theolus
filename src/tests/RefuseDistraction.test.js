@@ -97,7 +97,7 @@ vi.mock('three', () => {
         },
         Object3D: class { constructor() { this.position = { set: vi.fn(), copy: vi.fn() }; this.scale = { set: vi.fn() }; this.rotation = { x: 0, y: 0, z: 0, set: vi.fn() }; this.updateMatrix = vi.fn(); this.matrix = { clone: vi.fn() }; } },
         Sphere: class { constructor() { } },
-        Plane: class { constructor(normal, constant) { this.normal = normal; this.constant = constant || 0; } },
+        Plane: class { constructor(normal, constant) { this.normal = normal; this.constant = constant || 0; } clone() { return new this.constructor(this.normal ? this.normal.clone() : null, this.constant); } },
         BufferAttribute: MockBufferAttribute,
         Frustum: class { setFromProjectionMatrix() { } intersectsObject() { return true; } },
         Matrix4: class { multiplyMatrices() { } },
@@ -214,6 +214,7 @@ describe('Refuse Distraction', () => {
 
         // Mock Terrain
         const mockTerrain = {
+            findBestTarget: vi.fn(() => null),
             grid: [],
             logicalWidth: 100,
             logicalDepth: 100,
@@ -269,7 +270,7 @@ describe('Refuse Distraction', () => {
         // Manual Move Marker at 30,30 (Far away)
 
         // Add Manual Request
-        game.addRequest(30, 30, 'move', true); // isManual = true
+        game.addRequest('move', 30, 30, true); // isManual = true
         const manualReq = game.requestQueue[0];
 
         // Assign to unit (as if picked up)
@@ -322,13 +323,13 @@ describe('Refuse Distraction', () => {
 
     it('should NOT Switch to a better Auto-Job if Manual Job is active', () => {
         // Setup: Unit has manual job
-        game.addRequest(30, 30, 'move', true);
+        game.addRequest('move', 30, 30, true);
         const manualReq = game.requestQueue[0];
         unit.targetRequest = manualReq;
         manualReq.assignedTo = unit.id;
 
         // Setup: A much better Auto Job (very close)
-        game.addRequest(11, 11, 'flatten', false); // Normalized, close
+        game.addRequest('flatten', 11, 11, false); // Normalized, close
 
         // Check finding best request
         const best = game.findBestRequest(unit);

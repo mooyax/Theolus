@@ -1,0 +1,27 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/WorkerOscillation.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould blacklist unreachable jobs and NOT pick them up immediately
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/WorkerOscillation.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould blacklist unreachable jobs and NOT pick them up immediately
+[22m[39m[JobState 1] Job Unreachable (Path Failed). Deferring for 15s.
+
+[90mstdout[2m | src/tests/WorkerOscillation.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould NOT oscillate (Ping Pong) between Job and Idle
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/WorkerOscillation.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould NOT oscillate (Ping Pong) between Job and Idle
+[22m[39m[JobState 1] Job Unreachable (Path Failed). Deferring for 15s.
+
+ [31mﾃ・[39m src/tests/WorkerOscillation.test.js[2m > [22mWorker Oscillation Debug[2m > [22mshould blacklist unreachable jobs and NOT pick them up immediately[32m 13[2mms[22m[39m
+[31m   竊・actual value must be number or bigint, received "undefined"[39m
+ [31mﾃ・[39m src/tests/WorkerOscillation.test.js[2m > [22mWorker Oscillation Debug[2m > [22mshould NOT oscillate (Ping Pong) between Job and Idle[32m 7[2mms[22m[39m
+[31m   竊・expected { id: 102, type: 'build', x: 50, 窶ｦ(3) } to be null[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 23:48:18
+[2m   Duration [22m 914ms[2m (transform 133ms, setup 44ms, import 169ms, tests 23ms, environment 499ms)[22m
+

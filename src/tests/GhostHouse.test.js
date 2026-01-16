@@ -15,7 +15,7 @@ vi.mock('three', () => {
         Vector3: Vector3,
         Color: class { setHex() { return this; } lerp() { return this; } setHSL() { return this; } },
         DoubleSide: 2,
-        Plane: class { },
+        Plane: class { clone() { return new this.constructor(); } },
         PlaneGeometry: class {
             constructor() {
                 this.attributes = {

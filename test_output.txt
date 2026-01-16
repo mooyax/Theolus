@@ -1,15 +1,33 @@
 
 [1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
 
-[90mstdout[2m | src/tests/GoblinActivity.test.js[2m > [22m[2mGoblin Activity & Persistence[2m > [22m[2mshould spawn a goblin at a cave and persist effectively
-[22m[39mGoblinManager: Generation started...
-GoblinManager: Generated 0 goblin caves after 5000 attempts.
+[90mstdout[2m | src/tests/BuildingZeroPopReproduction.test.js[2m > [22m[2mBuilding Destruction at Zero Pop[2m > [22m[2mShould destroy a 0-pop house eventually
+[22m[39m[Building] house(0) took 10 dmg. Pop: 0. HP: 90. Retaliation: 0
+[Building] house(0) took 10 dmg. Pop: 0. HP: 80. Retaliation: 0
+[Building] house(0) took 10 dmg. Pop: 0. HP: 70. Retaliation: 0
+[Building] house(0) took 10 dmg. Pop: 0. HP: 60. Retaliation: 0
+[Building] house(0) took 10 dmg. Pop: 0. HP: 50. Retaliation: 0
+[Building] house(0) took 10 dmg. Pop: 0. HP: 40. Retaliation: 0
+[Building] house(0) took 10 dmg. Pop: 0. HP: 30. Retaliation: 0
+[Building] house(0) took 10 dmg. Pop: 0. HP: 20. Retaliation: 0
+[Building] house(0) took 10 dmg. Pop: 0. HP: 10. Retaliation: 0
+[Building] house(0) took 10 dmg. Pop: 0. HP: 0. Retaliation: 0
+Goblin 0 destroyed house !
 
- [31m笶ｯ[39m src/tests/GoblinActivity.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 14[2mms[22m[39m
-[31m     [31mﾃ・[31m should spawn a goblin at a cave and persist effectively[39m[32m 13[2mms[22m[39m
+[90mstdout[2m | src/tests/BuildingZeroPopReproduction.test.js[2m > [22m[2mBuilding Destruction at Zero Pop[2m > [22m[2mShould destroy a flickering low-pop house
+[22m[39m[Building] house(2) took 10 dmg. Pop: 0. HP: 90. Retaliation: 0
+[Building] house(2) took 10 dmg. Pop: 0. HP: 81. Retaliation: 0
+[Building] house(2) took 10 dmg. Pop: 0. HP: 71. Retaliation: 0
+[Building] house(2) took 10 dmg. Pop: 0. HP: 61. Retaliation: 0
+[Building] house(2) took 10 dmg. Pop: 0. HP: 51. Retaliation: 0
+Final House Flickering: HP:51 Pop:0.09000000000000005 Destroyed:No
+
+ [31m笶ｯ[39m src/tests/BuildingZeroPopReproduction.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 35[2mms[22m[39m
+[31m     [31mﾃ・[31m Should destroy a 0-pop house eventually[39m[32m 18[2mms[22m[39m
+[31m     [31mﾃ・[31m Should destroy a flickering low-pop house[39m[32m 16[2mms[22m[39m
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m   Start at [22m 22:58:33
-[2m   Duration [22m 976ms[2m (transform 144ms, setup 39ms, import 193ms, tests 14ms, environment 437ms)[22m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 15:41:26
+[2m   Duration [22m 1.25s[2m (transform 162ms, setup 61ms, import 166ms, tests 35ms, environment 682ms)[22m
 

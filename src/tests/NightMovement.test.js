@@ -28,6 +28,7 @@ describe('Night Movement and Sleep State', () => {
             registerEntity: vi.fn(),
             moveEntity: vi.fn(),
             findPath: vi.fn(),
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 20, z: 20 }]),
             pathfindingCalls: 0,
             isReachable: vi.fn(() => true),
             buildings: []

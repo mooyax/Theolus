@@ -50,14 +50,15 @@ export class HelpShowroom {
         // --- MOCK TERRAIN ---
         // Needed by Renderers
         this.terrainMock = {
-            logicalWidth: 100, // Small for Goblins (Grid 0-99)
-            logicalDepth: 100,
+            logicalWidth: 1000,
+            logicalDepth: 1000,
             entityGrid: [],
             getTileHeight: () => 0,
             getVisualPosition: (x, z) => new THREE.Vector3(x, 0, z),
             getInterpolatedHeight: () => 0,
             registerEntity: () => { },
             unregisterEntity: () => { },
+            checkYield: async () => { } // Added for UnitRenderer init
         };
 
         // Mock for Buildings (Large to prevent ghosts)
@@ -116,9 +117,29 @@ export class HelpShowroom {
         this.currentType = null;
         this.isRunning = false;
 
-        // Handle Resize
         this.resizeObserver = new ResizeObserver(() => this.resize());
         this.resizeObserver.observe(this.canvas);
+
+        this.initialized = false;
+        this.initPromise = this.initRenderers();
+    }
+
+    async initRenderers() {
+        console.log('[HelpShowroom] Initializing renderers...');
+        // Dummy yield function for immediate execution
+        const yieldFn = async () => Promise.resolve();
+        const statusFn = (msg) => console.log(`[HelpShowroom] ${msg}`);
+
+        try {
+            await this.unitRenderer.init(yieldFn, statusFn);
+            await this.goblinRenderer.init();
+            await this.buildingRenderer.init();
+            this.initialized = true;
+            console.log('[HelpShowroom] Renderers initialized.');
+            if (this.currentType) this.render(); // Re-render if pending
+        } catch (e) {
+            console.error('[HelpShowroom] Failed to initialize renderers:', e);
+        }
     }
 
     resize() {
@@ -273,8 +294,8 @@ export class HelpShowroom {
             }
 
             // GoblinRenderer relies on grid
-            if (this.terrainMock.entityGrid[50] && this.terrainMock.entityGrid[50][50]) {
-                const cell = this.terrainMock.entityGrid[50][50];
+            if (this.terrainMock.entityGrid[0] && this.terrainMock.entityGrid[0][0]) {
+                const cell = this.terrainMock.entityGrid[0][0];
                 cell.push(g);
                 this.usedCells.push(cell);
             }

@@ -1,0 +1,105 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould NOT abort job during long async pathfinding (prevent oscillation)
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin Hut when idle (Passive Worker Fix)
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin Hut when idle (Passive Worker Fix)
+[22m[39m[MockTerrain] Best: [1mnull[22m
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin even if holding a job (Self Defense)
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+
+stderr | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin even if holding a job (Self Defense)
+Target missing takeDamage! {
+  obj: {
+    id: 'gob1',
+    gridX: 11,
+    gridZ: 11,
+    position: { x: 11, y: 0, z: 11 },
+    isDead: false,
+    hp: 10,
+    type: 'goblin',
+    takeDamage: [Function: takeDamage]
+  }
+}
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin even if holding a job (Self Defense)
+[22m[39m[MockTerrain] Candidate ID:gob1 Dist:1.4142135623730951
+[MockTerrain] Score:-998.5857864376269
+[MockTerrain] Best: {
+  id: [32m'gob1'[39m,
+  gridX: [33m11[39m,
+  gridZ: [33m11[39m,
+  position: { x: [33m11[39m, y: [33m0[39m, z: [33m11[39m },
+  isDead: [33mfalse[39m,
+  hp: [33m10[39m,
+  type: [32m'goblin'[39m,
+  takeDamage: [36m[Function: takeDamage][39m
+}
+[JobState 1] Worker found threat/target on path!
+Target set: {
+  obj: {
+    id: [32m'gob1'[39m,
+    gridX: [33m11[39m,
+    gridZ: [33m11[39m,
+    position: { x: [33m11[39m, y: [33m0[39m, z: [33m11[39m },
+    isDead: [33mfalse[39m,
+    hp: [33m10[39m,
+    type: [32m'goblin'[39m,
+    takeDamage: [36m[Function: takeDamage][39m
+  }
+}
+
+ [31m笶ｯ[39m src/tests/Regression_WorkerLogic.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 186[2mms[22m[39m
+     [32m笨・[39m should NOT abort job during long async pathfinding (prevent oscillation)[32m 160[2mms[22m[39m
+     [32m笨・[39m should attack nearby Goblin Hut when idle (Passive Worker Fix)[32m 3[2mms[22m[39m
+[31m     [31mﾃ・[31m should attack nearby Goblin even if holding a job (Self Defense)[39m[32m 21[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin even if holding a job (Self Defense)
+AssertionError: expected { Object (obj) } to be { id: 'gob1', gridX: 11, 窶ｦ(6) } // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,6 +1,7 @@
+  {
++   "obj": {
+      "gridX": 11,
+      "gridZ": 11,
+      "hp": 10,
+      "id": "gob1",
+      "isDead": false,
+@@ -9,6 +10,7 @@
+        "y": 0,
+        "z": 11,
+      },
+      "takeDamage": [Function takeDamage],
+      "type": "goblin",
++   },
+  }
+
+ 笶ｯ src/tests/Regression_WorkerLogic.test.js:219:35
+
+    217| 
+    218|         expect(enteredCombat).toBe(true);
+    219|         expect(unit.targetGoblin).toBe(goblin);
+       |                                   ^
+    220|     });
+    221| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 17:32:27
+[2m   Duration [22m 2.17s[2m (transform 642ms, setup 67ms, import 840ms, tests 186ms, environment 756ms)[22m
+

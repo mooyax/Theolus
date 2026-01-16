@@ -40,6 +40,7 @@ describe('Worker Job Logic (Unit.js + States)', () => {
             isWalkable: vi.fn().mockReturnValue(true),
             getRegion: vi.fn().mockReturnValue(1),
             findPath: vi.fn(), // Mock findPath
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 10, z: 10 }]), // Mock findPathAsync
             pathfindingCalls: 0 // Mock Budget
         };
         // Setup grid

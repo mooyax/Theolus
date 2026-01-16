@@ -1,0 +1,60 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/WorkerAggression.test.js[2m > [22m[2mWorker Aggression Debug[2m > [22m[2mshould attack nearby Goblin while in WanderState
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/WorkerAggression.test.js[2m > [22m[2mWorker Aggression Debug[2m > [22m[2mshould attack nearby Goblin while in JobState (Self Defense)
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/WorkerAggression.test.js[2m > [22m[2mWorker Aggression Debug[2m > [22m[2mshould attack nearby Goblin Hut (Building) when idle
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+
+ [31m笶ｯ[39m src/tests/WorkerAggression.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 24[2mms[22m[39m
+[31m     [31mﾃ・[31m should attack nearby Goblin while in WanderState[39m[32m 17[2mms[22m[39m
+[31m     [31mﾃ・[31m should attack nearby Goblin while in JobState (Self Defense)[39m[32m 4[2mms[22m[39m
+     [32m笨・[39m should attack nearby Goblin Hut (Building) when idle[32m 2[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/WorkerAggression.test.js > Worker Aggression Debug > should attack nearby Goblin while in WanderState
+AssertionError: expected 'UnitWanderState' to be 'CombatState' // Object.is equality
+
+Expected: "CombatState"
+Received: "UnitWanderState"
+
+ 笶ｯ src/tests/WorkerAggression.test.js:84:33
+     82| 
+     83|         // Expect transition to CombatState
+     84|         expect(unit.state.name).toBe('CombatState');
+       |                                 ^
+     85|         expect(unit.targetGoblin).toBe(goblin);
+     86|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/WorkerAggression.test.js > Worker Aggression Debug > should attack nearby Goblin while in JobState (Self Defense)
+AssertionError: expected 'JobState' to be 'CombatState' // Object.is equality
+
+Expected: "CombatState"
+Received: "JobState"
+
+ 笶ｯ src/tests/WorkerAggression.test.js:104:33
+    102| 
+    103|         // Expect transition to CombatState (or at least some reaction)
+    104|         expect(unit.state.name).toBe('CombatState');
+       |                                 ^
+    105|         expect(unit.targetGoblin).toBe(goblin);
+    106|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 17:18:58
+[2m   Duration [22m 1.47s[2m (transform 203ms, setup 82ms, import 263ms, tests 24ms, environment 758ms)[22m
+

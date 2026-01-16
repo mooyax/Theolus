@@ -1,0 +1,94 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/JobAssignment.test.js[2m > [22m[2mJob Assignment & Continuation[2m > [22m[2mshould properly interrupt and change state if a job is snatched by another unit
+[22m[39mclaimRequest is: claimRequest(unit, req) {
+        if (!req || (req.status !== 'pending' && req.status !== 'assigned')) return false;
+        if (unit.role !== 'worker') return false;
+
+        // IDEMPOTENCY CHECK: If already assigned to this unit, do nothing & confirm success
+        if (req.status === 'assigned' && req.assignedTo === unit.id && unit.targetRequest === req) {
+            return true;
+        };
+
+        // Global Cooldown Check (Double check for race conditions)
+        if (req.excludedUntil && req.excludedUntil > this.simTotalTimeSec) {
+            return false;
+        };
+
+        // 1. DETACH OLD OWNER (Safe Handoff)
+        if (req.status === 'assigned' && req.assignedTo && req.assignedTo !== unit.id) {
+            // If the request is already assigned to someone else, we cannot claim it.
+            // This prevents a unit from "stealing" a job from another unit.
+            // The `assignRequestSync` loop should handle finding available jobs.
+            return false;
+        };
+
+        // Global Cooldown Check (Double check for race conditions)
+        if (req.excludedUntil && req.excludedUntil > this.simTotalTimeSec) {
+            return false;
+        };
+
+        // 1. DETACH OLD OWNER (Safe Handoff)
+        if (req.status === 'assigned' && req.assignedTo !== unit.id) {
+            const oldUnit = this.units.find(u => u.id === req.assignedTo);
+            if (oldUnit) {
+                if (oldUnit.resetToDefaultState) {
+                    oldUnit.resetToDefaultState();
+                } else {
+                    oldUnit.targetRequest = null;
+                    oldUnit.isMoving = false;
+                    if (oldUnit.changeState) {
+                        const nextState = oldUnit.getDefaultState ? oldUnit.getDefaultState() : "Wander";
+                        oldUnit.changeState(nextState);
+                    }
+                }
+            }
+        };
+
+        // 2. DETACH SELF FROM OLD JOBS
+        if (unit.targetRequest && unit.targetRequest.id !== req.id) {
+            this.releaseRequest(unit, unit.targetRequest);
+        };
+
+        // 3. ATOMIC ASSIGNMENT
+        req.status = 'assigned';
+        req.assignedTo = unit.id;
+        req.assignedAt = this.simTotalTimeSec; // Track when it was assigned for Watchdog
+        unit.targetRequest = req;
+
+        // COMBAT CLEAR: Stop fighting to work
+        unit.targetGoblin = null;
+        unit.targetBuilding = null;
+        unit.isSleeping = false; // Awake when assigned a job
+        unit.action = 'Approaching Job';
+        unit.isMoving = false; // INTERRUPT: Stop any current walk (Wander/Patrol) to react to Job!
+        unit.lastPathTime = 0; // Force immediate pathfinding for new job
+
+        // CRITICAL: Ensure JobState is active and fresh
+        if (unit.changeState) {
+            unit.changeState(new __vite_ssr_import_16__.JobState(unit));
+        };
+
+        // console.log(`[Game] Request ${req.id} assigned to Unit ${unit.id}`);
+        return true;
+    }
+Unit2 after claim: {
+  id: [33m10[39m,
+  type: [32m'raise'[39m,
+  x: [33m60[39m,
+  z: [33m60[39m,
+  status: [32m'assigned'[39m,
+  assignedTo: [33m1[39m
+} [33mtrue[39m
+
+ [32m笨・[39m src/tests/JobAssignment.test.js[2m > [22mJob Assignment & Continuation[2m > [22mshould release old job when a new job is claimed (Sequential assignment)[32m 2[2mms[22m[39m
+ [32m笨・[39m src/tests/JobAssignment.test.js[2m > [22mJob Assignment & Continuation[2m > [22mshould continue to the next nearby job after completing current one (Chaining)[32m 2[2mms[22m[39m
+ [31mﾃ・[39m src/tests/JobAssignment.test.js[2m > [22mJob Assignment & Continuation[2m > [22mshould properly interrupt and change state if a job is snatched by another unit[32m 8[2mms[22m[39m
+[31m   竊・expected 1 to be +0 // Object.is equality[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 23:41:32
+[2m   Duration [22m 1.18s[2m (transform 381ms, setup 48ms, import 473ms, tests 13ms, environment 465ms)[22m
+

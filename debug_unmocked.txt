@@ -1,0 +1,101 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Lighting.test.js[2m > [22m[2mBuildingRenderer Lighting[2m > [22m[2mshould turn on barracks lights at night
+[22m[39mCalling renderer.init()
+[BuildingRenderer] init() called
+
+[90mstdout[2m | src/tests/Lighting.test.js[2m > [22m[2mBuildingRenderer Lighting[2m > [22m[2mshould turn on barracks lights at night
+[22m[39mTower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/Lighting.test.js[2m > [22m[2mBuildingRenderer Lighting[2m > [22m[2mshould turn on barracks lights at night
+[22m[39m[BuildingRenderer] initAssets completed. Assets keys: [
+  [32m'houseWallGeo'[39m, [32m'houseWallMat'[39m,
+  [32m'houseRoofMat'[39m, [32m'houseRoofGeo'[39m,
+  [32m'towerGeo'[39m,     [32m'towerRimGeo'[39m,
+  [32m'towerMat'[39m,     [32m'towerCapMat'[39m,
+  [32m'farmGeo'[39m,      [32m'farmMat'[39m,
+  [32m'barracksGeo'[39m,  [32m'barracksRoofGeo'[39m,
+  [32m'barracksMat'[39m,  [32m'barracksRoofMat'[39m,
+  [32m'goblinHutGeo'[39m, [32m'goblinHutMat'[39m,
+  [32m'caveGeo'[39m,      [32m'caveMat'[39m
+]
+
+[90mstdout[2m | src/tests/Lighting.test.js[2m > [22m[2mBuildingRenderer Lighting[2m > [22m[2mshould turn on barracks lights at night
+[22m[39m[BuildingRenderer] Initialization Complete.
+
+[90mstdout[2m | src/tests/Lighting.test.js[2m > [22m[2mBuildingRenderer Lighting[2m > [22m[2mshould turn on barracks lights at night
+[22m[39mrenderer.init() returned
+
+ [32m笨・[39m src/tests/Lighting.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 18[2mms[22m[39m
+[90mstdout[2m | src/tests/GoblinAggression.test.js[2m > [22m[2mGoblin Aggression Bug[2m > [22m[2mshould find target, chase, and attack
+[22m[39m[Test] Creating Goblin
+
+[90mstdout[2m | src/tests/GoblinAggression.test.js[2m > [22m[2mGoblin Aggression Bug[2m > [22m[2mshould find target, chase, and attack
+[22m[39m[Test] START Goblin Aggression
+[Test] Scanning for targets...
+[Test] Goblin Found Target & Switched to Combat
+[Test] Chasing...
+
+[90mstdout[2m | src/tests/GoblinAggression.test.js[2m > [22m[2mGoblin Aggression Bug[2m > [22m[2mshould find target, chase, and attack
+[22m[39mGoblin hit Unit! Dmg: 8 UnitHP: 92 
+[Test] Arrived in Range (Dist 2)
+[Test] Attack Successful. UnitHP: 92
+
+ [32m笨・[39m src/tests/GoblinAggression.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 10[2mms[22m[39m
+stderr | src/tests/StartupCrash.test.js > Startup Crash Verification > UnitRenderer should initialize without null materials
+[UnitRenderer] Geometry missing for mesh creation!
+
+stderr | src/tests/StartupCrash.test.js > Startup Crash Verification
+[UnitRenderer] Geometry missing for mesh creation!
+[UnitRenderer] Geometry missing for mesh creation!
+
+[90mstdout[2m | src/tests/StartupCrash.test.js[2m > [22m[2mStartup Crash Verification[2m > [22m[2mUnitRenderer update should not crash with active units
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10
+
+ [31m笶ｯ[39m src/tests/StartupCrash.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 18[2mms[22m[39m
+[31m     [31mﾃ・[31m UnitRenderer should initialize without null materials[39m[32m 10[2mms[22m[39m
+[31m     [31mﾃ・[31m UnitRenderer update should not crash with active units[39m[32m 4[2mms[22m[39m
+     [32m笨・[39m FaceMesh should be present if split logic is active[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/StartupCrash.test.js > Startup Crash Verification > UnitRenderer should initialize without null materials
+AssertionError: expected undefined to be defined
+ 笶ｯ src/tests/StartupCrash.test.js:66:35
+     64| 
+     65|         // Check if meshes are created with valid materials
+     66|         expect(renderer.headMesh).toBeDefined();
+       |                                   ^
+     67|         // Accessing material properties shouldn't throw
+     68|         expect(renderer.headMesh.material).toBeDefined();
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/StartupCrash.test.js > Startup Crash Verification > UnitRenderer update should not crash with active units
+AssertionError: expected [Function] to not throw an error but 'ReferenceError: Cannot access \'logic窶ｦ' was thrown
+
+- Expected: 
+undefined
+
++ Received: 
+"ReferenceError: Cannot access 'logicalW' before initialization"
+
+ 笶ｯ src/tests/StartupCrash.test.js:89:16
+     87|         expect(() => {
+     88|             renderer.update(units, null, camera);
+     89|         }).not.toThrow();
+       |                ^
+     90|     });
+     91| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 11:39:51
+[2m   Duration [22m 1.09s[2m (transform 475ms, setup 163ms, import 582ms, tests 46ms, environment 1.46s)[22m
+

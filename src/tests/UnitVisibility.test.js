@@ -4,6 +4,8 @@ import { UnitRenderer } from '../UnitRenderer';
 import { Unit } from '../Unit.js';
 import * as THREE from 'three';
 
+vi.unmock('../UnitRenderer');
+
 // Mock THREE
 global.THREE = THREE;
 
@@ -13,19 +15,26 @@ describe('UnitRenderer Visibility', () => {
     let mockTerrain;
     let mockCamera;
     let mockFrustum;
+    let viewCenter = new THREE.Vector3(0, 0, 0);
 
-    beforeEach(() => {
+    beforeEach(async () => {
+        // Prevent Unit.initAssets from overwriting our mocks
+        vi.spyOn(Unit, 'initAssets').mockResolvedValue();
+
         // Init Assets Fake
         Unit.assets = {
             initialized: true,
             geometries: {
                 body: new THREE.BoxGeometry(),
                 head: new THREE.BoxGeometry(),
+                facePlane: new THREE.PlaneGeometry(),
                 limb: new THREE.BoxGeometry(),
                 sword: new THREE.BoxGeometry(),
                 staff: new THREE.BoxGeometry(),
                 wizardHat: new THREE.BoxGeometry(),
                 wizardHatBrim: new THREE.BoxGeometry(),
+                jobIndicatorTop: new THREE.BoxGeometry(),
+                jobIndicatorDot: new THREE.BoxGeometry(),
             },
             materials: {
                 skin: new THREE.MeshBasicMaterial(),
@@ -33,11 +42,21 @@ describe('UnitRenderer Visibility', () => {
                 metal: new THREE.MeshBasicMaterial(),
                 wood: new THREE.MeshBasicMaterial(),
                 wizardHat: new THREE.MeshBasicMaterial(),
+                face: new THREE.MeshBasicMaterial(),
+                redIndicator: new THREE.MeshBasicMaterial(),
+                armor: new THREE.MeshBasicMaterial(),
+                helmet: new THREE.MeshBasicMaterial(),
+                robe: new THREE.MeshBasicMaterial(),
             }
         };
 
         mockScene = { add: vi.fn(), remove: vi.fn() };
-        mockTerrain = { logicalWidth: 100, logicalDepth: 100 };
+        mockTerrain = {
+            logicalWidth: 100,
+            logicalDepth: 100,
+            checkYield: async () => { }, // Mock checkYield
+            getVisualPosition: (x, z) => ({ x: x * 10, y: 0, z: z * 10 }) // Mock getVisualPosition
+        };
         mockCamera = new THREE.PerspectiveCamera();
         mockCamera.position.set(0, 50, 0);
 
@@ -45,6 +64,7 @@ describe('UnitRenderer Visibility', () => {
         mockFrustum = { intersectsSphere: () => true };
 
         renderer = new UnitRenderer(mockScene, mockTerrain);
+        await renderer.init();
 
         // Spy on setMatrixAt
         vi.spyOn(renderer.torsoMesh, 'setMatrixAt');

@@ -1,0 +1,60 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould tag new requests with createdAt timestamp
+[22m[39mScene created: [33mtrue[39m Pos: object
+Camera created: [33mtrue[39m Pos: object
+Camera setup done
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould cleanup expired pending requests
+[22m[39mScene created: [33mtrue[39m Pos: object
+Camera created: [33mtrue[39m Pos: object
+Camera setup done
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+
+ [31mﾃ・[39m src/tests/RequestLifecycle.test.js[2m > [22mGame Request Lifecycle[2m > [22mshould tag new requests with createdAt timestamp[32m 86[2mms[22m[39m
+[31m   竊・Cannot set properties of undefined (setting 'tail')[39m
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould NOT cleanup assigned requests even if old
+[22m[39mScene created: [33mtrue[39m Pos: object
+Camera created: [33mtrue[39m Pos: object
+Camera setup done
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould cancel request via Proximity Search
+[22m[39mScene created: [33mtrue[39m Pos: object
+Camera created: [33mtrue[39m Pos: object
+Camera setup done
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+
+ [31mﾃ・[39m src/tests/RequestLifecycle.test.js[2m > [22mGame Request Lifecycle[2m > [22mshould cleanup expired pending requests[32m 73[2mms[22m[39m
+[31m   竊・Cannot set properties of undefined (setting 'tail')[39m
+ [31mﾃ・[39m src/tests/RequestLifecycle.test.js[2m > [22mGame Request Lifecycle[2m > [22mshould NOT cleanup assigned requests even if old[32m 64[2mms[22m[39m
+[31m   竊・Cannot set properties of undefined (setting 'tail')[39m
+[90mstdout[2m | src/tests/RequestLifecycle.test.js[2m > [22m[2mGame Request Lifecycle[2m > [22m[2mshould prioritize nearest request when cancelling
+[22m[39mScene created: [33mtrue[39m Pos: object
+Camera created: [33mtrue[39m Pos: object
+Camera setup done
+SheepManager Refactored: Initialized with Entity-based Sheep.
+GoblinManager: Generation started...
+GoblinManager: Generated 0 goblin caves after 5000 attempts.
+
+ [31mﾃ・[39m src/tests/RequestLifecycle.test.js[2m > [22mGame Request Lifecycle[2m > [22mshould cancel request via Proximity Search[32m 55[2mms[22m[39m
+[31m   竊・Cannot set properties of undefined (setting 'tail')[39m
+ [31mﾃ・[39m src/tests/RequestLifecycle.test.js[2m > [22mGame Request Lifecycle[2m > [22mshould prioritize nearest request when cancelling[32m 55[2mms[22m[39m
+[31m   竊・Cannot set properties of undefined (setting 'tail')[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m5 failed[39m[22m[90m (5)[39m
+[2m     Errors [22m [1m[31m5 errors[39m[22m
+[2m   Start at [22m 23:33:19
+[2m   Duration [22m 1.50s[2m (transform 376ms, setup 46ms, import 484ms, tests 335ms, environment 432ms)[22m
+

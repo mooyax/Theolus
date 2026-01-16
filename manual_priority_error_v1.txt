@@ -1,0 +1,25 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/ManualPriority.test.js[2m > [22m[2mManual Request Priority and Preemption[2m > [22m[2mshould allow manual request to preempt CombatState
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/ManualPriority.test.js[2m > [22m[2mManual Request Priority and Preemption[2m > [22m[2mshould allow manual request to preempt SleepState
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/ManualPriority.test.js[2m > [22m[2mManual Request Priority and Preemption[2m > [22m[2mshould NOT allow auto request to preempt CombatState
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+ [31m笶ｯ[39m src/tests/ManualPriority.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 34[2mms[22m[39m
+[31m     [31mﾃ・[31m should allow manual request to preempt CombatState[39m[32m 29[2mms[22m[39m
+[31m     [31mﾃ・[31m should allow manual request to preempt SleepState[39m[32m 3[2mms[22m[39m
+     [32m笨・[39m should NOT allow auto request to preempt CombatState[32m 1[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 10:34:01
+[2m   Duration [22m 919ms[2m (transform 132ms, setup 54ms, import 158ms, tests 34ms, environment 463ms)[22m
+

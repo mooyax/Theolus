@@ -50,7 +50,7 @@ describe('Goblin Activity & Persistence', () => {
             Array.from({ length: 100 }, () => ({ height: 1.0, hasBuilding: false }))
         );
 
-        mockTerrain.getTileHeight = () => 1.0;
+        mockTerrain.getTileHeight = () => 5.0;
         mockTerrain.getVisualPosition = (x, z) => new THREE.Vector3(x, 1.0, z);
         mockTerrain.logicalWidth = 100;
         mockTerrain.logicalDepth = 100;
@@ -103,7 +103,8 @@ describe('Goblin Activity & Persistence', () => {
         expect(goblin.isDead).toBe(false);
 
         // 2. Simulate Updates (Activity)
-        goblinManager.update(100, 0.1, false, [], 1.0, { x: 50, z: 50 });
+        // 2. Simulate Updates (Activity)
+        goblinManager.update(100, 0.1, false, [], 1.0, { position: { x: 50, z: 50 } });
 
         expect(goblin.state).toBeDefined();
 
@@ -112,7 +113,9 @@ describe('Goblin Activity & Persistence', () => {
 
         // Run loop for 5 seconds logic time
         for (let i = 0; i < 300; i++) { // 300 frames * 16ms ~ 5s
-            goblinManager.update(100 + i * 16, 0.016, false, [], 1.0, { x: 50, z: 50 });
+            for (let i = 0; i < 300; i++) { // 300 frames * 16ms ~ 5s
+                goblinManager.update(100 + i * 16, 0.016, false, [], 1.0, { position: { x: 50, z: 50 } });
+            }
         }
 
         // 3. Verify Persistence

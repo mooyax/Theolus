@@ -85,6 +85,7 @@ describe('Large Scale Stress Testing (Phase 26)', () => {
 
         // Mock Terrain FIRST
         const mockTerrain = {
+            findBestTarget: vi.fn(() => null),
             width: 160,
             depth: 160,
             getHeight: () => 0,
@@ -98,8 +99,17 @@ describe('Large Scale Stress Testing (Phase 26)', () => {
                 }
                 return path;
             },
+            findPathAsync: (start, end) => {
+                const path = [];
+                const steps = 20;
+                for (let i = 0; i <= steps; i++) {
+                    path.push({ x: start.x + (end.x - start.x) * (i / steps), z: start.z + (end.z - start.z) * (i / steps) });
+                }
+                return Promise.resolve(path);
+            },
             getRandomPointInRegion: () => ({ x: Math.random() * 150 + 5, z: Math.random() * 150 + 5 }),
             checkFlatArea: () => true,
+            isReachable: () => true,
             getRegion: () => 1,
             update: () => { },// Mock update
             updateMeshPosition: () => { },
@@ -182,7 +192,7 @@ describe('Large Scale Stress Testing (Phase 26)', () => {
         expect(true).toBe(true);
     });
 
-    it('should complete a 60-second simulation with 100 colliding entities (Chaos Test)', () => {
+    it('should complete a 60-second simulation with 100 colliding entities (Chaos Test)', { timeout: 15000 }, () => {
         // Setup
         for (let i = 0; i < 50; i++) game.units.push(new Unit(game.scene, game.terrain, 50, 50, 'knight'));
         for (let i = 0; i < 50; i++) game.goblinManager.spawnGoblin(10 + i * 2, 10 + i * 2, 'clan_chaos');

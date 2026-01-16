@@ -36,16 +36,16 @@ vi.mock('../SaveManager.js', () => ({
     }
 }));
 vi.mock('../InputManager.js', () => ({ InputManager: class { update() { } updateCursor() { } } }));
-vi.mock('../GoblinManager.js', () => ({ GoblinManager: class { update() { } reset() { } scanForCaves() { } serialize() { return {}; } deserialize() { } } }));
+vi.mock('../GoblinManager.js', () => ({ GoblinManager: class { constructor() { this.goblins = []; } update() { } reset() { } scanForCaves() { } serialize() { return {}; } deserialize() { } } }));
 vi.mock('../CloudManager.js', () => ({ CloudManager: class { update() { } draw() { } } }));
 vi.mock('../BirdManager.js', () => ({ BirdManager: class { update() { } draw() { } } }));
 vi.mock('../SheepManager.js', () => ({ SheepManager: class { update() { } draw() { } } }));
 vi.mock('../FishManager.js', () => ({ FishManager: class { update() { } draw() { } } }));
 vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } } }));
 vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
-vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { update() { } dispose() { } } }));
-vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { update() { } updateLighting() { } dispose() { } } }));
-vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { update() { } dispose() { } } }));
+vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { init() { return Promise.resolve(); } update() { } dispose() { } } }));
+vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { init() { return Promise.resolve(); } update() { } updateLighting() { } dispose() { } } }));
+vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { init() { return Promise.resolve(); } update() { } dispose() { } } }));
 
 // MOCK TERRAIN TO AVOID GEOMETRY CRASHES
 vi.mock('../Terrain.js', () => ({
@@ -71,6 +71,8 @@ vi.mock('../Terrain.js', () => ({
             this.getBiomeColor = vi.fn(() => ({ r: 0, g: 1, b: 0 }));
             this.isReachable = vi.fn(() => true);
             this.setSeason = vi.fn();
+            this.findPathAsync = vi.fn((sx, sz, ex, ez) => Promise.resolve([{ x: ex, z: ez }]));
+            this.checkYield = () => Promise.resolve();
         }
     }
 }));
@@ -100,7 +102,7 @@ vi.mock('three', () => {
         DirectionalLight: class extends MockObject3D { },
         BoxGeometry: class { translate() { } },
         PlaneGeometry: class { translate() { } },
-        Plane: class { constant = 0; normal = new MockVector3(); setComponents() { } },
+        Plane: class { constant = 0; normal = new MockVector3(); setComponents() { } clone() { return new this.constructor(); } },
         Fog: class { },
         CylinderGeometry: class { translate() { } },
         ConeGeometry: class { translate() { } },

@@ -1,0 +1,253 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/SaveLoadRestoration.test.js[2m > [22m[2mSave/Load Job Restoration[2m > [22m[2mshould restore unit ID and re-link to JobState correctly
+[22m[39mScene created: [33mtrue[39m Pos: object
+Camera created: [33mtrue[39m Pos: object
+Camera setup done
+Terrain created: [33mtrue[39m
+
+[90mstdout[2m | src/tests/SaveLoadRestoration.test.js[2m > [22m[2mSave/Load Job Restoration[2m > [22m[2mshould restore unit ID and re-link to JobState correctly
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (12,12) ID:req_0
+[Assign] Checking Unit 55 (Dead:false)
+[Assign] Unit 55 Action: Idle, TargetReq: none
+[Game] forceAssignRequest FOUND Unit 55 (DistSq:8). Scanned:1
+[Game] Request req_0 assigned/switched to Unit 55
+Saved to slot 1 (Compressed). Size: 46894 chars (Original: 689765)
+Load Started...
+
+[90mstdout[2m | src/tests/SaveLoadRestoration.test.js[2m > [22m[2mSave/Load Job Restoration[2m > [22m[2mshould restore unit ID and re-link to JobState correctly
+[22m[39mLoading slot 1, Raw length: 46894
+Load: Decompressed successfully.
+Parsed Data for slot 1: {
+  timestamp: [33m1768360299688[39m,
+  data: {
+    slotId: [33m1[39m,
+    timestamp: [33m1768360299652[39m,
+    resources: { grain: [33m10[39m, fish: [33m10[39m, meat: [33m10[39m },
+    gameTime: [33m8[39m,
+    gameTotalTime: [33m0[39m,
+    terrain: {
+      logicalWidth: [33m240[39m,
+      logicalDepth: [33m240[39m,
+      version: [33m2[39m,
+      h: [36m[Array][39m,
+      n: [36m[Array][39m,
+      b: [],
+      m: [36m[Array][39m
+    },
+    units: [ [36m[Object][39m ],
+    requests: [ [36m[Object][39m ],
+    goblinManager: {},
+    camera: { position: [36m[Object][39m, zoom: [33m1[39m, target: {} }
+  }
+}
+Load Game: Data found {
+  slotId: [33m1[39m,
+  timestamp: [33m1768360299652[39m,
+  resources: { grain: [33m10[39m, fish: [33m10[39m, meat: [33m10[39m },
+  gameTime: [33m8[39m,
+  gameTotalTime: [33m0[39m,
+  terrain: {
+    logicalWidth: [33m240[39m,
+    logicalDepth: [33m240[39m,
+    version: [33m2[39m,
+    h: [
+       [33m4[39m,  [33m5[39m,  [33m5[39m,  [33m5[39m,  [33m6[39m,  [33m6[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,
+       [33m8[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m,
+      [33m10[39m, [33m11[39m, [33m11[39m, [33m11[39m, [33m12[39m, [33m12[39m, [33m12[39m, [33m12[39m, [33m12[39m, [33m12[39m, [33m12[39m, [33m11[39m,
+      [33m11[39m, [33m11[39m, [33m11[39m, [33m11[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m, [33m10[39m,
+      [33m10[39m, [33m10[39m, [33m10[39m, [33m11[39m, [33m11[39m, [33m11[39m, [33m11[39m, [33m11[39m, [33m12[39m, [33m12[39m, [33m12[39m, [33m12[39m,
+      [33m12[39m, [33m12[39m, [33m11[39m, [33m10[39m, [33m10[39m,  [33m9[39m,  [33m9[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,
+       [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m6[39m,  [33m6[39m,  [33m5[39m,  [33m5[39m,  [33m4[39m,  [33m4[39m,
+       [33m4[39m,  [33m4[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,
+       [33m3[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,
+      ... 57500 more items
+    ],
+    n: [
+      [33m-0.01[39m, [33m-0.02[39m,     [33m0[39m,     [33m0[39m,     [33m0[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m,
+      [33m-0.01[39m, [33m-0.01[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.02[39m,     [33m0[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.02[39m,
+          [33m0[39m, [33m-0.02[39m,  [33m0.02[39m,     [33m0[39m,     [33m0[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.02[39m,     [33m0[39m,
+      [33m-0.02[39m,  [33m0.01[39m, [33m-0.02[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.01[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.01[39m,
+      [33m-0.01[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.01[39m,
+      [33m-0.01[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.01[39m,     [33m0[39m,  [33m0.02[39m,     [33m0[39m, [33m-0.01[39m,  [33m0.01[39m,
+       [33m0.02[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.02[39m,
+      [33m-0.02[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.01[39m,  [33m0.01[39m, [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.01[39m,
+          [33m0[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.01[39m,
+      [33m-0.02[39m,     [33m0[39m,  [33m0.02[39m,  [33m0.01[39m,     [33m0[39m, [33m-0.02[39m, [33m-0.01[39m, [33m-0.01[39m, [33m-0.01[39m,
+      [33m-0.01[39m,  [33m0.01[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.01[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.02[39m,     [33m0[39m,
+       [33m0.01[39m,
+      ... 57500 more items
+    ],
+    b: [],
+    m: [
+      [33m0.89[39m, [33m0.88[39m, [33m0.87[39m, [33m0.85[39m, [33m0.82[39m,  [33m0.8[39m, [33m0.77[39m, [33m0.75[39m, [33m0.73[39m, [33m0.71[39m,
+      [33m0.69[39m, [33m0.67[39m, [33m0.65[39m, [33m0.64[39m, [33m0.62[39m,  [33m0.6[39m, [33m0.58[39m, [33m0.57[39m, [33m0.55[39m, [33m0.54[39m,
+      [33m0.54[39m, [33m0.53[39m, [33m0.53[39m, [33m0.53[39m, [33m0.52[39m, [33m0.51[39m,  [33m0.5[39m, [33m0.49[39m, [33m0.48[39m, [33m0.47[39m,
+      [33m0.46[39m, [33m0.45[39m, [33m0.43[39m, [33m0.41[39m,  [33m0.4[39m, [33m0.38[39m, [33m0.37[39m, [33m0.37[39m, [33m0.38[39m, [33m0.39[39m,
+       [33m0.4[39m, [33m0.41[39m, [33m0.42[39m, [33m0.42[39m, [33m0.43[39m, [33m0.42[39m, [33m0.42[39m, [33m0.42[39m, [33m0.42[39m, [33m0.42[39m,
+      [33m0.43[39m, [33m0.44[39m, [33m0.45[39m, [33m0.46[39m, [33m0.46[39m, [33m0.46[39m, [33m0.45[39m, [33m0.43[39m, [33m0.42[39m, [33m0.41[39m,
+      [33m0.41[39m, [33m0.41[39m, [33m0.41[39m, [33m0.42[39m, [33m0.43[39m, [33m0.43[39m, [33m0.42[39m, [33m0.41[39m, [33m0.39[39m, [33m0.37[39m,
+      [33m0.35[39m, [33m0.34[39m, [33m0.33[39m, [33m0.34[39m, [33m0.36[39m, [33m0.38[39m,  [33m0.4[39m, [33m0.43[39m, [33m0.45[39m, [33m0.46[39m,
+      [33m0.48[39m, [33m0.49[39m,  [33m0.5[39m, [33m0.52[39m, [33m0.53[39m, [33m0.53[39m, [33m0.54[39m, [33m0.53[39m, [33m0.53[39m, [33m0.53[39m,
+      [33m0.53[39m, [33m0.53[39m, [33m0.52[39m, [33m0.52[39m, [33m0.52[39m, [33m0.52[39m, [33m0.52[39m, [33m0.53[39m, [33m0.54[39m, [33m0.57[39m,
+      ... 57500 more items
+    ]
+  },
+  units: [
+    {
+      id: [33m55[39m,
+      gridX: [33m10[39m,
+      gridZ: [33m10[39m,
+      age: [33m20[39m,
+      lifespan: [33m81.62305014321913[39m,
+      isDead: [33mfalse[39m,
+      isMoving: [33mtrue[39m,
+      targetX: [33m0[39m,
+      targetZ: [33m0[39m,
+      moveStartTime: [33m0[39m,
+      moveDuration: [33m1.1313708498984762[39m,
+      startGridX: [33m10[39m,
+      startGridZ: [33m10[39m,
+      targetGridX: [33m11[39m,
+      targetGridZ: [33m11[39m,
+      isSpecial: [33mfalse[39m,
+      role: [32m'worker'[39m,
+      type: [32m'worker'[39m,
+      hp: [33m57[39m,
+      maxHp: [33m57[39m,
+      damage: [33m12[39m,
+      xp: [33m0[39m,
+      level: [33m1[39m,
+      squadId: [1mnull[22m,
+      targetRequestId: [32m'req_manual_1'[39m,
+      action: [32m'Approaching Job'[39m,
+      ignoredTargets: []
+    }
+  ],
+  requests: [
+    {
+      id: [32m'req_manual_1'[39m,
+      type: [32m'raise'[39m,
+      x: [33m12[39m,
+      z: [33m12[39m,
+      status: [32m'assigned'[39m,
+      assignedTo: [33m55[39m,
+      createdAt: [33m0[39m,
+      isManual: [33mtrue[39m
+    }
+  ],
+  goblinManager: {},
+  camera: { position: { x: [33m20[39m, y: [33m20[39m, z: [33m20[39m }, zoom: [33m1[39m, target: {} }
+}
+
+[90mstdout[2m | src/tests/SaveLoadRestoration.test.js[2m > [22m[2mSave/Load Job Restoration[2m > [22m[2mshould restore unit ID and re-link to JobState correctly
+[22m[39mClearing 0 projectiles...
+
+stderr | src/tests/SaveLoadRestoration.test.js > Save/Load Job Restoration > should restore unit ID and re-link to JobState correctly
+Critical Load Error: TypeError: this.goblinRenderer.init is not a function
+    at Game.loadGame (C:/Users/mooya/develop/test/src/Game.js:2013:39)
+    at C:/Users/mooya/develop/test/src/tests/SaveLoadRestoration.test.js:121:25
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:20
+
+[90mstdout[2m | src/tests/SaveLoadRestoration.test.js[2m > [22m[2mSave/Load Job Restoration[2m > [22m[2mshould reset ghost-assigned requests during load
+[22m[39mScene created: [33mtrue[39m Pos: object
+Camera created: [33mtrue[39m Pos: object
+Camera setup done
+Terrain created: [33mtrue[39m
+
+[90mstdout[2m | src/tests/SaveLoadRestoration.test.js[2m > [22m[2mSave/Load Job Restoration[2m > [22m[2mshould reset ghost-assigned requests during load
+[22m[39mLoad Started...
+
+[90mstdout[2m | src/tests/SaveLoadRestoration.test.js[2m > [22m[2mSave/Load Job Restoration[2m > [22m[2mshould reset ghost-assigned requests during load
+[22m[39mLoading slot 1, Raw length: 114
+Load: Decompressed successfully.
+Parsed Data for slot 1: {
+  timestamp: [33m1768360301929[39m,
+  data: {
+    resources: {},
+    gameTime: [33m12[39m,
+    terrain: { logicalWidth: [33m80[39m, logicalDepth: [33m80[39m, grid: [], buildings: [] },
+    units: [],
+    requests: [ [36m[Object][39m ]
+  }
+}
+Load Game: Data found {
+  resources: {},
+  gameTime: [33m12[39m,
+  terrain: { logicalWidth: [33m80[39m, logicalDepth: [33m80[39m, grid: [], buildings: [] },
+  units: [],
+  requests: [
+    {
+      id: [32m'req_ghost'[39m,
+      type: [32m'raise'[39m,
+      x: [33m5[39m,
+      z: [33m5[39m,
+      status: [32m'assigned'[39m,
+      assignedTo: [33m99[39m,
+      isManual: [33mtrue[39m
+    }
+  ]
+}
+
+[90mstdout[2m | src/tests/SaveLoadRestoration.test.js[2m > [22m[2mSave/Load Job Restoration[2m > [22m[2mshould reset ghost-assigned requests during load
+[22m[39mClearing 0 projectiles...
+
+stderr | src/tests/SaveLoadRestoration.test.js > Save/Load Job Restoration > should reset ghost-assigned requests during load
+Critical Load Error: TypeError: this.goblinRenderer.init is not a function
+    at Game.loadGame (C:/Users/mooya/develop/test/src/Game.js:2013:39)
+    at C:/Users/mooya/develop/test/src/tests/SaveLoadRestoration.test.js:162:9
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:20
+
+ [31m笶ｯ[39m src/tests/SaveLoadRestoration.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 3594[2mms[22m[39m
+[31m     [31mﾃ・[31m should restore unit ID and re-link to JobState correctly[39m[33m 1907[2mms[22m[39m
+[31m     [31mﾃ・[31m should reset ghost-assigned requests during load[39m[33m 1685[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/SaveLoadRestoration.test.js > Save/Load Job Restoration > should restore unit ID and re-link to JobState correctly
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/SaveLoadRestoration.test.js:122:25
+    120|         localStorage.getItem.mockReturnValue(val);
+    121|         const success = await game.loadGame(1);
+    122|         expect(success).toBe(true);
+       |                         ^
+    123| 
+    124|         // 4. VERIFY RESTORATION
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/SaveLoadRestoration.test.js > Save/Load Job Restoration > should reset ghost-assigned requests during load
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ 笶ｯ src/tests/SaveLoadRestoration.test.js:164:42
+    162|         await game.loadGame(1);
+    163| 
+    164|         expect(game.requestQueue.length).toBe(1);
+       |                                          ^
+    165|         const req = game.requestQueue[0];
+    166|         expect(req.status).toBe('pending'); // CLEANUP!
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 12:11:36
+[2m   Duration [22m 5.35s[2m (transform 527ms, setup 76ms, import 673ms, tests 3.59s, environment 680ms)[22m
+

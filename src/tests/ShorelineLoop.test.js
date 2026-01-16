@@ -28,6 +28,7 @@ class MockTerrain {
         }
         this.registerEntity = vi.fn();
         this.unregisterEntity = vi.fn();
+        this.findBestTarget = vi.fn(() => null); // Added findBestTarget as a mock function
         this.getTileHeight = (x, z) => this.grid[x][z].height;
         this.getRegionId = (x, z) => this.grid[x][z].regionId;
     }

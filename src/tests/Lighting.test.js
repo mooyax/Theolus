@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import * as THREE from 'three';
 import { BuildingRenderer } from '../BuildingRenderer.js';
+vi.unmock('../BuildingRenderer.js');
 
 describe('BuildingRenderer Lighting', () => {
-    it('should turn on barracks lights at night', () => {
+    it('should turn on barracks lights at night', async () => {
         // Mock DOM
         global.document = {
             getElementById: () => ({ style: {} }),
@@ -22,10 +23,15 @@ describe('BuildingRenderer Lighting', () => {
         };
         // Mock Scene
         const scene = new THREE.Scene();
-        const terrain = { logicalWidth: 80, logicalDepth: 80 };
+        const terrain = {
+            logicalWidth: 80,
+            logicalDepth: 80,
+            checkYield: async () => { }, // Mock checkYield
+            getVisualPosition: (x, z) => ({ x, y: 0, z }) // Also mock getVisualPosition as it is used in update
+        };
 
         const renderer = new BuildingRenderer(scene, terrain);
-        renderer.initAssets();
+        await renderer.init();
 
         // 1. Verify Initial State (Lights OFF)
         expect(renderer.assets.barracksMat).toBeDefined();

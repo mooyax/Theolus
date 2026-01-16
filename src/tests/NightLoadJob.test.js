@@ -180,6 +180,27 @@ describe('Night Loading Job Assignment', () => {
         scene = new THREE.Scene();
         scene.background = new THREE.Color();
         game = new Game(scene, null, true);
+
+        // Mock Terrain for initial game
+        game.terrain = {
+            grid: Array(100).fill(null).map(() => Array(100).fill({ type: 'ground', height: 10, regionId: 1 })),
+            findBestTarget: vi.fn(() => null),
+            getTileHeight: () => 10,
+            getWidth: () => 100,
+            getTileHeight: () => 1,
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 20, z: 20 }]), // Mock pathfinding
+            isReachable: () => true,
+            findPath: vi.fn().mockReturnValue([{ x: 10, z: 10 }]),
+            update: () => { },
+            getBuildingAt: () => null,
+            moveEntity: () => { },
+            initEntityGrid: () => { },
+            deserialize: vi.fn(), // Prevent real deserialization
+            serialize: vi.fn(),
+            registerEntity: () => { },
+            unregisterEntity: () => { }
+        };
+
         game.directionalLight = { intensity: 1, position: new THREE.Vector3() };
         game.controls = { target: new THREE.Vector3(), update: vi.fn() };
         window.alert = vi.fn();
@@ -196,7 +217,7 @@ describe('Night Loading Job Assignment', () => {
         unit.id = 0;
 
         // Issue manual request
-        const req = game.addRequest('raise', 15, 15, null, null, null, true);
+        const req = game.addRequest('raise', 15, 15, true);
         game.claimRequest(unit, req);
 
         expect(unit.targetRequest).toBe(req);
@@ -247,7 +268,7 @@ describe('Night Loading Job Assignment', () => {
         unit.action = 'Sleeping';
 
         // Assign manual job
-        const req = game.addRequest('raise', 15, 15, null, null, null, true);
+        const req = game.addRequest('raise', 15, 15, true);
         game.claimRequest(unit, req);
 
         expect(unit.state).toBeInstanceOf(JobState);
@@ -258,6 +279,11 @@ describe('Night Loading Job Assignment', () => {
         const newGame = new Game(new THREE.Scene(), null, true);
         newGame.controls = { target: new THREE.Vector3(), update: vi.fn() }; // Mock for load
         await newGame.loadGame(2);
+
+        // Inject missed mock after load (since load recreates terrain)
+        if (!newGame.terrain.findBestTarget) {
+            newGame.terrain.findBestTarget = vi.fn(() => null);
+        }
 
         const loadedUnit = newGame.units.find(u => u.id === 0);
         expect(loadedUnit.state).toBeInstanceOf(JobState);
@@ -280,7 +306,11 @@ describe('Night Loading Job Assignment', () => {
         // Mock SaveManager payload representing a LEGACY save (no isManual)
         const legacyData = {
             gameTime: 20, // Night
-            terrain: { serialize: () => { } }, // Dummy, effectively skipped or mocked
+            terrain: {
+                serialize: () => { }, // Dummy, effectively skipped or mocked
+                findBestTarget: vi.fn(() => null),
+                getTileHeight: () => 10,
+            },
             units: [{
                 id: 0, role: 'worker', gridX: 10, gridZ: 10,
                 targetRequestId: 'req_legacy',
@@ -303,6 +333,7 @@ describe('Night Loading Job Assignment', () => {
         vi.spyOn(newGame.terrain, 'deserialize').mockImplementation(() => { });
         // FIX: Ensure pathfinding succeeds with a FRESH array each time so Actor.js mutation (shift) doesn't break retry
         vi.spyOn(newGame.terrain, 'findPath').mockImplementation(() => [{ x: 15, z: 15 }]);
+        newGame.terrain.findPathAsync = vi.fn().mockResolvedValue([{ x: 15, z: 15 }]);
 
         // FIX: Mock Actor reachability to prevent "Unreachable" logic from triggering due to uninitialized terrain height
         vi.spyOn(Actor.prototype, 'isReachable').mockReturnValue(true);

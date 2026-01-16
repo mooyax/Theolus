@@ -15,6 +15,7 @@ vi.mock('three', () => {
             multiplyScalar(s) { this.x *= s; this.y *= s; this.z *= s; return this; }
             distanceTo(v) { return Math.sqrt((this.x - v.x) ** 2 + (this.z - v.z) ** 2); }
             copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
+            set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
         },
         Group: class { constructor() { this.position = { x: 0, y: 0, z: 0 }; this.add = vi.fn(); this.remove = vi.fn(); } },
         Mesh: class { constructor() { this.position = { x: 0, y: 0, z: 0 }; this.scale = { set: vi.fn() }; this.rotation = { y: 0 }; } },
@@ -40,6 +41,7 @@ if (typeof window !== 'undefined') {
 // Minimal Mocks
 const mockScene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
 const mockTerrain = {
+    findBestTarget: vi.fn(() => null),
     getTileHeight: () => 10,
     gridToWorld: (x, z) => ({ x, y: 10, z }),
     getVisualOffset: () => ({ x: 0, y: 0 }),

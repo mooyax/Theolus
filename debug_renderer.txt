@@ -1,0 +1,57 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/Lighting.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 5[2mms[22m[39m
+[31m     [31mﾃ・[31m should turn on barracks lights at night[39m[32m 3[2mms[22m[39m
+[90mstdout[2m | src/tests/GoblinAggression.test.js[2m > [22m[2mGoblin Aggression Bug[2m > [22m[2mshould find target, chase, and attack
+[22m[39m[Test] Creating Goblin
+
+[90mstdout[2m | src/tests/GoblinAggression.test.js[2m > [22m[2mGoblin Aggression Bug[2m > [22m[2mshould find target, chase, and attack
+[22m[39m[Test] START Goblin Aggression
+[Test] Scanning for targets...
+[Test] Goblin Found Target & Switched to Combat
+[Test] Chasing...
+Goblin 0 stuck reaching target unit_victim. Blacklisting.
+
+ [31m笶ｯ[39m src/tests/GoblinAggression.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 14[2mms[22m[39m
+[31m     [31mﾃ・[31m should find target, chase, and attack[39m[32m 13[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/GoblinAggression.test.js > Goblin Aggression Bug > should find target, chase, and attack
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/GoblinAggression.test.js:145:33
+    143| 
+    144|         // Check if moving
+    145|         expect(goblin.isMoving).toBe(true);
+       |                                 ^
+    146|         // Teleport closer to simulate movement success
+    147|         goblin.gridX = 14;
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/Lighting.test.js > BuildingRenderer Lighting > should turn on barracks lights at night
+TypeError: Cannot read properties of undefined (reading 'barracksMat')
+ 笶ｯ src/tests/Lighting.test.js:36:32
+     34| 
+     35|         // 1. Verify Initial State (Lights OFF)
+     36|         expect(renderer.assets.barracksMat).toBeDefined();
+       |                                ^
+     37|         expect(renderer.assets.barracksMat.emissive.getHex()).toBe(0x0窶ｦ
+     38|         expect(renderer.assets.barracksMat.emissiveIntensity).toBe(0.0窶ｦ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 11:35:35
+[2m   Duration [22m 860ms[2m (transform 185ms, setup 107ms, import 211ms, tests 19ms, environment 934ms)[22m
+

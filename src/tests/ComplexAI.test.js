@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as THREE from 'three';
 import { Game } from '../Game.js';
 import { Actor } from '../Actor.js';
+import { Unit } from '../Unit.js';
 import { JobState, CombatState, SleepState } from '../ai/states/UnitStates.js';
 
 // Mock THREE as usual
@@ -21,6 +22,11 @@ vi.mock('three', async (importOriginal) => {
         },
     };
 });
+vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } drawRaidPing() { } } }));
+vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
+vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { init() { return Promise.resolve(); } update() { } } }));
+vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { init() { return Promise.resolve(); } update() { } updateLighting() { } } }));
+vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { init() { return Promise.resolve(); } update() { } } }));
 
 describe('Complex AI Scenarios', () => {
     let game;
@@ -29,6 +35,8 @@ describe('Complex AI Scenarios', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         localStorage.clear();
+        Actor.nextId = 0;
+        Unit.nextId = 0;
         vi.spyOn(Game.prototype, 'animate').mockImplementation(() => { });
         vi.spyOn(Game.prototype, 'startNewGame').mockImplementation(() => { });
         document.body.innerHTML = '<div id="ui"></div><canvas id="minimap"></canvas><div id="mana-bar"></div><div id="loading-screen"></div>';
@@ -45,7 +53,10 @@ describe('Complex AI Scenarios', () => {
                 get: () => new Proxy({}, { get: () => ({ height: 5, type: 'grass', regionId: 1 }) })
             }),
             isReachable: () => true,
-            findPath: vi.fn(),
+            isValidGrid: () => true,
+            findPath: vi.fn().mockImplementation((sx, sz, ex, ez) => [{ x: ex, z: ez }]),
+            findPathAsync: vi.fn().mockImplementation((sx, sz, ex, ez) => Promise.resolve([{ x: ex, z: ez }])),
+            findBestTarget: vi.fn(() => null),
             getTileHeight: () => 5,
             buildings: [],
             update: vi.fn(),
@@ -55,8 +66,6 @@ describe('Complex AI Scenarios', () => {
             getRegion: () => 1,
             getRandomPointInRegion: () => ({ x: 50, z: 50 })
         };
-        // Mock findPath to return a simple path
-        game.terrain.findPath.mockImplementation(() => [{ x: 50, z: 50 }]);
 
         game.units = [];
         game.requestQueue = [];
@@ -72,7 +81,7 @@ describe('Complex AI Scenarios', () => {
         vi.restoreAllMocks();
     });
 
-    it('should drop job gracefully if target building is destroyed', () => {
+    it('should drop job gracefully if target building is destroyed', async () => {
         const unit = game.spawnUnit(10, 10, 'worker');
 
         // Create a mock building
@@ -80,7 +89,7 @@ describe('Complex AI Scenarios', () => {
         game.terrain.buildings = [building];
 
         // Create request for this building
-        const req = game.addRequest('cultivate', 20, 20, building);
+        const req = game.addRequest('cultivate', 20, 20, true, null, null, building);
         game.claimRequest(unit, req);
 
         expect(unit.state).toBeInstanceOf(JobState);
@@ -93,25 +102,31 @@ describe('Complex AI Scenarios', () => {
         // Check building status during update
         unit.updateLogic(0.1, 0.1);
 
-        // CHECK if it released the request
+        // CHECK if it released the request immediately
         expect(unit.targetRequest).toBeNull();
         expect(unit.state).not.toBeInstanceOf(JobState);
+
+        // Optional: wait for async and check background state
+        await new Promise(r => setTimeout(r, 0));
     });
 
-    it('should prioritize manual jobs even when closer auto jobs appear', () => {
+    it('should prioritize manual jobs even when closer auto jobs appear', async () => {
         const unit = game.spawnUnit(10, 10, 'worker');
 
         // 1. Assign a distant manual job
-        const manualReq = game.addRequest('raise', 50, 50, null, null, null, true);
+        const manualReq = game.addRequest('raise', 50, 50, true);
         game.claimRequest(unit, manualReq);
         expect(unit.targetRequest).toBe(manualReq);
         expect(unit.state).toBeInstanceOf(JobState);
 
         // 2. Add a close auto job
-        const autoReq = game.addRequest('raise', 11, 11, null, null, null, false);
+        const autoReq = game.addRequest('raise', 11, 11, false);
 
         // Trigger assignment check
         unit.updateLogic(0.1, 0.1);
+        await new Promise(r => setTimeout(r, 0));
+        unit.updateLogic(1.2, 0.1);
+
 
         // Should STILL have the manual job
         expect(unit.targetRequest).toBe(manualReq);
@@ -119,7 +134,7 @@ describe('Complex AI Scenarios', () => {
 
     it('should NOT drop manual job when switching to SleepState at night', () => {
         const unit = game.spawnUnit(10, 10, 'worker');
-        const manualReq = game.addRequest('raise', 50, 50, null, null, null, true);
+        const manualReq = game.addRequest('raise', 50, 50, true);
         game.claimRequest(unit, manualReq);
 
         // Transition to night
@@ -130,42 +145,32 @@ describe('Complex AI Scenarios', () => {
         expect(unit.targetRequest).toBe(manualReq);
     });
 
-    it('should ignore unreachable job to prevent flicker (Regression Test)', () => {
+    it('should abandon unreachable job (Abandonment Test)', async () => {
         const unit = game.spawnUnit(10, 10, 'worker');
-        const req = game.addRequest('raise', 90, 90, null);
+        const req = game.addRequest('raise', 90, 90, true);
         game.claimRequest(unit, req);
 
         expect(unit.state).toBeInstanceOf(JobState);
 
         // Force unreachable condition
         unit.isUnreachable = true;
+        vi.spyOn(unit, 'smartMove').mockImplementation(() => false);
 
-        // Mock smartMove to ensure it doesn't clear isUnreachable or succeed
-        // We want to simulate Actor.smartMove failing and setting isUnreachable (or keeping it set)
-        vi.spyOn(unit, 'smartMove').mockImplementation(() => {
-            return false;
-        });
-
-        // TIME SYNC: critical for ignoredTargets check in Game.findBestRequest
+        // TIME SYNC
         unit.simTime = 0.1;
         game.simTotalTimeSec = 0.1;
 
-        // Direct update to ensure we hit the JobState logic cleanly
-        unit.state.update(0.1, 0.1);
+        // Direct update to hit abandonment logic
+        if (unit.state) {
+            unit.state.update(0.1, 0.1);
+        }
 
-        // Expectation: Job released AND added to ignore list
+        // Expectation: Job RELEASED
         expect(unit.targetRequest).toBeNull();
-        expect(unit.state).not.toBeInstanceOf(JobState);
-        expect(unit.ignoredTargets.has(req.id)).toBe(true);
-        expect(unit.ignoredTargets.get(req.id)).toBeGreaterThan(0.1); // Expiry time > current time
+        expect(unit.state).not.toBeInstanceOf(JobState); // Should resume wander
 
-        // VERIFY STABILITY: calling update again should NOT pick the job back up
-        // Because it is in the ignore list, findBestRequest should skip it.
-        unit.simTime = 0.2; // Increase time slightly
-        game.simTotalTimeSec = 0.2;
-        unit.state.update(0.2, 0.1);
-
-        expect(unit.state).not.toBeInstanceOf(JobState);
-        expect(unit.targetRequest).toBeNull();
+        // Should be ignored globally
+        expect(req.excludedUntil).toBeDefined();
+        expect(req.excludedUntil).toBeGreaterThan(0.1); // Future timestamp
     });
 });

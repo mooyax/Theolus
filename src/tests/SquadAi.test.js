@@ -57,6 +57,7 @@ class MockTerrain {
         }
     }
 
+    findBestTarget() { return null; }
     getTileHeight(x, z) {
         if (x < 0 || x >= 100 || z < 0 || z >= 100) return 0;
         return this.grid[x][z].height;

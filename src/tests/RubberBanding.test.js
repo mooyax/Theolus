@@ -41,7 +41,8 @@ describe('Rubber-banding and Chaining Verification', () => {
             getBuildingSize: () => 1,
             getRandomPointInRegion: () => ({ x: 0, z: 0 }),
             getRegion: () => 1,
-            findPath: vi.fn().mockReturnValue([{ x: 20, z: 10 }])
+            findPath: vi.fn().mockReturnValue([{ x: 20, z: 10 }]),
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 20, z: 10 }])
         };
         mockGame = {
             simTotalTimeSec: 0,

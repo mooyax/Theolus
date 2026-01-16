@@ -52,9 +52,12 @@ const mockTerrain = {
     registerEntity: vi.fn(),
     unregisterEntity: vi.fn(),
     findPath: vi.fn((sx, sz, tx, tz) => [{ x: sx, z: sz }, { x: tx, z: tz }]), // Direct path
+    findPathAsync: vi.fn((sx, sz, tx, tz) => Promise.resolve([{ x: sx, z: sz }, { x: tx, z: tz }])),
+    isReachable: () => true,
     isAdjacentToRegion: () => true,
     moveEntity: vi.fn(),
-    getRandomPointInRegion: vi.fn(() => ({ x: 10, z: 10 }))
+    getRandomPointInRegion: vi.fn(() => ({ x: 10, z: 10 })),
+    findBestTarget: vi.fn(() => null)
 };
 
 // Setup Grid

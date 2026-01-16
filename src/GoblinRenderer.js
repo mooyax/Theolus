@@ -8,8 +8,18 @@ export class GoblinRenderer {
         this.clippingPlanes = clippingPlanes || [];
         this.MAX_INSTANCES = maxInstances; // Shared limit for parts
 
+        this._dummy = new THREE.Object3D();
+        this._scratchVector = new THREE.Vector3();
+        this._scratchSphere = new THREE.Sphere(new THREE.Vector3(), 2.0);
+
+        // Remove meshGroup to match UnitRenderer and avoid group-level culling issues
+        // this.meshGroup = new THREE.Group();
+        // this.scene.add(this.meshGroup);
+    }
+
+    async init() {
         // Ensure assets are ready
-        Goblin.initAssets();
+        await Goblin.initAssets(this.terrain.checkYield.bind(this.terrain));
 
         // Apply clipping to shared materials
         // Apply clipping to shared materials EXPLICITLY
@@ -36,15 +46,9 @@ export class GoblinRenderer {
             }
         });
 
-        this._dummy = new THREE.Object3D();
-        this._scratchVector = new THREE.Vector3();
-        this._scratchSphere = new THREE.Sphere(new THREE.Vector3(), 2.0);
-
-        // Remove meshGroup to match UnitRenderer and avoid group-level culling issues
-        // this.meshGroup = new THREE.Group();
-        // this.scene.add(this.meshGroup);
-
+        await this.terrain.checkYield();
         this.initInstancedMeshes();
+        this.initialized = true;
     }
 
     initInstancedMeshes() {
@@ -108,9 +112,10 @@ export class GoblinRenderer {
         return this.whiteMat;
     }
     update(goblins, viewCenter) {
-        if (!goblins || !viewCenter) return;
+        if (!this.initialized) return; // Guard: Not initialized
+        if (!goblins) return;
 
-        // Safety Check: Assets
+        let idx = 0;// Safety Check: Assets
         if (!Goblin.assets.initialized) {
             console.warn("[GoblinRenderer] Assets not initialized! Re-initializing...");
             Goblin.initAssets(); // Last ditch effort
@@ -153,7 +158,7 @@ export class GoblinRenderer {
         for (const g of goblins) {
             if (g.isDead || g.isFinished) continue;
 
-            const viewRadius = 300; // Expanded view radius
+            const viewRadius = 120; // Reduced from 300 for performance
 
             // Define missing variables for rendering logic
             const isHob = (g.type === 'hobgoblin' || g.type === 'orc'); // Orc fallback
@@ -201,7 +206,16 @@ export class GoblinRenderer {
                     const instanceY = g.position.y;
                     const instanceZ = g.position.z + shiftZ;
 
-                    // Root Dummy (for positioning parts)
+                    // DISTANCE CULLING
+                    const dx = instanceX - viewCenter.x;
+                    const dz = instanceZ - viewCenter.z;
+                    const distSq = dx * dx + dz * dz;
+
+                    // Hard Cull beyond 60m (High Performance)
+                    // Or 80m? 60m is decent for RTS.
+                    if (distSq > 3600) { // 60^2
+                        continue;
+                    }
                     // 1. Torso
                     // Pivot Adjustment: Torso center is usually ~0.3 up.
                     // If geometry center is 0, we move dummy up.

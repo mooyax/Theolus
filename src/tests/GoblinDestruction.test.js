@@ -4,7 +4,8 @@ import { Goblin } from '../Goblin.js';
 
 // Mock Dependencies
 const mockTerrain = {
-    getTileHeight: () => 5.0,
+    findBestTarget: vi.fn(() => null),
+    getTileHeight: () => 10,
     gridToWorld: (v) => v,
     getVisualOffset: () => ({ x: 0, y: 0 }),
     moveEntity: vi.fn(),

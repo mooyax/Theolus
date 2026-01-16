@@ -20,6 +20,9 @@ import { UnitRenderer } from './UnitRenderer.js';
 import { BuildingRenderer } from './BuildingRenderer.js';
 import { UnitWanderState, JobState, CombatState, SleepState } from './ai/states/UnitStates.js';
 import { GoblinRenderer } from './GoblinRenderer.js';
+import { PerformanceMonitor } from './PerformanceMonitor.js';
+
+import GameConfig from './config/GameConfig.json'; // Direct Import
 
 export class BattleMemory {
     constructor() {
@@ -123,7 +126,7 @@ export class Game {
             this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
             this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             this.renderer.setSize(window.innerWidth, window.innerHeight);
-            this.renderer.localClippingEnabled = false;
+            this.renderer.localClippingEnabled = true;
             document.body.appendChild(this.renderer.domElement);
 
             // 3. Controls
@@ -133,13 +136,12 @@ export class Game {
             this.controls.screenSpacePanning = false;
             // User Request: "Zoom rate 2x larger is fine".
             // Expanding range to allow wider view and closer inspection.
-            this.controls.minZoom = 0.4; // Was 0.8 (Can zoom out to see larger area)
+            this.controls.minZoom = 0.5; // Relaxed from 1.5 back to 0.5 to allow zooming out
             this.controls.maxZoom = 8.0; // Was 4.0 (Can zoom in to see details)
             this.controls.maxPolarAngle = Math.PI / 2;
 
-            // 4. Clipping Planes (Radius 30) - Initialize EARLY
-            // 4. Clipping Planes (Radius 30) - Initialize EARLY
-            this.viewRadius = 30; // Promoted to class property
+            // 4. Clipping Planes
+            this.viewRadius = GameConfig.render.viewRadius || 120; // Used to be 30
             const r = this.viewRadius;
             this.clippingPlanes = [
                 new THREE.Plane(new THREE.Vector3(1, 0, 0), r),
@@ -147,9 +149,10 @@ export class Game {
                 new THREE.Plane(new THREE.Vector3(0, 0, 1), r),
                 new THREE.Plane(new THREE.Vector3(0, 0, -1), r)
             ];
-            // CRITICAL FIX: Use Global Clipping to avoid conflicts with shared materials (Showroom)
-            this.renderer.clippingPlanes = this.clippingPlanes;
-            this.renderer.localClippingEnabled = false; // Disable local to force global usage
+            // CRITICAL FIX: Revert to Local Clipping to prevent Clouds from being clipped.
+            // All renderers (Terrain, Unit, Building, Goblin) now handle clipping planes manually.
+            this.renderer.clippingPlanes = []; // Explicitly empty to ensure no global clipping occurs
+            this.renderer.localClippingEnabled = true;
 
             this.setupLights();
         }
@@ -175,7 +178,10 @@ export class Game {
                 updateLights: () => { },
                 getBuildingAt: () => null,
                 getRegion: () => 1,
-                isValidGrid: () => true, findPath: () => [], checkFlatArea: () => true,
+                isValidGrid: () => true, findPath: () => [],
+                findPathAsync: () => Promise.resolve([]),
+                checkYield: () => Promise.resolve(),
+                checkFlatArea: () => true,
                 gridToWorld: (v) => v, worldToGrid: (v) => v, setSeason: () => { },
                 addBuilding: function (type, x, z) { const b = { userData: { type, gridX: x, gridZ: z }, gridX: x, gridZ: z }; this.buildings.push(b); if (this.grid && this.grid[x] && this.grid[x][z]) this.grid[x][z].hasBuilding = true; return b; },
                 getRandomPointInRegion: () => ({ x: 10, z: 10 }),
@@ -202,21 +208,46 @@ export class Game {
         };
 
         // 6. Managers
-        // Managers Order is important for dependencies
-        this.cloudManager = new CloudManager(this.scene, this.terrain.width, this.terrain.depth);
-        this.birdManager = new BirdManager(this.scene, this.terrain.width, this.terrain.depth, this.clippingPlanes);
-        this.sheepManager = new SheepManager(this.scene, this.terrain, this.clippingPlanes);
-        this.goblinManager = new GoblinManager(this.scene, this.terrain, this, this.clippingPlanes);
-        this.fishManager = new FishManager(this.scene, this.terrain, this.clippingPlanes);
-        this.minimap = new Minimap(this);
-        this.compass = new Compass(this);
+        if (!minimal) {
+            // Managers Order is important for dependencies
+            this.cloudManager = new CloudManager(this.scene, this.terrain.width, this.terrain.depth);
+            this.birdManager = new BirdManager(this.scene, this.terrain.width, this.terrain.depth, this.clippingPlanes);
+            this.sheepManager = new SheepManager(this.scene, this.terrain, this.clippingPlanes);
+            this.goblinManager = new GoblinManager(this.scene, this.terrain, this, this.clippingPlanes);
+            this.fishManager = new FishManager(this.scene, this.terrain, this.clippingPlanes);
+            this.minimap = new Minimap(this);
+            this.compass = new Compass(this);
 
-        this.unitRenderer = new UnitRenderer(this.scene, this.terrain, this.clippingPlanes);
-        this.buildingRenderer = new BuildingRenderer(this.scene, this.terrain, this.clippingPlanes);
+            // Increase maxInstances to 12000 to handle 9000+ units
+            this.unitRenderer = new UnitRenderer(this.scene, this.terrain, this.clippingPlanes, 12000);
+            this.unitRenderer.init(); // Fire and forget async init
+            this.buildingRenderer = new BuildingRenderer(this.scene, this.terrain, this.clippingPlanes, 5000);
+            this.buildingRenderer.init(); // Fire and forget async init
 
-        // InputManager needs access to UnitRenderer for raycasting (tooltips)
-        // Pass 'this' (Game instance) for Mana control
-        this.inputManager = new InputManager(this.scene, this.camera, this.terrain, this.spawnUnit.bind(this), this.units, this.unitRenderer, this);
+            // パフォーマンス監視
+            this.performanceMonitor = new PerformanceMonitor();
+            // URLパラメータでperformance=trueの場合は自動で有効化
+            if (typeof window !== 'undefined' && window.location && window.location.search && window.location.search.includes('performance=true')) {
+                this.performanceMonitor.enable();
+            }
+
+            // InputManager needs access to UnitRenderer for raycasting (tooltips)
+            // Pass 'this' (Game instance) for Mana control
+            this.inputManager = new InputManager(this.scene, this.camera, this.terrain, this.spawnUnit.bind(this), this.units, this.unitRenderer, this);
+        } else {
+            // Minimal stubs if needed to prevent crash
+            this.goblinManager = {
+                update: () => { },
+                reset: () => { },
+                scanForCaves: () => { },
+                serialize: () => ({}),
+                deserialize: () => { },
+                notifyClanActivity: () => { },
+                clans: {},
+                goblins: []
+            };
+            this.units = []; // Already init above but safe
+        }
 
         // Initialize Marker Shader Material
         this.initMarkerMaterial();
@@ -271,9 +302,15 @@ export class Game {
             }
         };
 
-        // Debug Season Toggle (P Key)
+        // Debug Season Toggle (P Key) → 変更: Pキーはパフォーマンス、Seasonは別キーへ
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'p' || e.key === 'P') {
+            // F key: パフォーマンスモニターのトグル
+            if (e.key === 'f' || e.key === 'F') {
+                this.performanceMonitor.toggle();
+                console.log(`[DEBUG] Performance Monitor: ${this.performanceMonitor.enabled ? 'Enabled' : 'Disabled'}`);
+            }
+            // S key: シーズン切り替え (Pから変更)
+            else if (e.key === 's' || e.key === 'S') {
                 const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
                 this.currentSeasonIndex = ((this.currentSeasonIndex || 0) + 1) % 4;
                 const newSeason = SEASONS[this.currentSeasonIndex];
@@ -453,14 +490,20 @@ export class Game {
     initMarkerMaterial() {
         // Shader for Rising Light Particles
         const vertexShader = `
+            #include <clipping_planes_pars_vertex>
             varying vec2 vUv;
+            varying vec3 vViewPosition;
             void main() {
                 vUv = uv;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                gl_Position = projectionMatrix * mvPosition;
+                vViewPosition = -mvPosition.xyz;
+                #include <clipping_planes_vertex>
             }
         `;
 
         const fragmentShader = `
+            #include <clipping_planes_pars_fragment>
             uniform float uTime;
             uniform vec3 uColor;
             varying vec2 vUv;
@@ -471,6 +514,7 @@ export class Game {
             }
 
             void main() {
+                #include <clipping_planes_fragment>
                 // Scroll UVs vertically
                 vec2 st = vUv;
                 // ULTRA FINE SETTINGS (Adjusted for Visibility)
@@ -516,12 +560,14 @@ export class Game {
             transparent: true,
             blending: THREE.AdditiveBlending,
             depthWrite: false, // Don't write depth (transparency)
-            side: THREE.DoubleSide
+            side: THREE.DoubleSide,
+            clipping: true // FIX: Support clipping planes
         });
+        this.markerMaterial.clippingPlanes = this.clippingPlanes;
     }
 
     // --- Request System ---
-    addRequest(type, x, z, building = null, visX = null, visZ = null, isManual = true) {
+    addRequest(type, x, z, isManual = true, visX = null, visZ = null, building = null) {
         // Mana Check (Consume Upfront? Or on completion?)
         // User requested: "Instruct workers... they operate."
         // Consuming upfront prevents spamming without resources.
@@ -530,6 +576,7 @@ export class Game {
 
         // User requested: "Instruct workers... they operate."
         // MANUAL JOBS are special: High Priority & Sticky
+        // REFACTOR: All jobs are now treated as "Manual" (Persistent).
         const id = `req_${this.requestIdCounter++}`;
         const req = {
             id: id,
@@ -540,8 +587,9 @@ export class Game {
             assignedTo: null,
             mesh: null,
             createdAt: this.simTotalTimeSec || 0,
-            isManual: isManual, // Manual marker flag
-            building: (building && typeof building === 'object' && building.id) ? building : null
+            isManual: !!isManual,
+            building: (building && typeof building === 'object' && building.id) ? building : null,
+            excludedUntil: 0 // New: Global Cooldown timestamp
         };
 
         // VISUAL MARKER (Rising Light Particles)
@@ -556,6 +604,7 @@ export class Game {
             if (material.uniforms && material.uniforms.uColor) {
                 material.uniforms.uColor.value.setHex(0xFFFF00); // Yellow
             }
+            material.clippingPlanes = this.clippingPlanes;
         } else {
             console.warn("[Game] Warning: markerMaterial missing or invalid. Using fallback.");
             material = new THREE.MeshBasicMaterial({ color: 0xFFFF00, transparent: true, opacity: 0.8 });
@@ -603,12 +652,19 @@ export class Game {
 
             if (unit.role !== 'worker') continue;
 
+            // GLOBAL COOLDOWN CHECK
+            if (req.excludedUntil && req.excludedUntil > this.simTotalTimeSec) {
+                continue;
+            }
+
             // Priority: Pending first. 
             // Snatch: If allowSnatch is true, we can steal 'assigned' jobs if we are very close.
             if (req.status !== 'pending') {
                 if (!allowSnatch) continue;
                 if (req.status !== 'assigned') continue;
-                if (req.assignedTo === unit.id) continue; // Already ours
+                if (String(req.assignedTo) === String(unit.id)) continue; // Already ours
+                // NEVER snatch a Manual job from its owner
+                if (req.isManual) continue;
             }
 
             // WRAP-AWARE DISTANCE
@@ -641,7 +697,7 @@ export class Game {
                 if (req.isManual) continue;
 
                 // For Auto jobs, check if we are closer by a significant margin
-                const currentOwner = this.units.find(u => u.id === req.assignedTo);
+                const currentOwner = this.units.find(u => String(u.id) === String(req.assignedTo));
                 if (currentOwner) {
                     let dOwner = Math.abs(currentOwner.gridX - req.x);
                     let dzOwner = Math.abs(currentOwner.gridZ - req.z);
@@ -709,6 +765,9 @@ export class Game {
 
         for (const req of this.requestQueue) {
             if (req.status === 'pending') {
+                // GLOBAL COOLDOWN CHECK
+                if (req.excludedUntil && req.excludedUntil > now) continue;
+
                 // Throttle: Don't retry same request too often (e.g., every 0.2s)
                 if (req.lastAttempt && (now - req.lastAttempt < 0.2)) continue;
 
@@ -722,6 +781,8 @@ export class Game {
     }
 
     // Renamed from forceAssignRequest (Old Async) to Sync Helper
+
+
     assignRequestSync(req) {
         if (!req || req.status !== 'pending') return;
 
@@ -743,16 +804,14 @@ export class Game {
             let debugValid = 0;
 
             for (const unit of this.units) {
-                console.log(`[Assign] Checking Unit ${unit.id} (Dead:${unit.isDead})`);
                 if (unit.isDead) continue;
                 if (unit.role !== 'worker') {
-                    console.log(`[Assign] Unit ${unit.id} skipped - Role: ${unit.role}`);
                     debugRole++; continue;
                 }
                 debugScanned++;
 
                 let scorePenalty = 0;
-                console.log(`[Assign] Unit ${unit.id} Action: ${unit.action}, TargetReq: ${unit.targetRequest ? unit.targetRequest.id : 'none'}`);
+
 
                 // Preemption Logic: STRICTLY Prefer FREE units.
                 // MODIFIED: Allow interrupting units in low-priority states (Wander, Moving, Idle) if Request is MANUAL.
@@ -767,100 +826,47 @@ export class Game {
                     continue;
                 }
 
-                // Fighting and Sleeping are normally busy, but can be preempted by MANUAL requests
-                const isFightingOrSleeping = unit.action === 'Fighting' || unit.action === 'Sleeping';
-                if (isFightingOrSleeping && !req.isManual) {
-                    debugBusy++;
+                // Manual jobs is IMMUNE to preemption from other sync assignments
+                if (unit.targetRequest && unit.targetRequest.isManual) {
                     continue;
                 }
 
-                // Soft Busy States (Approaching Job / Migrating)
-                // If unit has a target request, it is "Approaching".
-                // We only interrupt "Approaching" or "Migrating" if the NEW request is MANUAL (High Priority).
-                const isSoftBusy = unit.targetRequest || unit.action === 'Migrating';
-                if (isSoftBusy) {
-                    // Prevent ping-pong: Do not interrupt a Manual job with another Manual job
-                    if (unit.targetRequest && unit.targetRequest.isManual && req.isManual) {
-                        debugBusy++;
-                        continue;
-                    }
-
-                    if (req.isManual) {
-                        // Allow preemption for Manual markers.
-                        // Add distance penalty to prefer idle units if multiple units are reachable.
-                        scorePenalty += 1000;
-                    } else {
-                        debugBusy++;
-                        continue;
-                    }
+                // If new job is AUTO (not manual), don't interrupt units already having a job
+                if (unit.targetRequest && !req.isManual) {
+                    continue;
                 }
 
-                // If we get here, unit is either:
-                // 1. Free (Idle/Wander)
-                // 2. Approaching (targetRequest set) BUT req is MANUAL (so we interrupt)
-                debugValid++;
-
-                // WRAP-AWARE DISTANCE
-                let dx = Math.abs(unit.gridX - req.x);
-                let dz = Math.abs(unit.gridZ - req.z);
-                if (dx > logicalW / 2) dx = logicalW - dx;
-                if (dz > logicalD / 2) dz = logicalD - dz;
-
-                const dSq = dx * dx + dz * dz;
-                const finalScore = dSq + scorePenalty;
-
-                // REGIONAL REACHABILITY CHECK
-                if (unit.isReachable && !unit.isReachable(req.x, req.z)) continue;
-
-                // BLACKLIST CHECK (New)
-                if (unit.ignoredTargets && unit.ignoredTargets.has(req.id)) {
-                    const expiry = unit.ignoredTargets.get(req.id);
-                    if (this.simTotalTimeSec < expiry) continue;
+                // Fighting and Sleeping are normally busy, but can be preempted by requests
+                // Since all requests are now treated as "Manual"/High Priority, we allow preemption.
+                const isFightingOrSleeping = unit.state && (unit.state.constructor.name === 'CombatState' || unit.state.constructor.name === 'SleepState');
+                if (isFightingOrSleeping) {
+                    // Preemption allowed but penalized slightly?
+                    scorePenalty += 50;
                 }
 
-                if (finalScore < minDistSq) {
-                    minDistSq = finalScore;
+                // Distance Score
+                const dist = unit.getDistance(req.x, req.z);
+                const totalScore = dist + scorePenalty;
+
+                if (totalScore < minDistSq) {
+                    minDistSq = totalScore;
                     bestUnit = unit;
                 }
             }
 
-            // DEBUG LOG: Why is no one picked?
-            if (!bestUnit) {
-                console.log(`[Game] forceAssignRequest FAILED for Req ${req.id}. Scanned:${debugScanned} (RoleSkipped:${debugRole}) Busy:${debugBusy} Valid:${debugValid}. TotalUnits:${this.units.length}`);
-            } else {
-                console.log(`[Game] forceAssignRequest FOUND Unit ${bestUnit.id} (DistSq:${minDistSq}). Scanned:${debugScanned}`);
-            }
-
+            // Assign to best unit found
             if (bestUnit) {
-                // If bestUnit is already doing a Manual job, we ONLY switch if new req is MUCH closer (efficiency)
-                if (bestUnit.targetRequest && bestUnit.targetRequest.isManual) {
-                    let oldDx = Math.abs(bestUnit.gridX - bestUnit.targetRequest.x);
-                    let oldDz = Math.abs(bestUnit.gridZ - bestUnit.targetRequest.z);
-                    if (oldDx > logicalW / 2) oldDx = logicalW - oldDx;
-                    if (oldDz > logicalD / 2) oldDz = logicalD - oldDz;
-                    const oldDistSq = oldDx * oldDx + oldDz * oldDz;
-
-                    if (minDistSq > oldDistSq * 0.25) { // Switch only if 2x closer (4x distSq)
-                        return; // Stick to A
-                    }
-                }
-
-                if (this.claimRequest(bestUnit, req)) {
-                    console.log(`[Game] Request ${req.id} assigned/switched to Unit ${bestUnit.id}`);
-                }
+                this.claimRequest(bestUnit, req);
             }
+
         } catch (e) {
-            console.error("[Game] Assignment Error:", e);
+            console.error("[Game] assignRequestSync error:", e);
         }
     }
 
-    // Legacy method name support
+    // Legacy Alias
     forceAssignRequest(req) {
-        if (this.assignRequestSync) {
-            this.assignRequestSync(req);
-        } else {
-            console.warn("[Game] forceAssignRequest: assignRequestSync not found.");
-        }
+        this.assignRequestSync(req);
     }
 
     detectZombieRequests() {
@@ -870,7 +876,7 @@ export class Game {
         for (const req of this.requestQueue) {
             if (req.status === 'assigned' && req.assignedTo !== null) {
                 // Find unit
-                const u = this.units.find(unit => unit.id === req.assignedTo);
+                const u = this.units.find(unit => String(unit.id) === String(req.assignedTo));
 
                 // Zombie Case 1: Unit invalid/dead
                 if (!u || u.isDead) {
@@ -881,10 +887,9 @@ export class Game {
                     continue;
                 }
 
-                // Zombie Case 2: Unit forgot about request
                 // Zombie Case 2: Unit forgot about request (or ID mismatch)
                 // Use ID comparison because object references might differ after load
-                if (!u.targetRequest || u.targetRequest.id !== req.id) {
+                if (!u.targetRequest || String(u.targetRequest.id) !== String(req.id)) {
                     console.log(`[Game] Detected ZOMBIE Request req_${req.id} (Assigned to ${u.id}, but unit has ${u.targetRequest ? u.targetRequest.id : 'null'}). Resetting.`);
                     req.status = 'pending';
                     req.assignedTo = null;
@@ -897,27 +902,25 @@ export class Game {
 
 
     claimRequest(unit, req) {
-        if (!req || (req.status !== 'pending' && req.status !== 'assigned')) return false;
-        if (unit.role !== 'worker') return false;
+        if (!unit || !req) return false;
+        if (req.status === 'assigned' && String(req.assignedTo) === String(unit.id)) return true; // Already assigned
 
-        // IDEMPOTENCY CHECK: If already assigned to this unit, do nothing & confirm success
-        if (req.status === 'assigned' && req.assignedTo === unit.id && unit.targetRequest === req) {
-            return true;
+        // Global Cooldown Check (Double check for race conditions)
+        if (req.excludedUntil && req.excludedUntil > this.simTotalTimeSec) {
+            if (req.status === 'assigned' && String(req.assignedTo) === String(unit.id)) return true; // Already assigned
+            return false; // Cannot claim if excluded and not already assigned to this unit
         }
 
-        // 1. DETACH OLD OWNER (Safe Handoff)
-        if (req.status === 'assigned' && req.assignedTo !== unit.id) {
-            const oldUnit = this.units.find(u => u.id === req.assignedTo);
+        // 1. CLEAR OLD ASSIGNMENT (If snatching from someone else)
+        if (req.status === 'assigned' && req.assignedTo !== null) {
+            const oldUnit = this.units.find(u => String(u.id) === String(req.assignedTo));
             if (oldUnit) {
-                if (oldUnit.resetToDefaultState) {
-                    oldUnit.resetToDefaultState();
-                } else {
-                    oldUnit.targetRequest = null;
-                    oldUnit.isMoving = false;
-                    if (oldUnit.changeState) {
-                        const nextState = oldUnit.getDefaultState ? oldUnit.getDefaultState() : "Wander";
-                        oldUnit.changeState(nextState);
-                    }
+                oldUnit.targetRequest = null;
+                oldUnit.isMoving = false; // Stop moving towards stolen job
+                // If old unit was approaching, it should rethink.
+                if (oldUnit.changeState) {
+                    const nextState = oldUnit.getDefaultState ? oldUnit.getDefaultState() : "Wander";
+                    oldUnit.changeState(nextState);
                 }
             }
         }
@@ -950,9 +953,18 @@ export class Game {
         return true;
     }
 
+    deferRequest(req, durationSeconds) {
+        if (!req) return;
+        req.status = 'pending';
+        req.assignedTo = null;
+        req.excludedUntil = (this.simTotalTimeSec || 0) + durationSeconds;
+
+        console.log(`[Game] Request ${req.id} Deferred (Excluded) for ${durationSeconds}s until ${req.excludedUntil.toFixed(1)}`);
+    }
+
     releaseRequest(unit, req) {
         if (!req) return;
-        if (req.assignedTo === unit.id) {
+        if (String(req.assignedTo) === String(unit.id)) {
             req.assignedTo = null;
             if (req.status === 'assigned') {
                 req.status = 'pending';
@@ -1004,7 +1016,7 @@ export class Game {
 
             // 1. Release assigned unit
             if (req.assignedTo !== null && req.assignedTo !== undefined) {
-                const unit = this.units.find(u => u.id === req.assignedTo);
+                const unit = this.units.find(u => String(u.id) === String(req.assignedTo));
                 if (unit) {
                     unit.targetRequest = null;
                     if (unit.resetToDefaultState) {
@@ -1085,12 +1097,12 @@ export class Game {
                 const assigneeId = req.assignedTo;
                 // If ID is present, verify unit exists and knows about job
                 if (assigneeId !== null) {
-                    const unit = this.units.find(u => u.id === assigneeId);
+                    const unit = this.units.find(u => String(u.id) === String(assigneeId));
 
                     let isBroken = false;
                     if (!unit) isBroken = true; // Unit vanished
                     else if (unit.isDead) isBroken = true; // Unit dead
-                    else if (unit.targetRequest !== req) {
+                    else if (!unit.targetRequest || String(unit.targetRequest.id) !== String(req.id)) {
                         // Unit dropped job (e.g. interruption) without Releasing?
                         // Or unit has a different job?
                         isBroken = true;
@@ -1332,7 +1344,7 @@ export class Game {
             cz = this.camera.position.z;
         }
 
-        const viewRadius = 150; // Increased from 120 to provide buffer against renderer culling (120)
+        const viewRadius = this.viewRadius || 120; // Use configured radius (GameConfig.render.viewRadius)
 
         if (this.clippingPlanes) {
             this.clippingPlanes[0].constant = -(cx - viewRadius);
@@ -1484,15 +1496,23 @@ export class Game {
             this.simTotalTimeSec += deltaTime;
             const simTimeSec = this.simTotalTimeSec;
 
+            // パフォーマンス測定: 更新処理開始
+            if (this.performanceMonitor) this.performanceMonitor.startUpdate();
+
             try {
                 isNight = this.updateEnvironment(deltaTime);
                 this.updateSeasons(deltaTime);
                 if (this.terrain) {
+                    // Terrain.update() 内の updatePopulation() は house/barracks のみを更新
                     this.terrain.update(deltaTime, this.handleBuildingSpawn.bind(this), isNight);
-                    // NEW: Update all buildings (Population growth, repair, etc.)
+
+                    // CRITICAL: cave/goblin_hut は自律的に成長するため、個別に update() を呼ぶ必要がある
+                    // Terrain.updatePopulation() は house/barracks のみを処理するため
                     if (this.terrain.buildings) {
                         this.terrain.buildings.forEach(b => {
-                            if (b.update) b.update(simTimeSec, deltaTime);
+                            if (b.update && (b.type === 'cave' || b.type === 'goblin_hut')) {
+                                b.update(simTimeSec, deltaTime);
+                            }
                         });
                     }
                 }
@@ -1510,6 +1530,9 @@ export class Game {
             // --- BATTLE HOTSPOTS & MOBILIZATION ---
             this.updateBattleHotspots(deltaTime);
             this.updateSquadMobilization(deltaTime);
+
+            // パフォーマンス測定: 更新処理終了
+            if (this.performanceMonitor) this.performanceMonitor.endUpdate();
         } else {
             // Preview Mode: Just update lights/visuals sparingly
             if (this.terrain) {
@@ -1599,29 +1622,67 @@ export class Game {
         this.frameCount++;
 
         if (this.gameActive) {
-            // Staggered Unit Updates
-            const stagger = Math.max(1, Math.floor(4 / this.timeScale));
-            const parity = this.frameCount % stagger;
 
             try {
+                // Pre-calc camera position to avoid repetitive access
+                const camX = this.camera ? this.camera.position.x : 0;
+                const camZ = this.camera ? this.camera.position.z : 0;
+                const hasCamera = !!this.camera;
+
+                // Time Slicing Constants
+                const INTERVAL_NEAR = 2;   // 30 FPS (Every 2nd frame)
+                const INTERVAL_MID = 10;   // 6 FPS
+                const INTERVAL_FAR = 60;   // 1 FPS
+
+                const DIST_NEAR_SQ = 40 * 40; // 40 units
+                const DIST_FAR_SQ = 80 * 80;  // 80 units
+
                 for (let i = this.units.length - 1; i >= 0; i--) {
                     const unit = this.units[i];
+
                     // 1. Always Update Movement (Visuals)
+                    // Essential for smooth linear interpolation of position
                     if (unit.updateMovement) unit.updateMovement(this.simTotalTimeSec);
 
-                    // 2. Staggered Logic Update
-                    if (i % stagger === parity) {
+                    // 2. Dynamic Time-Sliced Logic Update
+                    let interval = INTERVAL_NEAR;
+                    if (hasCamera) {
+                        const dx = unit.position.x - camX;
+                        const dz = unit.position.z - camZ;
+                        const distSq = dx * dx + dz * dz;
+
+                        if (distSq > DIST_FAR_SQ) {
+                            interval = INTERVAL_FAR;
+                        } else if (distSq > DIST_NEAR_SQ) {
+                            interval = INTERVAL_MID;
+                        }
+                    }
+
+                    // Spread updates evenly using unit ID or index
+                    // (frameCount + i) ensure 1/N units update each frame
+                    if ((this.frameCount + i) % interval === 0) {
                         try {
-                            unit.updateLogic(this.simTotalTimeSec, deltaTime * stagger, isNight, this.goblinManager.goblins);
+                            // Scale deltaTime by interval to compensate for infrequent updates?
+                            // Logic usually relies on "total time" or "state duration", not integration.
+                            // But cooldowns (dt) need to be accumulated.
+                            // Unit.updateLogic(time, dt)
+                            // We should pass 'deltaTime * interval' so timers tick correctly.
+                            const logicDt = deltaTime * interval;
+
+                            unit.updateLogic(this.simTotalTimeSec, logicDt, isNight, this.goblinManager.goblins);
                         } catch (e) {
                             console.error("Unit Logic Error:", e, unit);
                         }
+
+                        // Dead checks only needed on logic updates
                         if (unit.isDead && unit.isFinished) {
                             this.units.splice(i, 1);
                         }
                     }
                 }
-            } catch (e) { console.error("Unit Loop Error:", e); }
+            } catch (e) {
+                console.error("Unit Loop Error:", e);
+            }
         }
 
         try {
@@ -1639,6 +1700,18 @@ export class Game {
                 // Removing this one.
             }
         } catch (e) { console.error("Manager Update Error:", e); }
+        if (this.controls && this.controls.enabled) this.controls.update();
+
+        // SKIP RENDERER UPDATES DURING LOADING
+        // This prevents heavy mesh rebuilding while data is being populated asynchronously
+        if (this.isLoading) {
+            this.renderer.render(this.scene, this.camera);
+            if (this.performanceMonitor) {
+                this.performanceMonitor.endRender();
+                this.performanceMonitor.update(this);
+            }
+            return;
+        }
 
         try {
             // ALWAYS update visual mesh position and lights for preview
@@ -1690,7 +1763,16 @@ export class Game {
             } catch (e) { console.error("GoblinRenderer Error:", e); }
         }
 
+        // パフォーマンス測定: レンダリング開始
+        if (this.performanceMonitor) this.performanceMonitor.startRender();
+
         this.renderer.render(this.scene, this.camera);
+
+        // パフォーマンス測定: レンダリング終了 & 更新
+        if (this.performanceMonitor) {
+            this.performanceMonitor.endRender();
+            this.performanceMonitor.update(this);
+        }
     }
 
     saveGame(slotId) {
@@ -1715,6 +1797,7 @@ export class Game {
                     z: req.z,
                     status: req.status,
                     assignedTo: req.assignedTo,
+                    assignedAt: req.assignedAt,
                     createdAt: req.createdAt,
                     isManual: req.isManual,
                 })),
@@ -1866,261 +1949,356 @@ export class Game {
         // Indicate Loading Start
         console.log("Load Started...");
 
-        // Small delay to let UI render (yield)
-        await new Promise(r => setTimeout(r, 50));
-
-        const saveData = this.saveManager.load(slotId);
-        if (!saveData) {
-            console.error("Load Game Failed: No data for slot", slotId);
-            if (loadingScreen) loadingScreen.style.display = 'none';
-            return false;
-        }
-        console.log("Load Game: Data found", saveData);
-
-        // Show UI
-        const ui = document.getElementById('ui');
-        if (ui) ui.style.display = 'flex';
-
-        // Reset Systems
-        if (this.goblinManager) this.goblinManager.reset();
-        this.clearProjectiles();
-
-        // FIX: Clear Request Queue and visual markers on load
-        if (this.requestQueue) {
-            this.requestQueue.forEach(req => {
-                if (req.mesh) {
-                    this.scene.remove(req.mesh);
-                    if (req.mesh.geometry) req.mesh.geometry.dispose();
-                    if (req.mesh.material) {
-                        const materials = Array.isArray(req.mesh.material) ? req.mesh.material : [req.mesh.material];
-                        materials.forEach(m => { if (m && typeof m.dispose === 'function') m.dispose(); });
-                    }
+        try {
+            // Time Slicing Yield Logic
+            let lastYieldTime = performance.now();
+            const checkYield = async () => {
+                if (performance.now() - lastYieldTime > 16) {
+                    await new Promise(r => setTimeout(r, 0));
+                    lastYieldTime = performance.now();
+                    return true;
                 }
-            });
-            this.requestQueue = [];
-        }
+                return false;
+            };
 
-        // FIX: Dispose old renderers to prevent "Ghost" meshes (duplicates)
-        if (this.buildingRenderer && this.buildingRenderer.dispose) this.buildingRenderer.dispose();
-        if (this.goblinRenderer && this.goblinRenderer.dispose) this.goblinRenderer.dispose();
-        if (this.unitRenderer && this.unitRenderer.dispose) this.unitRenderer.dispose();
+            // Small delay to let UI render (yield)
+            if (loadingText) loadingText.innerText = 'Reading Data...';
+            await new Promise(r => setTimeout(r, 50));
 
-        // Re-Initialize Renderers (Assets are cached, but meshes need fresh scene add?)
-        // Wait, if we dispose meshes, we need to RE-CREATE them.
-        // BuildingRenderer constructor calling initInstancedMeshes.
-        // But we are keeping the SAME instance of BuildingRenderer.
-        // So we must manually re-call helper to create new meshes!
-        // OR we just create NEW renderers?
-        // New renderers is safer as it resets internal state (counts).
-
-        this.buildingRenderer = new BuildingRenderer(this.scene, this.terrain, this.clippingPlanes);
-        this.goblinRenderer = new GoblinRenderer(this.scene, this.terrain, this.clippingPlanes);
-        // UnitRenderer might be needed too
-        this.unitRenderer = new UnitRenderer(this.scene, this.terrain, this.clippingPlanes);
-
-        // Re-link InputManager
-        if (this.inputManager) this.inputManager.unitRenderer = this.unitRenderer;
-
-        // Chunked / Async Deserialization to prevent freeze
-        console.log('[Game] Deserializing terrain...');
-        await this.terrain.deserialize(saveData.terrain, (pct) => {
-            if (loadingBar) loadingBar.style.width = pct + '%';
-            if (loadingText) loadingText.innerText = pct + '%';
-        });
-        console.log('[Game] Terrain deserialized.');
-
-        console.log('[Game] Loading resources/time...');
-        this.resources = saveData.resources || { grain: 0, fish: 0, meat: 0 };
-        this.gameTime = saveData.gameTime || 8;
-        this.gameTotalTime = saveData.gameTotalTime || 0;
-        this.simTotalTimeSec = this.gameTotalTime / 1000; // FIX: Sync runtime timer with saved time
-
-        console.log('[Game] Updating environment...');
-        // Immediate isNight update to ensure state consistency before unit logic runs
-        this.updateEnvironment(0);
-
-        // Restore Season
-        this.currentSeasonIndex = saveData.currentSeasonIndex || 0;
-        this.daysPassed = saveData.daysPassed || 0;
-
-        const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
-        this.season = SEASONS[this.currentSeasonIndex];
-        if (this.terrain) this.terrain.setSeason(this.season);
-
-        // Restore Units
-        if (this.units) {
-            this.units.forEach(u => {
-                if (u.dispose) u.dispose();
-                this.scene.remove(u.mesh);
-                if (u.crossMesh) this.scene.remove(u.crossMesh);
-            });
-        }
-        this.units = [];
-
-        if (saveData.units) {
-            console.log(`[Game] Restoring ${saveData.units.length} units...`);
-            try {
-                // Pre-import Unit to ensure availability if needed, mainly for reference. 
-                // It is imported at module level, so should be fine.
-                saveData.units.forEach(uData => {
-                    const u = Unit.deserialize(uData, this.scene, this.terrain);
-                    if (u) {
-                        this.units.push(u);
-                    }
-                });
-            } catch (e) { console.error("Unit restore failed:", e); }
-        }
-        console.log(`[Game] Successfully restored ${this.units.length} units.`);
-
-        // Restore Goblin Manager
-        if (this.goblinManager) {
-            if (saveData.goblinManager) {
-                this.goblinManager.deserialize(saveData.goblinManager);
-            } else {
-                this.goblinManager.scanForCaves();
+            const saveData = this.saveManager.load(slotId);
+            if (!saveData) {
+                console.error("Load Game Failed: No data for slot", slotId);
+                if (loadingScreen) loadingScreen.style.display = 'none';
+                return false;
             }
-        }
+            console.log("Load Game: Data found", saveData);
 
-        // Restore Requests (Persistent Instruction Markers)
-        if (saveData.requests) {
-            console.log(`[Game] Restoring ${saveData.requests.length} requests...`);
-            let maxId = 0;
-            saveData.requests.forEach(rData => {
-                // Parse ID
-                const parts = rData.id.split('_');
-                const idNum = parseInt(parts[parts.length - 1]);
-                if (!isNaN(idNum) && idNum > maxId) maxId = idNum;
+            if (loadingText) loadingText.innerText = 'Cleaning Up...';
+            // await checkYield(); // Let UI update 'Cleaning Up'
+            await new Promise(r => setTimeout(r, 16));
 
-                // Recreate Visual Mesh
-                let h = this.terrain.getTileHeight(rData.x, rData.z);
-                if (h === undefined || isNaN(h)) h = 10;
+            // Show UI
+            const ui = document.getElementById('ui');
+            if (ui) ui.style.display = 'flex';
 
-                const geometry = new THREE.CylinderGeometry(0.5, 0.5, 5, 16, 1, true);
+            // Reset Systems
+            if (this.goblinManager) this.goblinManager.reset();
+            this.clearProjectiles();
 
-                // Clone material with safety and color restoration
-                let material;
-                if (this.markerMaterial && this.markerMaterial.clone) {
-                    material = this.markerMaterial.clone();
-                    if (material.uniforms && material.uniforms.uColor) {
-                        const colorHex = (rData.status === 'completed') ? 0x00FF00 : 0xFFFF00;
-                        material.uniforms.uColor.value.setHex(colorHex);
+            // FIX: Clear Request Queue and visual markers on load
+            if (this.requestQueue) {
+                for (const req of this.requestQueue) {
+                    if (req.mesh) {
+                        this.scene.remove(req.mesh);
+                        if (req.mesh.geometry) req.mesh.geometry.dispose();
+                        if (req.mesh.material) {
+                            const materials = Array.isArray(req.mesh.material) ? req.mesh.material : [req.mesh.material];
+                            materials.forEach(m => { if (m && typeof m.dispose === 'function') m.dispose(); });
+                        }
+                    }
+                    await checkYield();
+                }
+                this.requestQueue = [];
+            }
+
+            // FIX: Dispose old renderers to prevent "Ghost" meshes (duplicates)
+            if (this.buildingRenderer && this.buildingRenderer.dispose) this.buildingRenderer.dispose();
+            if (this.goblinRenderer && this.goblinRenderer.dispose) this.goblinRenderer.dispose();
+            if (this.unitRenderer && this.unitRenderer.dispose) this.unitRenderer.dispose();
+
+            // Chunked / Async Deserialization to prevent freeze
+            console.log('[Game] Deserializing terrain...');
+            await this.terrain.deserialize(saveData.terrain, (pct) => {
+                const scaledPct = Math.floor(pct * 0.5); // 0% -> 50%
+                if (loadingBar) loadingBar.style.width = scaledPct + '%';
+                if (loadingText) loadingText.innerText = scaledPct + '%';
+            });
+
+            console.log('[Game] Terrain deserialized.');
+
+            if (loadingText) loadingText.innerText = 'Initializing Renderers...';
+            // await new Promise(r => setTimeout(r, 16));
+
+            if (loadingText) loadingText.innerText = 'Initializing Buildings...';
+            this.buildingRenderer = new BuildingRenderer(this.scene, this.terrain, this.clippingPlanes);
+            await this.buildingRenderer.init();
+
+            await checkYield();
+
+            if (loadingText) loadingText.innerText = 'Initializing Goblins...';
+            // FIX: Re-link GoblinManager renderer correctly and dispose old one
+            if (this.goblinManager && this.goblinManager.renderer && this.goblinManager.renderer.dispose) {
+                this.goblinManager.renderer.dispose();
+            }
+            this.goblinRenderer = new GoblinRenderer(this.scene, this.terrain, this.clippingPlanes);
+            await this.goblinRenderer.init();
+            if (this.goblinManager) this.goblinManager.renderer = this.goblinRenderer;
+
+            await checkYield();
+
+            if (loadingText) loadingText.innerText = 'Initializing Units...';
+            this.unitRenderer = new UnitRenderer(this.scene, this.terrain, this.clippingPlanes);
+            await this.unitRenderer.init();
+
+            await checkYield();
+
+            // Re-link InputManager
+            if (this.inputManager) this.inputManager.unitRenderer = this.unitRenderer;
+
+            // Terrain Finished (~50%) -> Jump to 60% (Rebuild Mesh overhead)
+            if (loadingBar) loadingBar.style.width = '60%';
+            if (loadingText) loadingText.innerText = '60%';
+            await checkYield();
+
+            console.log('[Game] Loading resources/time...');
+            this.resources = saveData.resources || { grain: 0, fish: 0, meat: 0 };
+            this.gameTime = saveData.gameTime || 8;
+            this.gameTotalTime = saveData.gameTotalTime || 0;
+            this.simTotalTimeSec = this.gameTotalTime / 1000; // FIX: Sync runtime timer with saved time
+
+            console.log('[Game] Updating environment...');
+            // Immediate isNight update to ensure state consistency before unit logic runs
+            this.updateEnvironment(0);
+            await checkYield();
+
+            // Restore Season
+            this.currentSeasonIndex = saveData.currentSeasonIndex || 0;
+            this.daysPassed = saveData.daysPassed || 0;
+
+            const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
+            this.season = SEASONS[this.currentSeasonIndex];
+            if (this.terrain) this.terrain.setSeason(this.season);
+            await checkYield();
+
+            // Restore Units
+            if (this.units) {
+                this.units.forEach(u => {
+                    if (u.dispose) u.dispose();
+                    this.scene.remove(u.mesh);
+                    if (u.crossMesh) this.scene.remove(u.crossMesh);
+                });
+            }
+            this.units.length = 0; // Clear instead of replace reference
+
+            if (saveData.units) {
+                console.log(`[Game] Restoring ${saveData.units.length} units...`);
+                try {
+                    // Batch Restore Units
+                    const totalUnits = saveData.units.length;
+                    for (let i = 0; i < totalUnits; i++) {
+                        // Time-based Yield
+                        if (await checkYield()) {
+                            // 60% -> 80%
+                            const progress = 60 + Math.floor((i / totalUnits) * 20);
+                            if (loadingBar) loadingBar.style.width = progress + '%';
+                            if (loadingText) loadingText.innerText = progress + '%';
+                        }
+
+                        const uData = saveData.units[i];
+                        const u = Unit.deserialize(uData, this.scene, this.terrain);
+                        if (u) {
+                            this.units.push(u);
+                        }
+                    }
+                } catch (e) { console.error("CRITICAL Unit restore failed:", e); throw e; }
+            }
+            console.log(`[Game] Successfully restored ${this.units.length} units.`);
+
+            // Restore Goblin Manager
+            if (this.goblinManager) {
+                if (saveData.goblinManager) {
+                    this.goblinManager.deserialize(saveData.goblinManager);
+
+                    // Diagnostic: Verify no Units in Goblin array
+                    const mixedUnits = this.goblinManager.goblins.filter(g => g.type === 'unit' || g.role);
+                    if (mixedUnits.length > 0) {
+                        console.error(`[DIAGNOSTIC] Transformation Error Detected! ${mixedUnits.length} Units found in Goblin Manager!`, mixedUnits);
                     }
                 } else {
-                    console.warn("[Game] Warning: markerMaterial missing on Load. Using fallback.");
-                    material = new THREE.MeshBasicMaterial({ color: 0xFFFF00, transparent: true, opacity: 0.8 });
+                    this.goblinManager.scanForCaves();
                 }
-
-                const mesh = new THREE.Mesh(geometry, material);
-                mesh.renderOrder = 2000; // CRITICAL: Ensure visibility over terrain
-                mesh.position.set(rData.x, h + 2, rData.z);
-                this.scene.add(mesh);
-
-                const req = {
-                    id: rData.id,
-                    type: rData.type,
-                    x: rData.x,
-                    z: rData.z,
-                    status: rData.status,
-                    assignedTo: rData.assignedTo,
-                    createdAt: rData.createdAt || Date.now(),
-                    // BACKWARD COMPATIBILITY: 
-                    // If isManual matches, good. If missing (legacy save), auto-detect based on type.
-                    isManual: (rData.isManual !== undefined) ? !!rData.isManual : ['raise', 'lower', 'flatten', 'wall', 'door'].includes(rData.type),
-                    mesh: mesh
-                };
-                this.requestQueue.push(req);
-            });
-
-            // Update ID Counter
-            this.requestIdCounter = Math.max(this.requestIdCounter, maxId + 1);
-        }
-
-        // RE-LINK UNITS (Restoration)
-        if (this.units) {
-            let maxUnitId = -1;
-            this.units.forEach(u => {
-                if (u.id > maxUnitId) maxUnitId = u.id;
-
-                // Link HomeBase
-                if (u.savedHomeBaseX !== undefined) {
-                    const hb = this.terrain.getBuildingAt(u.savedHomeBaseX, u.savedHomeBaseZ);
-                    if (hb) u.homeBase = hb;
-                }
-
-                // Link Request (Persistent)
-                if (u.savedTargetRequestId) {
-                    // Type-safe comparison using String() to handle JSON string/number mismatch
-                    const req = this.requestQueue.find(r => String(r.id) === String(u.savedTargetRequestId));
-                    if (req) {
-                        u.targetRequest = req;
-                        console.log(`[Game] Re-linked Unit ${u.id} to Request ${req.id}`);
-
-                        // Fix Status
-                        if (req.status === 'pending') req.status = 'assigned';
-                        // Typed comparison: stringify for safety or use loose equality
-                        if (String(req.assignedTo) !== String(u.id)) {
-                            console.log(`[Game] Correcting Request ownership for ${req.id} ( ${req.assignedTo} -> ${u.id} )`);
-                            req.assignedTo = u.id;
-                        }
-
-                        // Force Action Reset and STATE transition so StateMachine (JobState) picks it up
-                        u.action = 'Going to Work';
-                        if (u.changeState && typeof JobState !== 'undefined') {
-                            u.changeState(new JobState(u));
-                        }
-                    } else {
-                        u.targetRequest = null;
-                    }
-                    u.savedTargetRequestId = null;
-                }
-            });
-
-            // Restore Unit ID Counter
-            Unit.nextId = maxUnitId + 1;
-
-            // SANITY CHECK: Reset requests that are 'assigned' but owner is missing/mismatched
-            this.requestQueue.forEach(req => {
-                if (req.status === 'assigned') {
-                    const owner = this.units.find(u => String(u.id) === String(req.assignedTo));
-                    if (!owner || owner.targetRequest !== req) {
-                        console.log(`[Game] Ghost Assignment Cleaned: Request ${req.id} (assigned to ${req.assignedTo}) reset to pending.`);
-                        req.status = 'pending';
-                        req.assignedTo = null;
-                    }
-                }
-            });
-        }
-
-        // Restore Camera
-        if (saveData.camera) {
-            this.camera.position.set(saveData.camera.position.x, saveData.camera.position.y, saveData.camera.position.z);
-
-            if (this.controls) {
-                this.controls.target.set(saveData.camera.target.x, saveData.camera.target.y, saveData.camera.target.z);
-                this.controls.update();
             }
 
-            // Set zoom AFTER controls update to ensure it sticks
-            // Fallback to 1.0 if missing
-            const restoredZoom = (saveData.camera.zoom !== undefined) ? saveData.camera.zoom : 1.0;
-            this.camera.zoom = restoredZoom;
-            this.camera.updateProjectionMatrix();
-            console.log(`[Game] Restored Camera Zoom: ${restoredZoom}`);
+            // Restore Requests (Persistent Instruction Markers)
+            if (saveData.requests) {
+                // FORCE RESET to prevent duplicates if user clicked during async load
+                this.requestQueue.length = 0;
+                console.log(`[Game] Restoring ${saveData.requests.length} requests...`);
+                let maxId = 0;
+                const totalReqs = saveData.requests.length;
+
+                for (let i = 0; i < totalReqs; i++) {
+                    if (await checkYield()) {
+                        // 80% -> 90%
+                        const progress = 80 + Math.floor((i / totalReqs) * 10);
+                        if (loadingBar) loadingBar.style.width = progress + '%';
+                        if (loadingText) loadingText.innerText = progress + '%';
+                    }
+
+                    const rData = saveData.requests[i];
+
+                    // Parse ID
+                    const parts = rData.id.split('_');
+                    const idNum = parseInt(parts[parts.length - 1]);
+                    if (!isNaN(idNum) && idNum > maxId) maxId = idNum;
+
+                    // Recreate Visual Mesh
+                    let h = this.terrain.getTileHeight(rData.x, rData.z);
+                    if (h === undefined || isNaN(h)) h = 10;
+
+                    const geometry = new THREE.CylinderGeometry(0.5, 0.5, 5, 16, 1, true);
+
+                    // Clone material with safety and color restoration
+                    let material;
+                    if (this.markerMaterial && this.markerMaterial.clone) {
+                        material = this.markerMaterial.clone();
+                        if (material.uniforms && material.uniforms.uColor) {
+                            const colorHex = (rData.status === 'completed') ? 0x00FF00 : 0xFFFF00;
+                            material.uniforms.uColor.value.setHex(colorHex);
+                        }
+                        material.clippingPlanes = this.clippingPlanes;
+                    } else {
+                        console.warn("[Game] Warning: markerMaterial missing on Load. Using fallback.");
+                        material = new THREE.MeshBasicMaterial({ color: 0xFFFF00, transparent: true, opacity: 0.8 });
+                    }
+
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.renderOrder = 2000; // CRITICAL: Ensure visibility over terrain
+                    mesh.position.set(rData.x, h + 2, rData.z);
+                    this.scene.add(mesh);
+
+                    const req = {
+                        id: rData.id,
+                        type: rData.type,
+                        x: rData.x,
+                        z: rData.z,
+                        status: rData.status,
+                        assignedTo: rData.assignedTo,
+                        assignedAt: rData.assignedAt || ((rData.status === 'assigned') ? ((this.gameTotalTime || 0) / 1000) : undefined),
+                        createdAt: rData.createdAt || Date.now(),
+                        // BACKWARD COMPATIBILITY: 
+                        // If isManual matches, good. If missing (legacy save), auto-detect based on type.
+                        isManual: (rData.isManual !== undefined) ? !!rData.isManual : ['raise', 'lower', 'flatten', 'wall', 'door', 'build_tower', 'build_barracks', 'build_farm', 'build_house', 'migration'].includes(rData.type),
+                        mesh: mesh
+                    };
+                    this.requestQueue.push(req);
+                }
+
+                // Update ID Counter
+                this.requestIdCounter = Math.max(this.requestIdCounter, maxId + 1);
+            }
+
+            // RE-LINK UNITS (Restoration)
+            if (this.units) {
+                let maxUnitId = -1;
+                this.units.forEach(u => {
+                    if (u.id > maxUnitId) maxUnitId = u.id;
+
+                    // Link HomeBase
+                    if (u.savedHomeBaseX !== undefined) {
+                        const hb = this.terrain.getBuildingAt(u.savedHomeBaseX, u.savedHomeBaseZ);
+                        if (hb) u.homeBase = hb;
+                    }
+
+                    // Link Request (Persistent)
+                    if (u.savedTargetRequestId) {
+                        // Type-safe comparison using String() to handle JSON string/number mismatch
+                        const req = this.requestQueue.find(r => String(r.id) === String(u.savedTargetRequestId));
+                        if (req) {
+                            // CONFLICT CHECK: Prevent multiple units from claiming the same job
+                            if (req.assignedTo && String(req.assignedTo) !== String(u.id)) {
+                                const currentOwner = this.units.find(un => String(un.id) === String(req.assignedTo));
+                                if (currentOwner) {
+                                    console.warn(`[Game] Conflict: Unit ${u.id} tried to claim Job ${req.id}, but it is already owned by ${currentOwner.id}. Yielding to owner.`);
+                                    u.targetRequest = null;
+                                    u.savedTargetRequestId = null;
+                                    // Unit remains in WanderState (set by Unit.deserialize)
+                                    return; // Skip linking
+                                }
+                            }
+
+                            u.targetRequest = req;
+                            console.log(`[Game] Re-linked Unit ${u.id} to Request ${req.id}`);
+
+                            // Fix Status
+                            if (req.status === 'pending') req.status = 'assigned';
+                            // Typed comparison: stringify for safety or use loose equality
+                            if (String(req.assignedTo) !== String(u.id)) {
+                                console.log(`[Game] Correcting Request ownership for ${req.id} ( ${req.assignedTo} -> ${u.id} )`);
+                                req.assignedTo = u.id;
+                            }
+
+                            // Force Action Reset and STATE transition so StateMachine (JobState) picks it up
+                            u.action = 'Going to Work';
+                            if (u.changeState && typeof JobState !== 'undefined') {
+                                u.changeState(new JobState(u));
+                            }
+                        } else {
+                            u.targetRequest = null;
+                        }
+                        u.savedTargetRequestId = null;
+                    }
+                });
+
+                // Restore Unit ID Counter
+                Unit.nextId = maxUnitId + 1;
+
+                // SANITY CHECK: Reset requests that are 'assigned' but owner is missing/mismatched
+                this.requestQueue.forEach(req => {
+                    if (req.status === 'assigned') {
+                        const owner = this.units.find(u => String(u.id) === String(req.assignedTo));
+                        if (!owner || !owner.targetRequest || String(owner.targetRequest.id) !== String(req.id)) {
+                            console.log(`[Game] Ghost Assignment Cleaned: Request ${req.id} (assigned to ${req.assignedTo}) reset to pending.`);
+                            req.status = 'pending';
+                            req.assignedTo = null;
+                        }
+                    }
+                });
+            }
+
+            // Restore Camera
+            if (saveData.camera) {
+                this.camera.position.set(saveData.camera.position.x, saveData.camera.position.y, saveData.camera.position.z);
+
+                if (this.controls) {
+                    this.controls.target.set(saveData.camera.target.x, saveData.camera.target.y, saveData.camera.target.z);
+                    this.controls.update();
+                }
+
+                // Set zoom AFTER controls update to ensure it sticks
+                // Fallback to 1.0 if missing
+                const restoredZoom = (saveData.camera.zoom !== undefined) ? saveData.camera.zoom : 1.0;
+                this.camera.zoom = restoredZoom;
+                this.camera.updateProjectionMatrix();
+                console.log(`[Game] Restored Camera Zoom: ${restoredZoom}`);
+            }
+
+            // Hide Loading Screen
+            if (loadingScreen) {
+                if (loadingBar) loadingBar.style.width = '100%';
+                if (loadingText) loadingText.innerText = '100%';
+
+                // Small delay for 100% check
+                await new Promise(r => setTimeout(r, 200));
+                loadingScreen.style.display = 'none';
+            }
+
+            // Force one render update to verify state
+            if (this.buildingRenderer) this.buildingRenderer.forceUpdate = true;
+
+            // Resume Engine
+            this.isLoading = false;
+            this.gameActive = true;
+            this.lastTime = performance.now();
+            return true;
+
+        } catch (e) {
+            console.error("Critical Load Error:", e);
+            if (loadingScreen) loadingScreen.style.display = 'none';
+            alert("Load Failed: " + e.message);
+            this.gameActive = true; // Ensure game is not stuck in paused state
+            return false;
         }
-
-        // Hide Loading Screen
-        if (loadingScreen) {
-            if (loadingBar) loadingBar.style.width = '100%';
-            if (loadingText) loadingText.innerText = '100%';
-
-            // Small delay for 100% check
-            await new Promise(r => setTimeout(r, 200));
-            loadingScreen.style.display = 'none';
-        }
-
-        this.gameActive = true;
-        this.lastTime = performance.now();
-        return true;
     }
 
     // --- SQUAD MANAGEMENT ---
@@ -2133,7 +2311,7 @@ export class Game {
             target: null, // {x, z, time}
             lastUpdate: this.simTotalTimeSec || 0
         });
-        console.log(`[Game] Registered Squad ${id} (${type})`);
+        // console.log(`[Game] Registered Squad ${id} (${type})`);
         return id;
     }
 

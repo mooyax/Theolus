@@ -36,6 +36,8 @@ if (typeof window !== 'undefined') {
 // Minimal Mocks
 const mockScene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
 const mockTerrain = {
+    findBestTarget: vi.fn(() => null),
+    findPathAsync: vi.fn().mockResolvedValue([{ x: 10, z: 10 }, { x: 20, z: 20 }]),
     getTileHeight: () => 10,
     gridToWorld: (x) => x, // Simplification
     getVisualOffset: () => ({ x: 0, y: 0 }),
@@ -62,6 +64,8 @@ const mockTerrain = {
         return best;
     },
     findPath: (sx, sz, ex, ez) => [{ x: ex, z: ez }], // Mock linear path
+    findPathAsync: (sx, sz, ex, ez) => Promise.resolve([{ x: ex, z: ez }]),
+    isReachable: () => true,
     pathfindingCalls: 0
 };
 
@@ -101,8 +105,15 @@ describe('Goblin Aggression Bug', () => {
         };
     });
 
-    it('should find target, chase, and attack', () => {
+    it('should find target, chase, and attack', async () => {
         console.log('[Test] START Goblin Aggression');
+
+        // Mock findBestTarget to return unitTarget regardless of list
+        mockTerrain.findBestTarget = vi.fn((type, x, z, rad) => {
+            const d = Math.sqrt((unitTarget.gridX - x) ** 2 + (unitTarget.gridZ - z) ** 2);
+            if (d <= rad) return unitTarget;
+            return null;
+        });
 
         // 1. Initial State: Wander
         expect(goblin.state.constructor.name).toBe('GoblinWanderState');
@@ -123,6 +134,12 @@ describe('Goblin Aggression Bug', () => {
         // Should move
         console.log('[Test] Chasing...');
         goblin.updateLogic(0, 0.1, [unitTarget], []); // Calling Logic which calls State.update which calls updateCombatLogic
+
+        // Allow async pathfinding to resolve
+        await new Promise(resolve => setTimeout(resolve, 0));
+
+        // Force update to process path
+        goblin.updateLogic(0.1, 0.1);
 
         // Check if moving
         expect(goblin.isMoving).toBe(true);

@@ -51,7 +51,7 @@ vi.mock('three', () => {
         Points: class { constructor() { this.position = new Vector3(); } },
         PointsMaterial: class { },
         DoubleSide: 2,
-        Plane: class { }
+        Plane: class { clone() { return new this.constructor(); } }
     };
 });
 

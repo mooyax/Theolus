@@ -29,6 +29,7 @@ describe('Night Manual Work Priority', () => {
             registerEntity: vi.fn(),
             moveEntity: vi.fn(),
             findPath: vi.fn((sx, sz, ex, ez) => [{ x: ex, z: ez }]),
+            findPathAsync: vi.fn((sx, sz, ex, ez) => Promise.resolve([{ x: ex, z: ez }])),
             pathfindingCalls: 0,
             isReachable: vi.fn(() => true),
             buildings: []

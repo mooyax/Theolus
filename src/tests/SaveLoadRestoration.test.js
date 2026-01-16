@@ -28,16 +28,16 @@ global.Image = class { constructor() { this.onload = null; } };
 
 vi.mock('../SoundManager.js', () => ({ SoundManager: class { play() { } } }));
 vi.mock('../InputManager.js', () => ({ InputManager: class { update() { } updateCursor() { } } }));
-vi.mock('../GoblinManager.js', () => ({ GoblinManager: class { update() { } reset() { } scanForCaves() { } serialize() { return {}; } deserialize() { } } }));
+vi.mock('../GoblinManager.js', () => ({ GoblinManager: class { constructor() { this.goblins = []; } update() { } reset() { } scanForCaves() { } serialize() { return {}; } deserialize() { } } }));
 vi.mock('../CloudManager.js', () => ({ CloudManager: class { update() { } draw() { } } }));
 vi.mock('../BirdManager.js', () => ({ BirdManager: class { update() { } draw() { } } }));
 vi.mock('../SheepManager.js', () => ({ SheepManager: class { update() { } draw() { } } }));
 vi.mock('../FishManager.js', () => ({ FishManager: class { update() { } draw() { } } }));
 vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } } }));
 vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
-vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { update() { } dispose() { } } }));
-vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { update() { } updateLighting() { } dispose() { } } }));
-vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { update() { } dispose() { } } }));
+vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { update() { } dispose() { } init() { } } }));
+vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { update() { } updateLighting() { } dispose() { } init() { } } }));
+vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { update() { } dispose() { } init() { } } }));
 
 vi.mock('three', async () => {
     const actual = await vi.importActual('three');

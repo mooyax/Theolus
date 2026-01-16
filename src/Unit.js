@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { Actor } from './Actor.js';
 import { WanderState } from './ai/states/State.js';
 import { UnitWanderState, JobState, CombatState, SleepState } from './ai/states/UnitStates.js';
+import GameConfig from './config/GameConfig.json';
 
 export class Unit extends Actor {
     static assets = {
@@ -12,99 +13,117 @@ export class Unit extends Actor {
     };
     static nextId = 0;
 
-    static initAssets() {
-        if (Unit.assets.initialized) return;
+    static async initAssets(checkYield, updateStatus) {
+        if (Unit.assets.initialized) {
+            return;
+        }
+        if (Unit.assets.initializing) {
+            // Wait for existing initialization if needed, or just return
+            return;
+        }
+        Unit.assets.initializing = true;
+
+        console.log("[Unit] Starting initAssets...");
+
+        // Yield Helper (Force Yield if supported)
+        const yieldOp = async (label) => {
+            console.log(`[Unit] Yielding: ${label || ''}`);
+            if (checkYield) await checkYield(true);
+            console.log(`[Unit] Resumed: ${label || ''}`);
+        };
+
+        if (updateStatus) updateStatus("Initializing Units (Geometries)...");
 
         // Geometries
-        // Geometries (Reverted to Cute/Chibi proportions)
-        const bodyGeo = new THREE.BoxGeometry(0.3, 0.35, 0.2);
-        bodyGeo.translate(0, 0.3, 0); // Center height ~0.3
-        Unit.assets.geometries.body = bodyGeo;
+        try {
+            console.log("[Unit] Creating Geometries...");
+            const bodyGeo = new THREE.BoxGeometry(0.3, 0.35, 0.2);
+            bodyGeo.translate(0, 0.3, 0); // Center height ~0.3
+            Unit.assets.geometries.body = bodyGeo;
 
-        const headGeo = new THREE.BoxGeometry(0.25, 0.25, 0.25);
-        headGeo.translate(0, 0.6, 0);
-        Unit.assets.geometries.head = headGeo;
+            const headGeo = new THREE.BoxGeometry(0.25, 0.25, 0.25);
+            headGeo.translate(0, 0.6, 0);
+            Unit.assets.geometries.head = headGeo;
 
-        // Face Plane (Separate mesh to allow independent tinting of Hair/Helmet vs Face)
-        const faceGeo = new THREE.PlaneGeometry(0.2, 0.2);
-        faceGeo.translate(0, 0.6, 0.126); // Slightly in front of Head Box (Z=0.125)
-        Unit.assets.geometries.facePlane = faceGeo;
+            // Face Plane (Separate mesh to allow independent tinting of Hair/Helmet vs Face)
+            const faceGeo = new THREE.PlaneGeometry(0.2, 0.2);
+            faceGeo.translate(0, 0.6, 0.126); // Slightly in front of Head Box (Z=0.125)
+            Unit.assets.geometries.facePlane = faceGeo;
 
-        const limbGeo = new THREE.BoxGeometry(0.1, 0.25, 0.1);
-        limbGeo.translate(0, -0.1, 0); // Pivot at top
-        Unit.assets.geometries.limb = limbGeo;
+            const limbGeo = new THREE.BoxGeometry(0.1, 0.25, 0.1);
+            limbGeo.translate(0, -0.1, 0); // Pivot at top
+            Unit.assets.geometries.limb = limbGeo;
 
-        // Sword (Blade + Hilt joined? No, simple box for chibi)
-        // Blade: 0.05 x 0.4 x 0.05
-        const swordGeo = new THREE.BoxGeometry(0.05, 0.5, 0.05);
-        swordGeo.translate(0, 0.25, 0); // Handle at bottom
-        Unit.assets.geometries.sword = swordGeo;
+            // Sword (Blade + Hilt joined? No, simple box for chibi)
+            // Blade: 0.05 x 0.4 x 0.05
+            const swordGeo = new THREE.BoxGeometry(0.05, 0.5, 0.05);
+            swordGeo.translate(0, 0.25, 0); // Handle at bottom
+            Unit.assets.geometries.sword = swordGeo;
 
-        // Staff (Long pole)
-        const staffGeo = new THREE.BoxGeometry(0.05, 0.8, 0.05);
-        staffGeo.translate(0, 0, 0); // Center held
-        Unit.assets.geometries.staff = staffGeo;
+            // Staff (Long pole)
+            const staffGeo = new THREE.BoxGeometry(0.05, 0.8, 0.05);
+            staffGeo.translate(0, 0, 0); // Center held
+            Unit.assets.geometries.staff = staffGeo;
+        } catch (e) {
+            console.error("[Unit] Error creating geometries:", e);
+        }
 
-        // Wizard Hat (Cone + Brim)
-        // Brim: Cylinder thin
-        const brimGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.02, 16);
-        brimGeo.translate(0, 0, 0);
-        // Cone
-        const coneGeo = new THREE.ConeGeometry(0.15, 0.4, 16);
-        coneGeo.translate(0, 0.2, 0);
+        await yieldOp("After Geometries");
+        if (updateStatus) updateStatus("Initializing Units (Hats)...");
 
-        // Merge for simple instancing? Or kept separate?
-        // Let's merge for single draw call per hat
-        // Requires BufferGeometryUtils which might not be imported here?
-        // Unit.js imports THREE.
-        // Let's just use Cone for now for simplicity or complex if imported.
-        // Actually Unit.js doesn't import Utils.
-        // Let's use two meshes in Renderer or just the Cone for now?
-        // User asked for "Gandalf like". Needs brim.
-        // We will define them separate and render separate or use a Group logic?
-        // InstancedMesh supports one Geometry.
-        // We will just define `wizardHat` as the Cone part and `wizardHatBrim`?
-        // Or we can construct a merged geometry manually if simple?
-        // Let's stick to simple: Just a tall Cone for now, maybe add brim later if needed or modify `UnitRenderer` to handle multi-part hat.
-        // Wait, I can't merge easily without util.
-        // Let's define `hat` as just the Cone for now, but wide base.
-        const hatGeo = new THREE.ConeGeometry(0.2, 0.5, 16);
-        hatGeo.translate(0, 0.25, 0);
-        Unit.assets.geometries.wizardHat = hatGeo;
+        try {
+            console.log("[Unit] Creating Hats...");
+            // Wizard Hat (Cone + Brim)
+            // Brim: Cylinder thin
+            const brimGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.02, 16);
+            brimGeo.translate(0, 0, 0);
+            // Cone
+            const coneGeo = new THREE.ConeGeometry(0.15, 0.4, 16);
+            coneGeo.translate(0, 0.2, 0);
 
-        // Brim (Separate for Renderer to handle? Or renderer renders 2 parts?)
-        const hatBrimGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.02, 16);
-        Unit.assets.geometries.wizardHatBrim = hatBrimGeo;
+            const hatGeo = new THREE.ConeGeometry(0.2, 0.5, 16);
+            hatGeo.translate(0, 0.25, 0);
+            Unit.assets.geometries.wizardHat = hatGeo;
 
-        // Job Indicator (!) - Top Cylinder and Bottom Dot
-        const indicatorTopGeo = new THREE.CylinderGeometry(0.04, 0.02, 0.25, 8);
-        indicatorTopGeo.translate(0, 0.15, 0);
-        Unit.assets.geometries.jobIndicatorTop = indicatorTopGeo;
+            const hatBrimGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.02, 16);
+            Unit.assets.geometries.wizardHatBrim = hatBrimGeo;
 
-        const indicatorDotGeo = new THREE.SphereGeometry(0.04, 8, 8);
-        indicatorDotGeo.translate(0, -0.05, 0);
-        Unit.assets.geometries.jobIndicatorDot = indicatorDotGeo;
+            // Job Indicator (!) - Top Cylinder and Bottom Dot
+            const indicatorTopGeo = new THREE.CylinderGeometry(0.04, 0.02, 0.25, 8);
+            indicatorTopGeo.translate(0, 0.15, 0);
+            Unit.assets.geometries.jobIndicatorTop = indicatorTopGeo;
+
+            const indicatorDotGeo = new THREE.SphereGeometry(0.04, 8, 8);
+            indicatorDotGeo.translate(0, -0.05, 0);
+            Unit.assets.geometries.jobIndicatorDot = indicatorDotGeo;
+        } catch (e) { console.error("[Unit] Error creating hats:", e); }
+
+        await yieldOp("After Hats");
+        if (updateStatus) updateStatus("Initializing Units (Materials)...");
 
         // Materials
-        // Standard
-        Unit.assets.materials.skin = new THREE.MeshStandardMaterial({ color: 0xffccaa, roughness: 0.8 });
-        Unit.assets.materials.clothes = new THREE.MeshStandardMaterial({ color: 0x885533, roughness: 1.0 });
-        Unit.assets.materials.tool = new THREE.MeshStandardMaterial({ color: 0x555555, metalness: 0.5 });
-        Unit.assets.materials.hat = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 1.0 });
+        try {
+            console.log("[Unit] Creating Materials...");
+            Unit.assets.materials.skin = new THREE.MeshStandardMaterial({ color: 0xffccaa, roughness: 0.8 });
+            Unit.assets.materials.clothes = new THREE.MeshStandardMaterial({ color: 0x885533, roughness: 1.0 });
+            Unit.assets.materials.tool = new THREE.MeshStandardMaterial({ color: 0x555555, metalness: 0.5 });
+            Unit.assets.materials.hat = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 1.0 });
 
-        // Knight Materials
-        Unit.assets.materials.armor = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.8, roughness: 0.2 });
-        Unit.assets.materials.helmet = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.9, roughness: 0.1 });
+            // Knight Materials
+            Unit.assets.materials.armor = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.8, roughness: 0.2 });
+            Unit.assets.materials.helmet = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.9, roughness: 0.1 });
 
-        // Wizard Materials
-        // Wizard Materials
-        Unit.assets.materials.robe = new THREE.MeshStandardMaterial({ color: 0x444499, roughness: 1.0 });
-        Unit.assets.materials.wizardHat = new THREE.MeshStandardMaterial({ color: 0x333388, roughness: 1.0 });
+            // Wizard Materials
+            Unit.assets.materials.robe = new THREE.MeshStandardMaterial({ color: 0x444499, roughness: 1.0 });
+            Unit.assets.materials.wizardHat = new THREE.MeshStandardMaterial({ color: 0x333388, roughness: 1.0 });
 
-        // New Item Materials
-        Unit.assets.materials.metal = new THREE.MeshStandardMaterial({ color: 0xDDDDDD, metalness: 0.9, roughness: 0.2 });
-        Unit.assets.materials.wood = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 0.9 });
-        Unit.assets.materials.darkMagic = new THREE.MeshStandardMaterial({ color: 0x330033, roughness: 1.0 });
+            // New Item Materials
+            Unit.assets.materials.metal = new THREE.MeshStandardMaterial({ color: 0xDDDDDD, metalness: 0.9, roughness: 0.2 });
+            Unit.assets.materials.wood = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 0.9 });
+            Unit.assets.materials.darkMagic = new THREE.MeshStandardMaterial({ color: 0x330033, roughness: 1.0 });
+        } catch (e) { console.error("[Unit] Error creating materials:", e); }
+
+        await yieldOp("After Materials");
 
         // Red indicator for (!)
         Unit.assets.materials.redIndicator = new THREE.MeshStandardMaterial({
@@ -116,16 +135,25 @@ export class Unit extends Actor {
         });
 
         // Faces & Textures
-        Unit.assets.textures.face = Unit.createFaceTexture();
-        Unit.assets.materials.face = new THREE.MeshStandardMaterial({ map: Unit.assets.textures.face, transparent: true });
+        if (updateStatus) updateStatus("Initializing Units (Textures)...");
+        try {
+            console.log("[Unit] Creating Face Texture...");
+            Unit.assets.textures.face = Unit.createFaceTexture();
+            Unit.assets.materials.face = new THREE.MeshStandardMaterial({ map: Unit.assets.textures.face, transparent: true });
 
-        Unit.assets.textures.hair = Unit.createHairTexture();
-        // Use Lambert to match body lighting and prevent 'Standard' material darkening
-        Unit.assets.materials.hair = new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair, transparent: true });
+            await yieldOp("After Face Texture");
+
+            if (updateStatus) updateStatus("Initializing Units (Hair)...");
+            console.log("[Unit] Creating Hair Texture...");
+            Unit.assets.textures.hair = Unit.createHairTexture();
+            // Use Lambert to match body lighting and prevent 'Standard' material darkening
+            Unit.assets.materials.hair = new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair, transparent: true });
+        } catch (e) { console.error("[Unit] Error creating textures:", e); }
 
         Unit.assets.materials.heads = null; // Deprecated (Split meshes)
 
         Unit.assets.initialized = true;
+        console.log("[Unit] initAssets Complete.");
     }
 
     static createFaceTexture() {
@@ -156,6 +184,7 @@ export class Unit extends Actor {
 
     constructor(scene, terrain, x, z, role, isSpecial = false, squadId = null) {
         super(scene, terrain, x, z, 'unit');
+
 
         // Remove manual ID (Use Entity's if standardized, or keep manual overlap?)
         // UnitMain initialized ID manually. Entity does too.
@@ -206,40 +235,60 @@ export class Unit extends Actor {
             rightLeg: { x: 0 }
         };
 
+        // Stats from Config
+        let statConfig = GameConfig.units[this.role];
+        if (!statConfig) statConfig = GameConfig.units.worker;
+
+        // Base HP
+        let baseHp = GameConfig.units.worker.hp; // Default Base
+        if (statConfig.hpMultiplier) baseHp *= statConfig.hpMultiplier;
+        else if (statConfig.hp) baseHp = statConfig.hp;
+
+        // Variance
+        this.hp = baseHp + Math.floor(Math.random() * 15);
+
+        // Special Unit Handling
+        if (this.isSpecial && statConfig.specialMultiplier) {
+            const sm = statConfig.specialMultiplier;
+            if (sm.hp) this.hp = Math.floor(this.hp * sm.hp);
+        }
+        this.maxHp = this.hp;
+
+        this.attackCooldown = 0;
+        this.attackRate = statConfig.attackRate || 1.0;
+
+        // Damage
+        let baseDamage = GameConfig.units.worker.damage;
+        if (statConfig.damageMultiplier) {
+            this.damage = Math.floor(baseDamage * statConfig.damageMultiplier);
+        } else if (statConfig.damage) {
+            this.damage = statConfig.damage;
+        } else {
+            this.damage = baseDamage;
+        }
+
+        if (this.isSpecial && statConfig.specialMultiplier && statConfig.specialMultiplier.damage) {
+            this.damage = Math.floor(this.damage * statConfig.specialMultiplier.damage);
+        }
+
+        this.targetGoblin = null;
+        this.targetRaidPoint = null; // Fix: Initialize to null
+
         // Lifespan
-        // Reverted to original lifespan (50-80 sim seconds)
-        // With staggered update (half speed), this is ~2-3 mins real time.
-        // Special Unit = 6-9 mins.
-        // User Request: Lifespan 80-100 years.
-        // Aging Rate remains same (Worker=1yr/s, Soldier=1yr/10s).
-        const baseLifespan = 80 + Math.random() * 20;
+        // Lifespan
+        // Lifespan
+        const variance = Math.random() * (statConfig.lifespanVariance || 0);
+        let baseLifespan = (statConfig.lifespanBase || 80) + variance;
+
+        if (this.isSpecial && statConfig.specialMultiplier && statConfig.specialMultiplier.lifespan) {
+            baseLifespan *= statConfig.specialMultiplier.lifespan;
+        }
         this.lifespan = baseLifespan;
 
         this.age = 20; // Starts at 20 years old
-        this.isSleeping = false;
-        this.isNight = false; // Sync flag for states
         this.isDead = false;
-        this.isMoving = false; // Entity base normally sets this, but be sure
-        this.debugFrame = 0; // Initialize for logic gatesr)
-        this.hp = 50 + Math.floor(Math.random() * 15); // BUFF: 35->50 (Avg 57)
-        this.maxHp = this.hp;
-        this.attackCooldown = 0;
-        this.attackRate = 1.0;
-        this.damage = 12; // BUFF: 8 -> 12 (3-shot Goblins)
-        this.targetGoblin = null;
+        this.isSleeping = false; // Missing flag init?
 
-        // Stats Overrides
-        if (this.role === 'knight') {
-            this.hp *= 20; // BUFF: 15x -> 20x (Base ~40 -> 800 HP)
-            this.maxHp = this.hp;
-            this.damage *= 25; // 100 Dmg (Definitely 1-shot Normal Goblin)
-        } else if (this.role === 'wizard') {
-            this.hp *= 3; // Buffed (40x3 = 120) - Strong enough to survive
-            this.maxHp = this.hp;
-            this.damage *= 20; // 80 Dmg (1-shot Normal, 2-shot Hob)
-            this.attackRate = 2.0; // Slower attack? Or faster? "Multi-target"
-            // Range handled in logic
-        }
 
         this.updatePosition();
 
@@ -559,7 +608,7 @@ export class Unit extends Actor {
 
 
 
-    checkSelfDefense(passedGoblins) {
+    checkSelfDefense(passedGoblins, force = false) {
         // --- TARGET SCANNING (From Legacy Logic) ---
 
         // Priority: Calculate Best Target (Goblin vs Building)
@@ -583,18 +632,20 @@ export class Unit extends Actor {
             scanInterval = 300; // 5 seconds commitment
         }
 
-        const forceScan = (this.scanTimer > scanInterval);
+        const forceScan = force || (this.scanTimer > scanInterval);
 
         // Logic: Scan if Idle OR Invalid Target OR Force Scan... UNLESS Worker is Working
         let shouldScan = (!isBusy || (!hasValidGoblin && !hasValidBuilding) || forceScan);
-        if (this.role === 'worker' && this.targetRequest) shouldScan = false;
+
+        // WORKER PACIFISM: Only scan if forced (periodic) or if specific override
+        if (this.role === 'worker' && this.targetRequest && !forceScan) shouldScan = false;
 
         // Jitabata Fix: Prevent jitter during Reinforcing/Migration unless forced
         if ((this.action === 'Reinforcing' || this.action === 'Migrating' || this.migrationTarget) && !forceScan) return false;
 
         // OPTIMIZATION: Time Slicing (Load Balancing)
         // Spread checks across frames based on ID to prevent spikes
-        const frame = (window.game && window.game.frameCounter) ? window.game.frameCounter : 0;
+        const frame = (window.game && window.game.frameCount) ? window.game.frameCount : 0;
         if (!forceScan && (frame + this.id) % 20 !== 0) {
             // Skip check this frame (check only ~3 times per second at 60fps)
             // Unless we are Knight/Wizard (check more often?) -> Knights maybe every 10 frames
@@ -620,73 +671,99 @@ export class Unit extends Actor {
             // Fetch Goblins from Global Manager if available
             const goblins = passedGoblins || (window.game && window.game.goblinManager ? window.game.goblinManager.goblins : []);
 
-            // 1. Scan Goblins
-            if (goblins) {
-                const maxDist = (this.role === 'knight' || this.role === 'wizard') ? 50 : 15;
+            // 1. Scan Goblins (Optimized with Spatial Partitioning)
+            const maxDist = (this.role === 'knight' || this.role === 'wizard') ? 50 : 15;
 
-                for (const g of goblins) {
-                    if (g.isDead) continue;
-                    if (this.ignoredTargets.has(g.id)) continue;
+            // Use findBestTarget to avoid O(N) loop over all goblins
+            const foundGoblin = this.terrain.findBestTarget('goblin', this.gridX, this.gridZ, maxDist, (g, dist) => {
+                if (g.isDead) return Infinity;
+                if (this.ignoredTargets.has(g.id)) return Infinity;
 
-                    const d = this.getDistance(g.gridX, g.gridZ);
+                // User Rule: Strict Reachability Check (Regions MUST match)
+                const myCell = (this.terrain.grid[this.gridX] && this.terrain.grid[this.gridX][this.gridZ]);
+                const gCell = (this.terrain.grid[g.gridX] && this.terrain.grid[g.gridX][g.gridZ]);
 
-                    // Strict Region Check
-                    const myRegion = (this.terrain.grid[this.gridX] && this.terrain.grid[this.gridX][this.gridZ]) ? this.terrain.grid[this.gridX][this.gridZ].regionId : 1;
-                    const gRegion = (this.terrain.grid[g.gridX] && this.terrain.grid[g.gridX][g.gridZ]) ? this.terrain.grid[g.gridX][g.gridZ].regionId : 1;
+                if (myCell && gCell) {
+                    const myRegion = myCell.regionId;
+                    const gRegion = gCell.regionId;
 
-                    if (myRegion !== gRegion) {
-                        if (d > 2.5) continue;
-                    }
-
-                    // Relaxed Range for Current Target (Stickiness)
-                    let limit = maxDist;
-                    if (g.id === currentTargetId) limit = maxDist * 2.0;
-
-                    if (d > limit) continue;
-
-                    // HEIGHT CHECK
-                    const myH = this.terrain.getTileHeight(this.gridX, this.gridZ);
-                    const targetH = this.terrain.getTileHeight(g.gridX, g.gridZ);
-                    if (Math.abs(myH - targetH) > 10.0) continue;
-
-                    let h = 0;
-                    // Safe Height Check
-                    if (this.terrain.getTileHeight) h = this.terrain.getTileHeight(g.gridX, g.gridZ);
-
-                    let score = d - 1000.0; // Base priority for Goblins (High)
-                    if (h > 8) score += 20;
-
-                    // Sticky Bonus
-                    if (g.id === currentTargetId) score -= 500.0;
-
-                    if (score < bestScore) {
-                        bestScore = score;
-                        bestTarget = { type: 'goblin', obj: g };
-                    }
+                    if (myRegion > 0 && gRegion > 0 && myRegion !== gRegion) return Infinity;
+                    if ((myRegion === 0 && gRegion > 0) || (myRegion > 0 && gRegion === 0)) return Infinity;
                 }
+
+                // Relaxed Range for Current Target (Stickiness)
+                let limit = maxDist;
+                if (g.id === currentTargetId) limit = maxDist * 2.0;
+
+                if (dist > limit) return Infinity;
+
+                // HEIGHT CHECK
+                const myH = this.terrain.getTileHeight(this.gridX, this.gridZ);
+                const targetH = this.terrain.getTileHeight(g.gridX, g.gridZ);
+                if (Math.abs(myH - targetH) > 10.0) return Infinity;
+
+                let score = dist - 1000.0; // Base priority for Goblins
+
+                // Height Penalty (Attacking uphill)
+                if (targetH > 8) score += 20;
+
+                // Sticky Bonus
+                if (g.id === currentTargetId) score -= 500.0;
+
+                return score;
+            }, goblins);
+
+            if (foundGoblin) {
+                // Recalculate score for the found goblin to set as baseline
+                const d = this.getDistance(foundGoblin.gridX, foundGoblin.gridZ);
+                let score = d - 1000.0;
+                const h = this.terrain.getTileHeight(foundGoblin.gridX, foundGoblin.gridZ);
+                if (h > 8) score += 20;
+                if (foundGoblin.id === currentTargetId) score -= 500.0;
+
+                bestScore = score;
+                bestTarget = { type: 'goblin', obj: foundGoblin };
             }
 
-            // 2. Scan Buildings
-            if (this.terrain.buildings) {
-                const range = (this.role === 'knight' || this.role === 'wizard') ? Infinity : 10;
-                for (const b of this.terrain.buildings) {
-                    if (this.role === 'worker' && b.userData.type !== 'goblin_hut' && b.userData.type !== 'cave') continue;
-                    if (b.userData.type === 'goblin_hut' || b.userData.type === 'cave') {
-                        if (b.userData && b.userData.hp <= 0) continue;
-                        if (this.ignoredTargets.has(b.id)) continue;
-                        const d = this.getDistance(b.gridX, b.gridZ);
-                        if (d > range) continue;
+            // 2. Scan Buildings (Optimized)
+            // Only scan if we care about buildings (Worker or Knight/Wizard)
+            // Pass specific check logic
+            const range = (this.role === 'knight' || this.role === 'wizard') ? 50 : 10; // Capped range for spatial search
 
-                        let score = d - 5.0; // Lower priority than goblins (-1000)
-                        if (b.id === currentTargetId) score -= 500.0; // Sticky Bonus
+            const foundBuilding = this.terrain.findBestTarget('building', this.gridX, this.gridZ, range, (b, dist) => {
+                if (this.role === 'worker' && b.userData.type !== 'goblin_hut' && b.userData.type !== 'cave') return Infinity;
+                if (b.userData.type !== 'goblin_hut' && b.userData.type !== 'cave') return Infinity; // Only target enemy buildings
 
-                        if (d < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 2000.0; // Sieging Logic Override
+                if (b.userData && b.userData.hp <= 0) return Infinity;
+                if (this.ignoredTargets.has(b.id)) return Infinity;
 
-                        if (score < bestScore) {
-                            bestScore = score;
-                            bestTarget = { type: 'building', obj: b };
-                        }
-                    }
+                if (dist > range) return Infinity;
+
+                let score = dist - 5.0;
+                if (b.id === currentTargetId) score -= 500.0;
+
+                if (dist < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 2000.0;
+
+                // Worker Priority for Close Buildings
+                if (dist < 4.0 && this.role === 'worker') {
+                    score -= 2000.0;
+                }
+
+                // Prioritize finding it, but real comparison is against bestScore
+                return score;
+            }, (passedGoblins ? null : this.terrain.buildings));
+
+            if (foundBuilding) {
+                // Recalculate score to compare with Goblin
+                const dist = this.getDistance(foundBuilding.gridX, foundBuilding.gridZ);
+                let score = dist - 5.0;
+                if (foundBuilding.id === currentTargetId) score -= 500.0;
+                if (dist < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 2000.0;
+                if (dist < 4.0 && this.role === 'worker') score -= 2000.0;
+
+                if (score < bestScore) {
+                    bestScore = score;
+                    bestTarget = { type: 'building', obj: foundBuilding };
                 }
             }
 
@@ -711,11 +788,21 @@ export class Unit extends Actor {
             }
         }
 
+        // 2 Scan for Buildings (Caves / Huts) if no goblin target
+        if (!this.targetGoblin && shouldScan) {
+            const scanRange = (this.role === 'worker') ? 15 : 40;
+            this.findTargetBuilding(scanRange);
+        }
+
         // Return true if we have a valid target to engage
         return (!!this.targetGoblin || !!this.targetBuilding);
     }
 
-
+    // New Helper for Aggressive Chain
+    findNextEnemy() {
+        // Force a self-defense check immediately, bypassing time slicing
+        return this.checkSelfDefense(null, true);
+    }
 
     searchForHut(x, z) {
         // Wrapper for finding nearby buildings. 
@@ -835,7 +922,7 @@ export class Unit extends Actor {
             const now = window.game.simTotalTimeSec || 0;
             // Find closest reachable hotspot
             let bestSpot = null;
-            let minD = Infinity;
+            let minScore = Infinity;
 
             for (const spot of window.game.battleHotspots) {
                 if (now - spot.time > 30) continue; // Skip old (30s)
@@ -858,13 +945,26 @@ export class Unit extends Actor {
                             proxyFound = true;
                         }
                     }
-                    if (!proxyFound) continue; // Truly unreachable
+                    if (!proxyFound) {
+                        continue; // Truly unreachable
+                    }
                 }
 
                 if (d < 2.0) continue; // Already there
 
-                if (d < minD) {
-                    minD = d;
+                // HYSTERESIS: Stickiness for current target
+                let score = d;
+                if (this.targetRaidPoint) {
+                    const dx = this.targetRaidPoint.x - targetX;
+                    const dz = this.targetRaidPoint.z - targetZ;
+                    // If target is effectively the same as current, give it a big bonus
+                    if (Math.abs(dx) < 1.0 && Math.abs(dz) < 1.0) {
+                        score -= 15.0;
+                    }
+                }
+
+                if (score < minScore) {
+                    minScore = score;
                     bestSpot = { x: targetX, z: targetZ };
                 }
             }
@@ -888,7 +988,7 @@ export class Unit extends Actor {
         }
 
         let nearest = null;
-        let minDist = Infinity;
+        let minScore = Infinity;
 
         memories.forEach(p => {
             let targetX = p.x;
@@ -930,8 +1030,18 @@ export class Unit extends Actor {
                 }
             }
 
-            if (dist < minDist) {
-                minDist = dist;
+            // HYSTERESIS: Stickiness
+            let score = dist;
+            if (this.targetRaidPoint) {
+                const dx = this.targetRaidPoint.x - targetX;
+                const dz = this.targetRaidPoint.z - targetZ;
+                if (Math.abs(dx) < 1.0 && Math.abs(dz) < 1.0) {
+                    score -= 15.0;
+                }
+            }
+
+            if (score < minScore) {
+                minScore = score;
                 nearest = { x: targetX, z: targetZ };
             }
         });
@@ -1000,7 +1110,7 @@ export class Unit extends Actor {
 
         // OPTIMIZATION: Time Slicing
         // Use a different modulo offset than checkSelfDefense to avoid CPU spikes in same frame
-        const frame = (window.game && window.game.frameCounter) ? window.game.frameCounter : 0;
+        const frame = (window.game && window.game.frameCount) ? window.game.frameCount : 0;
         if ((frame + this.id + 5) % 20 !== 0) {
             // Check only rarely
             // If Knight/Wizard, slightly more often?
@@ -1099,26 +1209,44 @@ export class Unit extends Actor {
 
 
     patrol(time) {
-        // Go to a random building to "guard" it, or just wander if none
+        // IMPROVEMENT: Use persistent patrol target to prevent wandering
+
+        // 1. Check if we already have a patrol target
+        if (this.patrolTarget) {
+            const dist = this.getDistance(this.patrolTarget.x, this.patrolTarget.z);
+            if (dist < 3.0) {
+                // Arrived. Chill for a bit, then pick new.
+                this.patrolTimer = (this.patrolTimer || 0) + 1;
+
+                // If waited long enough, pick new
+                if (this.patrolTimer > 100) { // ~1.5s - 3s
+                    this.patrolTarget = null;
+                    this.patrolTimer = 0;
+                } else {
+                    // Just idle or look around
+                    if (Math.random() < 0.05) this.moveRandomly(time);
+                    return;
+                }
+            } else {
+                // Keep moving to target
+                // Throttle triggers to avoid spam? smartMove handles it.
+                this.triggerMove(this.patrolTarget.x, this.patrolTarget.z, time);
+                return;
+            }
+        }
+
+        // 2. Pick new target if none
         if (this.terrain.buildings && this.terrain.buildings.length > 0) {
             // Pick random building
             const r = Math.floor(Math.random() * this.terrain.buildings.length);
             const b = this.terrain.buildings[r];
 
-            // Go near it
-            // Don't go INSIDE, go next to it.
-            // Simple: Target its location.
-            // Dist check?
-            const dx = Math.abs(this.gridX - b.gridX);
-            const dz = Math.abs(this.gridZ - b.gridZ);
+            this.patrolTarget = { x: b.gridX, z: b.gridZ };
+            this.patrolTimer = 0;
 
-            // If already near, wander locally
-            if (dx < 5 && dz < 5) {
-                this.moveRandomly(time);
-            } else {
-                this.triggerMove(b.gridX, b.gridZ, time);
-            }
+            this.triggerMove(b.gridX, b.gridZ, time);
         } else {
+            // Fallback if no buildings
             this.moveRandomly(time);
         }
     }
@@ -1207,7 +1335,8 @@ export class Unit extends Actor {
         } else {
             // Blocked / Failed
             // Unit specific stuck handling
-            if (!this.isMoving) {
+            // FIX: Do not count as stuck if we are waiting for async pathfinding or throttled
+            if (!this.isMoving && !this.isPathfinding && !this.isPathfindingThrottled) {
                 this.stuckCount = (this.stuckCount || 0) + 1;
                 // Only give up after significant failures (e.g. 10 frames of blockage)
                 // This prevents giving up on transient collisions, but ensures we eventually drop unreachable targets.
@@ -1216,6 +1345,7 @@ export class Unit extends Actor {
                 }
             }
         }
+        return moved;
     }
 
     handleStuck() {
@@ -1440,13 +1570,32 @@ export class Unit extends Actor {
         let nearest = null;
         let minScore = Infinity;
 
-        const maxDist = (this.role === 'knight' || this.role === 'wizard') ? 50 : 15;
+        // User Rule: Check 8-tile radius first
+        const maxDist = 8.0;
+        // Note: Soldiers might have larger vision (e.g. 50), but for "Reaction Improvement" 
+        // to prevent sluggishness/stuckness, we focus on immediate threats first.
+        // Actually, if we restrict to 8, Archers won't shoot far?
+        // User said: "Check 8 tiles... IF found...". 
+        // Does this mean "Only engage if < 8"? 
+        // Soldiers should probably engage further if they can path. 
+        // BUT for the "Sluggishness" fix, let's prioritize < 8.
+        // If Role is Knight/Wizard, keep long range but ENFORCE reachability.
+
+        const effectiveRange = (this.role === 'knight' || this.role === 'wizard') ? 50 : 8;
 
         for (const goblin of goblins) {
             if (goblin.isDead) continue;
             if (this.ignoredTargets && this.ignoredTargets.has(goblin.id)) continue;
 
-            // Region Check (CRITICAL FIX)
+            // 1. Distance Check FIRST (Optimization & Logic)
+            const dx = this.gridX - goblin.gridX;
+            const dz = this.gridZ - goblin.gridZ;
+            const dist = Math.sqrt(dx * dx + dz * dz);
+
+            if (dist > effectiveRange) continue;
+
+            // 2. Reachability Check (Region)
+            // User Rule: "If found, check Region Map... if path exists -> Combat. Else ignore."
             const myCell = this.terrain.grid[this.gridX][this.gridZ];
             const targetCell = this.terrain.grid[goblin.gridX][goblin.gridZ];
 
@@ -1454,28 +1603,20 @@ export class Unit extends Actor {
                 const myRegion = myCell.regionId;
                 const targetRegion = targetCell.regionId;
 
-                if (myRegion > 0) {
-                    // Land-to-Land: Must match
-                    if (targetRegion !== myRegion) continue;
-                } else {
-                    // Water-to-Land: Strictly Forbidden (Blindness)
-                    // Prevents "Seeing Island from Shore"
-                    if (targetRegion > 0) continue;
+                // Strict Reachability: Regions MUST match for land-to-land
+                if (myRegion > 0 && targetRegion > 0 && myRegion !== targetRegion) {
+                    continue; // Ignore unreachable (opposite bank)
+                }
+                // Water-to-Land (0 vs >0) is also unreachable for melee
+                if ((myRegion === 0 && targetRegion > 0) || (myRegion > 0 && targetRegion === 0)) {
+                    continue;
                 }
             }
 
-            const dx = this.gridX - goblin.gridX;
-            const dz = this.gridZ - goblin.gridZ;
-            const dist = Math.sqrt(dx * dx + dz * dz);
-
-            if (dist > maxDist) continue;
-
+            // Scoring (Prioritize High Threat or Close)
             const targetH = this.terrain.getTileHeight(goblin.gridX, goblin.gridZ);
             let score = dist;
-
-            if (targetH > 8) {
-                score += 20.0;
-            }
+            if (targetH > 8) score += 20.0; // Penalty for high ground
 
             if (score < minScore) {
                 minScore = score;
@@ -1518,14 +1659,11 @@ export class Unit extends Actor {
         }
     }
 
+    // cleanIgnoredTargets removed (Deprecated)
     cleanIgnoredTargets(time) {
-        if (!this.ignoredTargets) return;
-        for (const [id, expiry] of this.ignoredTargets) {
-            if (time > expiry) {
-                this.ignoredTargets.delete(id);
-            }
-        }
+        // No-op
     }
+
 
 
     // updatePosition inherited from Entity
@@ -1652,6 +1790,7 @@ export class Unit extends Actor {
             return; // Stop logic if dead
         }
 
+        // 1. State Machine (Priority)
         // 1. State Machine (Priority)
         if (this.state) {
             this.state.update(time, deltaTime, isNight, goblins);
@@ -2062,32 +2201,22 @@ export class Unit extends Actor {
     }
 
     static deserialize(data, scene, terrain) {
-        const type = data.type || data.role || (data.isSpecial ? 'knight' : 'worker'); // Fallback logic
-        const unit = new Unit(scene, terrain, data.gridX, data.gridZ, type, data.isSpecial);
+        // FIX: Prioritize role over type ('unit') to prevent worker-transformation bug
+        const role = data.role || data.type || (data.isSpecial ? 'knight' : 'worker');
+        const unit = new Unit(scene, terrain, data.gridX, data.gridZ, role, data.isSpecial);
+
         unit.id = (data.id !== undefined) ? Number(data.id) : unit.id; // Restore ID as Number
         unit.age = data.age || 20;
 
         // Restore State Properties
-        // We must override the default state set by constructor if needed
-        // Assuming default constructor sets WanderState which makes isMoving=false
-
-        if (data.isMoving) {
-            unit.isMoving = true;
-        }
-
         if (data.moveDuration) {
             unit.moveDuration = data.moveDuration;
         }
-
-
 
         if (typeof data.lifespan === 'number' && data.lifespan > 0) {
             unit.lifespan = data.lifespan;
         }
 
-        if (data.lifespan) unit.lifespan = data.lifespan;
-
-        unit.isDead = data.isDead || false;
         unit.isDead = data.isDead || false;
         unit.isFinished = data.isFinished || false;
 
@@ -2096,7 +2225,6 @@ export class Unit extends Actor {
         if (data.maxHp !== undefined) unit.maxHp = data.maxHp;
         if (data.damage !== undefined) unit.damage = data.damage;
         if (data.xp !== undefined) unit.xp = data.xp;
-        if (data.level !== undefined) unit.level = data.level;
         if (data.level !== undefined) unit.level = data.level;
         if (data.name !== undefined) unit.name = data.name;
 
@@ -2135,14 +2263,23 @@ export class Unit extends Actor {
         }
 
         // STATE RESTORATION
+        // STATE RESTORATION
         const actionStr = (unit.action || "Idle").toLowerCase();
-        if (actionStr.includes('job') || actionStr.includes('work')) {
-            unit.changeState(new JobState(unit));
-        } else if (actionStr.includes('fight') || actionStr.includes('combat')) {
+        // FIX: Do NOT restore JobState here. Game.js handles linking and starting JobState safely.
+        // Starting it here would create a temporary "broken" state (no targetRequest linked yet).
+
+        if (actionStr.includes('fight') || actionStr.includes('combat')) {
+            // For combat, we might still be risky if target isn't valid, but keeping for now.
+            // Ideally Game.js should handle all interactions.
             unit.changeState(new CombatState(unit));
         } else if (actionStr.includes('sleep')) {
             unit.changeState(new SleepState(unit));
+        } else if (unit.savedTargetRequestId || actionStr.includes('job') || actionStr.includes('work') || actionStr.includes('approaching')) {
+            // FIX for LoadUpdateLoop: Restore JobState immediately if we have a request ID or job-like action
+            // This prevents the unit from falling back to WanderState and losing its assignment.
+            unit.changeState(new JobState(unit));
         } else {
+            // Default to Wander for Jobs too, until Game.js upgrades it to JobState
             unit.changeState(new UnitWanderState(unit));
         }
 

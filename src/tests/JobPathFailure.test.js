@@ -31,6 +31,7 @@ describe('Job Pathfinding Failure Handling', () => {
     beforeEach(() => {
         const mockScene = { add: vi.fn(), getObjectByName: vi.fn().mockReturnValue({ add: vi.fn(), remove: vi.fn(), children: [] }) };
         const mockTerrain = {
+            findBestTarget: vi.fn(() => null),
             getTileHeight: vi.fn().mockReturnValue(10),
             logicalWidth: 100, logicalDepth: 100,
             grid: Array(100).fill(0).map(() => Array(100).fill(0).map(() => ({ regionId: 1, hasBuilding: false }))),
@@ -43,6 +44,7 @@ describe('Job Pathfinding Failure Handling', () => {
             removeBuilding: vi.fn(),
             isReachable: vi.fn().mockReturnValue(true),
             findPath: vi.fn().mockImplementation(() => [{ x: 20, z: 0 }]), // Fix: Return fresh array each call to avoid mutation issues
+            findPathAsync: vi.fn().mockImplementation(() => Promise.resolve([{ x: 20, z: 0 }])),
             findClosestReachablePoint: vi.fn().mockReturnValue(null),
             getRegion: vi.fn().mockReturnValue(1),
             getRandomPassablePointInRegion: vi.fn().mockReturnValue({ x: 5, z: 5 }),
@@ -69,7 +71,7 @@ describe('Job Pathfinding Failure Handling', () => {
         vi.clearAllMocks();
     });
 
-    it('should abandon job if smartMove fails repeatedly', () => {
+    it('should abandon job if smartMove fails repeatedly', async () => {
         // Mock Unit prototype canMoveTo to FORCE FAIL (simulate blockage)
         // Must be before changeState because enter() calls update -> smartMove!
         vi.spyOn(Unit.prototype, 'canMoveTo').mockReturnValue(false);

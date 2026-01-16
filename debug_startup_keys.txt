@@ -1,0 +1,324 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/StartupCrash.test.js[2m > [22m[2mStartup Crash Verification[2m > [22m[2mUnitRenderer should initialize without null materials
+[22m[39m[UnitRenderer] Step 1: Meshes 1/4 start
+[UnitRenderer] Creating Torso/Head
+[UnitRenderer] HeadMesh created: [33mtrue[39m
+
+[90mstdout[2m | src/tests/StartupCrash.test.js[2m > [22m[2mStartup Crash Verification
+[22m[39m[Test] Renderer Keys: [
+  [32m'scene'[39m,            [32m'terrain'[39m,
+  [32m'clippingPlanes'[39m,   [32m'maxInstances'[39m,
+  [32m'dummy'[39m,            [32m'whiteMat'[39m,
+  [32m'initialized'[39m,      [32m'torsoMesh'[39m,
+  [32m'headMesh'[39m,         [32m'faceMesh'[39m,
+  [32m'leftArmMesh'[39m,      [32m'rightArmMesh'[39m,
+  [32m'leftLegMesh'[39m,      [32m'rightLegMesh'[39m,
+  [32m'swordMesh'[39m,        [32m'visorMesh'[39m,
+  [32m'staffMesh'[39m,        [32m'hatMesh'[39m,
+  [32m'hatBrimMesh'[39m,      [32m'indicatorTopMesh'[39m,
+  [32m'indicatorDotMesh'[39m, [32m'_scratchVector'[39m,
+  [32m'_scratchSphere'[39m,   [32m'_up'[39m,
+  [32m'_neighborOffsets'[39m
+]
+[Test] Renderer Constructor: UnitRenderer
+[Test] renderer.headMesh: [36m<ref *1>[39m InstancedMesh {
+  isObject3D: [33mtrue[39m,
+  uuid: [32m'590480d5-2a43-437c-9179-184087a08a78'[39m,
+  name: [32m''[39m,
+  type: [32m'Mesh'[39m,
+  parent: Scene {
+    isObject3D: [33mtrue[39m,
+    uuid: [32m'6a00421e-8564-4931-b02b-6ef7b3657d1f'[39m,
+    name: [32m''[39m,
+    type: [32m'Scene'[39m,
+    parent: [1mnull[22m,
+    children: [
+      [36m[InstancedMesh][39m, [36m[Circular *1][39m,
+      [36m[InstancedMesh][39m, [36m[InstancedMesh][39m,
+      [36m[InstancedMesh][39m, [36m[InstancedMesh][39m,
+      [36m[InstancedMesh][39m, [36m[InstancedMesh][39m,
+      [36m[InstancedMesh][39m, [36m[InstancedMesh][39m,
+      [36m[InstancedMesh][39m, [36m[InstancedMesh][39m,
+      [36m[InstancedMesh][39m, [36m[InstancedMesh][39m
+    ],
+    up: Vector3 { x: [33m0[39m, y: [33m1[39m, z: [33m0[39m },
+    position: Vector3 { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m },
+    rotation: Euler {
+      isEuler: [33mtrue[39m,
+      _x: [33m0[39m,
+      _y: [33m0[39m,
+      _z: [33m0[39m,
+      _order: [32m'XYZ'[39m,
+      _onChangeCallback: [36m[Function: onRotationChange][39m
+    },
+    quaternion: Quaternion {
+      isQuaternion: [33mtrue[39m,
+      _x: [33m0[39m,
+      _y: [33m0[39m,
+      _z: [33m0[39m,
+      _w: [33m1[39m,
+      _onChangeCallback: [36m[Function: onQuaternionChange][39m
+    },
+    scale: Vector3 { x: [33m1[39m, y: [33m1[39m, z: [33m1[39m },
+    matrix: Matrix4 { elements: [36m[Array][39m },
+    matrixWorld: Matrix4 { elements: [36m[Array][39m },
+    matrixAutoUpdate: [33mtrue[39m,
+    matrixWorldAutoUpdate: [33mtrue[39m,
+    matrixWorldNeedsUpdate: [33mfalse[39m,
+    layers: Layers { mask: [33m1[39m },
+    visible: [33mtrue[39m,
+    castShadow: [33mfalse[39m,
+    receiveShadow: [33mfalse[39m,
+    frustumCulled: [33mtrue[39m,
+    renderOrder: [33m0[39m,
+    animations: [],
+    customDepthMaterial: [90mundefined[39m,
+    customDistanceMaterial: [90mundefined[39m,
+    userData: {},
+    isScene: [33mtrue[39m,
+    background: [1mnull[22m,
+    environment: [1mnull[22m,
+    fog: [1mnull[22m,
+    backgroundBlurriness: [33m0[39m,
+    backgroundIntensity: [33m1[39m,
+    backgroundRotation: Euler { isEuler: [33mtrue[39m, _x: [33m0[39m, _y: [33m0[39m, _z: [33m0[39m, _order: [32m'XYZ'[39m },
+    environmentIntensity: [33m1[39m,
+    environmentRotation: Euler { isEuler: [33mtrue[39m, _x: [33m0[39m, _y: [33m0[39m, _z: [33m0[39m, _order: [32m'XYZ'[39m },
+    overrideMaterial: [1mnull[22m
+  },
+  children: [],
+  up: Vector3 { x: [33m0[39m, y: [33m1[39m, z: [33m0[39m },
+  position: Vector3 { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m },
+  rotation: Euler {
+    isEuler: [33mtrue[39m,
+    _x: [33m0[39m,
+    _y: [33m0[39m,
+    _z: [33m0[39m,
+    _order: [32m'XYZ'[39m,
+    _onChangeCallback: [36m[Function: onRotationChange][39m
+  },
+  quaternion: Quaternion {
+    isQuaternion: [33mtrue[39m,
+    _x: [33m0[39m,
+    _y: [33m0[39m,
+    _z: [33m0[39m,
+    _w: [33m1[39m,
+    _onChangeCallback: [36m[Function: onQuaternionChange][39m
+  },
+  scale: Vector3 { x: [33m1[39m, y: [33m1[39m, z: [33m1[39m },
+  matrix: Matrix4 {
+    elements: [
+      [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m,
+      [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m,
+      [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m
+    ]
+  },
+  matrixWorld: Matrix4 {
+    elements: [
+      [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m,
+      [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m,
+      [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m
+    ]
+  },
+  matrixAutoUpdate: [33mtrue[39m,
+  matrixWorldAutoUpdate: [33mtrue[39m,
+  matrixWorldNeedsUpdate: [33mfalse[39m,
+  layers: Layers { mask: [33m1[39m },
+  visible: [33mtrue[39m,
+  castShadow: [33mtrue[39m,
+  receiveShadow: [33mtrue[39m,
+  frustumCulled: [33mfalse[39m,
+  renderOrder: [33m0[39m,
+  animations: [],
+  customDepthMaterial: [90mundefined[39m,
+  customDistanceMaterial: [90mundefined[39m,
+  userData: {},
+  isMesh: [33mtrue[39m,
+  geometry: BoxGeometry {
+    isBufferGeometry: [33mtrue[39m,
+    uuid: [32m'68917752-f8ec-4e5b-9daa-f407d57aa137'[39m,
+    name: [32m''[39m,
+    type: [32m'BoxGeometry'[39m,
+    index: Uint16BufferAttribute {
+      isBufferAttribute: [33mtrue[39m,
+      name: [32m''[39m,
+      array: [36m[Uint16Array][39m,
+      itemSize: [33m1[39m,
+      count: [33m36[39m,
+      normalized: [33mfalse[39m,
+      usage: [33m35044[39m,
+      updateRanges: [],
+      gpuType: [33m1015[39m,
+      version: [33m0[39m
+    },
+    indirect: [1mnull[22m,
+    attributes: {
+      position: [36m[Float32BufferAttribute][39m,
+      normal: [36m[Float32BufferAttribute][39m,
+      uv: [36m[Float32BufferAttribute][39m
+    },
+    morphAttributes: {},
+    morphTargetsRelative: [33mfalse[39m,
+    groups: [ [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m, [36m[Object][39m ],
+    boundingBox: [1mnull[22m,
+    boundingSphere: [1mnull[22m,
+    drawRange: { start: [33m0[39m, count: [33mInfinity[39m },
+    userData: {},
+    parameters: {
+      width: [33m1[39m,
+      height: [33m1[39m,
+      depth: [33m1[39m,
+      widthSegments: [33m1[39m,
+      heightSegments: [33m1[39m,
+      depthSegments: [33m1[39m
+    }
+  },
+  material: MeshStandardMaterial {
+    isMaterial: [33mtrue[39m,
+    uuid: [32m'df83eb99-bf2c-4535-9b82-22c2df26b487'[39m,
+    name: [32m''[39m,
+    type: [32m'MeshStandardMaterial'[39m,
+    blending: [33m1[39m,
+    side: [33m0[39m,
+    vertexColors: [33mfalse[39m,
+    opacity: [33m1[39m,
+    transparent: [33mfalse[39m,
+    alphaHash: [33mfalse[39m,
+    blendSrc: [33m204[39m,
+    blendDst: [33m205[39m,
+    blendEquation: [33m100[39m,
+    blendSrcAlpha: [1mnull[22m,
+    blendDstAlpha: [1mnull[22m,
+    blendEquationAlpha: [1mnull[22m,
+    blendColor: Color { isColor: [33mtrue[39m, r: [33m0[39m, g: [33m0[39m, b: [33m0[39m },
+    blendAlpha: [33m0[39m,
+    depthFunc: [33m3[39m,
+    depthTest: [33mtrue[39m,
+    depthWrite: [33mtrue[39m,
+    stencilWriteMask: [33m255[39m,
+    stencilFunc: [33m519[39m,
+    stencilRef: [33m0[39m,
+    stencilFuncMask: [33m255[39m,
+    stencilFail: [33m7680[39m,
+    stencilZFail: [33m7680[39m,
+    stencilZPass: [33m7680[39m,
+    stencilWrite: [33mfalse[39m,
+    clippingPlanes: [],
+    clipIntersection: [33mfalse[39m,
+    clipShadows: [33mfalse[39m,
+    shadowSide: [1mnull[22m,
+    colorWrite: [33mtrue[39m,
+    precision: [1mnull[22m,
+    polygonOffset: [33mfalse[39m,
+    polygonOffsetFactor: [33m0[39m,
+    polygonOffsetUnits: [33m0[39m,
+    dithering: [33mfalse[39m,
+    alphaToCoverage: [33mfalse[39m,
+    premultipliedAlpha: [33mfalse[39m,
+    forceSinglePass: [33mfalse[39m,
+    allowOverride: [33mtrue[39m,
+    visible: [33mtrue[39m,
+    toneMapped: [33mtrue[39m,
+    userData: {},
+    version: [33m0[39m,
+    _alphaTest: [33m0[39m,
+    isMeshStandardMaterial: [33mtrue[39m,
+    defines: { STANDARD: [32m''[39m },
+    color: Color { isColor: [33mtrue[39m, r: [33m1[39m, g: [33m1[39m, b: [33m1[39m },
+    roughness: [33m1[39m,
+    metalness: [33m0[39m,
+    map: [1mnull[22m,
+    lightMap: [1mnull[22m,
+    lightMapIntensity: [33m1[39m,
+    aoMap: [1mnull[22m,
+    aoMapIntensity: [33m1[39m,
+    emissive: Color { isColor: [33mtrue[39m, r: [33m0[39m, g: [33m0[39m, b: [33m0[39m },
+    emissiveIntensity: [33m1[39m,
+    emissiveMap: [1mnull[22m,
+    bumpMap: [1mnull[22m,
+    bumpScale: [33m1[39m,
+    normalMap: [1mnull[22m,
+    normalMapType: [33m0[39m,
+    normalScale: Vector2 { x: [33m1[39m, y: [33m1[39m },
+    displacementMap: [1mnull[22m,
+    displacementScale: [33m1[39m,
+    displacementBias: [33m0[39m,
+    roughnessMap: [1mnull[22m,
+    metalnessMap: [1mnull[22m,
+    alphaMap: [1mnull[22m,
+    envMap: [1mnull[22m,
+    envMapRotation: Euler { isEuler: [33mtrue[39m, _x: [33m0[39m, _y: [33m0[39m, _z: [33m0[39m, _order: [32m'XYZ'[39m },
+    envMapIntensity: [33m1[39m,
+    wireframe: [33mfalse[39m,
+    wireframeLinewidth: [33m1[39m,
+    wireframeLinecap: [32m'round'[39m,
+    wireframeLinejoin: [32m'round'[39m,
+    flatShading: [33mfalse[39m,
+    fog: [33mtrue[39m
+  },
+  morphTargetDictionary: [90mundefined[39m,
+  morphTargetInfluences: [90mundefined[39m,
+  count: [33m2000[39m,
+  isInstancedMesh: [33mtrue[39m,
+  instanceMatrix: InstancedBufferAttribute {
+    isBufferAttribute: [33mtrue[39m,
+    name: [32m''[39m,
+    array: Float32Array(32000) [
+      [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m,
+      [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m, [33m0[39m,
+      [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m,
+      [33m0[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m,
+      [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m,
+      [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m, [33m0[39m,
+      [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m,
+      [33m0[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m0[39m, [33m1[39m,
+      [33m1[39m, [33m0[39m, [33m0[39m, [33m0[39m,
+      ... 31900 more items
+    ],
+    itemSize: [33m16[39m,
+    count: [33m2000[39m,
+    normalized: [33mfalse[39m,
+    usage: [33m35048[39m,
+    updateRanges: [],
+    gpuType: [33m1015[39m,
+    version: [33m0[39m,
+    isInstancedBufferAttribute: [33mtrue[39m,
+    meshPerAttribute: [33m1[39m
+  },
+  instanceColor: [1mnull[22m,
+  morphTexture: [1mnull[22m,
+  boundingBox: [1mnull[22m,
+  boundingSphere: [1mnull[22m
+}
+
+[90mstdout[2m | src/tests/StartupCrash.test.js[2m > [22m[2mStartup Crash Verification[2m > [22m[2mUnitRenderer update should not crash with active units
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10
+
+ [31m笶ｯ[39m src/tests/StartupCrash.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 20[2mms[22m[39m
+[31m     [31mﾃ・[31m UnitRenderer should initialize without null materials[39m[32m 12[2mms[22m[39m
+     [32m笨・[39m UnitRenderer update should not crash with active units[32m 2[2mms[22m[39m
+     [32m笨・[39m FaceMesh should be present if split logic is active[32m 0[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/StartupCrash.test.js > Startup Crash Verification > UnitRenderer should initialize without null materials
+AssertionError: expected undefined to be defined
+ 笶ｯ src/tests/StartupCrash.test.js:72:35
+     70| 
+     71|         // Check if meshes are created with valid materials
+     72|         expect(renderer.headMesh).toBeDefined();
+       |                                   ^
+     73|         // Accessing material properties shouldn't throw
+     74|         expect(renderer.headMesh.material).toBeDefined();
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 11:46:13
+[2m   Duration [22m 985ms[2m (transform 222ms, setup 46ms, import 264ms, tests 20ms, environment 468ms)[22m
+

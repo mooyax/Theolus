@@ -14,8 +14,10 @@ describe('Autonomous Building Attack', () => {
             getTileHeight: vi.fn().mockReturnValue(10), // Flat
             findBestTarget: vi.fn(), // We will mock this specifically
             findPath: vi.fn().mockReturnValue([{ x: 10, z: 15 }]), // Mock findPath
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 10, z: 15 }]), // Mock findPathAsync
             buildings: [],
-            grid: []
+            grid: [],
+            isReachable: () => true
         };
 
         // Mock Game
@@ -60,7 +62,7 @@ describe('Autonomous Building Attack', () => {
 
         // Time Slicing Bypass: Set frame such that (frame + id + 5) % 10 == 0
         // id=1. (frame + 6) % 10 == 0 -> frame=4
-        if (window.game) window.game.frameCounter = 4;
+        if (window.game) window.game.frameCount = 4;
 
         unit.searchSurroundings(10, 10, []);
 
@@ -93,7 +95,7 @@ describe('Autonomous Building Attack', () => {
         terrain.findBestTarget = (type) => hut; // Even if it finds it...
 
         // Time Slicing Bypass
-        if (window.game) window.game.frameCounter = 4;
+        if (window.game) window.game.frameCount = 4;
 
         unit.searchSurroundings(10, 10, []);
         // Worker MIGHT find it.

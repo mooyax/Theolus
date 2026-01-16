@@ -1,0 +1,56 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/MarkerEndToEnd.test.js[2m > [22m[2mMarker End-to-End: Persistence and Wrap Support[2m > [22m[2mshould calculate shortest distance across map boundaries (Wrap Support)
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/MarkerEndToEnd.test.js[2m > [22m[2mMarker End-to-End: Persistence and Wrap Support[2m > [22m[2mshould persist through pathfinding delays for manual jobs
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/MarkerEndToEnd.test.js[2m > [22m[2mMarker End-to-End: Persistence and Wrap Support[2m > [22m[2mshould handle sequential manual instructions with efficient preemption
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/MarkerEndToEnd.test.js[2m > [22m[2mMarker End-to-End: Persistence and Wrap Support[2m > [22m[2mshould handle sequential manual instructions with efficient preemption
+[22m[39m[MockGame] Assigning req_0 to Unit 1 (DistSq: 11250)
+[MockGame] Claiming req_0 for Unit 1
+[MockGame] No unit found for req_1
+[MockGame] No unit found for req_1
+[MockGame] Assigning req_2 to Unit 1 (DistSq: 2)
+[MockGame] Claiming req_2 for Unit 1
+
+[90mstdout[2m | src/tests/MarkerEndToEnd.test.js[2m > [22m[2mMarker End-to-End: Persistence and Wrap Support[2m > [22m[2mshould assign pending jobs to newly spawned workers
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/MarkerEndToEnd.test.js[2m > [22m[2mMarker End-to-End: Persistence and Wrap Support[2m > [22m[2mshould assign pending jobs to newly spawned workers
+[22m[39m[MockGame] Assigning req_0 to Unit 1 (DistSq: 11250)
+[MockGame] Claiming req_0 for Unit 1
+[MockGame] No unit found for req_1
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:50,50
+[MockGame] Assigning req_1 to Unit 101 (DistSq: 5000)
+[MockGame] Claiming req_1 for Unit 101
+
+[90mstdout[2m | src/tests/MarkerEndToEnd.test.js[2m > [22m[2mMarker End-to-End: Persistence and Wrap Support[2m > [22m[2mshould handle job cancellation and release worker
+[22m[39m[UnitCore.js] Unit Created ID:5 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:5 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/MarkerEndToEnd.test.js[2m > [22m[2mMarker End-to-End: Persistence and Wrap Support[2m > [22m[2mshould handle job cancellation and release worker
+[22m[39m[MockGame] Assigning req_0 to Unit 1 (DistSq: 2450)
+[MockGame] Claiming req_0 for Unit 1
+
+ [31m笶ｯ[39m src/tests/MarkerEndToEnd.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 30[2mms[22m[39m
+     [32m笨・[39m should calculate shortest distance across map boundaries (Wrap Support)[32m 4[2mms[22m[39m
+[31m     [31mﾃ・[31m should persist through pathfinding delays for manual jobs[39m[32m 17[2mms[22m[39m
+     [32m笨・[39m should handle sequential manual instructions with efficient preemption[32m 4[2mms[22m[39m
+     [32m笨・[39m should assign pending jobs to newly spawned workers[32m 2[2mms[22m[39m
+     [32m笨・[39m should handle job cancellation and release worker[32m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 10:14:02
+[2m   Duration [22m 822ms[2m (transform 137ms, setup 46ms, import 168ms, tests 30ms, environment 401ms)[22m
+

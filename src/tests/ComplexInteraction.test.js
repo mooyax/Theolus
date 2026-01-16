@@ -30,6 +30,7 @@ describe('Complex Job Interaction and Cancellation', () => {
     beforeEach(() => {
         const mockScene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn().mockReturnValue({ add: vi.fn(), remove: vi.fn(), children: [] }) };
         const mockTerrain = {
+            findBestTarget: vi.fn(() => null),
             getTileHeight: vi.fn().mockReturnValue(10),
             logicalWidth: 100, logicalDepth: 100,
             grid: Array(100).fill(0).map(() => Array(100).fill(0).map(() => ({ regionId: 1, hasBuilding: false }))),
@@ -41,7 +42,8 @@ describe('Complex Job Interaction and Cancellation', () => {
             }),
             removeBuilding: vi.fn(),
             isReachable: vi.fn().mockReturnValue(true),
-            findPath: vi.fn().mockReturnValue([{ x: 20, z: 0 }]), // Valid path
+            findPath: vi.fn().mockImplementation((sx, sz, ex, ez) => [{ x: ex, z: ez }]),
+            findPathAsync: vi.fn().mockImplementation((sx, sz, ex, ez) => Promise.resolve([{ x: ex, z: ez }])), // ADDED
             findClosestReachablePoint: vi.fn().mockReturnValue(null),
             getRegion: vi.fn().mockReturnValue(1),
             getRandomPassablePointInRegion: vi.fn().mockReturnValue({ x: 5, z: 5 }),
@@ -64,7 +66,7 @@ describe('Complex Job Interaction and Cancellation', () => {
         vi.clearAllMocks();
     });
 
-    it('should immediately stop unit when job is cancelled mid-approach', () => {
+    it('should immediately stop unit when job is cancelled mid-approach', async () => {
         // 1. Add Request
         const req = mockGame.addRequest('build', 20, 0);
 
@@ -75,6 +77,11 @@ describe('Complex Job Interaction and Cancellation', () => {
 
         // 3. Move (Unit sees request)
         unit.updateLogic(1000, 0.1);
+
+        // NEW: Wait for async path
+        await new Promise(r => setTimeout(r, 0));
+        unit.updateLogic(2.0, 0.1); // Advance time past throttle (1.0) and consume path
+
         // Expect 'Approaching Job'. No longer overriden by 'Moving'.
         expect(unit.targetRequest).toBe(req);
         expect(unit.isMoving).toBe(true);
@@ -95,7 +102,7 @@ describe('Complex Job Interaction and Cancellation', () => {
         // expect(unit.state).toBeInstanceOf(WanderState);
     }); // Close first it
 
-    it('should pickup NEXT job if current is cancelled', () => {
+    it('should pickup NEXT job if current is cancelled', async () => {
         // 1. Add Req A and B (Auto/Background requests to ensure stability)
         const reqA = mockGame.addRequest('build', 20, 0, null, null, null, false); // ID: req_0
         const reqB = mockGame.addRequest('build', -20, 0, null, null, null, false); // ID: req_1
@@ -106,6 +113,8 @@ describe('Complex Job Interaction and Cancellation', () => {
 
         // 3. Move
         unit.updateLogic(1000, 0.1);
+        await new Promise(r => setTimeout(r, 0));
+        unit.updateLogic(2.0, 0.1); // Advance and consume path
 
         // 4. Cancel A
         mockGame.tryCancelRequest(20, 0);
@@ -113,9 +122,13 @@ describe('Complex Job Interaction and Cancellation', () => {
 
         // 5. Update Unit (Should drop A, then find B)
         // First update: Drop A
-        unit.updateLogic(2000, 0.1);
-        // First update: Drop A AND Find B (Happens in same frame if efficient)
-        unit.updateLogic(2000, 0.1);
+        unit.updateLogic(3.0, 0.1);
+        // Second: find B (starts async search for B)
+        unit.updateLogic(4.0, 0.1);
+
+        await new Promise(r => setTimeout(r, 0));
+        unit.updateLogic(6.0, 0.1); // Consume path for B
+
 
         if (unit.targetRequest) {
             expect(unit.targetRequest.id).toBe(reqB.id);

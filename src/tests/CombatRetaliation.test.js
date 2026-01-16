@@ -120,7 +120,10 @@ describe('Combat Retaliation System', () => {
             scene: new THREE.Scene(),
             gridToWorld: (g) => g,
             findPath: vi.fn().mockReturnValue([]),
-            isWalkable: vi.fn().mockReturnValue(true)
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 11, z: 10 }]),
+            isWalkable: vi.fn().mockReturnValue(true),
+            isReachable: vi.fn().mockReturnValue(true),
+            getRandomPointInRegion: vi.fn().mockReturnValue({ x: 10, z: 10 })
         };
         // Init Grid
         for (let x = 0; x < 40; x++) {
@@ -196,7 +199,11 @@ describe('Combat Retaliation System', () => {
     });
 
     it('should switch strictly for self-defense scan failure in JobState (Non-worker)', () => {
+        // Enable search result
+        terrainMock.findBestTarget.mockReturnValue(goblin);
+
         unit.role = 'knight';
+        unit.id = 0; // Force ID 0 to enable JobState logging
         unit.targetRequest = { id: 'req2', type: 'patrol', x: 30, z: 30, assignedTo: unit.id };
         unit.changeState(new JobState(unit));
 

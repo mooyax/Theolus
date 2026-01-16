@@ -1,0 +1,61 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Patrol for Knight/Wizard when idle
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Wander for Worker when idle
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Combat when targetGoblin is set
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Combat when targetGoblin is set
+[22m[39m[Unit Debug] ATTACKING Goblin 99
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Siege when targetBuilding is set
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Siege when targetBuilding is set
+[22m[39mUnit 1 attacking undefined. HP: 88
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Working when targetRequest is set
+[22m[39m[UnitCore.js] Unit Created ID:4 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Patrolling with coords when targetRaidPoint is set
+[22m[39m[UnitCore.js] Unit Created ID:5 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:5 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould return Wander for Migrating if action is Migrating but state is Wander
+[22m[39m[UnitCore.js] Unit Created ID:6 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould prioritize Combat mode when in CombatState
+[22m[39m[UnitCore.js] Unit Created ID:7 Role:undefined Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:7 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/UnitBehavior.test.js[2m > [22m[2mUnit Behavior Mode[2m > [22m[2mshould prioritize Combat mode when in CombatState
+[22m[39m[Unit Debug] ATTACKING Goblin 99
+
+ [32m笨・[39m src/tests/UnitBehavior.test.js[2m > [22mUnit Behavior Mode[2m > [22mshould return Patrol for Knight/Wizard when idle[32m 5[2mms[22m[39m
+ [32m笨・[39m src/tests/UnitBehavior.test.js[2m > [22mUnit Behavior Mode[2m > [22mshould return Wander for Worker when idle[32m 2[2mms[22m[39m
+ [31mﾃ・[39m src/tests/UnitBehavior.test.js[2m > [22mUnit Behavior Mode[2m > [22mshould return Combat when targetGoblin is set[32m 39[2mms[22m[39m
+[31m   竊・goblin.takeDamage is not a function[39m
+ [32m笨・[39m src/tests/UnitBehavior.test.js[2m > [22mUnit Behavior Mode[2m > [22mshould return Siege when targetBuilding is set[32m 3[2mms[22m[39m
+ [32m笨・[39m src/tests/UnitBehavior.test.js[2m > [22mUnit Behavior Mode[2m > [22mshould return Working when targetRequest is set[32m 4[2mms[22m[39m
+ [31mﾃ・[39m src/tests/UnitBehavior.test.js[2m > [22mUnit Behavior Mode[2m > [22mshould return Patrolling with coords when targetRaidPoint is set[32m 3[2mms[22m[39m
+[31m   竊・this.terrain.findPathAsync is not a function[39m
+ [32m笨・[39m src/tests/UnitBehavior.test.js[2m > [22mUnit Behavior Mode[2m > [22mshould return Wander for Migrating if action is Migrating but state is Wander[32m 1[2mms[22m[39m
+ [31mﾃ・[39m src/tests/UnitBehavior.test.js[2m > [22mUnit Behavior Mode[2m > [22mshould prioritize Combat mode when in CombatState[32m 2[2mms[22m[39m
+[31m   竊・goblin.takeDamage is not a function[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 15:59:43
+[2m   Duration [22m 1.58s[2m (transform 215ms, setup 90ms, import 271ms, tests 63ms, environment 738ms)[22m
+

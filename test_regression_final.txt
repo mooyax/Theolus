@@ -1,0 +1,50 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould NOT abort job during long async pathfinding (prevent oscillation)
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin Hut when idle (Passive Worker Fix)
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin even if holding a job (Self Defense)
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin even if holding a job (Self Defense)
+[22m[39m[JobState 1] Worker found threat/target on path!
+[Unit Debug] ATTACKING Goblin undefined
+
+ [31m笶ｯ[39m src/tests/Regression_WorkerLogic.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 199[2mms[22m[39m
+     [32m笨・[39m should NOT abort job during long async pathfinding (prevent oscillation)[32m 160[2mms[22m[39m
+     [32m笨・[39m should attack nearby Goblin Hut when idle (Passive Worker Fix)[32m 4[2mms[22m[39m
+[31m     [31mﾃ・[31m should attack nearby Goblin even if holding a job (Self Defense)[39m[32m 33[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin even if holding a job (Self Defense)
+TypeError: goblin.takeDamage is not a function
+ 笶ｯ Unit.attackGoblin src/Unit.js:444:16
+    442| 
+    443|         // DAMAGE LOGIC
+    444|         goblin.takeDamage(this.damage);
+       |                ^
+    445| 
+    446|         // Report Combat to Squad/Global Memory (Every hit matches "In窶ｦ
+ 笶ｯ CombatState.update src/ai/states/UnitStates.js:665:28
+ 笶ｯ CombatState.enter src/ai/states/UnitStates.js:534:14
+ 笶ｯ Unit.changeState src/Actor.js:35:24
+ 笶ｯ JobState.update src/ai/states/UnitStates.js:306:32
+ 笶ｯ Unit.updateLogic src/Unit.js:1784:24
+ 笶ｯ src/tests/Regression_WorkerLogic.test.js:182:18
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 17:25:53
+[2m   Duration [22m 1.92s[2m (transform 601ms, setup 74ms, import 763ms, tests 199ms, environment 591ms)[22m
+

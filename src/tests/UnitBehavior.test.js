@@ -29,7 +29,10 @@ describe('Unit Behavior Mode', () => {
             grid: Array(10).fill(0).map(() => Array(10).fill({ height: 1, moisture: 0.5 })),
             registerEntity: vi.fn(),
             unregisterEntity: vi.fn(),
-            checkCollision: vi.fn().mockReturnValue(false)
+            checkCollision: vi.fn().mockReturnValue(false),
+            findPathAsync: vi.fn().mockReturnValue(Promise.resolve([])),
+            findBestTarget: vi.fn().mockReturnValue(null),
+            buildings: [] // Ensure buildings array exists
         };
 
         mockScene = { add: vi.fn(), remove: vi.fn() };
@@ -62,7 +65,7 @@ describe('Unit Behavior Mode', () => {
     });
 
     it('should return Combat when targetGoblin is set', () => {
-        unit.targetGoblin = { id: 99 };
+        unit.targetGoblin = { id: 99, x: 10, z: 10, gridX: 10, gridZ: 10, takeDamage: vi.fn(), isDead: false };
         unit.changeState(new CombatState(unit));
         expect(unit.getBehaviorMode()).toBe('Combat');
         expect(unit.state).toBeInstanceOf(CombatState);
@@ -99,7 +102,7 @@ describe('Unit Behavior Mode', () => {
     });
 
     it('should prioritize Combat mode when in CombatState', () => {
-        unit.targetGoblin = { id: 99 };
+        unit.targetGoblin = { id: 99, x: 10, z: 10, gridX: 10, gridZ: 10, takeDamage: vi.fn(), isDead: false };
         unit.targetRaidPoint = { x: 10, z: 20 };
         unit.changeState(new CombatState(unit));
         // CombatState logic prioritizes Target over RaidPoint

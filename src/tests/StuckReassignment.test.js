@@ -30,6 +30,7 @@ describe('Stuck/Throttled Job Reassignment', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         localStorage.clear();
+        Unit.nextId = 0; // Reset IDs for deterministic results
         vi.spyOn(document.body, 'appendChild').mockImplementation(() => { });
         game = new Game(null, null, true); // Use minimal init
         window.game = game;
@@ -45,6 +46,7 @@ describe('Stuck/Throttled Job Reassignment', () => {
             }
         }
         game.terrain.initEntityGrid();
+        game.terrain.findBestTarget = vi.fn(() => null);
     });
 
     afterEach(() => {
@@ -60,8 +62,8 @@ describe('Stuck/Throttled Job Reassignment', () => {
         const unit1 = game.spawnUnit(10, 10, 'worker');
         const unit2 = game.spawnUnit(50, 50, 'worker');
 
-        // Target is far away
-        const req = game.addRequest('raise', 80, 80);
+        // Target is far away. Use AUTO job (isManual=false) so it gets released.
+        const req = game.addRequest('raise', 80, 80, false);
         game.processAssignments();
 
         expect(req.assignedTo).toBe(unit1.id);
@@ -80,22 +82,22 @@ describe('Stuck/Throttled Job Reassignment', () => {
 
         // Advance time by 60s (to be safe, threshold is 45)
         let time = 100;
+        // Update existing terrain mocks instead of replacing
+        game.terrain.findBestTarget = vi.fn(() => null);
+        game.terrain.findPathAsync = vi.fn().mockResolvedValue([{ x: 80, z: 80 }]);
+        // game.terrain.isReachable is likely real, or mock if needed (assumed walkable)
+
         const dt = 1.0;
-        for (let i = 0; i < 60; i++) {
+        for (let i = 0; i < 30; i++) {
             time += dt;
+            game.simTotalTimeSec = time;
             unit1.updateLogic(time, dt, false, []);
         }
 
-        // Unit1 should have released the job
+        // Unit1 should have RELEASED the job and NOT picked it up yet (Excluded for 15s)
+        expect(req.status).toBe('pending');
+        expect(req.assignedTo).toBeNull();
         expect(unit1.targetRequest).toBeNull();
-
-        // In our current implementation, releaseRequest calls forceAssignRequest synchronously.
-        // So it might already be assigned to unit2.
-        expect(req.assignedTo).not.toBe(unit1.id);
-        expect(req.assignedTo).toBe(unit2.id);
-
-        // Verify state of unit2
-        expect(unit2.targetRequest).not.toBeNull();
-        expect(unit2.targetRequest.id).toBe(req.id);
+        expect(unit1.state.name).toBe('UnitWanderState');
     });
 });

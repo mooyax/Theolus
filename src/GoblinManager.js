@@ -16,9 +16,10 @@ export class GoblinManager {
         // Use passed clippingPlanes or fallback to terrain's (which should be same)
         const clips = clippingPlanes || terrain.clippingPlanes || [];
         this.renderer = new GoblinRenderer(scene, terrain, clips);
+        this.renderer.init(); // Fire and forget async init
 
         this.spawnTimer = 0;
-        this.spawnInterval = 20; // Slowed down from 10s to 20s per User Request (Halve Rate)
+        this.spawnInterval = 40; // Adjusted to 40s to balance with human house spawn rate
         this.plunderCount = 0; // Track successful raids
         this.MAX_GOBLINS = 20000; // InstancedMesh allows high count!
         this.clanMemory = {}; // { clanId: [ {x,z,weight,timestamp} ] }
@@ -48,6 +49,7 @@ export class GoblinManager {
         }
         this.goblins = [];
         this.plunderCount = 0;
+        this.frameCount = 0;
 
         // Caves are managed partly by Terrain restoration.
         // We should clear our reference list. Terrain deserialization will restore 'cave' buildings.
@@ -216,6 +218,20 @@ export class GoblinManager {
     }
 
     update(time, deltaTime, isNight, units, timeScale = 1.0, camera) {
+        // Stress Test Mode: Fast Spawn to 20k
+        if (typeof window !== 'undefined' && window.location && window.location.search && window.location.search.includes('stressTest=true')) {
+            if (this.goblins.length < this.MAX_GOBLINS) {
+                // Spawn 500 per frame
+                for (let i = 0; i < 500; i++) {
+                    if (this.goblins.length >= this.MAX_GOBLINS) break;
+                    if (this.caves.length > 0) {
+                        const randomCave = this.caves[Math.floor(Math.random() * this.caves.length)];
+                        this.spawnGoblinAtCave(randomCave);
+                    }
+                }
+            }
+        }
+
         // time passed is simTime (ms)
 
         // Spawn Goblins
@@ -262,6 +278,10 @@ export class GoblinManager {
                 cave.mesh.updateMatrix();
             }
 
+            // DISABLED: Cave 自動スポーンを無効化（ユーザー要求）
+            // populationベースのスポーン（checkHutSpawns経由）のみを使用
+            // これにより、Cave/Hutは同じスポーンシステムになる
+            /*
             cave.spawnCooldown -= deltaTime;
             if (cave.spawnCooldown <= 0) {
                 // Removed hard cap of 50. Use global limit if needed.
@@ -270,6 +290,7 @@ export class GoblinManager {
                     cave.spawnCooldown = this.spawnInterval + Math.random() * 5;
                 }
             }
+            */
         });
 
         // WAVE SYSTEM UPDATE
@@ -295,41 +316,76 @@ export class GoblinManager {
         for (let i = this.goblins.length - 1; i >= 0; i--) {
             const goblin = this.goblins[i];
 
-            // 1. Always Update Movement & Visuals (Every Frame)
-            if (goblin.updateMovement) {
-                goblin.updateMovement(time);
-            }
-            if (goblin.updateVisuals) {
-                goblin.updateVisuals();
+            // --- SMART THROTTLING & LEVEL OF DETAIL (LOD) ---
+            let throttleSkip = false;
+            let timeBudget = deltaTime; // Default: just this frame's time
+
+            if (camera) {
+                const dx = goblin.position.x - camera.position.x;
+                const dz = goblin.position.z - camera.position.z;
+                const distSq = dx * dx + dz * dz;
+
+                // Priority Check: Combat/Siege units ALWAYS update regularly (Simulation Integrity)
+                const isUrgent = goblin.action === 'Fighting' || goblin.action === 'Sieging' || (goblin.state && goblin.state.name === 'CombatState');
+
+                if (!isUrgent) {
+                    let interval = 0;
+                    if (distSq > 10000) interval = 30; // 100m+
+                    else if (distSq > 3600) interval = 10; // 60m+
+                    else if (distSq > 900) interval = 2; // 30m+
+
+                    if (interval > 0) {
+                        // Throttling Active
+                        if ((this.frameCount + i) % interval !== 0) {
+                            throttleSkip = true;
+                            // ACCUMULATE TIME (Prevent Slow Motion)
+                            goblin.skippedTime = (goblin.skippedTime || 0) + deltaTime;
+                        } else {
+                            // Update Frame: Release accumulated time
+                            timeBudget += (goblin.skippedTime || 0);
+                            goblin.skippedTime = 0;
+                        }
+                    }
+                }
             }
 
-            // 2. Staggered Logic Update
-            if (i % stagger === parity) {
-                // Compensate deltaTime: passed dt is realDelta * timeScale.
-                // We run this block 1/stagger times.
-                // So effective dt for logic is dw * stagger.
-                try {
-                    if (goblin.isDead) {
-                        goblin.updateDeathAnimation(deltaTime * stagger);
-                    } else {
-                        goblin.updateLogic(time, deltaTime * stagger, units, buildings);
-                    }
-                } catch (e) {
-                    // Detailed Error Logging
-                    if (!this._hasLoggedError) {
-                        console.error(`[GoblinManager] CRITICAL Error updating goblin ${i}:`, e.message);
-                        console.error(e.stack);
-                        this._hasLoggedError = true; // Prevent spamming 1000 times
-                    }
-                    continue;
+            if (throttleSkip) {
+                // Completely skip Logic AND Visuals for this frame (CPU Saving)
+                // Movement is time-based, so it will snap next update.
+                continue;
+            }
+
+            // --- UPDATES ---
+
+            // 1. Logic Update (Staggered or Throttled-Batch)
+            // Note: If we just unthrottled, we run logic NOW regardless of original stagger?
+            // Or we respect stagger? 
+            // Better to decouple throttling from legacy stagger.
+            // If we are here, we are allowed to update. 
+            // BUT, original logic ran 1/2 frames via parity.
+            // If we throttle to 1/30, we definitely want to run logic on that 30th frame.
+
+            try {
+                if (goblin.isDead) {
+                    goblin.updateDeathAnimation(timeBudget); // Use accumulated time
+                } else {
+                    goblin.updateLogic(time, timeBudget, units, buildings);
                 }
 
-                if (goblin.isFinished) {
-                    // console.log(`[GoblinManager] Removing finished goblin index ${ i } `);
-                    this.goblins.splice(i, 1);
+                if (goblin.updateVisuals) goblin.updateVisuals();
+
+            } catch (e) {
+                if (!this._hasLoggedError) {
+                    console.error(`[GoblinManager] Error updating goblin ${i}:`, e.message);
+                    this._hasLoggedError = true;
                 }
+            }
+
+            if (goblin.isFinished) {
+                this.goblins.splice(i, 1);
             }
         }
+        this.frameCount++;
     }
 
     // --- WAVE SYSTEM ---
@@ -596,36 +652,33 @@ export class GoblinManager {
 
 
     checkHutSpawns(deltaTime) {
-        // Logic solely for spawning from Huts when they hit capacity (or threshold)
-        // Similar to updateHuts but without the growth logic (handled above)
+        // PopulationベースのスポーンロジックをCave/Goblin Hut両方に適用
+        // Cave自動スポーンを無効化したため、これが唯一のスポーン方法になる
 
         const buildings = this.terrain.buildings || [];
         buildings.forEach(b => {
-            if (b.userData.type === 'goblin_hut') {
-                // Spawn Threshold: 5 (Full Capacity) behavior? 
-                // Or user said "Spawn when full"?
-                // Let's say if Pop >= 5, FORCE SPAWN.
+            // Cave または Goblin Hut の両方を処理
+            if (b.userData.type === 'goblin_hut' || b.userData.type === 'cave') {
+                // Spawn Threshold: population >= 5.0
                 if (b.userData.population >= 5.0) {
                     // Check Global Cap
-                    if (this.goblins.length >= (this.MAX_GOBLINS || 20000)) return;
-
-                    // Consume
-                    b.userData.population -= 1.0;
+                    if (this.goblins.length >= (this.MAX_GOBLINS || 20000)) {
+                        console.log(`[GoblinManager] MAX_GOBLINS reached: ${this.goblins.length}`);
+                        return;
+                    }
 
                     // Spawn
-                    const clanId = b.userData.clanId || `clan_hut_${b.userData.gridX}_${b.userData.gridZ}`;
+                    const clanId = b.userData.clanId || `clan_${b.userData.type}_${b.userData.gridX}_${b.userData.gridZ}`;
                     const fakeCave = { gridX: b.userData.gridX, gridZ: b.userData.gridZ, clanId: clanId, building: b };
-                    // Pass 'building' so spawnGoblinAtCave knows where to deduct (though we just deducted manually? 
-                    // spawnGoblinAtCave ALSO deducts. Let's NOT deduct here if we pass building.
-                    // Wait, spawnGoblinAtCave checks `if (pop < 1) return`.
-                    // So we should Re-Add the 1 we took? Or just let spawnGoblinAtCave handle it?
-                    // Let's let spawnGoblinAtCave handle the deduction.
-
-                    // Restore the 1 we just took for the "Check"
-                    b.userData.population += 1.0;
 
                     this.spawnGoblinAtCave(fakeCave);
-                    console.log(`Goblin born from Hut! Clan: ${clanId}. Global Pop: ${this.goblins.length}`);
+
+                    // CRITICAL FIX: populationを消費してスポーンクールダウンを作る
+                    // 5.0に達したら即座にリセットし、次のスポーンまで時間がかかるようにする
+                    b.userData.population = 0.0;
+                    if (b.population !== undefined) b.population = 0.0;
+
+                    console.log(`[DEBUG] Goblin born from ${b.userData.type}! Total: ${this.goblins.length}, Reset population to 0`);
                 }
             }
         });

@@ -9,8 +9,8 @@ describe('Unit Performance Optimization', () => {
 
     beforeEach(() => {
         terrain = {
-            getTileHeight: vi.fn(),
-            findBestTarget: vi.fn(),
+            findBestTarget: vi.fn(() => null),
+            getTileHeight: () => 1,
             buildings: [],
             grid: []
         };
@@ -43,17 +43,17 @@ describe('Unit Performance Optimization', () => {
         unit.ignoredTargets = new Set();
 
         // Frame 0: (0 + 1) % 20 != 0 -> Should skip
-        window.game.frameCounter = 0;
+        window.game.frameCount = 0;
         const result0 = unit.checkSelfDefense(passedGoblins);
         expect(result0).toBe(false);
         expect(unit.getDistance).not.toHaveBeenCalled();
 
         // Frame 19: (19 + 1) % 20 == 0 -> Should execute
-        window.game.frameCounter = 19;
+        window.game.frameCount = 19;
         unit.checkSelfDefense(passedGoblins);
 
-        // checkSelfDefense calls getDistance for goblins
-        expect(unit.getDistance).toHaveBeenCalledWith(goblin.gridX, goblin.gridZ);
+        // findBestTarget should be called instead of manual getDistance loop
+        expect(terrain.findBestTarget).toHaveBeenCalledWith('goblin', 10, 10, expect.any(Number), expect.any(Function), passedGoblins);
     });
 
     it('should skip searchSurroundings for busy workers', () => {
@@ -70,18 +70,18 @@ describe('Unit Performance Optimization', () => {
         unit.role = 'knight';
         unit.id = 1;
 
-        // Offset is (frame + id + 5) % 20
-        // Target: 20 -> frame + 6 % 20 == 0 -> frame = 14
+        // Offset is (frame + id) % 20 [id=2 for this unit]
+        // Target: (frame + 2) % 20 == 0 -> frame = 18
 
-        window.game.frameCounter = 0; // (0 + 1 + 5) = 6 % 20 != 0 -> Skip
+        window.game.frameCount = 0; // (0 + 2) = 2 % 20 != 0 -> Skip
         unit.searchSurroundings(10, 10, []);
         expect(terrain.findBestTarget).not.toHaveBeenCalled();
 
-        window.game.frameCounter = 14; // (14 + 1 + 5) = 20 % 20 == 0 -> Run
+        window.game.frameCount = 14; // (14 + 1 + 5) = 20 % 20 == 0 -> Run
         unit.searchSurroundings(10, 10, []);
         // Note: Knight/Wizard run every 10 frames check
-        // if ((frame + this.id + 5) % 20 !== 0) {
-        //    if (Knight && (frame + id + 5) % 10 !== 0) return;
+        // if ((frame + this.id) % 20 !== 0) {
+        //    if (Knight/Wizard && (frame + id) % 10 !== 0) return;
         // }
 
         expect(terrain.findBestTarget).toHaveBeenCalled();

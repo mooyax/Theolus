@@ -1,0 +1,31 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/JobCombatRelease.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 35[2mms[22m[39m
+[31m     [31mﾃ・[31m should release assigned job when entering CombatState[39m[32m 33[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/JobCombatRelease.test.js > Worker Combat Job Release > should release assigned job when entering CombatState
+TypeError: target.set is not a function
+ 笶ｯ Unit.getPositionForGrid src/Entity.js:86:20
+     84| 
+     85|         if (target) {
+     86|             target.set(rawX + ox, height, rawZ - oy);
+       |                    ^
+     87|             return target;
+     88|         }
+ 笶ｯ Unit.updatePosition src/Entity.js:53:14
+ 笶ｯ new Entity src/Entity.js:46:14
+ 笶ｯ new Actor src/Actor.js:5:9
+ 笶ｯ new Unit src/Unit.js:186:9
+ 笶ｯ src/tests/JobCombatRelease.test.js:62:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 16:03:18
+[2m   Duration [22m 1.23s[2m (transform 198ms, setup 69ms, import 203ms, tests 35ms, environment 574ms)[22m
+

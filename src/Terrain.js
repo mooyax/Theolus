@@ -1,13 +1,37 @@
 import * as THREE from 'three';
 import { Building } from './Building.js';
+import GameConfig from './config/GameConfig.json';
 
 export class Terrain {
     constructor(scene, clippingPlanes) {
         this.scene = scene;
         this.clippingPlanes = clippingPlanes || [];
         // Expanded Map 160 -> 240
-        this.logicalWidth = 240;
-        this.logicalDepth = 240;
+        this.logicalWidth = GameConfig.terrain.logicalWidth;
+        this.logicalDepth = GameConfig.terrain.logicalDepth;
+
+        // Pathfinding Cache
+        this.pathCache = [];
+        this.pathfindingCalls = 0; // Budget per frame
+
+        // Initialize Web Worker
+        if (typeof Worker !== 'undefined') {
+            this.worker = new Worker(new URL('./workers/pathfindingWorker.js', import.meta.url), { type: 'module' });
+            this.worker.onerror = (e) => console.error('[Terrain] Worker Error:', e);
+            this.workerRequests = new Map();
+            this.requestIdCounter = 0;
+
+            this.worker.onmessage = (e) => {
+                const { type, id, payload } = e.data;
+                if (type === 'PATH_RESULT') {
+                    const req = this.workerRequests.get(id);
+                    if (req) {
+                        req.resolve(payload);
+                        this.workerRequests.delete(id);
+                    }
+                }
+            };
+        }
         this.width = this.logicalWidth * 3; // Visual size (3x3 grid)
         this.depth = this.logicalDepth * 3;
 
@@ -32,6 +56,18 @@ export class Terrain {
         // Spatial Partitioning for Entities
         this.entityGrid = [];
         this.initEntityGrid();
+    }
+
+
+
+    async checkYield() {
+        // Only yield if requested and time passed
+        if (performance.now() - this.lastYieldTime > 16) {
+            await new Promise(resolve => setTimeout(resolve, 0));
+            this.lastYieldTime = performance.now();
+            return true;
+        }
+        return false;
     }
 
     initEntityGrid() {
@@ -204,40 +240,67 @@ export class Terrain {
 
         // Fallback to Grid Search (Original Logic)
         const r = Math.ceil(maxRadius);
-        // ... (Existing Grid Logic) ...
+        // Optimization: Use Squared Radius for inner loop checks to avoid Sqrt
+        const maxRadiusSq = maxRadius * maxRadius;
 
         // Debug Log
         if (type === 'building' && maxRadius < 70) {
             // console.log(`[Terrain] findBestTarget searching for building at ${centerX},${centerZ} rad:${maxRadius}`);
         }
 
+        // Cache common values
+        const grid = this.entityGrid; // Direct ref
+        if (!grid) return null;
+
         for (let dx = -r; dx <= r; dx++) {
+            // Optimization: Outer loop distance check (Box vs Circle early pruning)
+            const dxSq = dx * dx;
+            if (dxSq > maxRadiusSq) continue;
+
+            const targetX = centerX + dx;
+            // Wrap X (Efficient)
+            let ix = targetX;
+            if (ix < 0 || ix >= W) {
+                ix = ((ix % W) + W) % W;
+            }
+            ix = Math.floor(ix);
+
+            // Safety
+            if (!grid[ix]) continue;
+
             for (let dz = -r; dz <= r; dz++) {
-                // Distance Check
-                const dist = Math.sqrt(dx * dx + dz * dz);
-                if (dist > maxRadius) continue;
+                // Distance Check Squared
+                const dzSq = dz * dz;
+                const distSq = dxSq + dzSq;
+                if (distSq > maxRadiusSq) continue;
 
-                const ix = Math.floor((centerX + dx + W) % W);
-                const iz = Math.floor((centerZ + dz + H) % H);
+                const targetZ = centerZ + dz;
+                // Wrap Z
+                let iz = targetZ;
+                if (iz < 0 || iz >= H) {
+                    iz = ((iz % H) + H) % H;
+                }
+                iz = Math.floor(iz);
 
-                // Safety check for EntityGrid
-                if (!this.entityGrid || !this.entityGrid[ix] || !this.entityGrid[ix][iz]) continue;
-
-                // Region Check (Grid Optimization: Skip entire cell if region mismatch? No, cell might span regions? No, cell is 1 tile)
-                // So YES, we can skip the CELL if region mismatches!
+                // Check Cell Region
+                // Check Cell Region
                 if (sourceRegion > 0) {
-                    const cellData = this.grid[ix][iz];
-                    if (cellData.regionId !== sourceRegion) continue;
-                } else {
-                    // Source is Water (Region 0). Block Land Cells (Region > 0).
-                    const cellData = this.grid[ix][iz];
-                    if (cellData.regionId > 0) continue;
+                    const cData = this.grid[ix][iz];
+                    if (cData.regionId !== sourceRegion) continue;
                 }
 
-                const cell = this.entityGrid[ix][iz];
+                // Entity Check (Optimized)
+                const cell = grid[ix][iz];
+                if (!cell || cell.length === 0) continue;
+
+                // Only calc true Sqrt distance if we find an entity candidate
+                // But we need distance for Score.
+                const dist = Math.sqrt(distSq);
 
                 for (let i = 0; i < cell.length; i++) {
                     const e = cell[i];
+                    // Direct property check is faster than _spatial lookup if aligned?
+                    // Safe to use _spatial.type
                     if (e._spatial && e._spatial.type === type) {
                         if (e.isDead) continue;
 
@@ -254,8 +317,7 @@ export class Terrain {
         return bestEntity;
     }
 
-    initTerrain() {
-        // Initialize Logical Grid (40x40)
+    initGrid() {
         this.grid = [];
         for (let x = 0; x < this.logicalWidth; x++) {
             this.grid[x] = [];
@@ -268,46 +330,56 @@ export class Terrain {
                 };
             }
         }
+    }
 
-        // 1. Create Single Large Geometry (120x120)
-        // Centered at 0,0. Covers -60 to 60.
-        // We want the "Center" 40x40 to be at World 0,0.
-        // PlaneGeometry is centered.
+    initMeshes() {
+        // Dispose existing if any
+        if (this.geometry) this.geometry.dispose();
+        if (this.mesh) {
+            this.scene.remove(this.mesh);
+            if (this.mesh.material) {
+                if (Array.isArray(this.mesh.material)) this.mesh.material.forEach(m => m.dispose());
+                else this.mesh.material.dispose();
+            }
+        }
+        if (this.waterMesh) {
+            this.scene.remove(this.waterMesh);
+            if (this.waterMesh.geometry) this.waterMesh.geometry.dispose();
+            if (this.waterMesh.material) this.waterMesh.material.dispose();
+        }
+
+        this.width = this.logicalWidth * 3;
+        this.depth = this.logicalDepth * 3;
+
+        // 1. Create Single Large Geometry
         this.geometry = new THREE.PlaneGeometry(this.width, this.depth, this.width, this.depth);
-        // Rotate to XZ plane immediately to simplify logic? 
-        // Or keep standard and rotate mesh. Standard is better for utils.
-
         const count = this.geometry.attributes.position.count;
         this.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(count * 3), 3));
 
-        // 1.5. Apply Slight Terrain Distortion (User Request)
-        // Adjust X/Y (which correspond to World X/Z) slightly to look natural
         const posAttr = this.geometry.attributes.position;
         for (let i = 0; i < count; i++) {
             const x = posAttr.getX(i);
             const y = posAttr.getY(i);
-
-            // Deterministic "Wobble" (Refactored to helper)
             const offsets = this.getVisualOffset(x, y);
-
             posAttr.setX(i, x + offsets.x);
             posAttr.setY(i, y + offsets.y);
         }
-        // No need to update 'needsUpdate' yet as we haven't rendered, but good practice
         posAttr.needsUpdate = true;
 
-
-        // 2. Generate Height Data (FBM) for Logical Grid
-        this.generateRandomTerrain();
-
-        // 3. Create Single Mesh
         this.createMesh();
         this.createWater();
     }
 
+    initTerrain() {
+        this.initGrid();
+        this.initMeshes();
+        this.generateRandomTerrain();
+    }
+
     generateRandomTerrain() {
         // Use a random offset so every reload is different
-        this.seed = Math.random() * 100;
+        this.seed = Math.random();
+        this.lastYieldTime = 0; // For Time Slicing
 
         // Populate Logical Grid
         for (let x = 0; x < this.logicalWidth; x++) {
@@ -318,6 +390,13 @@ export class Terrain {
 
                 // Use Seamless FBM
                 let n = this.seamlessFbm(u, v, this.seed);
+
+                // Stress Test Mode: Forces Flat Terrain
+                if (typeof window !== 'undefined' && window.location && window.location.search && window.location.search.includes('stressTest=true')) {
+                    this.grid[x][z].height = 1;
+                    this.grid[x][z].moisture = 0.5; // Default green
+                    continue;
+                }
 
                 // Map 0..1 to desired height range
                 // n is 0..1. 0.5 is average?
@@ -352,9 +431,10 @@ export class Terrain {
 
         this.updateMesh();
         this.calculateRegions();
+        this.syncToWorker(); // Send initial data to worker
     }
 
-    calculateRegions() {
+    async calculateRegions(useAsync = false) {
         const W = this.logicalWidth;
         const D = this.logicalDepth;
         let currentRegion = 0;
@@ -375,7 +455,13 @@ export class Terrain {
             { x: -1, z: 1 }, { x: -1, z: -1 }
         ];
 
+        // Yield interval for heavy calculation
+        // const yieldInterval = 20; // Removed in favor of Time Slicing
+
         for (let x = 0; x < W; x++) {
+            // Yield to main thread to prevent freeze (Only in Async Mode)
+            if (useAsync) await this.checkYield();
+
             for (let z = 0; z < D; z++) {
                 const startCell = this.grid[x][z];
                 // If Land (>0) and not assigned logic region yet
@@ -410,6 +496,43 @@ export class Terrain {
         }
         // console.log(`[Terrain] Regions Calculated: ${currentRegion} islands found.`);
         this.updateColors(); // Optional debug visual
+    }
+
+    syncToWorker() {
+        if (!this.worker) return;
+
+        // Flatten HeightMap
+        const W = this.logicalWidth;
+        const H = this.logicalDepth;
+        const data = new Int16Array(W * H);
+
+        for (let z = 0; z < H; z++) {
+            for (let x = 0; x < W; x++) {
+                if (this.grid[x] && this.grid[x][z]) {
+                    data[z * W + x] = this.grid[x][z].height;
+                }
+            }
+        }
+
+        // Transfer buffer for speed
+        this.worker.postMessage({
+            type: 'INIT',
+            payload: { w: W, h: H, data: data }
+        }, [data.buffer]);
+
+        console.log("[Terrain] Synced Grid to Pathfinding Worker.");
+
+        // Also buffer region updates? 
+        // Currently A* uses pure height/slope, so regions aren't strictly needed for pathing,
+        // but might be useful later.
+    }
+
+    updateWorkerCell(x, z, h) {
+        if (!this.worker) return;
+        this.worker.postMessage({
+            type: 'UPDATE_CELL',
+            payload: { x, z, h }
+        });
     }
 
     // Helper: Find a valid tile in the specified region closest to target (x,z)
@@ -867,6 +990,7 @@ export class Terrain {
         const start = getWrapped(startX, startZ);
         if (this.grid[start.x] && this.grid[start.x][start.z]) {
             this.grid[start.x][start.z].height += amount;
+            this.updateWorkerCell(start.x, start.z, this.grid[start.x][start.z].height); // SYNC
             totalChange += Math.abs(amount);
             queue.push(start);
         }
@@ -910,6 +1034,7 @@ export class Terrain {
                     const newH = currentHeight - 1;
                     totalChange += Math.abs(newH - neighborHeight);
                     neighborCell.height = newH;
+                    this.updateWorkerCell(nw.x, nw.z, newH); // SYNC
                     queue.push(nw);
                 }
                 // If difference < -1, push neighbor DOWN (if we lowered the center)
@@ -917,6 +1042,7 @@ export class Terrain {
                     const newH = currentHeight + 1;
                     totalChange += Math.abs(newH - neighborHeight);
                     neighborCell.height = newH;
+                    this.updateWorkerCell(nw.x, nw.z, newH); // SYNC
                     queue.push(nw);
                 }
             }
@@ -1200,12 +1326,12 @@ export class Terrain {
         return sin - Math.floor(sin);
     }
 
-    addBuilding(type, gridX, gridZ, force = false) {
+    addBuilding(type, gridX, gridZ, force = false, skipMeshUpdate = false) {
         this.invalidatePathCache();
 
         // Use exact height
         if (!this.grid[gridX] || !this.grid[gridX][gridZ]) return null;
-        const h = this.grid[gridX][gridZ].height;
+        // const h = this.grid[gridX][gridZ].height;
 
         // Use Building Class
         const building = new Building(this.scene, this, type, gridX, gridZ);
@@ -1237,7 +1363,7 @@ export class Terrain {
             return null;
         }
 
-        console.log(`[Terrain] addBuilding: ${type} at ${gridX},${gridZ}. Force:${force}`);
+        // console.log(`[Terrain] addBuilding: ${type} at ${gridX},${gridZ}. Force:${force}`);
 
         this.buildings.push(building);
 
@@ -1251,11 +1377,11 @@ export class Terrain {
             }
         }
 
-        console.log(`[Terrain] Building Added: ${type} at (${gridX}, ${gridZ}) Size:${size}x${size}. Total: ${this.buildings.length}`);
+        // console.log(`[Terrain] Building Added: ${type} at (${gridX}, ${gridZ}) Size:${size}x${size}. Total: ${this.buildings.length}`);
 
         // Entity constructor already registers it!
         // this.registerEntity(building, gridX, gridZ, 'building');
-        this.updateMesh();
+        if (!skipMeshUpdate && !this.isRestoring) this.updateMesh();
 
         return building;
     }
@@ -1802,36 +1928,50 @@ export class Terrain {
 
     async deserialize(data, onProgress) {
         if (!data) {
-            console.error("Terrain.deserialize received invalid data:", data);
-            return;
+            throw new Error("Terrain.deserialize received invalid data");
         }
 
-        // Clear existing buildings
-        this.buildings.forEach(b => {
+        console.log("[Terrain] deserialize: Start");
+        this.lastYieldTime = performance.now();
+
+        // Clear existing buildings (Async Split)
+        console.log("[Terrain] deserialize: Clearing Buildings...");
+        for (const b of this.buildings) {
             this.scene.remove(b);
             if (b.userData.clones) {
                 b.userData.clones.forEach(c => this.scene.remove(c));
             }
-        });
-        this.buildings = [];
+            // Yield if taking too long
+            await this.checkYield();
+        }
+        this.buildings = []; // FIX: Clear the array!
         this.initEntityGrid();
 
-        const yieldInterval = 10;
+        const newW = (data.logicalWidth !== undefined) ? data.logicalWidth : data.width;
+        const newD = (data.logicalDepth !== undefined) ? data.logicalDepth : data.depth;
 
-        // Fast Clear Grid State
-        for (let x = 0; x < this.logicalWidth; x++) {
-            if (x % yieldInterval === 0) await new Promise(resolve => setTimeout(resolve, 0));
-            for (let z = 0; z < this.logicalDepth; z++) {
-                const cell = this.grid[x][z];
-                if (cell.hasBuilding && cell.building) this.scene.remove(cell.building);
-                cell.hasBuilding = false;
-                cell.building = null;
+        if (newW !== this.logicalWidth || newD !== this.logicalDepth) {
+            console.log(`[Terrain] deserialize: Resize detected! ${this.logicalWidth}x${this.logicalDepth} -> ${newW}x${newD}`);
+            this.logicalWidth = newW;
+            this.logicalDepth = newD;
+            this.initGrid();
+            this.initMeshes();
+        } else {
+            console.log("[Terrain] deserialize: Clearing Grid...");
+            for (let x = 0; x < this.logicalWidth; x++) {
+                if (await this.checkYield()) {
+                    if (onProgress) onProgress(Math.floor((x / this.logicalWidth) * 10));
+                }
+                for (let z = 0; z < this.logicalDepth; z++) {
+                    const cell = this.grid[x][z];
+                    if (cell.hasBuilding && cell.building) this.scene.remove(cell.building);
+                    cell.hasBuilding = false;
+                    cell.building = null;
+                }
             }
         }
 
-        this.logicalWidth = data.logicalWidth;
-        this.logicalDepth = data.logicalDepth;
-
+        console.log("[Terrain] deserialize: Restoring Grid Data...");
         // V2 Optimized Format Check (Structure of Arrays)
         // If data.h is Array, use V2.
         if ((data.version === 2) || (data.h && Array.isArray(data.h))) {
@@ -1841,10 +1981,10 @@ export class Terrain {
             const D = this.logicalDepth;
 
             for (let x = 0; x < this.logicalWidth; x++) {
-                // Yield periodically
-                if (x % yieldInterval === 0) {
-                    await new Promise(resolve => setTimeout(resolve, 0));
-                    if (onProgress) onProgress(Math.floor((x / this.logicalWidth) * 100));
+                // Time-based Yield
+                if (await this.checkYield()) {
+                    // 10% -> 50%
+                    if (onProgress) onProgress(10 + Math.floor((x / this.logicalWidth) * 40));
                 }
 
                 for (let z = 0; z < this.logicalDepth; z++) {
@@ -1857,37 +1997,62 @@ export class Terrain {
 
             // Restore Buildings from Separate List
             if (data.b && Array.isArray(data.b)) {
-                data.b.forEach(bd => {
-                    const restoreData = {
-                        gridX: bd.x,
-                        gridZ: bd.z,
-                        type: bd.t,
-                        population: bd.p,
-                        level: bd.l || 1,
-                        rotation: bd.r
-                    };
+                console.log(`[Terrain] deserialize: Restoring ${data.b.length} Buildings...`);
 
-                    switch (bd.t) {
-                        case 'house': this.restoreHouse(restoreData); break;
-                        case 'mansion': this.restoreMansion(restoreData); break;
-                        case 'castle': this.restoreCastle(restoreData); break;
-                        case 'tower': this.restoreTower(restoreData); break;
-                        case 'barracks': this.restoreBarracks(restoreData); break;
-                        case 'goblin_hut': this.restoreGoblinHut(restoreData); break;
-                        case 'cave': this.restoreCave(restoreData); break;
-                        case 'farm': this.restoreFarm(restoreData); break;
-                        default: console.warn("Unknown building type:", bd.t);
+                this.isRestoring = true; // Optimization flag check
+
+                try {
+                    // Use for-of to allow await inside loop
+                    for (let i = 0; i < data.b.length; i++) {
+                        const bd = data.b[i];
+
+                        // Yield check
+                        if (await this.checkYield()) {
+                            if (onProgress) onProgress(50 + Math.floor((i / data.b.length) * 40));
+                        }
+
+                        const restoreData = {
+                            gridX: bd.x,
+                            gridZ: bd.z,
+                            type: bd.t,
+                            population: bd.p,
+                            level: bd.l || 1,
+                            rotation: bd.r
+                        };
+
+                        try {
+                            switch (bd.t) {
+                                case 'house': this.restoreHouse(restoreData); break;
+                                case 'mansion': this.restoreMansion(restoreData); break;
+                                case 'castle': this.restoreCastle(restoreData); break;
+                                case 'tower': this.restoreTower(restoreData); break;
+                                case 'barracks': this.restoreBarracks(restoreData); break;
+                                case 'goblin_hut': this.restoreGoblinHut(restoreData); break;
+                                case 'cave': this.restoreCave(restoreData); break;
+                                case 'farm': this.restoreFarm(restoreData); break;
+                                default: console.warn("Unknown building type:", bd.t);
+                            }
+                        } catch (e2) {
+                            console.error(`[Terrain] Failed to restore building ${bd.t} at index ${i}:`, e2);
+                        }
                     }
-                });
+                } catch (e) {
+                    console.error("[Terrain] Building Restore Loop Failed:", e);
+                } finally {
+                    this.isRestoring = false;
+                }
+
+                // Final Mesh Update
+                this.updateMesh();
             }
 
         } else {
             // Legacy V1 Format (Grid Objects)
             console.log("[Terrain] Deserializing Legacy Format...");
             for (let x = 0; x < this.logicalWidth; x++) {
-                if (x % yieldInterval === 0) {
-                    await new Promise(resolve => setTimeout(resolve, 0));
-                    if (onProgress) onProgress(Math.floor((x / this.logicalWidth) * 100));
+                if (await this.checkYield()) {
+                    // 10% -> 50%
+                    if (onProgress) onProgress(10 + Math.floor((x / this.logicalWidth) * 40));
                 }
 
                 for (let z = 0; z < this.logicalDepth; z++) {
@@ -1948,9 +2113,13 @@ export class Terrain {
             }
         }
 
+        await this.checkYield();
         this.updateMesh();
+        await this.checkYield();
         this.updateColors();
-        this.calculateRegions();
+        await this.checkYield();
+        await this.calculateRegions(true);
+        this.syncToWorker(); // Init worker with loaded data
     }
 
 
@@ -2072,6 +2241,27 @@ export class Terrain {
 
     invalidatePathCache() {
         this.pathCache = [];
+    }
+
+    findPathAsync(sx, sz, ex, ez, maxSteps = 0) {
+        if (!this.worker) {
+            // Fallback to sync if worker not ready
+            return Promise.resolve(this.findPath(sx, sz, ex, ez, maxSteps));
+        }
+
+        return new Promise((resolve, reject) => {
+            const id = ++this.requestIdCounter;
+            this.workerRequests.set(id, { resolve, reject });
+
+            this.worker.postMessage({
+                type: 'FIND_PATH',
+                id: id,
+                payload: { sx, sz, ex, ez, maxSteps }
+            });
+
+            // Timeout safety?
+            // setTimeout(() => { ... }, 5000);
+        });
     }
 
     findPath(sx, sz, ex, ez, maxStepsParam = 0) {
@@ -2316,6 +2506,96 @@ export class Terrain {
             }
         }
         return null; // No path found
+    }
+
+    /**
+     * Finds the best target within a range using spatial partitioning or list iteration.
+     * @param {string} type - 'goblin', 'unit', 'building', or 'any'
+     * @param {number} cx - Center Grid X
+     * @param {number} cz - Center Grid Z
+     * @param {number} maxRange - Radius to search
+     * @param {function} scoreFn - (entity, dist) => score (Lower is better). Return Infinity to skip.
+     * @param {Array} list - Optional. If provided and small, scans this list. If large, prefers grid.
+     */
+    findBestTarget(type, cx, cz, maxRange, scoreFn, list) {
+        let best = null;
+        let bestScore = Infinity;
+
+        // Use Spatial Grid if available and list is large or missing
+        // This is O(R^2) vs O(N)
+        // If maxRange is huge (e.g. 100), R^2 = 10000. N might be 18000.
+        // If maxRange is small (15), R^2 = 225. Much faster.
+        const useGrid = (this.entityGrid && (!list || list.length > 500) && maxRange < 40);
+
+        if (useGrid) {
+            const range = Math.ceil(maxRange);
+            const W = this.logicalWidth;
+            const D = this.logicalDepth;
+            const minX = Math.max(0, cx - range);
+            const maxX = Math.min(W - 1, cx + range);
+            const minZ = Math.max(0, cz - range);
+            const maxZ = Math.min(D - 1, cz + range);
+
+            // OPTIMIZATION: Spiral Search or simple Scan?
+            // Simple scan is cache-friendly-ish.
+            for (let x = minX; x <= maxX; x++) {
+                for (let z = minZ; z <= maxZ; z++) {
+                    const cell = this.entityGrid[x][z];
+                    if (!cell || cell.length === 0) continue;
+
+                    // Dist Check (Manhattan first?)
+                    // const dx = Math.abs(x - cx);
+                    // const dz = Math.abs(z - cz);
+                    // if (dx + dz > range * 1.5) continue; // Approx circle
+
+                    for (const e of cell) {
+                        // Type Check
+                        if (type !== 'any') {
+                            if (type === 'goblin' && e.type !== 'goblin') continue;
+                            if (type === 'building' && e.type !== 'building') continue;
+                            if (type === 'unit' && e.type !== 'unit') continue;
+                        }
+
+                        const d2 = (e.gridX - cx) ** 2 + (e.gridZ - cz) ** 2;
+                        if (d2 > maxRange * maxRange) continue;
+
+                        const dist = Math.sqrt(d2);
+                        const score = scoreFn(e, dist);
+
+                        if (score < bestScore) {
+                            bestScore = score;
+                            best = e;
+                        }
+                    }
+                }
+            }
+        } else {
+            // Fallback: List Iteration
+            // If no list provided, assume buildings (legacy safe) or empty
+            let candidates = list;
+            if (!candidates) {
+                if (type === 'building') candidates = this.buildings;
+                // else if (type === 'goblin') candidates = window.game?.goblinManager?.goblins || []; // Unsafe coupling?
+                else candidates = [];
+            }
+
+            for (const e of candidates) {
+                // Pre-filter by dist?
+                // Assuming candidates can be anywhere.
+                const d2 = (e.gridX - cx) ** 2 + (e.gridZ - cz) ** 2;
+                if (d2 > maxRange * maxRange) continue;
+
+                const dist = Math.sqrt(d2);
+                const score = scoreFn(e, dist);
+
+                if (score < bestScore) {
+                    bestScore = score;
+                    best = e;
+                }
+            }
+        }
+
+        return best;
     }
 
     unregisterAll(type) {

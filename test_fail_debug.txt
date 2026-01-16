@@ -1,0 +1,9 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+No test files found, exiting with code 1
+
+filter: src/tests/WorkerOscillation*.test.js
+include: **/*.{test,spec}.?(c|m)[jt]s?(x)
+exclude:  **/node_modules/**, **/.git/**
+

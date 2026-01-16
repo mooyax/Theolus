@@ -50,14 +50,13 @@ export class Entity {
 
     updatePosition() {
         if (isNaN(this.gridX) || isNaN(this.gridZ)) return;
-
-        const pos = this.getPositionForGrid(this.gridX, this.gridZ);
-        this.position.copy(pos);
+        this.getPositionForGrid(this.gridX, this.gridZ, this.position);
     }
 
-    getPositionForGrid(x, z) {
-        const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
-        const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
+    // OPTIMIZED: Use target vector to avoid garbage collection
+    getPositionForGrid(x, z, target = null) {
+        const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
+        const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
 
         // Center check
         const rawX = x - logicalW / 2 + 0.5;
@@ -68,9 +67,11 @@ export class Entity {
         const planeX = rawX;
         const planeY = -rawZ;
 
-        let offsets = { x: 0, y: 0 };
+        let ox = 0, oy = 0;
         if (this.terrain && this.terrain.getVisualOffset) {
-            offsets = this.terrain.getVisualOffset(planeX, planeY);
+            const offsets = this.terrain.getVisualOffset(planeX, planeY);
+            ox = offsets.x;
+            oy = offsets.y;
         }
 
         // KEY FIX: Use Interpolated Height for smooth visual snap
@@ -81,18 +82,18 @@ export class Entity {
             height = this.terrain.getTileHeight(x, z);
         }
 
-        return new THREE.Vector3(
-            rawX + offsets.x,
-            height,
-            rawZ - offsets.y
-        );
+        if (target) {
+            target.set(rawX + ox, height, rawZ - oy);
+            return target;
+        }
+        return new THREE.Vector3(rawX + ox, height, rawZ - oy);
     }
 
     getDistance(tx, tz, ox = null, oz = null) {
         const sx = (ox !== null) ? ox : this.gridX;
         const sz = (oz !== null) ? oz : this.gridZ;
-        const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
-        const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
+        const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
+        const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
 
         let dx = Math.abs(sx - tx);
         let dz = Math.abs(sz - tz);
@@ -111,7 +112,7 @@ export class Entity {
         // Simple Lerp (Wrap aware)
         let sx = this.startGridX;
         let tx = this.targetGridX;
-        const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
+        const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
         if (tx - sx > logicalW / 2) sx += logicalW;
         if (sx - tx > logicalW / 2) sx -= logicalW;
         let x = sx + (tx - sx) * progress;
@@ -124,7 +125,7 @@ export class Entity {
         // Simple Lerp (Wrap aware)
         let sz = this.startGridZ;
         let tz = this.targetGridZ;
-        const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
+        const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
         if (tz - sz > logicalD / 2) sz += logicalD;
         if (sz - tz > logicalD / 2) sz -= logicalD;
         let z = sz + (tz - sz) * progress;
@@ -149,8 +150,8 @@ export class Entity {
             let oldTz = this.targetGridZ;
 
             // Wrap adjustment (matches updateMovement)
-            const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
-            const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
+            const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
+            const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
             if (oldTx - sx > logicalW / 2) sx += logicalW;
             if (sx - oldTx > logicalW / 2) sx -= logicalW;
             if (oldTz - sz > logicalD / 2) sz += logicalD;
@@ -178,8 +179,8 @@ export class Entity {
         if (this.onMoveStep) this.onMoveStep(0);
 
         // Rotation
-        const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
-        const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
+        const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
+        const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
 
         let dx = tx - this.gridX;
         let dz = tz - this.gridZ;
@@ -220,8 +221,8 @@ export class Entity {
             }
         } else {
             // LERP
-            const logicalW = this.terrain ? this.terrain.logicalWidth : 240;
-            const logicalD = this.terrain ? this.terrain.logicalDepth : 240;
+            const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
+            const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
 
             let sx = this.startGridX;
             let sz = this.startGridZ;
@@ -238,8 +239,7 @@ export class Entity {
             const cz = sz + (tz - sz) * progress;
 
             // Visual Update
-            const pos = this.getPositionForGrid(cx, cz);
-            this.position.copy(pos);
+            this.getPositionForGrid(cx, cz, this.position);
 
             // Subclass hook (Animation)
             if (this.onMoveStep) {

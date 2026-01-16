@@ -89,6 +89,7 @@ class MockTerrain {
         }
     }
 
+    findBestTarget() { return null; }
     getTileHeight(x, z) {
         if (x < 0 || x >= 100 || z < 0 || z >= 100) return 0;
         return this.grid[x][z].height;
@@ -190,7 +191,7 @@ describe('Combat Logic Verification', () => {
         // Time Slicing: (frame + id) % 20 != 0
         // id=1 -> (frame + 1) % 20 != 0 -> skip
         // Target: (frame + 1) % 20 == 0 -> frame=19
-        game.frameCounter = 19;
+        game.frameCount = 19;
 
         const threat = worker.checkSelfDefense();
         expect(threat).toBe(true); // Should pass now!

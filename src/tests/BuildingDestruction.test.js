@@ -143,4 +143,35 @@ describe('Building Destruction Logic', () => {
         // logic in removeBuilding handles this by searching coords
         expect(terrain.buildings.length).toBe(0);
     });
+    it('should not destroy building if population > 0 even if HP <= 0', () => {
+        Goblin.initAssets = vi.fn();
+        Goblin.assets.initialized = true;
+
+        const goblin = new Goblin(scene, terrain, 11, 10);
+        const building = terrain.addBuilding('house', 10, 10, true);
+
+        // Setup: HP 1, Pop 10
+        building.hp = 1;
+        building.userData.hp = 1;
+        building.population = 10;
+        building.userData.population = 10;
+
+        // Attack 1: HP goes to <= 0, but Pop is still > 0
+        goblin.attackBuilding(building);
+
+        expect(building.hp).toBeLessThanOrEqual(0);
+        expect(building.population).toBeGreaterThan(0);
+        expect(terrain.buildings).toContain(building); // Should still be there
+        expect(building.isDead).toBeUndefined(); // Or falsy
+
+        // Attack until Pop 0
+        while (building.population > 0) {
+            goblin.attackCooldown = 0;
+            goblin.attackBuilding(building);
+        }
+
+        // Now it should be destroyed
+        expect(terrain.buildings).not.toContain(building);
+        expect(building.userData.isDead).toBe(true);
+    });
 });

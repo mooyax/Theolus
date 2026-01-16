@@ -1,0 +1,18 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/ManualJobPersistence.test.js[2m > [22m[2mManual Job Persistence[2m > [22m[2mshould NOT abandon Manual Job even if path is unreachable
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/ManualJobPersistence.test.js[2m > [22m[2mManual Job Persistence[2m > [22m[2mshould NOT abandon Manual Job due to Stuck Timeout
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+ [32m笨・[39m src/tests/ManualJobPersistence.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m   Start at [22m 17:44:50
+[2m   Duration [22m 1.57s[2m (transform 205ms, setup 77ms, import 263ms, tests 12ms, environment 848ms)[22m
+

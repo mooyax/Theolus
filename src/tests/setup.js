@@ -32,6 +32,14 @@ HTMLCanvasElement.prototype.getContext = vi.fn(function (type) {
     return null;
 });
 
+// Mock UI and Renderers globally to prevent async initialization crashes in tests
+vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } drawRaidPing() { } } }));
+vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
+vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { init() { return Promise.resolve(); } update() { } } }));
+vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { init() { return Promise.resolve(); } update() { } updateLighting() { } } }));
+vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { init() { return Promise.resolve(); } update() { } } }));
+vi.mock('../Weather.js', () => ({ Weather: class { update() { } setSeason() { } } }));
+
 // Mock Window Game if needed globally
 window.game = undefined;
 

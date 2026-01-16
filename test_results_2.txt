@@ -1,0 +1,88 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/UnitPerformance.test.js[2m > [22m[2mUnit Performance Optimization[2m > [22m[2mshould throttle checkSelfDefense based on ID and Frame
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Hysteresis.test.js[2m > [22m[2mUnit Combat Hysteresis (Stickiness)[2m > [22m[2mshould stay focused on existing targetRaidPoint despite a slightly closer new hotspot
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:knight Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:50,50
+
+[90mstdout[2m | src/tests/UnitPerformance.test.js[2m > [22m[2mUnit Performance Optimization[2m > [22m[2mshould skip searchSurroundings for busy workers
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Hysteresis.test.js[2m > [22m[2mUnit Combat Hysteresis (Stickiness)[2m > [22m[2mshould switch target if the new hotspot is significantly closer (beyond hysteresis)
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:knight Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:50,50
+
+[90mstdout[2m | src/tests/UnitPerformance.test.js[2m > [22m[2mUnit Performance Optimization[2m > [22m[2mshould throttle searchSurroundings for idle units
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Hysteresis.test.js[2m > [22m[2mUnit Combat Hysteresis (Stickiness)[2m > [22m[2mshould apply stickiness during checkSelfDefense for entities
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:knight Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:50,50
+
+ [31mﾃ・[39m src/tests/UnitPerformance.test.js[2m > [22mUnit Performance Optimization[2m > [22mshould throttle checkSelfDefense based on ID and Frame[32m 25[2mms[22m[39m
+[31m   竊・expected "vi.fn()" to be called with arguments: [ 'goblin', 10, 10, Any<Number>, 窶ｦ(1) ][90m
+
+Received: 
+
+[1m  1st vi.fn() call:
+
+[22m[2m  [[22m
+[2m    "goblin",[22m
+[2m    10,[22m
+[2m    10,[22m
+[32m-   Any<Number>,[90m
+[32m-   Any<Function>,[90m
+[31m+   15,[90m
+[31m+   [Function anonymous],[90m
+[31m+   [[90m
+[31m+     {[90m
+[31m+       "gridX": 12,[90m
+[31m+       "gridZ": 12,[90m
+[31m+       "id": "g1",[90m
+[31m+       "isDead": false,[90m
+[31m+     },[90m
+[31m+   ],[90m
+[2m  ][22m
+
+[1m  2nd vi.fn() call:
+
+[22m[2m  [[22m
+[32m-   "goblin",[90m
+[31m+   "building",[90m
+[31m+   10,[90m
+[2m    10,[22m
+[2m    10,[22m
+[32m-   Any<Number>,[90m
+[32m-   Any<Function>,[90m
+[31m+   [Function anonymous],[90m
+[31m+   null,[90m
+[2m  ][22m
+[31m[90m
+
+Number of calls: [1m2[22m
+[31m[39m
+ [32m笨・[39m src/tests/UnitPerformance.test.js[2m > [22mUnit Performance Optimization[2m > [22mshould skip searchSurroundings for busy workers[32m 2[2mms[22m[39m
+ [31mﾃ・[39m src/tests/UnitPerformance.test.js[2m > [22mUnit Performance Optimization[2m > [22mshould throttle searchSurroundings for idle units[32m 1[2mms[22m[39m
+[31m   竊・expected "vi.fn()" to be called at least once[39m
+ [32m笨・[39m src/tests/Hysteresis.test.js[2m > [22mUnit Combat Hysteresis (Stickiness)[2m > [22mshould stay focused on existing targetRaidPoint despite a slightly closer new hotspot[32m 9[2mms[22m[39m
+ [32m笨・[39m src/tests/Hysteresis.test.js[2m > [22mUnit Combat Hysteresis (Stickiness)[2m > [22mshould switch target if the new hotspot is significantly closer (beyond hysteresis)[32m 2[2mms[22m[39m
+ [31mﾃ・[39m src/tests/Hysteresis.test.js[2m > [22mUnit Combat Hysteresis (Stickiness)[2m > [22mshould apply stickiness during checkSelfDefense for entities[32m 14[2mms[22m[39m
+[31m   竊・expected null to be { Object (id, gridX, ...) } // Object.is equality[39m
+[90mstdout[2m | src/tests/UnitAISearch.test.js[2m > [22m[2mUnit AI Search Optimization[2m > [22m[2mshould use Spatial Search to find goblin
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:guard Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:guard Pos:0,0
+
+ [32m笨・[39m src/tests/UnitAISearch.test.js[2m > [22mUnit AI Search Optimization[2m > [22mshould use Spatial Search to find goblin[32m 9[2mms[22m[39m
+ [32m笨・[39m src/tests/UnitAISearch.test.js[2m > [22mUnit AI Search Optimization[2m > [22mshould find Base using Spatial Search[32m 3[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 15:14:36
+[2m   Duration [22m 1.75s[2m (transform 716ms, setup 273ms, import 976ms, tests 71ms, environment 2.39s)[22m
+

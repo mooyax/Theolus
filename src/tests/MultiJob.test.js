@@ -32,16 +32,20 @@ describe('Multi-Job Juggling Verification', () => {
     beforeEach(() => {
         const mockScene = { add: vi.fn(), getObjectByName: vi.fn().mockReturnValue({ add: vi.fn(), remove: vi.fn(), children: [] }) };
         const mockTerrain = {
+            findBestTarget: vi.fn(() => null),
             getTileHeight: vi.fn().mockReturnValue(10),
             logicalWidth: 100, logicalDepth: 100,
             grid: Array(100).fill(null).map(() => Array(100).fill(null).map(() => ({ regionId: 1, height: 10 }))),
-            isReachable: vi.fn().mockReturnValue(true),
+            isReachable: vi.fn(() => true),
+            isWalkable: vi.fn(() => true), // Added
             findPath: vi.fn().mockImplementation((x1, y1, x2, y2) => [{ x: x2, z: y2 }]),
+            findPathAsync: vi.fn().mockImplementation((sx, sz, ex, ez) => Promise.resolve([{ x: ex, z: ez }])), // Dynamic target
             checkFlatArea: vi.fn().mockReturnValue(true),
             moveEntity: vi.fn(),
             addBuilding: vi.fn(),
             removeBuilding: vi.fn(),
             initTerrain: vi.fn(),
+            initPathfindingWorker: vi.fn(), // If needed
             getRegion: vi.fn().mockReturnValue(1),
             isAdjacentToRegion: vi.fn().mockReturnValue(true),
             getBuildingSize: vi.fn().mockReturnValue(1)
@@ -67,7 +71,7 @@ describe('Multi-Job Juggling Verification', () => {
         vi.clearAllMocks();
     });
 
-    it('should NOT interrupt busy units when a new job is added', () => {
+    it('should NOT interrupt busy units when a new job is added', async () => {
         // 1. Initial Assignment
         mockGame.processAssignments(10);
 
@@ -79,6 +83,14 @@ describe('Multi-Job Juggling Verification', () => {
         // Start Moving
         u1.updateLogic(0.1, 0.1);
         u2.updateLogic(0.1, 0.1);
+
+        await new Promise(r => setTimeout(r, 0));
+
+        // Retry logic to consume path
+        // Must advance time > throttle (1.0s)
+        u1.updateLogic(5.0, 0.1);
+        u2.updateLogic(5.0, 0.1);
+
         expect(u1.isMoving).toBe(true);
         expect(u2.isMoving).toBe(true);
         const u1_moveStart = u1.moveStartTime;
@@ -89,10 +101,10 @@ describe('Multi-Job Juggling Verification', () => {
         // We need to match the logic. 
         // Note: addRequest creates a new object with ID 'req_X'. 
         // We'll capture it.
-        const newReq = mockGame.addRequest('build', 10, 10, null, null, null, false);
+        const newReq = mockGame.addRequest('build', 10, 10, false);
 
         // 3. Run Assignment Loop again
-        // 3. Run Assignment Loop again
+        console.log(`[TEST DEBUG] Before processAssignments: U1 Target: ${u1.targetRequest ? u1.targetRequest.id : 'null'}`);
         mockGame.processAssignments(10);
 
         console.error(`[DEBUG] Job3 Status: ${newReq.status}`);

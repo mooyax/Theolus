@@ -14,6 +14,12 @@ global.window = {
     alert: vi.fn(),
     game: null
 };
+global.Worker = class {
+    constructor() { }
+    postMessage() { }
+    terminate() { }
+    addEventListener() { }
+};
 global.document = {
     getElementById: vi.fn(() => ({ style: {}, innerText: '' })),
     createElement: vi.fn(() => ({
@@ -50,9 +56,9 @@ vi.mock('../SheepManager.js', () => ({ SheepManager: class { update() { } draw()
 vi.mock('../FishManager.js', () => ({ FishManager: class { update() { } draw() { } } }));
 vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } } }));
 vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
-vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { update() { } dispose() { } } }));
-vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { update() { } updateLighting() { } dispose() { } } }));
-vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { update() { } dispose() { } } }));
+vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { update() { } dispose() { } init() { } } }));
+vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { update() { } updateLighting() { } dispose() { } init() { } } }));
+vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { update() { } dispose() { } init() { } } }));
 
 vi.mock('three', () => {
     class MockVector3 {
@@ -121,7 +127,7 @@ vi.mock('three', () => {
         PlaneGeometry: MockPlaneGeometry,
         BufferGeometry: class { setAttribute() { } setIndex() { } },
         BufferAttribute: MockBufferAttribute,
-        Plane: class { constant = 0; normal = new MockVector3(); setComponents() { } },
+        Plane: class { constant = 0; normal = new MockVector3(); setComponents() { } clone() { return new this.constructor(); } },
         CylinderGeometry: class { translate() { } },
         ConeGeometry: class { translate() { } },
         SphereGeometry: class { translate() { } },
@@ -197,7 +203,8 @@ describe('Real Terrain Restoration Logic', () => {
         game.terrain.logicalWidth = 80;
         game.terrain.logicalDepth = 80;
         game.terrain.getTileHeight = () => 10; // Allow movement
-        game.terrain.findPath = vi.fn().mockImplementation(() => [{ x: 20, z: 20 }]); // Ensure move starts with fresh array
+        game.terrain.findPath = vi.fn().mockImplementation((sx, sz, tx, tz) => [{ x: tx, z: tz }]);
+        game.terrain.findPathAsync = vi.fn().mockImplementation((sx, sz, tx, tz) => Promise.resolve([{ x: tx, z: tz }]));
         window.game = game;
     });
 
@@ -225,6 +232,9 @@ describe('Real Terrain Restoration Logic', () => {
 
         // Verify Setup
         unit.changeState(new JobState(unit));
+        // Async Wait
+        await new Promise(resolve => setTimeout(resolve, 0));
+        unit.updateLogic(0.016, 0.016, false, []);
         expect(unit.isMoving).toBe(true);
         // expect(unit.path).toBeDefined(); // Linear move may not have path
 

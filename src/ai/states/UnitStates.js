@@ -3,6 +3,7 @@ import { State, WanderState } from './State.js';
 export class UnitWanderState extends WanderState {
     constructor(actor) {
         super(actor);
+        this.name = 'UnitWanderState';
     }
 
     enter(prev) {
@@ -135,6 +136,7 @@ export class UnitWanderState extends WanderState {
             }
             if (this.actor.stagnationTimer > 20.0) {
                 this.actor.migrate(time);
+                return;
             }
         }
 
@@ -189,6 +191,7 @@ export class UnitWanderState extends WanderState {
 export class JobState extends State {
     constructor(actor) {
         super(actor);
+        this.name = 'JobState';
         this.targetRequest = actor.targetRequest;
         this.resumeState = null;
         this.lastMoveAttempt = 0;
@@ -218,6 +221,7 @@ export class JobState extends State {
         this.actor.action = 'Approaching Job';
         this.actor.isMoving = false;
         this.actor.lastPathTime = -100; // Force pathfinding immediately (bypass throttle)
+        this.actor.isUnreachable = false; // FIX: Clear stale unreachable flag from previous jobs
         this.targetRequest = this.actor.targetRequest;
 
         if (this.targetRequest) {
@@ -243,10 +247,7 @@ export class JobState extends State {
     }
 
     exit(nextState) {
-        // If we are switching to another JobState for the SAME request, do not clear it.
-        if (nextState instanceof JobState && nextState.targetRequest && this.targetRequest && nextState.targetRequest.id === this.targetRequest.id) {
-            return;
-        }
+
 
         // PERSISTENCE: If we are switching to a temporary state (Combat/Sleep), 
         // we keep the targetRequest on the actor so it can be resumed by WanderState.
@@ -265,7 +266,7 @@ export class JobState extends State {
 
     // Helper to pass context back
     getResumeState() {
-
+        if (!this.targetRequest) console.warn(`[JobState ${this.actor.id}] getResumeState called with NO targetRequest.`);
         const state = new UnitWanderState(this.actor);
         state.resumeContext = this.savedResumeContext;
         return state;
@@ -273,12 +274,14 @@ export class JobState extends State {
 
     update(time, deltaTime, isNightParam, goblins) {
         if (!this.targetRequest) {
+            console.warn(`[JobState ${this.actor.id}] Abort: No targetRequest (Update). Switching to Wander.`);
             this.actor.changeState(this.getResumeState());
             return;
         }
 
-        if (this.targetRequest.assignedTo !== this.actor.id) {
-            console.log(`[JobState ${this.actor.id}] Ownership LOST for Job ${this.targetRequest.id}. Switching to Wander.`);
+        // DEBUG: Flapping Diagnosis
+        if (String(this.targetRequest.assignedTo) !== String(this.actor.id)) {
+            console.warn(`[JobState ${this.actor.id}] Ownership LOST for Job ${this.targetRequest.id}. Assignee: ${this.targetRequest.assignedTo}. Switching to Wander.`);
             this.actor.changeState(this.getResumeState());
             return;
         }
@@ -297,6 +300,15 @@ export class JobState extends State {
 
         if (this.actor.role === 'worker') {
             // Pacifism (Don't scan aggressively), but Retaliation handled above.
+            // FIX: Allow occasional scans for VERY CLOSE threats (specifically buildings blocking path)
+            // checkSelfDefense logic in Unit.js now handles filtering.
+            if (this.actor.checkSelfDefense && this.actor.checkSelfDefense(goblins)) {
+                if (this.actor.targetGoblin || this.actor.targetBuilding) {
+                    console.log(`[JobState ${this.actor.id}] Worker found threat/target on path!`);
+                    this.actor.changeState(new CombatState(this.actor));
+                    return;
+                }
+            }
         } else {
             // Aggressive Guards (Knights/Wizards)
             if (this.actor.checkSelfDefense && this.actor.checkSelfDefense(goblins)) {
@@ -321,24 +333,14 @@ export class JobState extends State {
             }
         }
 
-        const vx = this.actor.getVisualX ? this.actor.getVisualX(time) : this.actor.gridX;
-        const vz = this.actor.getVisualZ ? this.actor.getVisualZ(time) : this.actor.gridZ;
-        const dist = this.actor.getDistance(this.targetRequest.x, this.targetRequest.z, vx, vz);
+        const dist = this.actor.getDistance(this.targetRequest.x, this.targetRequest.z);
+        if (dist < 1.0) {
+            this.actor.isMoving = false;
+            if (this.actor.id === 0) console.log(`[JobState] Arrived at Job. Completing...`);
 
-        const approachDist = (this.targetRequest.type === 'raise' || this.targetRequest.type === 'lower') ? 3.0 : 2.0;
+            // COMPLETION LOGIC
+            if (this.actor.onMoveFinished) this.actor.onMoveFinished(time);
 
-        if (dist <= approachDist) {
-            if (this.actor.isMoving) {
-                const oldX = this.actor.gridX;
-                const oldZ = this.actor.gridZ;
-                this.actor.gridX = Math.round(vx);
-                this.actor.gridZ = Math.round(vz);
-                this.actor.isMoving = false;
-                if (this.actor.terrain && this.actor.terrain.moveEntity) {
-                    this.actor.terrain.moveEntity(this.actor, oldX, oldZ, this.actor.gridX, this.actor.gridZ, this.actor.spatialType || 'unit');
-                }
-                if (this.actor.onMoveFinished) this.actor.onMoveFinished(time);
-            }
             this.actor.action = "Working";
 
             if (window.game) window.game.completeRequest(this.actor, this.targetRequest);
@@ -361,7 +363,6 @@ export class JobState extends State {
 
         if (this.targetRequest && this.targetRequest.building) {
             const b = this.targetRequest.building;
-            // Check if building still exists in terrain or is not dead
             const stillExists = this.actor.terrain && this.actor.terrain.buildings && this.actor.terrain.buildings.includes(b);
             if (!stillExists || b.isDead) {
                 console.log(`[JobState ${this.actor.id}] Target building destroyed. Releasing job.`);
@@ -378,100 +379,115 @@ export class JobState extends State {
             Math.abs(this.actor.targetGridX - this.targetRequest.x) < 0.1 &&
             Math.abs(this.actor.targetGridZ - this.targetRequest.z) < 0.1;
 
-        if (!isHeadingToTarget || !this.actor.isMoving) {
-            const moved = this.actor.smartMove(this.targetRequest.x, this.targetRequest.z, time);
+        if (this.targetRequest.status === 'pending' || this.targetRequest.status === 'assigned') {
+            const moved = this.actor.triggerMove(this.targetRequest.x, this.targetRequest.z, time);
 
-            // FIX: Immediate Release if Unreachable (Pathfinding Explicitly Returned Null)
+            // 1. Pathfinding Returned Null (Unreachable)
             if (this.actor.isUnreachable) {
-                console.log(`[JobState ${this.actor.id}] Request Unreachable (No Path). Releasing Job.`);
+                console.warn(`[JobState ${this.actor.id}] Abort: Target Unreachable. Req:${this.targetRequest.id} at ${this.targetRequest.x},${this.targetRequest.z}`);
+                const game = this.actor.game || window.game;
+                if (game && game.deferRequest) game.deferRequest(this.targetRequest, 15.0);
 
-                // CRITICAL FIX: Add to ignore list to prevent immediate reclaim by WanderState
-                if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + 10.0);
-
-                if (window.game) window.game.releaseRequest(this.actor, this.targetRequest);
-                this.targetRequest = null;
                 this.actor.targetRequest = null;
+                if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + 15.0);
+                this.targetRequest = null; // Clear local ref too
                 this.actor.isUnreachable = false;
+                this.actor.stuckCount = 0;
+                this.actor.lastJobAbortTime = time; // Set abort time for unreachability too
                 this.actor.changeState(this.getResumeState());
                 return;
             }
 
-            this.lastMoveAttempt = time;
+            if (!moved) {
+                // Check for STUCK (Physical block or Logic block)
+                // Stuck accumulation is handled in triggerMove / handleStuck of Unit.js
+                // But we can check if triggerMove returned false repeatedly?
 
-            // FIX: If smartMove returned true but we are throttled, do NOT count as failure
-            if (!moved && !this.actor.isMoving && !this.actor.isPathfindingThrottled && !this.actor.isUnreachable) {
-                const failureInc = (this.targetRequest.isManual) ? 5 : 1;
-                this.pathFailures = (this.pathFailures || 0) + failureInc;
-                this.actor.stuckCount = (this.actor.stuckCount || 0) + failureInc;
+                // Unit.js handles stuckCount internally.
+                // If stuckCount > 10, Unit logic might try to unstick?
+                // JobState should monitor progress.
+                if (!this.lastPos) this.lastPos = { x: this.actor.gridX, z: this.actor.gridZ };
 
-                if (this.actor.stuckCount > 30) {
-                    this.actor.lastPathTime = 0;
-                    this.actor.stuckCount = 0;
-                }
-
-                const isUnreachable = this.actor.isReachable && !this.actor.isReachable(this.targetRequest.x, this.targetRequest.z);
-
-                // STICKY JOBS: Reduce threshold for manual jobs (100 = approx 6-10s of blocking)
-                // Auto jobs patience increased to 50 frames (~1.5s - 5s depending on frame rate) to avoid flickering.
-                const failureThreshold = (this.targetRequest && this.targetRequest.isManual) ? 100 : 50;
-
-                if (isUnreachable || this.pathFailures > failureThreshold || this.stuckTimer > 45.0) {
-                    console.warn(`[JobState ${this.actor.id}] ABORTING JOB ${this.targetRequest.id}. Reason: Fail:${this.pathFailures}, Stuck:${this.stuckTimer}, Unreach:${isUnreachable}. Ignore Expiry: ${time + 60.0}`);
-                    if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + 60.0);
-                    if (window.game) window.game.releaseRequest(this.actor, this.targetRequest);
-
-                    // Fix: Do not nullify this.targetRequest before exit() runs, otherwise exit() won't clear unit.targetRequest
-                    // We rely on exit() to clear unit.targetRequest.
-                    // But checking logic: exit uses (this.actor.targetRequest === this.targetRequest)
-                    // So we must keep this.targetRequest valid for a moment.
-
-                    // Actually, simpler: explicit clear if we know we are aborting.
-                    this.actor.targetRequest = null;
-                    this.targetRequest = null;
-
-                    // Prevention of "Distracted Building": Set cooldown
-                    this.actor.lastJobAbortTime = time;
-
-                    this.actor.changeState(this.getResumeState());
-                    return;
+                const dm = Math.abs(this.actor.gridX - this.lastPos.x) + Math.abs(this.actor.gridZ - this.lastPos.z);
+                if (dm < 0.01) {
+                    this.stuckTimer += deltaTime;
+                } else {
+                    this.stuckTimer = 0;
+                    this.lastPos = { x: this.actor.gridX, z: this.actor.gridZ };
                 }
             } else {
-                // If moved OR throttled OR unreachable-flag-checked-already, reset or hold failures
-                // Resetting pathFailures on success is standard
-                if (moved) this.pathFailures = 0;
-            }
-        }
-
-        if (time - this.lastStuckCheck >= this.checkStuckInterval) {
-            this.lastStuckCheck = time;
-
-
-            const vx = this.actor.getVisualX ? this.actor.getVisualX(time) : this.actor.gridX;
-            const vz = this.actor.getVisualZ ? this.actor.getVisualZ(time) : this.actor.gridZ;
-            const dx = Math.abs(vx - this.lastPos.x);
-            const dz = Math.abs(vz - this.lastPos.z);
-            if (dx < 0.5 && dz < 0.5) {
-                this.stuckTimer += this.checkStuckInterval;
-                const stuckThreshold = (this.targetRequest && this.targetRequest.isManual) ? 45.0 : 15.0; // Reduced from 300 to 45
-                if (this.stuckTimer > stuckThreshold) {
-                    if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + 30.0);
-                    if (window.game) window.game.releaseRequest(this.actor, this.targetRequest);
-
-                    this.actor.targetRequest = null;
-                    this.targetRequest = null;
-
-                    this.actor.changeState(this.getResumeState());
-                    return;
-                }
-            } else {
+                // Moving OK
                 this.stuckTimer = 0;
-                this.lastPos = { x: vx, z: vz };
+                this.pathFailures = 0;
+            }
+
+            // pathFailures logic (from previous persistence check)
+            // If Unit.smartMove fails repeatedly?
+            if (!moved && !this.actor.isMoving && !this.actor.isPathfinding) {
+                this.pathFailures++;
+            }
+
+            // Tuned Thresholds:
+            // StuckTimer: 45s (Long wait for transient crowds)
+            // PathFailures: 100 frames (Approx 2-3s of solid blocking)
+            // User requested: "Persistence" with "Abandonment if impossible".
+
+            // Dynamic Threshold based on Crowd?
+            const nearby = (this.actor.terrain && this.actor.terrain.findNearestEntity) ? this.actor.terrain.findNearestEntity('unit', this.actor.gridX, this.actor.gridZ, 2) : null;
+            const failureThreshold = nearby ? 150 : 100; // More tolerance if crowded
+
+            if (this.pathFailures > failureThreshold || this.stuckTimer > 45.0) {
+                console.warn(`[JobState ${this.actor.id}] Abort: Path Failures > ${failureThreshold} or Stuck > 45s.`);
+                const game = this.actor.game || window.game;
+                if (game && game.deferRequest) game.deferRequest(this.targetRequest, 15.0);
+                if (game && game.deferRequest) game.deferRequest(this.targetRequest, 15.0);
+
+                this.actor.targetRequest = null;
+                if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + 15.0);
+                this.targetRequest = null;
+                this.pathFailures = 0;
+                this.stuckTimer = 0;
+                this.actor.lastJobAbortTime = time; // Prevent immediate distraction building
+                this.actor.changeState(this.getResumeState());
+                return;
+            }
+            // 3. Physical Stuck Check
+            if (time - this.lastStuckCheck >= this.checkStuckInterval) {
+                this.lastStuckCheck = time;
+
+                const vx = this.actor.getVisualX ? this.actor.getVisualX(time) : this.actor.gridX;
+                const vz = this.actor.getVisualZ ? this.actor.getVisualZ(time) : this.actor.gridZ;
+                const dx = Math.abs(vx - this.lastPos.x);
+                const dz = Math.abs(vz - this.lastPos.z);
+
+                if (dx < 0.5 && dz < 0.5) {
+                    this.stuckTimer += this.checkStuckInterval;
+                    const stuckThreshold = 45.0;
+                    if (this.stuckTimer > stuckThreshold) {
+                        console.warn(`[JobState ${this.actor.id}] Abort: Physical Stuck > 45s.`);
+                        const game = this.actor.game || window.game;
+                        if (game && game.deferRequest) game.deferRequest(this.targetRequest, 15.0);
+
+                        this.actor.targetRequest = null;
+                        if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + 15.0);
+                        this.targetRequest = null;
+                        this.stuckTimer = 0;
+                        this.actor.lastJobAbortTime = time; // Set abort time for physical stuck
+
+                        this.actor.changeState(this.getResumeState());
+                        return;
+                    }
+                } else {
+                    if (this.targetRequest) {
+                        this.stuckTimer = 0;
+                    }
+                    this.lastPos = { x: vx, z: vz };
+                }
             }
         }
     }
-
-
 }
+
 
 export class CombatState extends State {
     constructor(actor) {
@@ -493,10 +509,15 @@ export class CombatState extends State {
 
         this.actor.isSleeping = false;
         this.actor.migrationTarget = null;
-        // FIX: Worker should NOT drop their job just because they defend themselves!
-        // (WanderState will resume it after combat if actor.targetRequest is kept)
-        // Only release if it's NOT a manual job OR if we are overwhelmed? 
-        // For now, let's just keep it to resolve the "drop job on attack" bug.
+        // FIX: Release job assignment so other workers can take it!
+        if (this.actor.targetRequest) {
+            if (window.game && window.game.releaseRequest) {
+                console.log(`[CombatState ${this.actor.id}] Releasing Job ${this.actor.targetRequest.id} to fight!`);
+                window.game.releaseRequest(this.actor, this.actor.targetRequest);
+            }
+            this.actor.targetRequest = null;
+        }
+
         this.actor.action = 'Fighting';
         this.stagnationTimer = 0;
         this.update(this.actor.simTime || 0, 0); // Force immediate update with valid time
@@ -508,10 +529,27 @@ export class CombatState extends State {
         return state;
     }
 
-    update(time, deltaTime) {
 
-        if (!this.actor.targetGoblin && !this.actor.targetBuilding && this.actor.findRaidTarget) {
-            this.actor.findRaidTarget();
+    update(time, deltaTime, isNightParam, goblins) {
+        // 0. Acquire Target if missing
+        if (!this.actor.targetGoblin && !this.actor.targetBuilding) {
+
+            // AGGRESSION FIX: Immediate Chain Attack
+            // Before giving up, do a FORCE SCAN for nearby enemies
+            if (this.actor.findNextEnemy && this.actor.findNextEnemy()) {
+                // If found, loop continues naturally with new target
+            } else {
+                // Find Raid Point (Hotspots/Squad)
+                if (this.actor.findRaidTarget) {
+                    this.actor.findRaidTarget();
+                }
+
+                // Search for nearby Goblins/Buildings to engage
+                // (Already covered by findNextEnemy above, but kept for fallback logic if API changes)
+                if (!this.actor.targetGoblin && !this.actor.targetBuilding && this.actor.checkSelfDefense) {
+                    this.actor.checkSelfDefense(goblins);
+                }
+            }
         }
 
         if (!this.actor.targetGoblin && !this.actor.targetBuilding && !this.actor.targetRaidPoint) {
@@ -535,7 +573,7 @@ export class CombatState extends State {
             const terrain = this.actor.terrain || window.game?.terrain;
             if (terrain && terrain.buildings && !terrain.buildings.includes(this.actor.targetBuilding)) {
                 this.actor.targetBuilding = null;
-                this.actor.changeState(this.getResumeState());
+                // Don't exit immediately, try finding next enemy next frame
                 return;
             }
         }
@@ -551,11 +589,23 @@ export class CombatState extends State {
         // Ported Combat Logic from Unit.js (Legacy updateCombatLogic)
         let target = this.actor.targetGoblin || this.actor.targetBuilding;
         if (!target) {
-            // FIX: If we have a RaidPoint, keep CombatState active (Patrolling)
+            // FIX: Before moving to Raid Point, SCAN for enemies along the path!
+            // If we blindly move to Raid Point, we ignore goblins we bump into.
+            if (this.actor.checkSelfDefense && this.actor.checkSelfDefense(goblins)) {
+                if (this.actor.targetGoblin || this.actor.targetBuilding) {
+                    // Found one! Re-run logic immediately next frame (or loop?)
+                    // Just return, next frame 'target' will be set.
+                    return;
+                }
+            }
+
+            // If still no target, move to Raid Point
             if (this.actor.targetRaidPoint) {
+                this.actor.smartMove(this.actor.targetRaidPoint.x, this.actor.targetRaidPoint.z, time);
+                this.actor.action = "Patrolling";
                 return;
             }
-            this.actor.changeState(this.getResumeState());
+            // Retrying findNextEnemy() here is redundant as loop top handles it next frame
             return;
         }
 
@@ -605,39 +655,32 @@ export class CombatState extends State {
         }
 
         // EXECUTE ATTACK
-        // Use Actor Stats (Fixed hardcoded override bug)
-        let damage = this.actor.damage || 10;
-        let rate = this.actor.attackRate || 1.0;
-
-        // Legacy overrides removed in favor of Unit.js stats
-
-        // Perform Damage
         if (this.actor.targetGoblin) {
-            if (this.actor.targetGoblin.takeDamage) {
+            if (this.actor.attackGoblin) {
+                this.actor.attackGoblin(this.actor.targetGoblin);
+            } else {
+                // Fallback for tests
+                let damage = this.actor.damage || 10;
                 this.actor.targetGoblin.takeDamage(damage, this.actor);
-            }
-            if (this.actor.targetGoblin.isDead) { // Check dead status
-                this.actor.targetGoblin = null;
-                // Don't switch state immediately, let next update handle target null check
+                if (this.actor.targetGoblin.isDead) this.actor.targetGoblin = null;
+                this.actor.attackCooldown = this.actor.attackRate || 1.0;
             }
         } else if (this.actor.targetBuilding) {
-            // Mock attackBuilding or direct HP modification for tests
             if (this.actor.attackBuilding) {
-                this.actor.attackBuilding(this.actor.targetBuilding, damage);
+                this.actor.attackBuilding(this.actor.targetBuilding);
             } else {
-                // Fallback for tests if attackBuilding not on actor instance (though it should be)
+                // Fallback for tests
+                let damage = this.actor.damage || 10;
                 if (target.userData && target.userData.hp !== undefined) {
                     target.userData.hp -= damage;
                     if (target.userData.hp <= 0 && window.game && window.game.terrain) {
-                        // Simple destruction mock
                         window.game.terrain.removeBuilding(target);
                         this.actor.targetBuilding = null;
                     }
                 }
+                this.actor.attackCooldown = this.actor.attackRate || 1.0;
             }
         }
-
-        this.actor.attackCooldown = rate;
     }
 }
 

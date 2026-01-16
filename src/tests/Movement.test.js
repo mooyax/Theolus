@@ -123,7 +123,7 @@ describe('Terrain Movement and Logic Tests', () => {
         gm.checkHutSpawns(1.0);
 
         expect(gm.spawnGoblinAtCave).toHaveBeenCalled();
-        // Population decreases by 1 (cost of goblin)
-        expect(hut.userData.population).toBe(9.0);
+        // Population is reset to 0.0 after spawning (changed to prevent infinite spawning bug)
+        expect(hut.userData.population).toBe(0.0);
     });
 });

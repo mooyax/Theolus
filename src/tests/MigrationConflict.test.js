@@ -26,6 +26,7 @@ class MockTerrain {
         }
         this.pathfindingCalls = 0;
     }
+    findBestTarget() { return null; }
     getTileHeight(x, z) { return 1; }
     getRegion(x, z) { return 1; }
     getRandomPointInRegion(regionId, x, z, range) {
@@ -34,6 +35,7 @@ class MockTerrain {
     }
     isAdjacentToRegion() { return false; }
     findPath(sx, sz, ex, ez) { return [{ x: Math.round((sx + ex) / 2), z: Math.round((sz + ez) / 2) }, { x: ex, z: ez }]; } // Mock path
+    findPathAsync(sx, sz, ex, ez) { return Promise.resolve(this.findPath(sx, sz, ex, ez)); }
     moveEntity() { }
     unregisterEntity() { }
     registerEntity() { }
@@ -73,14 +75,18 @@ describe('Migration Conflict Regression (Jitabata Bug)', () => {
         expect(unit.action).toBeDefined();
     });
 
-    it('should NOT allow WanderState to interfere with Migration Movement', () => {
+    it('should NOT allow WanderState to interfere with Migration Movement', async () => {
         const time = 1000;
 
         // 1. Start Migration explicitly
         unit.migrate(time);
 
         expect(unit.action).toBe('Migrating');
-        expect(unit.isMoving).toBe(true);
+        // Async pathfinding means we are either moving (short dist) or pathfinding (long dist)
+        expect(unit.isMoving || unit.isPathfinding).toBe(true);
+
+        // Wait for Async Pathfinding to resolve
+        await new Promise(resolve => setTimeout(resolve, 0));
 
         // 2. Advance Frame with UnitWanderState active
         const deltaTime = 0.016;

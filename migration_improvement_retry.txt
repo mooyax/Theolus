@@ -1,0 +1,37 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould retry migration after 30 seconds timeout
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould interrupt migration if enemy is found (Priority)
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould interrupt migration if enemy is found (Priority)
+[22m[39m[Test Debug] Action after 1st update: Chasing
+[Test Debug] Action after 2nd update: Chasing
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mshould stop migrating if construction succeeds
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mDEBUG: should log blockage reasons correctly
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/MigrationImprovement.test.js[2m > [22m[2mMigration Improvements[2m > [22m[2mDEBUG: should log blockage reasons correctly
+[22m[39m[Unit test-migrant] Blocked by Slope at 21,20 H:2->6
+
+ [31m笶ｯ[39m src/tests/MigrationImprovement.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 19[2mms[22m[39m
+[31m     [31mﾃ・[31m should retry migration after 30 seconds timeout[39m[32m 14[2mms[22m[39m
+     [32m笨・[39m should interrupt migration if enemy is found (Priority)[32m 2[2mms[22m[39m
+     [32m笨・[39m should stop migrating if construction succeeds[32m 1[2mms[22m[39m
+     [32m笨・[39m DEBUG: should log blockage reasons correctly[32m 1[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 10:40:39
+[2m   Duration [22m 767ms[2m (transform 121ms, setup 50ms, import 121ms, tests 19ms, environment 392ms)[22m
+

@@ -42,7 +42,9 @@ describe('Unit AI Stress Testing', () => {
         game.terrain.getTileHeight = () => 1;
         game.terrain.grid = Array(160).fill(0).map(() => Array(160).fill(0).map(() => ({ regionId: 1, height: 1 })));
         game.terrain.isReachable = () => true;
-        game.terrain.findPath = vi.fn().mockImplementation(() => [{ x: 50, z: 50 }]);
+        game.terrain.findBestTarget = vi.fn().mockReturnValue(null);
+        game.terrain.findPath = vi.fn().mockImplementation((sx, sz, tx, tz) => [{ x: tx, z: tz }]);
+        game.terrain.findPathAsync = vi.fn().mockImplementation((sx, sz, tx, tz) => Promise.resolve([{ x: tx, z: tz }]));
         game.terrain.isAdjacentToRegion = () => true;
     });
 
@@ -67,7 +69,7 @@ describe('Unit AI Stress Testing', () => {
             u.id = i;
             units.push(u);
 
-            const req = game.addRequest('raise', 100, 100, null, null, null, true); // Manual
+            const req = game.addRequest('raise', 100, 100, true); // Manual
             game.claimRequest(u, req);
         }
 
@@ -104,7 +106,7 @@ describe('Unit AI Stress Testing', () => {
         });
     });
 
-    it('should eventually reach target even with extreme congestion (low budget)', () => {
+    it('should eventually reach target even with extreme congestion (low budget)', async () => {
         // Mock a VERY low budget
         const budgetLimit = 1; // Only 1 unit per frame gets to pathfind
 
@@ -115,7 +117,7 @@ describe('Unit AI Stress Testing', () => {
             const u = game.spawnUnit(2, 2, 'worker');
             u.id = i;
             units.push(u);
-            const req = game.addRequest('raise', 10, 10, null, null, null, true);
+            const req = game.addRequest('raise', 10, 10, true);
             game.claimRequest(u, req);
         }
 
@@ -125,6 +127,9 @@ describe('Unit AI Stress Testing', () => {
         for (let frame = 0; frame < 50; frame++) {
             game.frameCounter = frame;
             let framePathfindingAttempted = false;
+
+            // Allow promises to resolve
+            await new Promise(resolve => setTimeout(resolve, 0));
 
             units.forEach(u => {
                 const prevX = u.gridX;

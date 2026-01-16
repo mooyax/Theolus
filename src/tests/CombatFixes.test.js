@@ -37,6 +37,7 @@ describe('Combat and Logic Fixes', () => {
         const currentTime = 1100;
 
         const goblin = { gridX: 10, gridZ: 0, isDead: false, id: 'g1', takeDamage: vi.fn() };
+        mockGame.goblinManager.goblins.push(goblin);
 
         // Mock getDistance to be safe
         unit.getDistance = (x, z) => {

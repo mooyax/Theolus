@@ -1,6 +1,7 @@
 
 import { Entity } from './Entity.js';
 import * as THREE from 'three';
+import GameConfig from './config/GameConfig.json';
 
 export class Building extends Entity {
     constructor(scene, terrain, type, x, z) {
@@ -15,36 +16,13 @@ export class Building extends Entity {
         let capacity = 0;
         let defense = 0;
 
-        if (type === 'house') {
-            hp = 100;
-            maxHp = 100;
-            capacity = 5;
-        } else if (type === 'mansion') {
-            hp = 300;
-            maxHp = 300;
-            capacity = 10;
-        } else if (type === 'tower') {
-            hp = 500;
-            maxHp = 500;
-            capacity = 5; // Garrison
-            defense = 10.0; // High retaliation
-        } else if (type === 'barracks') {
-            hp = 800;
-            maxHp = 800;
-            capacity = 10;
-        } else if (type === 'castle') {
-            hp = 2000;
-            maxHp = 2000;
-            capacity = 50;
-        } else if (type === 'cave') {
-            hp = 200;
-            maxHp = 200;
-            capacity = 20;
-        } else if (type === 'goblin_hut') {
-            hp = 100;
-            maxHp = 100;
-            capacity = 5;
-        }
+        const config = GameConfig.buildings[type] || { hp: 100, capacity: 0 };
+
+        hp = config.hp;
+        maxHp = config.hp;
+        capacity = config.capacity || 0;
+        defense = config.defense || 0;
+        // growthRate is used in update, not here
 
         // Backward Compatibility Data Structure
         // Many systems access building.userData directly.
@@ -68,20 +46,23 @@ export class Building extends Entity {
 
     // --- LOGIC ---
     update(time, deltaTime) {
-        // Sync population from userData (in case it was modified externally by spawn/damage)
-        this.population = this.userData.population || 0;
-
-        // 1. Population Growth
-        if (this.type === 'house' || this.type === 'mansion' || this.type === 'cave' || this.type === 'goblin_hut') {
-            const growthRate = (this.type === 'cave') ? 0.3 : 0.1; // Cave grows faster
-            this.population = Math.min(this.userData.capacity, this.population + deltaTime * growthRate);
+        // Human buildings (house, mansion, etc.) are managed by Terrain.js updatePopulation.
+        // Goblin buildings (cave, goblin_hut) are autonomous.
+        if (this.type === 'cave' || this.type === 'goblin_hut') {
+            // 元の設定に戻す（ユーザー要求）
+            // Cave: 0.125/s → 40s to reach pop 5.0 (spawns 1 goblin per 40s)
+            // Goblin Hut: 0.25/s → 20s to reach pop 5.0 (spawns 1 goblin per 20s)
+            // 元の設定: Cave 0.125, Hut 0.25 (Defined in json)
+            const config = GameConfig.buildings[this.type];
+            const growthRate = (config && config.growthRate) ? config.growthRate : 0.125;
+            this.population = Math.min(this.userData.capacity, (this.population || 0) + growthRate * deltaTime);
         }
 
-        // Sync userData (legacy support)
+        // Ensure userData stays in sync for legacy systems
         this.userData.population = this.population;
         this.userData.hp = this.hp;
 
-        // Auto-Repair or Regen?
+        // Auto-Repair remains here as it's a building-specific behavior
         if (this.population > 0 && this.hp < this.maxHp) {
             // 1 HP per 5 seconds?
             if (Math.random() < deltaTime * 0.2) {
@@ -125,7 +106,9 @@ export class Building extends Entity {
     }
 
     isDestroyed() {
-        return this.hp <= 0;
+        // Fix: User sees "0 Population" (UI floors it).
+        // If population is < 1.0 (e.g. 0.05), it is effectively empty and should be destroyable.
+        return this.hp <= 0 && this.population < 1.0;
     }
 
     // --- SERIALIZATION ---

@@ -12,7 +12,8 @@ describe('Unit Initialization and Movement Start', () => {
 
     beforeEach(() => {
         mockTerrain = {
-            getTileHeight: () => 1,
+            findBestTarget: vi.fn(() => null),
+            getTileHeight: () => 10,
             getInterpolatedHeight: () => 1, // Mock this
             getVisualOffset: () => ({ x: 0, y: 0 }), // Mock this
             modifyMoisture: vi.fn(), // Mock this
@@ -25,6 +26,7 @@ describe('Unit Initialization and Movement Start', () => {
             logicalWidth: 100,
             logicalDepth: 100,
             findPath: vi.fn(), // Mock findPath
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 5, z: 5 }]), // Mock findPathAsync
             pathfindingCalls: 0 // Mock Budget
         };
         // Mock initAssets prevent crash
@@ -33,9 +35,9 @@ describe('Unit Initialization and Movement Start', () => {
         unit = new Unit(null, mockTerrain, 10, 10, 'worker');
         // moveInterval is 2.0 - 5.0 seconds
         const interval = unit.moveInterval || 3.0;
-        // expect(interval).toBeGreaterThanOrEqual(2.0); // Might differ in new implementation
+        expect(interval).toBeGreaterThanOrEqual(2.0);
 
-        // Advance time by 1s
+        // Advance time by 1.0s
         unit.lastMoveAttempt = 0;
         unit.updateLogic(1.0, 1.0, false, [], [], []);
 

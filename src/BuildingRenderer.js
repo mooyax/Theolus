@@ -9,9 +9,8 @@ export class BuildingRenderer {
         this.terrainDepth = terrain.logicalDepth;
         this.clippingPlanes = clippingPlanes || [];
         this.MAX_INSTANCES = maxInstances;
+        this.MAX_INSTANCES = maxInstances;
         this.meshes = {};
-        this.initAssets();
-        this.initInstancedMeshes();
 
         // Frustum Culling Helpers
         this._scratchVector = new THREE.Vector3();
@@ -19,7 +18,15 @@ export class BuildingRenderer {
         this._dummy = new THREE.Object3D();
     }
 
-    initAssets() {
+    async init() {
+        console.log("[BuildingRenderer] Initializing Assets...");
+        await this.initAssets();
+        await this.initInstancedMeshes();
+        this.initialized = true;
+        console.log("[BuildingRenderer] Initialization Complete.");
+    }
+
+    async initAssets() {
         this.assets = {};
 
         const matOptions = {
@@ -71,6 +78,8 @@ export class BuildingRenderer {
             emissiveIntensity: 0.0
         });
 
+        await this.terrain.checkYield();
+
         // Roof Texture (Shingles)
         const canvasR = document.createElement('canvas');
         canvasR.width = 64; canvasR.height = 64;
@@ -97,6 +106,9 @@ export class BuildingRenderer {
         this.assets.houseRoofGeo = new THREE.ConeGeometry(1.2, 0.8, 4);
         this.assets.houseRoofGeo.translate(0, 1.2, 0); // Sit on top of wall (0.8 height)
         this.assets.houseRoofGeo.rotateY(Math.PI / 4);
+
+        await this.terrain.checkYield();
+
         // --- TOWER (Cylinder, 3x3) ---
         // Medieval Tower: Tall Stone Cylinder, Flat Top (Crenellated look implied)
         // Height 4.5. Width 1.4 radius.
@@ -173,8 +185,7 @@ export class BuildingRenderer {
 
         console.log("Tower Debug: Generated High-Res Tower Texture + Cap Material");
 
-        // Emissive Window for Tower (always glowing slightly?) or night logic?
-        // Let's rely on standard emissive toggle in updateLighting.color: 0x800000 });
+        await this.terrain.checkYield();
 
         // --- FARM (2x2) ---
         // Size 2x2 tiles. Visual size ~1.8
@@ -193,6 +204,8 @@ export class BuildingRenderer {
             map: new THREE.CanvasTexture(canvas3),
             side: THREE.DoubleSide
         });
+
+        await this.terrain.checkYield();
 
         // --- BARRACKS (3x3) ---
         // Center of 3x3 is (x+1, z+1). 
@@ -346,6 +359,7 @@ export class BuildingRenderer {
 
 
     update(buildings, frustum, viewCenter) {
+        if (!this.initialized) return; // Guard: Not initialized
         if (!buildings || !viewCenter) return;
 
         // Debug Log (Moved to Top)
@@ -358,7 +372,8 @@ export class BuildingRenderer {
                 const t = (b.userData && b.userData.type) ? b.userData.type : 'unknown';
                 counts[t] = (counts[t] || 0) + 1;
             });
-            console.log(`[BuildingRenderer] ListSize=${buildings.length}. Types:`, JSON.stringify(counts));
+            // console.log(`[BuildingRenderer] ListSize=${buildings.length}. Types:`, JSON.stringify(counts));
+
         }
 
         const logicalW = this.terrain.logicalWidth || 240;
@@ -422,7 +437,7 @@ export class BuildingRenderer {
                 // House 2x2 offset: +0.5
                 // Farm 2x2 offset: +0.5 (Midpoint of 0 and 1)
                 // Mansion 3x3 offset: +1.0 (Midpoint of 0,1,2 = 1)
-                if (b.type === 'farm' || b.type === 'house') {
+                if (b.type === 'farm' || b.type === 'house' || b.type === 'goblin_hut') {
                     finalX += 0.5;
                     finalZ += 0.5;
                 } else if (b.type === 'barracks' || b.type === 'tower') {
@@ -484,7 +499,7 @@ export class BuildingRenderer {
         }
 
         if (Math.random() < 0.005) {
-            console.log(`[BuildingRenderer] Updated Buffers. House:${hIdx}, Farm:${fIdx} (BaseGrid: ${baseGridX},${baseGridZ})`);
+            // console.log(`[BuildingRenderer] Updated Buffers. House:${hIdx}, Farm:${fIdx} (BaseGrid: ${baseGridX},${baseGridZ})`);
         }
 
         this.meshes.houseWalls.count = hIdx;
@@ -514,6 +529,7 @@ export class BuildingRenderer {
     }
 
     updateLighting(isNight) {
+        if (!this.initialized) return;
         if (this._lastIsNight === isNight) return;
         this._lastIsNight = isNight;
         // console.log(`BuildingRenderer: Night Mode ${isNight ? 'ON' : 'OFF'}`);
