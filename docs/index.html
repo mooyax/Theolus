@@ -322,7 +322,7 @@
       background: white;
       padding: 30px;
       border-radius: 15px;
-      width: 600px;
+      width: 800px;
       max-width: 90%;
       max-height: 80vh;
       overflow-y: auto;
@@ -540,7 +540,7 @@
       line-height: 1.4;
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-DGlmWp18.js"></script>
+  <script type="module" crossorigin src="./assets/index-CAfzA0oo.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-Bqp-OHo3.css">
 </head>
 
@@ -704,6 +704,12 @@
         <button class="tab-btn" onclick="openTab('stats')">
           <span class="material-symbols-outlined">bar_chart</span> 統計 (Stats)
         </button>
+        <button class="tab-btn" onclick="openTab('time')">
+          <span class="material-symbols-outlined">schedule</span> 時間 (Time)
+        </button>
+        <button class="tab-btn" onclick="openTab('terrain')">
+          <span class="material-symbols-outlined">landscape</span> 地形 (Terrain)
+        </button>
         <button class="tab-btn" onclick="openTab('units')">
           <span class="material-symbols-outlined">groups</span> 人間 (Humans)
         </button>
@@ -777,6 +783,89 @@
           <div class="help-item">
             <div class="help-icon"><span class="material-symbols-outlined">kebab_dining</span></div>
             <div><strong>肉 (Meat)</strong>: 狩人が動物から得ます。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time & Seasons Tab -->
+      <div id="tab-time" class="help-tab-content" style="display: none;">
+        <div class="help-section">
+          <h3>時間 (Time)</h3>
+          <p>Theolusの世界には昼と夜のサイクルがあります。</p>
+          <div class="help-item">
+            <div style="margin-left: 10px;"><strong>昼 (Day)</strong><br>労働者たちは活発に働き、資源を集め、建物を建設します。</div>
+          </div>
+          <div class="help-item">
+            <div style="margin-left: 10px;"><strong>夜
+                (Night)</strong><br>労働者は家に帰って休息し、体力を回復します。夜間はゴブリンの活動が見えにくくなるため注意が必要です。</div>
+          </div>
+        </div>
+
+        <div class="help-section">
+          <h3>季節 (Seasons)</h3>
+          <p>季節は一定周期で移り変わり、地形や農業に影響を与えます。</p>
+          <div class="help-item">
+            <div style="margin-left: 10px;"><strong>春 (Spring)</strong><br>植物が芽吹き、緑が豊かになる季節です。作物の成長に適しています。</div>
+          </div>
+          <div class="help-item">
+            <div style="margin-left: 10px;"><strong>夏 (Summer)</strong><br>日差しが強く、作物が最も早く成長します。</div>
+          </div>
+          <div class="help-item">
+            <div style="margin-left: 10px;"><strong>秋 (Autumn)</strong><br>木々が紅葉し、地面が色づきます。冬への準備期間です。</div>
+          </div>
+          <div class="help-item">
+            <div style="margin-left: 10px;"><strong>冬 (Winter)</strong><br>大地が雪に覆われます。作物は育たず、食料の備蓄が重要になります。</div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Terrain Tab -->
+      <div id="tab-terrain" class="help-tab-content" style="display: none;">
+        <div class="help-section">
+          <h3>地形 (Terrain)</h3>
+          <p>土地の色や高さによって、様々な特徴があります。</p>
+
+          <div class="help-item">
+            <div
+              style="width: 24px; height: 24px; background-color: #808080; border: 1px solid #333; margin-right: 15px; flex-shrink: 0;">
+            </div>
+            <div><strong>高地 (Highland)</strong><br>岩肌が露出した高い土地です。歩きにくいため、移動速度が遅くなります。</div>
+          </div>
+
+          <div class="help-item">
+            <div
+              style="width: 24px; height: 24px; background-color: #88DD88; border: 1px solid #333; margin-right: 15px; flex-shrink: 0;">
+            </div>
+            <div><strong>草原 (Grassland)</strong><br>緑豊かな標準的な土地です。建設や移動に適しています。</div>
+          </div>
+
+          <div class="help-item">
+            <div
+              style="width: 24px; height: 24px; background-color: #228B22; border: 1px solid #333; margin-right: 15px; flex-shrink: 0;">
+            </div>
+            <div><strong>森 (Forest)</strong><br>木々が生い茂る場所です。木材 (Wood) を採取できます。</div>
+          </div>
+
+          <div class="help-item">
+            <div
+              style="width: 24px; height: 24px; background-color: #F4A460; border: 1px solid #333; margin-right: 15px; flex-shrink: 0;">
+            </div>
+            <div><strong>砂地 (Sand)</strong><br>乾燥した地域です。木は育ちにくい環境です。</div>
+          </div>
+
+          <div class="help-item">
+            <div
+              style="width: 24px; height: 24px; background-color: #2F4F4F; border: 1px solid #333; margin-right: 15px; flex-shrink: 0;">
+            </div>
+            <div><strong>湿地 (Marsh)</strong><br>水分を多く含む暗い色の土地です。</div>
+          </div>
+
+          <div class="help-item">
+            <div
+              style="width: 24px; height: 24px; background-color: #1E90FF; border: 1px solid #333; margin-right: 15px; flex-shrink: 0;">
+            </div>
+            <div><strong>水辺 (Water)</strong><br>海や湖です。魚 (Fish) が泳いでおり、食料源となります。</div>
           </div>
         </div>
       </div>
@@ -920,6 +1009,7 @@
         <h4>Theolus</h4>
         <p>Creator: <strong>mooyax</strong></p>
         <p>Programmer: <strong>Google Antigravity</strong></p>
+        <p><small>Last Updated: 2026-01-17</small></p>
       </div>
     </div>
   </div>
@@ -1220,10 +1310,12 @@
         const btnMap = {
           'controls': 0,
           'stats': 1,
-          'units': 2,
-          'buildings': 3,
-          'goblins': 4,
-          'others': 5
+          'time': 2,
+          'terrain': 3,
+          'units': 4,
+          'buildings': 5,
+          'goblins': 6,
+          'others': 7
         };
 
         if (btnMap[tabName] !== undefined && btns[btnMap[tabName]]) {

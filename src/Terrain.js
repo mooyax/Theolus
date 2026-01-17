@@ -782,7 +782,27 @@ export class Terrain {
         const startCell = this.grid[sx % this.logicalWidth][sz % this.logicalDepth];
         const targetCell = this.grid[tx % this.logicalWidth][tz % this.logicalDepth];
         if (!startCell || !targetCell) return false;
-        if (targetCell.height <= 0) return false; // In water
+
+        // If target is water (height <= 0), it doesn't have a regionId (0).
+        // We check if it's adjacent to the starter's region.
+        if (targetCell.height <= 0) {
+            const directions = [
+                { x: 1, z: 0 }, { x: -1, z: 0 },
+                { x: 0, z: 1 }, { x: 0, z: -1 },
+                { x: 1, z: 1 }, { x: 1, z: -1 },
+                { x: -1, z: 1 }, { x: -1, z: -1 }
+            ];
+            for (const dir of directions) {
+                let nx = (tx + dir.x + this.logicalWidth) % this.logicalWidth;
+                let nz = (tz + dir.z + this.logicalDepth) % this.logicalDepth;
+                const neighbor = this.grid[nx][nz];
+                if (neighbor && neighbor.regionId === startCell.regionId) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         return startCell.regionId === targetCell.regionId;
     }
 

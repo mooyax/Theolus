@@ -1,0 +1,50 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/ResourceGathering.test.js[2m > [22m[2mResourceGathering Regression Test[2m > [22m[2mFisher should gather fish when near water
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:fisher Pos:6,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:fisher Pos:6,5
+
+[90mstdout[2m | src/tests/ResourceGathering.test.js[2m > [22m[2mResourceGathering Regression Test[2m > [22m[2mHunter should gather meat when near forest
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:hunter Pos:11,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:hunter Pos:11,10
+
+[90mstdout[2m | src/tests/ResourceGathering.test.js[2m > [22m[2mResourceGathering Regression Test[2m > [22m[2mWorker should NOT gather resources automatically
+[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:6,5 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:6,5
+
+[90mstdout[2m | src/tests/ResourceGathering.test.js[2m > [22m[2mResourceGathering Regression Test[2m > [22m[2mFisher should seek water during patrol
+[22m[39m[UnitCore.js] Unit Created ID:3 Role:fisher Pos:15,15 Special:false
+[UnitCore.js] Unit Created ID:3 Role:fisher Pos:15,15
+
+[90mstdout[2m | src/tests/ResourceGathering.test.js[2m > [22m[2mResourceGathering Regression Test[2m > [22m[2mHunter should seek forest during patrol
+[22m[39m[UnitCore.js] Unit Created ID:4 Role:hunter Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:4 Role:hunter Pos:0,0
+
+ [31m笶ｯ[39m src/tests/ResourceGathering.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 23[2mms[22m[39m
+     [32m笨・[39m Fisher should gather fish when near water[32m 8[2mms[22m[39m
+     [32m笨・[39m Hunter should gather meat when near forest[32m 1[2mms[22m[39m
+     [32m笨・[39m Worker should NOT gather resources automatically[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m Fisher should seek water during patrol[39m[32m 9[2mms[22m[39m
+     [32m笨・[39m Hunter should seek forest during patrol[32m 2[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ResourceGathering.test.js > ResourceGathering Regression Test > Fisher should seek water during patrol
+AssertionError: expected null not to be null
+ 笶ｯ src/tests/ResourceGathering.test.js:101:41
+     99|         fisher.patrol(0);
+    100| 
+    101|         expect(fisher.patrolTarget).not.toBeNull();
+       |                                         ^
+    102|         terrain.getTileHeight = originalMock;
+    103|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 15:39:20
+[2m   Duration [22m 1.21s[2m (transform 400ms, setup 57ms, import 491ms, tests 23ms, environment 435ms)[22m
+

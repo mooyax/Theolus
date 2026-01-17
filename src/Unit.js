@@ -341,6 +341,8 @@ export class Unit extends Actor {
 
         this.wanderCount = 0;
         this.migrationTarget = null;
+        this.patrolTarget = null;
+        this.patrolTimer = 0;
 
         // Target Ignoring Logic (Replaces global cooldown)
         this.ignoredTargets = new Map(); // id -> timestamp until ignored
@@ -1229,13 +1231,74 @@ export class Unit extends Actor {
                 }
             } else {
                 // Keep moving to target
-                // Throttle triggers to avoid spam? smartMove handles it.
                 this.triggerMove(this.patrolTarget.x, this.patrolTarget.z, time);
                 return;
             }
         }
 
-        // 2. Pick new target if none
+        // 2. Pick new target based on Role (Biome-seeking)
+        let foundBiome = false;
+
+        if (this.role === 'fisher' || this.role === 'hunter') {
+            // Scan larger radius for suitable terrain
+            const searchRadius = 30;
+            const attempts = 50;
+            const logicalW = this.terrain.logicalWidth || 80;
+            const logicalD = this.terrain.logicalDepth || 80;
+
+            for (let i = 0; i < attempts; i++) {
+                const ox = Math.floor(Math.random() * (searchRadius * 2 + 1)) - searchRadius;
+                const oz = Math.floor(Math.random() * (searchRadius * 2 + 1)) - searchRadius;
+
+                let nx = (this.gridX + ox % logicalW + logicalW) % logicalW;
+                let nz = (this.gridZ + oz % logicalD + logicalD) % logicalD;
+
+                const h = this.terrain.getTileHeight(nx, nz);
+                let suitable = false;
+
+                if (this.role === 'fisher' && h <= 0) {
+                    // Found water. We want to stand on LAND adjacent to water.
+                    // For now, just targeting the water tile is fine as smartMove handles land-only movement
+                    // or we can find a neighbor.
+                    suitable = true;
+                } else if (this.role === 'hunter' && h > 4 && h <= 8) {
+                    suitable = true;
+                }
+
+                if (suitable) {
+                    // If target tile is not walkable (e.g. water), smartMove will fail.
+                    // Let's ensure the target is land if it's a fisher.
+                    if (h <= 0) {
+                        // Find land neighbor
+                        const neighbors = [
+                            { x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 }
+                        ];
+                        for (const n of neighbors) {
+                            let lx = (nx + n.x + logicalW) % logicalW;
+                            let lz = (nz + n.z + logicalD) % logicalD;
+                            if (this.terrain.getTileHeight(lx, lz) > 0) {
+                                nx = lx;
+                                nz = lz;
+                                break;
+                            }
+                        }
+                        if (this.terrain.getTileHeight(nx, nz) <= 0) suitable = false; // Still water? Skip.
+                    }
+
+                    if (suitable) {
+                        this.patrolTarget = { x: nx, z: nz };
+                        this.patrolTimer = 0;
+                        this.triggerMove(nx, nz, time);
+                        foundBiome = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (foundBiome) return;
+
+        // 3. Fallback: Pick random building
         if (this.terrain.buildings && this.terrain.buildings.length > 0) {
             // Pick random building
             const r = Math.floor(Math.random() * this.terrain.buildings.length);
@@ -1514,7 +1577,7 @@ export class Unit extends Actor {
     }
 
     gatherResources(time) {
-        if (time - this.lastGatherTime < 5000) return;
+        if (this.lastGatherTime && time - this.lastGatherTime < 5.0) return;
         this.lastGatherTime = time;
 
         const logicalW = this.terrain.logicalWidth || 80;
@@ -1523,11 +1586,16 @@ export class Unit extends Actor {
         let foundWater = false;
         let foundForest = false;
 
-        const sampleOffsets = [
-            { x: 0, z: 0 },
-            { x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 },
-            { x: 4, z: 0 }, { x: -4, z: 0 }, { x: 0, z: 4 }, { x: 0, z: -4 }
-        ];
+        const sampleOffsets = [];
+        // Scan Radius 1 to 3 efficiently
+        // Direct neighbors
+        sampleOffsets.push({ x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 });
+        // Diagonals
+        sampleOffsets.push({ x: 1, z: 1 }, { x: -1, z: 1 }, { x: 1, z: -1 }, { x: -1, z: -1 });
+        // Distance 2
+        sampleOffsets.push({ x: 2, z: 0 }, { x: -2, z: 0 }, { x: 0, z: 2 }, { x: 0, z: -2 });
+        // Distance 3 (Sparse)
+        sampleOffsets.push({ x: 3, z: 0 }, { x: -3, z: 0 }, { x: 0, z: 3 }, { x: 0, z: -3 });
 
         for (const off of sampleOffsets) {
             let nx = this.gridX + off.x;
@@ -1544,6 +1612,7 @@ export class Unit extends Actor {
 
             const h = this.terrain.getTileHeight(nx, nz);
 
+            // Detailed Debug
             if (h <= 0) foundWater = true;
             else if (h > 4 && h <= 8) foundForest = true;
 
@@ -1551,13 +1620,10 @@ export class Unit extends Actor {
         }
 
         if (window.game && window.game.resources) {
-            if (foundWater) {
-                // Ensure resources exist
-                if (window.game && window.game.resources) {
-                    window.game.resources.fish = (window.game.resources.fish || 0) + 1;
-                }
+            if (foundWater && this.role === 'fisher') {
+                window.game.resources.fish = (window.game.resources.fish || 0) + 1;
             }
-            if (foundForest) {
+            if (foundForest && this.role === 'hunter') {
                 const amount = (this.role === 'hunter') ? 3.0 : 1.0;
                 window.game.resources.meat += amount;
             }

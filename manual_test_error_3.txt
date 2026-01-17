@@ -1,0 +1,44 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/ManualJobRetry.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 14[2mms[22m[39m
+       [32m笨・[39m should return true for water adjacent to same region land[32m 1[2mms[22m[39m
+       [32m笨・[39m should return false for water NOT adjacent to same region land[32m 0[2mms[22m[39m
+       [32m笨・[39m should pick a manual job even if on water (due to improved isReachable)[32m 1[2mms[22m[39m
+[31m       [31mﾃ・[31m should use 3s deferTime for manual requests[39m[32m 9[2mms[22m[39m
+[31m       [31mﾃ・[31m should use 15s deferTime for automatic requests[39m[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ManualJobRetry.test.js > Manual Job Retry and Water Reachability Logic Test > JobState Deferral Logic > should use 3s deferTime for manual requests
+TypeError: this.actor.getDistance is not a function
+ 笶ｯ JobState.update src/ai/states/UnitStates.js:344:33
+    342|         }
+    343| 
+    344|         const dist = this.actor.getDistance(this.targetRequest.x, this窶ｦ
+       |                                 ^
+    345|         if (dist < 1.5) {
+    346|             this.actor.isMoving = false;
+ 笶ｯ src/tests/ManualJobRetry.test.js:121:19
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/ManualJobRetry.test.js > Manual Job Retry and Water Reachability Logic Test > JobState Deferral Logic > should use 15s deferTime for automatic requests
+TypeError: this.actor.getDistance is not a function
+ 笶ｯ JobState.update src/ai/states/UnitStates.js:344:33
+    342|         }
+    343| 
+    344|         const dist = this.actor.getDistance(this.targetRequest.x, this窶ｦ
+       |                                 ^
+    345|         if (dist < 1.5) {
+    346|             this.actor.isMoving = false;
+ 笶ｯ src/tests/ManualJobRetry.test.js:156:19
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 16:24:52
+[2m   Duration [22m 1.12s[2m (transform 370ms, setup 53ms, import 459ms, tests 14ms, environment 406ms)[22m
+

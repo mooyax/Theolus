@@ -1,0 +1,62 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+stderr | src/tests/ManualJobRetry.test.js > Manual Job Retry and Water Reachability Logic Test > JobState Deferral Logic > should use 3s deferTime for manual requests
+[JobState 1] Abort: Target Unreachable. Req:req_manual at 10,10
+
+stderr | src/tests/ManualJobRetry.test.js > Manual Job Retry and Water Reachability Logic Test > JobState Deferral Logic > should use 15s deferTime for automatic requests
+[JobState 1] Abort: Target Unreachable. Req:req_auto at 10,10
+
+ [31m笶ｯ[39m src/tests/ManualJobRetry.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 14[2mms[22m[39m
+       [32m笨・[39m should return true for water adjacent to same region land[32m 1[2mms[22m[39m
+       [32m笨・[39m should return false for water NOT adjacent to same region land[32m 0[2mms[22m[39m
+       [32m笨・[39m should pick a manual job even if on water (due to improved isReachable)[32m 1[2mms[22m[39m
+[31m       [31mﾃ・[31m should use 3s deferTime for manual requests[39m[32m 9[2mms[22m[39m
+[31m       [31mﾃ・[31m should use 15s deferTime for automatic requests[39m[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ManualJobRetry.test.js > Manual Job Retry and Water Reachability Logic Test > JobState Deferral Logic > should use 3s deferTime for manual requests
+AssertionError: expected 3.1 to be 103 // Object.is equality
+
+- Expected
++ Received
+
+- 103
++ 3.1
+
+ 笶ｯ src/tests/ManualJobRetry.test.js:123:64
+    121| 
+    122|             expect(mockActor.game.deferRequest).toHaveBeenCalledWith(m窶ｦ
+    123|             expect(mockActor.ignoredTargets.get('req_manual')).toBe(10窶ｦ
+       |                                                                ^
+    124|         });
+    125| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/ManualJobRetry.test.js > Manual Job Retry and Water Reachability Logic Test > JobState Deferral Logic > should use 15s deferTime for automatic requests
+AssertionError: expected 15.1 to be 115 // Object.is equality
+
+- Expected
++ Received
+
+- 115
++ 15.1
+
+ 笶ｯ src/tests/ManualJobRetry.test.js:159:62
+    157| 
+    158|             expect(mockActor.game.deferRequest).toHaveBeenCalledWith(m窶ｦ
+    159|             expect(mockActor.ignoredTargets.get('req_auto')).toBe(115.窶ｦ
+       |                                                              ^
+    160|         });
+    161|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 16:26:50
+[2m   Duration [22m 1.16s[2m (transform 365ms, setup 52ms, import 456ms, tests 14ms, environment 440ms)[22m
+

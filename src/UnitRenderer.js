@@ -15,7 +15,8 @@ export class UnitRenderer {
         this.whiteMat = new THREE.MeshStandardMaterial({
             color: 0xFFFFFF,
             roughness: 1.0,
-            clippingPlanes: this.clippingPlanes
+            clippingPlanes: this.clippingPlanes,
+            clipShadows: true
         });
     }
 
@@ -57,6 +58,7 @@ export class UnitRenderer {
         const setClip = (mat) => {
             if (mat) {
                 mat.clippingPlanes = this.clippingPlanes;
+                mat.clipShadows = true;
                 mat.needsUpdate = true;
             }
         };
@@ -74,6 +76,7 @@ export class UnitRenderer {
                 const materialList = Array.isArray(mat) ? mat : [mat];
                 materialList.forEach(m => {
                     m.clippingPlanes = this.clippingPlanes;
+                    m.clipShadows = true;
                     m.needsUpdate = true;
                 });
             }
@@ -135,6 +138,7 @@ export class UnitRenderer {
         }
 
         let countBody = 0;
+        let countIndicator = 0;
         let countDetails = 0; // For Arms, Legs, Accessories
 
         // LOD Thresholds
@@ -152,7 +156,7 @@ export class UnitRenderer {
 
         for (const unit of units) {
             if (unit.isDead) continue;
-            if (unit.isSleeping) continue;
+            // if (unit.isSleeping) continue; // Keep units visible while sleeping
             if (!unit.position) continue; // Safety if unit refactor incomplete
 
             // Determine Color
@@ -247,24 +251,18 @@ export class UnitRenderer {
                     this.faceMesh.setColorAt(countBody, new THREE.Color(0xFFFFFF));
 
                     // 11. Job Indicator (!) - ALWAYS RENDER (Important info)
+                    // 11. Job Indicator
                     if (unit.targetRequest) {
                         const floatY = Math.sin(Date.now() * 0.005) * 0.1;
                         this.dummy.position.set(posX, posY + 1.2 + floatY, posZ);
-                        this.dummy.rotation.set(0, rotY, 0); // Face with unit, or could be static
+                        this.dummy.rotation.set(0, rotY, 0);
                         this.dummy.scale.set(1, 1, 1);
                         this.dummy.updateMatrix();
-                        this.indicatorTopMesh.setMatrixAt(countBody, this.dummy.matrix);
-                        this.indicatorDotMesh.setMatrixAt(countBody, this.dummy.matrix);
+                        this.indicatorTopMesh.setMatrixAt(countIndicator, this.dummy.matrix);
+                        this.indicatorDotMesh.setMatrixAt(countIndicator, this.dummy.matrix);
+                        countIndicator++;
                     }
-                    else {
-                        // Hide indicator if not used (move far away or scale 0)
-                        // InstancedMesh limitation: Must set valid matrix.
-                        // We can set scale 0.
-                        this.dummy.scale.set(0, 0, 0);
-                        this.dummy.updateMatrix();
-                        this.indicatorTopMesh.setMatrixAt(countBody, this.dummy.matrix);
-                        this.indicatorDotMesh.setMatrixAt(countBody, this.dummy.matrix);
-                    }
+                    // Else: Don't render anything (Implicit culling)
 
                     // --- DETAIL MESHES (LOD CULLED) ---
                     // Since we already check dist < 60 above, everything here is "Detailed"
@@ -403,12 +401,11 @@ export class UnitRenderer {
         }
 
         // Update Counts
-        // Update Counts (Unified to countBody)
+        // Update Counts
         this.torsoMesh.count = countBody;
         this.headMesh.count = countBody;
         this.faceMesh.count = countBody;
 
-        // Use countBody for limbs and accessories (Unified)
         this.leftArmMesh.count = countBody;
         this.rightArmMesh.count = countBody;
         this.leftLegMesh.count = countBody;
@@ -420,14 +417,15 @@ export class UnitRenderer {
         this.hatBrimMesh.count = countBody;
         this.visorMesh.count = countBody;
 
-        // Indicator uses body count (Always Visible)
-        this.indicatorTopMesh.count = countBody;
-        this.indicatorDotMesh.count = countBody;
+        // Indicator uses separate count
+        this.indicatorTopMesh.count = countIndicator;
+        this.indicatorDotMesh.count = countIndicator;
 
-        // Commit Updates
+        // Commit Updates & Visibility Safety
         const updateMesh = (m) => {
             if (m.instanceMatrix) m.instanceMatrix.needsUpdate = true;
             if (m.instanceColor) m.instanceColor.needsUpdate = true;
+            m.visible = (m.count > 0); // Explicitly hide empty meshes
         };
 
         updateMesh(this.torsoMesh);
@@ -438,7 +436,7 @@ export class UnitRenderer {
         updateMesh(this.leftLegMesh);
         updateMesh(this.rightLegMesh);
         updateMesh(this.swordMesh);
-        updateMesh(this.visorMesh); // Commit Visor
+        updateMesh(this.visorMesh);
         updateMesh(this.staffMesh);
         updateMesh(this.hatMesh);
         updateMesh(this.hatBrimMesh);

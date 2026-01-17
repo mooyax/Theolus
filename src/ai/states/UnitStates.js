@@ -141,7 +141,15 @@ export class UnitWanderState extends WanderState {
         }
 
         // 2c. Patrol (Non-worker only)
+        // 2x. Passive Actions (Resource Gathering) - Run even if moving
+        if (this.actor.role === 'fisher' || this.actor.role === 'hunter') {
+            if (window.game && window.game.resources) {
+                this.actor.gatherResources(time);
+            }
+        }
+
         if (this.actor.role !== 'worker' && !this.actor.targetRequest && !this.actor.targetGoblin && !this.actor.isMoving) {
+
             if (this.actor.patrol) {
                 this.actor.patrol(time);
             }
@@ -334,7 +342,7 @@ export class JobState extends State {
         }
 
         const dist = this.actor.getDistance(this.targetRequest.x, this.targetRequest.z);
-        if (dist < 1.0) {
+        if (dist < 1.5) {
             this.actor.isMoving = false;
             if (this.actor.id === 0) console.log(`[JobState] Arrived at Job. Completing...`);
 
@@ -386,10 +394,11 @@ export class JobState extends State {
             if (this.actor.isUnreachable) {
                 console.warn(`[JobState ${this.actor.id}] Abort: Target Unreachable. Req:${this.targetRequest.id} at ${this.targetRequest.x},${this.targetRequest.z}`);
                 const game = this.actor.game || window.game;
-                if (game && game.deferRequest) game.deferRequest(this.targetRequest, 15.0);
+                const deferTime = this.targetRequest.isManual ? 3.0 : 15.0;
+                if (game && game.deferRequest) game.deferRequest(this.targetRequest, deferTime);
 
                 this.actor.targetRequest = null;
-                if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + 15.0);
+                if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + deferTime);
                 this.targetRequest = null; // Clear local ref too
                 this.actor.isUnreachable = false;
                 this.actor.stuckCount = 0;
@@ -439,11 +448,11 @@ export class JobState extends State {
             if (this.pathFailures > failureThreshold || this.stuckTimer > 45.0) {
                 console.warn(`[JobState ${this.actor.id}] Abort: Path Failures > ${failureThreshold} or Stuck > 45s.`);
                 const game = this.actor.game || window.game;
-                if (game && game.deferRequest) game.deferRequest(this.targetRequest, 15.0);
-                if (game && game.deferRequest) game.deferRequest(this.targetRequest, 15.0);
+                const deferTime = this.targetRequest.isManual ? 3.0 : 15.0;
+                if (game && game.deferRequest) game.deferRequest(this.targetRequest, deferTime);
 
                 this.actor.targetRequest = null;
-                if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + 15.0);
+                if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + deferTime);
                 this.targetRequest = null;
                 this.pathFailures = 0;
                 this.stuckTimer = 0;
@@ -466,10 +475,11 @@ export class JobState extends State {
                     if (this.stuckTimer > stuckThreshold) {
                         console.warn(`[JobState ${this.actor.id}] Abort: Physical Stuck > 45s.`);
                         const game = this.actor.game || window.game;
-                        if (game && game.deferRequest) game.deferRequest(this.targetRequest, 15.0);
+                        const deferTime = this.targetRequest.isManual ? 3.0 : 15.0;
+                        if (game && game.deferRequest) game.deferRequest(this.targetRequest, deferTime);
 
                         this.actor.targetRequest = null;
-                        if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + 15.0);
+                        if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + deferTime);
                         this.targetRequest = null;
                         this.stuckTimer = 0;
                         this.actor.lastJobAbortTime = time; // Set abort time for physical stuck

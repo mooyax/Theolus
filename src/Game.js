@@ -1720,8 +1720,9 @@ export class Game {
 
             // Update Clipping Planes to Follow Camera
             if (this.clippingPlanes && this.clippingPlanes.length === 4) {
-                const cx = this.camera.position.x;
-                const cz = this.camera.position.z;
+                // Use camera target (focus point) instead of camera position for isometric view clipping
+                const cx = this.controls ? this.controls.target.x : this.camera.position.x;
+                const cz = this.controls ? this.controls.target.z : this.camera.position.z;
                 const r = this.viewRadius || 30;
 
                 // Planes:

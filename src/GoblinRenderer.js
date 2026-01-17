@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Goblin } from './Goblin.js';
+import GameConfig from './config/GameConfig.json';
 
 export class GoblinRenderer {
     constructor(scene, terrain, clippingPlanes, maxInstances = 50000) {
@@ -158,7 +159,8 @@ export class GoblinRenderer {
         for (const g of goblins) {
             if (g.isDead || g.isFinished) continue;
 
-            const viewRadius = 120; // Reduced from 300 for performance
+            const viewRadius = GameConfig.render && GameConfig.render.viewRadius ? GameConfig.render.viewRadius : 120;
+            const cullDistSq = viewRadius * viewRadius;
 
             // Define missing variables for rendering logic
             const isHob = (g.type === 'hobgoblin' || g.type === 'orc'); // Orc fallback
@@ -211,9 +213,8 @@ export class GoblinRenderer {
                     const dz = instanceZ - viewCenter.z;
                     const distSq = dx * dx + dz * dz;
 
-                    // Hard Cull beyond 60m (High Performance)
-                    // Or 80m? 60m is decent for RTS.
-                    if (distSq > 3600) { // 60^2
+                    // Use GameConfig radius
+                    if (distSq > cullDistSq) {
                         continue;
                     }
                     // 1. Torso
@@ -367,6 +368,7 @@ export class GoblinRenderer {
         const updateMesh = (m) => {
             if (m.instanceMatrix) m.instanceMatrix.needsUpdate = true;
             if (m.instanceColor) m.instanceColor.needsUpdate = true;
+            m.visible = (m.count > 0); // Explicitly hide empty meshes
         };
 
         updateMesh(this.torsoMesh);
