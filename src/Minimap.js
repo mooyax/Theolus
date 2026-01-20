@@ -210,8 +210,8 @@ export class Minimap {
         // Camera is looking at origin (20,20,20).
         // Since we clipped view to radius 30.
         // Center is camera.position.x, camera.position.z
-        const cx = this.game.camera.position.x;
-        const cz = this.game.camera.position.z;
+        const cx = this.game.controls ? this.game.controls.target.x : this.game.camera.position.x;
+        const cz = this.game.controls ? this.game.controls.target.z : this.game.camera.position.z;
 
         // Wrap coordinates for camera?
         // Map wrapped coordinates.
@@ -234,18 +234,23 @@ export class Minimap {
 
         const mx = gx * scaleX;
         const my = gz * scaleY;
-        const viewRadius = GameConfig.render && GameConfig.render.viewRadius ? GameConfig.render.viewRadius : 40;
-        const r = viewRadius * scaleX; // Radius in pixels
+        const viewRadius = GameConfig.render && GameConfig.render.viewRadius ? GameConfig.render.viewRadius : 60;
+
+        // Reverted to Static Square per User Request
+        // "Minimap frame... viewRadius size... actual display area conforms to it."
+        // IGNORE Zoom and Aspect. Frame is ALWAYS the ViewRadius.
+
+        const rX = viewRadius * scaleX; // Pixels
+        const rY = viewRadius * scaleY; // Pixels
 
         // Debug Log (Once)
         if (!this._loggedDebug) {
             console.log("Minimap Debug:", {
                 canvasW: this.canvas.width,
-                logicalW: logicalW,
                 scaleX: scaleX,
                 viewRadius: viewRadius,
-                pixelRadius: r,
-                frameSize: r * 2
+                pixelRadius: rX,
+                frame: `${rX.toFixed(1)}x${rY.toFixed(1)}`
             });
             this._loggedDebug = true;
         }
@@ -254,7 +259,7 @@ export class Minimap {
         this.ctx.lineWidth = 1;
 
         // Draw Main Rect
-        this.ctx.strokeRect(mx - r, my - r, r * 2, r * 2);
+        this.ctx.strokeRect(mx - rX, my - rY, rX * 2, rY * 2);
 
         // Draw Ghost Rects (if near edge)
         // Check 3x3 neighbors to handle wrap visual
@@ -265,7 +270,7 @@ export class Minimap {
                 const gmx = mx + dx * this.canvas.width;
                 const gmy = my + dy * this.canvas.height;
 
-                this.ctx.strokeRect(gmx - r, gmy - r, r * 2, r * 2);
+                this.ctx.strokeRect(gmx - rX, gmy - rY, rX * 2, rY * 2);
             }
         }
     }

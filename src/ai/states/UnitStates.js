@@ -342,7 +342,9 @@ export class JobState extends State {
         }
 
         const dist = this.actor.getDistance(this.targetRequest.x, this.targetRequest.z);
-        if (dist < 1.5) {
+        // FIX: Increased threshold from 1.5 to 2.1 to prevent "Approaching Job" jitter/stall
+        // adjacent to target or on uneven terrain.
+        if (dist < 2.1) {
             this.actor.isMoving = false;
             if (this.actor.id === 0) console.log(`[JobState] Arrived at Job. Completing...`);
 
@@ -601,13 +603,54 @@ export class CombatState extends State {
         if (!target) {
             // FIX: Before moving to Raid Point, SCAN for enemies along the path!
             // If we blindly move to Raid Point, we ignore goblins we bump into.
-            if (this.actor.checkSelfDefense && this.actor.checkSelfDefense(goblins)) {
+            // ENCOUNTER COMBAT: Scan nearby (5.0) for ANY enemy to engage
+            if (this.actor.searchSurroundings) {
+                // searchSurroundings will set targetGoblin/targetBuilding if found
+                // But we want to be careful not to spam it.
+                // Let's use checkSelfDefense logic which is throttled, but FORCE it?
+                // No, checkSelfDefense only sets target if none exists. Here we have none.
+                // So checkSelfDefense is perfect.
+                this.actor.checkSelfDefense(goblins);
                 if (this.actor.targetGoblin || this.actor.targetBuilding) {
-                    // Found one! Re-run logic immediately next frame (or loop?)
-                    // Just return, next frame 'target' will be set.
-                    return;
+                    return; // Loop next frame to engage
                 }
             }
+        } else {
+            // ENCOUNTER COMBAT: We HAVE a target.
+            // But if we are chasing a far target (like a Building), scan for NEARBY units to engage first.
+            // This prevents walking past enemies to hit a wall.
+
+            // Only scan if moving (Chasing)
+            if (this.actor.isMoving || this.actor.action === 'Chasing') {
+                const distToTarget = this.actor.getDistance(target.gridX, target.gridZ);
+
+                // Only distract if main target is far (> 8.0)
+                if (distToTarget > 8.0) {
+                    // Check very close range (5.0)
+                    const range = 5.0;
+                    // Use optimized findBestTarget
+                    const nearbyEnemy = this.actor.terrain.findBestTarget('goblin', this.actor.gridX, this.actor.gridZ, range, (g, d) => {
+                        if (g.isDead) return Infinity;
+                        if (this.actor.ignoredTargets.has(g.id)) return Infinity;
+                        // Don't switch to current target (redundant)
+                        if (this.actor.targetGoblin && g.id === this.actor.targetGoblin.id) return Infinity;
+                        return d;
+                    });
+
+                    if (nearbyEnemy) {
+                        console.log(`[CombatState ${this.actor.id}] Encounter! Switching target to nearby Goblin ${nearbyEnemy.id}!`);
+                        this.actor.targetGoblin = nearbyEnemy;
+                        // Keep targetBuilding as backup? No, standard logic will re-acquire it if goblin dies.
+                        // But if we want to "Resume" attacking building...
+                        // For now, simple switch is enough.
+                        return; // Next loop will engage new target
+                    }
+                }
+            }
+        }
+
+        if (!target) {
+            // If still no target, move to Raid Point
 
             // If still no target, move to Raid Point
             if (this.actor.targetRaidPoint) {
@@ -636,8 +679,24 @@ export class CombatState extends State {
         let range = 1.5; // Melee
         if (this.actor.role === 'wizard') range = 8.0;
 
+        // WORKER LEASH: Logic to stop chasing if target runs too far
+        if (this.actor.role === 'worker' && dist > 15.0) {
+            console.log(`[CombatState ${this.actor.id}] Worker gave up chase. Dist: ${dist.toFixed(1)}`);
+            this.actor.targetGoblin = null;
+            this.actor.targetBuilding = null;
+            this.actor.changeState(this.getResumeState());
+            return;
+        }
+
+        // HYSTERESIS: If already fighting, allow target to drift slightly out of range without resuming chase
+        // This prevents "jitter" where unit moves 1px, stops, attacks, moves 1px...
+        let chaseThreshold = range;
+        if (this.actor.action === 'Fighting' || this.actor.action === 'Shooting') {
+            chaseThreshold = range * 1.1; // 10% buffer (e.g. 1.5 -> 1.65)
+        }
+
         // 2. Move / Chase
-        if (dist > range) {
+        if (dist > chaseThreshold) {
             // Too far, move closer
             let tx = target.gridX;
             let tz = target.gridZ;

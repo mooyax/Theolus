@@ -1,0 +1,34 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/TerrainDetection.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 693[2mms[22m[39m
+[31m     [31mﾃ・[31m should detect target in same region[39m[32m 231[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT detect target in different region (Cross Mountain)[39m[32m 220[2mms[22m[39m
+[31m     [31mﾃ・[31m should rely on Grid search and respect regions[39m[32m 240[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 3 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/TerrainDetection.test.js > Terrain Detection Logic > should detect target in same region
+ FAIL  src/tests/TerrainDetection.test.js > Terrain Detection Logic > should NOT detect target in different region (Cross Mountain)
+ FAIL  src/tests/TerrainDetection.test.js > Terrain Detection Logic > should rely on Grid search and respect regions
+TypeError: Cannot read properties of null (reading 'add')
+ 笶ｯ Terrain.createMesh src/Terrain.js:702:20
+    700|         this.mesh.add(dotsMesh);
+    701| 
+    702|         this.scene.add(this.mesh);
+       |                    ^
+    703|         this.meshes.push(this.mesh);
+    704|     }
+ 笶ｯ Terrain.initMeshes src/Terrain.js:369:14
+ 笶ｯ Terrain.initTerrain src/Terrain.js:375:14
+ 笶ｯ new Terrain src/Terrain.js:52:14
+ 笶ｯ src/tests/TerrainDetection.test.js:11:19
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/3]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[90m (3)[39m
+[2m   Start at [22m 15:21:27
+[2m   Duration [22m 1.55s[2m (transform 176ms, setup 52ms, import 198ms, tests 693ms, environment 413ms)[22m
+

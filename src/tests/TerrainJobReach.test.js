@@ -96,8 +96,8 @@ describe('Terrain Job Reachability Test', () => {
         expect(worker.targetRequest).toBeNull();
     });
 
-    it('Worker should NOT complete job if distance is 1.5 or more', () => {
-        const worker = new Unit(scene, terrain, 8, 10, 'worker'); // Distance 2.0 to (10,10)
+    it('Worker should NOT complete job if distance is > 2.1 (outside new threshold)', () => {
+        const worker = new Unit(scene, terrain, 7, 10, 'worker'); // Distance 3.0 to (10,10)
         worker.game = game;
 
         const request = {
@@ -114,7 +114,7 @@ describe('Terrain Job Reachability Test', () => {
         worker.changeState(new JobState(worker));
 
         const dist = worker.getDistance(request.x, request.z);
-        expect(dist).toBe(2.0);
+        expect(dist).toBe(3.0);
 
         worker.updateLogic(100, 0.1, false, [], [], []);
 

@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { Goblin } from './Goblin.js';
 import { GoblinRenderer } from './GoblinRenderer.js';
 import { GoblinRaidState, GoblinCombatState, GoblinWanderState } from './ai/states/GoblinStates.js';
+import GameConfig from './config/GameConfig.json';
 
 export class GoblinManager {
     constructor(scene, terrain, game, clippingPlanes) {
@@ -106,7 +107,7 @@ export class GoblinManager {
 
     generateCaves() {
         console.log("GoblinManager: Generation started...");
-        const caveCount = 5;
+        const caveCount = (GameConfig && GameConfig.goblins && GameConfig.goblins.initialCaves) ? GameConfig.goblins.initialCaves : 5;
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
@@ -313,6 +314,11 @@ export class GoblinManager {
         this.frameCount++;
         const parity = this.frameCount % stagger;
 
+        // --- PERFORMANCE: GLOBAL SCAN BUDGET ---
+        // Limit strict pathfinding/scanning ops per frame to prevent freeze at 5000+ entities
+        this.scanBudget = 50; // Max 50 heavy scans per frame
+        if (this.goblins.length > 2000) this.scanBudget = 30; // Throttling for massive crowds
+
         for (let i = this.goblins.length - 1; i >= 0; i--) {
             const goblin = this.goblins[i];
 
@@ -329,10 +335,17 @@ export class GoblinManager {
                 const isUrgent = goblin.action === 'Fighting' || goblin.action === 'Sieging' || (goblin.state && goblin.state.name === 'CombatState');
 
                 if (!isUrgent) {
+                    // FIX: If total goblin count is low (< 50), disable aggressive throttling
+                    // so they don't freeze when FPS drops due to high Unit count (e.g. 1500 units).
+                    const lowPop = this.goblins.length < 50;
+
                     let interval = 0;
-                    if (distSq > 10000) interval = 30; // 100m+
-                    else if (distSq > 3600) interval = 10; // 60m+
-                    else if (distSq > 900) interval = 2; // 30m+
+                    // FIX: Relaxed throttling to match Game.js unit logic (Prevents stutter)
+                    // 100m+ (Very Far): throttle to ~20FPS (interval 3)
+                    // <100m: Update every frame (Smooth)
+                    if (distSq > 10000) interval = lowPop ? 2 : 3;
+                    else if (distSq > 3600) interval = lowPop ? 1 : 1;
+                    else if (distSq > 900) interval = 1; // Always smooth < 60m
 
                     if (interval > 0) {
                         // Throttling Active
@@ -350,8 +363,20 @@ export class GoblinManager {
             }
 
             if (throttleSkip) {
-                // Completely skip Logic AND Visuals for this frame (CPU Saving)
-                // Movement is time-based, so it will snap next update.
+                // Completely skip Logic BUT update Visual Movement for smoothness
+                if (goblin.updateMovement && !goblin.isDead) {
+                    goblin.updateMovement(time);
+                }
+
+                // If dead, update death animation with skipped time to keep it smooth-ish?
+                // Actually, death animation is less critical for stuttering.
+                if (goblin.isDead && goblin.updateDeathAnimation) {
+                    goblin.updateDeathAnimation(deltaTime);
+                    // Note: We don't accumulate skippedTime here because we just consumed it.
+                    // But for logic consistency, maybe just let it accumulate and jump later.
+                    // Let's stick to movement fix primarily.
+                }
+
                 continue;
             }
 
@@ -385,12 +410,18 @@ export class GoblinManager {
                 this.goblins.splice(i, 1);
             }
         }
-        this.frameCount++;
+        // this.frameCount++; // REMOVED DOUBLE INCREMENT
     }
 
     // --- WAVE SYSTEM ---
     // --- WAVE SYSTEM ---
     notifyClanActivity(clanId, targetInput = null) {
+        // --- NEW: Handle Attack Event Object ---
+        if (clanId && typeof clanId === 'object' && clanId.type === 'UNDER_ATTACK') {
+            this.respondToAttack(clanId);
+            return;
+        }
+
         if (!clanId) return;
         if (!this.clans) this.clans = {};
 
@@ -445,6 +476,61 @@ export class GoblinManager {
                 clan.waveLevel = 1;  // Start at Level 1
                 console.log(`[GoblinManager] Clan ${clanId} ACTIVATED! Wave 1 in 30s. Target:`, clan.raidTarget);
             }
+        }
+    }
+
+    respondToAttack(event) {
+        // event: { type: 'UNDER_ATTACK', target: Building, attacker: Unit, x, z }
+        const { target, attacker, x, z } = event;
+        if (!attacker || !target) return;
+
+        // Find relevant Clan ID
+        const clanId = target.userData ? target.userData.clanId : null;
+        console.log(`[GoblinManager] BASE UNDER ATTACK! At ${x},${z} (Clan: ${clanId || 'Unknown'})`);
+
+        // Notify Clan Aggression (Increase anger)
+        if (clanId) {
+            this.notifyClanActivity(clanId, { x, z }); // recursive but with string ID -> Increases aggression
+        }
+
+        // --- IMMEDIATE RESPONSE: Mobilize nearby defenders ---
+        let mobilized = 0;
+        const defenseRadius = 30.0; // Check range
+        const defenseSq = defenseRadius * defenseRadius;
+
+        for (const goblin of this.goblins) {
+            if (goblin.isDead) continue;
+
+            // Check distance to base being attacked
+            const dx = goblin.gridX - x;
+            const dz = goblin.gridZ - z;
+            const distSq = dx * dx + dz * dz;
+
+            if (distSq < defenseSq) {
+                // If goblin is not already fighting or is fighting but far away?
+                // Priority: Defend Base > Current Action
+                const isBusy = (goblin.state && goblin.state.constructor.name === 'GoblinCombatState');
+
+                // STABILIZATION FIX: If already fighting, DO NOT SWITCH targets.
+                // This prevents "jitter" when multiple enemies attack base and goblin ping-pongs between them.
+                // Exception: If current target is DEAD or very far (abandoned logic)?
+                // GoblinCombatState handles dead targets.
+                if (isBusy) continue;
+
+                // Force Switch to Defend
+                goblin.targetUnit = attacker;
+                goblin.targetBuilding = null;
+
+                // Visual or Logic Interrupt
+                if (goblin.changeState) {
+                    goblin.changeState(new GoblinCombatState(goblin));
+                    mobilized++;
+                }
+            }
+        }
+
+        if (mobilized > 0) {
+            console.log(`[GoblinManager] Mobilized ${mobilized} goblins to defend base!`);
         }
     }
 

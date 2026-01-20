@@ -35,29 +35,32 @@
         }
     },
     "goblins": {
+        "initialCaves": 20,
         "normal": {
-            "hp": 30,
-            "damage": 8,
-            "attackRate": 2.0,
+            "hp": 50,
+            "damage": 15,
+            "attackRate": 1.0,
             "lifespan": 100
         },
         "hobgoblin": {
-            "hp": 120,
-            "damage": 20,
-            "attackRate": 2.5,
+            "hp": 150,
+            "damage": 30,
+            "attackRate": 1.5,
             "lifespan": 150
         },
         "shaman": {
             "hp": 80,
             "damage": 35,
-            "attackRate": 3.0,
+            "attackRate": 2.0,
             "lifespan": 120,
-            "attackRange": 8.0
+            "attackRange": 8.0,
+            "isRanged": true
         },
         "king": {
             "hp": 1500,
             "damage": 80,
-            "attackRate": 1.5,
+            "attackRate": 1.2,
+            "attackRange": 4.0,
             "lifespan": 300
         }
     },
@@ -65,37 +68,61 @@
         "house": {
             "hp": 100,
             "capacity": 5,
-            "defense": 4.0
+            "defense": 4.0,
+            "growthRate": 0.02
         },
         "mansion": {
             "hp": 300,
             "capacity": 10,
-            "defense": 2.0
+            "defense": 2.0,
+            "growthRate": 0.02
         },
         "tower": {
             "hp": 500,
             "capacity": 5,
-            "defense": 10.0
+            "defense": 10.0,
+            "growthRate": 1.0
         },
         "barracks": {
             "hp": 800,
             "capacity": 10,
-            "defense": 2.0
+            "defense": 2.0,
+            "growthRate": 1.0
         },
         "castle": {
             "hp": 2000,
             "capacity": 50,
-            "defense": 2.0
+            "defense": 2.0,
+            "growthRate": 0.05
         },
         "cave": {
             "hp": 200,
             "capacity": 20,
-            "growthRate": 0.125
+            "growthRate": 0.25
         },
         "goblin_hut": {
             "hp": 100,
             "capacity": 5,
             "growthRate": 0.25
+        }
+    },
+    "economy": {
+        "food": {
+            "consumptionRate": 0.005,
+            "hunterAmount": 3.0,
+            "fisherAmount": 1.0,
+            "maxFish": 300,
+            "fishSpawnChance": 0.05,
+            "farmBaseYield": 4,
+            "farmBaseGrowth": 10
+        },
+        "growth": {
+            "baseRate": 0.05,
+            "varietyMultipliers": [
+                1.0,
+                2.5,
+                5.0
+            ]
         }
     }
 }

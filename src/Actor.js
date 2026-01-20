@@ -283,47 +283,64 @@ export class Actor extends Entity {
             }
 
             // FALLBACK 2: Force Pathfinding (Linear Blocked by Terrain/Water)
-            // If we failed linear move, and we don't have a path, and throttle allows...
+            // If we failed linear move, and we don't have a path...
 
-            // Critical Fix: If we stuck repeatedly, allow pathfinding immediately regardless of throttle
-            // Using "stuckCount" from Unit.js or inferring from failure? 
-            // We lack "stuckCount" here in Actor, but JobState might track it.
-            // Let's use a local random chance if blocked to break throttle for urgent cases.
+            // CRITICAL FIX: Prefer ASYNC to prevent Stutter.
+            // Only use SYNC if target is very close (< 10 tiles) OR we are strictly stuck.
 
             const dist2 = this.getDistance(tx, tz);
-            // Expanded range (was 15.0/30.0) and random urgency
+            // Throttle randomly to prevent all units requesting at once
+            const throttle = 1.0 + (this.id % 20) * 0.1;
+
+            // Urgent bypass: Low chance, or if very close
+            const isClose = dist2 < 10.0;
+            const urgent = Math.random() < (isClose ? 0.5 : 0.05); // 50% chance if close, 5% if far
+
             if (!this.path && dist2 <= 80.0) {
-
-                const throttle = 1.0 + (this.id % 20) * 0.1;
-                // Urgent bypass: Increased to 40% chance per frame if blocked (was 10%)
-                // This ensures they don't look "dumb" for too long when hitting a wall
-                const urgent = Math.random() < 0.4;
-
-                if (urgent || time - this.lastPathTime > throttle) {
-                    this.isPathfindingThrottled = false;
-                    // Check Budget
-                    if (this.terrain.pathfindingCalls >= 30) {
-                        this.isPathfindingThrottled = true;
-                        return false;
-                    }
-
-                    this.lastPathTime = time;
-
-                    // Check Reachability (Again, just in case)
-                    if (!this.isReachable(tx, tz)) return false;
-
+                // 1. Try SYNC (Cheap/Fast) only if Close + Urgent
+                if (urgent && isClose) {
+                    // Check Budget in Terrain (Will return null if exhausted)
                     const newPath = this.terrain.findPath(this.gridX, this.gridZ, tx, tz);
                     if (newPath && newPath.length > 0) {
-                        // console.log(`[Actor ${this.id}] Pathfinding Success (Len:${newPath.length}). Executing immediately.`);
                         this.path = newPath;
-                        // RECURSIVE CALL: Execute first step immediately to prevent 3s delay
                         return this.smartMove(tx, tz, time);
-                    } else {
-                        if (this.terrain.pathfindingCalls < 100) this.isUnreachable = true;
-                        return false;
                     }
+                }
+
+                // 2. Default to ASYNC (Worker)
+                // This is non-blocking. Unit will pause briefly (Idle) until promise resolves.
+                if (time - this.lastPathTime > throttle) {
+                    this.isPathfindingThrottled = false;
+
+                    // Reuse the Async Logic from block 180 (SmartMove Start)
+                    if (!this.isPathfinding) {
+                        this.lastPathTime = time;
+                        this.isPathfinding = true;
+
+                        this.terrain.findPathAsync(this.gridX, this.gridZ, tx, tz)
+                            .then(newPath => {
+                                this.isPathfinding = false;
+                                if (newPath && newPath.length > 0) {
+                                    this.path = newPath;
+                                    // Remove start node if close
+                                    if (this.path.length > 0) {
+                                        const first = this.path[0];
+                                        if (Math.abs(this.gridX - first.x) < 0.5 && Math.abs(this.gridZ - first.z) < 0.5) {
+                                            this.path.shift();
+                                        }
+                                    }
+                                    // Resume
+                                    this.smartMove(tx, tz, this.lastPathTime);
+                                } else {
+                                    this.isUnreachable = true;
+                                }
+                            })
+                            .catch(e => {
+                                this.isPathfinding = false;
+                            });
+                    }
+                    return false; // Wait
                 } else {
-                    // Throttled
                     this.isPathfindingThrottled = true;
                 }
             }
@@ -428,6 +445,41 @@ export class Actor extends Entity {
         // Reset counters?
         this.stuckCount = 0;
     }
+    onMoveFinished(time) {
+        // Reset Limbs
+        if (this.limbs) {
+            this.limbs.leftArm = this.limbs.leftArm || { x: 0 }; this.limbs.leftArm.x = 0;
+            this.limbs.rightArm = this.limbs.rightArm || { x: 0 }; this.limbs.rightArm.x = 0;
+            this.limbs.leftLeg = this.limbs.leftLeg || { x: 0 }; this.limbs.leftLeg.x = 0;
+            this.limbs.rightLeg = this.limbs.rightLeg || { x: 0 }; this.limbs.rightLeg.x = 0;
+        }
+
+        // Final Snap Logic (Entity)
+        if (super.onMoveFinished) super.onMoveFinished(time);
+
+        // FIX: Idle/Move Stuttering
+        // Immediately try to advance path instead of waiting for next Logic Tick (1s delay).
+        // Pass 'depth=1' or similar to prevent infinite recursion if 0-dist nodes exist?
+        // smartMove has internal path check.
+        if (this.path && this.path.length > 0) {
+            // Re-invoke smartMove to pick next node
+            // Use current safe 'time' or simTime logic?
+            const now = (this.game && this.game.simTotalTimeSec) ? this.game.simTotalTimeSec : time;
+            // Preserve target from state if available?
+            // smartMove() arguments: targetX, targetZ.
+            // We need to know where we were going!
+            // Unit stores targetRequest? or simple targetGridX/Z is enough?
+            // Problem: smartMove needs Final Destination (tx, tz), not next node.
+            // We don't store "Final Destination" explicitly in Actor property except path end?
+            // But we can infer from path last node.
+
+            const lastNode = this.path[this.path.length - 1];
+            if (lastNode) {
+                this.smartMove(lastNode.x, lastNode.z, now);
+            }
+        }
+    }
+
     // --- TOOLTIP OVERRIDE ---
     getTooltip() {
         let text = super.getTooltip();

@@ -80,13 +80,23 @@ export class Terrain {
         }
     }
 
+    isValidGrid(x, z) {
+        return x >= 0 && x < this.logicalWidth && z >= 0 && z < this.logicalDepth;
+    }
+
     registerEntity(entity, x, z, type) {
         const ix = Math.floor(x);
         const iz = Math.floor(z);
         if (!this.isValidGrid(ix, iz)) return;
 
-        // Add metadata to entity if not present (handled by caller mostly, but useful here)
-        entity._spatial = { x: ix, z: iz, type };
+        // DEBUG LOG
+        console.error(`[DEBUG] Registering Entity ${entity.id} as ${type} at ${x},${z}`);
+
+        entity._spatial = { // Cache spatial data
+            x: x,
+            z: z,
+            type: type
+        };
 
         if (!this.entityGrid[ix]) this.entityGrid[ix] = []; // Safety
         if (!this.entityGrid[ix][iz]) this.entityGrid[ix][iz] = []; // Safety
@@ -186,10 +196,6 @@ export class Terrain {
         const sourceCell = this.grid[Math.floor(centerX)][Math.floor(centerZ)];
         const sourceRegion = sourceCell ? sourceCell.regionId : 0;
 
-        // If source is water (0), we assume they can target anything (e.g. boats/swim) or nothing.
-        // But preventing Land->Water targeting is key.
-        // If sourceRegion > 0, we require targetRegion === sourceRegion.
-
         // Optimization: Linear Scan vs Grid Search
         // Grid Search Area ~ (2R)^2.
         // If candidateList is provided and smaller than Grid Area, use Linear Scan.
@@ -204,25 +210,21 @@ export class Terrain {
                 if (e.isDead || e.isFinished) continue;
 
                 // Region Filter
-                // Buildings (multi-tile) might be reachable even if anchor is in different region.
-                // Units self-verify reachability via Pathing/CostFn.
                 if (type !== 'building' && sourceRegion > 0) {
                     const tCell = this.grid[e.gridX][e.gridZ];
                     if (!tCell || tCell.regionId !== sourceRegion) continue;
                 }
 
-                // Verify Type (if mixed list, though mostly pre-filtered)
-                // If candidateList is "units", they are units.
-                if (type === 'building' && (!e.userData || e.userData.type !== 'house' && e.userData.type !== 'farm' && e.userData.type !== 'barracks' && e.userData.type !== 'tower' && e.userData.type !== 'mansion' && e.userData.type !== 'goblin_hut' && e.userData.type !== 'cave')) {
-                    // Loose type check if needed, or rely on caller
+                // Verify Type (if mixed list)
+                // Linear scan assumes list is pre-filtered or we check broadly.
+                // We don't strict check 'unit' vs 'worker' here usually, but if needed:
+                if (type === 'building' && (!e.userData || !['house', 'farm', 'barracks', 'tower', 'mansion', 'goblin_hut', 'cave'].includes(e.userData.type))) {
+                    // building check
                 }
 
                 // Distance Check
-                // Handle Wrapping manually for distance
                 let dx = Math.abs(e.gridX - centerX);
                 let dz = Math.abs(e.gridZ - centerZ);
-
-                // Wrap logic for shortest distance
                 if (dx > W / 2) dx = W - dx;
                 if (dz > H / 2) dz = H - dz;
 
@@ -240,72 +242,68 @@ export class Terrain {
 
         // Fallback to Grid Search (Original Logic)
         const r = Math.ceil(maxRadius);
-        // Optimization: Use Squared Radius for inner loop checks to avoid Sqrt
         const maxRadiusSq = maxRadius * maxRadius;
+        const entityGrid = this.entityGrid;
 
-        // Debug Log
-        if (type === 'building' && maxRadius < 70) {
-            // console.log(`[Terrain] findBestTarget searching for building at ${centerX},${centerZ} rad:${maxRadius}`);
-        }
-
-        // Cache common values
-        const grid = this.entityGrid; // Direct ref
-        if (!grid) return null;
+        if (!entityGrid) return null;
 
         for (let dx = -r; dx <= r; dx++) {
-            // Optimization: Outer loop distance check (Box vs Circle early pruning)
             const dxSq = dx * dx;
             if (dxSq > maxRadiusSq) continue;
 
-            const targetX = centerX + dx;
-            // Wrap X (Efficient)
-            let ix = targetX;
-            if (ix < 0 || ix >= W) {
-                ix = ((ix % W) + W) % W;
-            }
-            ix = Math.floor(ix);
+            let ix = Math.floor(centerX + dx);
+            if (ix < 0 || ix >= W) ix = ((ix % W) + W) % W;
 
-            // Safety
-            if (!grid[ix]) continue;
+            if (!entityGrid[ix]) {
+                continue;
+            }
 
             for (let dz = -r; dz <= r; dz++) {
-                // Distance Check Squared
                 const dzSq = dz * dz;
                 const distSq = dxSq + dzSq;
                 if (distSq > maxRadiusSq) continue;
 
-                const targetZ = centerZ + dz;
-                // Wrap Z
-                let iz = targetZ;
-                if (iz < 0 || iz >= H) {
-                    iz = ((iz % H) + H) % H;
-                }
-                iz = Math.floor(iz);
+                let iz = Math.floor(centerZ + dz);
+                if (iz < 0 || iz >= H) iz = ((iz % H) + H) % H;
 
-                // Check Cell Region
-                // Check Cell Region
+                // Region Check
                 if (sourceRegion > 0) {
                     const cData = this.grid[ix][iz];
-                    if (cData.regionId !== sourceRegion) continue;
+                    if (cData && cData.regionId !== sourceRegion) {
+                        continue;
+                    }
                 }
 
-                // Entity Check (Optimized)
-                const cell = grid[ix][iz];
-                if (!cell || cell.length === 0) continue;
+                const cell = entityGrid[ix][iz];
+                if (!cell || cell.length === 0) {
+                    continue;
+                }
 
-                // Only calc true Sqrt distance if we find an entity candidate
-                // But we need distance for Score.
                 const dist = Math.sqrt(distSq);
 
                 for (let i = 0; i < cell.length; i++) {
                     const e = cell[i];
-                    // Direct property check is faster than _spatial lookup if aligned?
-                    // Safe to use _spatial.type
-                    if (e._spatial && e._spatial.type === type) {
-                        if (e.isDead) continue;
+                    if (!e._spatial) continue;
+
+                    let isMatch = (e._spatial.type === type);
+
+                    // Wildcard: 'unit' matches all human units
+                    if (!isMatch && type === 'unit') {
+                        // EXPLICIT FILTER: Check against known non-human types
+                        const sType = e._spatial.type;
+                        // Added 'bird' just in case
+                        if (sType === 'building' || sType === 'cave' || sType === 'goblin' || sType === 'sheep' || sType === 'fish' || sType === 'bird') {
+                            isMatch = false;
+                        } else {
+                            // Valid human unit (worker, soldier, knight, etc.)
+                            isMatch = true;
+                        }
+                    }
+
+                    if (isMatch) {
+                        if (e.isDead || e.isFinished) continue;
 
                         const score = costFn(e, dist);
-
                         if (score < bestScore) {
                             bestScore = score;
                             bestEntity = e;
@@ -380,6 +378,9 @@ export class Terrain {
         // Use a random offset so every reload is different
         this.seed = Math.random();
         this.lastYieldTime = 0; // For Time Slicing
+
+        // Reset Grid (Clear previous buildings, flags, etc.)
+        this.initGrid();
 
         // Populate Logical Grid
         for (let x = 0; x < this.logicalWidth; x++) {
@@ -1659,7 +1660,7 @@ export class Terrain {
         const totalPopulation = Math.floor(totalHousingPop) + activeUnits;
 
         // Food Consumption Settings
-        let consumptionRate = 0.005;
+        let consumptionRate = (GameConfig.economy && GameConfig.economy.food && GameConfig.economy.food.consumptionRate) || 0.005;
         // Night: 1/10th consumption (User Request)
         if (isNight) consumptionRate *= 0.1;
 
@@ -1718,11 +1719,13 @@ export class Terrain {
         if (resources.meat > 0) variety++;
 
         let multiplier = 0.5;
-        if (variety === 1) multiplier = 1.0;
-        if (variety === 2) multiplier = 2.5;
-        if (variety === 3) multiplier = 5.0;
+        const multipliers = (GameConfig.economy && GameConfig.economy.growth && GameConfig.economy.growth.varietyMultipliers) || [1.0, 2.5, 5.0];
+        if (variety === 1) multiplier = multipliers[0];
+        if (variety === 2) multiplier = multipliers[1];
+        if (variety === 3) multiplier = multipliers[2];
 
-        const baseRate = 0.05 * multiplier; // Tuned: 0.05 base = ~3m. With Variety(5x) = ~36s.
+        const configBaseRate = (GameConfig.economy && GameConfig.economy.growth && GameConfig.economy.growth.baseRate) || 0.05;
+        const baseRate = configBaseRate * multiplier; // Tuned: 0.05 base = ~3m. With Variety(5x) = ~36s.
 
         if (this.frameCount === undefined) this.frameCount = 0;
         this.frameCount++;
@@ -1744,12 +1747,14 @@ export class Terrain {
                 const bx = building.userData.gridX;
                 const bz = building.userData.gridZ;
 
-                let rate = baseRate;
+                const bConfig = GameConfig.buildings[type];
+                const growthVal = (bConfig && bConfig.growthRate !== undefined) ? bConfig.growthRate : 0.05;
+                let rate = growthVal * multiplier;
 
                 let cap = 10; // House Cap (User Request)
 
                 if (type === 'barracks') {
-                    rate *= 20; // Significantly faster (User Request)
+                    // rate multiplier now handled by growthRate in config (set to 1.0 vs 0.05)
                     cap = 200; // Aligned with UI
                 }
 
@@ -1810,7 +1815,10 @@ export class Terrain {
                 }
             } else if (type === 'tower') {
                 // TOWER SPAWN LOGIC
-                const rate = baseRate * 20; // Significantly faster
+                const bConfig = GameConfig.buildings[type];
+                const growthVal = (bConfig && bConfig.growthRate !== undefined) ? bConfig.growthRate : 1.0;
+                const rate = growthVal * multiplier; // Apply food multiplier
+
                 const cap = 300; // Aligned with UI
 
                 building.userData.population += rate * simDeltaTime;
@@ -1834,7 +1842,7 @@ export class Terrain {
             } else if (type === 'farm') {
                 // Farm Logic: Yield based on Moisture
                 // Farm Logic
-                const growthRate = 10;
+                const growthRate = (GameConfig.economy && GameConfig.economy.food && GameConfig.economy.food.farmBaseGrowth) || 10;
                 building.userData.population = (building.userData.population || 0) + growthRate * simDeltaTime;
 
                 while (building.userData.population >= 100) {
@@ -1849,8 +1857,9 @@ export class Terrain {
                         let efficiency = 1.0 - (diff * 2.0); // 0.5 diff -> 0 efficiency
                         if (efficiency < 0.2) efficiency = 0.2; // Min 20%
 
-                        // Buff: Increase base yield 5 -> 50 -> Nerf to 20 -> Nerf to 8
-                        const yieldAmount = Math.floor(8 * efficiency);
+                        // Buff: Increase base yield 5 -> 50 -> Nerf to 20 -> Nerf to 8 -> Nerf to 4
+                        const baseYield = (GameConfig.economy && GameConfig.economy.food && GameConfig.economy.food.farmBaseYield) || 4;
+                        const yieldAmount = Math.floor(baseYield * efficiency);
                         window.game.resources.grain += yieldAmount;
                     }
                 }
@@ -2312,7 +2321,9 @@ export class Terrain {
 
         // --- 2. BUDGET CHECK (Skip Calculation if overloaded) ---
         // Only applies if we didn't find a cache.
-        if (this.pathfindingCalls > 50) { // Reduced from 100 to 50 to balance with higher maxSteps
+        // FIX: Reduced budget from 50 to 3 to prevent Low Entity Stutter on Main Thread.
+        // Complex paths can take 1-2ms each. 50 calls = 50ms+ lag.
+        if (this.pathfindingCalls > 3) {
             return null;
         }
 
@@ -2528,95 +2539,8 @@ export class Terrain {
         return null; // No path found
     }
 
-    /**
-     * Finds the best target within a range using spatial partitioning or list iteration.
-     * @param {string} type - 'goblin', 'unit', 'building', or 'any'
-     * @param {number} cx - Center Grid X
-     * @param {number} cz - Center Grid Z
-     * @param {number} maxRange - Radius to search
-     * @param {function} scoreFn - (entity, dist) => score (Lower is better). Return Infinity to skip.
-     * @param {Array} list - Optional. If provided and small, scans this list. If large, prefers grid.
-     */
-    findBestTarget(type, cx, cz, maxRange, scoreFn, list) {
-        let best = null;
-        let bestScore = Infinity;
 
-        // Use Spatial Grid if available and list is large or missing
-        // This is O(R^2) vs O(N)
-        // If maxRange is huge (e.g. 100), R^2 = 10000. N might be 18000.
-        // If maxRange is small (15), R^2 = 225. Much faster.
-        const useGrid = (this.entityGrid && (!list || list.length > 500) && maxRange < 40);
 
-        if (useGrid) {
-            const range = Math.ceil(maxRange);
-            const W = this.logicalWidth;
-            const D = this.logicalDepth;
-            const minX = Math.max(0, cx - range);
-            const maxX = Math.min(W - 1, cx + range);
-            const minZ = Math.max(0, cz - range);
-            const maxZ = Math.min(D - 1, cz + range);
-
-            // OPTIMIZATION: Spiral Search or simple Scan?
-            // Simple scan is cache-friendly-ish.
-            for (let x = minX; x <= maxX; x++) {
-                for (let z = minZ; z <= maxZ; z++) {
-                    const cell = this.entityGrid[x][z];
-                    if (!cell || cell.length === 0) continue;
-
-                    // Dist Check (Manhattan first?)
-                    // const dx = Math.abs(x - cx);
-                    // const dz = Math.abs(z - cz);
-                    // if (dx + dz > range * 1.5) continue; // Approx circle
-
-                    for (const e of cell) {
-                        // Type Check
-                        if (type !== 'any') {
-                            if (type === 'goblin' && e.type !== 'goblin') continue;
-                            if (type === 'building' && e.type !== 'building') continue;
-                            if (type === 'unit' && e.type !== 'unit') continue;
-                        }
-
-                        const d2 = (e.gridX - cx) ** 2 + (e.gridZ - cz) ** 2;
-                        if (d2 > maxRange * maxRange) continue;
-
-                        const dist = Math.sqrt(d2);
-                        const score = scoreFn(e, dist);
-
-                        if (score < bestScore) {
-                            bestScore = score;
-                            best = e;
-                        }
-                    }
-                }
-            }
-        } else {
-            // Fallback: List Iteration
-            // If no list provided, assume buildings (legacy safe) or empty
-            let candidates = list;
-            if (!candidates) {
-                if (type === 'building') candidates = this.buildings;
-                // else if (type === 'goblin') candidates = window.game?.goblinManager?.goblins || []; // Unsafe coupling?
-                else candidates = [];
-            }
-
-            for (const e of candidates) {
-                // Pre-filter by dist?
-                // Assuming candidates can be anywhere.
-                const d2 = (e.gridX - cx) ** 2 + (e.gridZ - cz) ** 2;
-                if (d2 > maxRange * maxRange) continue;
-
-                const dist = Math.sqrt(d2);
-                const score = scoreFn(e, dist);
-
-                if (score < bestScore) {
-                    bestScore = score;
-                    best = e;
-                }
-            }
-        }
-
-        return best;
-    }
 
     unregisterAll(type) {
         if (!this.entityGrid) return;

@@ -153,6 +153,8 @@ export class UnitRenderer {
         const colorKnight = new THREE.Color(0x999999); // Mid Grey (User Request)
         const colorWizard = new THREE.Color(0x440088); // Purple
         const colorSkin = new THREE.Color(0xffccaa); // Match skin material
+        const colorFisher = new THREE.Color(0x00CED1); // Aqua/Cyan (Newly Cached)
+        const colorHunter = new THREE.Color(0x006400); // Dark Green (Newly Cached)
 
         for (const unit of units) {
             if (unit.isDead) continue;
@@ -163,8 +165,8 @@ export class UnitRenderer {
             let clothesColor = colorNormal;
             if (unit.role === 'knight') clothesColor = colorKnight;
             else if (unit.role === 'wizard') clothesColor = colorWizard;
-            else if (unit.role === 'fisher') clothesColor = new THREE.Color(0x00CED1); // Aqua/Cyan (水色 - 漁師)
-            else if (unit.role === 'hunter') clothesColor = new THREE.Color(0x006400); // Dark Green (Darkened from 0x228B22)
+            else if (unit.role === 'fisher') clothesColor = colorFisher;
+            else if (unit.role === 'hunter') clothesColor = colorHunter;
             else if (unit.role === 'worker') {
                 if (unit.isSpecial) clothesColor = colorSpecial; // Special: Dark Blue (特別な労働者 - 青色)
                 else clothesColor = colorNormal; // Normal: Dark Brown (Clothes)
@@ -173,7 +175,10 @@ export class UnitRenderer {
             // ROBUST SMART CLONING
             // Calculate which integer offsets (k) place the unit within the View Volume.
             const viewRadius = GameConfig.render && GameConfig.render.viewRadius ? GameConfig.render.viewRadius : 120;
-            const cullDistSq = viewRadius * viewRadius; // Strict culling at view radius limit
+            // FIX: Culling limit was too strict (Circle vs Square Viewport).
+            // Camera sees the CORNERS of the square, which are at distance radius * sqrt(2) ~= 1.41.
+            // Using 1.5 multiplier to match Camera Frustum and ensure units in corners are visible.
+            const cullDistSq = (viewRadius * 1.5) * (viewRadius * 1.5);
 
             const minKx = Math.floor((viewCenter.x - viewRadius - unit.position.x) / logicalW);
             const maxKx = Math.ceil((viewCenter.x + viewRadius - unit.position.x) / logicalW);
@@ -194,13 +199,15 @@ export class UnitRenderer {
                     const posY = unit.position.y;
                     const rotY = unit.rotationY;
 
-                    // LOD Check: If distance > viewRadius, render NOTHING (Aggressive Optimization)
-                    const dx = posX - viewCenter.x;
-                    const dz = posZ - viewCenter.z;
-                    const distSq = dx * dx + dz * dz;
+                    // LOD Check: If outside viewRadius BOX, render NOTHING
+                    // User Request: "Cutoff at viewRadius is fine... Unit missing in corners is problem"
+                    // Clipping planes form a SQUARE (Box). Renderer was checking CIRCLE.
+                    // Fix: Check Box bounds.
+                    const dx = Math.abs(posX - viewCenter.x);
+                    const dz = Math.abs(posZ - viewCenter.z);
 
-                    // Skip rendering if too far (User Configured)
-                    if (distSq > cullDistSq) continue;
+                    // Allow slight buffer (2.0) for unit radius/model size
+                    if (dx > viewRadius + 2.0 || dz > viewRadius + 2.0) continue;
 
                     // 1. Torso (Body) - ALWAYS RENDER if within range
                     // Cute Geo: Translated 0.3. 

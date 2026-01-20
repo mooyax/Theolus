@@ -95,8 +95,8 @@ describe('Building Destruction Logic', () => {
 
         // Setup Building
         const building = terrain.addBuilding('house', 10, 10, true);
-        building.hp = 10; // Sync HP directly for Class
-        building.userData.hp = 10;
+        building.hp = 30; // Sync HP directly for Class (Was 10, but Goblin Dmg is now 15)
+        building.userData.hp = 30;
         building.population = 0; // Empty
         building.userData.population = 0;
 
@@ -110,9 +110,9 @@ describe('Building Destruction Logic', () => {
         expect(terrain.buildings).toContain(building);
 
         // Attack loop
-        // Attack 1: Damage
+        // Attack 1: Damage (15 dmg)
         goblin.attackBuilding(building);
-        expect(building.userData.hp).toBeLessThan(10);
+        expect(building.userData.hp).toBeLessThan(30);
         expect(terrain.buildings).toContain(building);
 
         // Force kill

@@ -23,9 +23,7 @@ class MockTerrain {
     getTileHeight(x, z) { return 1; }
     // Async Pathfinding Mock (Simulates delay)
     findPathAsync(sx, sz, tx, tz) {
-        return new Promise(resolve => {
-            setTimeout(() => resolve([{ x: sx, z: sz }, { x: tx, z: tz }]), 100);
-        });
+        return Promise.resolve([{ x: sx, z: sz }, { x: tx, z: tz }]);
     }
     findPath(sx, sz, tx, tz) { return [{ x: sx, z: sz }, { x: tx, z: tz }]; }
     unregisterEntity() { }
@@ -42,17 +40,17 @@ class MockTerrain {
             const dx = c.gridX - px;
             const dz = c.gridZ - pz;
             const dist = Math.sqrt(dx * dx + dz * dz);
-            console.log(`[MockTerrain] Candidate ID:${c.id} Dist:${dist}`);
+            // console.log(`[MockTerrain] Candidate ID:${c.id} Dist:${dist}`);
 
             if (dist > maxRange) continue;
             const score = scoreFunc(c, dist);
-            console.log(`[MockTerrain] Score:${score}`);
+            // console.log(`[MockTerrain] Score:${score}`);
             if (score < bestScore) {
                 bestScore = score;
                 best = c;
             }
         }
-        console.log(`[MockTerrain] Best:`, best);
+        // console.log(`[MockTerrain] Best:`, best);
         return best;
     }
 }
@@ -61,6 +59,7 @@ class MockGame {
     constructor() {
         this.simTotalTimeSec = 100;
         this.frameCount = 0;
+        this.unitScanBudget = 1000; // FIX: Add Budget
         this.units = [];
         this.requestQueue = [];
         this.goblinManager = {

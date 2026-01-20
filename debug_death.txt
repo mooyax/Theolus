@@ -1,0 +1,1 @@
+Goblin died at iteration 0. Pos: 49,49 Height: 5 Age: 120.01679999999033/120

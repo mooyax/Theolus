@@ -4,16 +4,11 @@ export class Entity {
     static nextId = 0;
 
     constructor(scene, terrain, x, z, type) {
-        this.id = Entity.nextId++; // Shared ID counter? Or separate? 
-        // UnitMain had its own, Goblin had its own. 
-        // If we mix them, ID collisions might happen if Game.js assumes Unit IDs start at 0.
-        // Let's keep separate static counters in subclasses if needed, OR force unique IDs globally.
-        // For safety, let's use the ID passed or let subclass handle ID generation.
-        // Actually, let's let subclass set ID. 
-        // But we DO need ID for logs.
-
+        this.id = Entity.nextId++;
         this.scene = scene;
         this.terrain = terrain;
+        this.game = (typeof window !== 'undefined') ? window.game : (typeof global !== 'undefined' ? global.window?.game : null);
+        this.frameCount = 0;
         this.gridX = x;
         this.gridZ = z;
         this.type = type || 'entity';

@@ -101,7 +101,7 @@ describe('Unit AI Search Optimization', () => {
         // Expectation: Calls findBestTarget for building
         expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('building', 0, 0, 25, expect.any(Function));
 
-        // Expectation: Log found base (Unit.js prints "found Base via Spatial Search")
-        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('found Base via Spatial Search'));
+        // Log removed from source to reduce spam
+        // expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('found Base via Spatial Search'));
     });
 });

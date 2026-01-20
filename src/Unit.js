@@ -324,19 +324,18 @@ export class Unit extends Actor {
         if (typeof UnitWanderState !== 'undefined') {
             this.changeState(new UnitWanderState(this));
         } else {
-            // If UnitStates.js is circular dependency, we might need a lazy init or check.
-            // But for now, assuming import is available.
-            // Actually, Unit.js imports UnitWanderState? Let's check imports first.
-            // If imports are missing, we add them.
-            // See step 4 for import check.
+            console.warn(`[Unit ${this.id}] UnitWanderState is undefined!`);
         }
+        // If UnitStates.js is circular dependency, we might need a lazy init or check.
+        // But for now, assuming import is available.
+        // Actually, Unit.js imports UnitWanderState? Let's check imports first.
+        // If imports are missing, we add them.
+        // See step 4 for import check.
+
         // this.moveStartTime = 0; // Already defined above
         // this.moveDuration = 1000; // Already defined above
 
-        // Register in Spatial Grid
-        if (this.terrain && this.terrain.registerEntity) {
-            this.terrain.registerEntity(this, this.gridX, this.gridZ, 'unit');
-        }
+        // Register in Spatial Grid is handled by Entity constructor
         console.log(`[UnitCore.js] Unit Created ID:${this.id} Role:${this.role} Pos:${this.gridX},${this.gridZ}`);
 
         this.wanderCount = 0;
@@ -349,8 +348,25 @@ export class Unit extends Actor {
         this.debugFrame = 0;
     }
 
-    takeDamage(amount, attacker) {
+    takeDamage(amount, attacker, isCounter = false) {
         if (this.isDead || this.isFinished) return;
+
+        // --- DEATH COUNTER (User Request) ---
+        // If lethal damage AND melee range, trigger retaliation before dying
+        if (amount >= this.hp && !isCounter && attacker && attacker.hp > 0) {
+            // Distance Check
+            let dist = 999;
+            if (attacker.gridX !== undefined) {
+                dist = this.getDistance(attacker.gridX, attacker.gridZ);
+            }
+            const meleeRange = 2.0;
+
+            if (dist <= meleeRange) {
+                console.log(`[Unit ${this.id}] Death Counter! Hitting ${attacker.id}`);
+                // Nerf: 50% damage logic
+                attacker.takeDamage(this.damage * 0.5, this, true); // isCounter = true
+            }
+        }
 
         this.hp -= amount;
         if (isNaN(this.hp)) this.hp = 0;
@@ -443,7 +459,8 @@ export class Unit extends Actor {
         }
 
         // DAMAGE LOGIC
-        goblin.takeDamage(this.damage);
+        // Ensure we pass 'this' so Goblin knows who hit it (Retaliation)
+        goblin.takeDamage(this.damage, this);
 
         // Report Combat to Squad/Global Memory (Every hit matches "In Combat" status)
         if (this.role === 'knight' || this.role === 'wizard') {
@@ -463,22 +480,35 @@ export class Unit extends Actor {
     }
 
     attackBuilding(building, damageOverride) {
-        if (this.attackCooldown > 0) return;
         if (!building || !building.userData) return;
+
+        // GHOST ATTACK FIX: Check liveness
+        const isDead = (building.isDestroyed && building.isDestroyed()) || (building.userData.hp <= 0 && (building.userData.population || 0) < 1.0);
+        if (isDead) {
+            this.targetBuilding = null;
+            return;
+        }
+
+        if (this.attackCooldown > 0) return;
 
         const damage = (damageOverride !== undefined) ? damageOverride : (this.damage || 10);
         const bType = building.userData.type;
 
         // --- NEW: Class-based Logic ---
         if (building.takeDamage) {
-            building.takeDamage(damage);
+            const retaliation = building.takeDamage(damage, this); // Pass attacker
+            if (retaliation > 0) {
+                console.log(`[Combat] ${building.userData ? building.userData.type : 'Building'} retaliates! Deals ${retaliation} dmg to Unit ${this.id}`);
+                this.takeDamage(retaliation, null);
+            }
+
             // Retaliation? Unit.js currently doesn't handle retaliation from Buildings as well as Goblin.js
             // But Building.js's takeDamage returns retaliation damage.
-            // Let's use it!
-            // const retaliation = building.takeDamage(damage);
-            // if (retaliation > 0) this.takeDamage(retaliation); 
-            // Wait, Unit.js logic below is quite specific. Let's stick to safe addition for now.
-            if (building.hp <= 0) {
+
+            // Check Destruction
+            const isDestroyed = building.isDestroyed ? building.isDestroyed() : (building.userData && building.userData.hp <= 0);
+
+            if (isDestroyed) {
                 this.terrain.removeBuilding(building);
                 this.targetBuilding = null;
                 this.searchSurroundings(this.gridX, this.gridZ);
@@ -568,17 +598,35 @@ export class Unit extends Actor {
         }
         // --- OTHERS (Goblin Hut / Cave) ---
         else {
-            // Standard HP Logic for Enemy Buildings
-            if (building.userData.hp === undefined) {
-                building.userData.hp = (building.userData.type === 'cave' ? 200 : 100);
-            }
-            building.userData.hp -= damage;
-            console.log(`Unit ${this.id} attacking ${building.userData.type}. HP: ${building.userData.hp}`);
+            // NEW: Use Building.js method if available for Retaliation
+            if (building.takeDamage) {
+                const retaliation = building.takeDamage(damage);
+                if (retaliation > 0) {
+                    console.log(`[Combat] ${building.userData.type} retaliates! Deals ${retaliation} dmg to Unit ${this.id}`);
+                    this.takeDamage(retaliation, null);
+                }
 
-            if (building.userData.hp <= 0) {
-                this.terrain.removeBuilding(building);
-                this.targetBuilding = null;
-                this.searchSurroundings(this.gridX, this.gridZ);
+                // Check Destruction
+                const isDestroyed = building.isDestroyed ? building.isDestroyed() : (building.hp <= 0 && building.population < 1.0);
+
+                if (isDestroyed) {
+                    this.terrain.removeBuilding(building);
+                    this.targetBuilding = null;
+                    this.searchSurroundings(this.gridX, this.gridZ);
+                }
+            } else {
+                // Fallback for legacy objects (Mesh with userData)
+                if (building.userData.hp === undefined) {
+                    building.userData.hp = (building.userData.type === 'cave' ? 200 : 100);
+                }
+                building.userData.hp -= damage;
+                console.log(`Unit ${this.id} attacking ${building.userData.type}. HP: ${building.userData.hp}`);
+
+                if (building.userData.hp <= 0) {
+                    this.terrain.removeBuilding(building);
+                    this.targetBuilding = null;
+                    this.searchSurroundings(this.gridX, this.gridZ);
+                }
             }
         }
 
@@ -645,15 +693,32 @@ export class Unit extends Actor {
         // Jitabata Fix: Prevent jitter during Reinforcing/Migration unless forced
         if ((this.action === 'Reinforcing' || this.action === 'Migrating' || this.migrationTarget) && !forceScan) return false;
 
-        // OPTIMIZATION: Time Slicing (Load Balancing)
+        // OPTIMIZATION: Time Slicing (Load Balancing) & GLOBAL BUDGET
         // Spread checks across frames based on ID to prevent spikes
         const frame = (window.game && window.game.frameCount) ? window.game.frameCount : 0;
-        if (!forceScan && (frame + this.id) % 20 !== 0) {
-            // Skip check this frame (check only ~3 times per second at 60fps)
-            // Unless we are Knight/Wizard (check more often?) -> Knights maybe every 10 frames
-            if ((this.role === 'knight' || this.role === 'wizard') && (frame + this.id) % 10 !== 0) {
-                return false;
-            } else if (this.role === 'worker') {
+
+        let allowedInterval = 20;
+        // Knights need faster reaction?
+        if (this.role === 'knight' || this.role === 'wizard') allowedInterval = 10;
+        // Worker Pacifism: Check less often
+        if (this.role === 'worker') allowedInterval = 30;
+
+        // Worker Pacifism: Reduce Scan Range for selfDefense too
+        // (Handled inside searchSurroundings mostly, but checkSelfDefense uses findBestTarget too)
+
+        if (!forceScan && (frame + this.id) % allowedInterval !== 0) {
+            return false;
+        }
+
+        // GLOBAL BUDGET CHECK
+        if (!forceScan && window.game && window.game.unitScanBudget !== undefined) {
+            if (window.game.unitScanBudget > 0) {
+                window.game.unitScanBudget--;
+            } else {
+                // Budget Exhausted: Skip this frame
+                // We don't reset scanTimer so it will try again next cycle or next allowed frame.
+                // To avoid "starvation" of high IDs, we could randomize? 
+                // But simple skipping is usually enough as IDs wrap/mod varies.
                 return false;
             }
         }
@@ -826,7 +891,7 @@ export class Unit extends Actor {
         for (const b of buildings) {
             // Workers ONLY target huts, not Caves (Caves require explosives/Knights?)
             // Actually user just said "Goblin Huts". Let's restrict workers to huts.
-            if (this.role === 'worker' && b.type !== 'goblin_hut') continue;
+            if (this.role === 'worker' && b.type !== 'goblin_hut' && b.type !== 'cave') continue;
 
             if (b.type === 'goblin_hut' || b.type === 'cave') {
                 const dist = this.getDistance(b.gridX, b.gridZ);
@@ -894,8 +959,16 @@ export class Unit extends Actor {
                 if (age < 30) { // Valid for 30s
                     // Check if close enough to be "arrived" (to stop jitter)
                     const d = this.getDistance(squad.target.x, squad.target.z);
-                    // Tightened threshold from 5.0 to 2.0 to force units closer to the fight
-                    if (d > 2.0) {
+
+                    // HYSTERESIS:
+                    // Entry Threshold: 2.0 (Move closer)
+                    // Exit Threshold: 1.5 (Stop moving if already there)
+                    let threshold = 2.0;
+                    if (this.targetRaidPoint && this.targetRaidPoint.x === squad.target.x && this.targetRaidPoint.z === squad.target.z) {
+                        threshold = 1.5;
+                    }
+
+                    if (d > threshold) {
                         // Check reachability
                         if (this.isReachable(squad.target.x, squad.target.z)) {
                             this.targetRaidPoint = { x: squad.target.x, z: squad.target.z };
@@ -912,6 +985,11 @@ export class Unit extends Actor {
                                     return true;
                                 }
                             }
+                        }
+                    } else {
+                        // Arrived: Clear target to stop "Patrolling" state and allow Idle/Wander
+                        if (this.targetRaidPoint && this.targetRaidPoint.x === squad.target.x && this.targetRaidPoint.z === squad.target.z) {
+                            this.targetRaidPoint = null;
                         }
                     }
                 }
@@ -982,7 +1060,10 @@ export class Unit extends Actor {
         const currentTime = (this.game) ? this.game.simTotalTimeSec : 0;
 
         if (this.game && this.game.battleMemory) {
-            memories = this.game.battleMemory.getPriorities(currentTime);
+            // WORKER FIX: Workers should NOT listen to global battle calls
+            if (this.role !== 'worker') {
+                memories = this.game.battleMemory.getPriorities(currentTime);
+            }
         }
 
         if (!memories || memories.length === 0) {
@@ -1129,9 +1210,32 @@ export class Unit extends Actor {
         if (this.terrain && this.terrain.findBestTarget) {
             // 1. Goblins (Optimized)
             // Use Role-based range (Knights/Wizards can see farther)
-            const range = (this.role === 'knight' || this.role === 'wizard') ? 50 : 12;
+            let range = 12;
+            if (this.role === 'knight' || this.role === 'wizard') range = 25; // 50 was too large
+            if (this.role === 'worker') range = 8; // Reduced from 12 (Close range only)
+
+            // WORKER DEFENSE REFORM:
+            // Worker uses standard range (12) BUT filters targets based on Home Distance
 
             const goblin = this.terrain.findBestTarget('goblin', x, z, range, (g, dist) => {
+                // WORKER RESTRICTION: Do not chase enemies far from home
+                if (this.role === 'worker') {
+                    // Check distance from Residence
+                    if (this.residence) {
+                        const distToHome = this.getDistance(this.residence.userData.gridX, this.residence.userData.gridZ, g.gridX, g.gridZ); // Direct calc or helper?
+                        // Unit.js doesn't have 4-arg getDistance easily.
+                        // Let's use simple math.
+                        const dx = this.residence.userData.gridX - g.gridX;
+                        const dz = this.residence.userData.gridZ - g.gridZ;
+                        const dHome = Math.sqrt(dx * dx + dz * dz);
+
+                        if (dHome > 20.0) return false; // Too far from home (20 tiles)
+                    } else {
+                        // Homeless: Don't go far from CURRENT position (already covered by 'range', but be stricter)
+                        if (dist > 15.0) return false;
+                    }
+                }
+
                 const now = window.game ? window.game.gameTotalTime : Date.now();
 
                 // SELF DEFENSE OVERRIDE: If super close (< 5.0), ignore the Ignore List!
@@ -1172,13 +1276,17 @@ export class Unit extends Actor {
             if (goblin) {
                 this.targetGoblin = goblin;
                 this.reportEnemy(goblin);
-                console.log(`Unit ${this.id} found Goblin via Spatial Search!`);
+                // console.log(`Unit ${this.id} found Goblin via Spatial Search!`);
                 return;
             }
 
             // 2. Buildings (Optimized)
             // Range 25. Types: goblin_hut or cave.
-            const building = this.terrain.findBestTarget('building', x, z, 25, (b, dist) => {
+            let bRange = 25;
+            if (this.role === 'worker') bRange = 10; // Reduced from 25 (Only encroachments)
+
+            // Worker allowed to attack nearby buildings (User Request)
+            const building = this.terrain.findBestTarget('building', x, z, bRange, (b, dist) => {
                 const now = window.game ? window.game.gameTotalTime : Date.now();
                 const id = b.userData ? (b.userData.id || b.id) : b.id;
                 if (id && this.ignoredTargets.has(id) && now < this.ignoredTargets.get(id)) return Infinity;
@@ -1198,7 +1306,7 @@ export class Unit extends Actor {
             });
 
             if (building) {
-                console.log(`Unit ${this.id} found Base via Spatial Search!`);
+                // console.log(`Unit ${this.id} found Base via Spatial Search!`);
                 this.targetBuilding = building;
                 this.reportEnemy(building);
                 return;
@@ -1240,57 +1348,130 @@ export class Unit extends Actor {
         let foundBiome = false;
 
         if (this.role === 'fisher' || this.role === 'hunter') {
-            // Scan larger radius for suitable terrain
-            const searchRadius = 30;
-            const attempts = 50;
             const logicalW = this.terrain.logicalWidth || 80;
             const logicalD = this.terrain.logicalDepth || 80;
 
-            for (let i = 0; i < attempts; i++) {
-                const ox = Math.floor(Math.random() * (searchRadius * 2 + 1)) - searchRadius;
-                const oz = Math.floor(Math.random() * (searchRadius * 2 + 1)) - searchRadius;
+            // PRIORITY: Find Active Entities (Fish/Sheep)
+            let bestEntity = null;
+            let minDist = 40.0; // Searching Range
 
-                let nx = (this.gridX + ox % logicalW + logicalW) % logicalW;
-                let nz = (this.gridZ + oz % logicalD + logicalD) % logicalD;
-
-                const h = this.terrain.getTileHeight(nx, nz);
-                let suitable = false;
-
-                if (this.role === 'fisher' && h <= 0) {
-                    // Found water. We want to stand on LAND adjacent to water.
-                    // For now, just targeting the water tile is fine as smartMove handles land-only movement
-                    // or we can find a neighbor.
-                    suitable = true;
-                } else if (this.role === 'hunter' && h > 4 && h <= 8) {
-                    suitable = true;
+            if (window.game) {
+                let targets = [];
+                if (this.role === 'fisher' && window.game.fishManager) {
+                    targets = window.game.fishManager.fishes;
+                } else if (this.role === 'hunter' && window.game.sheepManager) {
+                    targets = window.game.sheepManager.sheeps;
                 }
 
-                if (suitable) {
-                    // If target tile is not walkable (e.g. water), smartMove will fail.
-                    // Let's ensure the target is land if it's a fisher.
-                    if (h <= 0) {
-                        // Find land neighbor
-                        const neighbors = [
-                            { x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 }
-                        ];
-                        for (const n of neighbors) {
-                            let lx = (nx + n.x + logicalW) % logicalW;
-                            let lz = (nz + n.z + logicalD) % logicalD;
-                            if (this.terrain.getTileHeight(lx, lz) > 0) {
-                                nx = lx;
-                                nz = lz;
-                                break;
+                if (targets && targets.length > 0) {
+                    for (const t of targets) {
+                        const d = this.getDistance(t.gridX, t.gridZ);
+                        if (d < minDist) {
+                            minDist = d;
+                            bestEntity = t;
+                        }
+                    }
+                }
+            }
+
+            if (bestEntity) {
+                // If Fisher, target LAND near fish. If Hunter, target Sheep directly.
+                let tx = bestEntity.gridX;
+                let tz = bestEntity.gridZ;
+                let validParams = false;
+
+                if (this.role === 'fisher') {
+                    // Find neighbor land
+                    const neighbors = [
+                        { x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 },
+                        { x: 1, z: 1 }, { x: -1, z: 1 }, { x: 1, z: -1 }, { x: -1, z: -1 }
+                    ];
+                    // Sort neighbors by distance to unit (to pull unit closer?) or just random?
+                    // Let's pick Closest Land to Unit that is adj to Fish
+
+                    let bestLand = null;
+                    let bestLandDist = 999;
+
+                    for (const n of neighbors) {
+                        let lx = (tx + n.x + logicalW) % logicalW;
+                        let lz = (tz + n.z + logicalD) % logicalD;
+                        const h = this.terrain.getTileHeight(lx, lz);
+
+                        if (h > 0) { // It's Land
+                            const d = this.getDistance(lx, lz);
+                            if (d < bestLandDist) {
+                                bestLandDist = d;
+                                bestLand = { x: lx, z: lz };
                             }
                         }
-                        if (this.terrain.getTileHeight(nx, nz) <= 0) suitable = false; // Still water? Skip.
+                    }
+                    if (bestLand) {
+                        tx = bestLand.x;
+                        tz = bestLand.z;
+                        validParams = true;
+                    }
+                } else {
+                    // Hunter: Go to sheep directly (assuming sheep is on land)
+                    validParams = true;
+                }
+
+                if (validParams) {
+                    this.patrolTarget = { x: tx, z: tz };
+                    this.patrolTimer = 0;
+                    this.triggerMove(tx, tz, time);
+                    foundBiome = true;
+                }
+            }
+
+            // FALLBACK: Scan for Biome if no entity found
+            if (!foundBiome) {
+                // Scan larger radius for suitable terrain
+                const searchRadius = 30;
+                const attempts = 20; // Reduced attempts since we have Entity check now
+
+                for (let i = 0; i < attempts; i++) {
+                    const ox = Math.floor(Math.random() * (searchRadius * 2 + 1)) - searchRadius;
+                    const oz = Math.floor(Math.random() * (searchRadius * 2 + 1)) - searchRadius;
+
+                    let nx = (this.gridX + ox % logicalW + logicalW) % logicalW;
+                    let nz = (this.gridZ + oz % logicalD + logicalD) % logicalD;
+
+                    const h = this.terrain.getTileHeight(nx, nz);
+                    let suitable = false;
+
+                    if (this.role === 'fisher' && h <= 0) {
+                        // Found water. We want to stand on LAND adjacent to water.
+                        suitable = true;
+                    } else if (this.role === 'hunter' && h > 4 && h <= 8) {
+                        suitable = true;
                     }
 
                     if (suitable) {
-                        this.patrolTarget = { x: nx, z: nz };
-                        this.patrolTimer = 0;
-                        this.triggerMove(nx, nz, time);
-                        foundBiome = true;
-                        break;
+                        // If target tile is not walkable, ensure we find valid neighbor
+                        if (h <= 0) {
+                            // Find land neighbor
+                            const neighbors = [
+                                { x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 }
+                            ];
+                            for (const n of neighbors) {
+                                let lx = (nx + n.x + logicalW) % logicalW;
+                                let lz = (nz + n.z + logicalD) % logicalD;
+                                if (this.terrain.getTileHeight(lx, lz) > 0) {
+                                    nx = lx;
+                                    nz = lz;
+                                    break;
+                                }
+                            }
+                            if (this.terrain.getTileHeight(nx, nz) <= 0) suitable = false;
+                        }
+
+                        if (suitable) {
+                            this.patrolTarget = { x: nx, z: nz };
+                            this.patrolTimer = 0;
+                            this.triggerMove(nx, nz, time);
+                            foundBiome = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -1621,10 +1802,11 @@ export class Unit extends Actor {
 
         if (window.game && window.game.resources) {
             if (foundWater && this.role === 'fisher') {
-                window.game.resources.fish = (window.game.resources.fish || 0) + 1;
+                const amount = (GameConfig.economy && GameConfig.economy.food && GameConfig.economy.food.fisherAmount) || 1.0;
+                window.game.resources.fish = (window.game.resources.fish || 0) + amount;
             }
             if (foundForest && this.role === 'hunter') {
-                const amount = (this.role === 'hunter') ? 3.0 : 1.0;
+                const amount = (GameConfig.economy && GameConfig.economy.food && GameConfig.economy.food.hunterAmount) || 3.0;
                 window.game.resources.meat += amount;
             }
         }

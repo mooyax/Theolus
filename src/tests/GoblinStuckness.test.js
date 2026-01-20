@@ -42,6 +42,8 @@ describe('Goblin Combat and Stagnation', () => {
 
         // Mock smartMove failure by making target unreachable
         goblin.isReachable = vi.fn().mockReturnValue(false);
+        goblin.smartMove = vi.fn().mockReturnValue(false);
+        goblin.isUnreachable = true; // Required by new oscillation fix
 
         // run updateLogic via state
         window.game.simTotalTimeSec = 101;

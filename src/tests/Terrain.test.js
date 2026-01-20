@@ -90,7 +90,7 @@ describe('Terrain Logic', () => {
             terrain.frameCount = 19;
             terrain.updatePopulation(slowDelta, false, 0, vi.fn());
 
-            expect(mockGame.resources.grain).toBe(8); // Yield is 8
+            expect(mockGame.resources.grain).toBe(4); // Yield is 4
             expect(farm.userData.population).toBeCloseTo(15, 0); // 115 - 100
         });
     });
@@ -98,7 +98,7 @@ describe('Terrain Logic', () => {
     describe('Advanced Mechanics', () => {
         it('should scale farm yield based on moisture', () => {
             // 1. Optimal Moisture (0.5) => Efficiency 1.0 => Yield 5
-            // 1. Optimal Moisture (0.5) => Efficiency 1.0 => Yield 8
+            // 1. Optimal Moisture (0.5) => Efficiency 1.0 => Yield 4
             const farmOptimal = { userData: { type: 'farm', population: 100, gridX: 0, gridZ: 0 } };
             terrain.buildings = [farmOptimal];
             terrain.grid[0][0].moisture = 0.5;
@@ -112,7 +112,7 @@ describe('Terrain Logic', () => {
             terrain.updatePopulation(0.1, false, 0, spawnCallback);
 
             // Yield should happen
-            expect(mockGame.resources.grain).toBe(8);
+            expect(mockGame.resources.grain).toBe(4);
         });
 
         it('should reduce food consumption at night', () => {

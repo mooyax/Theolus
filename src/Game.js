@@ -78,6 +78,7 @@ export class Game {
         this.soundManager = new SoundManager();
         this.mana = 100; // Initial Mana
         this.gameActive = false; // Start Screen Gate
+        this.unitScanBudget = 1000; // Initialize Scan Budget
 
         // Battle Memory System (Global used by Freelancers)
         this.battleMemory = new BattleMemory();
@@ -115,12 +116,27 @@ export class Game {
 
             const aspect = window.innerWidth / window.innerHeight;
             // User requested zoomed in view (d=20) -> Expanded to d=50 to prevent clipping
-            const d = 50;
+            // 2. Setup Renderer (Moved up slightly or just setting camera first)
+
+            // 4. Clipping Planes & View Config
+            this.viewRadius = GameConfig.render.viewRadius || 60; // Increased default
+
+            // Calculate Frustum Size based on ViewRadius to prevent clipping
+            // Ortho Size 'd' is half-height. Total height = 2d.
+            // We need 'd' to be slightly larger than viewRadius to account for rotation/tilt.
+            // CRITICAL: Must cover the DIAGONAL of the square (radius * sqrt(2) ~= 1.41)
+            // Using 1.5 for safety buffer.
+            const d = this.viewRadius * 1.5;
+
             this.camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
-            console.log("Camera created:", !!this.camera, "Pos:", typeof this.camera.position);
+            console.log(`Camera created: d=${d} based on radius=${this.viewRadius}`);
+
             this.camera.position.set(20, 20, 20); // Isometric
             this.camera.lookAt(this.scene.position);
-            console.log("Camera setup done");
+
+            // Fog Removed per User Request (Hard edges preferred)
+            this.scene.fog = null;
+
 
             // 2. Setup Renderer
             this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
@@ -134,10 +150,9 @@ export class Game {
             this.controls.enableDamping = true;
             this.controls.dampingFactor = 0.05;
             this.controls.screenSpacePanning = false;
-            // User Request: "Zoom rate 2x larger is fine".
-            // Expanding range to allow wider view and closer inspection.
-            this.controls.minZoom = 0.5; // Relaxed from 1.5 back to 0.5 to allow zooming out
-            this.controls.maxZoom = 8.0; // Was 4.0 (Can zoom in to see details)
+            // User Change: Allow Zoom Out to see full viewRadius
+            this.controls.minZoom = 0.25; // Relaxed (0.5 was maybe still tight for d=72)
+            this.controls.maxZoom = 4.0; // 8.0 might be excessive
             this.controls.maxPolarAngle = Math.PI / 2;
 
             // 4. Clipping Planes
@@ -1387,8 +1402,9 @@ export class Game {
         const elWizard = document.getElementById('wizard-val');
         if (elWizard) elWizard.innerText = wizards;
 
-        document.getElementById('house-val').innerText = this.terrain.buildings.filter(b => b.userData.type === 'house').length;
-        document.getElementById('castle-val').innerText = this.terrain.buildings.filter(b => b.userData.type === 'barracks').length;
+        const elHouse = document.getElementById('house-val');
+        if (elHouse) elHouse.innerText = this.terrain.buildings.filter(b => b.userData.type === 'house').length;
+        // document.getElementById('castle-val').innerText = ... (Removed from UI)
         document.getElementById('grain-val').innerText = Math.floor(this.resources.grain);
         document.getElementById('fish-val').innerText = Math.floor(this.resources.fish);
         document.getElementById('meat-val').innerText = Math.floor(this.resources.meat);
@@ -1490,6 +1506,13 @@ export class Game {
         if (this.gameActive) {
             // Apply Speed Multiplier
             deltaTime *= (this.timeScale || 1.0);
+
+            // PERFORMANCE: Global Unit Scan Budget (Shared across all units)
+            // Limit expensive spatial queries per frame to prevent CPU lock at high pop.
+            // 7700 units / 20 frames = 385 scans/frame -> Too heavy.
+            // Limit to ~50-100 per frame.
+            this.unitScanBudget = 100;
+            if (this.units.length > 5000) this.unitScanBudget = 50;
 
             // Accumulate SIMULATED time in SECONDS
             if (this.simTotalTimeSec === undefined) this.simTotalTimeSec = (this.gameTotalTime || 0) / 1000;
@@ -1629,34 +1652,48 @@ export class Game {
                 const camZ = this.camera ? this.camera.position.z : 0;
                 const hasCamera = !!this.camera;
 
-                // Time Slicing Constants
+                // Time Slicing & Throttling
+                // More aggressive throttling for distant units to handle 2000+ entities
                 const INTERVAL_NEAR = 2;   // 30 FPS (Every 2nd frame)
-                const INTERVAL_MID = 10;   // 6 FPS
-                const INTERVAL_FAR = 60;   // 1 FPS
+                const INTERVAL_MID = 4;    // 15 FPS (Improved from 10/6FPS) for "Clunky" report @ 200 units
+                const INTERVAL_FAR = 30;   // 2 FPS (Reduced from 1 FPS for smoothness/responsiveness balance)
+                const INTERVAL_VERY_FAR = 60; // 1 FPS (For > 120 units away)
 
-                const DIST_NEAR_SQ = 40 * 40; // 40 units
-                const DIST_FAR_SQ = 80 * 80;  // 80 units
+                const DIST_NEAR_SQ = 60 * 60; // 60 units (Increased from 40 for smoother zoom-out)
+                const DIST_FAR_SQ = 90 * 90;  // 90 units (Shifted out)
+                const DIST_VERY_FAR_SQ = 130 * 130; // 130 units
 
                 for (let i = this.units.length - 1; i >= 0; i--) {
                     const unit = this.units[i];
 
-                    // 1. Always Update Movement (Visuals)
-                    // Essential for smooth linear interpolation of position
-                    if (unit.updateMovement) unit.updateMovement(this.simTotalTimeSec);
-
-                    // 2. Dynamic Time-Sliced Logic Update
+                    // 1. Dynamic Time-Sliced Logic Update
                     let interval = INTERVAL_NEAR;
+                    let distSq = 0;
+
                     if (hasCamera) {
                         const dx = unit.position.x - camX;
                         const dz = unit.position.z - camZ;
-                        const distSq = dx * dx + dz * dz;
+                        distSq = dx * dx + dz * dz;
 
-                        if (distSq > DIST_FAR_SQ) {
+                        if (distSq > DIST_VERY_FAR_SQ) {
+                            interval = INTERVAL_VERY_FAR;
+                        } else if (distSq > DIST_FAR_SQ) {
                             interval = INTERVAL_FAR;
                         } else if (distSq > DIST_NEAR_SQ) {
                             interval = INTERVAL_MID;
                         }
                     }
+
+                    // 2. Throttled Position/Height Updates (Visuals)
+                    // Only update Movement/Height every few frames for distant units to save CPU
+                    // FIX: Clamp max throttle to 3 frames (~20FPS) to prevent visual stutter even if Logic is slow (1FPS)
+                    // Adjusted: Only throttle if interval is VERY high (>30). Medium distance should be smooth.
+                    const moveInterval = (interval > 30) ? 3 : 1;
+                    if ((this.frameCount + i) % moveInterval === 0) {
+                        if (unit.updateMovement) unit.updateMovement(this.simTotalTimeSec);
+                    }
+
+                    // Force full update for selected unit or very close? Not needed if smooth enough.
 
                     // Spread updates evenly using unit ID or index
                     // (frameCount + i) ensure 1/N units update each frame
@@ -1721,8 +1758,8 @@ export class Game {
             // Update Clipping Planes to Follow Camera
             if (this.clippingPlanes && this.clippingPlanes.length === 4) {
                 // Use camera target (focus point) instead of camera position for isometric view clipping
-                const cx = this.controls ? this.controls.target.x : this.camera.position.x;
-                const cz = this.controls ? this.controls.target.z : this.camera.position.z;
+                const cx = (this.controls && this.controls.target) ? this.controls.target.x : (this.camera ? this.camera.position.x : 0);
+                const cz = (this.controls && this.controls.target) ? this.controls.target.z : (this.camera ? this.camera.position.z : 0);
                 const r = this.viewRadius || 30;
 
                 // Planes:

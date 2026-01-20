@@ -1,48 +1,69 @@
 
 [1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
 
-[90mstdout[2m | src/tests/Hysteresis.test.js[2m > [22m[2mUnit Combat Hysteresis (Stickiness)[2m > [22m[2mshould stay focused on existing targetRaidPoint despite a slightly closer new hotspot
-[22m[39m[UnitCore.js] Unit Created ID:0 Role:knight Pos:50,50 Special:false
-[UnitCore.js] Unit Created ID:0 Role:knight Pos:50,50
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould damage building population
+[22m[39mGoblin Raid: House population reduced.Rem: 9 
 
-[90mstdout[2m | src/tests/UnitPerformance.test.js[2m > [22m[2mUnit Performance Optimization[2m > [22m[2mshould throttle checkSelfDefense based on ID and Frame
-[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould destroy building when Population AND HP are depleted
+[22m[39mGoblin Raid: House population reduced.Rem: -0.95 
+Goblin destroyed Building house (Legacy) !
+Goblin 1 destroyed house !
 
-[90mstdout[2m | src/tests/Hysteresis.test.js[2m > [22m[2mUnit Combat Hysteresis (Stickiness)[2m > [22m[2mshould switch target if the new hotspot is significantly closer (beyond hysteresis)
-[22m[39m[UnitCore.js] Unit Created ID:1 Role:knight Pos:50,50 Special:false
-[UnitCore.js] Unit Created ID:1 Role:knight Pos:50,50
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould destroy building even if fractional population remains (e.g. 0.5)
+[22m[39mGoblin Raid: House population reduced.Rem: -0.95 
+Goblin destroyed Building house (Legacy) !
+Goblin 2 destroyed house !
 
-[90mstdout[2m | src/tests/Hysteresis.test.js[2m > [22m[2mUnit Combat Hysteresis (Stickiness)[2m > [22m[2mshould apply stickiness during checkSelfDefense for entities
-[22m[39m[UnitCore.js] Unit Created ID:2 Role:knight Pos:50,50 Special:false
-[UnitCore.js] Unit Created ID:2 Role:knight Pos:50,50
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould NOT destroy building if population remains >= 1.0
+[22m[39mGoblin Raid: House population reduced.Rem: 6 
 
-[90mstdout[2m | src/tests/UnitPerformance.test.js[2m > [22m[2mUnit Performance Optimization[2m > [22m[2mshould skip searchSurroundings for busy workers
-[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould take retaliation damage
+[22m[39mGoblin Raid: House population reduced.Rem: 19 
 
- [32m笨・[39m src/tests/Hysteresis.test.js[2m > [22mUnit Combat Hysteresis (Stickiness)[2m > [22mshould stay focused on existing targetRaidPoint despite a slightly closer new hotspot[32m 8[2mms[22m[39m
- [32m笨・[39m src/tests/Hysteresis.test.js[2m > [22mUnit Combat Hysteresis (Stickiness)[2m > [22mshould switch target if the new hotspot is significantly closer (beyond hysteresis)[32m 2[2mms[22m[39m
- [31mﾃ・[39m src/tests/Hysteresis.test.js[2m > [22mUnit Combat Hysteresis (Stickiness)[2m > [22mshould apply stickiness during checkSelfDefense for entities[32m 18[2mms[22m[39m
-[31m   竊・expected null to be { Object (id, gridX, ...) } // Object.is equality[39m
-[90mstdout[2m | src/tests/UnitPerformance.test.js[2m > [22m[2mUnit Performance Optimization[2m > [22m[2mshould throttle searchSurroundings for idle units
-[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould damage real building population
+[22m[39m[Building] house(6) took 10 dmg. Pop: 9. Retaliation: 36
 
- [31mﾃ・[39m src/tests/UnitPerformance.test.js[2m > [22mUnit Performance Optimization[2m > [22mshould throttle checkSelfDefense based on ID and Frame[32m 37[2mms[22m[39m
-[31m   竊・targets is not defined[39m
- [32m笨・[39m src/tests/UnitPerformance.test.js[2m > [22mUnit Performance Optimization[2m > [22mshould skip searchSurroundings for busy workers[32m 1[2mms[22m[39m
- [31mﾃ・[39m src/tests/UnitPerformance.test.js[2m > [22mUnit Performance Optimization[2m > [22mshould throttle searchSurroundings for idle units[32m 3[2mms[22m[39m
-[31m   竊・expected "vi.fn()" to be called at least once[39m
-[90mstdout[2m | src/tests/UnitAISearch.test.js[2m > [22m[2mUnit AI Search Optimization[2m > [22m[2mshould use Spatial Search to find goblin
-[22m[39m[UnitCore.js] Unit Created ID:0 Role:guard Pos:0,0 Special:false
-[UnitCore.js] Unit Created ID:0 Role:guard Pos:0,0
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould destroy real building when Pop and HP reach zero
+[22m[39m[Building] house(8) took 10 dmg. Pop: 0. Retaliation: 0
+Goblin 6 destroyed house !
 
- [32m笨・[39m src/tests/UnitAISearch.test.js[2m > [22mUnit AI Search Optimization[2m > [22mshould use Spatial Search to find goblin[32m 10[2mms[22m[39m
- [32m笨・[39m src/tests/UnitAISearch.test.js[2m > [22mUnit AI Search Optimization[2m > [22mshould find Base using Spatial Search[32m 3[2mms[22m[39m
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Building Destruction[2m > [22m[2mshould NOT destroy if population remains high
+[22m[39m[Building] house(10) took 10 dmg. Pop: 4. Retaliation: 16
 
-[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
-[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (8)[39m
-[2m   Start at [22m 15:13:25
-[2m   Duration [22m 2.41s[2m (transform 923ms, setup 299ms, import 1.17s, tests 88ms, environment 3.86s)[22m
+ [31m笶ｯ[39m src/tests/GoblinDestruction.test.js [2m([22m[2m8 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 21[2mms[22m[39m
+     [32m笨・[39m should damage building population[32m 9[2mms[22m[39m
+     [32m笨・[39m should destroy building when Population AND HP are depleted[32m 2[2mms[22m[39m
+     [32m笨・[39m should destroy building even if fractional population remains (e.g. 0.5)[32m 1[2mms[22m[39m
+     [32m笨・[39m should NOT destroy building if population remains >= 1.0[32m 0[2mms[22m[39m
+     [32m笨・[39m should take retaliation damage[32m 1[2mms[22m[39m
+     [32m笨・[39m should damage real building population[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m should destroy real building when Pop and HP reach zero[39m[32m 6[2mms[22m[39m
+     [32m笨・[39m should NOT destroy if population remains high[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/GoblinDestruction.test.js > Goblin Building Destruction > should destroy real building when Pop and HP reach zero
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected: 
+true
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/GoblinDestruction.test.js:165:42
+    163| 
+    164|         expect(mockTerrain.removeBuilding).toHaveBeenCalledWith(buildi窶ｦ
+    165|         expect(building.userData.isDead).toBe(true);
+       |                                          ^
+    166|     });
+    167| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m7 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 08:48:28
+[2m   Duration [22m 817ms[2m (transform 113ms, setup 51ms, import 139ms, tests 21ms, environment 413ms)[22m
 

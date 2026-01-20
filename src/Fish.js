@@ -133,17 +133,13 @@ export class Fish extends Actor {
     // If that returns seabed, fish will walk on seabed.
     // If we want them swimming near surface, we must override `getPositionForGrid`.
 
-    getPositionForGrid(x, z) {
+    getPositionForGrid(x, z, target = null) {
         // Use Entity logic for X/Z, but force Y to fixed Water level
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
         const rawX = x - logicalW / 2 + 0.5;
         const rawZ = z - logicalD / 2 + 0.5;
-
-        // Apply distortions if needed? Previous Fish didn't use it.
-        // Let's copy Entity's distortion logic but keep Y fixed.
-        // Actually, let's keep it simple: Fish traverse the "Plane" of water.
 
         let offsets = { x: 0, y: 0 };
         // If we want visual jitter, use terrain offsets.
@@ -153,11 +149,15 @@ export class Fish extends Actor {
             offsets = this.terrain.getVisualOffset(planeX, planeY);
         }
 
-        return new THREE.Vector3(
-            rawX + offsets.x,
-            -0.2, // Fixed Water Level
-            rawZ - offsets.y
-        );
+        const finalX = rawX + offsets.x;
+        const finalY = -0.2; // Fixed Water Level
+        const finalZ = rawZ - offsets.y;
+
+        if (target) {
+            target.set(finalX, finalY, finalZ);
+            return target;
+        }
+        return new THREE.Vector3(finalX, finalY, finalZ);
     }
 
     onMoveStep(progress) {

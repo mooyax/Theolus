@@ -92,6 +92,7 @@ describe('Save/Load System', () => {
         game.terrain.updateColors = vi.fn();
         game.terrain.updateMesh = vi.fn();
         game.terrain.generate = vi.fn();
+        window.game = game; // Fix: Ensure global game access for Units
     });
 
     it('should save game data correctly', () => {

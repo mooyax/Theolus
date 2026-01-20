@@ -130,8 +130,8 @@ describe('Goblin Spawning Logic', () => {
         const deltaTime = 1.0;
         cave.update(0, deltaTime);
 
-        // Cave growth rate is 0.125 (original balanced rate)
-        expect(cave.userData.population).toBeCloseTo(0.125, 2);
+        // Cave growth rate is 0.25 (as per current GameConfig)
+        expect(cave.userData.population).toBeCloseTo(0.25, 2);
     });
 
     it('should synchronize clipping planes with controls.target when available', () => {

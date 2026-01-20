@@ -68,6 +68,7 @@ describe('Goblin Activity & Persistence', () => {
 
         goblinManager = new GoblinManager(mockGame.scene, mockTerrain);
         mockGame.goblinManager = goblinManager;
+        global.window = { game: mockGame };
     });
 
     afterEach(() => {
@@ -104,7 +105,7 @@ describe('Goblin Activity & Persistence', () => {
 
         // 2. Simulate Updates (Activity)
         // 2. Simulate Updates (Activity)
-        goblinManager.update(100, 0.1, false, [], 1.0, { position: { x: 50, z: 50 } });
+        goblinManager.update(0.1, 0.016, false, [], 1.0, { position: { x: 50, z: 50 } });
 
         expect(goblin.state).toBeDefined();
 
@@ -112,9 +113,11 @@ describe('Goblin Activity & Persistence', () => {
         const startPos = goblin.position.clone();
 
         // Run loop for 5 seconds logic time
-        for (let i = 0; i < 300; i++) { // 300 frames * 16ms ~ 5s
-            for (let i = 0; i < 300; i++) { // 300 frames * 16ms ~ 5s
-                goblinManager.update(100 + i * 16, 0.016, false, [], 1.0, { position: { x: 50, z: 50 } });
+        for (let i = 0; i < 300; i++) {
+            goblinManager.update(0.1 + i * 0.016, 0.016, false, [], 1.0, { position: { x: 50, z: 50 } });
+            if (goblin.isDead) {
+                console.error(`Goblin died at iteration ${i}. Pos: ${goblin.gridX},${goblin.gridZ}`);
+                break;
             }
         }
 

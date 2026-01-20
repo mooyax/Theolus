@@ -163,10 +163,11 @@ export class Goblin extends Actor {
 
         if (statConfig.attackRange) {
             this.attackRange = statConfig.attackRange;
-            this.isRanged = true;
-        } else {
-            this.isRanged = false;
         }
+
+        // Fix: Decouple 'isRanged' (visuals/projectile) from 'attackRange' (reach).
+        // King has reach (4.0) but is Melee. Shaman has reach (8.0) and is Ranged.
+        this.isRanged = !!statConfig.isRanged;
         // Fallback or explicit check for Shaman
         if (this.type === 'shaman') {
             this.isRanged = true;
@@ -239,7 +240,7 @@ export class Goblin extends Actor {
         this.age += deltaTime * 0.2;
 
         if (this.age >= this.lifespan) {
-            this.die();
+            this.die("Old Age");
             return;
         }
         // FAILSAFE: If age is corrupted or die() failed, force logic.
@@ -254,8 +255,8 @@ export class Goblin extends Actor {
         const currentH = this.terrain.getTileHeight(this.gridX, this.gridZ);
         // console.log(`[Goblin.js] updateLogic H:${currentH}`);
         if (currentH <= 0) {
-            console.log(`[Goblin.js] Dying due to low height: ${currentH}`);
-            this.die();
+            console.error(`[Goblin.js] Dying due to low height: ${currentH} at ${this.gridX},${this.gridZ}`);
+            this.die("Low Height");
             return;
         }
 
@@ -286,6 +287,8 @@ export class Goblin extends Actor {
         const target = this.targetUnit || this.targetBuilding;
         if (!target) return;
 
+        // if (this.id % 5 === 0) console.log(`[Goblin ${this.id}] ExecCombat...`);
+
         // 1. Distance Check
         let dist = 999;
         if (this.targetUnit) {
@@ -296,7 +299,7 @@ export class Goblin extends Actor {
 
 
         // 2. Range Logic
-        let range = 1.5; // Default Melee (Standardized)
+        let range = this.attackRange || 1.5; // Default Melee (Standardized)
         if (this.isRanged) range = this.attackRange || 8.0;
 
         // Adjust range for buildings (hitbox)
@@ -318,7 +321,12 @@ export class Goblin extends Actor {
                 tz = approach.z;
             }
 
-            if (!this.smartMove(tx, tz, time) && !this.isPathfinding) {
+            const moved = this.smartMove(tx, tz, time);
+            if (this.id === 999) { // Test Goblin ID
+                console.log(`DEBUG GOBLIN: Moved=${moved} PF=${this.isPathfinding} Throttled=${this.isPathfindingThrottled} Unreachable=${this.isUnreachable}`);
+            }
+
+            if (!moved && !this.isPathfinding && !this.isPathfindingThrottled && this.isUnreachable) {
                 // FAILED TO MOVE (Stuck/Unreachable)
                 // Note: smartMove returns false if waiting for async pathfinding (isPathfinding=true)
                 // So we MUST check !isPathfinding before blacklisting.
@@ -331,6 +339,10 @@ export class Goblin extends Actor {
                 } else if (this.targetBuilding) {
                     // Building unreachable? Maybe just skip turn or random move.
                     // But strictly, we should probably ignore it too.
+                    console.log(`Goblin ${this.id} stuck reaching Building ${this.targetBuilding.id}. Blacklisting.`);
+                    // FIX: Blacklist unreachable buildings to prevent State Oscillation Loop
+                    this.ignoredTargets.set(this.targetBuilding.id || this.targetBuilding.userData.id, now + 10);
+                    this.targetBuilding = null;
                 }
             }
         } else {
@@ -343,20 +355,37 @@ export class Goblin extends Actor {
     }
 
 
+    /**
+     * @deprecated Use scanForTargets instead. Kept for backward compatibility with tests.
+     */
     findTarget(units, buildings) {
+        return this.scanForTargets(units, buildings);
+    }
+
+    scanForTargets(units, buildings) {
         // Frustration Check
         const time = window.game ? window.game.simTotalTimeSec : 0;
+
+        // DEBUG
+        // if (this.id % 10 === 0) console.log(`[Goblin ${this.id}] scanForTargets...`);
+
         if (this.frustratedUntil && time < this.frustratedUntil) return;
 
         // If we have a target, check if valid
         if (this.targetUnit && (this.targetUnit.isDead || this.targetUnit.isFinished)) {
             this.targetUnit = null;
         }
-        if (this.targetBuilding && this.targetBuilding.userData.hp <= 0 && (this.targetBuilding.userData.population || 0) <= 0) {
-            this.targetBuilding = null;
+        if (this.targetBuilding) {
+            const b = this.targetBuilding;
+            // SYNC FIX: Use isDestroyed() logic
+            const isDead = (b.isDestroyed && b.isDestroyed()) || (b.userData.hp <= 0 && (b.userData.population || 0) < 1.0);
+            if (isDead) {
+                this.targetBuilding = null;
+            }
         }
 
-        if (this.targetUnit || this.targetBuilding) return; // Keep target
+        if (this.targetUnit) return; // Keep Unit target (High Priority)
+        // If targetBuilding, we still scan to find closer Units or Buildings (Opportunity)
 
         // Find Unit
         // Reduced ranges per User Request (Too fast detection)
@@ -364,10 +393,17 @@ export class Goblin extends Actor {
         // Reduced ranges per User Request (Too fast detection)
         // Check for raiding state (can be string or state object)
         const isRaiding = (this.state === 'raiding' || this.state instanceof GoblinRaidState);
-        const searchDistUnits = isRaiding ? 25.0 : 12.0; // Increased range
+        // User Feedback: "Humans detect goblins but goblins don't detect humans"
+        // Cause: Human Range (Knight=50, Worker=15) vs Goblin Range (12).
+        // Fix: Increase Base Range to 20.0 (Matches or exceeds Worker, approaches aggressive capability)
+        const searchDistUnits = isRaiding ? 25.0 : 20.0; // Increased from 12.0
         // Optimization: Use Spatial Grid Search to avoid O(N) scan
+
+        // if (this.id % 10 === 0) console.log(`[Goblin ${this.id}] invoking terrain.findBestTarget (Units)...`);
+
         const closestUnit = this.terrain.findBestTarget('unit', this.gridX, this.gridZ, searchDistUnits, (entity, dist) => {
             if (entity.isSleeping) return Infinity; // Ignore sleeping
+            if (entity.isInsideBuilding) return Infinity; // Ignore units inside buildings (Attack the building instead!)
             // Blacklist Check
             const now = window.game ? window.game.simTotalTimeSec : Date.now() / 1000;
             if (this.ignoredTargets.has(entity.id) && this.ignoredTargets.get(entity.id) > now) return Infinity;
@@ -377,12 +413,18 @@ export class Goblin extends Actor {
             if (h > 8) score += 20.0; // Rock Penalty
             return score;
         });
+        if (closestUnit) console.log(`[Goblin ${this.id}] Found Unit Candidate: ${closestUnit.id} Dist:?`);
 
         // Find Building
         // User Request: Match building range to unit range (Reduced from 20/30)
         const bldDist = searchDistUnits;
         // Optimization: Use Spatial Grid Search
         const closestBuilding = this.terrain.findBestTarget('building', this.gridX, this.gridZ, bldDist, (entity, dist) => {
+            // Blacklist Check
+            const now = window.game ? window.game.simTotalTimeSec : Date.now() / 1000;
+            const id = entity.id || (entity.userData ? entity.userData.id : null);
+            if (id && this.ignoredTargets.has(id) && this.ignoredTargets.get(id) > now) return Infinity;
+
             if (!entity.userData || entity.userData.type === 'goblin_hut' || entity.userData.type === 'cave') return Infinity;
             // Rule: Only ignore if BOTH population and hp are depleted
             const pop = entity.userData.population || 0;
@@ -399,6 +441,7 @@ export class Goblin extends Actor {
         let chosen = null;
 
         if (closestUnit && closestBuilding) {
+            // console.log(`[Goblin ${this.id}] Arsonist Check...`);
             // Arsonist Logic: If Building is CLOSE (< 15), burn it!
             const W = this.terrain.logicalWidth || 80;
             const D = this.terrain.logicalDepth || 80;
@@ -421,13 +464,23 @@ export class Goblin extends Actor {
             } else {
                 chosen = (uDist < bDist) ? closestUnit : closestBuilding;
             }
+            // console.log(`[Goblin ${this.id}] Arsonist Result: ${chosen.id}`);
         } else {
             chosen = closestUnit || closestBuilding;
+            // console.log(`[Goblin ${this.id}] Simple Choice: ${chosen ? chosen.id : 'null'}`);
         }
 
         if (chosen) {
-            if (chosen.userData && chosen.userData.hp !== undefined) this.targetBuilding = chosen;
-            else this.targetUnit = chosen;
+            if (chosen.userData && chosen.userData.hp !== undefined) {
+                this.targetBuilding = chosen;
+                this.targetUnit = null;
+            } else {
+                this.targetUnit = chosen;
+                this.targetBuilding = null;
+            }
+            // console.log(`[Goblin ${this.id}] Target LOCKED: ${chosen.id}`);
+        } else {
+            // if (closestUnit) console.log(`[Goblin ${this.id}] WAITING...`);
         }
 
         // Clan Memory Logic (Keep existing)
@@ -495,15 +548,38 @@ export class Goblin extends Actor {
             }
         }
 
-        // Random adjacent move (Existing random logic)
-        // Can we just pick a random point within 5 tiles and smartMove?
-        // Or keep current simple step Logic for "Wander"?
-        // Current logic checks specific neighbors. It's fine for small wander.
-        // But we should use smartMove for guaranteed validity?
-        // No, random wander is "dumb". Let's keep it simple or use smartMove short range?
-        // Let's keep simple neighbor check but add Region Check?
+        // --- SCOUT LOGIC (User Request) ---
+        // Normal Goblins only: 10% chance to wander far (15-30 tiles)
+        if (this.type === 'normal' && Math.random() < 0.10) {
+            const logicalW = this.terrain.logicalWidth || 80;
+            const logicalD = this.terrain.logicalDepth || 80;
+            const range = 15 + Math.random() * 15; // 15-30
+            const angle = Math.random() * Math.PI * 2;
 
-        // Actually, let's keep the existing `moveRandomly` logic but ensure it calls `startMove` which is inherited.
+            let tx = this.gridX + Math.cos(angle) * range;
+            let tz = this.gridZ + Math.sin(angle) * range;
+
+            // Wrap
+            if (tx < 0) tx = (tx % logicalW + logicalW) % logicalW;
+            else if (tx >= logicalW) tx = tx % logicalW;
+
+            if (tz < 0) tz = (tz % logicalD + logicalD) % logicalD;
+            else if (tz >= logicalD) tz = tz % logicalD;
+
+            // Check Reachability
+            if (this.isReachable(tx, tz)) {
+                // Check Sea Level (Don't scout into water)
+                const th = this.terrain.getTileHeight(tx, tz);
+                if (th > 0) {
+                    // Go!
+                    console.log(`[Goblin ${this.id}] Scouting to ${tx.toFixed(1)},${tz.toFixed(1)}`);
+                    this.smartMove(tx, tz, time);
+                    return;
+                }
+            }
+        }
+
+        // Random adjacent move (Existing random logic)
         // Wait, `startMove` in Goblin was just a wrapper.
         // `Actor` has `startMove` from `Entity`.
         // Goblin `startMove` (lines 776+) had logic for speed/stuck.
@@ -561,6 +637,7 @@ export class Goblin extends Actor {
 
     handleMoveFailure(time) {
         this.pathFailCount = (this.pathFailCount || 0) + 1;
+        if (this.id % 5 === 0) console.log(`[Goblin ${this.id}] Move Fail. Count:${this.pathFailCount}`);
         if (this.pathFailCount > 3) {
             console.log(`Goblin ${this.id} gave up target! Stuck / Coast.`);
             this.targetUnit = null;
@@ -659,6 +736,7 @@ export class Goblin extends Actor {
     }
 
     attackUnit(unit) {
+        // console.log(`[Goblin ${this.id}] attackUnit called for Unit ${unit.id}. CD:${this.attackCooldown}`);
         if (this.attackCooldown > 0) return;
         if (unit.isDead) {
             this.targetUnit = null;
@@ -689,7 +767,10 @@ export class Goblin extends Actor {
 
         // Range Check safety
         const dist = this.getDistance(unit.gridX, unit.gridZ);
-        if (!unit.isDead && (this.isRanged || dist <= 1.5)) {
+        // Fix: Use attackRange if available (e.g. King has 4.0), otherwise fallback to 1.5 (Melee)
+        // Ensure we include a small buffer for grid quantization errors? No, trust range.
+        const range = this.attackRange || 1.5;
+        if (!unit.isDead && (this.isRanged || dist <= range)) {
             unit.takeDamage(this.damage, this);
             console.log(`Goblin hit Unit! Dmg: ${this.damage} UnitHP: ${unit.hp} `);
         }
@@ -699,6 +780,14 @@ export class Goblin extends Actor {
 
     attackBuilding(building) {
         if (!building) return;
+
+        // GHOST ATTACK FIX: Check if building is dead before doing anything (Visuals or Logic)
+        const isDead = (building.isDestroyed && building.isDestroyed()) || (building.userData && building.userData.hp <= 0 && (building.userData.population || 0) < 1.0);
+        if (isDead) {
+            this.targetBuilding = null;
+            return;
+        }
+
         if (this.attackCooldown > 0) return;
 
         // --- Visuals ---
@@ -726,7 +815,6 @@ export class Goblin extends Actor {
             }, 200);
         }
 
-        // --- Damage Logic ---
         // NEW: Use Building.js method if available (Encapsulated Logic)
         if (building.takeDamage) {
             const retaliation = building.takeDamage(this.damage || 10);
@@ -737,7 +825,8 @@ export class Goblin extends Actor {
             }
 
             // Check Destruction (Match Building Logic)
-            const isDestroyed = building.isDestroyed ? building.isDestroyed() : (building.hp <= 0 && building.population <= 0);
+            const isDestroyed = building.isDestroyed ? building.isDestroyed() : (building.hp <= 0 && building.population < 1.0);
+
             if (isDestroyed) {
                 this.destroyBuilding(building);
                 this.targetBuilding = null;
@@ -811,7 +900,6 @@ export class Goblin extends Actor {
 
     die(reason = "Unknown") {
         if (this.isDead) return;
-        // console.log(`[Goblin] Goblin ${this.id} DIED. Reason: ${reason}...`);
         this.isDead = true;
         this.terrain.unregisterEntity(this);
 
@@ -835,8 +923,26 @@ export class Goblin extends Actor {
     // --- COMBAT LOGIC (RESTORED) ---
     // Fixes Passive Goblins
 
-    takeDamage(amount, attacker) {
+    takeDamage(amount, attacker, isCounter = false) {
         if (this.isDead || this.isFinished) return;
+
+        // --- DEATH COUNTER (User Request) ---
+        // If lethal damage AND melee range, trigger retaliation before dying
+        if (amount >= this.hp && !isCounter && attacker && attacker.hp > 0) {
+            const dist = this.getDistance(attacker.gridX, attacker.gridZ);
+            const meleeRange = 2.0; // Wiggle room
+            if (dist <= meleeRange) {
+                // Must not be ranged unit sniper (attacker.isRanged check?)
+                // Attacker might be ranged unit but standing close. 
+                // Logic: "Non-ranged combat". If I am melee, I can hit back if close.
+                // If I am ranged, I might not counteract efficiently? 
+                // User said: "Non-ranged combat... one-pan... always retaliation".
+                // Assume if distance is close, it counts as melee engagement.
+                console.log(`[Goblin ${this.id}] Death Counter! Hitting ${attacker.id}`);
+                // Nerf: 50% damage logic (User Request)
+                attacker.takeDamage(this.damage * 0.5, this, true); // isCounter = true
+            }
+        }
 
         this.hp -= amount;
         if (this.hp <= 0) {
@@ -1080,7 +1186,9 @@ export class Goblin extends Actor {
 
                 if (!this.targetUnit) return;
 
-                if (this.getDistance(this.targetUnit.gridX, this.targetUnit.gridZ) <= 1.8) {
+                // DYNAMIC RANGE: Use attackRange if set (King: 4.0, Shaman: 8.0) or default 1.8
+                const range = this.attackRange || 1.8;
+                if (this.getDistance(this.targetUnit.gridX, this.targetUnit.gridZ) <= range) {
                     this.attackTarget(time, deltaTime);
                     this.chaseTimer = 0;
                 }
@@ -1095,7 +1203,9 @@ export class Goblin extends Actor {
                 return;
             }
 
-            if (this.getDistanceToBuilding(this.targetBuilding) <= 2.5) {
+            // Building Range: Base Range + Building Radius Allowance
+            const range = (this.attackRange || 1.8) + 0.7;
+            if (this.getDistanceToBuilding(this.targetBuilding) <= range) {
                 this.attackTarget(time, deltaTime);
             }
         }

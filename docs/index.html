@@ -540,7 +540,7 @@
       line-height: 1.4;
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-CAfzA0oo.js"></script>
+  <script type="module" crossorigin src="./assets/index-D30J7E8s.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-Bqp-OHo3.css">
 </head>
 
@@ -561,6 +561,18 @@
       <span class="material-symbols-outlined">filter_drama</span>
       <span id="season-val">Spring</span>
     </div>
+
+    <!-- Mana (Moved up) -->
+    <div class="stat-row">
+      <span class="material-symbols-outlined">bolt</span>
+      <span id="mana-val" style="color: cyan;">0</span>
+    </div>
+
+    <!-- Units Order: Worker -> Knight -> Wizard -->
+    <div class="stat-row" title="Workers (Active)">
+      <span class="material-symbols-outlined">directions_run</span>
+      <span id="active-val">0</span>
+    </div>
     <div class="stat-row" title="Knights">
       <span class="material-symbols-outlined">shield</span>
       <span id="knight-val">0</span>
@@ -570,37 +582,23 @@
       <span id="wizard-val">0</span>
     </div>
 
-    <div class="stat-row">
+    <!-- Totals & Buildings -->
+    <div class="stat-row" title="Total Population">
       <span class="material-symbols-outlined">groups</span>
       <span id="pop-val">0</span>
     </div>
-    <div class="stat-row">
-      <span class="material-symbols-outlined">bolt</span>
-      <span id="mana-val" style="color: cyan;">0</span>
-    </div>
-    <div class="stat-row">
-      <span class="material-symbols-outlined">directions_run</span>
-      <span id="active-val">0</span>
-    </div>
-    <div class="stat-row">
+    <div class="stat-row" title="Houses">
       <span class="material-symbols-outlined">house</span>
       <span id="house-val">0</span>
     </div>
-    <div class="stat-row" title="兵舎 (Barracks)">
-      <span class="material-symbols-outlined">account_balance</span>
-      <span id="castle-val">0</span>
-    </div>
-    <div class="stat-row">
-      <span class="material-symbols-outlined">grain</span>
-      <span id="grain-val">0</span>
-    </div>
-    <div class="stat-row">
-      <span class="material-symbols-outlined">set_meal</span>
-      <span id="fish-val">0</span>
-    </div>
-    <div class="stat-row">
-      <span class="material-symbols-outlined">kebab_dining</span>
-      <span id="meat-val">0</span>
+
+    <div class="stat-row" title="Food (Grain / Fish / Meat)">
+      <span class="material-symbols-outlined">restaurant</span>
+      <span id="grain-val" style="color: #FFD700; margin-right: 5px;">0</span>
+      <span style="color: #aaa;">/</span>
+      <span id="fish-val" style="color: #87CEEB; margin: 0 5px;">0</span>
+      <span style="color: #aaa;">/</span>
+      <span id="meat-val" style="color: #FF6347; margin-left: 5px;">0</span>
     </div>
   </div>
 
@@ -1105,13 +1103,19 @@
         modal.style.display = 'flex';
       });
 
-      closeBtn.addEventListener('click', () => {
+      const closeModalLogic = () => {
         modal.style.display = 'none';
-      });
+        // Fix: If game hasn't started (gameActive is false), restore Start Screen
+        if (window.game && !window.game.gameActive) {
+          document.getElementById('start-screen').style.display = 'flex';
+        }
+      };
+
+      closeBtn.addEventListener('click', closeModalLogic);
 
       window.addEventListener('click', (e) => {
         if (e.target === modal) {
-          modal.style.display = 'none';
+          closeModalLogic();
         }
       });
 

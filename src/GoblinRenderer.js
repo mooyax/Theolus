@@ -209,14 +209,11 @@ export class GoblinRenderer {
                     const instanceZ = g.position.z + shiftZ;
 
                     // DISTANCE CULLING
-                    const dx = instanceX - viewCenter.x;
-                    const dz = instanceZ - viewCenter.z;
-                    const distSq = dx * dx + dz * dz;
-
-                    // Use GameConfig radius
-                    if (distSq > cullDistSq) {
-                        continue;
-                    }
+                    const dx = Math.abs(instanceX - viewCenter.x);
+                    const dz = Math.abs(instanceZ - viewCenter.z);
+                    // FIX: Use Box Culling (Square Frustum) instead of Circle
+                    // Allow small buffer (2.0)
+                    if (dx > viewRadius + 2.0 || dz > viewRadius + 2.0) continue;
                     // 1. Torso
                     // Pivot Adjustment: Torso center is usually ~0.3 up.
                     // If geometry center is 0, we move dummy up.

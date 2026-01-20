@@ -71,7 +71,7 @@ export class Building extends Entity {
         }
     }
 
-    takeDamage(amount) {
+    takeDamage(amount, attacker = null) {
         // 1. Calculate Damage reduction?
         // Armor?
 
@@ -98,6 +98,23 @@ export class Building extends Entity {
 
             // Retaliation based on CURRENT population (survivors fight back)
             retaliation = Math.floor(this.population * factor);
+
+            // 5. Goblin Defense Logic (User Request)
+            if (this.type === 'cave' || this.type === 'goblin_hut') {
+                if (window.game && window.game.goblinManager && window.game.goblinManager.notifyClanActivity) {
+                    // Notify manager of attack
+                    // attacker is passed from Unit.js now
+                    if (attacker) {
+                        window.game.goblinManager.notifyClanActivity({
+                            type: 'UNDER_ATTACK',
+                            target: this, // The building being attacked
+                            attacker: attacker,
+                            x: this.userData.gridX,
+                            z: this.userData.gridZ
+                        });
+                    }
+                }
+            }
         }
 
         console.log(`[Building] ${this.type}(${this.id}) took ${amount} dmg. Pop: ${this.population}. Retaliation: ${retaliation}`);

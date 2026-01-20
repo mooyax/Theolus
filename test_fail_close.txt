@@ -1,0 +1,41 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/TerrainDetection.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 2813[2mms[22m[39m
+     [33m[2m笨・[22m[39m should detect target in same region [33m 690[2mms[22m[39m
+     [33m[2m笨・[22m[39m should NOT detect target in different region (Cross Mountain) [33m 664[2mms[22m[39m
+     [33m[2m笨・[22m[39m should rely on Grid search and respect regions [33m 638[2mms[22m[39m
+[31m     [31mﾃ・[31m should detect target in different region IF CLOSE (Melee Exemption)[39m[33m 819[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/TerrainDetection.test.js > Terrain Detection Logic > should detect target in different region IF CLOSE (Melee Exemption)
+AssertionError: expected null to be { gridX: 6, gridZ: 6, 窶ｦ(2) } // Object.is equality
+
+- Expected: 
+{
+  "gridX": 6,
+  "gridZ": 6,
+  "id": 3,
+  "type": "goblin",
+}
+
++ Received: 
+null
+
+ 笶ｯ src/tests/TerrainDetection.test.js:105:22
+    103|         const best = terrain.findBestTarget('goblin', cx, cz, 20, (e, 窶ｦ
+    104| 
+    105|         expect(best).toBe(targetDiffClose); // Should pick the close o窶ｦ
+       |                      ^
+    106|     });
+    107| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 15:30:53
+[2m   Duration [22m 3.66s[2m (transform 158ms, setup 49ms, import 184ms, tests 2.81s, environment 425ms)[22m
+

@@ -9,13 +9,17 @@ export class MockGame {
         this.mana = 1000;
         this.resources = { grain: 0, fish: 0, meat: 0 };
         this.frameCount = 0;
+        this.unitScanBudget = 1000;
         this.terrain = null;
         this.scene = {
             add: vi.fn(),
             remove: vi.fn(),
             getObjectByName: vi.fn().mockReturnValue({ add: vi.fn(), remove: vi.fn(), children: [] })
         };
-        this.goblinManager = { goblins: [] };
+        this.goblinManager = {
+            goblins: [],
+            notifyClanActivity: vi.fn()
+        };
     }
 
     spawnUnit(x, z, roleOrSpecial) {

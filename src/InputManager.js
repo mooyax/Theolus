@@ -253,9 +253,32 @@ export class InputManager {
                 if (!candidate) candidate = this.terrain.findNearestEntity('sheep', gridX, gridZ, 4.0);
                 if (!candidate) candidate = this.terrain.findNearestEntity('fish', gridX, gridZ, 4.0);
 
-                if (candidate && candidate.getTooltip) {
-                    text = candidate.getTooltip();
-                    found = true;
+                if (candidate) {
+                    // Custom Tooltip Logic
+                    // Check constructor name to identify class type reliably
+                    const ctor = candidate.constructor ? candidate.constructor.name : '';
+
+                    if (ctor === 'Unit' || (candidate.role && !candidate.subType)) {
+                        const hp = Math.floor(candidate.hp);
+                        const maxHp = candidate.maxHp || 50;
+                        text = `[Human] ${candidate.role} (ID:${candidate.id})\nHP: ${hp}/${maxHp}`;
+                        if (candidate.action) text += `\nAction: ${candidate.action}`;
+                        found = true;
+                    } else if (ctor === 'Goblin' || candidate.type === 'normal' || candidate.type === 'hobgoblin' || candidate.type === 'shaman' || candidate.type === 'king') {
+                        const hp = Math.floor(candidate.hp);
+                        const maxHp = candidate.maxHp || 30; // Estimate
+                        text = `[Goblin] ${candidate.type || 'Normal'} (ID:${candidate.id})\nHP: ${hp}/${maxHp}`;
+                        if (candidate.state) {
+                            // Format State Name: GoblinRaidState -> "Raid", GoblinCombatState -> "Combat"
+                            let stateName = candidate.state.constructor.name;
+                            stateName = stateName.replace('Goblin', '').replace('State', '');
+                            text += `\nAction: ${stateName}`;
+                        }
+                        found = true;
+                    } else if (candidate.getTooltip) {
+                        text = candidate.getTooltip();
+                        found = true;
+                    }
                 }
             } // End if (!found)
 

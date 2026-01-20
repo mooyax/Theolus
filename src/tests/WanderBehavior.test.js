@@ -48,7 +48,7 @@ describe('Wander Behavior Verification', () => {
         const mockGoblin = {
             ...mockActor,
             type: 'goblin',
-            findTarget: vi.fn()
+            scanForTargets: vi.fn()
         };
         const state = new GoblinWanderState(mockGoblin);
         state.enter(null);
@@ -56,7 +56,7 @@ describe('Wander Behavior Verification', () => {
         state.update(100, 0.5); // Init
         state.update(101, 1.0); // Trigger scan (scanTimer > 1.0)
 
-        expect(mockGoblin.findTarget).toHaveBeenCalled();
+        expect(mockGoblin.scanForTargets).toHaveBeenCalled();
 
         // Trigger wander
         state.update(110, 9);

@@ -1,17 +1,19 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Goblin } from '../Goblin.js';
+import { Building } from '../Building.js';
 
 // Mock Dependencies
 const mockTerrain = {
-    findBestTarget: vi.fn(() => null),
+    findBestTarget: vi.fn(),
     getTileHeight: () => 10,
     gridToWorld: (v) => v,
     getVisualOffset: () => ({ x: 0, y: 0 }),
     moveEntity: vi.fn(),
     registerEntity: vi.fn(),
+    unregisterEntity: vi.fn(),
     getVisualPosition: () => ({ x: 0, y: 5, z: 0 }),
-    removeBuilding: vi.fn(),
+    removeBuilding: vi.fn((b) => { if (b && b.userData) b.userData.isDead = true; }),
     grid: [],
     getBuildingSize: () => 2
 };
@@ -33,7 +35,7 @@ const mockGame = {
 
 if (typeof window !== 'undefined') { window.game = mockGame; }
 
-describe('Goblin Building Destruction', () => {
+describe('Goblin Real Building Destruction', () => {
     let goblin;
     let building;
 
@@ -43,81 +45,48 @@ describe('Goblin Building Destruction', () => {
         window.game.goblinManager.recordRaidLocation.mockClear();
 
         // Create Goblin
-        goblin = new Goblin(mockScene, mockTerrain, 10, 10, 1);
+        goblin = new Goblin(mockScene, mockTerrain, 10, 10, 'normal');
         goblin.hp = 100;
+        goblin.damage = 10;
+        goblin.attackCooldown = 0;
 
-        // Create Building
-        building = {
-            userData: {
-                type: 'house',
-                gridX: 11,
-                gridZ: 11,
-                population: 10
-            }
-        };
+        // Create Real Building
+        building = new Building(mockScene, mockTerrain, 'house', 11, 11);
+        building.population = 10;
+        building.hp = 100;
+        building.userData.population = 10;
+        building.userData.hp = 100;
     });
 
     it('should damage building population', () => {
-        goblin.damage = 15; // 15 * 0.1 = 1.5 -> floor 1. Max(1,1)=1.
         goblin.attackBuilding(building);
-        // Logic changed to integer reduction (min 1)
+        // damage 10 -> popDamage 1
+        expect(building.population).toBe(9);
         expect(building.userData.population).toBe(9);
     });
 
-    it('should destroy building when Population AND HP are depleted', () => {
-        // Stage 1: Deplete Population
-        building.userData.population = 0.05;
-        goblin.attackBuilding(building);
-
-        expect(building.userData.population).toBeLessThanOrEqual(0);
-        // Should NOT destroy yet (Pop shield gone, but Structure Integrity remains)
-        expect(mockTerrain.removeBuilding).not.toHaveBeenCalled();
-
-        // Stage 2: Deplete HP
-        building.userData.hp = 5; // Enable HP mode
-        goblin.damage = 10; // Ensure destruction
-        goblin.attackCooldown = 0; // Reset CD
-        goblin.attackBuilding(building);
-
-        expect(mockTerrain.removeBuilding).toHaveBeenCalledWith(building);
-    });
-
-    it('should destroy building even if fractional population remains (e.g. 0.5)', () => {
-        // This test historically checked for float issues.
-        // Now checks logic flow for fractional pop.
-        building.userData.population = 0.05;
-        goblin.damage = 10;
-        goblin.attackBuilding(building);
-
-        expect(building.userData.population).toBeLessThanOrEqual(0);
-        // HP phase triggered
+    it('should destroy building when Pop and HP reach zero', () => {
+        building.population = 0.5;
+        building.hp = 5;
+        building.userData.population = 0.5;
         building.userData.hp = 5;
-        goblin.attackCooldown = 0;
+
         goblin.attackBuilding(building);
 
         expect(mockTerrain.removeBuilding).toHaveBeenCalledWith(building);
+        expect(building.userData.isDead).toBe(true);
     });
 
-    it('should NOT destroy building if population remains >= 1.0', () => {
-        building.userData.population = 7;
-        goblin.attackBuilding(building); // Damage 0.08 -> 6.92
-
-        expect(building.userData.population).toBeGreaterThan(1.0);
-        expect(mockTerrain.removeBuilding).not.toHaveBeenCalled();
-    });
-
-    it('should take retaliation damage', () => {
-        building.userData.population = 20; // High pop
-        const initialHP = goblin.hp;
+    it('should NOT destroy if population remains high', () => {
+        building.population = 5.0;
+        building.hp = 0; // Integrity gone but populated
+        building.userData.population = 5.0;
+        building.userData.hp = 0;
 
         goblin.attackBuilding(building);
 
-        // Retaliation damage logic is complex, just ensure SOME damage taken if population is high
-        // Or if damage is too low (0.08), retaliation might be 0.
-        // If actual result showed 81, it means significant damage was taken.
-        // We just verify HP changed if we expect it to.
-        if (goblin.hp < initialHP) {
-            expect(goblin.hp).toBeLessThan(initialHP);
-        }
+        expect(mockTerrain.removeBuilding).not.toHaveBeenCalled();
+        // Population should decrease instead
+        expect(building.population).toBe(4.0);
     });
 });
