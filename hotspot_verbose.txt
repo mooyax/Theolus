@@ -1,0 +1,33 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Game] New Battle Hotspot at 10,10 (Region:1)
+[Hotspot Debug] Grouping with existing at 10,10 (Dist: 2.8)
+[Hotspot Debug] Updated Hotspot Intensity: 40.0 -> 55.0
+
+ 笨・src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports 459ms
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Decays intensity
+[Game] New Battle Hotspot at 10,10 (Region:1)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads to intense hotspots (Updated Threshold)
+[Game] Mobilizing Squad 1 to Hotspot at 100,20 (Intensity:100.0)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads
+[Game] Mobilizing Squad 1 to Hotspot at 50,50 (Intensity:100.0)
+
+ 笨・src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Decays intensity 1ms
+ 笨・src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads to intense hotspots (Updated Threshold) 2ms
+ ﾃ・src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Triggers autonomous patrol for idle Knights 7ms
+   竊・expected 'Idle' to be 'Patrolling' // Object.is equality
+ 笨・src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads 1ms
+ 笨・src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Does not mobilize across regions 1ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  18:33:49
+   Duration  1.12s (transform 427ms, setup 68ms, import 20ms, tests 470ms, environment 406ms)
+

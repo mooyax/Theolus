@@ -26,8 +26,6 @@
       display: flex;
       gap: 15px;
       /* Increased gap */
-      background: rgba(0, 0, 0, 0.5);
-      /* Background for visibility */
       padding: 10px;
       border-radius: 20px;
     }
@@ -65,6 +63,27 @@
       font-size: 28px;
     }
 
+    button {
+      position: relative;
+      /* Base for cost-badge */
+    }
+
+    .cost-badge {
+      position: absolute;
+      bottom: -5px;
+      right: -5px;
+      background: #2196F3;
+      color: white;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: bold;
+      pointer-events: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      border: 1px solid white;
+      white-space: nowrap;
+    }
+
     /* Stats Display Optimization */
     #stats-container {
       position: absolute;
@@ -79,7 +98,6 @@
     .stat-row {
       display: flex;
       align-items: center;
-      background: rgba(0, 0, 0, 0.5);
       padding: 5px 10px;
       border-radius: 15px;
       color: white;
@@ -112,7 +130,6 @@
         /* Reserve space for Minimap? No, moving it down. */
         padding-right: 5px;
         gap: 5px;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent);
         /* Visual separation */
       }
 
@@ -120,7 +137,6 @@
         font-size: 12px;
         padding: 4px 6px;
         border-radius: 10px;
-        background: rgba(0, 0, 0, 0.4);
         margin: 0;
       }
 
@@ -133,7 +149,6 @@
         font-size: 14px;
         padding: 4px 8px;
         margin-bottom: 0;
-        background: rgba(0, 0, 0, 0.6);
         /* More visible */
       }
 
@@ -539,6 +554,69 @@
       color: #555;
       line-height: 1.4;
     }
+
+    /* Game Over Screen */
+    #game-over-screen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 5000;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+    }
+
+    #game-over-title {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      text-shadow: 0 0 20px currentColor;
+    }
+
+    .win-text {
+      color: #FFD700;
+      /* Gold */
+    }
+
+    .lose-text {
+      color: #FF4444;
+      /* Red */
+    }
+
+    #game-over-message {
+      font-size: 1.5rem;
+      margin-bottom: 3rem;
+      color: #ddd;
+    }
+
+    .game-over-btn {
+      padding: 15px 40px;
+      font-size: 1.5rem;
+      margin: 10px;
+      width: auto;
+      height: auto;
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .game-over-btn:hover {
+      background: white;
+      color: black;
+      box-shadow: 0 0 20px white;
+    }
   </style>
 </head>
 
@@ -600,7 +678,10 @@
     </div>
   </div>
 
-  <div id="start-screen" style="background: rgba(0, 0, 0, 0.4);">
+  <div id="version-indicator">v1.2.1-FIXED</div>
+  <div id="unit-debug-panel"></div>
+
+  <div id="start-screen">
     <h1>Theolus</h1>
     <div style="display: flex; align-items: center; gap: 10px;">
       <button id="start-new-btn" class="start-btn">NEW</button>
@@ -629,10 +710,22 @@
     <!-- Units & Buildings Group -->
     <div class="ui-group"
       style="display: flex; gap: 5px; margin-right: 15px; border-right: 1px solid rgba(255,255,255,0.3); padding-right: 15px;">
-      <button id="btn-spawn" title="Spawn Unit"><span class="material-symbols-outlined">person_add</span></button>
-      <button id="btn-barracks" title="Build Barracks (Knight)"><span
-          class="material-symbols-outlined">shield</span></button>
-      <button id="btn-tower" title="Debug: Build Tower"><span class="material-symbols-outlined">fort</span></button>
+      <button id="btn-spawn" title="Spawn Unit">
+        <span class="material-symbols-outlined">person_add</span>
+        <span id="cost-spawn" class="cost-badge">100</span>
+      </button>
+      <button id="btn-house" title="Build House">
+        <span class="material-symbols-outlined">cottage</span>
+        <span id="cost-house" class="cost-badge">100</span>
+      </button>
+      <button id="btn-barracks" title="Build Barracks (Knight)">
+        <span class="material-symbols-outlined">shield</span>
+        <span id="cost-barracks" class="cost-badge">1000</span>
+      </button>
+      <button id="btn-tower" title="Debug: Build Tower">
+        <span class="material-symbols-outlined">fort</span>
+        <span id="cost-tower" class="cost-badge">1000</span>
+      </button>
       <button id="btn-cancel" title="Cancel Request"><span class="material-symbols-outlined">cancel</span></button>
     </div>
 
@@ -665,6 +758,17 @@
       <div id="loading-bar" style="width: 0%; height: 100%; background: #4CAF50; transition: width 0.1s;"></div>
     </div>
     <div id="loading-text" style="margin-top: 10px;">0%</div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="game-over-screen">
+    <h1 id="game-over-title">VICTORY</h1>
+    <p id="game-over-message">All enemies have been vanquished!</p>
+    <div>
+      <button id="retry-btn" class="game-over-btn" style="display:none;">Retry Level</button>
+      <button id="next-level-btn" class="game-over-btn" style="display:none;">Next Level</button>
+      <button id="return-title-btn" class="game-over-btn">Title</button>
+    </div>
   </div>
 
   <!-- Save/Load Modal -->
@@ -1366,6 +1470,7 @@
           }
         });
       }
+
     });
   </script>
 

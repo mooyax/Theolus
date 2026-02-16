@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { Game } from '../Game.js';
 import { Actor } from '../Actor.js';
 import { Unit } from '../Unit.js';
-import { JobState, CombatState, SleepState } from '../ai/states/UnitStates.js';
+import { Job, Combat, Sleep } from '../ai/states/UnitStates.js';
 
 // Mock THREE as usual
 vi.mock('three', async (importOriginal) => {
@@ -45,7 +45,7 @@ describe('Complex AI Scenarios', () => {
         game = new Game(scene, null, true); // Use minimal init
         window.game = game;
         game.gameActive = true;
-        window.game = game; // IMPORTANT for JobState.releaseRequest
+        window.game = game; // IMPORTANT for Job.releaseRequest
         game.terrain = {
             logicalWidth: 100,
             logicalDepth: 100,
@@ -92,7 +92,7 @@ describe('Complex AI Scenarios', () => {
         const req = game.addRequest('cultivate', 20, 20, true, null, null, building);
         game.claimRequest(unit, req);
 
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
         expect(unit.targetRequest).toBe(req);
 
         // Sim: Building destroyed
@@ -104,7 +104,7 @@ describe('Complex AI Scenarios', () => {
 
         // CHECK if it released the request immediately
         expect(unit.targetRequest).toBeNull();
-        expect(unit.state).not.toBeInstanceOf(JobState);
+        expect(unit.state).not.toBeInstanceOf(Job);
 
         // Optional: wait for async and check background state
         await new Promise(r => setTimeout(r, 0));
@@ -117,7 +117,7 @@ describe('Complex AI Scenarios', () => {
         const manualReq = game.addRequest('raise', 50, 50, true);
         game.claimRequest(unit, manualReq);
         expect(unit.targetRequest).toBe(manualReq);
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
 
         // 2. Add a close auto job
         const autoReq = game.addRequest('raise', 11, 11, false);
@@ -132,7 +132,7 @@ describe('Complex AI Scenarios', () => {
         expect(unit.targetRequest).toBe(manualReq);
     });
 
-    it('should NOT drop manual job when switching to SleepState at night', () => {
+    it('should NOT drop manual job when switching to Sleep at night', () => {
         const unit = game.spawnUnit(10, 10, 'worker');
         const manualReq = game.addRequest('raise', 50, 50, true);
         game.claimRequest(unit, manualReq);
@@ -150,10 +150,12 @@ describe('Complex AI Scenarios', () => {
         const req = game.addRequest('raise', 90, 90, true);
         game.claimRequest(unit, req);
 
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
 
         // Force unreachable condition
         unit.isUnreachable = true;
+        unit.path = null; // Fix: Ensure no path exists
+        unit.isWaitingForPath = false; // Fix: Ensure we are not waiting, so abandonment triggers
         vi.spyOn(unit, 'smartMove').mockImplementation(() => false);
 
         // TIME SYNC
@@ -167,7 +169,7 @@ describe('Complex AI Scenarios', () => {
 
         // Expectation: Job RELEASED
         expect(unit.targetRequest).toBeNull();
-        expect(unit.state).not.toBeInstanceOf(JobState); // Should resume wander
+        expect(unit.state).not.toBeInstanceOf(Job); // Should resume wander
 
         // Should be ignored globally
         expect(req.excludedUntil).toBeDefined();

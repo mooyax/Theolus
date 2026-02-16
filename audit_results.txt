@@ -1,0 +1,164 @@
+Scanning 209 files for duplicate method definitions...
+
+塘 C:\Users\mooya\develop\test\src\ai\states\AnimalStates.js
+   笞・・ Duplicate method "update" found at lines: 8, 34
+
+塘 C:\Users\mooya\develop\test\src\ai\states\GoblinStates.ts
+   笞・・ Duplicate method "enter" found at lines: 9, 158, 200, 310
+   笞・・ Duplicate method "update" found at lines: 15, 164, 205, 322, 351
+
+塘 C:\Users\mooya\develop\test\src\ai\states\State.ts
+   笞・・ Duplicate method "enter" found at lines: 7, 47, 81
+   笞・・ Duplicate method "update" found at lines: 11, 54, 96
+
+塘 C:\Users\mooya\develop\test\src\ai\states\UnitStates.ts
+   笞・・ Duplicate method "enter" found at lines: 11, 222, 254, 430, 544
+   笞・・ Duplicate method "update" found at lines: 34, 228, 270, 443, 549
+
+塘 C:\Users\mooya\develop\test\src\GoblinManager.js
+   笞・・ Duplicate method "scanForCaves" found at lines: 74, 1161
+
+塘 C:\Users\mooya\develop\test\src\SaveManager.js
+   笞・・ Duplicate method "alert" found at lines: 50, 52
+
+塘 C:\Users\mooya\develop\test\src\Terrain.ts
+   笞・・ Duplicate method "updatePopulation" found at lines: 1994, 3106
+
+塘 C:\Users\mooya\develop\test\src\tests\CavePersistence.test.js
+   笞・・ Duplicate method "add" found at lines: 10, 19
+
+塘 C:\Users\mooya\develop\test\src\tests\CombatBalance.test.js
+   笞・・ Duplicate method "update" found at lines: 33, 40
+
+塘 C:\Users\mooya\develop\test\src\tests\CombatRetaliation.test.js
+   笞・・ Duplicate method "add" found at lines: 44, 56, 62
+   笞・・ Duplicate method "getObjectByName" found at lines: 58, 64
+
+塘 C:\Users\mooya\develop\test\src\tests\CombatStability.test.js
+   笞・・ Duplicate method "add" found at lines: 20, 29
+
+塘 C:\Users\mooya\develop\test\src\tests\CombatStuck.test.js
+   笞・・ Duplicate method "add" found at lines: 16, 24, 29
+
+塘 C:\Users\mooya\develop\test\src\tests\ForceAssignment.test.js
+   笞・・ Duplicate method "update" found at lines: 70, 85
+
+塘 C:\Users\mooya\develop\test\src\tests\GhostHouse.test.js
+   笞・・ Duplicate method "setAttribute" found at lines: 28, 46
+   笞・・ Duplicate method "dispose" found at lines: 31, 47
+
+塘 C:\Users\mooya\develop\test\src\tests\GoblinActivity.test.js
+   笞・・ Duplicate method "add" found at lines: 25, 29
+   笞・・ Duplicate method "remove" found at lines: 26, 30
+
+塘 C:\Users\mooya\develop\test\src\tests\GoblinMobilization.test.js
+   笞・・ Duplicate method "copy" found at lines: 14, 46
+   笞・・ Duplicate method "add" found at lines: 16, 24
+
+塘 C:\Users\mooya\develop\test\src\tests\Hysteresis.test.js
+   笞・・ Duplicate method "expect" found at lines: 60, 73, 90
+
+塘 C:\Users\mooya\develop\test\src\tests\JobAssignment.test.js
+   笞・・ Duplicate method "enter" found at lines: 19, 36
+   笞・・ Duplicate method "update" found at lines: 20, 37
+
+塘 C:\Users\mooya\develop\test\src\tests\JobIdempotency.test.js
+   笞・・ Duplicate method "update" found at lines: 9, 16, 25, 34
+   笞・・ Duplicate method "draw" found at lines: 17, 26, 35
+   笞・・ Duplicate method "dispose" found at lines: 27, 63
+
+塘 C:\Users\mooya\develop\test\src\tests\LoadJitabata.test.js
+   笞・・ Duplicate method "getTileHeight" found at lines: 17, 48, 79
+   笞・・ Duplicate method "getWidth" found at lines: 18, 49, 80
+   笞・・ Duplicate method "getDepth" found at lines: 19, 50, 81
+   笞・・ Duplicate method "isWalkable" found at lines: 20, 51, 82
+   笞・・ Duplicate method "isReachable" found at lines: 21, 52, 83
+   笞・・ Duplicate method "findPathAsync" found at lines: 22, 53, 84
+   笞・・ Duplicate method "update" found at lines: 26, 57, 88
+   笞・・ Duplicate method "getBuildingAt" found at lines: 27, 58, 89
+   笞・・ Duplicate method "moveEntity" found at lines: 28, 59, 90
+   笞・・ Duplicate method "initEntityGrid" found at lines: 29, 60, 91
+   笞・・ Duplicate method "serialize" found at lines: 30, 61, 92
+   笞・・ Duplicate method "deserialize" found at lines: 31, 62, 93
+   笞・・ Duplicate method "registerEntity" found at lines: 32, 63, 94
+   笞・・ Duplicate method "unregisterEntity" found at lines: 33, 64, 95
+   笞・・ Duplicate method "getBuildingSize" found at lines: 34, 65, 96
+   笞・・ Duplicate method "isAdjacentToRegion" found at lines: 35, 66, 97
+
+塘 C:\Users\mooya\develop\test\src\tests\LoadUpdateLoop.test.js
+   笞・・ Duplicate method "dispose" found at lines: 136, 146
+
+塘 C:\Users\mooya\develop\test\src\tests\ManualAssignment.test.js
+   笞・・ Duplicate method "update" found at lines: 65, 84, 108
+
+塘 C:\Users\mooya\develop\test\src\tests\ManualJobFlicker.test.js
+   笞・・ Duplicate method "add" found at lines: 15, 23, 28
+
+塘 C:\Users\mooya\develop\test\src\tests\MigrationConflict.test.js
+   笞・・ Duplicate method "findBestTarget" found at lines: 29, 42
+
+塘 C:\Users\mooya\develop\test\src\tests\MigrationImprovement.test.js
+   笞・・ Duplicate method "findBestTarget" found at lines: 18, 25
+
+塘 C:\Users\mooya\develop\test\src\tests\PathfindingTimeout.test.js
+   笞・・ Duplicate method "add" found at lines: 9, 31, 59, 66, 74
+   笞・・ Duplicate method "remove" found at lines: 10, 32, 60, 67
+   笞・・ Duplicate method "setAttribute" found at lines: 19, 47
+   笞・・ Duplicate method "getAttribute" found at lines: 20, 48
+   笞・・ Duplicate method "dispose" found at lines: 21, 50
+   笞・・ Duplicate method "set" found at lines: 41, 72
+
+塘 C:\Users\mooya\develop\test\src\tests\PathfindingWorker.test.js
+   笞・・ Duplicate method "updateCell" found at lines: 36, 55, 67
+
+塘 C:\Users\mooya\develop\test\src\tests\RealTerrainRestoration.test.js
+   笞・・ Duplicate method "dispose" found at lines: 113, 156, 167
+
+塘 C:\Users\mooya\develop\test\src\tests\RequestLifecycle.test.js
+   笞・・ Duplicate method "dispose" found at lines: 23, 47
+   笞・・ Duplicate method "add" found at lines: 27, 33
+
+塘 C:\Users\mooya\develop\test\src\tests\RubberBanding.test.js
+   笞・・ Duplicate method "expect" found at lines: 122, 123
+
+塘 C:\Users\mooya\develop\test\src\tests\SaveLoadIntegration.test.js
+   笞・・ Duplicate method "dispose" found at lines: 66, 80
+
+塘 C:\Users\mooya\develop\test\src\tests\setup.js
+   笞・・ Duplicate method "set" found at lines: 11, 101
+   笞・・ Duplicate method "copy" found at lines: 12, 102
+   笞・・ Duplicate method "clone" found at lines: 18, 19, 106
+   笞・・ Duplicate method "setFromMatrixScale" found at lines: 24, 120
+
+塘 C:\Users\mooya\develop\test\src\tests\SimpleRegion.test.js
+   笞・・ Duplicate method "setAttribute" found at lines: 25, 41
+
+塘 C:\Users\mooya\develop\test\src\tests\SquadAi.test.js
+   笞・・ Duplicate method "findBestTarget" found at lines: 60, 76
+   笞・・ Duplicate method "expect" found at lines: 143, 151
+
+塘 C:\Users\mooya\develop\test\src\tests\StuckAndMarker.test.js
+   笞・・ Duplicate method "add" found at lines: 76, 127, 135
+   笞・・ Duplicate method "remove" found at lines: 77, 128, 136
+   笞・・ Duplicate method "updateMatrixWorld" found at lines: 87, 99
+   笞・・ Duplicate method "updateProjectionMatrix" found at lines: 88, 100
+   笞・・ Duplicate method "setAttribute" found at lines: 111, 183
+   笞・・ Duplicate method "setIndex" found at lines: 112, 184
+   笞・・ Duplicate method "computeVertexNormals" found at lines: 113, 187
+   笞・・ Duplicate method "translate" found at lines: 114, 186
+   笞・・ Duplicate method "update" found at lines: 204, 220, 254, 260, 265
+   笞・・ Duplicate method "init" found at lines: 259, 267
+
+塘 C:\Users\mooya\develop\test\src\tests\StuckDebug.test.js
+   笞・・ Duplicate method "setAttribute" found at lines: 27, 43
+
+塘 C:\Users\mooya\develop\test\src\tests\WorkerLogic.test.js
+   笞・・ Duplicate method "initGrid" found at lines: 19, 90
+   笞・・ Duplicate method "expect" found at lines: 27, 28, 66
+
+塘 C:\Users\mooya\develop\test\src\tests\WorkerPerformance.test.js
+   笞・・ Duplicate method "initGrid" found at lines: 10, 45
+
+--------------------------------------------------
+笶・Found 83 potential duplicate definitions.
+Please review the files above. (Note: standard function overloads without body are ignored, so these are likely real/body duplicates)

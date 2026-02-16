@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
-import { UnitWanderState } from '../ai/states/UnitStates.js';
+import { Wander } from '../ai/states/UnitStates.js';
 
 // Mock Classes
 class MockTerrain {
@@ -59,12 +59,16 @@ describe('Migration Conflict Regression (Jitabata Bug)', () => {
         unit = new Unit(scene, terrain, 20, 20, 'worker');
 
         // Ensure standard state
-        unit.changeState(new UnitWanderState(unit));
+        unit.changeState(new Wander(unit));
 
-        // Mock getDistance to simple euclidean
-        unit.getDistance = (tx, tz) => {
-            const dx = tx - unit.gridX;
-            const dz = tz - unit.gridZ;
+        // Mock getDistance to wrap-aware mock supporting source points (for smartMove check)
+        unit.getDistance = (tx, tz, ox = null, oz = null) => {
+            const sx = (ox !== null) ? ox : unit.gridX;
+            const sz = (oz !== null) ? oz : unit.gridZ;
+            let dx = Math.abs(sx - tx);
+            let dz = Math.abs(sz - tz);
+            if (dx > terrain.logicalWidth / 2) dx = terrain.logicalWidth - dx;
+            if (dz > terrain.logicalDepth / 2) dz = terrain.logicalDepth - dz;
             return Math.sqrt(dx * dx + dz * dz);
         };
     });
@@ -88,7 +92,7 @@ describe('Migration Conflict Regression (Jitabata Bug)', () => {
         // Wait for Async Pathfinding to resolve
         await new Promise(resolve => setTimeout(resolve, 0));
 
-        // 2. Advance Frame with UnitWanderState active
+        // 2. Advance Frame with Wander active
         const deltaTime = 0.016;
         unit.updateLogic(time + deltaTime, deltaTime);
 

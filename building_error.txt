@@ -1,0 +1,33 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/VerifyBuildingGrowth.test.js
+[DEBUG] Building.ts loaded
+
+ 笶ｯ src/tests/VerifyBuildingGrowth.test.js (3 tests | 3 failed) 7ms
+     ﾃ・should grow population over time 4ms
+     ﾃ・should cap population at capacity 1ms
+     ﾃ・should reach spawn threshold (10.0) in 20 seconds with 0.5 rate 0ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 3 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/VerifyBuildingGrowth.test.js > Building Population Growth > should grow population over time
+ FAIL  src/tests/VerifyBuildingGrowth.test.js > Building Population Growth > should cap population at capacity
+ FAIL  src/tests/VerifyBuildingGrowth.test.js > Building Population Growth > should reach spawn threshold (10.0) in 20 seconds with 0.5 rate
+ReferenceError: THREE is not defined
+ 笶ｯ src/tests/VerifyBuildingGrowth.test.js:45:37
+     43|         };
+     44| 
+     45|         building = new Building(new THREE.Scene(), {}, 'cave', 0, 0);
+       |                                     ^
+     46|         building.userData = {
+     47|             type: 'cave',
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/3]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  23:33:25
+   Duration  787ms (transform 98ms, setup 77ms, import 61ms, tests 7ms, environment 466ms)
+

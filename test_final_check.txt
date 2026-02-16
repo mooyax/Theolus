@@ -1,55 +1,132 @@
 
 [1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould immediately switch to JobState and target the job upon assignment
-[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[90mstdout[2m | src/tests/WorkerOscillationStale.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould clear isUnreachable flag when entering new job
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
 [UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould immediately switch to JobState and target the job upon assignment
-[22m[39m[Test] Assigning request...
-[JobState] Entered. Target: lower. ResumeCtx: Approaching Job
-[Test] Update Frame 1...
+[90mstdout[2m | src/tests/WorkerOscillationStale.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould clear isUnreachable flag when entering new job
+[22m[39m[JobState 1] Entering. Target: 50,50
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 1] smartMove: triggers pathfinding. Dist: 56.6
+[Actor 1] smartMove: already pathfinding
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT be distracted by WanderState updates during Job
-[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+stderr | src/tests/WorkerOscillationStale.test.js > Worker Oscillation Debug > should clear isUnreachable flag when entering new job
+[JobState 1] Abort: Target Unreachable. Req:101 at 50,50
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT be distracted by WanderState updates during Job
-[22m[39m[JobState] Entered. Target: lower. ResumeCtx: Idle
+[90mstdout[2m | src/tests/WorkerOscillationStale.test.js[2m > [22m[2mWorker Oscillation Debug[2m > [22m[2mshould clear isUnreachable flag when entering new job
+[22m[39m[JobState 1] Entering. Target: 20,20
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 1] smartMove: triggers pathfinding. Dist: 14.1
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould not freeze due to throttle at low game time
-[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+ [32m笨・[39m src/tests/WorkerOscillationStale.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 20[2mms[22m[39m
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould NOT abort job during long async pathfinding (prevent oscillation)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould not freeze due to throttle at low game time
-[22m[39m[JobState] Entered. Target: raise. ResumeCtx: Idle
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould NOT abort job during long async pathfinding (prevent oscillation)
+[22m[39m[JobState 1] Entering. Target: 50,50
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 1] smartMove: triggers pathfinding. Dist: 56.6
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT Ping-Pong between two manual requests
-[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin Hut when idle (Passive Worker Fix)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT Ping-Pong between two manual requests
-[22m[39m[JobState] Entered. Target: lower. ResumeCtx: Idle
-[PingPong] Unit Busy with Manual? true
-[PingPong] New Req Manual? true
-[PingPong] Calculated Penalty: 1000
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin Hut when idle (Passive Worker Fix)
+[22m[39m[Actor 1] smartMove: triggers pathfinding. Dist: 56.6
+[CombatState] Entering. Saved Context: {"action":"Wandering","target":null,"migrationTarget":null}
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT build a house immediately if pathfinding fails temporarily
-[22m[39m[UnitCore.js] Unit Created ID:4 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:4 Role:worker Pos:10,10
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin even if holding a job (Self Defense)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT build a house immediately if pathfinding fails temporarily
-[22m[39m[JobState] Entered. Target: lower. ResumeCtx: Idle
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin even if holding a job (Self Defense)
+[22m[39m[JobState 1] Entering. Target: 80,80
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 1] smartMove: triggers pathfinding. Dist: 42.4
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove: already pathfinding
+[JobState 1] Worker found threat/target on path!
+[CombatState 1] Releasing Job 102 to fight!
+[CombatState] Entering. Saved Context: {"action":"Approaching Job","target":null,"migrationTarget":null}
+Target set: {
+  id: [32m'gob1'[39m,
+  gridX: [33m11[39m,
+  gridZ: [33m11[39m,
+  position: { x: [33m11[39m, y: [33m0[39m, z: [33m11[39m },
+  isDead: [33mfalse[39m,
+  hp: [33m10[39m,
+  type: [32m'goblin'[39m,
+  takeDamage: [36m[Function: takeDamage][39m
+}
 
- [31m笶ｯ[39m src/tests/WorkerDistraction.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 32[2mms[22m[39m
-[31m     [31mﾃ・[31m should immediately switch to JobState and target the job upon assignment[39m[32m 24[2mms[22m[39m
-[31m     [31mﾃ・[31m should NOT be distracted by WanderState updates during Job[39m[32m 2[2mms[22m[39m
-[31m     [31mﾃ・[31m should not freeze due to throttle at low game time[39m[32m 2[2mms[22m[39m
-     [32m笨・[39m should NOT Ping-Pong between two manual requests[32m 1[2mms[22m[39m
-[31m     [31mﾃ・[31m should NOT build a house immediately if pathfinding fails temporarily[39m[32m 1[2mms[22m[39m
+ [32m笨・[39m src/tests/Regression_WorkerLogic.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 163[2mms[22m[39m
 
-[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (5)[39m
-[2m   Start at [22m 22:51:45
-[2m   Duration [22m 836ms[2m (transform 123ms, setup 48ms, import 146ms, tests 32ms, environment 425ms)[22m
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 18:22:46
+[2m   Duration [22m 1.56s[2m (transform 811ms, setup 702ms, import 380ms, tests 183ms, environment 940ms)[22m
 

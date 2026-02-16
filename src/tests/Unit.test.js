@@ -80,14 +80,18 @@ describe('Unit Logic', () => {
     describe('Build Priority (Famine)', () => {
         it('should prioritize Farm and ABORT house if farm fails during famine', () => {
             mockGame.resources = { grain: 0, meat: 0, fish: 0 };
+            mockGame.totalPopulation = 11; // Ensure farmTarget > 0
             // FIX: Force Random < 0.3 to enter Farm Logic
             vi.spyOn(Math, 'random').mockReturnValue(0.1);
 
             unit.buildFarm = vi.fn().mockReturnValue(false);
             unit.buildHouse = vi.fn();
 
-            mockTerrain.grid[5][5] = { height: 1, hasBuilding: false, type: 'grass', regionId: 1 };
-            mockTerrain.grid[6][5] = { height: 1, hasBuilding: false, type: 'grass', regionId: 1 };
+            for (let i = 0; i < 2; i++) {
+                for (let j = 0; j < 2; j++) {
+                    mockTerrain.grid[5 + i][5 + j] = { height: 1, hasBuilding: false, type: 'grass', regionId: 1 };
+                }
+            }
 
             unit.tryBuildStructure(100);
 
@@ -97,19 +101,30 @@ describe('Unit Logic', () => {
 
         it('should fallback to House if NOT in famine', () => {
             mockGame.resources = { grain: 1000, meat: 1000, fish: 1000 };
+            mockGame.totalPopulation = 11; // farmTarget will be 3, housingBuffer will be 14
+
+            // Add 3 farms to satisfy farmTarget (3 > 11/5 = 2.2)
+            mockTerrain.buildings.push({ userData: { type: 'farm', faction: 'player' } });
+            mockTerrain.buildings.push({ userData: { type: 'farm', faction: 'player' } });
+            mockTerrain.buildings.push({ userData: { type: 'farm', faction: 'player' } });
 
             unit.buildFarm = vi.fn().mockReturnValue(false);
             unit.buildHouse = vi.fn();
 
-            mockTerrain.grid[5][5].hasBuilding = false;
-            mockTerrain.grid[5][5].height = 1;
-            if (mockTerrain.grid[6][5]) mockTerrain.grid[6][5].height = 1;
+            // Set heights for 2x2 area to satisfy checkFlatArea
+            for (let i = 0; i < 2; i++) {
+                for (let j = 0; j < 2; j++) {
+                    mockTerrain.grid[5 + i][5 + j].height = 1;
+                    mockTerrain.grid[5 + i][5 + j].hasBuilding = false;
+                }
+            }
 
             vi.spyOn(mockTerrain, 'addBuilding');
             unit.tryBuildStructure(100);
 
             // Fix: Check addBuilding, NOT unit.buildHouse
-            expect(mockTerrain.addBuilding).toHaveBeenCalledWith('house', 5, 5);
+            // baseHousingCapacity(10) < housingBuffer(14) -> should build
+            expect(mockTerrain.addBuilding).toHaveBeenCalledWith('house', 5, 5, false, false, 'player');
         });
     });
 
@@ -151,18 +166,17 @@ describe('Unit Logic', () => {
 
             const result = unit.buildFarm(100);
             expect(result).toBe(true);
-            expect(mockTerrain.addBuilding).toHaveBeenCalledWith('farm', 5, 5);
+            expect(mockTerrain.addBuilding).toHaveBeenCalledWith('farm', 5, 5, false, false, 'player');
         });
 
-        it('should check heights during moveRandomly', () => {
-            // Note: with checkStuck fixed, this should not crash even if target is found
-            vi.spyOn(mockTerrain, 'getTileHeight').mockReturnValue(1);
+        it('should check regions during moveRandomly', () => {
+            vi.spyOn(mockTerrain, 'getRegion');
+            vi.spyOn(mockTerrain, 'getRandomPointInRegion');
 
-            // We need to ensure smartMove is called OR checkStuck
-            // TestHelper getRandomPoint returns valid point -> smartMove
             unit.moveRandomly(100);
 
-            expect(mockTerrain.getTileHeight).toHaveBeenCalled();
+            expect(mockTerrain.getRegion).toHaveBeenCalled();
+            expect(mockTerrain.getRandomPointInRegion).toHaveBeenCalled();
         });
     });
 });

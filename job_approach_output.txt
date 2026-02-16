@@ -1,0 +1,11 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+ 笨・src/tests/JobApproachThreshold.test.js > Job Approach Threshold > should complete job if distance is 1.4 (within 1.5 threshold) 3ms
+ 笨・src/tests/JobApproachThreshold.test.js > Job Approach Threshold > should NOT complete job if distance is 1.6 (outside 1.5 threshold) 1ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  12:56:13
+   Duration  1.31s (transform 194ms, setup 72ms, import 172ms, tests 5ms, environment 496ms)
+

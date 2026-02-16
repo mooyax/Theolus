@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 
 // Mock Classes
 class MockTerrain {
@@ -84,8 +84,8 @@ describe('Worker Oscillation Debug', () => {
 
         // 2. Assign Job
         unit.targetRequest = req;
-        unit.changeState(new JobState(unit));
-        expect(unit.state.name).toBe('JobState');
+        unit.changeState(new Job(unit));
+        expect(unit.state.name).toBe('Job');
         expect(unit.action).toBe('Approaching Job');
 
         // 3. Update Loop (Simulate Async Path Failure)
@@ -93,24 +93,25 @@ describe('Worker Oscillation Debug', () => {
         unit.updateLogic(time, 0.1);
 
         // SmartMove should return false (waiting for path)
-        // Unit should still be in JobState waiting
-        expect(unit.state.name).toBe('JobState');
+        // Unit should still be in Job waiting
+        expect(unit.state.name).toBe('Job');
 
         // 4. Resolve Async Pathfinding (Fail)
         // Must wait for promise microtask?
         await new Promise(resolve => setTimeout(resolve, 0));
 
         // Actor should now have isUnreachable = true
-        // But JobState needs another update to see it
+        // But Job needs another update to see it
         // FIX: Ensure lastPathTime is set so smartMove throttles and respects the failure
         unit.lastPathTime = game.simTotalTimeSec;
         expect(unit.isUnreachable).toBe(true);
 
-        // 5. Next Update - JobState should Handle Failure
+        // 5. Next Update - Job should Handle Failure
         unit.updateLogic(time + 0.1, 0.1);
+        console.log(`[TestDebug] State:${unit.state.name} Unreach:${unit.isUnreachable} Wait:${unit.isWaitingForPath}`);
 
         // Should release job and set blacklist
-        expect(unit.state.name).not.toBe('JobState'); // Should be Wander/Resume
+        expect(unit.state.name).not.toBe('Job'); // Should be Wander/Resume
         expect(unit.targetRequest).toBeNull();
         expect(req.excludedUntil).toBeGreaterThan(time); // Check global cooldown instead of local ignoredTargets
 
@@ -126,7 +127,7 @@ describe('Worker Oscillation Debug', () => {
 
         // Initial Assign
         unit.targetRequest = req;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Fail Path
         await new Promise(resolve => setTimeout(resolve, 0)); // Trigger async start
@@ -136,7 +137,7 @@ describe('Worker Oscillation Debug', () => {
 
         // Handle Fail
         unit.updateLogic(game.simTotalTimeSec, 0.1);
-        expect(unit.state.name).not.toBe('JobState');
+        expect(unit.state.name).not.toBe('Job');
 
         // Sim 1 second later (Still blacklisted)
         game.simTotalTimeSec += 1.0;
@@ -144,12 +145,12 @@ describe('Worker Oscillation Debug', () => {
         expect(best).toBeNull();
 
         // Sim 9 seconds later (Total 10s passed from start? Blacklist is 10s?)
-        // JobState sets time + 10.0 (Unit line 1344 says 5s, JobState line 396 says 10s)
+        // Job sets time + 10.0 (Unit line 1344 says 5s, Job line 396 says 10s)
         game.simTotalTimeSec += 9.0;
         best = game.findBestRequest(unit);
 
         // At Time+10, it might expire?
-        // JobState: time + 10.0.
+        // Job: time + 10.0.
         // Current: Start(100) + 10 = 110. Expiry = 110.
         // If simTime > expiry? 110 > 110? No.
 

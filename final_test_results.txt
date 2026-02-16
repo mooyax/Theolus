@@ -1,488 +1,330 @@
 
- RUN  v4.0.15 C:/Users/mooya/develop/test
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
 
-stdout | src/tests/ManualPriority.test.js > Manual Request Priority and Preemption > should allow manual request to preempt CombatState
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
 [UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
 [UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
 
-stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should continue MANUAL job when night falls
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[Actor 1] SmartMove Depth:1 Node:0,0 My:0,0 d:0,0 
+[Actor 1] Reached Node.Shifting.
+[Actor 1] SmartMove Depth:2 Node:80,80 My:0,0 d:80,80 
+[Unit 1] Moving onto Rock at 80,80 H:10 (Speed Penalty)
+[Unit 1] canMoveTo(80,80) OK
+[Unit 1] canMoveTo(80,80) checking grid...
+[DIAG] executeMove Actor:1 calling startMove.Current isMoving:false 
+[Entity 1] startMove -> isMoving:true. Target:80,80 StartTime:100.0000
+[DIAG] executeMove Actor:1 finished startMove.New isMoving:true 
 
-stdout | src/tests/ManualPriority.test.js > Manual Request Priority and Preemption > should allow manual request to preempt CombatState
-[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:1
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:0
 
-stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should continue MANUAL job when night falls
-[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:0
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[Actor 1] Path Invalidated: Target Changed.Old:80,80 New:30,30 
 
-stdout | src/tests/ManualPriority.test.js > Manual Request Priority and Preemption > should allow manual request to preempt SleepState
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[Actor 1] SmartMove Depth:1 Node:0,0 My:0,0 d:0,0 
+[Actor 1] Reached Node.Shifting.
+[Actor 1] SmartMove Depth:2 Node:30,30 My:0,0 d:30,30 
+[Unit 1] Moving onto Rock at 30,30 H:10 (Speed Penalty)
+[Unit 1] canMoveTo(30,30) OK
+[Unit 1] canMoveTo(30,30) checking grid...
+[DIAG] executeMove Actor:1 calling startMove.Current isMoving:true 
+[Entity 1] startMove -> isMoving:true. Target:30,30 StartTime:0.0000
+[DIAG] executeMove Actor:1 finished startMove.New isMoving:true 
 
-stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should release AUTO job when night falls
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[Unit Debug 0] updateLogic. State: Wander
+[Unit 0] State Change: Wander -> Combat
 
-stdout | src/tests/ManualPriority.test.js > Manual Request Priority and Preemption > should allow manual request to preempt SleepState
-[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:None
-[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:0
-[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:0
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:1
 
-stdout | src/tests/ManualPriority.test.js > Manual Request Priority and Preemption > should NOT allow auto request to preempt CombatState
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:2
 
-stdout | src/tests/ManualPriority.test.js > Manual Request Priority and Preemption > should NOT allow auto request to preempt CombatState
-[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:1
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Actor 2] SmartMove Depth:1 Node:7,0 My:0,0 d:7,0 
+[Unit 2] Moving onto Rock at 7,0 H:10 (Speed Penalty)
+[Unit 2] canMoveTo(7,0) OK
+[Unit 2] canMoveTo(7,0) checking grid...
+[DIAG] executeMove Actor:2 calling startMove.Current isMoving:false 
+[Entity 2] startMove -> isMoving:true. Target:7,0 StartTime:1000.0000
+[DIAG] executeMove Actor:2 finished startMove.New isMoving:true 
 
-stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should release AUTO job when night falls
-[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:None
-[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:0
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould NOT auto-target distant Huts (Workers are passive)
+[22m[39m[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:3
 
-stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should prefer MANUAL job over sleep in UnitWanderState at night
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould resume MIGRATION after Combat interruption
+[22m[39m[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:1
 
- 笨・src/tests/ManualPriority.test.js (3 tests) 17ms
-stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should prefer MANUAL job over sleep in UnitWanderState at night
-[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:0
-[Defense Debug 1] shouldScan:false isBusy:true force:false PassedGoblins:0
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould NOT auto-target distant Huts (Workers are passive)
+[22m[39m[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[DIAG] Actor Created ID: 4
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:4
 
-stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should go to sleep if only AUTO jobs available at night
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+ [31mﾃ・[39m src/tests/InterruptResume.test.js[2m > [22mUnit Interrupt and Resume[2m > [22mshould return to previous movement target after finishing a job[32m 21[2mms[22m[39m
+[31m   竊・Cannot read properties of undefined (reading 'x')[39m
+ [31mﾃ・[39m src/tests/InterruptResume.test.js[2m > [22mUnit Interrupt and Resume[2m > [22mshould resume MIGRATION after Combat interruption[32m 6[2mms[22m[39m
+[31m   竊・expected 'Moving' to be 'Migrating' // Object.is equality[39m
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould auto-target CLOSE Huts for self-defense (Workers)
+[22m[39m[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+[DIAG] Actor Created ID: 5
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:5 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:5 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:5
 
-stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should go to sleep if only AUTO jobs available at night
-[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:0
-[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:None
-[Defense Debug 1] shouldScan:true isBusy:false force:false PassedGoblins:0
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould auto-target CLOSE Huts for self-defense (Workers)
+[22m[39m[Entity 6] Calling registerEntity...
+[Entity 6] registerEntity returned.
+[Entity 6] Calling updatePosition...
+[Entity 6] updatePosition returned.
+[DIAG] Actor Created ID: 6
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:6
 
- 笨・src/tests/NightManualWork.test.js (4 tests) 22ms
-stdout | src/tests/SaveLoadRestoration.test.js > Save/Load Job Restoration > should restore unit ID and re-link to JobState correctly
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
-[Game] Request Added: raise at (12,12) ID:req_0
-[Game] forceAssignRequest FOUND Unit 55 (DistSq:8). Scanned:1
-[Game] Request req_0 assigned/switched to Unit 55
-Saving Game Data: {
-  slotId: [33m1[39m,
-  timestamp: [33m1767623824419[39m,
-  resources: { grain: [33m10[39m, fish: [33m10[39m, meat: [33m10[39m },
-  gameTime: [33m8[39m,
-  gameTotalTime: [33m0[39m,
-  currentSeasonIndex: [90mundefined[39m,
-  daysPassed: [90mundefined[39m,
-  terrain: {
-    logicalWidth: [33m160[39m,
-    logicalDepth: [33m160[39m,
-    version: [33m2[39m,
-    h: [
-      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-4[39m, [33m-3[39m, [33m-2[39m, [33m-1[39m,  [33m0[39m,  [33m1[39m,  [33m2[39m,  [33m4[39m,  [33m5[39m,
-       [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m7[39m,  [33m8[39m,  [33m8[39m,  [33m9[39m, [33m10[39m, [33m11[39m, [33m12[39m,
-      [33m12[39m, [33m12[39m, [33m11[39m, [33m10[39m, [33m10[39m,  [33m9[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,
-       [33m6[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m8[39m,  [33m8[39m,  [33m9[39m,  [33m9[39m, [33m10[39m, [33m10[39m,
-       [33m9[39m,  [33m9[39m,  [33m8[39m,  [33m7[39m,  [33m6[39m,  [33m5[39m,  [33m4[39m,  [33m3[39m,  [33m2[39m,  [33m1[39m, [33m-0[39m, [33m-1[39m,
-      [33m-2[39m, [33m-3[39m, [33m-3[39m, [33m-4[39m, [33m-4[39m, [33m-4[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
-      [33m-5[39m, [33m-5[39m, [33m-4[39m, [33m-3[39m, [33m-3[39m, [33m-2[39m, [33m-2[39m, [33m-1[39m, [33m-1[39m,  [33m0[39m,  [33m1[39m,  [33m1[39m,
-       [33m2[39m,  [33m4[39m,  [33m5[39m,  [33m6[39m,  [33m7[39m,  [33m8[39m,  [33m9[39m, [33m10[39m, [33m11[39m, [33m12[39m, [33m13[39m, [33m14[39m,
-      [33m14[39m, [33m14[39m, [33m14[39m, [33m14[39m,
-      ... 25500 more items
-    ],
-    n: [
-      [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.01[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.02[39m,
-      [33m-0.01[39m,     [33m0[39m,    [33m-0[39m,    [33m-0[39m,    [33m-0[39m,  [33m0.01[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.02[39m,
-          [33m0[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.02[39m,
-       [33m0.02[39m, [33m-0.02[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.01[39m,     [33m0[39m,    [33m-0[39m,
-         [33m-0[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.02[39m,    [33m-0[39m,  [33m0.01[39m,  [33m0.01[39m,     [33m0[39m,  [33m0.02[39m,
-      [33m-0.01[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.02[39m,
-      [33m-0.01[39m,    [33m-0[39m,    [33m-0[39m, [33m-0.01[39m,    [33m-0[39m, [33m-0.01[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.01[39m,
-      [33m-0.02[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.02[39m,
-      [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.01[39m,     [33m0[39m,
-          [33m0[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m,    [33m-0[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m,
-       [33m0.02[39m, [33m-0.02[39m,  [33m0.01[39m,     [33m0[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.01[39m,  [33m0.02[39m,
-       [33m0.01[39m,
-      ... 25500 more items
-    ],
-    b: [],
-    m: [
-       [33m0.8[39m, [33m0.79[39m, [33m0.75[39m, [33m0.71[39m, [33m0.67[39m, [33m0.63[39m, [33m0.61[39m, [33m0.58[39m, [33m0.56[39m, [33m0.52[39m,
-      [33m0.49[39m, [33m0.46[39m, [33m0.44[39m, [33m0.43[39m, [33m0.43[39m, [33m0.42[39m, [33m0.41[39m, [33m0.39[39m, [33m0.36[39m, [33m0.34[39m,
-      [33m0.31[39m,  [33m0.3[39m, [33m0.29[39m, [33m0.29[39m, [33m0.29[39m, [33m0.29[39m, [33m0.31[39m, [33m0.33[39m, [33m0.34[39m, [33m0.36[39m,
-      [33m0.38[39m, [33m0.39[39m,  [33m0.4[39m, [33m0.39[39m, [33m0.36[39m, [33m0.33[39m, [33m0.31[39m, [33m0.31[39m, [33m0.31[39m, [33m0.31[39m,
-      [33m0.31[39m, [33m0.31[39m, [33m0.32[39m, [33m0.34[39m, [33m0.35[39m, [33m0.36[39m, [33m0.37[39m, [33m0.38[39m,  [33m0.4[39m, [33m0.41[39m,
-      [33m0.42[39m, [33m0.44[39m, [33m0.46[39m, [33m0.49[39m, [33m0.53[39m, [33m0.56[39m, [33m0.59[39m, [33m0.61[39m, [33m0.63[39m, [33m0.65[39m,
-      [33m0.67[39m, [33m0.69[39m,  [33m0.7[39m, [33m0.71[39m, [33m0.72[39m, [33m0.71[39m, [33m0.68[39m, [33m0.65[39m, [33m0.61[39m, [33m0.58[39m,
-      [33m0.56[39m, [33m0.53[39m, [33m0.52[39m,  [33m0.5[39m, [33m0.48[39m, [33m0.46[39m, [33m0.45[39m, [33m0.44[39m, [33m0.45[39m, [33m0.44[39m,
-      [33m0.44[39m, [33m0.43[39m, [33m0.42[39m, [33m0.43[39m, [33m0.43[39m, [33m0.42[39m, [33m0.42[39m, [33m0.42[39m, [33m0.41[39m, [33m0.41[39m,
-      [33m0.39[39m, [33m0.39[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m,
-      ... 25500 more items
-    ]
+ [32m笨・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould prioritize Goblin if it is much closer than Building[32m 5[2mms[22m[39m
+ [32m笨・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould prioritize Building if distances are very close (Siege Mode)[32m 4[2mms[22m[39m
+ [31mﾃ・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould NOT auto-target distant Huts (Workers are passive)[32m 9[2mms[22m[39m
+[31m   竊・expected { userData: { 窶ｦ(4) }, gridX: 10, 窶ｦ(2) } to be falsy[39m
+ [32m笨・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould auto-target CLOSE Huts for self-defense (Workers)[32m 1[2mms[22m[39m
+[90mstdout[2m | src/tests/GoblinFixes.test.js
+[22m[39m[Import Debug] Raid: function, Combat: function, Wander: function
+
+[90mstdout[2m | src/tests/JobPathFailure.test.js
+[22m[39m[Import Debug] Raid: function, Combat: function, Wander: function
+
+[90mstdout[2m | src/tests/GoblinFixes.test.js[2m > [22m[2mGoblin Spawning Logic[2m > [22m[2mshould update building population
+[22m[39m[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+
+[90mstdout[2m | src/tests/GoblinFixes.test.js[2m > [22m[2mGoblin Spawning Logic[2m > [22m[2mshould synchronize clipping planes with controls.target when available
+[22m[39m[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.855337, 0.846996) -> Grid(205, 203) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.355167, 0.715083) -> Grid(85, 171) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.603718, 0.843312) -> Grid(144, 202) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[Camera] Controls enabled: undefined, Pos: 100.0,100.0,100.0
+
+ [32m笨・[39m src/tests/GoblinFixes.test.js[2m > [22mGoblin Spawning Logic[2m > [22mshould update building population[32m 2[2mms[22m[39m
+ [32m笨・[39m src/tests/GoblinFixes.test.js[2m > [22mGoblin Spawning Logic[2m > [22mshould synchronize clipping planes with controls.target when available[32m 6[2mms[22m[39m
+[90mstdout[2m | src/tests/JobPathFailure.test.js[2m > [22m[2mJob Pathfinding Failure Handling[2m > [22m[2mshould abandon job if smartMove fails repeatedly
+[22m[39m[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:0
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.670216, 0.667042) -> Grid(67, 66) rngState=undefined
+GoblinManager: Cave registered at 67,66 
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.268789, 0.843096) -> Grid(26, 84) rngState=undefined
+GoblinManager: Cave registered at 26,84 
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.914901, 0.225103) -> Grid(91, 22) rngState=undefined
+GoblinManager: Cave registered at 91,22 
+GoblinManager: Cave registered at 76,19 
+GoblinManager: Cave registered at 59,30 
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+GoblinManager: Force spawning Debug Goblin
+[Game] Generating Preview Terrain...
+[Game] Preview Ready.
+
+[90mstdout[2m | src/tests/JobPathFailure.test.js[2m > [22m[2mJob Pathfinding Failure Handling[2m > [22m[2mshould abandon job if smartMove fails repeatedly
+[22m[39m[Test Debug] unit.canMoveTo is: [Function: Mock] {
+  _isMockFunction: [33mtrue[39m,
+  getMockImplementation: [36m[Function (anonymous)][39m,
+  mock: {
+    calls: [],
+    contexts: [],
+    instances: [],
+    invocationCallOrder: [],
+    settledResults: [],
+    results: [],
+    lastCall: [36m[Getter][39m
   },
-  units: [
-    {
-      id: [33m55[39m,
-      gridX: [33m10[39m,
-      gridZ: [33m10[39m,
-      age: [33m20[39m,
-      lifespan: [33m81.35738412647754[39m,
-      isDead: [33mfalse[39m,
-      isFinished: [90mundefined[39m,
-      isMoving: [33mtrue[39m,
-      targetX: [33m0[39m,
-      targetZ: [33m0[39m,
-      moveStartTime: [33m0[39m,
-      moveDuration: [33m2.1313708498984765[39m,
-      startGridX: [33m10[39m,
-      startGridZ: [33m10[39m,
-      targetGridX: [33m11[39m,
-      targetGridZ: [33m11[39m,
-      isSpecial: [33mfalse[39m,
-      role: [32m'worker'[39m,
-      hp: [33m36[39m,
-      maxHp: [33m36[39m,
-      damage: [33m4[39m,
-      xp: [33m0[39m,
-      level: [33m1[39m,
-      name: [90mundefined[39m,
-      homeBaseGridX: [90mundefined[39m,
-      homeBaseGridZ: [90mundefined[39m,
-      squadId: [1mnull[22m,
-      targetRequestId: [32m'req_manual_1'[39m
-    }
-  ],
-  goblinManager: {},
-  camera: {
-    position: { x: [33m20[39m, y: [33m20[39m, z: [33m20[39m },
-    zoom: [33m1[39m,
-    target: { x: [90mundefined[39m, y: [90mundefined[39m, z: [90mundefined[39m }
-  },
-  requests: [
-    {
-      id: [32m'req_manual_1'[39m,
-      type: [32m'raise'[39m,
-      x: [33m12[39m,
-      z: [33m12[39m,
-      status: [32m'assigned'[39m,
-      assignedTo: [33m55[39m,
-      createdAt: [33m0[39m,
-      isManual: [33mtrue[39m
-    }
-  ]
+  mockImplementation: [36m[Function: mockImplementation][39m,
+  mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+  withImplementation: [36m[Function: withImplementation][39m,
+  mockReturnThis: [36m[Function: mockReturnThis][39m,
+  mockReturnValue: [36m[Function: mockReturnValue][39m,
+  mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+  mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+  mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+  mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+  mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+  mockClear: [36m[Function: mockClear][39m,
+  mockReset: [36m[Function: mockReset][39m,
+  mockRestore: [36m[Function: mockRestore][39m,
+  mockName: [36m[Function: mockName][39m,
+  getMockName: [36m[Function: getMockName][39m,
+  [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
 }
-Saved to slot 1 (Compressed). Size: 24661 chars (Original: 308244)
-Load Started...
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[Unit Debug 1] updateLogic. State: Job
+[JobState] Unit Stuck for 5s. Abandoning Job. DistSq: 400.0
+[Unit Debug 1] updateLogic. State: Wander
+[Unit Debug 1] updateLogic. State: Wander
+[Unit Debug 1] updateLogic. State: Wander
+[Unit Debug 1] updateLogic. State: Wander
+[Unit Debug 1] updateLogic. State: Wander
+[Unit Debug 1] updateLogic. State: Wander
+[Unit Debug 1] updateLogic. State: Wander
+[Unit Debug 1] updateLogic. State: Wander
+[Unit Debug 1] updateLogic. State: Wander
+[Unit Debug 1] updateLogic. State: Wander
+[Unit Debug 1] updateLogic. State: Wander
+Success: Job released after repeated failures.
 
-stdout | src/tests/SaveLoad.test.js > Save/Load System > should save game data correctly
-Saving Game Data: {
-  slotId: [33m1[39m,
-  timestamp: [33m1767623824480[39m,
-  resources: { grain: [33m100[39m, fish: [33m50[39m, meat: [33m25[39m },
-  gameTime: [33m12[39m,
-  gameTotalTime: [33m0[39m,
-  currentSeasonIndex: [90mundefined[39m,
-  daysPassed: [90mundefined[39m,
-  terrain: {
-    logicalWidth: [33m160[39m,
-    logicalDepth: [33m160[39m,
-    version: [33m2[39m,
-    h: [
-      [33m13[39m, [33m13[39m, [33m13[39m, [33m12[39m, [33m11[39m, [33m10[39m,  [33m9[39m,  [33m9[39m,  [33m8[39m,  [33m8[39m,  [33m7[39m,  [33m6[39m,
-       [33m6[39m,  [33m5[39m,  [33m5[39m,  [33m4[39m,  [33m3[39m,  [33m3[39m,  [33m4[39m,  [33m4[39m,  [33m4[39m,  [33m4[39m,  [33m3[39m,  [33m3[39m,
-       [33m2[39m,  [33m2[39m,  [33m1[39m,  [33m1[39m,  [33m0[39m, [33m-0[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-0[39m,  [33m1[39m,
-       [33m2[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,  [33m4[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,  [33m2[39m,  [33m2[39m,  [33m2[39m,  [33m2[39m,
-       [33m2[39m,  [33m2[39m,  [33m2[39m,  [33m2[39m,  [33m2[39m,  [33m1[39m,  [33m1[39m, [33m-0[39m, [33m-0[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m,
-      [33m-1[39m, [33m-2[39m, [33m-2[39m, [33m-2[39m, [33m-2[39m, [33m-2[39m, [33m-1[39m, [33m-1[39m,  [33m0[39m,  [33m1[39m,  [33m2[39m,  [33m3[39m,
-       [33m3[39m,  [33m4[39m,  [33m4[39m,  [33m5[39m,  [33m5[39m,  [33m5[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m5[39m,  [33m5[39m,  [33m5[39m,
-       [33m4[39m,  [33m4[39m,  [33m3[39m,  [33m3[39m,  [33m3[39m,  [33m2[39m,  [33m2[39m,  [33m2[39m,  [33m2[39m,  [33m2[39m,  [33m1[39m,  [33m1[39m,
-       [33m1[39m,  [33m1[39m,  [33m1[39m,  [33m2[39m,
-      ... 25500 more items
-    ],
-    n: [
-       [33m0.01[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.02[39m,    [33m-0[39m, [33m-0.02[39m,
-         [33m-0[39m,     [33m0[39m, [33m-0.01[39m,  [33m0.01[39m,    [33m-0[39m,    [33m-0[39m,  [33m0.01[39m, [33m-0.01[39m,     [33m0[39m,
-       [33m0.01[39m,  [33m0.01[39m,     [33m0[39m, [33m-0.01[39m,  [33m0.02[39m,    [33m-0[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.01[39m,
-          [33m0[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.02[39m,  [33m0.02[39m,    [33m-0[39m,  [33m0.02[39m,  [33m0.02[39m,
-       [33m0.02[39m, [33m-0.01[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.01[39m, [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m,
-      [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m,    [33m-0[39m, [33m-0.01[39m,  [33m0.02[39m,    [33m-0[39m, [33m-0.02[39m,
-      [33m-0.02[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.01[39m,
-         [33m-0[39m,  [33m0.01[39m, [33m-0.01[39m,    [33m-0[39m,    [33m-0[39m, [33m-0.02[39m,    [33m-0[39m,  [33m0.02[39m,    [33m-0[39m,
-       [33m0.01[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.02[39m, [33m-0.01[39m,  [33m0.02[39m,
-      [33m-0.02[39m,  [33m0.02[39m,     [33m0[39m,     [33m0[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.02[39m,     [33m0[39m,
-         [33m-0[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m,    [33m-0[39m,  [33m0.02[39m,  [33m0.02[39m,
-      [33m-0.02[39m,
-      ... 25500 more items
-    ],
-    b: [],
-    m: [
-      [33m0.23[39m, [33m0.24[39m, [33m0.26[39m, [33m0.29[39m, [33m0.32[39m, [33m0.35[39m, [33m0.38[39m, [33m0.41[39m, [33m0.44[39m, [33m0.45[39m,
-      [33m0.47[39m, [33m0.48[39m,  [33m0.5[39m, [33m0.52[39m, [33m0.54[39m, [33m0.55[39m, [33m0.56[39m, [33m0.58[39m,  [33m0.6[39m, [33m0.61[39m,
-      [33m0.62[39m, [33m0.62[39m, [33m0.62[39m, [33m0.63[39m, [33m0.63[39m, [33m0.64[39m, [33m0.64[39m, [33m0.64[39m, [33m0.64[39m, [33m0.65[39m,
-      [33m0.67[39m, [33m0.68[39m, [33m0.69[39m, [33m0.68[39m, [33m0.67[39m, [33m0.65[39m, [33m0.65[39m, [33m0.66[39m, [33m0.68[39m, [33m0.69[39m,
-      [33m0.69[39m, [33m0.68[39m, [33m0.67[39m, [33m0.65[39m, [33m0.63[39m, [33m0.63[39m, [33m0.62[39m, [33m0.61[39m, [33m0.61[39m, [33m0.61[39m,
-       [33m0.6[39m, [33m0.58[39m, [33m0.57[39m, [33m0.57[39m, [33m0.57[39m, [33m0.57[39m, [33m0.57[39m, [33m0.58[39m,  [33m0.6[39m, [33m0.62[39m,
-      [33m0.63[39m, [33m0.64[39m, [33m0.64[39m, [33m0.63[39m, [33m0.62[39m, [33m0.63[39m, [33m0.63[39m, [33m0.64[39m, [33m0.63[39m, [33m0.61[39m,
-      [33m0.58[39m, [33m0.57[39m, [33m0.56[39m, [33m0.57[39m, [33m0.58[39m,  [33m0.6[39m, [33m0.62[39m, [33m0.63[39m, [33m0.64[39m, [33m0.63[39m,
-      [33m0.63[39m, [33m0.62[39m, [33m0.61[39m,  [33m0.6[39m, [33m0.58[39m, [33m0.56[39m, [33m0.54[39m, [33m0.52[39m, [33m0.51[39m, [33m0.49[39m,
-      [33m0.47[39m, [33m0.46[39m, [33m0.44[39m, [33m0.44[39m, [33m0.44[39m, [33m0.44[39m, [33m0.44[39m, [33m0.44[39m, [33m0.42[39m, [33m0.41[39m,
-      ... 25500 more items
-    ]
-  },
-  units: [],
-  goblinManager: {},
-  camera: {
-    position: { x: [33m20[39m, y: [33m20[39m, z: [33m20[39m },
-    zoom: [33m1[39m,
-    target: { x: [90mundefined[39m, y: [90mundefined[39m, z: [90mundefined[39m }
-  },
-  requests: []
-}
-Saved to slot 1 (Compressed). Size: 24835 chars (Original: 309905)
+ [32m笨・[39m src/tests/JobPathFailure.test.js[2m > [22mJob Pathfinding Failure Handling[2m > [22mshould abandon job if smartMove fails repeatedly[32m 19[2mms[22m[39m
 
-stdout | src/tests/SaveLoadRestoration.test.js > Save/Load Job Restoration > should restore unit ID and re-link to JobState correctly
-Loading slot 1, Raw length: 24661
-Load: Decompressed successfully.
-Parsed Data for slot 1: {
-  timestamp: [33m1767623824428[39m,
-  data: {
-    slotId: [33m1[39m,
-    timestamp: [33m1767623824419[39m,
-    resources: { grain: [33m10[39m, fish: [33m10[39m, meat: [33m10[39m },
-    gameTime: [33m8[39m,
-    gameTotalTime: [33m0[39m,
-    terrain: {
-      logicalWidth: [33m160[39m,
-      logicalDepth: [33m160[39m,
-      version: [33m2[39m,
-      h: [36m[Array][39m,
-      n: [36m[Array][39m,
-      b: [],
-      m: [36m[Array][39m
-    },
-    units: [ [36m[Object][39m ],
-    goblinManager: {},
-    camera: { position: [36m[Object][39m, zoom: [33m1[39m, target: {} },
-    requests: [ [36m[Object][39m ]
-  }
-}
-Load Game: Data found {
-  slotId: [33m1[39m,
-  timestamp: [33m1767623824419[39m,
-  resources: { grain: [33m10[39m, fish: [33m10[39m, meat: [33m10[39m },
-  gameTime: [33m8[39m,
-  gameTotalTime: [33m0[39m,
-  terrain: {
-    logicalWidth: [33m160[39m,
-    logicalDepth: [33m160[39m,
-    version: [33m2[39m,
-    h: [
-      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-4[39m, [33m-3[39m, [33m-2[39m, [33m-1[39m,  [33m0[39m,  [33m1[39m,  [33m2[39m,  [33m4[39m,  [33m5[39m,
-       [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m6[39m,  [33m7[39m,  [33m8[39m,  [33m8[39m,  [33m9[39m, [33m10[39m, [33m11[39m, [33m12[39m,
-      [33m12[39m, [33m12[39m, [33m11[39m, [33m10[39m, [33m10[39m,  [33m9[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,
-       [33m6[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m8[39m,  [33m8[39m,  [33m9[39m,  [33m9[39m, [33m10[39m, [33m10[39m,
-       [33m9[39m,  [33m9[39m,  [33m8[39m,  [33m7[39m,  [33m6[39m,  [33m5[39m,  [33m4[39m,  [33m3[39m,  [33m2[39m,  [33m1[39m,  [33m0[39m, [33m-1[39m,
-      [33m-2[39m, [33m-3[39m, [33m-3[39m, [33m-4[39m, [33m-4[39m, [33m-4[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
-      [33m-5[39m, [33m-5[39m, [33m-4[39m, [33m-3[39m, [33m-3[39m, [33m-2[39m, [33m-2[39m, [33m-1[39m, [33m-1[39m,  [33m0[39m,  [33m1[39m,  [33m1[39m,
-       [33m2[39m,  [33m4[39m,  [33m5[39m,  [33m6[39m,  [33m7[39m,  [33m8[39m,  [33m9[39m, [33m10[39m, [33m11[39m, [33m12[39m, [33m13[39m, [33m14[39m,
-      [33m14[39m, [33m14[39m, [33m14[39m, [33m14[39m,
-      ... 25500 more items
-    ],
-    n: [
-      [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.01[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.02[39m,
-      [33m-0.01[39m,     [33m0[39m,     [33m0[39m,     [33m0[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.02[39m,
-          [33m0[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.02[39m,
-       [33m0.02[39m, [33m-0.02[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.01[39m,     [33m0[39m,     [33m0[39m,
-          [33m0[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.02[39m,     [33m0[39m,  [33m0.01[39m,  [33m0.01[39m,     [33m0[39m,  [33m0.02[39m,
-      [33m-0.01[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.02[39m,
-      [33m-0.01[39m,     [33m0[39m,     [33m0[39m, [33m-0.01[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.01[39m,
-      [33m-0.02[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.02[39m,
-      [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.01[39m,     [33m0[39m,
-          [33m0[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m,     [33m0[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m,
-       [33m0.02[39m, [33m-0.02[39m,  [33m0.01[39m,     [33m0[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.01[39m,  [33m0.02[39m,
-       [33m0.01[39m,
-      ... 25500 more items
-    ],
-    b: [],
-    m: [
-       [33m0.8[39m, [33m0.79[39m, [33m0.75[39m, [33m0.71[39m, [33m0.67[39m, [33m0.63[39m, [33m0.61[39m, [33m0.58[39m, [33m0.56[39m, [33m0.52[39m,
-      [33m0.49[39m, [33m0.46[39m, [33m0.44[39m, [33m0.43[39m, [33m0.43[39m, [33m0.42[39m, [33m0.41[39m, [33m0.39[39m, [33m0.36[39m, [33m0.34[39m,
-      [33m0.31[39m,  [33m0.3[39m, [33m0.29[39m, [33m0.29[39m, [33m0.29[39m, [33m0.29[39m, [33m0.31[39m, [33m0.33[39m, [33m0.34[39m, [33m0.36[39m,
-      [33m0.38[39m, [33m0.39[39m,  [33m0.4[39m, [33m0.39[39m, [33m0.36[39m, [33m0.33[39m, [33m0.31[39m, [33m0.31[39m, [33m0.31[39m, [33m0.31[39m,
-      [33m0.31[39m, [33m0.31[39m, [33m0.32[39m, [33m0.34[39m, [33m0.35[39m, [33m0.36[39m, [33m0.37[39m, [33m0.38[39m,  [33m0.4[39m, [33m0.41[39m,
-      [33m0.42[39m, [33m0.44[39m, [33m0.46[39m, [33m0.49[39m, [33m0.53[39m, [33m0.56[39m, [33m0.59[39m, [33m0.61[39m, [33m0.63[39m, [33m0.65[39m,
-      [33m0.67[39m, [33m0.69[39m,  [33m0.7[39m, [33m0.71[39m, [33m0.72[39m, [33m0.71[39m, [33m0.68[39m, [33m0.65[39m, [33m0.61[39m, [33m0.58[39m,
-      [33m0.56[39m, [33m0.53[39m, [33m0.52[39m,  [33m0.5[39m, [33m0.48[39m, [33m0.46[39m, [33m0.45[39m, [33m0.44[39m, [33m0.45[39m, [33m0.44[39m,
-      [33m0.44[39m, [33m0.43[39m, [33m0.42[39m, [33m0.43[39m, [33m0.43[39m, [33m0.42[39m, [33m0.42[39m, [33m0.42[39m, [33m0.41[39m, [33m0.41[39m,
-      [33m0.39[39m, [33m0.39[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m, [33m0.38[39m,
-      ... 25500 more items
-    ]
-  },
-  units: [
-    {
-      id: [33m55[39m,
-      gridX: [33m10[39m,
-      gridZ: [33m10[39m,
-      age: [33m20[39m,
-      lifespan: [33m81.35738412647754[39m,
-      isDead: [33mfalse[39m,
-      isMoving: [33mtrue[39m,
-      targetX: [33m0[39m,
-      targetZ: [33m0[39m,
-      moveStartTime: [33m0[39m,
-      moveDuration: [33m2.1313708498984765[39m,
-      startGridX: [33m10[39m,
-      startGridZ: [33m10[39m,
-      targetGridX: [33m11[39m,
-      targetGridZ: [33m11[39m,
-      isSpecial: [33mfalse[39m,
-      role: [32m'worker'[39m,
-      hp: [33m36[39m,
-      maxHp: [33m36[39m,
-      damage: [33m4[39m,
-      xp: [33m0[39m,
-      level: [33m1[39m,
-      squadId: [1mnull[22m,
-      targetRequestId: [32m'req_manual_1'[39m
-    }
-  ],
-  goblinManager: {},
-  camera: { position: { x: [33m20[39m, y: [33m20[39m, z: [33m20[39m }, zoom: [33m1[39m, target: {} },
-  requests: [
-    {
-      id: [32m'req_manual_1'[39m,
-      type: [32m'raise'[39m,
-      x: [33m12[39m,
-      z: [33m12[39m,
-      status: [32m'assigned'[39m,
-      assignedTo: [33m55[39m,
-      createdAt: [33m0[39m,
-      isManual: [33mtrue[39m
-    }
-  ]
-}
-Clearing 0 projectiles...
-
-stdout | src/tests/SaveLoadRestoration.test.js > Save/Load Job Restoration > should restore unit ID and re-link to JobState correctly
-[DEBUG] Terrain.setSeason: Changing from undefined to Spring
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
-[Game] Restoring 1 requests...
-[Game] Re-linked Unit 55 to Request req_manual_1
-[Game] Restored Camera Zoom: 1
-
-stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
-Load Started...
-
-stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
-Loading slot 1, Raw length: 100
-Load: Decompressed successfully.
-Parsed Data for slot 1: {
-  timestamp: [33m1767623825252[39m,
-  data: {
-    resources: { grain: [33m999[39m, fish: [33m888[39m },
-    gameTime: [33m6[39m,
-    terrain: { logicalWidth: [33m10[39m, logicalDepth: [33m10[39m, grid: [], buildings: [] },
-    units: [],
-    camera: { position: [36m[Object][39m, target: [36m[Object][39m }
-  }
-}
-Load Game: Data found {
-  resources: { grain: [33m999[39m, fish: [33m888[39m },
-  gameTime: [33m6[39m,
-  terrain: { logicalWidth: [33m10[39m, logicalDepth: [33m10[39m, grid: [], buildings: [] },
-  units: [],
-  camera: { position: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m }, target: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m } }
-}
-Clearing 0 projectiles...
-
-stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
-[DEBUG] Terrain.setSeason: Changing from undefined to Spring
-[Game] Restored Camera Zoom: 1
-
-stdout | src/tests/SaveLoadRestoration.test.js > Save/Load Job Restoration > should reset ghost-assigned requests during load
-Load Started...
-
-stdout | src/tests/SaveLoadRestoration.test.js > Save/Load Job Restoration > should reset ghost-assigned requests during load
-Loading slot 1, Raw length: 114
-Load: Decompressed successfully.
-Parsed Data for slot 1: {
-  timestamp: [33m1767623825402[39m,
-  data: {
-    resources: {},
-    gameTime: [33m12[39m,
-    terrain: { logicalWidth: [33m80[39m, logicalDepth: [33m80[39m, grid: [], buildings: [] },
-    units: [],
-    requests: [ [36m[Object][39m ]
-  }
-}
-Load Game: Data found {
-  resources: {},
-  gameTime: [33m12[39m,
-  terrain: { logicalWidth: [33m80[39m, logicalDepth: [33m80[39m, grid: [], buildings: [] },
-  units: [],
-  requests: [
-    {
-      id: [32m'req_ghost'[39m,
-      type: [32m'raise'[39m,
-      x: [33m5[39m,
-      z: [33m5[39m,
-      status: [32m'assigned'[39m,
-      assignedTo: [33m99[39m,
-      isManual: [33mtrue[39m
-    }
-  ]
-}
-Clearing 0 projectiles...
-
-stdout | src/tests/SaveLoadRestoration.test.js > Save/Load Job Restoration > should reset ghost-assigned requests during load
-[DEBUG] Terrain.setSeason: Changing from undefined to Spring
-[Game] Restoring 1 requests...
-[Game] Ghost Assignment Cleaned: Request req_ghost (assigned to 99) reset to pending.
-
- 笨・src/tests/SaveLoadRestoration.test.js (2 tests) 1702ms
-     笨・should restore unit ID and re-link to JobState correctly  923ms
-     笨・should reset ghost-assigned requests during load  776ms
-stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
-Load Started...
-
-stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
-Loading slot 1, Raw length: 110
-Load: Decompressed successfully.
-Parsed Data for slot 1: {
-  timestamp: [33m1767623826180[39m,
-  data: {
-    resources: {},
-    gameTime: [33m10[39m,
-    terrain: { logicalWidth: [33m80[39m, grid: [], buildings: [] },
-    units: [],
-    requests: [ [36m[Object][39m, [36m[Object][39m ]
-  }
-}
-Load Game: Data found {
-  resources: {},
-  gameTime: [33m10[39m,
-  terrain: { logicalWidth: [33m80[39m, grid: [], buildings: [] },
-  units: [],
-  requests: [
-    { id: [32m'req_1'[39m, type: [32m'raise'[39m, x: [33m5[39m, z: [33m5[39m, status: [32m'pending'[39m },
-    { id: [32m'req_2'[39m, type: [32m'lower'[39m, x: [33m10[39m, z: [33m10[39m, status: [32m'completed'[39m }
-  ]
-}
-Clearing 0 projectiles...
-
-stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
-[Terrain] Deserializing Legacy Format...
-
-stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
-[DEBUG] Terrain.setSeason: Changing from undefined to Spring
-[Game] Restoring 2 requests...
-
- 笨・src/tests/SaveLoad.test.js (3 tests) 2503ms
-     笨・should save game data correctly  661ms
-     笨・should load game data correctly  893ms
-     笨・should restore request markers with correct renderOrder  947ms
-
- Test Files  4 passed (4)
-      Tests  12 passed (12)
-   Start at  23:37:02
-   Duration  4.23s (transform 1.00s, setup 197ms, import 1.66s, tests 4.24s, environment 3.40s)
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (9)[39m
+[2m   Start at [22m 00:07:08
+[2m   Duration [22m 1.20s[2m (transform 1.07s, setup 281ms, import 1.48s, tests 79ms, environment 1.88s)[22m
 

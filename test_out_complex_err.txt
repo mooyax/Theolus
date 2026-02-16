@@ -1,0 +1,65 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/ComplexAI.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+[Game] Dispose called for Game Instance.
+
+stderr | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+Disposing detached game instance
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night
+[Game] Dispose called for Game Instance.
+
+stderr | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night
+Disposing detached game instance
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test)
+[Game] Dispose called for Game Instance.
+
+stderr | src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test)
+Disposing detached game instance
+
+ ❯ src/tests/ComplexAI.test.js (4 tests | 4 failed) 25ms
+     × should drop job gracefully if target building is destroyed 14ms
+     × should prioritize manual jobs even when closer auto jobs appear 5ms
+     × should NOT drop manual job when switching to Sleep at night 3ms
+     × should abandon unreachable job (Abandonment Test) 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed
+ FAIL  src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+ FAIL  src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night
+ FAIL  src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test)
+Error: [vitest] No "ShaderMaterial" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi.mock(import("three"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    // your mocked methods
+  }
+})
+
+ ❯ Game.initMarkerMaterial src/Game.ts:830:41
+    828|         `;
+    829| 
+    830|         this.markerMaterial = new THREE.ShaderMaterial({
+       |                                         ^
+    831|             uniforms: {
+    832|                 uTime: { value: 0 },
+ ❯ new Game src/Game.ts:275:14
+ ❯ src/tests/ComplexAI.test.js:24:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  20:48:08
+   Duration  1.32s (transform 485ms, setup 69ms, import 519ms, tests 25ms, environment 443ms)
+

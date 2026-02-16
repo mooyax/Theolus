@@ -1,0 +1,22 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/HumanSpawningSurvival.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/HumanSpawningSurvival.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/HumanSpawningSurvival.test.js > Human Spawning Survival > should allow population growth (slowly) even with 0 food
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/HumanSpawningSurvival.test.js > Human Spawning Survival > should allow population growth (slowly) even with 0 food
+Population after update: [33m10[39m
+
+ 笨・src/tests/HumanSpawningSurvival.test.js (1 test) 115ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  23:40:24
+   Duration  978ms (transform 208ms, setup 72ms, import 215ms, tests 115ms, environment 418ms)
+

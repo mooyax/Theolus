@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { GameConfig } from './config/GameConfig';
 
 export class BuildingRenderer {
     constructor(scene, terrain, clippingPlanes, maxInstances = 10000) {
@@ -9,13 +10,13 @@ export class BuildingRenderer {
         this.terrainDepth = terrain.logicalDepth;
         this.clippingPlanes = clippingPlanes || [];
         this.MAX_INSTANCES = maxInstances;
-        this.MAX_INSTANCES = maxInstances;
         this.meshes = {};
 
         // Frustum Culling Helpers
         this._scratchVector = new THREE.Vector3();
         this._scratchSphere = new THREE.Sphere(new THREE.Vector3(), 2.0);
         this._dummy = new THREE.Object3D();
+        this.forceUpdate = true; // 初回および強制更新用フラグ
     }
 
     async init() {
@@ -337,6 +338,7 @@ export class BuildingRenderer {
             m.castShadow = true;
             m.receiveShadow = true;
             m.frustumCulled = false;
+            m.count = 0; // FIX: Start with 0 visible instances to avoid initial merged rendering at 0,0,0
             this.scene.add(m);
             return m;
         };
@@ -360,7 +362,13 @@ export class BuildingRenderer {
 
     update(buildings, frustum, viewCenter) {
         if (!this.initialized) return; // Guard: Not initialized
-        if (!buildings || !viewCenter) return;
+
+        if (!buildings) return;
+
+        if (!viewCenter) {
+            // console.warn("[BuildingRenderer] Missing viewCenter, allow default 0,0,0");
+            viewCenter = new THREE.Vector3(0, 0, 0);
+        }
 
         // Debug Log (Moved to Top)
         if (!this._debugTimer) this._debugTimer = 0;
@@ -376,8 +384,8 @@ export class BuildingRenderer {
 
         }
 
-        const logicalW = this.terrain.logicalWidth || 240;
-        const logicalD = this.terrain.logicalDepth || 240;
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
 
         let baseGridX = 0;
         let baseGridZ = 0;
@@ -386,17 +394,6 @@ export class BuildingRenderer {
             baseGridZ = Math.round(viewCenter.z / logicalD);
         }
 
-        // Optimization: Only update if Camera Chunk changed OR Building Count changed OR Force Update
-        if (this._lastBaseGridX === baseGridX &&
-            this._lastBaseGridZ === baseGridZ &&
-            this._lastBuildingCount === buildings.length &&
-            !this.forceUpdate) {
-            return;
-        }
-
-        this._lastBaseGridX = baseGridX;
-        this._lastBaseGridZ = baseGridZ;
-        this._lastBuildingCount = buildings.length;
         this.forceUpdate = false;
 
         let hIdx = 0, fIdx = 0, gIdx = 0, mIdx = 0, tIdx = 0, cIdx = 0;
@@ -410,90 +407,113 @@ export class BuildingRenderer {
 
         // Colors
         const colorRoof = new THREE.Color(0xFFFFFF); // White to show texture
+        const colorRoofEnemy = new THREE.Color(0x4169E1); // Royal Blue
         const colorBarracksRoof = new THREE.Color(0xFFFFFF);
         const colorGoblinHut = new THREE.Color(0xAAAAAA);
+        const colorTowerPlayer = new THREE.Color(0xeeeeee);
+        const colorTowerEnemy = new THREE.Color(0x8B4513); // Saddle Brown
 
 
 
+
+        const viewRadius = (GameConfig && GameConfig.render && GameConfig.render.viewRadius) ? GameConfig.render.viewRadius : 120;
 
         for (const b of buildings) {
-            const x = b.gridX;
-            const z = b.gridZ;
-            const vPos = this.terrain.getVisualPosition(x, z, true);
-            const y = vPos.y || 0; // Use terrain visual height!
 
-            for (const offset of offsets) {
-                // Apply Base Shift
-                const shiftX = (offset.x + baseGridX) * logicalW;
-                const shiftZ = (offset.z + baseGridZ) * logicalD;
+            // Safety: Ensure type is valid
+            if (!b.type) continue;
 
-                const posX = vPos.x + shiftX;
-                const posZ = vPos.z + shiftZ;
+            const vPos = this.terrain.getVisualPosition(b.gridX, b.gridZ, true);
+            const y = vPos.y || 0;
+            const rotY = (b.rotationY !== undefined) ? b.rotationY : (b.rotation || 0);
 
-                // Center Offsets by Type
-                let finalX = posX;
-                let finalZ = posZ;
+            // Dynamic Wrapping Logic
+            const minKx = Math.floor((viewCenter.x - viewRadius - vPos.x) / logicalW);
+            const maxKx = Math.ceil((viewCenter.x + viewRadius - vPos.x) / logicalW);
 
-                // House 2x2 offset: +0.5
-                // Farm 2x2 offset: +0.5 (Midpoint of 0 and 1)
-                // Mansion 3x3 offset: +1.0 (Midpoint of 0,1,2 = 1)
-                if (b.type === 'farm' || b.type === 'house' || b.type === 'goblin_hut') {
-                    finalX += 0.5;
-                    finalZ += 0.5;
-                } else if (b.type === 'barracks' || b.type === 'tower') {
-                    finalX += 1.0;
-                    finalZ += 1.0;
-                }
+            const minKz = Math.floor((viewCenter.z - viewRadius - vPos.z) / logicalD);
+            const maxKz = Math.ceil((viewCenter.z + viewRadius - vPos.z) / logicalD);
 
-                if (b.type === 'tower') {
-                    // Force Visible logic covered by radius below
-                }
+            for (let kx = minKx; kx <= maxKx; kx++) {
+                for (let kz = minKz; kz <= maxKz; kz++) {
+                    const shiftX = kx * logicalW;
+                    const shiftZ = kz * logicalD;
 
-                // Frustum Culling
-                // Note: If we optimize updates, we LOSE dynamic frustum culling per frame.
-                // The GPU will draw everything we put in the buffer.
-                // However, since we re-update on camera chunk change, we cull large swaths.
-                // To keep high perf, we might want to skip detailed frustum culling here if we are not updating every frame.
-                // Actually, if we don't update every frame, we act as "Static Draw".
-                // InstancedMesh supports Frustum Culling natively if we set valid boundingSphere.
-                // But we set frustumCulled = false because we wrap.
-                // Conclusion: By caching the buffer, we are drawing ALL instances (9x copies).
-                // Is this faster than CPU culling 9x every frame?
-                // Yes, GPU culling is fast. CPU Loop overhead was the bottleneck.
+                    const posX = vPos.x + shiftX;
+                    const posZ = vPos.z + shiftZ;
 
-                // if (frustum) { ... } // Removed Frustum check for Static Batching
+                    // Box Culling
+                    const dx = Math.abs(posX - viewCenter.x);
+                    const dz = Math.abs(posZ - viewCenter.z);
+                    if (dx > viewRadius + 10.0 || dz > viewRadius + 10.0) continue;
 
-                dummy.position.set(finalX, y, finalZ);
-                // Safety: Ensure scale is 1
-                dummy.scale.set(1, 1, 1);
-                dummy.rotation.set(0, b.rotation || 0, 0);
-                dummy.updateMatrix();
+                    // Center Offsets by Type
+                    let finalX = posX;
+                    let finalZ = posZ;
 
-                if (b.type === 'house' && hIdx < this.MAX_INSTANCES) {
-                    this.meshes.houseWalls.setMatrixAt(hIdx, dummy.matrix);
-                    this.meshes.houseRoofs.setMatrixAt(hIdx, dummy.matrix);
-                    this.meshes.houseRoofs.setColorAt(hIdx, colorRoof);
-                    hIdx++;
-                } else if (b.type === 'farm' && fIdx < this.MAX_INSTANCES) {
-                    this.meshes.farms.setMatrixAt(fIdx, dummy.matrix);
-                    fIdx++;
-                } else if (b.type === 'barracks' && mIdx < this.MAX_INSTANCES) {
-                    this.meshes.barracksWalls.setMatrixAt(mIdx, dummy.matrix);
-                    this.meshes.barracksRoofs.setMatrixAt(mIdx, dummy.matrix);
-                    this.meshes.barracksRoofs.setColorAt(mIdx, colorBarracksRoof);
-                    mIdx++;
-                } else if (b.type === 'goblin_hut' && gIdx < this.MAX_INSTANCES) {
-                    this.meshes.goblinHuts.setMatrixAt(gIdx, dummy.matrix);
-                    this.meshes.goblinHuts.setColorAt(gIdx, colorGoblinHut);
-                    this.meshes.goblinHuts.setColorAt(gIdx, colorGoblinHut);
-                    gIdx++;
-                } else if (b.type === 'tower' && tIdx < this.MAX_INSTANCES) {
-                    this.meshes.towers.setMatrixAt(tIdx, dummy.matrix);
-                    this.meshes.towerRims.setMatrixAt(tIdx, dummy.matrix);
-                    tIdx++;
-                } else if (b.type === 'cave' && cIdx < this.MAX_INSTANCES) {
-                    this.meshes.caves.setMatrixAt(cIdx, dummy.matrix);
-                    cIdx++;
+                    if (b.type === 'farm' || b.type === 'house' || b.type === 'goblin_hut') {
+                        finalX += 0.5;
+                        finalZ += 0.5;
+                    } else if (b.type === 'barracks' || b.type === 'tower') {
+                        finalX += 1.0;
+                        finalZ += 1.0;
+                    }
+
+                    dummy.position.set(finalX, y, finalZ);
+                    dummy.scale.set(1, 1, 1);
+                    dummy.rotation.set(0, rotY, 0);
+                    dummy.updateMatrix();
+
+                    if (b.type === 'house' && hIdx < this.MAX_INSTANCES) {
+                        this.meshes.houseWalls.setMatrixAt(hIdx, dummy.matrix);
+                        this.meshes.houseRoofs.setMatrixAt(hIdx, dummy.matrix);
+
+                        // Faction Color
+                        if (b.userData && b.userData.faction === 'enemy') {
+                            this.meshes.houseRoofs.setColorAt(hIdx, colorRoofEnemy);
+                        } else {
+                            this.meshes.houseRoofs.setColorAt(hIdx, colorRoof);
+                        }
+                        hIdx++;
+                    } else if (b.type === 'farm' && fIdx < this.MAX_INSTANCES) {
+                        this.meshes.farms.setMatrixAt(fIdx, dummy.matrix);
+                        fIdx++;
+                    } else if (b.type === 'barracks' && mIdx < this.MAX_INSTANCES) {
+                        this.meshes.barracksWalls.setMatrixAt(mIdx, dummy.matrix);
+                        this.meshes.barracksRoofs.setMatrixAt(mIdx, dummy.matrix);
+
+                        // Faction Color
+                        if (b.userData && b.userData.faction === 'enemy') {
+                            this.meshes.barracksRoofs.setColorAt(mIdx, colorRoofEnemy);
+                        } else {
+                            this.meshes.barracksRoofs.setColorAt(mIdx, colorBarracksRoof);
+                        }
+
+                        mIdx++;
+                    } else if (b.type === 'goblin_hut' && gIdx < this.MAX_INSTANCES) {
+                        this.meshes.goblinHuts.setMatrixAt(gIdx, dummy.matrix);
+                        this.meshes.goblinHuts.setColorAt(gIdx, colorGoblinHut);
+                        gIdx++;
+                    } else if (b.type === 'tower' && tIdx < this.MAX_INSTANCES) {
+                        this.meshes.towers.setMatrixAt(tIdx, dummy.matrix);
+                        // Faction Color (Tower Body)
+                        if (b.userData && b.userData.faction === 'enemy') {
+                            this.meshes.towers.setColorAt(tIdx, colorRoofEnemy); // Unified Blue
+                        } else {
+                            this.meshes.towers.setColorAt(tIdx, colorTowerPlayer);
+                        }
+
+                        this.meshes.towerRims.setMatrixAt(tIdx, dummy.matrix);
+                        if (b.userData && b.userData.faction === 'enemy') {
+                            this.meshes.towerRims.setColorAt(tIdx, colorRoofEnemy); // Unified Blue
+                        } else {
+                            this.meshes.towerRims.setColorAt(tIdx, colorTowerPlayer);
+                        }
+                        tIdx++;
+                    } else if (b.type === 'cave' && cIdx < this.MAX_INSTANCES) {
+                        this.meshes.caves.setMatrixAt(cIdx, dummy.matrix);
+                        cIdx++;
+                    }
                 }
             }
         }

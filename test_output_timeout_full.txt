@@ -1,0 +1,31 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+ 笶ｯ src/tests/PathfindingTimeout.test.js (2 tests | 2 failed) 20ms
+     ﾃ・should timeout if worker does not respond within 5000ms 16ms
+     ﾃ・should resolve if worker responds in time 2ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/PathfindingTimeout.test.js > Terrain Pathfinding Timeout > should timeout if worker does not respond within 5000ms
+ FAIL  src/tests/PathfindingTimeout.test.js > Terrain Pathfinding Timeout > should resolve if worker responds in time
+TypeError: Cannot read properties of undefined (reading 'position')
+ 笶ｯ Terrain.initMeshes src/Terrain.ts:433:48
+    431|         // 1. Create Single Large Geometry
+    432|         this.geometry = new THREE.PlaneGeometry(this.width, this.depth窶ｦ
+    433|         const count = this.geometry.attributes.position.count;
+       |                                                ^
+    434|         this.geometry.setAttribute('color', new THREE.BufferAttribute(窶ｦ
+    435| 
+ 笶ｯ Terrain.initTerrain src/Terrain.ts:452:14
+ 笶ｯ new Terrain src/Terrain.ts:104:14
+ 笶ｯ src/tests/PathfindingTimeout.test.js:25:19
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  12:26:18
+   Duration  984ms (transform 248ms, setup 78ms, import 220ms, tests 20ms, environment 462ms)
+

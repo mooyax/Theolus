@@ -1,0 +1,144 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/ComplexAI.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.147282, 0.697622) -> Grid(23, 111) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.540483, 0.930937) -> Grid(86, 148) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.977774, 0.942648) -> Grid(156, 150) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Game] Request Added: cultivate at (20,20) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Unit 0] State Change: Wander -> Job
+[Unit 0] State Change: Job -> Wander
+[Actor 0] SmartMove Depth:1 Node:20,20 My:10,10 d:10,10 
+[Unit 0] canMoveTo(20,20) OK
+[Unit 0] canMoveTo(20,20) checking grid...
+[DIAG] executeMove Actor:0 calling startMove.Current isMoving:false 
+[Entity 0] startMove -> isMoving:true. Target:20,20 StartTime:0.0000
+[DIAG] executeMove Actor:0 finished startMove.New isMoving:true 
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+[Game] Dispose called for Game Instance.
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.816307, 0.439225) -> Grid(130, 70) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.325823, 0.468787) -> Grid(52, 75) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.827087, 0.123142) -> Grid(132, 19) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Game] Request Added: raise at (50,50) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Unit 0] State Change: Wander -> Job
+[Game] Request Added: raise at (11,11) ID:req_1
+[Actor 0] SmartMove Depth:1 Node:50,50 My:10,10 d:40,40 
+[Unit 0] canMoveTo(50,50) OK
+[Unit 0] canMoveTo(50,50) checking grid...
+[DIAG] executeMove Actor:0 calling startMove.Current isMoving:false 
+[Entity 0] startMove -> isMoving:true. Target:50,50 StartTime:0.0000
+[DIAG] executeMove Actor:0 finished startMove.New isMoving:true 
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+[Actor 0] SmartMove Depth:0 Node:50,50 My:10,10 d:40,40 
+[Unit 0] canMoveTo(50,50) OK
+[Unit 0] canMoveTo(50,50) checking grid...
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night
+[Game] Dispose called for Game Instance.
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.011630, 0.220590) -> Grid(1, 35) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.830803, 0.445742) -> Grid(132, 71) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.534377, 0.936351) -> Grid(85, 149) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Game] Request Added: raise at (50,50) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Unit 0] State Change: Wander -> Job
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night
+[Actor 0] SmartMove Depth:1 Node:50,50 My:10,10 d:40,40 
+[Unit 0] canMoveTo(50,50) OK
+[Unit 0] canMoveTo(50,50) checking grid...
+[DIAG] executeMove Actor:0 calling startMove.Current isMoving:false 
+[Entity 0] startMove -> isMoving:true. Target:50,50 StartTime:0.0000
+[DIAG] executeMove Actor:0 finished startMove.New isMoving:true 
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test)
+[Game] Dispose called for Game Instance.
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.588008, 0.352459) -> Grid(94, 56) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.092951, 0.149958) -> Grid(14, 23) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.594827, 0.074685) -> Grid(95, 11) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test)
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Game] Request Added: raise at (90,90) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Unit 0] State Change: Wander -> Job
+[JobDebug] Unreachable Check: MoveStarted:false Unreachable:true Waiting:true DistSq:12800 PathLen:null
+
+ 笶ｯ src/tests/ComplexAI.test.js (4 tests | 1 failed) 51ms
+     笨・should drop job gracefully if target building is destroyed 17ms
+     笨・should prioritize manual jobs even when closer auto jobs appear 11ms
+     笨・should NOT drop manual job when switching to Sleep at night 5ms
+     ﾃ・should abandon unreachable job (Abandonment Test) 17ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  17:16:15
+   Duration  1.18s (transform 440ms, setup 68ms, import 510ms, tests 51ms, environment 385ms)
+

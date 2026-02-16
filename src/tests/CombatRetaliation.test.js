@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { Game } from '../Game.js';
 import { Unit } from '../Unit.js';
 import { Goblin } from '../Goblin.js';
-import { JobState, CombatState } from '../ai/states/UnitStates.js';
+import { Job, Combat } from '../ai/states/UnitStates.js';
 
 // Mock Game class to avoid complex THREE initialization
 vi.mock('../Game.js', () => {
@@ -151,18 +151,18 @@ describe('Combat Retaliation System', () => {
         for (let i = 0; i < 25; i++) {
             if (window.game) window.game.frameCounter = i;
             testUnit.updateLogic(100 + i, 0.1, false, goblins);
-            if (testUnit.state.constructor.name === 'CombatState') break;
+            if (testUnit.state.constructor.name === 'Combat') break;
         }
     };
 
-    it('should retaliate when hit while working (JobState)', () => {
+    it('should retaliate when hit while working (Job)', () => {
         // Assign Dummy Job to Unit
         const dummyReq = { id: 'req1', type: 'move', x: 30, z: 30, assignedTo: unit.id, isManual: true };
         unit.targetRequest = dummyReq;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Verify Initial State
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
         expect(unit.targetGoblin).toBeNull();
         expect(unit.targetRequest).toBe(dummyReq);
 
@@ -179,13 +179,13 @@ describe('Combat Retaliation System', () => {
         runUpdateLoop(unit, [goblin]);
 
         // CRITICAL ASSERTION: Did it switch?
-        if (unit.state.constructor.name === 'JobState') {
-            console.log("BUG CONFIRMED: Unit stayed in JobState after being attacked.");
-        } else if (unit.state.constructor.name === 'CombatState') {
-            console.log("SUCCESS: Unit switched to CombatState.");
+        if (unit.state.constructor.name === 'Job') {
+            console.log("BUG CONFIRMED: Unit stayed in Job after being attacked.");
+        } else if (unit.state.constructor.name === 'Combat') {
+            console.log("SUCCESS: Unit switched to Combat.");
         }
 
-        expect(unit.state.constructor.name).toBe('CombatState');
+        expect(unit.state.constructor.name).toBe('Combat');
         expect(unit.action).toBe('Fighting');
 
         // Verify effective combat
@@ -198,14 +198,14 @@ describe('Combat Retaliation System', () => {
         expect(goblin.hp).toBeLessThan(goblinHp);
     });
 
-    it('should switch strictly for self-defense scan failure in JobState (Non-worker)', () => {
+    it('should switch strictly for self-defense scan failure in Job (Non-worker)', () => {
         // Enable search result
         terrainMock.findBestTarget.mockReturnValue(goblin);
 
         unit.role = 'knight';
-        unit.id = 0; // Force ID 0 to enable JobState logging
+        unit.id = 0; // Force ID 0 to enable Job logging
         unit.targetRequest = { id: 'req2', type: 'patrol', x: 30, z: 30, assignedTo: unit.id };
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Update
         // unit.targetGoblin is likely null here unless we set it or provoke it?
@@ -213,7 +213,7 @@ describe('Combat Retaliation System', () => {
         runUpdateLoop(unit, [goblin]);
 
         // Assert
-        expect(unit.state.constructor.name).toBe('CombatState');
+        expect(unit.state.constructor.name).toBe('Combat');
     });
 
 });

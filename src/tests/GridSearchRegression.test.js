@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Terrain } from '../Terrain.js';
-import GameConfig from '../config/GameConfig.json';
+import { GameConfig } from '../config/GameConfig';
 
 // Mocks
 const MockScene = new THREE.Scene();
@@ -55,7 +55,7 @@ describe('Terrain Grid Search Regression', () => {
         expect(result._spatial.type).toBe('worker');
     });
 
-    it('should NOT find Sheep or Fish when searching for "unit"', () => {
+    it('should find Sheep but NOT Fish when searching for "unit"', () => {
         // Setup
         const cx = 10, cz = 10;
 
@@ -66,9 +66,15 @@ describe('Terrain Grid Search Regression', () => {
         terrain.registerEntity(sheep, 10, 10, 'sheep');
         terrain.registerEntity(fish, 11, 10, 'fish');
 
+        // Search for unit - should now find sheep (as per new requirements)
         const result = terrain.findBestTarget('unit', cx, cz, 20, (e, d) => d, null);
 
-        expect(result).toBeNull();
+        expect(result).not.toBeNull();
+        expect(result.id).toBe(101);
+        expect(result._spatial.type).toBe('sheep');
+
+        // verify fish is still NOT found via unit search specifically? 
+        // findBestTarget only returns one (the best).
     });
 
     it('should NOT find Building when searching for unit', () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Unit } from '../Unit';
-import { UnitWanderState } from '../ai/states/UnitStates.js';
+import { Wander } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 import { MockGame, MockTerrain } from './TestHelper.js';
 
@@ -34,7 +34,7 @@ describe('Unit Migration Logic', () => {
         unit.game = mockGame; // Ensure explicit link
 
         // Initial state
-        unit.changeState(new UnitWanderState(unit));
+        unit.changeState(new Wander(unit));
 
         unit.triggerMove = vi.fn();
         unit.updatePosition = vi.fn();
@@ -65,7 +65,7 @@ describe('Unit Migration Logic', () => {
     });
 
     it('should increment stagnation on failed build', () => {
-        // Migration logic now resides in UnitWanderState for workers
+        // Migration logic now resides in Wander for workers
         unit.role = 'worker';
         unit.stagnationTimer = 0;
         unit.lastGridX = 50; unit.lastGridZ = 50;

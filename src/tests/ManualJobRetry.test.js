@@ -2,7 +2,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { Game } from '../Game.js';
 import { Terrain } from '../Terrain.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 
 describe('Manual Job Retry and Water Reachability Logic Test', () => {
 
@@ -86,7 +86,7 @@ describe('Manual Job Retry and Water Reachability Logic Test', () => {
         });
     });
 
-    describe('JobState Deferral Logic', () => {
+    describe('Job Deferral Logic', () => {
         it('should use 3s deferTime for manual requests', () => {
             const mockActor = {
                 id: 1,
@@ -113,8 +113,8 @@ describe('Manual Job Retry and Water Reachability Logic Test', () => {
                 z: 10
             };
 
-            const state = new JobState(mockActor);
-            state.targetRequest = mockRequest;
+            const state = new Job(mockActor);
+            mockActor.targetRequest = mockRequest;
             state.getResumeState = vi.fn();
 
             // Correct order: update(time, deltaTime)
@@ -150,8 +150,8 @@ describe('Manual Job Retry and Water Reachability Logic Test', () => {
                 z: 10
             };
 
-            const state = new JobState(mockActor);
-            state.targetRequest = mockRequest;
+            const state = new Job(mockActor);
+            mockActor.targetRequest = mockRequest;
             state.getResumeState = vi.fn();
 
             // Correct order: update(time, deltaTime)

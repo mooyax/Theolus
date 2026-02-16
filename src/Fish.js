@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { Actor } from './Actor.js';
-import { WanderState } from './ai/states/State.js';
+import { Actor } from './Actor';
+import { WanderBase } from './ai/states/State.js';
 
 export class Fish extends Actor {
     static assets = {
@@ -43,7 +43,7 @@ export class Fish extends Actor {
         this.updatePosition();
 
         // Init State
-        this.changeState(new WanderState(this));
+        this.changeState(new WanderBase(this));
     }
 
     createMesh() {

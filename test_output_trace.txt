@@ -1,0 +1,145 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/CombatStuck.test.js
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/CombatStuck.test.js
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/CombatStuck.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/CombatStuck.test.js > Combat Stuck Investigation > should NOT get stuck in Combat state if target is unreachable
+[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    console.log(`[Actor ${this.id}] smartMove Called. Target:${
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Entity 1] CONSTRUCTOR START: type=goblin at 20,10
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    console.log(`[Actor ${this.id}] smartMove Called. Target:${
+
+stdout | src/tests/CombatStuck.test.js > Combat Stuck Investigation > should NOT get stuck in Combat state if target is unreachable
+[Unit Debug 1] updateLogic. State: Combat
+[Combat Debug 1] Update Start. TargetG:true TargetB:false
+[Combat] Move Failed (Unreachable/NoPath). Abandoning Combat. Unit:1
+[Unit Debug 1] updateLogic. State: Wander
+
+stdout | src/tests/CombatStuck.test.js > Combat Stuck Investigation > should NOT get stuck in Combat state if smartMove fails (No Path) even if isUnreachable is false
+Disposing detached game instance
+
+stdout | src/tests/CombatStuck.test.js > Combat Stuck Investigation > should NOT get stuck in Combat state if smartMove fails (No Path) even if isUnreachable is false
+[Entity 2] CONSTRUCTOR START: type=unit at 10,10
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    console.log(`[Actor ${this.id}] smartMove Called. Target:${
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:1
+[Entity 3] CONSTRUCTOR START: type=goblin at 20,10
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    console.log(`[Actor ${this.id}] smartMove Called. Target:${
+
+stdout | src/tests/CombatStuck.test.js > Combat Stuck Investigation > should NOT get stuck in Combat state if smartMove fails (No Path) even if isUnreachable is false
+[Unit Debug 1] updateLogic. State: Combat
+[Combat Debug 1] Update Start. TargetG:true TargetB:false
+[Combat] Move Failed (Unreachable/NoPath). Abandoning Combat. Unit:1
+
+stdout | src/tests/CombatStuck.test.js > Combat Stuck Investigation > should add unreachable target to ignoredTargets to prevent loop (Infinite Loop Prevention)
+Disposing detached game instance
+
+stdout | src/tests/CombatStuck.test.js > Combat Stuck Investigation > should add unreachable target to ignoredTargets to prevent loop (Infinite Loop Prevention)
+[Entity 4] CONSTRUCTOR START: type=unit at 10,10
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[DIAG] Actor Created ID: 4
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    console.log(`[Actor ${this.id}] smartMove Called. Target:${
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:2
+[Entity 5] CONSTRUCTOR START: type=goblin at 20,10
+[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+[DIAG] Actor Created ID: 5
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    console.log(`[Actor ${this.id}] smartMove Called. Target:${
+
+stdout | src/tests/CombatStuck.test.js > Combat Stuck Investigation > should add unreachable target to ignoredTargets to prevent loop (Infinite Loop Prevention)
+[Unit Debug 1] updateLogic. State: Combat
+[Combat Debug 1] Update Start. TargetG:true TargetB:false
+[Combat] Move Failed (Unreachable/NoPath). Abandoning Combat. Unit:1
+
+stdout | src/tests/CombatStuck.test.js > Combat Stuck Investigation > should Handle Async Pathfinding Errors gracefully (prevent stuck state)
+Disposing detached game instance
+
+stdout | src/tests/CombatStuck.test.js > Combat Stuck Investigation > should Handle Async Pathfinding Errors gracefully (prevent stuck state)
+[Entity 6] CONSTRUCTOR START: type=unit at 10,10
+[Entity 6] Calling registerEntity...
+[Entity 6] registerEntity returned.
+[Entity 6] Calling updatePosition...
+[Entity 6] updatePosition returned.
+[DIAG] Actor Created ID: 6
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    console.log(`[Actor ${this.id}] smartMove Called. Target:${
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:3
+[Entity 7] CONSTRUCTOR START: type=goblin at 20,10
+[Entity 7] Calling registerEntity...
+[Entity 7] registerEntity returned.
+[Entity 7] Calling updatePosition...
+[Entity 7] updatePosition returned.
+[DIAG] Actor Created ID: 7
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    console.log(`[Actor ${this.id}] smartMove Called. Target:${
+
+stdout | src/tests/CombatStuck.test.js > Combat Stuck Investigation > should Handle Async Pathfinding Errors gracefully (prevent stuck state)
+[Unit Debug 1] updateLogic. State: Combat
+[Combat Debug 1] Update Start. TargetG:true TargetB:false
+
+ 笶ｯ src/tests/CombatStuck.test.js (4 tests | 1 failed) 16ms
+     笨・should NOT get stuck in Combat state if target is unreachable 6ms
+     笨・should NOT get stuck in Combat state if smartMove fails (No Path) even if isUnreachable is false 1ms
+     笨・should add unreachable target to ignoredTargets to prevent loop (Infinite Loop Prevention) 1ms
+     ﾃ・should Handle Async Pathfinding Errors gracefully (prevent stuck state) 6ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  12:14:13
+   Duration  1.51s (transform 603ms, setup 94ms, import 641ms, tests 16ms, environment 529ms)
+

@@ -52,7 +52,7 @@ describe('Combat and Logic Fixes', () => {
         console.log("DEBUG: Heights:", h1, h2);
         console.log("DEBUG: Distance:", unit.getDistance(10, 0));
 
-        unit.updateLogic(currentTime, 0.1, false, [goblin], [], []);
+        unit.updateLogic(currentTime, 0.1, false, [], [], [goblin]);
 
         console.log("DEBUG: Target Found:", unit.targetGoblin ? unit.targetGoblin.id : 'NONE');
         console.log("DEBUG: Action:", unit.action);

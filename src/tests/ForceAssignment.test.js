@@ -42,6 +42,7 @@ vi.mock('three', async () => {
         AmbientLight: class { },
         DirectionalLight: class { position = { set: vi.fn() }; },
         BoxGeometry: class extends MockGeometry { },
+        BufferGeometry: class extends MockGeometry { },
         SphereGeometry: class extends MockGeometry { },
         CylinderGeometry: class extends MockGeometry { },
         PlaneGeometry: class extends MockGeometry { },
@@ -53,6 +54,8 @@ vi.mock('three', async () => {
         CanvasTexture: class { },
         ShaderMaterial: class { clone() { return this; } },
         Color: class { setHex() { } set() { } },
+        MOUSE: { LEFT: 0, MIDDLE: 1, RIGHT: 2 },
+        Clock: class { constructor() { } getDelta() { return 0.016; } getElapsedTime() { return 0; } },
     };
 });
 

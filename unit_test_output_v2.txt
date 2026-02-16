@@ -1,0 +1,128 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/Unit.test.js > Unit Logic > Resource Gathering > should gather fish if checking neighbors finds water
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Resource Gathering > should NOT gather fish if completely inland
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should prioritize Farm and ABORT house if farm fails during famine
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should fallback to House if NOT in famine
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should fallback to House if NOT in famine
+[Entity 3] startMove -> isMoving:true. Target:5,5 StartTime:100.0000
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should accept role in constructor
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should accept role in constructor
+[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:5 Role:hunter Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:5 Role:hunter Pos:5,5
+[Entity 6] Calling registerEntity...
+[Entity 6] registerEntity returned.
+[Entity 6] Calling updatePosition...
+[Entity 6] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:5,5
+[Entity 7] Calling registerEntity...
+[Entity 7] registerEntity returned.
+[Entity 7] Calling updatePosition...
+[Entity 7] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:7 Role:true Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:7 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor
+[Entity 8] Calling registerEntity...
+[Entity 8] registerEntity returned.
+[Entity 8] Calling updatePosition...
+[Entity 8] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:8 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:8 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor
+Unit improved land at 5,5. Moisture 0.50 -> 0.50
+[Entity 8] startMove -> isMoving:true. Target:5,5 StartTime:100.0000
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should succeed buildFarm if moisture is optimal
+[Entity 9] Calling registerEntity...
+[Entity 9] registerEntity returned.
+[Entity 9] Calling updatePosition...
+[Entity 9] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:9 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:9 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should succeed buildFarm if moisture is optimal
+[Unit 9] Moving onto Rock at 5,5 H:10 (Speed Penalty)
+[Entity 9] startMove -> isMoving:true. Target:5,5 StartTime:100.0000
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should check heights during moveRandomly
+[Entity 10] Calling registerEntity...
+[Entity 10] registerEntity returned.
+[Entity 10] Calling updatePosition...
+[Entity 10] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:10 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:10 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should check heights during moveRandomly
+[Entity 10] startMove -> isMoving:true. Target:5,5 StartTime:100.0000
+
+ 笨・src/tests/Unit.test.js > Unit Logic > Resource Gathering > should gather fish if checking neighbors finds water 5ms
+ 笨・src/tests/Unit.test.js > Unit Logic > Resource Gathering > should NOT gather fish if completely inland 3ms
+ ﾃ・src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should prioritize Farm and ABORT house if farm fails during famine 7ms
+   竊・expected "vi.fn()" to be called at least once
+ 笨・src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should fallback to House if NOT in famine 3ms
+ 笨・src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should accept role in constructor 1ms
+ 笨・src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor 2ms
+ 笨・src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should succeed buildFarm if moisture is optimal 7ms
+ 笨・src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should check heights during moveRandomly 2ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  13:05:45
+   Duration  1.03s (transform 188ms, setup 69ms, import 204ms, tests 31ms, environment 430ms)
+

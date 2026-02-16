@@ -1,0 +1,146 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stderr | src/tests/NightManualWork.test.js
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should go toward shelter (Going Home) if only AUTO jobs available at night
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+
+stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should go toward shelter (Going Home) if only AUTO jobs available at night
+[Unit 0] State Change: Wander -> Wander
+
+stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should continue MANUAL job when night falls
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+
+stderr | src/tests/NightManualWork.test.js > Night Manual Work Priority > should continue MANUAL job when night falls
+[JobState update] id:0 action:Approaching Job isMoving:false target:10
+!!![TRACE Entity 0] startMove target:20,20
+stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should continue MANUAL job when night falls
+[Unit 0] State Change: Wander -> Job
+[Actor 0]smartMove: triggers pathfinding.Dist: 14.1 Time:100.0 Last:0.0 Throttle:1.00 Action:Approaching Job 
+[JobCheck] Unit:0 Req:10 Assigned:0 Status:assigned
+[Actor 0] SmartMove Depth:1 Node:20,20 My:10,10 d:10,10 
+[Unit 0] canMoveTo(20,20) OK
+[Unit 0] canMoveTo(20,20) checking grid...
+[DIAG] executeMove Actor:0 calling startMove.Current isMoving:false 
+[Entity 0] startMove -> isMoving:true. Target:20,20 StartTime:100.0000
+[DIAG] executeMove Actor:0 finished startMove.New isMoving:true 
+
+
+stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should NOT release AUTO job when night falls if already active
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+
+stderr | src/tests/NightManualWork.test.js > Night Manual Work Priority > should NOT release AUTO job when night falls if already active
+[JobState update] id:0 action:Approaching Job isMoving:false target:11
+!!![TRACE Entity 0] startMove target:20,20
+
+stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should NOT release AUTO job when night falls if already active
+[Unit 0] State Change: Wander -> Job
+[Actor 0]smartMove: triggers pathfinding.Dist: 14.1 Time:100.0 Last:0.0 Throttle:1.00 Action:Approaching Job 
+[JobCheck] Unit:0 Req:11 Assigned:0 Status:assigned
+[Actor 0] SmartMove Depth:1 Node:20,20 My:10,10 d:10,10 
+[Unit 0] canMoveTo(20,20) OK
+[Unit 0] canMoveTo(20,20) checking grid...
+[DIAG] executeMove Actor:0 calling startMove.Current isMoving:false 
+[Entity 0] startMove -> isMoving:true. Target:20,20 StartTime:100.0000
+[DIAG] executeMove Actor:0 finished startMove.New isMoving:true 
+
+stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should prefer MANUAL job over sleep in Wander at night
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+
+stdout | src/tests/NightManualWork.test.js > Night Manual Work Priority > should prefer MANUAL job over sleep in Wander at night
+[Unit 0] State Change: Wander -> Wander
+
+
+ 笶ｯ src/tests/NightManualWork.test.js (4 tests | 2 failed) 19ms
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/NightManualWork.test.js > Night Manual Work Priority > should go toward shelter (Going Home) if only AUTO jobs available at night
+TypeError: this.terrain.findBestTarget is not a function
+ 笶ｯ Unit.checkSelfDefense src/Unit.ts:905:46
+    903| 
+    904|             // Use findBestTarget to avoid O(N) loop over all goblins
+    905|             const foundGoblin = this.terrain.findBestTarget('goblin', 窶ｦ
+       |                                              ^
+    906|                 if (g.isDead) return Infinity;
+    907|                 if (this.ignoredTargets.has(g.id)) return Infinity;
+ 笶ｯ Wander.update src/ai/states/UnitStates.ts:41:55
+ 笶ｯ Unit.updateLogic src/Unit.ts:2235:24
+ 笶ｯ src/tests/NightManualWork.test.js:69:14
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/NightManualWork.test.js > Night Manual Work Priority > should prefer MANUAL job over sleep in Wander at night
+TypeError: this.terrain.findBestTarget is not a function
+ 笶ｯ Unit.checkSelfDefense src/Unit.ts:905:46
+    903| 
+    904|             // Use findBestTarget to avoid O(N) loop over all goblins
+    905|             const foundGoblin = this.terrain.findBestTarget('goblin', 窶ｦ
+       |                                              ^
+    906|                 if (g.isDead) return Infinity;
+    907|                 if (this.ignoredTargets.has(g.id)) return Infinity;
+ 笶ｯ Wander.update src/ai/states/UnitStates.ts:41:55
+ 笶ｯ Unit.updateLogic src/Unit.ts:2235:24
+ 笶ｯ src/tests/NightManualWork.test.js:122:14
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+     ﾃ・should go toward shelter (Going Home) if only AUTO jobs available at night 11ms
+     笨・should continue MANUAL job when night falls 3ms
+     笨・should NOT release AUTO job when night falls if already active 1ms
+     ﾃ・should prefer MANUAL job over sleep in Wander at night 2ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  15:26:42
+   Duration  879ms (transform 181ms, setup 70ms, import 192ms, tests 19ms, environment 420ms)
+

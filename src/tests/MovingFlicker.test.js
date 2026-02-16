@@ -32,7 +32,7 @@ vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
 
 import { Unit } from '../Unit.js';
 import { Game } from '../Game.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 
 // Mock Game.animate to avoid matrix/camera errors in headless environment
 Game.prototype.animate = vi.fn();
@@ -131,7 +131,7 @@ describe('Moving Flicker Check', () => {
         const claimed = game.claimRequest(unit, req);
         expect(claimed).toBe(true);
         expect(unit.targetRequest).toBe(req);
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
 
         // Track state changes
         const actions = [];
@@ -152,14 +152,14 @@ describe('Moving Flicker Check', () => {
             states.push(unit.state.constructor.name);
 
             // Fail immediately if we see unexpected Idle
-            if (unit.state.constructor.name !== 'JobState') {
+            if (unit.state.constructor.name !== 'Job') {
                 console.log(`[Flicker Detected] Frame ${i}: State=${unit.state.constructor.name}, Action=${unit.action}`);
             }
         }
 
-        // Verify we stayed in JobState
-        const nonJobStates = states.filter(s => s !== 'JobState');
-        expect(nonJobStates.length).toBe(0);
+        // Verify we stayed in Job
+        const nonJobs = states.filter(s => s !== 'Job');
+        expect(nonJobs.length).toBe(0);
 
         // Verify action didn't flicker to Idle
         const idleFrames = actions.map((a, i) => ({ a, i })).filter(pair => pair.a === 'Idle');
@@ -192,7 +192,7 @@ describe('Moving Flicker Check', () => {
         const claimed = game.claimRequest(unit, req);
         expect(claimed).toBe(true);
         expect(unit.targetRequest).toBe(req);
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
 
         // Track changes
         const states = [];
@@ -206,12 +206,12 @@ describe('Moving Flicker Check', () => {
         }
 
         // This is EXPECTED TO FAIL until the fix is applied
-        const jobStateCount = states.filter(s => s === 'JobState').length;
-        if (jobStateCount < 10) {
-            console.log(`[Reproduction Successful] Unit dropped job in frames: ${states.map((s, i) => s !== 'JobState' ? i : null).filter(x => x !== null).join(', ')}`);
+        const JobCount = states.filter(s => s === 'Job').length;
+        if (JobCount < 10) {
+            console.log(`[Reproduction Successful] Unit dropped job in frames: ${states.map((s, i) => s !== 'Job' ? i : null).filter(x => x !== null).join(', ')}`);
         }
 
-        expect(states[9]).toBe('JobState');
+        expect(states[9]).toBe('Job');
         expect(unit.action).toBe('Approaching Job');
     });
 
@@ -227,7 +227,7 @@ describe('Moving Flicker Check', () => {
         for (let i = 0; i < 10; i++) {
             unit.updateLogic(i * 0.1, 0.1);
             await new Promise(r => setTimeout(r, 0));
-            expect(unit.state).toBeInstanceOf(JobState);
+            expect(unit.state).toBeInstanceOf(Job);
         }
 
         // Frame 11-40: Force BLOCKAGE (canMoveTo fails)
@@ -237,8 +237,8 @@ describe('Moving Flicker Check', () => {
         for (let i = 11; i < 40; i++) {
             unit.updateLogic(i * 0.1, 0.1);
             await new Promise(r => setTimeout(r, 0));
-            // Should stay in JobState even if blocked for 30 frames
-            expect(unit.state).toBeInstanceOf(JobState);
+            // Should stay in Job even if blocked for 30 frames
+            expect(unit.state).toBeInstanceOf(Job);
             expect(unit.action).toBe('Approaching Job');
         }
 
@@ -246,7 +246,7 @@ describe('Moving Flicker Check', () => {
         unit.canMoveTo = originalCanMove;
         unit.updateLogic(4.1, 0.1);
 
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
         expect(unit.action).toBe('Approaching Job');
     });
 
@@ -260,11 +260,11 @@ describe('Moving Flicker Check', () => {
 
         // Start moving
         unit.updateLogic(0.1, 0.1);
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
 
         // Interruption: Attack!
         // Simulate a combat-triggering event or state change
-        const CombatState = class {
+        const Combat = class {
             constructor(u) { this.actor = u; }
             enter(prev) {
                 this.actor.action = 'Fighting';
@@ -274,15 +274,15 @@ describe('Moving Flicker Check', () => {
             exit() { }
         };
 
-        unit.changeState(new CombatState(unit));
+        unit.changeState(new Combat(unit));
         expect(unit.action).toBe('Fighting');
         expect(unit.targetRequest).toBe(req); // Request should be KEPT
 
-        // Resolve combat: Switch back to resume state (which should be JobState)
+        // Resolve combat: Switch back to resume state (which should be Job)
         const resume = unit.state.resumeState;
-        unit.changeState(resume || new JobState(unit));
+        unit.changeState(resume || new Job(unit));
 
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
         expect(unit.action).toBe('Approaching Job');
         expect(unit.targetRequest).toBe(req);
     });

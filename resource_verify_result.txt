@@ -1,0 +1,23 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/ResourceVerify.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/ResourceVerify.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/ResourceVerify.test.js > Resource Growth Verification > should harvest grain from farm and increase resources
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/ResourceVerify.test.js > Resource Growth Verification > should harvest grain from farm and increase resources
+[Test] Initial Grain: 100
+[Test] Post-Update Grain: 101
+
+ 笨・src/tests/ResourceVerify.test.js (1 test) 133ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  23:13:26
+   Duration  1.10s (transform 236ms, setup 76ms, import 244ms, tests 133ms, environment 462ms)
+

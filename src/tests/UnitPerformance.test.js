@@ -48,8 +48,8 @@ describe('Unit Performance Optimization', () => {
         expect(result0).toBe(false);
         expect(unit.getDistance).not.toHaveBeenCalled();
 
-        // Frame 29: (29 + 1) % 30 == 0 -> Should execute (Worker interval is 30)
-        window.game.frameCount = 29;
+        // Frame 59: (59 + 1) % 60 == 0 -> Should execute (Worker interval is 60)
+        window.game.frameCount = 59;
         unit.checkSelfDefense(passedGoblins);
 
         // findBestTarget should be called instead of manual getDistance loop
@@ -60,33 +60,30 @@ describe('Unit Performance Optimization', () => {
         // expect(args[0]).toBe('goblin');
     });
 
-    it('should skip searchSurroundings for busy workers', () => {
+    it('should skip checkSelfDefense for busy workers', () => {
         unit.role = 'worker';
         unit.targetRequest = { id: 1 }; // Busy
 
-        unit.searchSurroundings(10, 10, []);
+        // (Frame + id) % 30 == 0 -> frame 29 (Worker allowedInterval is 30)
+        window.game.frameCount = 29;
+        unit.checkSelfDefense([]);
 
-        // Should return immediately, findBestTarget NOT called
+        // Should return immediately, findBestTarget NOT called (Worker Pacifism)
         expect(terrain.findBestTarget).not.toHaveBeenCalled();
     });
 
-    it('should throttle searchSurroundings for idle units', () => {
+    it('should throttle checkSelfDefense for idle units', () => {
         unit.role = 'knight';
         unit.id = 1;
 
-        // Offset is (frame + id) % 20 [id=2 for this unit]
-        // Target: (frame + 2) % 20 == 0 -> frame = 18
+        // Knight allowedInterval = 10. Frame check: (frame + id) % 10 == 0
 
-        window.game.frameCount = 0; // (0 + 2) = 2 % 20 != 0 -> Skip
-        unit.searchSurroundings(10, 10, []);
+        window.game.frameCount = 0; // (0 + 1) % 10 != 0 -> Skip
+        unit.checkSelfDefense([]);
         expect(terrain.findBestTarget).not.toHaveBeenCalled();
 
-        window.game.frameCount = 14; // (14 + 1 + 5) = 20 % 20 == 0 -> Run
-        unit.searchSurroundings(10, 10, []);
-        // Note: Knight/Wizard run every 10 frames check
-        // if ((frame + this.id) % 20 !== 0) {
-        //    if (Knight/Wizard && (frame + id) % 10 !== 0) return;
-        // }
+        window.game.frameCount = 9; // (9 + 1) % 10 == 0 -> Run
+        unit.checkSelfDefense([]);
 
         expect(terrain.findBestTarget).toHaveBeenCalled();
     });

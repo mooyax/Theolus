@@ -115,7 +115,7 @@ export class CloudManager {
     }
 
     update(deltaTime, camera) {
-        if (!camera) return;
+        if (!camera || !camera.position) return;
 
         const camX = camera.position.x;
         const camZ = camera.position.z;

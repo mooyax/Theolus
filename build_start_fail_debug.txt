@@ -1,0 +1,44 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/BuildingStart.test.js[2m > [22m[2mBuilding Logic[2m > [22m[2mshould build house if population is sufficient (Initial State)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/BuildingStart.test.js[2m > [22m[2mBuilding Logic[2m > [22m[2mshould build house if population > 8 (with Base Cap 10)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+ [31m笶ｯ[39m src/tests/BuildingStart.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 23[2mms[22m[39m
+[31m     [31mﾃ・[31m should build house if population is sufficient (Initial State)[39m[32m 18[2mms[22m[39m
+     [32m笨・[39m should build house if population > 8 (with Base Cap 10)[32m 3[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/BuildingStart.test.js > Building Logic > should build house if population is sufficient (Initial State)
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ 笶ｯ src/tests/BuildingStart.test.js:43:23
+     41| 
+     42|         // EXPECTATION: Should fail if base capacity is 10
+     43|         expect(built).toBe(false);
+       |                       ^
+     44| 
+     45|         // This confirms why "Houses are not being built" initially.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m   Start at [22m 18:30:29
+[2m   Duration [22m 1.15s[2m (transform 325ms, setup 389ms, import 48ms, tests 23ms, environment 441ms)[22m
+

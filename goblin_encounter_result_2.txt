@@ -1,0 +1,149 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/GoblinEncounter.test.js
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/GoblinEncounter.test.js
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/GoblinEncounter.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/GoblinEncounter.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should detect Worker within range and enter Combat
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should detect Worker within range and enter Combat
+[Entity 0] CONSTRUCTOR START: type=goblin at 20,20
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Actor 0] CHANGE STATE: None -> Wander Request:null 
+[Entity 1] CONSTRUCTOR START: type=unit at 30,20
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:30,20 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:30,20
+[UnitCore.js] Unit Construction Finished ID:0
+[Test Debug] Worker keys: id,scene,terrain,game,frameCount,gridX,gridZ,type,spatialType,position,rotationY,userData,isMoving,moveTimer,moveDuration,moveStartTime,startGridX,startGridZ,targetGridX,targetGridZ,walkAnimTimer,isDead,age,limbs,_spatial,path,pathIndex,stuckCount,stuckTimer,lastPos,pathFailCount,action,lastMoveLog,raidGoal,lifespan,isFinished,unreachableTimer,mesh,targetRequest,targetItem,heldItem,targetEntity,targetBuilding,hp,maxHp,damage,attackRate,attackCooldown,combatRange,isRanged,baseMoveDuration,lastPathTime,isPathfinding,isPathfindingThrottled,isUnreachable,isWaitingForPath,minDistToTarget,pathStagnation,pathRequestId,pathTargetX,pathTargetZ,pathRequestedTargetX,pathRequestedTargetZ,state,simTime,role,isSpecial,squadId,faction,lastJobResult,lastGridX,lastGridZ,stagnationTimer,buildStagnationCount,lastTime,lastGatherTime,lastHitTime,moveInterval,huntingCooldown,target,targetX,targetZ,wanderCount,migrationTarget,patrolTarget,patrolTimer,ignoredTargets,debugFrame,isSleeping,targetGoblin,targetUnit,targetRaidPoint,lastWaterLogTime,scanTimer,homeBase,residence,xp,crossMesh,level,name,lastPathAttempt,savedHomeBaseX,savedHomeBaseZ,savedTargetRequestId,migrationTimer,moisture,deathTimer
+[Actor 200] Resetting Unreachable (Target changed or initializing)
+[GoblinWander Debug] ID:100 State:Wander Update. Timer:0.20 dt:0.1000 findTarget:function
+[GoblinState Debug] ID:100 Calling scanForTargets...
+[Goblin 100] Found Unit Candidate: 200 Dist:? 
+[Actor 100] Resetting Unreachable (Target changed or initializing)
+[Actor 200] Resetting Unreachable (Target changed or initializing)
+[Actor 200] Resetting Unreachable (Target changed or initializing)
+[Actor 100] Pathfinding SUCCESS: Got 11 nodes to 30,20
+[Entity 100] startMove -> isMoving:true. Target:21,20 StartTime:0.7000
+[Actor 200] Pathfinding SUCCESS: Got 12 nodes to 19,10
+[Entity 200] startMove -> isMoving:true. Target:29,19 StartTime:4.9000
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should prioritize Worker if Building is far, or attack Building if close
+Disposing detached game instance
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should prioritize Worker if Building is far, or attack Building if close
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should prioritize Worker if Building is far, or attack Building if close
+[Entity 2] CONSTRUCTOR START: type=goblin at 20,20
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 3] CONSTRUCTOR START: type=unit at 30,20
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:30,20 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:30,20
+[UnitCore.js] Unit Construction Finished ID:1
+[Actor 201] Resetting Unreachable (Target changed or initializing)
+[Entity 201] startMove -> isMoving:true. Target:29,20 StartTime:0.1000
+[Goblin 101] Found Unit Candidate: 201 Dist:? 
+[Actor 101] Resetting Unreachable (Target changed or initializing)
+[Entity 201] updateMovement ARRIVAL -> isMoving:false. Time:1.0000 StartTime:0.1000 Dur:0.8000 PrevGrid:30,20 Target:29,20
+[Entity 4] CONSTRUCTOR START: type=building at 29,20
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[Actor 201] Resetting Unreachable (Target changed or initializing)
+[Actor 201] Resetting Unreachable (Target changed or initializing)
+[Actor 201] Resetting Unreachable (Target changed or initializing)
+[Actor 101] Pathfinding SUCCESS: Got 11 nodes to 30,20
+[Entity 101] startMove -> isMoving:true. Target:21,20 StartTime:0.7000
+[Actor 201] Pathfinding SUCCESS: Got 7 nodes to 23,21
+[Entity 201] startMove -> isMoving:true. Target:28,20 StartTime:4.4000
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should switch target to Worker if it encounters one while moving to a far Building
+Disposing detached game instance
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should switch target to Worker if it encounters one while moving to a far Building
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should switch target to Worker if it encounters one while moving to a far Building
+[Entity 5] CONSTRUCTOR START: type=goblin at 20,20
+[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+[DIAG] Actor Created ID: 5
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 6] CONSTRUCTOR START: type=unit at 25,20
+[Entity 6] Calling registerEntity...
+[Entity 6] registerEntity returned.
+[Entity 6] Calling updatePosition...
+[Entity 6] updatePosition returned.
+[DIAG] Actor Created ID: 6
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:25,20 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:25,20
+[UnitCore.js] Unit Construction Finished ID:2
+[Goblin 102] Found Unit Candidate: 202 Dist:? 
+[Actor 102] Resetting Unreachable (Target changed or initializing)
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should switch target to Worker if it encounters one while moving to a far Building
+[Actor 102] Pathfinding SUCCESS: Got 6 nodes to 25,20
+[Entity 102] startMove -> isMoving:true. Target:21,20 StartTime:0.8000
+
+ 笨・src/tests/GoblinEncounter.test.js (3 tests) 532ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  00:06:01
+   Duration  1.82s (transform 409ms, setup 110ms, import 425ms, tests 532ms, environment 521ms)
+

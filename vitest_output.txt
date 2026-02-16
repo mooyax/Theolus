@@ -1,0 +1,95 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/GoblinStuckness.test.js > Goblin Combat and Stagnation > should blacklist unreachable targets and transition state
+Goblin constructor: calling super...
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Actor 0] CHANGE STATE: None -> Wander Request:null
+
+stdout | src/tests/GoblinStuckness.test.js > Goblin Combat and Stagnation > should blacklist unreachable targets and transition state
+[Actor 0] CHANGE STATE: Wander -> Combat Request:null
+UPDATE LOGIC BODY: updateLogic(time, deltaTime, units, buildings) {
+    console.log(`[Goblin DEBUG] updateLogic ENTER: time=${time}, id=${this.id}`);
+    if (this.isDead || this.isFinished) return;
+    if (this.hp < this.maxHp) {
+      this.hp += 1 / 60 * deltaTime;
+      if (this.hp > this.maxHp) this.hp = this.maxHp;
+    };
+    this.age += deltaTime * 0.2;
+    if (this.age >= this.lifespan) {
+      this.die("Old Age");
+      return;
+    };
+    if (this.age > 400 && this.type !== "king") {
+      console.warn(`Goblin ${this.id} exceeded max lifespan (${this.age}). Forcing death.`);
+      this.die("Exceeded Lifespan");
+      return;
+    };
+    const currentH = this.terrain.getTileHeight(this.gridX, this.gridZ);
+    if (currentH <= 0) {
+      console.error(`[Goblin.js] Dying due to low height: ${currentH} at ${this.gridX},${this.gridZ}`);
+      this.die("Low Height");
+      return;
+    };
+    if (this.updateMovement) {
+      this.updateMovement(time);
+    };
+    if (this.attackCooldown > 0) {
+      this.attackCooldown -= deltaTime;
+    };
+    console.log(`[Goblin DEBUG] updateLogic state: ${this.state ? this.state.constructor.name : "null"}, typeof update: ${this.state ? typeof this.state.update : "n/a"}`);
+    if (this.state && typeof this.state.update === "function") {
+      this.state.update(time, deltaTime, units, buildings);
+    } else {
+      console.log(`[Goblin.js] Invalid State! State:`, this.state);
+    }
+  }
+[Goblin DEBUG] updateLogic ENTER: time=101, id=0
+[Goblin DEBUG] updateLogic state: Combat, typeof update: function
+[Combat DEBUG] update: targetUnit=victim1, targetBuilding=undefined
+[Goblin DEBUG] moved: false, pathing: false, throttled: false, unreachable: true, target: victim1
+Goblin 0 stuck reaching target victim1. Blacklisting.
+[Actor 0] CHANGE STATE: Combat -> Raid Request:null
+
+stdout | src/tests/GoblinStuckness.test.js > Goblin Combat and Stagnation > should respect blacklist in findTarget
+Goblin constructor: calling super...
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+
+stdout | src/tests/GoblinStuckness.test.js > Goblin Combat and Stagnation > should respect blacklist in findTarget
+[Goblin 1] Found Unit Candidate: blocked1 Dist:?
+
+stdout | src/tests/GoblinStuckness.test.js > Goblin Combat and Stagnation > should not stop movement if already fighting
+Goblin constructor: calling super...
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+
+ 笶ｯ src/tests/GoblinStuckness.test.js (3 tests | 1 failed) 18ms
+     笨・should blacklist unreachable targets and transition state 8ms
+     笨・should respect blacklist in findTarget 1ms
+     ﾃ・should not stop movement if already fighting 8ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  12:17:19
+   Duration  881ms (transform 144ms, setup 70ms, import 118ms, tests 18ms, environment 453ms)
+

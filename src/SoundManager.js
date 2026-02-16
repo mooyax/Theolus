@@ -1,13 +1,18 @@
 import * as THREE from 'three';
+console.log('[DEBUG] SoundManager.js top-level load');
 
 export class SoundManager {
     constructor() {
+        console.log('[SoundManager] Constructor START');
         this.context = null;
         this.masterGain = null;
         this.initialized = false;
         this.camera = null;
+        console.log('[SoundManager] Creating Frustum');
         this.frustum = new THREE.Frustum();
+        console.log('[SoundManager] Creating Matrix4');
         this.projScreenMatrix = new THREE.Matrix4();
+        console.log('[SoundManager] Constructor END');
     }
 
     init(camera) {

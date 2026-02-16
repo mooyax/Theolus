@@ -11,7 +11,8 @@ describe('Human Spawning Survival', () => {
         mockScene = { add: vi.fn(), remove: vi.fn() };
         // Valid Game State for Food - STARVATION MODE
         window.game = {
-            resources: { grain: 0, meat: 0, fish: 0 }
+            resources: { grain: 0, meat: 0, fish: 0 },
+            minimal: true
         };
 
         terrain = new Terrain(mockScene, []);
@@ -19,6 +20,15 @@ describe('Human Spawning Survival', () => {
         terrain.logicalDepth = 10;
         terrain.grid = Array(10).fill(null).map(() => Array(10).fill({ height: 1, noise: 0 }));
         terrain.buildings = [];
+
+        // Mock WaterMesh to prevent TypeError in update
+        terrain.waterMesh = {
+            material: {
+                uniforms: {
+                    uTime: { value: 0 }
+                }
+            }
+        };
     });
 
     it('should allow population growth (slowly) even with 0 food', () => {
@@ -30,7 +40,8 @@ describe('Human Spawning Survival', () => {
                 population: 0,
                 capacity: 10,
                 popTimer: 0
-            }
+            },
+            material: { uniforms: { uColor: { value: new THREE.Color() } } }
         };
         terrain.buildings.push(house);
 

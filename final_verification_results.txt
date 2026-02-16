@@ -1,0 +1,126 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:soldier Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:soldier Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+Goblin constructor: calling super...
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Actor 0] CHANGE STATE: None -> Wander Request:null 
+[TestDebug] Starting Loop. Unit State: Combat
+[Unit Debug 1] updateLogic. State: Combat
+[Combat Debug 1] Update Start. TargetG:false TargetB:true
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Goblin should switch target to nearby Unit while moving to distant Building
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Goblin should switch target to nearby Unit while moving to distant Building
+Goblin constructor: calling super...
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:soldier Pos:20,20 Special:false
+[UnitCore.js] Unit Created ID:1 Role:soldier Pos:20,20
+[UnitCore.js] Unit Construction Finished ID:1
+[GoblinState 3] Encounter! Switching from Building to Nearby Unit 4
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Worker should reduce scan range (Worker Aggression Fix)
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Worker should reduce scan range (Worker Aggression Fix)
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[DIAG] Actor Created ID: 4
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:2
+
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario A: Worker destroys Cave
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Unit Debug 1] updateLogic. State: Wander
+[Test A] Pre-Update HP: 200
+[Test A] Post-Update HP: 200
+
+ 笨・src/tests/EncounterCombat.test.js (3 tests) 17ms
+ 笨・src/tests/CombatVerification.test.js (1 test) 10ms
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Hotspot Debug] Grouping with existing at 10,10 (Dist: 2.8)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads to intense hotspots (Updated Threshold)
+[Game] Mobilizing Squad 1 to Hotspot at 100,20 (Intensity:100.0)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads
+[Game] Mobilizing Squad 1 to Hotspot at 50,50 (Intensity:100.0)
+
+ 笨・src/tests/Hotspot.test.js (6 tests) 437ms
+     笨・Clusters nearby battle reports  431ms
+
+ Test Files  3 passed (3)
+      Tests  10 passed (10)
+   Start at  23:30:29
+   Duration  1.21s (transform 822ms, setup 194ms, import 782ms, tests 464ms, environment 1.47s)
+

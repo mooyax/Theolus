@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
-import { UnitWanderState } from '../ai/states/UnitStates.js';
+import { Wander } from '../ai/states/UnitStates.js';
 import { MockGame, MockTerrain } from './TestHelper.js';
 
 describe('Jitabata Bug Reproduction (Interrupt Loop)', () => {
@@ -20,7 +20,7 @@ describe('Jitabata Bug Reproduction (Interrupt Loop)', () => {
         // Create Unit at 10,10
         unit = new Unit(mockGame.scene, mockTerrain, 10, 10, 'knight');
         unit.game = mockGame;
-        unit.changeState(new UnitWanderState(unit));
+        unit.changeState(new Wander(unit));
     });
 
     it('should NOT trigger Jitabata (Stop-and-Go) when a distant Raid Point appears during Migration', () => {
@@ -32,8 +32,8 @@ describe('Jitabata Bug Reproduction (Interrupt Loop)', () => {
         unit.migrationTarget = { x: 50, z: 50 };
         unit.isMoving = false;
 
-        // Mock searchSurroundings to find NOTHING locally
-        vi.spyOn(unit, 'searchSurroundings').mockImplementation(() => { });
+        // Mock checkSelfDefense to find NOTHING locally
+        vi.spyOn(unit, 'checkSelfDefense').mockImplementation(() => { });
 
         // Mock findRaidTarget to find a DISTANT point (e.g. 80, 80)
         vi.spyOn(unit, 'findRaidTarget').mockReturnValue(true);

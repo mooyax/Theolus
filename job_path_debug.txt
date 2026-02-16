@@ -1,0 +1,29 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+stderr | src/tests/Investigation_JobPath.test.js
+[DEBUG] Actor.ts loaded
+
+ [31m笶ｯ[39m src/tests/Investigation_JobPath.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 6[2mms[22m[39m
+[31m     [31mﾃ・[31m should maintain path while processing Job[39m[32m 5[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Investigation_JobPath.test.js > Job Path Consistency > should maintain path while processing Job
+TypeError: Cannot read properties of undefined (reading 'setupTestEnv')
+ 笶ｯ src/tests/Investigation_JobPath.test.js:13:25
+     11| 
+     12|     beforeEach(() => {
+     13|         env = TestUtils.setupTestEnv();
+       |                         ^
+     14|         mockGame = env.game;
+     15|         terrain = env.terrain;
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 08:33:07
+[2m   Duration [22m 1.03s[2m (transform 282ms, setup 66ms, import 307ms, tests 6ms, environment 452ms)[22m
+

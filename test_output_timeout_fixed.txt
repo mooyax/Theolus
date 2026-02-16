@@ -1,0 +1,12 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+ 笶ｯ src/tests/PathfindingTimeout.test.js (2 tests | 2 failed) 17ms
+     ﾃ・should timeout if worker does not respond within 5000ms 14ms
+     ﾃ・should resolve if worker responds in time 2ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  12:27:08
+   Duration  1.11s (transform 271ms, setup 89ms, import 246ms, tests 17ms, environment 552ms)
+

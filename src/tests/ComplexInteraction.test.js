@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Game } from '../Game.js';
 import { Unit } from '../Unit.js';
-import { JobState, WanderState } from '../ai/states/UnitStates.js';
+import { Job, WanderState } from '../ai/states/UnitStates.js';
 import { Minimap } from '../Minimap.js';
 import { Compass } from '../Compass.js';
 
@@ -156,10 +156,10 @@ describe('Complex Job Interaction and Cancellation', () => {
 
         // 2. Teleport to target (Arrived)
         unit.gridX = 20; unit.gridZ = 0;
-        unit.updateLogic(1000, 0.1); // JobState -> Arrived -> WorkingState?
+        unit.updateLogic(1000, 0.1); // Job -> Arrived -> WorkingState?
 
         // Check if Working
-        // JobState arrival logic sets action='Working' and starts work?
+        // Job arrival logic sets action='Working' and starts work?
         // We might need to mock smartMove returning true (arrived)?
         // Or mockTerrain.findPath returning empty path (arrived)?
         // Actually if we set unit Coords = Target coords, smartMove returns true immediately?

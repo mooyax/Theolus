@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
-import { CombatState } from '../ai/states/UnitStates.js';
+import { Combat } from '../ai/states/UnitStates.js';
 import { Game } from '../Game.js';
 import * as THREE from 'three';
 
@@ -71,12 +71,11 @@ describe('Advanced Units', () => {
 
         wizard.targetGoblin = goblin;
         wizard.getDistance = () => 4.0;
-        wizard.changeState(new CombatState(wizard));
-
+        wizard.changeState(new Combat(wizard));
         wizard.attackGoblin(goblin);
 
         expect(wizard.attackCooldown).toBeGreaterThan(0);
         expect(goblin.takeDamage).toHaveBeenCalled();
-        expect(wizard.state).toBeInstanceOf(CombatState);
+        expect(wizard.state).toBeInstanceOf(Combat);
     });
 });

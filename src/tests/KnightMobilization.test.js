@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
-import { CombatState, JobState, UnitWanderState } from '../ai/states/UnitStates.js';
+import { Combat, Job, Wander } from '../ai/states/UnitStates.js';
 import { Actor } from '../Actor.js';
 
 // Mock MockTerrain

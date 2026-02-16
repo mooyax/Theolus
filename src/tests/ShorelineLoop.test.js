@@ -53,15 +53,24 @@ describe('Shoreline Loop Reproduction', () => {
         };
     });
 
-    it('should NOT target unrelated region goblin via findTargetGoblin', () => {
+    it('should NOT target unrelated region goblin via checkSelfDefense', () => {
         // Mock Goblins list
         const goblins = [goblin];
 
+        // Mock findBestTarget to emulate the filtering logic
+        terrain.findBestTarget = vi.fn((type, x, z, r, filter, candidates) => {
+            if (candidates) {
+                for (const g of candidates) {
+                    if (filter(g, 10) !== Infinity) return g;
+                }
+            }
+            return null;
+        });
+
         // Call the suspect function
-        unit.findTargetGoblin(goblins);
+        unit.checkSelfDefense(goblins, true);
 
         // Expectation: Unit should IGNORE the goblin because it is in a different region
-        // Current Bug: It likely finds it because findTargetGoblin lacks region checks.
         expect(unit.targetGoblin).toBeNull();
     });
 
@@ -69,11 +78,20 @@ describe('Shoreline Loop Reproduction', () => {
         // Move unit to water
         unit.gridX = 10;
         unit.gridZ = 5;
-        // Mock terrain check implies region 0
+
+        // Mock findBestTarget
+        terrain.findBestTarget = vi.fn((type, x, z, r, filter, candidates) => {
+            if (candidates) {
+                for (const g of candidates) {
+                    if (filter(g, 10) !== Infinity) return g;
+                }
+            }
+            return null;
+        });
 
         const goblins = [goblin]; // Goblin at 15,5 (Region 2)
 
-        unit.findTargetGoblin(goblins);
+        unit.checkSelfDefense(goblins, true);
 
         expect(unit.targetGoblin).toBeNull();
     });

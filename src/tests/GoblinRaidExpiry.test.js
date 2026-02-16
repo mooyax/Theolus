@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GoblinManager } from '../GoblinManager.js';
 import { Goblin } from '../Goblin.js';
-import { GoblinRaidState, GoblinWanderState } from '../ai/states/GoblinStates.js';
+import { Raid, Wander } from '../ai/states/GoblinStates.js';
 import * as THREE from 'three';
 
 describe('Goblin Raid Expiry Persistence', () => {
@@ -60,7 +60,7 @@ describe('Goblin Raid Expiry Persistence', () => {
         goblin.id = 1;
         const raidGoal = { x: 50, z: 50, timestamp: 40.0 }; // Old timestamp (60s ago)
         goblin.raidGoal = raidGoal;
-        goblin.changeState(new GoblinRaidState(goblin));
+        goblin.changeState(new Raid(goblin));
         goblinManager.goblins.push(goblin);
 
         // 2. Serialize
@@ -77,7 +77,7 @@ describe('Goblin Raid Expiry Persistence', () => {
 
         // 4. Verification
         expect(restoredGoblin).toBeDefined();
-        expect(restoredGoblin.state.constructor.name).toBe('GoblinRaidState');
+        expect(restoredGoblin.state.constructor.name).toBe('Raid');
         expect(restoredGoblin.raidGoal).toBeDefined();
         expect(restoredGoblin.raidGoal.x).toBe(50);
 
@@ -89,7 +89,7 @@ describe('Goblin Raid Expiry Persistence', () => {
         // Setup serialized data with timestamp (simulating proper save)
         const savedData = {
             goblins: [{
-                id: 99, x: 10, z: 10, t: 'normal', s: 'GoblinRaidState',
+                id: 99, x: 10, z: 10, t: 'normal', s: 'Raid',
                 rg: { x: 50, z: 50, ts: 10.0 } // Use 'ts' as per implementation
             }]
         };
@@ -98,7 +98,7 @@ describe('Goblin Raid Expiry Persistence', () => {
         const goblin = goblinManager.goblins[0];
 
         // Pre-update check
-        expect(goblin.state.constructor.name).toBe('GoblinRaidState');
+        expect(goblin.state.constructor.name).toBe('Raid');
 
         // Update
         // goblin.updateLogic(time, deltaTime)
@@ -107,6 +107,6 @@ describe('Goblin Raid Expiry Persistence', () => {
         goblin.state.update(100.0, 0.1, [], []);
 
         // Should switch to Wander because 100 - 10 > 60
-        expect(goblin.state.constructor.name).toBe('GoblinWanderState');
+        expect(goblin.state.constructor.name).toBe('Wander');
     });
 });

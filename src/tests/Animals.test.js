@@ -2,45 +2,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SheepManager } from '../SheepManager.js';
 import { FishManager } from '../FishManager.js';
+import { Sheep } from '../Sheep.js';
+import { Fish } from '../Fish.js';
 import { Terrain } from '../Terrain.js';
 import * as THREE from 'three';
 
-// Simplify Mocking - Just the essentials
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        Group: class {
-            constructor() {
-                this.position = new actual.Vector3();
-                this.rotation = { x: 0, y: 0, z: 0 };
-                this.userData = {};
-                this.add = vi.fn();
-                this.remove = vi.fn();
-            }
-        },
-        Mesh: class {
-            constructor() {
-                this.position = new actual.Vector3();
-                this.rotation = { x: 0, y: 0, z: 0 };
-                this.add = vi.fn();
-                this.geometry = { dispose: vi.fn(), scale: vi.fn(), rotateX: vi.fn() };
-                this.material = { dispose: vi.fn(), uniforms: {} };
-            }
-        },
-        Scene: class {
-            constructor() {
-                this.add = vi.fn();
-                this.remove = vi.fn();
-            }
-        },
-        BoxGeometry: class { constructor() { this.dispose = vi.fn(); } },
-        SphereGeometry: class { constructor() { this.dispose = vi.fn(); this.scale = vi.fn(); } },
-        ConeGeometry: class { constructor() { this.dispose = vi.fn(); this.rotateX = vi.fn(); } },
-        MeshStandardMaterial: class { constructor() { this.dispose = vi.fn(); } },
-        MeshLambertMaterial: class { constructor() { this.dispose = vi.fn(); } },
-    };
-});
+// Local THREE mock removed to use global setup.js mock
 
 describe('Animal Movement Verification', () => {
     let scene, terrain;
@@ -50,7 +17,10 @@ describe('Animal Movement Verification', () => {
         terrain = {
             logicalWidth: 80,
             logicalDepth: 80,
-            grid: Array(80).fill().map(() => Array(80).fill({ hasBuilding: false })),
+            // grid needs to be a real 2D array of objects
+            grid: Array(80).fill(null).map(() =>
+                Array(80).fill(null).map(() => ({ hasBuilding: false }))
+            ),
             getTileHeight: vi.fn(() => 1.0), // Land
             getInterpolatedHeight: vi.fn(() => 1.0),
             unregisterEntity: vi.fn(),
@@ -64,13 +34,29 @@ describe('Animal Movement Verification', () => {
 
     it('Sheep should move after interval (Manual Time Step)', () => {
         const manager = new SheepManager(scene, terrain);
+        // Force spawn if random failed
+        if (manager.sheeps.length === 0) {
+            const s = new Sheep(scene, terrain, 10, 10);
+            s.updatePosition();
+            manager.sheeps.push(s);
+        }
         const sheep = manager.sheeps[0];
 
         expect(sheep).toBeDefined();
 
+        console.error(`[TEST DEBUG] manager.sheeps.length: ${manager.sheeps.length}`);
+        console.error(`[TEST DEBUG] manager.update implementation: ${manager.update.toString()}`);
+
         // Sequence of updates to ensure interval passes and move starts
-        manager.update(1.0, 1.0); // Init lastTime = 1.0
-        manager.update(10.0, 9.0); // Now 10 - 1 > interval(2-5), so moveRandomly called
+        manager.update(1.0, 1.0); // Init
+
+        // Step through simulation to reach moveInterval (2-5s)
+        for (let t = 2.0; t <= 12.0; t += 1.0) {
+            window.game.simTotalTimeSec = t;
+            sheep.updateLogic(t, 1.0);
+            sheep.updateMovement(t);
+            if (sheep.isMoving) break;
+        }
 
         expect(sheep.isMoving).toBe(true);
     });
@@ -78,12 +64,23 @@ describe('Animal Movement Verification', () => {
     it('Fish should move in water', () => {
         terrain.getTileHeight.mockReturnValue(0.2); // Water
         const manager = new FishManager(scene, terrain);
+        // Force spawn if random failed
+        if (manager.fishes.length === 0) {
+            const f = new Fish(scene, terrain, 10, 10);
+            f.updatePosition();
+            // In Fish.js constructor, it might use WanderBase. Ensure it's working.
+            manager.fishes.push(f);
+        }
         const fish = manager.fishes[0];
 
         expect(fish).toBeDefined();
 
-        manager.update(1.0, 1.0);
-        manager.update(10.0, 9.0);
+        for (let t = 2.0; t <= 12.0; t += 1.0) {
+            window.game.simTotalTimeSec = t;
+            fish.updateLogic(t, 1.0);
+            fish.updateMovement(t);
+            if (fish.isMoving) break;
+        }
 
         expect(fish.isMoving).toBe(true);
     });

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { Actor } from './Actor.js';
-import { SheepWanderState, SheepFleeState } from './ai/states/AnimalStates.js';
+import { Actor } from './Actor';
+import { SheepWander, SheepFlee } from './ai/states/AnimalStates.js';
 
 export class Sheep extends Actor {
     static assets = {
@@ -39,11 +39,10 @@ export class Sheep extends Actor {
         this.scene.add(this.mesh);
 
         // Initial Position Sync
-        // Initial Position Sync
         this.updatePosition();
 
         // Init State
-        this.changeState(new SheepWanderState(this));
+        this.changeState(new SheepWander(this));
     }
 
     createMesh() {
@@ -191,8 +190,6 @@ export class Sheep extends Actor {
             if (tz >= logicalD) tz = 0;
 
             if (this.canMoveTo(tx, tz)) {
-                // Determine duration based on Actor logic?
-                // Actor.executeMove handles duration calc.
                 this.executeMove(tx, tz, time);
                 return;
             }

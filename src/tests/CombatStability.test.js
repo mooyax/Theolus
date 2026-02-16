@@ -45,7 +45,7 @@ vi.mock('three', () => {
 
 import { Unit } from '../Unit.js'; // Adjust path if needed
 import { Goblin } from '../Goblin.js';
-import { JobState, CombatState, UnitWanderState } from '../ai/states/UnitStates.js';
+import { Job, Combat, Wander } from '../ai/states/UnitStates.js';
 
 // Mocks
 class MockTerrain {
@@ -140,8 +140,8 @@ describe('Combat Stability Tests', () => {
     });
 
     it('Should IGNORE goblin OUTSIDE general range (>8) for self defense check', () => {
-        // Setup Far Goblin (Dist 20)
-        goblin.gridX = 30; // 20 tiles away
+        // Setup Far Goblin (Dist 30)
+        goblin.gridX = 40; // 30 tiles away
         terrain.grid[10][10].regionId = 1;
         terrain.grid[30][10].regionId = 1;
 

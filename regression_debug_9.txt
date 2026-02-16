@@ -1,0 +1,74 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould NOT abort job during long async pathfinding (prevent oscillation)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould NOT abort job during long async pathfinding (prevent oscillation)
+[22m[39m[JobState 1] Entering. Target: 50,50
+[JobState 1] smartMove type: function
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin Hut when idle (Passive Worker Fix)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin Hut when idle (Passive Worker Fix)
+[22m[39m[CombatState] Entering. Saved Context: {"action":"Moving","target":null,"migrationTarget":null}
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin even if holding a job (Self Defense)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin even if holding a job (Self Defense)
+[22m[39m[JobState 1] Entering. Target: 80,80
+[JobState 1] smartMove type: function
+[JobState 1] Worker found threat/target on path!
+[CombatState 1] Releasing Job 102 to fight!
+[CombatState] Entering. Saved Context: {"action":"Approaching Job","target":null,"migrationTarget":null}
+Target set: {
+  id: [32m'gob1'[39m,
+  gridX: [33m11[39m,
+  gridZ: [33m11[39m,
+  position: { x: [33m11[39m, y: [33m0[39m, z: [33m11[39m },
+  isDead: [33mfalse[39m,
+  hp: [33m10[39m,
+  type: [32m'goblin'[39m,
+  takeDamage: [36m[Function: takeDamage][39m
+}
+
+ [31m笶ｯ[39m src/tests/Regression_WorkerLogic.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 20[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT abort job during long async pathfinding (prevent oscillation)[39m[32m 14[2mms[22m[39m
+     [32m笨・[39m should attack nearby Goblin Hut when idle (Passive Worker Fix)[32m 3[2mms[22m[39m
+     [32m笨・[39m should attack nearby Goblin even if holding a job (Self Defense)[32m 2[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should NOT abort job during long async pathfinding (prevent oscillation)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/Regression_WorkerLogic.test.js:140:36
+    138|         // Start Pathfinding
+    139|         unit.updateLogic(game.simTotalTimeSec, 0.016);
+    140|         expect(unit.isPathfinding).toBe(true);
+       |                                    ^
+    141| 
+    142|         // Simulate frames passing while pathfinding is pending
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 18:11:18
+[2m   Duration [22m 1.46s[2m (transform 536ms, setup 347ms, import 335ms, tests 20ms, environment 538ms)[22m
+

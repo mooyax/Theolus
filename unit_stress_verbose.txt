@@ -1,0 +1,1539 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should handle 100 units starting distant jobs simultaneously without dropping tasks
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should handle 100 units starting distant jobs simultaneously without dropping tasks
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_0
+[JobState 0] Entering. Target: 100,100
+[JobState 0] smartMove type: function
+[JobState 0] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_1
+[JobState 1] Entering. Target: 100,100
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_2
+[JobState 2] Entering. Target: 100,100
+[JobState 2] smartMove type: function
+[JobState 2] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_3
+[JobState 3] Entering. Target: 100,100
+[JobState 3] smartMove type: function
+[JobState 3] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_4
+[JobState 4] Entering. Target: 100,100
+[JobState 4] smartMove type: function
+[JobState 4] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:5 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:5 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_5
+[JobState 5] Entering. Target: 100,100
+[JobState 5] smartMove type: function
+[JobState 5] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 5] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_6
+[JobState 6] Entering. Target: 100,100
+[JobState 6] smartMove type: function
+[JobState 6] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 6] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:7 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:7 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_7
+[JobState 7] Entering. Target: 100,100
+[JobState 7] smartMove type: function
+[JobState 7] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 7] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:8 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:8 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_8
+[JobState 8] Entering. Target: 100,100
+[JobState 8] smartMove type: function
+[JobState 8] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 8] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:9 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:9 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_9
+[JobState 9] Entering. Target: 100,100
+[JobState 9] smartMove type: function
+[JobState 9] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 9] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:10 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:10 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_10
+[JobState 10] Entering. Target: 100,100
+[JobState 10] smartMove type: function
+[JobState 10] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 10] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:11 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:11 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_11
+[JobState 11] Entering. Target: 100,100
+[JobState 11] smartMove type: function
+[JobState 11] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 11] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:12 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:12 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_12
+[JobState 12] Entering. Target: 100,100
+[JobState 12] smartMove type: function
+[JobState 12] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 12] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:13 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:13 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_13
+[JobState 13] Entering. Target: 100,100
+[JobState 13] smartMove type: function
+[JobState 13] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 13] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:14 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:14 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_14
+[JobState 14] Entering. Target: 100,100
+[JobState 14] smartMove type: function
+[JobState 14] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 14] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:15 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:15 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_15
+[JobState 15] Entering. Target: 100,100
+[JobState 15] smartMove type: function
+[JobState 15] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 15] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:16 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:16 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_16
+[JobState 16] Entering. Target: 100,100
+[JobState 16] smartMove type: function
+[JobState 16] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 16] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:17 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:17 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_17
+[JobState 17] Entering. Target: 100,100
+[JobState 17] smartMove type: function
+[JobState 17] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 17] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:18 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:18 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_18
+[JobState 18] Entering. Target: 100,100
+[JobState 18] smartMove type: function
+[JobState 18] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 18] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:19 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:19 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_19
+[JobState 19] Entering. Target: 100,100
+[JobState 19] smartMove type: function
+[JobState 19] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 19] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:20 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:20 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_20
+[JobState 20] Entering. Target: 100,100
+[JobState 20] smartMove type: function
+[JobState 20] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 20] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:21 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:21 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_21
+[JobState 21] Entering. Target: 100,100
+[JobState 21] smartMove type: function
+[JobState 21] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 21] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:22 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:22 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_22
+[JobState 22] Entering. Target: 100,100
+[JobState 22] smartMove type: function
+[JobState 22] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 22] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:23 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:23 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_23
+[JobState 23] Entering. Target: 100,100
+[JobState 23] smartMove type: function
+[JobState 23] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 23] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:24 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:24 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_24
+[JobState 24] Entering. Target: 100,100
+[JobState 24] smartMove type: function
+[JobState 24] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 24] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:25 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:25 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_25
+[JobState 25] Entering. Target: 100,100
+[JobState 25] smartMove type: function
+[JobState 25] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 25] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:26 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:26 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_26
+[JobState 26] Entering. Target: 100,100
+[JobState 26] smartMove type: function
+[JobState 26] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 26] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:27 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:27 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_27
+[JobState 27] Entering. Target: 100,100
+[JobState 27] smartMove type: function
+[JobState 27] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 27] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:28 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:28 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_28
+[JobState 28] Entering. Target: 100,100
+[JobState 28] smartMove type: function
+[JobState 28] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 28] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:29 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:29 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_29
+[JobState 29] Entering. Target: 100,100
+[JobState 29] smartMove type: function
+[JobState 29] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 29] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:30 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:30 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_30
+[JobState 30] Entering. Target: 100,100
+[JobState 30] smartMove type: function
+[JobState 30] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 30] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:31 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:31 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_31
+[JobState 31] Entering. Target: 100,100
+[JobState 31] smartMove type: function
+[JobState 31] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 31] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:32 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:32 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_32
+[JobState 32] Entering. Target: 100,100
+[JobState 32] smartMove type: function
+[JobState 32] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 32] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:33 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:33 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_33
+[JobState 33] Entering. Target: 100,100
+[JobState 33] smartMove type: function
+[JobState 33] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 33] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:34 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:34 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_34
+[JobState 34] Entering. Target: 100,100
+[JobState 34] smartMove type: function
+[JobState 34] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 34] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:35 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:35 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_35
+[JobState 35] Entering. Target: 100,100
+[JobState 35] smartMove type: function
+[JobState 35] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 35] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:36 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:36 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_36
+[JobState 36] Entering. Target: 100,100
+[JobState 36] smartMove type: function
+[JobState 36] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 36] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:37 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:37 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_37
+[JobState 37] Entering. Target: 100,100
+[JobState 37] smartMove type: function
+[JobState 37] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 37] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:38 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:38 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_38
+[JobState 38] Entering. Target: 100,100
+[JobState 38] smartMove type: function
+[JobState 38] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 38] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:39 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:39 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_39
+[JobState 39] Entering. Target: 100,100
+[JobState 39] smartMove type: function
+[JobState 39] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 39] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:40 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:40 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_40
+[JobState 40] Entering. Target: 100,100
+[JobState 40] smartMove type: function
+[JobState 40] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 40] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:41 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:41 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_41
+[JobState 41] Entering. Target: 100,100
+[JobState 41] smartMove type: function
+[JobState 41] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 41] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:42 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:42 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_42
+[JobState 42] Entering. Target: 100,100
+[JobState 42] smartMove type: function
+[JobState 42] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 42] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:43 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:43 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_43
+[JobState 43] Entering. Target: 100,100
+[JobState 43] smartMove type: function
+[JobState 43] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 43] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:44 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:44 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_44
+[JobState 44] Entering. Target: 100,100
+[JobState 44] smartMove type: function
+[JobState 44] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 44] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:45 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:45 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_45
+[JobState 45] Entering. Target: 100,100
+[JobState 45] smartMove type: function
+[JobState 45] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 45] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:46 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:46 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_46
+[JobState 46] Entering. Target: 100,100
+[JobState 46] smartMove type: function
+[JobState 46] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 46] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:47 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:47 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_47
+[JobState 47] Entering. Target: 100,100
+[JobState 47] smartMove type: function
+[JobState 47] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 47] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:48 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:48 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_48
+[JobState 48] Entering. Target: 100,100
+[JobState 48] smartMove type: function
+[JobState 48] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 48] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:49 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:49 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_49
+[JobState 49] Entering. Target: 100,100
+[JobState 49] smartMove type: function
+[JobState 49] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 49] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:50 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:50 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_50
+[JobState 50] Entering. Target: 100,100
+[JobState 50] smartMove type: function
+[JobState 50] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 50] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:51 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:51 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_51
+[JobState 51] Entering. Target: 100,100
+[JobState 51] smartMove type: function
+[JobState 51] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 51] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:52 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:52 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_52
+[JobState 52] Entering. Target: 100,100
+[JobState 52] smartMove type: function
+[JobState 52] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 52] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:53 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:53 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_53
+[JobState 53] Entering. Target: 100,100
+[JobState 53] smartMove type: function
+[JobState 53] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 53] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:54 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:54 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_54
+[JobState 54] Entering. Target: 100,100
+[JobState 54] smartMove type: function
+[JobState 54] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 54] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:55 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:55 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_55
+[JobState 55] Entering. Target: 100,100
+[JobState 55] smartMove type: function
+[JobState 55] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 55] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:56 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:56 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_56
+[JobState 56] Entering. Target: 100,100
+[JobState 56] smartMove type: function
+[JobState 56] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 56] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:57 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:57 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_57
+[JobState 57] Entering. Target: 100,100
+[JobState 57] smartMove type: function
+[JobState 57] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 57] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:58 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:58 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_58
+[JobState 58] Entering. Target: 100,100
+[JobState 58] smartMove type: function
+[JobState 58] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 58] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:59 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:59 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_59
+[JobState 59] Entering. Target: 100,100
+[JobState 59] smartMove type: function
+[JobState 59] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 59] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:60 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:60 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_60
+[JobState 60] Entering. Target: 100,100
+[JobState 60] smartMove type: function
+[JobState 60] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 60] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:61 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:61 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_61
+[JobState 61] Entering. Target: 100,100
+[JobState 61] smartMove type: function
+[JobState 61] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 61] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:62 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:62 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_62
+[JobState 62] Entering. Target: 100,100
+[JobState 62] smartMove type: function
+[JobState 62] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 62] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:63 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:63 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_63
+[JobState 63] Entering. Target: 100,100
+[JobState 63] smartMove type: function
+[JobState 63] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 63] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:64 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:64 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_64
+[JobState 64] Entering. Target: 100,100
+[JobState 64] smartMove type: function
+[JobState 64] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 64] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:65 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:65 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_65
+[JobState 65] Entering. Target: 100,100
+[JobState 65] smartMove type: function
+[JobState 65] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 65] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:66 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:66 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_66
+[JobState 66] Entering. Target: 100,100
+[JobState 66] smartMove type: function
+[JobState 66] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 66] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:67 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:67 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_67
+[JobState 67] Entering. Target: 100,100
+[JobState 67] smartMove type: function
+[JobState 67] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 67] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:68 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:68 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_68
+[JobState 68] Entering. Target: 100,100
+[JobState 68] smartMove type: function
+[JobState 68] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 68] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:69 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:69 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_69
+[JobState 69] Entering. Target: 100,100
+[JobState 69] smartMove type: function
+[JobState 69] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 69] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:70 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:70 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_70
+[JobState 70] Entering. Target: 100,100
+[JobState 70] smartMove type: function
+[JobState 70] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 70] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:71 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:71 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_71
+[JobState 71] Entering. Target: 100,100
+[JobState 71] smartMove type: function
+[JobState 71] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 71] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:72 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:72 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_72
+[JobState 72] Entering. Target: 100,100
+[JobState 72] smartMove type: function
+[JobState 72] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 72] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:73 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:73 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_73
+[JobState 73] Entering. Target: 100,100
+[JobState 73] smartMove type: function
+[JobState 73] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 73] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:74 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:74 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_74
+[JobState 74] Entering. Target: 100,100
+[JobState 74] smartMove type: function
+[JobState 74] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 74] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:75 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:75 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_75
+[JobState 75] Entering. Target: 100,100
+[JobState 75] smartMove type: function
+[JobState 75] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 75] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:76 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:76 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_76
+[JobState 76] Entering. Target: 100,100
+[JobState 76] smartMove type: function
+[JobState 76] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 76] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:77 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:77 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_77
+[JobState 77] Entering. Target: 100,100
+[JobState 77] smartMove type: function
+[JobState 77] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 77] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:78 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:78 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_78
+[JobState 78] Entering. Target: 100,100
+[JobState 78] smartMove type: function
+[JobState 78] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 78] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:79 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:79 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_79
+[JobState 79] Entering. Target: 100,100
+[JobState 79] smartMove type: function
+[JobState 79] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 79] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:80 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:80 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_80
+[JobState 80] Entering. Target: 100,100
+[JobState 80] smartMove type: function
+[JobState 80] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 80] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:81 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:81 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_81
+[JobState 81] Entering. Target: 100,100
+[JobState 81] smartMove type: function
+[JobState 81] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 81] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:82 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:82 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_82
+[JobState 82] Entering. Target: 100,100
+[JobState 82] smartMove type: function
+[JobState 82] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 82] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:83 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:83 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_83
+[JobState 83] Entering. Target: 100,100
+[JobState 83] smartMove type: function
+[JobState 83] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 83] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:84 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:84 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_84
+[JobState 84] Entering. Target: 100,100
+[JobState 84] smartMove type: function
+[JobState 84] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 84] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:85 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:85 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_85
+[JobState 85] Entering. Target: 100,100
+[JobState 85] smartMove type: function
+[JobState 85] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 85] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:86 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:86 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_86
+[JobState 86] Entering. Target: 100,100
+[JobState 86] smartMove type: function
+[JobState 86] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 86] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:87 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:87 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_87
+[JobState 87] Entering. Target: 100,100
+[JobState 87] smartMove type: function
+[JobState 87] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 87] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:88 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:88 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_88
+[JobState 88] Entering. Target: 100,100
+[JobState 88] smartMove type: function
+[JobState 88] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 88] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:89 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:89 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_89
+[JobState 89] Entering. Target: 100,100
+[JobState 89] smartMove type: function
+[JobState 89] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 89] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:90 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:90 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_90
+[JobState 90] Entering. Target: 100,100
+[JobState 90] smartMove type: function
+[JobState 90] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 90] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:91 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:91 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_91
+[JobState 91] Entering. Target: 100,100
+[JobState 91] smartMove type: function
+[JobState 91] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 91] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:92 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:92 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_92
+[JobState 92] Entering. Target: 100,100
+[JobState 92] smartMove type: function
+[JobState 92] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 92] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:93 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:93 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_93
+[JobState 93] Entering. Target: 100,100
+[JobState 93] smartMove type: function
+[JobState 93] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 93] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:94 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:94 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_94
+[JobState 94] Entering. Target: 100,100
+[JobState 94] smartMove type: function
+[JobState 94] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 94] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:95 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:95 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_95
+[JobState 95] Entering. Target: 100,100
+[JobState 95] smartMove type: function
+[JobState 95] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 95] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:96 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:96 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_96
+[JobState 96] Entering. Target: 100,100
+[JobState 96] smartMove type: function
+[JobState 96] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 96] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:97 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:97 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_97
+[JobState 97] Entering. Target: 100,100
+[JobState 97] smartMove type: function
+[JobState 97] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 97] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:98 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:98 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_98
+[JobState 98] Entering. Target: 100,100
+[JobState 98] smartMove type: function
+[JobState 98] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 98] smartMove: budget exhausted (5)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:99 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:99 Role:worker Pos:2,2
+[Game] Request Added: raise at (100,100) ID:req_99
+[JobState 99] Entering. Target: 100,100
+[JobState 99] smartMove type: function
+[JobState 99] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Actor 99] smartMove: budget exhausted (5)
+[Actor 10] smartMove: budget exhausted (5)
+[Actor 11] smartMove: budget exhausted (5)
+[Actor 12] smartMove: budget exhausted (5)
+[Actor 13] smartMove: budget exhausted (5)
+[Actor 14] smartMove: budget exhausted (5)
+[Actor 15] smartMove: budget exhausted (5)
+[Actor 16] smartMove: budget exhausted (5)
+[Actor 17] smartMove: budget exhausted (5)
+[Actor 18] smartMove: budget exhausted (5)
+[Actor 19] smartMove: budget exhausted (5)
+[Actor 20] smartMove: budget exhausted (5)
+[Actor 21] smartMove: budget exhausted (5)
+[Actor 22] smartMove: budget exhausted (5)
+[Actor 23] smartMove: budget exhausted (5)
+[Actor 24] smartMove: budget exhausted (5)
+[Actor 25] smartMove: budget exhausted (5)
+[Actor 26] smartMove: budget exhausted (5)
+[Actor 27] smartMove: budget exhausted (5)
+[Actor 28] smartMove: budget exhausted (5)
+[Actor 29] smartMove: budget exhausted (5)
+[Actor 30] smartMove: budget exhausted (5)
+[Actor 31] smartMove: budget exhausted (5)
+[Actor 32] smartMove: budget exhausted (5)
+[Actor 33] smartMove: budget exhausted (5)
+[Actor 34] smartMove: budget exhausted (5)
+[Actor 35] smartMove: budget exhausted (5)
+[Actor 36] smartMove: budget exhausted (5)
+[Actor 37] smartMove: budget exhausted (5)
+[Actor 38] smartMove: budget exhausted (5)
+[Actor 39] smartMove: budget exhausted (5)
+[Actor 40] smartMove: budget exhausted (5)
+[Actor 41] smartMove: budget exhausted (5)
+[Actor 42] smartMove: budget exhausted (5)
+[Actor 43] smartMove: budget exhausted (5)
+[Actor 44] smartMove: budget exhausted (5)
+[Actor 45] smartMove: budget exhausted (5)
+[Actor 46] smartMove: budget exhausted (5)
+[Actor 47] smartMove: budget exhausted (5)
+[Actor 48] smartMove: budget exhausted (5)
+[Actor 49] smartMove: budget exhausted (5)
+[Actor 50] smartMove: budget exhausted (5)
+[Actor 51] smartMove: budget exhausted (5)
+[Actor 52] smartMove: budget exhausted (5)
+[Actor 53] smartMove: budget exhausted (5)
+[Actor 54] smartMove: budget exhausted (5)
+[Actor 55] smartMove: budget exhausted (5)
+[Actor 56] smartMove: budget exhausted (5)
+[Actor 57] smartMove: budget exhausted (5)
+[Actor 58] smartMove: budget exhausted (5)
+[Actor 59] smartMove: budget exhausted (5)
+[Actor 60] smartMove: budget exhausted (5)
+[Actor 61] smartMove: budget exhausted (5)
+[Actor 62] smartMove: budget exhausted (5)
+[Actor 63] smartMove: budget exhausted (5)
+[Actor 64] smartMove: budget exhausted (5)
+[Actor 65] smartMove: budget exhausted (5)
+[Actor 66] smartMove: budget exhausted (5)
+[Actor 67] smartMove: budget exhausted (5)
+[Actor 68] smartMove: budget exhausted (5)
+[Actor 69] smartMove: budget exhausted (5)
+[Actor 70] smartMove: budget exhausted (5)
+[Actor 71] smartMove: budget exhausted (5)
+[Actor 72] smartMove: budget exhausted (5)
+[Actor 73] smartMove: budget exhausted (5)
+[Actor 74] smartMove: budget exhausted (5)
+[Actor 75] smartMove: budget exhausted (5)
+[Actor 76] smartMove: budget exhausted (5)
+[Actor 77] smartMove: budget exhausted (5)
+[Actor 78] smartMove: budget exhausted (5)
+[Actor 79] smartMove: budget exhausted (5)
+[Actor 80] smartMove: budget exhausted (5)
+[Actor 81] smartMove: budget exhausted (5)
+[Actor 82] smartMove: budget exhausted (5)
+[Actor 83] smartMove: budget exhausted (5)
+[Actor 84] smartMove: budget exhausted (5)
+[Actor 85] smartMove: budget exhausted (5)
+[Actor 86] smartMove: budget exhausted (5)
+[Actor 87] smartMove: budget exhausted (5)
+[Actor 88] smartMove: budget exhausted (5)
+[Actor 89] smartMove: budget exhausted (5)
+[Actor 90] smartMove: budget exhausted (5)
+[Actor 91] smartMove: budget exhausted (5)
+[Actor 92] smartMove: budget exhausted (5)
+[Actor 93] smartMove: budget exhausted (5)
+[Actor 94] smartMove: budget exhausted (5)
+[Actor 95] smartMove: budget exhausted (5)
+[Actor 96] smartMove: budget exhausted (5)
+[Actor 97] smartMove: budget exhausted (5)
+[Actor 98] smartMove: budget exhausted (5)
+[Actor 99] smartMove: budget exhausted (5)
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should handle 100 units starting distant jobs simultaneously without dropping tasks
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:2,2
+[Game] Request Added: raise at (10,10) ID:req_0
+[JobState 0] Entering. Target: 10,10
+[JobState 0] smartMove type: function
+[JobState 0] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:2,2
+[Game] Request Added: raise at (10,10) ID:req_1
+[JobState 1] Entering. Target: 10,10
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:2,2
+[Game] Request Added: raise at (10,10) ID:req_2
+[JobState 2] Entering. Target: 10,10
+[JobState 2] smartMove type: function
+[JobState 2] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:2,2
+[Game] Request Added: raise at (10,10) ID:req_3
+[JobState 3] Entering. Target: 10,10
+[JobState 3] smartMove type: function
+[JobState 3] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[ActorCore] Actor Created. Type: unit Pos: 2,2
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:2,2 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:2,2
+[Game] Request Added: raise at (10,10) ID:req_4
+[JobState 4] Entering. Target: 10,10
+[JobState 4] smartMove type: function
+[JobState 4] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[Stress Test] Frame 0. Moved: 0/5. BudgetCalls: 0
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[JobState 0] Arrived at Job. Completing... Dist: 0.00
+[Game] Unit 0 completing Request raise at 10,10
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[Test Debug] Unit 0 Frame 5 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 1 Frame 5 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 2 Frame 5 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 3 Frame 5 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 4 Frame 5 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[Test Debug] Unit 0 Frame 10 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 1 Frame 10 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 2 Frame 10 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 3 Frame 10 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 4 Frame 10 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Stress Test] Frame 10. Moved: 2/5. BudgetCalls: 0
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[Actor 3] smartMove: budget exhausted (100)
+[Actor 4] smartMove: budget exhausted (100)
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[Test Debug] Unit 0 Frame 15 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 1 Frame 15 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 2 Frame 15 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 3 Frame 15 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:Pathfinding Throttled (Budget)
+[Test Debug] Unit 4 Frame 15 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:Pathfinding Throttled (Budget)
+
+ ﾃ・src/tests/UnitStress.test.js > Unit AI Stress Testing > should handle 100 units starting distant jobs simultaneously without dropping tasks 65ms
+   竊・this.terrain.unregisterEntity is not a function
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[Test Debug] Unit 0 Frame 20 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 1 Frame 20 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 2 Frame 20 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 3 Frame 20 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:Pathfinding Throttled (Budget)
+[Test Debug] Unit 4 Frame 20 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:Pathfinding Throttled (Budget)
+[Stress Test] Frame 20. Moved: 3/5. BudgetCalls: 0
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[Test Debug] Unit 0 Frame 25 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 1 Frame 25 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 2 Frame 25 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 3 Frame 25 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:Pathfinding Throttled (Budget)
+[Test Debug] Unit 4 Frame 25 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:Pathfinding Throttled (Budget)
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[Test Debug] Unit 0 Frame 30 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 1 Frame 30 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 2 Frame 30 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 3 Frame 30 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:Pathfinding Throttled (Budget)
+[Test Debug] Unit 4 Frame 30 gridX:10.00 vx:10.0000 startX:10.0000 diff:0.0000 isMoving:false action:Idle lastLog:Pathfinding Throttled (Budget)
+[Stress Test] Frame 30. Moved: 3/5. BudgetCalls: 1
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[Test Debug] Unit 0 Frame 35 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 1 Frame 35 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 2 Frame 35 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 3 Frame 35 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+[Test Debug] Unit 4 Frame 35 gridX:5.00 vx:5.0000 startX:10.0000 diff:5.0000 isMoving:true action:Moving lastLog:d:0.0 h:0.0 b:0.8 raw:0.1
+
+stdout | src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget)
+[Game] Dispose called for Game Instance.
+
+ ﾃ・src/tests/UnitStress.test.js > Unit AI Stress Testing > should eventually reach target even with extreme congestion (low budget) 63ms
+   竊・this.terrain.unregisterEntity is not a function
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  11:57:32
+   Duration  1.29s (transform 444ms, setup 287ms, import 275ms, tests 130ms, environment 418ms)
+

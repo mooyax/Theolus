@@ -1,0 +1,118 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+stderr | src/tests/PathChurn.test.js
+[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/PathChurn.test.js[2m > [22m[2mPath Churn / Refetching[2m > [22m[2mshould use stored pathTarget in onMoveFinished to preserve path
+[22m[39m[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:0
+
+[90mstdout[2m | src/tests/PathChurn.test.js[2m > [22m[2mPath Churn / Refetching[2m > [22m[2mshould use stored pathTarget in onMoveFinished to preserve path
+[22m[39m[Actor 0] Path Invalidated: Target Changed.Old:10.6,10.6 New:0,0 
+[Unit 0] Moving onto Rock at 0,0 H:10 (Speed Penalty)
+[Unit 0] canMoveTo(0,0) OK
+[Unit 0] canMoveTo(0,0) checking grid...
+[DEBUG_ACTOR] Actor.onMoveFinished ENTRY. Path=null
+
+[90mstdout[2m | src/tests/PathChurn.test.js[2m > [22m[2mPath Churn / Refetching[2m > [22m[2mshould fallback to lastNode if pathTarget is undefined
+[22m[39m[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:1
+
+[90mstdout[2m | src/tests/PathChurn.test.js[2m > [22m[2mPath Churn / Refetching[2m > [22m[2mshould fallback to lastNode if pathTarget is undefined
+[22m[39m[Unit 1] Moving onto Rock at 0,0 H:10 (Speed Penalty)
+[Unit 1] canMoveTo(0,0) OK
+[Unit 1] canMoveTo(0,0) checking grid...
+[DEBUG_ACTOR] Actor.onMoveFinished ENTRY. Path=null
+
+ [31m笶ｯ[39m src/tests/PathChurn.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 25[2mms[22m[39m
+[31m     [31mﾃ・[31m should use stored pathTarget in onMoveFinished to preserve path[39m[32m 18[2mms[22m[39m
+[31m     [31mﾃ・[31m should fallback to lastNode if pathTarget is undefined[39m[32m 5[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/PathChurn.test.js > Path Churn / Refetching > should use stored pathTarget in onMoveFinished to preserve path
+AssertionError: expected "smartMove" to be called with arguments: [ 10.6, 10.6, Anything ]
+
+Received: 
+
+  1st smartMove call:
+
+  [
+-   10.6,
+-   10.6,
+-   Anything,
++   0,
++   0,
++   200,
+  ]
+
+
+Number of calls: 1
+
+ 笶ｯ src/tests/PathChurn.test.js:41:32
+     39|         // ASSERT: 
+     40|         // 1. smartMove called with PRESERVED FLOAT TARGET (10.6)
+     41|         expect(unit.smartMove).toHaveBeenCalledWith(targetX, targetZ, 窶ｦ
+       |                                ^
+     42| 
+     43|         // 2. Path should NOT be null (It would be null if smartMove(1窶ｦ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/PathChurn.test.js > Path Churn / Refetching > should fallback to lastNode if pathTarget is undefined
+AssertionError: expected "smartMove" to be called with arguments: [ 5, 5, Anything ]
+
+Received: 
+
+  1st smartMove call:
+
+  [
+-   5,
+-   5,
+-   Anything,
++   0,
++   0,
++   200,
+  ]
+
+
+Number of calls: 1
+
+ 笶ｯ src/tests/PathChurn.test.js:63:32
+     61| 
+     62|         // ASSERT: Fallback to integer node
+     63|         expect(unit.smartMove).toHaveBeenCalledWith(5, 5, expect.anyth窶ｦ
+       |                                ^
+     64|     });
+     65| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 01:05:31
+[2m   Duration [22m 1.19s[2m (transform 345ms, setup 79ms, import 378ms, tests 25ms, environment 500ms)[22m
+

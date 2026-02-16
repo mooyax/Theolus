@@ -1,0 +1,27 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/Animals.test.js > Animal Movement Verification > Sheep should move after interval (Manual Time Step)
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: sheep Pos: 10,10
+[Actor 0] CHANGE STATE: None -> SheepWander Request:null
+
+stdout | src/tests/Animals.test.js > Animal Movement Verification > Fish should move in water
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: fish Pos: 10,10
+
+ 笶ｯ src/tests/Animals.test.js (2 tests | 2 failed) 15ms
+     ﾃ・Sheep should move after interval (Manual Time Step) 12ms
+     ﾃ・Fish should move in water 2ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  12:38:10
+   Duration  1.34s (transform 298ms, setup 69ms, import 281ms, tests 15ms, environment 491ms)
+

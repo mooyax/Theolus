@@ -1,0 +1,24 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/JobReassignment.test.js[2m > [22m[2mJob Reassignment on Death[2m > [22m[2mshould reassign job when original worker dies
+[22m[39m[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[JobReassignment] Terrain Keys: width,depth,logicalWidth,logicalDepth,buildings,entityGrid,initEntityGrid,getTileHeight,isWalkable,isReachable,update,registerEntity,unregisterEntity,removeBuilding,updateMeshPosition,updateLights,getBuildingAt,getRegion,isValidGrid,findPath,findPathAsync,isAdjacentToRegion,checkYield,checkFlatArea,gridToWorld,worldToGrid,setSeason,addBuilding,getRandomPointInRegion,serialize,deserialize,grid
+[JobReassignment] getRegion type: function
+
+[90mstdout[2m | src/tests/JobReassignment.test.js[2m > [22m[2mJob Reassignment on Death[2m > [22m[2mshould reassign job when original worker dies
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50
+[Game] Request Added: raise at (12,12) ID:req_0
+
+ [31m笶ｯ[39m src/tests/JobReassignment.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 33[2mms[22m[39m
+[31m     [31mﾃ・[31m should reassign job when original worker dies[39m[32m 31[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 12:49:34
+[2m   Duration [22m 1.59s[2m (transform 593ms, setup 365ms, import 381ms, tests 33ms, environment 567ms)[22m
+

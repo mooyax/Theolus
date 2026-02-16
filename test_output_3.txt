@@ -1,0 +1,66 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/IntegrationFlow.test.js
+[22m[39m[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/IntegrationFlow.test.js[2m > [22m[2mIntegration Flow: Actor -> Terrain -> MockWorker[2m > [22m[2mshould successfully request path and move when Worker replies
+[22m[39m[Test] Setup Start
+
+stderr | src/tests/IntegrationFlow.test.js > Integration Flow: Actor -> Terrain -> MockWorker > should successfully request path and move when Worker replies
+[Test] Setup FAILED: TypeError: posAttr.getX is not a function
+    at Terrain.initMeshes (C:/Users/mooya/develop/test/src/Terrain.ts:430:31)
+    at Terrain.initTerrain (C:/Users/mooya/develop/test/src/Terrain.ts:444:14)
+    at new Terrain (C:/Users/mooya/develop/test/src/Terrain.ts:96:14)
+    at C:/Users/mooya/develop/test/src/tests/IntegrationFlow.test.js:105:23
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at runHook (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1511:51)
+    at callSuiteHook (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1517:25)
+
+[90mstdout[2m | src/tests/IntegrationFlow.test.js[2m > [22m[2mIntegration Flow: Actor -> Terrain -> MockWorker[2m > [22m[2mshould STUCK when Worker DROPS the message
+[22m[39m[Test] Setup Start
+
+stderr | src/tests/IntegrationFlow.test.js > Integration Flow: Actor -> Terrain -> MockWorker > should STUCK when Worker DROPS the message
+[Test] Setup FAILED: TypeError: posAttr.getX is not a function
+    at Terrain.initMeshes (C:/Users/mooya/develop/test/src/Terrain.ts:430:31)
+    at Terrain.initTerrain (C:/Users/mooya/develop/test/src/Terrain.ts:444:14)
+    at new Terrain (C:/Users/mooya/develop/test/src/Terrain.ts:96:14)
+    at C:/Users/mooya/develop/test/src/tests/IntegrationFlow.test.js:105:23
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at runHook (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1511:51)
+    at callSuiteHook (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1517:25)
+
+ [31m笶ｯ[39m src/tests/IntegrationFlow.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 17[2mms[22m[39m
+[31m     [31mﾃ・[31m should successfully request path and move when Worker replies[39m[32m 13[2mms[22m[39m
+[31m     [31mﾃ・[31m should STUCK when Worker DROPS the message[39m[32m 3[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/IntegrationFlow.test.js > Integration Flow: Actor -> Terrain -> MockWorker > should successfully request path and move when Worker replies
+ FAIL  src/tests/IntegrationFlow.test.js > Integration Flow: Actor -> Terrain -> MockWorker > should STUCK when Worker DROPS the message
+TypeError: posAttr.getX is not a function
+ 笶ｯ Terrain.initMeshes src/Terrain.ts:430:31
+    428|         const posAttr = this.geometry.attributes.position;
+    429|         for (let i = 0; i < count; i++) {
+    430|             const x = posAttr.getX(i);
+       |                               ^
+    431|             const y = posAttr.getY(i);
+    432|             const offsets = this.getVisualOffset(x, y);
+ 笶ｯ Terrain.initTerrain src/Terrain.ts:444:14
+ 笶ｯ new Terrain src/Terrain.ts:96:14
+ 笶ｯ src/tests/IntegrationFlow.test.js:105:23
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 13:56:23
+[2m   Duration [22m 1.09s[2m (transform 301ms, setup 73ms, import 321ms, tests 17ms, environment 470ms)[22m
+

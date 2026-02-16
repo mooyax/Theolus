@@ -134,11 +134,14 @@ describe('Job Assignment Idempotency', () => {
             // Since we are mocking it, we can't easily call the "real" one if it's already mocked.
             // But checking 'originalCreateElement' above helps.
 
-            const el = originalCreateElement.getMockImplementation ?
-                originalCreateElement(tag) : // If it's a mock, call it?
-                (originalCreateElement.name !== 'createElement' ? // If it's native/happy-dom
-                    originalCreateElement(tag) :
-                    { style: {}, nodeName: tag.toUpperCase(), ownerDocument: global.document });
+            // Avoid recursion by NOT calling originalCreateElement
+            const el = {
+                style: {},
+                nodeName: tag.toUpperCase(),
+                nodeType: 1,
+                ownerDocument: global.document,
+                appendChild: vi.fn(), // Helper for HappyDOM
+            };
 
             // Correction: calling output of spy might be recursive.
             // Simplified: Return a dummy object with enough properties to satisfy happy-dom appendChild?

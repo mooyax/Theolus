@@ -1,0 +1,47 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario A: Worker destroys Cave
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Unit Debug 1] updateLogic. State: Wander
+[Wander Debug 1] Update. Action:Idle
+
+ 笶ｯ src/tests/CombatVerification.test.js (1 test | 1 failed) 19ms
+     ﾃ・Scenario A: Worker destroys Cave 18ms
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Game] New Battle Hotspot at 10,10 (Region:1)
+[Hotspot Debug] Grouping with existing at 10,10 (Dist: 2.8)
+[Hotspot Debug] Updated Hotspot Intensity: 40.0 -> 55.0
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Decays intensity
+[Game] New Battle Hotspot at 10,10 (Region:1)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads to intense hotspots (Updated Threshold)
+[Game] Mobilizing Squad 1 to Hotspot at 100,20 (Intensity:100.0)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads
+[Game] Mobilizing Squad 1 to Hotspot at 50,50 (Intensity:100.0)
+
+ 笨・src/tests/Hotspot.test.js (6 tests) 456ms
+     笨・Clusters nearby battle reports  449ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 6 passed (7)
+   Start at  18:55:32
+   Duration  1.21s (transform 681ms, setup 130ms, import 421ms, tests 475ms, environment 946ms)
+

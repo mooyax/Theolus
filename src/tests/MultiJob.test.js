@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Game } from '../Game.js';
 import { Unit } from '../Unit.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 import { Minimap } from '../Minimap.js';
 import { Compass } from '../Compass.js';
 

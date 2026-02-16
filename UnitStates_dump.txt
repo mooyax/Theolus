@@ -1,0 +1,981 @@
+import { State, WanderState } from './State';
+
+export class UnitWanderState extends WanderState {
+    public name: string;
+    public resumeContext: any;
+    constructor(actor: any) {
+        super(actor);
+        this.name = 'UnitWanderState';
+    }
+
+    enter(prev?: State) {
+        if (prev && prev instanceof UnitWanderState) {
+            // Self-transition (Resume/Update)
+            const wasMoving = this.actor.action === 'Moving';
+            const wasMigrating = this.actor.action === 'Migrating'; // FIX: Preserve Migrating
+
+            super.enter(prev);
+
+            if (wasMoving) {
+                this.actor.action = 'Moving';
+                this.actor.isMoving = true;
+            } else if (wasMigrating) {
+                this.actor.action = 'Migrating';
+            }
+            return;
+        }
+
+        super.enter(prev);
+        // console.log(`[UnitWanderState] Entered. Prev: ${prev ? prev.constructor.name : 'None'}. Default Action: ${this.actor.action}`);
+
+        this.actor.isMoving = false; // Always stop previous movement initially. 
+        // If we have a resume target, smartMove will re-enable it below.
+
+
+        // Context Restoration (Resume Logic)
+        if (this.resumeContext) {
+            // Restore Action - Safety Check
+            // Do NOT restore Job-related actions (e.g. 'Approaching Job', 'Working') in WanderState
+            // Only restore 'Migrating' or specific movement actions
+            if (this.resumeContext.action === 'Migrating') {
+                this.actor.action = 'Migrating';
+                if (this.resumeContext.migrationTarget) {
+                    this.actor.migrationTarget = this.resumeContext.migrationTarget;
+                }
+            } else {
+                this.actor.action = 'Idle';
+            }
+
+            // Restore Movement Target (Both Migrating and Generic Move)
+            if (this.resumeContext.target) {
+                this.actor.targetGridX = this.resumeContext.target.x;
+                this.actor.targetGridZ = this.resumeContext.target.z;
+                // Force pathfinding immediately (bypass throttle) for state transition
+                this.actor.lastPathTime = -100;
+                // Trigger movement immediately
+                if (this.actor.smartMove) {
+                    this.actor.smartMove(this.resumeContext.target.x, this.resumeContext.target.z, this.actor.simTime || 0);
+                }
+            }
+        } else {
+            // Default Behavior
+            // Don't overwrite 'Migrating' if we are in the middle of migration (Self-Transition check)
+            if (this.actor.action !== 'Migrating') {
+                this.actor.action = 'Idle';
+            }
+        }
+    }
+
+    update(...args: any[]) {
+        const [time, deltaTime, isNightParam, goblins] = args;
+        // console.log(`[JobState DEBUG] Update called for Unit ${this.actor.id}`);
+
+        // 0. Assigned Job Check (If Game.js force-assigned a job OR already has one)
+        // CRITICAL: We MUST not enter this if we are already in JobState (checked by changeState mostly, but here for safety)
+        if (this.actor.targetRequest && !(this instanceof JobState)) {
+            this.actor.changeState(new JobState(this.actor));
+            return;
+        }
+
+        // 0b. Existing Combat Target Check (e.g. from searchSurroundings or Manual)
+        if (this.actor.targetGoblin || this.actor.targetBuilding) {
+            this.actor.changeState(new CombatState(this.actor));
+            return;
+        }
+
+        // 1. Self Defense (High Priority)
+        if (this.actor.checkSelfDefense && this.actor.checkSelfDefense(goblins)) {
+            this.actor.changeState(new CombatState(this.actor));
+            return;
+        }
+
+        // 1b. Night Check: Go to sleep if not working or fighting AND have a home
+        // ユーザー要望：労働者（worker）のみ夜間に帰宅する
+        const isNight = isNightParam || this.actor.isNight || ((window as any).game && (window as any).game.isNight);
+        const shelter = (isNight && this.actor.role === 'worker' && !this.actor.targetRequest && !this.actor.targetGoblin && !this.actor.targetBuilding)
+            ? (this.actor.findNearestShelter ? this.actor.findNearestShelter() : null)
+            : null;
+
+        if (isNight && shelter) {
+            // Check for MANUAL requests before sleeping
+            if ((window as any).game) {
+                const manReq = (window as any).game.findBestRequest(this.actor, false); // No snatch
+                if (manReq && manReq.isManual) {
+                    if ((window as any).game.claimRequest(this.actor, manReq)) {
+                        this.actor.targetRequest = manReq;
+                        this.actor.changeState(new JobState(this.actor));
+                        return; // CRITICAL: Stop update here
+                    }
+                }
+            }
+            this.actor.changeState(new SleepState(this.actor));
+            return;
+        }
+
+        // 1c. Squad Order Check (Raid Points)
+        if (this.actor.role !== 'worker' && this.actor.findRaidTarget && this.actor.findRaidTarget()) {
+            if (this.actor.action !== 'Migrating' && this.actor.action !== 'Reinforcing') {
+                this.actor.changeState(new CombatState(this.actor));
+                return;
+            }
+        }
+
+        // 2. Job Search
+        if ((window as any).game && !(this instanceof JobState) && !this.actor.targetRequest) {
+            const req = (window as any).game.findBestRequest(this.actor, true); // true = allow snatching nearby assigned jobs
+            if (req) {
+                if ((window as any).game.claimRequest(this.actor, req)) {
+                    if (this.actor.id === 0) console.log(`[UnitWander] Found Job! ${req.type}.`);
+                    this.actor.targetRequest = req;
+                    this.actor.changeState(new JobState(this.actor));
+                    return;
+                }
+            }
+        }
+
+        // 2b. Building & Stagnation (Worker only)
+        if (this.actor.role === 'worker' && !isNight && !this.actor.targetGoblin && !this.actor.targetBuilding) {
+            // Check Cooldown from Job Abort
+            if (this.actor.lastJobAbortTime && (time - this.actor.lastJobAbortTime < 5.0)) {
+                // Just wander/idle for a bit to prevent immediate distraction building
+            } else {
+                const cell = this.actor.terrain.grid[Math.floor(this.actor.gridX)][Math.floor(this.actor.gridZ)];
+                if (!this.actor.isMoving && !this.actor.isSleeping && cell.height > 0) {
+                    if (!this.actor.canBuildAt || this.actor.canBuildAt(this.actor.gridX, this.actor.gridZ)) {
+                        this.actor.buildTimer = (this.actor.buildTimer || 0) + deltaTime;
+                        if (this.actor.buildTimer >= 1.0) {
+                            const success = this.actor.tryBuildStructure(time);
+                            if (success) {
+                                this.actor.stagnationTimer = 0;
+                                this.actor.buildTimer = 0;
+                            } else {
+                                this.actor.stagnationTimer = (this.actor.stagnationTimer || 0) + deltaTime;
+                            }
+                        }
+                    } else {
+                        this.actor.stagnationTimer = (this.actor.stagnationTimer || 0) + deltaTime;
+                    }
+                }
+            }
+            if (this.actor.stagnationTimer > 20.0) {
+                this.actor.migrate(time);
+                return;
+            }
+        }
+
+        // 2c. Patrol (Non-worker only)
+
+        if (this.actor.role !== 'worker' && !this.actor.targetRequest && !this.actor.targetGoblin && !this.actor.isMoving) {
+
+            if (this.actor.patrol) {
+                this.actor.patrol(time);
+            }
+        }
+
+        // 4. Check for Migration
+        if (this.actor.action === 'Migrating' && this.actor.migrationTarget) {
+            this.actor.migrationTimer = (this.actor.migrationTimer || 0) + deltaTime;
+            if (this.actor.migrationTimer > 30.0) {
+                this.actor.migrate(time);
+                return;
+            }
+
+            const isAttack = this.actor.checkSelfDefense(goblins) && (this.actor.targetGoblin || this.actor.targetBuilding);
+            // Worker Safeguard: Do not interrupt work for buildings
+            const isBusyWorker = (this.actor.role === 'worker' && this.actor.targetRequest);
+
+            if (isAttack && !isBusyWorker) {
+                this.actor.action = 'Fighting';
+                this.actor.changeState(new CombatState(this.actor));
+                this.actor.migrationTarget = null;
+                return;
+            }
+
+            // Movement Logic
+            if (!this.actor.isMoving && this.actor.migrationTarget) {
+                const dist = this.actor.getDistance(this.actor.migrationTarget.x, this.actor.migrationTarget.z);
+                // Assuming 'expiry' is a variable that should be defined elsewhere or is a placeholder for a specific condition.
+                // As per the instruction, replacing 'dist < 2.0' with 'currentTime <= expiry'.
+                // 'currentTime' is assumed to be 'time' from the update arguments.
+                // 'expiry' is not defined in this scope, so this change might lead to a runtime error if 'expiry' is not globally available or a property of 'this.actor'.
+                // For the purpose of faithfully applying the instruction, 'expiry' is used as provided.
+                if (dist < 2.0) {
+                    this.actor.action = 'Idle';
+                    this.actor.migrationTarget = null;
+                } else {
+                    this.actor.smartMove(this.actor.migrationTarget.x, this.actor.migrationTarget.z, time);
+                }
+            }
+            return;
+        }
+
+        // 5. Default Wander (Base Class)
+        super.update(time, deltaTime);
+
+        if (!this.actor.isMoving && this.actor.role === 'worker' && Math.random() < 0.05) {
+            this.actor.moveRandomly(time);
+        }
+    }
+}
+
+export class JobState extends State {
+    public name: string;
+    public targetRequest: any;
+    public resumeState: any;
+    public lastMoveAttempt: number;
+    public pathFailures: number;
+    public stuckTimer: number;
+    public checkStuckInterval: number;
+    public lastStuckCheck: number;
+    public lastPos: { x: number, z: number };
+    public savedResumeContext: any;
+    public closeRangeTimer: number = 0; // Jitter-proof arrival timer
+
+    constructor(actor: any) {
+        super(actor);
+        this.name = 'JobState';
+        this.targetRequest = actor.targetRequest;
+        this.resumeState = null;
+        this.lastMoveAttempt = 0;
+        this.pathFailures = 0;
+        this.stuckTimer = 0;
+        this.checkStuckInterval = 2.0;
+        this.lastStuckCheck = 0;
+        this.lastPos = { x: 0, z: 0 };
+        this.closeRangeTimer = 0;
+    }
+
+    enter(prev?: State) {
+        // Capture previous movement target (Resume Logic) - MUST BE FIRST
+        // Capture BEFORE we modify actor.action or target properties
+        this.savedResumeContext = {
+            action: this.actor.action,
+            // FIX: Only capture target if we were actually moving!
+            // Otherwise we might capture stale data (e.g. 0,0 from constructor)
+            target: (this.actor.isMoving && this.actor.targetGridX !== undefined && this.actor.targetGridZ !== undefined)
+                ? { x: this.actor.targetGridX, z: this.actor.targetGridZ }
+                : null,
+            migrationTarget: this.actor.migrationTarget || null
+        };
+
+        this.actor.targetBuilding = null;
+        this.actor.isSleeping = false;
+
+        // --- FACTION-BASED LABEL ---
+        if (this.actor.faction === 'player') {
+            this.actor.action = 'Approaching Job';
+        } else {
+            this.actor.action = 'Moving'; // Enemy units use generic 'Moving'
+        }
+
+        this.actor.isMoving = false;
+        this.actor.lastPathTime = -100; // Force pathfinding immediately (bypass throttle)
+        this.actor.isUnreachable = false; // FIX: Clear stale unreachable flag from previous jobs
+        this.targetRequest = this.actor.targetRequest;
+        this.closeRangeTimer = 0; // Reset Close Range Timer
+
+        if (this.targetRequest) {
+            // Validate Request Target (Building/Entity might be destroyed)
+            if (this.targetRequest.building && (this.targetRequest.building.isDead || (this.targetRequest.building.userData && this.targetRequest.building.userData.hp <= 0))) {
+                console.log(`[JobState ${this.actor.id}] Target Building Destroyed. Dropping Request.`);
+                this.actor.targetRequest = null;
+                this.targetRequest = null;
+                this.actor.changeState(new WanderState(this.actor));
+                return;
+            }
+            console.log(`[JobState ${this.actor.id}] Entering. Target: ${this.targetRequest.x},${this.targetRequest.z}`);
+            console.log(`[JobState ${this.actor.id}] smartMove type: ${typeof this.actor.smartMove}`);
+            console.log(`[JobState ${this.actor.id}] smartMove source: ${this.actor.smartMove.toString().substring(0, 200)}`);
+            // Force immediate pathfinding start (without full update cycle to avoid time distortion)
+            const vx = this.actor.getVisualX ? this.actor.getVisualX(0) : this.actor.gridX;
+            const vz = this.actor.getVisualZ ? this.actor.getVisualZ(0) : this.actor.gridZ;
+            this.actor.smartMove(this.targetRequest.x, this.targetRequest.z, this.actor.simTime || 0);
+        } else {
+            console.log(`[JobState ${this.actor.id}] Entering. NO TARGET REQUEST`);
+        }
+
+        if (prev instanceof JobState || prev instanceof CombatState) {
+            // Keep existing resume state if possible
+        } else {
+            this.resumeState = prev;
+        }
+
+        const time = this.actor.simTime || 0;
+        this.lastStuckCheck = time;
+        const vx = this.actor.getVisualX ? this.actor.getVisualX(0) : this.actor.gridX;
+        const vz = this.actor.getVisualZ ? this.actor.getVisualZ(0) : this.actor.gridZ;
+        this.lastPos = { x: vx, z: vz };
+    }
+
+    exit(nextState?: State) {
+
+
+        // PERSISTENCE: If we are switching to a temporary state (Combat/Sleep), 
+        // we keep the targetRequest on the actor so it can be resumed by WanderState.
+        // We also keep MANUAL jobs by default unless explicitly cleared by JobState.update (Unreachable/Done).
+        if (nextState instanceof CombatState || nextState instanceof SleepState) {
+            return;
+        }
+
+        if (this.actor.targetRequest && this.targetRequest && this.actor.targetRequest.id === this.targetRequest.id) {
+            // Only clear if NOT a manual job, or if we are going to a "true" idle state
+            if (!this.targetRequest.isManual) {
+                this.actor.targetRequest = null;
+            }
+        }
+    }
+
+    // Helper to pass context back
+    getResumeState() {
+        // if (!this.targetRequest) console.warn(`[JobState ${this.actor.id}] getResumeState called with NO targetRequest.`);
+        const state = new UnitWanderState(this.actor);
+        state.resumeContext = this.savedResumeContext;
+        return state;
+    }
+
+    update(...args: any[]) {
+        const [time, deltaTime, isNightParam, goblins] = args;
+        if (!this.actor.targetRequest) {
+            this.actor.changeState(this.getResumeState());
+            return;
+        }
+
+        // DEBUG: Flapping Diagnosis
+        if (String(this.targetRequest.assignedTo) !== String(this.actor.id)) {
+            this.actor.changeState(this.getResumeState());
+            return;
+        }
+        if (this.targetRequest.status === 'completed' || this.targetRequest.status === 'expired') {
+            this.actor.targetRequest = null;
+            this.actor.changeState(this.getResumeState());
+            return;
+        }
+
+        // 1. Retaliation (Highest Priority): If HIT (targetGoblin set), switch to Combat
+        if (this.actor.targetGoblin) {
+            this.actor.changeState(new CombatState(this.actor));
+            return;
+        }
+
+        if (this.actor.role === 'worker') {
+            // Pacifism (Don't scan aggressively), but Retaliation handled above.
+            // FIX: Allow occasional scans for VERY CLOSE threats (specifically buildings blocking path)
+            // checkSelfDefense logic in Unit.js now handles filtering.
+            if (this.actor.checkSelfDefense && this.actor.checkSelfDefense(goblins)) {
+                if (this.actor.targetGoblin || this.actor.targetBuilding) {
+                    console.log(`[JobState ${this.actor.id}] Worker found threat/target on path!`);
+                    this.actor.changeState(new CombatState(this.actor));
+                    return;
+                }
+            }
+        } else {
+            // Aggressive Guards (Knights/Wizards)
+            if (this.actor.checkSelfDefense && this.actor.checkSelfDefense(goblins)) {
+                // Fix: Actually enter combat instead of just returning
+                // Allow entering combat if we found a goblin OR a building
+                if (this.actor.targetGoblin || this.actor.targetBuilding) {
+                    console.log(`[JobState ${this.actor.id}] Auto-engaging target!`);
+                    this.actor.changeState(new CombatState(this.actor));
+                    return;
+                }
+            }
+        }
+
+        if (isNightParam && this.actor.role === 'worker') {
+            // Only release AUTO jobs at night. Manual jobs (isManual) take priority over sleep.
+            if (!this.targetRequest.isManual) {
+                if ((window as any).game) (window as any).game.releaseRequest(this.actor, this.targetRequest);
+                this.targetRequest = null;
+                this.actor.targetRequest = null;
+                // ... (rest of logic)
+                this.actor.lastJobResult = "Completed"; // DEBUG
+
+                // COMPLETION LOGIC
+                if (this.actor.onMoveFinished) this.actor.onMoveFinished(time);
+
+                this.actor.action = "Working";
+                if ((window as any).game) (window as any).game.completeRequest(this.actor, this.targetRequest);
+
+                this.targetRequest = null;
+                this.actor.targetRequest = null;
+
+                if ((window as any).game) {
+                    const next = (window as any).game.findBestRequest(this.actor);
+                    if (next && (window as any).game.claimRequest(this.actor, next)) {
+                        this.actor.targetRequest = next;
+                        this.targetRequest = next;
+                        if (this.actor.faction === 'player') {
+                            this.actor.action = 'Approaching Job';
+                        } else {
+                            this.actor.action = 'Moving';
+                        }
+                        this.enter(this);
+                        return;
+                    }
+                }
+                this.actor.changeState(this.getResumeState());
+                return;
+            }
+        } // End of Night/Worker check
+
+        // Moving Logic
+        if (this.targetRequest) {
+
+            const dist = this.actor.getDistance(this.targetRequest.x, this.targetRequest.z);
+
+            // --- JITTER PROOF ARRIVAL LOGIC ---
+            // If we are close (dist < 4.5), increment a separate timer regardless of movement.
+            // This handles cases where unit is jittering/sliding against collision (moved=true) but not getting closer.
+            if (dist < 4.5) {
+                this.closeRangeTimer = (this.closeRangeTimer || 0) + deltaTime;
+            } else {
+                this.closeRangeTimer = 0;
+            }
+
+            // FIX: Increased threshold from 1.5 to 2.1 to prevent "Approaching Job" jitter/stall
+            // OR if closeRangeTimer > 3.0 (Forced Arrival)
+            if (dist < 2.1 || this.closeRangeTimer > 3.0) {
+
+                if (this.closeRangeTimer > 3.0) {
+                    console.log(`[JobState ${this.actor.id}] CloseRange Timeout (${this.closeRangeTimer.toFixed(1)}s). Forcing Arrival at dist ${dist.toFixed(2)}`);
+                } else {
+                    if (this.actor.id === 0 || this.actor.faction === 'enemy') console.log(`[JobState ${this.actor.id}] Arrived at Job. Dist: ${dist.toFixed(2)}`);
+                }
+
+                this.actor.isMoving = false;
+                this.actor.lastJobResult = "Completed"; // DEBUG
+
+                // COMPLETION LOGIC
+                if (this.actor.onMoveFinished) this.actor.onMoveFinished(time);
+
+                this.actor.action = "Working";
+                if ((window as any).game) (window as any).game.completeRequest(this.actor, this.targetRequest);
+
+                this.targetRequest = null;
+                this.actor.targetRequest = null;
+
+                // Reset Timers
+                this.closeRangeTimer = 0;
+                this.stuckTimer = 0;
+
+                if ((window as any).game) {
+                    const next = (window as any).game.findBestRequest(this.actor);
+                    if (next && (window as any).game.claimRequest(this.actor, next)) {
+                        this.actor.targetRequest = next;
+                        this.targetRequest = next;
+                        if (this.actor.faction === 'player') {
+                            this.actor.action = 'Approaching Job';
+                        } else {
+                            this.actor.action = 'Moving';
+                        }
+                        this.enter(this);
+                        return;
+                    }
+                }
+                this.actor.changeState(this.getResumeState());
+                return;
+            }
+
+            // Target Validation
+            if (!this.actor.isMoving || (Math.abs(this.actor.targetGridX - this.targetRequest.x) > 0.5 || Math.abs(this.actor.targetGridZ - this.targetRequest.z) > 0.5)) {
+                // Only verify target occasionally to reduce overhead
+                // But ensure we target the request location
+                this.actor.smartMove(this.targetRequest.x, this.targetRequest.z, time);
+            }
+
+            const moved = (this.lastPos && (Math.abs(this.actor.gridX - this.lastPos.x) > 0.01 || Math.abs(this.actor.gridZ - this.lastPos.z) > 0.01));
+
+            if (!moved) {
+                if (!this.actor.isMoving) {
+                    this.stuckTimer += deltaTime;
+                    if (this.stuckTimer > 1.0) console.log(`[JobState ${this.actor.id}] StuckTimer: ${this.stuckTimer.toFixed(1)} Dist: ${dist.toFixed(2)}`);
+                }
+            } else {
+                this.stuckTimer = 0;
+                this.pathFailures = 0;
+            }
+
+            // Check for cancellation (Global check)
+            if (this.targetRequest.status === 'cancelled') {
+                console.log(`[JobState ${this.actor.id}] Update: Request Cancelled. Dropping.`);
+                this.actor.targetRequest = null;
+                this.targetRequest = null;
+                this.actor.changeState(new WanderState(this.actor));
+                return;
+            }
+
+            if (this.targetRequest.status === 'pending' || this.targetRequest.status === 'assigned') {
+                // Validate Request Target (Building/Entity might be destroyed)
+                if (this.targetRequest.building && (this.targetRequest.building.isDead || (this.targetRequest.building.userData && this.targetRequest.building.userData.hp <= 0))) {
+                    console.log(`[JobState ${this.actor.id}] Update: Target Building Destroyed. Dropping Request.`);
+                    this.actor.targetRequest = null;
+                    this.targetRequest = null;
+                    this.actor.changeState(new WanderState(this.actor));
+                    return;
+                }
+
+                const moved = this.actor.triggerMove(this.targetRequest.x, this.targetRequest.z, time);
+
+                // 1. Pathfinding Returned Null (Unreachable)
+                if (this.actor.isUnreachable) {
+                    console.warn(`[JobState ${this.actor.id}] Abort: Target Unreachable. Req:${this.targetRequest.id} at ${this.targetRequest.x},${this.targetRequest.z}`);
+                    this.actor.lastJobResult = "Unreachable"; // DEBUG
+                    const game = this.actor.game || (window as any).game;
+                    const deferTime = this.targetRequest.isManual ? 3.0 : 15.0;
+                    if (game && game.deferRequest) game.deferRequest(this.targetRequest, deferTime);
+
+                    this.actor.targetRequest = null;
+                    if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + deferTime);
+                    this.targetRequest = null; // Clear local ref too
+                    this.actor.isUnreachable = false;
+                    this.actor.stuckCount = 0;
+                    this.actor.lastJobAbortTime = time; // Set abort time for unreachability too
+                    this.actor.changeState(this.getResumeState());
+                    return;
+                }
+
+                if (!moved) {
+                    // Check for STUCK (Physical block or Logic block)
+                    if (!this.lastPos) this.lastPos = { x: this.actor.gridX, z: this.actor.gridZ };
+
+                    const dm = Math.abs(this.actor.gridX - this.lastPos.x) + Math.abs(this.actor.gridZ - this.lastPos.z);
+                    if (dm < 0.01) {
+                        // console.log(`[JobState ${this.actor.id}] Positional Stuck detected.`);
+                    } else {
+                        this.lastPos = { x: this.actor.gridX, z: this.actor.gridZ };
+                    }
+                }
+
+                // pathFailures logic
+                if (!moved && !this.actor.isMoving && !this.actor.isPathfinding) {
+                    this.pathFailures++;
+                }
+
+                // --- NEAR ARRIVAL / STUCK OPTIMIZATION (Moved BEFORE Path Failures) ---
+                // Now redundant/fallback for the Jitter logic above? 
+                // We keep it for "Complete Stuck" cases where dist < 4.5 but isMoving=false
+                // But closeRangeTimer covers both (moved=true and moved=false).
+                // So we can simplify or keep as safety. 
+                // Let's rely on closeRangeTimer which is superior. 
+                // But stuckTimer is useful for "Far Away Stuck".
+
+                // We REMOVE the old "Near Arrival" block here because closeRangeTimer (at top) handles it better before PathFailures.
+
+                const nearby = (this.actor.terrain && this.actor.terrain.findNearestEntity) ? this.actor.terrain.findNearestEntity('unit', this.actor.gridX, this.actor.gridZ, 2) : null;
+                const failureThreshold = nearby ? 400 : 300; // Increased to allow stuckTimer to trigger first
+
+                if (this.pathFailures > failureThreshold) {
+                    console.warn(`[JobState ${this.actor.id}] Abort: Path Failures > ${failureThreshold}.`);
+                    const game = this.actor.game || (window as any).game;
+                    const deferTime = this.targetRequest.isManual ? 3.0 : 15.0;
+                    if (game && game.deferRequest) game.deferRequest(this.targetRequest, deferTime);
+
+                    this.actor.targetRequest = null;
+                    if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + deferTime);
+                    this.targetRequest = null;
+                    this.pathFailures = 0;
+                    this.stuckTimer = 0;
+                    this.closeRangeTimer = 0;
+                    this.actor.lastJobAbortTime = time;
+                    this.actor.changeState(this.getResumeState());
+                    return;
+                }
+
+
+
+                if (this.stuckTimer > 10.0) { // REDUCED from 45.0
+                    console.warn(`[JobState ${this.actor.id}] Abort: Stuck/Throttled > 10s.`);
+                    const game = this.actor.game || (window as any).game;
+                    const deferTime = this.targetRequest.isManual ? 3.0 : 15.0;
+                    if (game && game.deferRequest) game.deferRequest(this.targetRequest, deferTime);
+
+                    this.actor.targetRequest = null;
+                    if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.targetRequest.id, time + deferTime);
+                    this.targetRequest = null;
+                    this.stuckTimer = 0;
+                    this.closeRangeTimer = 0;
+                    this.actor.lastJobAbortTime = time;
+                    this.actor.changeState(this.getResumeState());
+                    return;
+                }
+
+                // 3. Physical Stuck Check (Periodic)
+                if (time - this.lastStuckCheck >= this.checkStuckInterval) {
+                    this.lastStuckCheck = time;
+
+                    const vx = this.actor.getVisualX ? this.actor.getVisualX(time) : this.actor.gridX;
+                    const vz = this.actor.getVisualZ ? this.actor.getVisualZ(time) : this.actor.gridZ;
+
+                    if (this.lastPos) {
+                        const dx = Math.abs(vx - this.lastPos.x);
+                        const dz = Math.abs(vz - this.lastPos.z);
+
+                        if (dx < 0.5 && dz < 0.5) {
+                            // Position hasn't changed much. Timer already increasing in !moved block above.
+                        } else {
+                            this.lastPos = { x: vx, z: vz };
+                            // Only reset if we actually MOVED significantly
+                            if (!this.actor.isPathfindingThrottled && this.actor.isMoving) {
+                                this.stuckTimer = 0;
+                            }
+                        }
+                    } else {
+                        this.lastPos = { x: vx, z: vz };
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+export class CombatState extends State {
+    public stagnationTimer: number;
+    public name: string;
+    public savedResumeContext: any;
+    constructor(actor: any) {
+        super(actor);
+        this.stagnationTimer = 0;
+        this.name = "CombatState";
+    }
+    enter(prev?: State) {
+        // Capture Resume Context (Must be first)
+        this.savedResumeContext = {
+            action: this.actor.action,
+            // FIX: Only capture target if moving
+            target: (this.actor.isMoving && this.actor.targetGridX !== undefined && this.actor.targetGridZ !== undefined)
+                ? { x: this.actor.targetGridX, z: this.actor.targetGridZ }
+                : null,
+            migrationTarget: this.actor.migrationTarget || null
+        };
+
+
+        this.actor.isSleeping = false;
+        // FIX: Capture Migration Target before clearing if we want to resume it
+        // savedResumeContext already captured it above.
+        // We set it to null during combat to prevent accidental movement/migration logic during fighting.
+        this.actor.migrationTarget = null;
+        // FIX: Release job assignment so other workers can take it!
+        if (this.actor.targetRequest) {
+            if ((window as any).game && (window as any).game.releaseRequest) {
+                console.log(`[CombatState ${this.actor.id}] Releasing Job ${this.actor.targetRequest.id} to fight!`);
+                (window as any).game.releaseRequest(this.actor, this.actor.targetRequest);
+            }
+            this.actor.targetRequest = null;
+        }
+
+        this.actor.action = 'Fighting';
+        this.stagnationTimer = 0;
+        console.log(`[CombatState] Entering. Saved Context: ${JSON.stringify(this.savedResumeContext)}`);
+        this.update(this.actor.simTime || 0, 0); // Force immediate update with valid time
+    }
+
+    getResumeState() {
+        const state = new UnitWanderState(this.actor);
+        state.resumeContext = this.savedResumeContext;
+        return state;
+    }
+
+
+    update(...args: any[]) {
+        const [time, deltaTime, isNightParam, goblins] = args;
+        // 0. Acquire Target if missing
+        if (!this.actor.targetGoblin && !this.actor.targetBuilding) {
+
+            // AGGRESSION FIX: Immediate Chain Attack
+            // Before giving up, do a FORCE SCAN for nearby enemies
+            if (this.actor.findNextEnemy && this.actor.findNextEnemy()) {
+                // If found, loop continues naturally with new target
+            } else {
+                // Find Raid Point (Hotspots/Squad)
+                if (this.actor.findRaidTarget) {
+                    this.actor.findRaidTarget();
+                }
+
+                // Search for nearby Goblins/Buildings to engage
+                // (Already covered by findNextEnemy above, but kept for fallback logic if API changes)
+                if (!this.actor.targetGoblin && !this.actor.targetBuilding && this.actor.checkSelfDefense) {
+                    this.actor.checkSelfDefense(goblins);
+                }
+            }
+        }
+
+        if (!this.actor.targetGoblin && !this.actor.targetBuilding && !this.actor.targetRaidPoint && !this.actor.targetUnit) {
+            this.actor.changeState(this.getResumeState());
+            return;
+        }
+
+        // Manual Request Preemption (for workers)
+        if (this.actor.role === 'worker' && (window as any).game) {
+            const manReq = (window as any).game.findBestRequest(this.actor, false); // Only pending
+            if (manReq && manReq.isManual) {
+                if ((window as any).game.claimRequest(this.actor, manReq)) {
+                    this.actor.targetRequest = manReq;
+                    this.actor.changeState(new JobState(this.actor));
+                    return;
+                }
+            }
+        }
+
+        if (this.actor.targetBuilding) {
+            const terrain = this.actor.terrain || (window as any).game?.terrain;
+            if (terrain && terrain.buildings && !terrain.buildings.includes(this.actor.targetBuilding)) {
+                this.actor.targetBuilding = null;
+                // Don't exit immediately, try finding next enemy next frame
+                return;
+            }
+        }
+
+        this.stagnationTimer += deltaTime;
+        if (this.stagnationTimer > 20.0) {
+            this.actor.targetGoblin = null;
+            this.actor.targetBuilding = null;
+            this.actor.targetUnit = null; // Clear Unit
+            this.actor.changeState(this.getResumeState());
+            return;
+        }
+
+        // Ported Combat Logic from Unit.js (Legacy updateCombatLogic)
+        let target = this.actor.targetGoblin || this.actor.targetBuilding || this.actor.targetUnit;
+        if (!target) {
+            // FIX: Before moving to Raid Point, SCAN for enemies along the path!
+            // If we blindly move to Raid Point, we ignore goblins we bump into.
+            // ENCOUNTER COMBAT: Scan nearby (5.0) for ANY enemy to engage
+            if (this.actor.searchSurroundings) {
+                // searchSurroundings will set targetGoblin/targetBuilding if found
+                // But we want to be careful not to spam it.
+                // Let's use checkSelfDefense logic which is throttled, but FORCE it?
+                // No, checkSelfDefense only sets target if none exists. Here we have none.
+                // So checkSelfDefense is perfect.
+                this.actor.checkSelfDefense(goblins);
+                if (this.actor.targetGoblin || this.actor.targetBuilding) {
+                    return; // Loop next frame to engage
+                }
+            }
+        } else {
+            // ENCOUNTER COMBAT: We HAVE a target.
+            // But if we are chasing a far target (like a Building), scan for NEARBY units to engage first.
+            // This prevents walking past enemies to hit a wall.
+
+            // Only scan if moving (Chasing)
+            if (this.actor.isMoving || this.actor.action === 'Chasing') {
+                const distToTarget = this.actor.getDistance(target.gridX, target.gridZ);
+
+                // Only distract if main target is far (> 8.0)
+                if (distToTarget > 8.0) {
+                    // Check very close range (5.0)
+                    const range = 5.0;
+                    // Use optimized findBestTarget
+                    const nearbyEnemy = this.actor.terrain.findBestTarget('goblin', this.actor.gridX, this.actor.gridZ, range, (g, d) => {
+                        if (g.isDead) return Infinity;
+                        if (this.actor.ignoredTargets.has(g.id)) return Infinity;
+                        // Don't switch to current target (redundant)
+                        if (this.actor.targetGoblin && g.id === this.actor.targetGoblin.id) return Infinity;
+                        return d;
+                    });
+
+                    if (nearbyEnemy) {
+                        console.log(`[CombatState ${this.actor.id}] Encounter! Switching target to nearby Goblin ${nearbyEnemy.id}!`);
+                        this.actor.targetGoblin = nearbyEnemy;
+                        // Keep targetBuilding as backup? No, standard logic will re-acquire it if goblin dies.
+                        // But if we want to "Resume" attacking building...
+                        // For now, simple switch is enough.
+                        return; // Next loop will engage new target
+                    }
+                }
+            }
+        }
+
+        if (!target) {
+            // If still no target, move to Raid Point
+
+            // If still no target, move to Raid Point
+            if (this.actor.targetRaidPoint) {
+                this.actor.smartMove(this.actor.targetRaidPoint.x, this.actor.targetRaidPoint.z, time);
+                this.actor.action = "Patrolling";
+                return;
+            }
+            // Retrying findNextEnemy() here is redundant as loop top handles it next frame
+            return;
+        }
+
+        // 1. Distance Check
+        let dist = 999;
+        if (this.actor.targetGoblin) {
+            dist = this.actor.getDistance(this.actor.targetGoblin.gridX, this.actor.targetGoblin.gridZ);
+        } else if (this.actor.targetBuilding) {
+            dist = this.actor.getDistance(this.actor.targetBuilding.gridX, this.actor.targetBuilding.gridZ);
+            // Adjust for building size (Cave is size 2, center to center dist might be large)
+            if (this.actor.targetBuilding.userData && this.actor.targetBuilding.userData.type === 'cave') dist -= 1.0;
+        } else if (this.actor.targetUnit) {
+            dist = this.actor.getDistance(this.actor.targetUnit.gridX, this.actor.targetUnit.gridZ);
+        }
+
+        // Stagnation Check reset
+        if (dist < 3.0) this.stagnationTimer = 0;
+
+        // Range Stats
+        let range = 1.5; // Melee
+        if (this.actor.role === 'wizard') range = 8.0;
+
+        // WORKER LEASH: Logic to stop chasing if target runs too far
+        if (this.actor.role === 'worker' && dist > 15.0) {
+            console.log(`[CombatState ${this.actor.id}] Worker gave up chase. Dist: ${dist.toFixed(1)}`);
+            this.actor.targetGoblin = null;
+            this.actor.targetBuilding = null;
+            this.actor.changeState(this.getResumeState());
+            return;
+        }
+
+        // HYSTERESIS: If already fighting, allow target to drift slightly out of range without resuming chase
+        // This prevents "jitter" where unit moves 1px, stops, attacks, moves 1px...
+        let chaseThreshold = range;
+        if (this.actor.action === 'Fighting' || this.actor.action === 'Shooting') {
+            chaseThreshold = range * 1.1; // 10% buffer (e.g. 1.5 -> 1.65)
+        }
+
+        // 2. Move / Chase
+        if (dist > chaseThreshold) {
+            // Too far, move closer
+            let tx = target.gridX;
+            let tz = target.gridZ;
+
+            // For buildings, use smartMove
+            // Note: smartMove handles throttling implicitly.
+            this.actor.smartMove(tx, tz, time);
+            this.actor.action = "Chasing";
+            return;
+        }
+
+        // 3. Attack (In Range)
+        this.actor.action = "Fighting";
+        this.actor.isMoving = false; // Stop to hit
+
+        // Face Target
+        const dx = target.gridX - this.actor.gridX;
+        const dz = target.gridZ - this.actor.gridZ;
+        this.actor.rotationY = Math.atan2(dx, dz);
+
+        // Cooldown
+        if (this.actor.attackCooldown > 0) {
+            this.actor.attackCooldown -= deltaTime;
+            return;
+        }
+
+        // EXECUTE ATTACK
+        if (this.actor.targetGoblin) {
+            if (this.actor.attackGoblin) {
+                this.actor.attackGoblin(this.actor.targetGoblin);
+            } else {
+                // Fallback for tests
+                let damage = this.actor.damage || 10;
+                this.actor.targetGoblin.takeDamage(damage, this.actor);
+                if (this.actor.targetGoblin.isDead) this.actor.targetGoblin = null;
+                this.actor.attackCooldown = this.actor.attackRate || 1.0;
+            }
+        } else if (this.actor.targetUnit) {
+            // Attack Unit (Faction War)
+            if (this.actor.attackUnit) {
+                this.actor.attackUnit(this.actor.targetUnit);
+            } else {
+                // Fallback
+                const dmg = this.actor.damage || 5;
+                this.actor.targetUnit.takeDamage(dmg, this.actor);
+                this.actor.attackCooldown = this.actor.attackRate || 1.0;
+            }
+            if (this.actor.targetUnit.isDead) {
+                this.actor.targetUnit = null;
+                this.actor.changeState(this.getResumeState()); // Resume or find next
+            }
+        } else if (this.actor.targetBuilding) {
+            if (this.actor.attackBuilding) {
+                this.actor.attackBuilding(this.actor.targetBuilding);
+            } else {
+                // Fallback for tests
+                let damage = this.actor.damage || 10;
+                if (target.userData && target.userData.hp !== undefined) {
+                    target.userData.hp -= damage;
+                    if (target.userData.hp <= 0 && (window as any).game && (window as any).game.terrain) {
+                        (window as any).game.terrain.removeBuilding(target);
+                        this.actor.targetBuilding = null;
+                    }
+                }
+                this.actor.attackCooldown = this.actor.attackRate || 1.0;
+            }
+        }
+    }
+}
+
+
+
+export class SleepState extends State {
+    constructor(actor: any) {
+        super(actor);
+    }
+    enter() {
+        if (this.actor.id === 0) console.log(`[SleepState] Entering Sleep logic.`);
+        this.actor.action = "Sleeping";
+        this.actor.isSleeping = false; // Start by moving to shelter
+        this.update(this.actor.simTime || 0, 0, true); // Force isNightParam=true since we are entering SleepState
+    }
+    exit() {
+        this.actor.isSleeping = false;
+    }
+    update(...args: any[]) {
+        const [time, deltaTime, isNightParam, goblins] = args;
+        const isNight = isNightParam || ((window as any).game && (window as any).game.isNight);
+
+        // 0. Immediate Wakeup for Existing Manual Jobs (e.g. post-load)
+        if (this.actor.targetRequest && this.actor.targetRequest.isManual) {
+            this.actor.isSleeping = false;
+            this.actor.targetRequest.status = 'assigned'; // Reinforce
+            this.actor.changeState(new JobState(this.actor));
+            return;
+        }
+
+        if (!isNight || this.actor.role !== 'worker') {
+            this.actor.isSleeping = false;
+            this.actor.changeState(new UnitWanderState(this.actor));
+            return;
+        }
+
+        if (this.actor.checkSelfDefense && this.actor.checkSelfDefense(goblins) && (this.actor.targetGoblin || this.actor.targetBuilding)) {
+            this.actor.isSleeping = false;
+            this.actor.changeState(new CombatState(this.actor));
+            return;
+        }
+
+        // Manual Request Preemption (Wake up for player markers)
+        if (this.actor.role === 'worker' && (window as any).game) {
+            const manReq = (window as any).game.findBestRequest(this.actor, false);
+            if (manReq && manReq.isManual) {
+                if ((window as any).game.claimRequest(this.actor, manReq)) {
+                    this.actor.isSleeping = false;
+                    this.actor.targetRequest = manReq;
+                    this.actor.changeState(new JobState(this.actor));
+                    return;
+                }
+            }
+        }
+
+        if (this.actor.isSleeping) return;
+
+        const shelter = this.actor.findNearestShelter ? this.actor.findNearestShelter() : null;
+        if (shelter) {
+            const dist = this.actor.getDistance(shelter.gridX, shelter.gridZ);
+            if (dist < 1.0) {
+                this.actor.isSleeping = true;
+                this.actor.isMoving = false;
+                this.actor.action = "Sleeping";
+            } else {
+                this.actor.action = "Going Home";
+                this.actor.smartMove(shelter.gridX, shelter.gridZ, time);
+            }
+        } else {
+            // No home? Wake up and wander.
+            this.actor.isSleeping = false;
+            this.actor.changeState(new UnitWanderState(this.actor));
+        }
+    }
+}
+

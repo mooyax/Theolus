@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { Game } from '../Game.js';
 import { Unit } from '../Unit.js';
 import { Actor } from '../Actor.js';
-import { JobState, SleepState } from '../ai/states/UnitStates.js';
+import { Job, Sleep } from '../ai/states/UnitStates.js';
 
 // --- MOCKS ---
 
@@ -150,6 +150,37 @@ vi.mock('three/examples/jsm/utils/BufferGeometryUtils.js', () => ({
     mergeVertices: vi.fn(geo => geo),
 }));
 
+vi.mock('../Terrain.js', () => ({
+    Terrain: class {
+        constructor() {
+            this.logicalWidth = 100;
+            this.logicalDepth = 100;
+            this.grid = Array(100).fill(null).map(() => Array(100).fill({ regionId: 1, height: 10, type: 'grass' }));
+            this.entityGrid = Array(100).fill(null).map(() => Array(100).fill([]));
+            this.updateColors = vi.fn();
+            this.updateMesh = vi.fn();
+            this.calculateRegions = vi.fn();
+            this.deserialize = vi.fn().mockResolvedValue(true);
+            this.serialize = vi.fn(() => ({ grid: [], width: 100, depth: 100 }));
+            this.registerEntity = vi.fn();
+            this.unregisterEntity = vi.fn();
+            this.moveEntity = vi.fn();
+            this.getTileHeight = vi.fn(() => 10);
+            this.findPath = vi.fn((sx, sz, ex, ez) => [{ x: ex, z: ez }]);
+            this.findPathAsync = vi.fn((sx, sz, ex, ez) => Promise.resolve([{ x: ex, z: ez }]));
+            this.getMultiplier = vi.fn(() => 1);
+            this.getBiomeColor = vi.fn(() => ({ r: 0, g: 1, b: 0 }));
+            this.isReachable = vi.fn(() => true);
+            this.setSeason = vi.fn();
+            this.checkYield = () => Promise.resolve();
+            this.getBuildingAt = vi.fn(() => null);
+            this.findBestTarget = vi.fn(() => null);
+            this.initEntityGrid = vi.fn();
+            this.getWidth = () => 100;
+        }
+    }
+}));
+
 describe('Night Loading Job Assignment', () => {
     let game;
     let scene;
@@ -165,8 +196,18 @@ describe('Night Loading Job Assignment', () => {
             <div id="mana-bar"></div>
         `;
         // Global alert mock for current environment
-        if (typeof window !== 'undefined') window.alert = vi.fn();
         if (typeof global !== 'undefined') global.alert = vi.fn();
+
+        // FIX: Functional LocalStorage Mock
+        const store = new Map();
+        global.localStorage = {
+            getItem: vi.fn((key) => store.get(key) || null),
+            setItem: vi.fn((key, value) => store.set(key, value.toString())),
+            clear: vi.fn(() => store.clear()),
+            removeItem: vi.fn((key) => store.delete(key)),
+            length: 0,
+            key: vi.fn(),
+        };
 
         // Check localStorage
         try {
@@ -221,7 +262,7 @@ describe('Night Loading Job Assignment', () => {
         game.claimRequest(unit, req);
 
         expect(unit.targetRequest).toBe(req);
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
 
         // Save
         const saveSuccess = game.saveGame(1);
@@ -250,7 +291,7 @@ describe('Night Loading Job Assignment', () => {
 
         // Verify state
         expect(loadedUnit.targetRequest).toBe(loadedReq);
-        expect(loadedUnit.state).toBeInstanceOf(JobState);
+        expect(loadedUnit.state).toBeInstanceOf(Job);
         expect(loadedUnit.isSleeping).toBe(false);
         expect(loadedUnit.action).toBe('Approaching Job');
     });
@@ -263,7 +304,7 @@ describe('Night Loading Job Assignment', () => {
         unit.id = 0;
 
         // Force sleep
-        unit.changeState(new SleepState(unit));
+        unit.changeState(new Sleep(unit));
         unit.isSleeping = true;
         unit.action = 'Sleeping';
 
@@ -271,7 +312,7 @@ describe('Night Loading Job Assignment', () => {
         const req = game.addRequest('raise', 15, 15, true);
         game.claimRequest(unit, req);
 
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
         expect(unit.isSleeping).toBe(false);
 
         game.saveGame(2);
@@ -286,11 +327,11 @@ describe('Night Loading Job Assignment', () => {
         }
 
         const loadedUnit = newGame.units.find(u => u.id === 0);
-        expect(loadedUnit.state).toBeInstanceOf(JobState);
+        expect(loadedUnit.state).toBeInstanceOf(Job);
         expect(loadedUnit.isSleeping).toBe(false);
-        // Verifying JobState is sufficient to prove unit woke up
+        // Verifying Job is sufficient to prove unit woke up
         // (isMoving depends on pathfinding which may not work in this mock env)
-        expect(loadedUnit.state).toBeInstanceOf(JobState);
+        expect(loadedUnit.state).toBeInstanceOf(Job);
 
         // Verify final destination (Request) 
         expect(loadedUnit.targetRequest.x).toBe(15);
@@ -349,12 +390,12 @@ describe('Night Loading Job Assignment', () => {
         const loadedUnit = newGame.units.find(u => u.id === 0);
         expect(loadedUnit.targetRequest).toBe(loadedReq);
 
-        // Force an update to allow SleepState to transition to JobState
+        // Force an update to allow Sleep to transition to Job
         newGame.frameCounter = 100;
         loadedUnit.updateLogic(21, 0.1);
 
-        // It should be moving/working because SleepState sees isManual=true
+        // It should be moving/working because Sleep sees isManual=true
         // We check State because isMoving might be false if pathfinding fails in mock environment
-        expect(loadedUnit.state.constructor.name).toBe('JobState');
+        expect(loadedUnit.state.constructor.name).toBe('Job');
     });
 });

@@ -1,7 +1,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
-import { JobState, CombatState, SleepState } from '../ai/states/UnitStates.js';
+import { Job, Combat, Sleep } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
 // Mock THREE
@@ -56,11 +56,11 @@ describe('Manual Request Priority and Preemption', () => {
         game.units.push(unit);
     });
 
-    it('should allow manual request to preempt CombatState', () => {
+    it('should allow manual request to preempt Combat', () => {
         const goblin = { gridX: 12, gridZ: 12, id: 'g1' };
         unit.targetGoblin = goblin;
-        unit.changeState(new CombatState(unit));
-        expect(unit.state).toBeInstanceOf(CombatState);
+        unit.changeState(new Combat(unit));
+        expect(unit.state).toBeInstanceOf(Combat);
         // Action might be 'Fighting' or 'Chasing' depending on distance
         expect(['Fighting', 'Chasing']).toContain(unit.action);
 
@@ -70,15 +70,15 @@ describe('Manual Request Priority and Preemption', () => {
         // Update logic
         unit.updateLogic(101, 1, false, [goblin]);
 
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
         expect(unit.targetRequest).toBe(manReq);
         expect(unit.action).toBe('Approaching Job');
     });
 
-    it('should allow manual request to preempt SleepState', () => {
-        unit.changeState(new SleepState(unit));
+    it('should allow manual request to preempt Sleep', () => {
+        unit.changeState(new Sleep(unit));
         unit.isSleeping = true;
-        expect(unit.state).toBeInstanceOf(SleepState);
+        expect(unit.state).toBeInstanceOf(Sleep);
 
         const manReq = { id: 3, type: 'lower', x: 30, z: 30, isManual: true, status: 'pending' };
         game.findBestRequest.mockReturnValue(manReq);
@@ -86,21 +86,21 @@ describe('Manual Request Priority and Preemption', () => {
         // Update logic
         unit.updateLogic(101, 1, true, []);
 
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
         expect(unit.targetRequest).toBe(manReq);
         expect(unit.isSleeping).toBe(false);
     });
 
-    it('should NOT allow auto request to preempt CombatState', () => {
+    it('should NOT allow auto request to preempt Combat', () => {
         const goblin = { gridX: 12, gridZ: 12, id: 'g1' };
         unit.targetGoblin = goblin;
-        unit.changeState(new CombatState(unit));
+        unit.changeState(new Combat(unit));
 
         const autoReq = { id: 4, type: 'raise', x: 20, z: 20, isManual: false, status: 'pending' };
         game.findBestRequest.mockReturnValue(autoReq);
 
         unit.updateLogic(101, 1, false, [goblin]);
 
-        expect(unit.state).toBeInstanceOf(CombatState);
+        expect(unit.state).toBeInstanceOf(Combat);
     });
 });

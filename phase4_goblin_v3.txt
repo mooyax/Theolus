@@ -1,0 +1,37 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Real Building Destruction[2m > [22m[2mshould damage building population
+[22m[39m[ActorCore] Actor Created. Type: goblin Pos: 10,10
+
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Real Building Destruction[2m > [22m[2mshould damage building population
+[22m[39mTEST: Before Attack 1 - Pop: [33m10[39m
+[Building] house(1) took 10 dmg. Pop: 9. Retaliation: 36
+TEST: After Attack 1 - Pop: [33m9[39m
+
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Real Building Destruction[2m > [22m[2mshould destroy building when Pop and HP reach zero
+[22m[39m[ActorCore] Actor Created. Type: goblin Pos: 10,10
+
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Real Building Destruction[2m > [22m[2mshould destroy building when Pop and HP reach zero
+[22m[39mTEST: Before Attack 2 - Pop: [33m0.5[39m HP: [33m5[39m
+[Building] house(3) took 10 dmg. Pop: 0. Retaliation: 0
+Goblin 0 destroyed house !
+TEST: After Attack 2 - Pop: [33m0[39m HP: [33m-5[39m Dead: [33mtrue[39m
+
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Real Building Destruction[2m > [22m[2mshould NOT destroy if population remains high
+[22m[39m[ActorCore] Actor Created. Type: goblin Pos: 10,10
+
+[90mstdout[2m | src/tests/GoblinDestruction.test.js[2m > [22m[2mGoblin Real Building Destruction[2m > [22m[2mshould NOT destroy if population remains high
+[22m[39mTEST: Before Attack 3 - Pop: [33m5[39m HP: [33m0[39m
+[Building] house(5) took 10 dmg. Pop: 4. Retaliation: 16
+TEST: After Attack 3 - Pop: [33m4[39m HP: [33m-10[39m
+
+ [32m笨・[39m src/tests/GoblinDestruction.test.js[2m > [22mGoblin Real Building Destruction[2m > [22mshould damage building population[32m 10[2mms[22m[39m
+ [32m笨・[39m src/tests/GoblinDestruction.test.js[2m > [22mGoblin Real Building Destruction[2m > [22mshould destroy building when Pop and HP reach zero[32m 4[2mms[22m[39m
+ [32m笨・[39m src/tests/GoblinDestruction.test.js[2m > [22mGoblin Real Building Destruction[2m > [22mshould NOT destroy if population remains high[32m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 00:51:25
+[2m   Duration [22m 993ms[2m (transform 253ms, setup 323ms, import 20ms, tests 17ms, environment 425ms)[22m
+

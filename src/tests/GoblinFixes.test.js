@@ -1,73 +1,14 @@
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Building } from '../Building.js';
 import { Game } from '../Game.js';
-import GameConfig from '../config/GameConfig.json';
+import { GameConfig } from '../config/GameConfig';
+import { setupTestEnv } from './TestUtils';
 
-// --- Global Mocks/Setup ---
-if (typeof HTMLCanvasElement !== 'undefined') {
-    HTMLCanvasElement.prototype.getContext = vi.fn().mockImplementation((type) => {
-        if (type !== '2d') return null;
-        return {
-            fillRect: vi.fn(),
-            clearRect: vi.fn(),
-            getImageData: vi.fn(() => ({ data: new Uint8ClampedArray(4) })),
-            putImageData: vi.fn(),
-            createImageData: vi.fn(() => ({ data: new Uint8ClampedArray(4) })),
-            setTransform: vi.fn(),
-            drawImage: vi.fn(),
-            save: vi.fn(),
-            restore: vi.fn(),
-            beginPath: vi.fn(),
-            moveTo: vi.fn(),
-            lineTo: vi.fn(),
-            closePath: vi.fn(),
-            stroke: vi.fn(),
-            fill: vi.fn(),
-            arc: vi.fn(),
-            createRadialGradient: vi.fn(() => ({ addColorStop: vi.fn() })),
-            measureText: vi.fn(() => ({ width: 0 })),
-        };
-    });
-}
+// Note: setup.js handles global mocks for THREE, Canvas, and Managers.
 
-// Mock Component classes
-vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } dispose() { } } }));
-vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
-vi.mock('../CloudManager.js', () => ({ CloudManager: class { update() { } } }));
-vi.mock('../BirdManager.js', () => ({ BirdManager: class { update() { } } }));
-vi.mock('../SheepManager.js', () => ({ SheepManager: class { update() { } } }));
-vi.mock('../FishManager.js', () => ({ FishManager: class { update() { } } }));
-vi.mock('../SoundManager.js', () => ({ SoundManager: class { init() { } play() { } initialized = true; } }));
-vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { init() { return Promise.resolve(); } update() { } dispose() { } initAssets() { } initInstancedMeshes() { } updateLighting() { } assets = { caveGeo: { parameters: { radiusTop: 0.45 } } }; } }));
-vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { init() { return Promise.resolve(); } update() { } dispose() { } initAssets() { } updateLighting() { } } }));
-vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { init() { return Promise.resolve(); } update() { } dispose() { } initAssets() { } updateLighting() { } } }));
-vi.mock('../InputManager.js', () => ({ InputManager: class { update() { } } }));
-vi.mock('../ParticleManager.js', () => ({ ParticleManager: class { update() { } } }));
-vi.mock('three/examples/jsm/controls/OrbitControls.js', () => ({ OrbitControls: class { update() { } } }));
-
-// Mock THREE more robustly
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    class MockRenderer {
-        constructor() {
-            this.domElement = document.createElement('canvas');
-            this.clippingPlanes = [];
-            this.localClippingEnabled = false;
-        }
-        setSize() { }
-        setPixelRatio() { }
-        render() { }
-        setClearColor() { }
-        dispose() { }
-    }
-    return {
-        ...actual,
-        WebGLRenderer: MockRenderer
-    };
-});
-
-// Mock Unit & Goblin (Static methods)
+// Mock Unit & Goblin Statics (Specific to Game init requiring them)
 vi.mock('../Unit.js', async () => {
     const { Unit } = await vi.importActual('../Unit.js');
     Unit.createFaceTexture = vi.fn().mockReturnValue(new THREE.Texture());
@@ -82,60 +23,48 @@ vi.mock('../Goblin.js', async () => {
     return { Goblin };
 });
 
-const mockTerrain = {
-    findBestTarget: vi.fn(() => null),
-    logicalWidth: 240,
-    logicalDepth: 240,
-    width: 720,
-    depth: 720,
-    buildings: [],
-    grid: Array(240).fill(0).map(() => Array(240).fill(0).map(() => ({ height: 1, hasBuilding: false }))),
-    getVisualPosition: (x, z) => ({ x, y: 1, z }),
-    getVisualOffset: () => ({ x: 0, y: 0 }),
-    getTileHeight: () => 1,
-    getInterpolatedHeight: () => 1,
-    isValidGrid: () => true,
-    isWalkable: () => true,
-    isReachable: () => true,
-    update: vi.fn(),
-    registerEntity: vi.fn(),
-    unregisterEntity: vi.fn(),
-    moveEntity: vi.fn(),
-    canAddBuilding: () => true,
-    addBuilding: vi.fn().mockImplementation((type, x, z) => {
-        const b = new Building(null, mockTerrain, type, x, z);
-        mockTerrain.buildings.push(b);
-        return b;
-    }),
-    findBestTarget: () => null,
-    clippingPlanes: [],
-    updateMeshPosition: vi.fn(),
-    updateLights: vi.fn(),
-    findPathAsync: () => Promise.resolve([]),
-    checkYield: () => Promise.resolve()
-};
-
 describe('Goblin Spawning Logic', () => {
+    let terrain;
+
     beforeEach(() => {
         vi.clearAllMocks();
-        mockTerrain.buildings = [];
+        // Use TestUtils to setup environment
+        const env = setupTestEnv({ useMockTerrain: true });
+        terrain = env.terrain;
+
+        // Ensure terrain.buildings is clean
+        terrain.buildings = [];
     });
 
     it('should update building population', () => {
-        const cave = new Building(null, mockTerrain, 'cave', 10, 10);
-        mockTerrain.buildings.push(cave);
+        // Use real Building logic with mock terrain
+        const cave = new Building(null, terrain, 'cave', 10, 10);
+        terrain.buildings.push(cave);
 
         expect(cave.userData.population).toBe(0);
 
         const deltaTime = 1.0;
         cave.update(0, deltaTime);
 
-        // Cave growth rate is 0.25 (as per current GameConfig)
-        expect(cave.userData.population).toBeCloseTo(0.25, 2);
+        // Use growth rate from config
+        const expectedGrowth = GameConfig.buildings.cave.growthRate;
+        expect(cave.userData.population).toBeCloseTo(expectedGrowth, 2);
     });
 
     it('should synchronize clipping planes with controls.target when available', () => {
-        const game = new Game(null, mockTerrain, true);
+        // We need a Game instance. 
+        // setupTestGame creates a MockGame, but here we want to test REAL Game logic for updateCameraControls.
+        // So we instantiate real Game with minimal dependencies.
+
+        const game = new Game(null, terrain, true);
+
+        // Mock clippingPlanes manually for logic test
+        game.clippingPlanes = [
+            new THREE.Plane(new THREE.Vector3(1, 0, 0), 0),
+            new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0),
+            new THREE.Plane(new THREE.Vector3(0, 0, 1), 0),
+            new THREE.Plane(new THREE.Vector3(0, 0, -1), 0)
+        ];
 
         // Mock controls.target
         game.controls = {
@@ -144,11 +73,10 @@ describe('Goblin Spawning Logic', () => {
             domElement: document.createElement('canvas')
         };
 
-        game.camera.position.set(100, 100, 100); // Camera follows target but is far away
+        game.camera.position.set(100, 100, 100);
         game.updateCameraControls();
 
-        const viewRadius = GameConfig.render.viewRadius; // Updated to match User Config (currently 40)
-        // Should use target (500) instead of camera position (100)
+        const viewRadius = GameConfig.render.viewRadius;
         expect(game.clippingPlanes[1].constant).toBe(500 + viewRadius);
         expect(game.clippingPlanes[1].constant).not.toBe(100 + viewRadius);
     });

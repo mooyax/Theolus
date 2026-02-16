@@ -1,39 +1,62 @@
 
-竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Startup Error 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
-Error: Failed to load custom Reporter from list
-    at loadCustomReporterModule (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:10516:9)
-    at file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:10532:23
-    ... 3 lines matching cause stack trace ...
-    at _createServer (file:///C:/Users/mooya/develop/test/node_modules/vite/dist/node/chunks/config.js:26249:86)
-    at createViteServer (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:9810:17)
-    at createVitest (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:13099:17)
-    at prepareVitest (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:13461:14)
-    at startVitest (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:13407:14) {
-  [cause]: Error: Failed to load url list (resolved id: list). Does the file exist?
-      at reviveInvokeError (file:///C:/Users/mooya/develop/test/node_modules/vite/dist/node/module-runner.js:475:14)
-      at Object.invoke (file:///C:/Users/mooya/develop/test/node_modules/vite/dist/node/module-runner.js:491:33)
-      at ServerModuleRunner.getModuleInformation (file:///C:/Users/mooya/develop/test/node_modules/vite/dist/node/module-runner.js:1086:7)
-      at ServerModuleRunner.import (file:///C:/Users/mooya/develop/test/node_modules/vite/dist/node/module-runner.js:1013:23)
-      at loadCustomReporterModule (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:10514:26)
-      at file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:10532:23
-      at async Promise.all (index 0)
-      at Vitest._setServer (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:12168:138)
-      at BasicMinimalPluginContext.handler (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:13071:6)
-      at _createServer (file:///C:/Users/mooya/develop/test/node_modules/vite/dist/node/chunks/config.js:26249:86) {
-    code: 'ERR_LOAD_URL',
-    runnerError: Error: RunnerError
-        at reviveInvokeError (file:///C:/Users/mooya/develop/test/node_modules/vite/dist/node/module-runner.js:476:64)
-        at Object.invoke (file:///C:/Users/mooya/develop/test/node_modules/vite/dist/node/module-runner.js:491:33)
-        at ServerModuleRunner.getModuleInformation (file:///C:/Users/mooya/develop/test/node_modules/vite/dist/node/module-runner.js:1086:7)
-        at ServerModuleRunner.import (file:///C:/Users/mooya/develop/test/node_modules/vite/dist/node/module-runner.js:1013:23)
-        at loadCustomReporterModule (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:10514:26)
-        at file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:10532:23
-        at async Promise.all (index 0)
-        at Vitest._setServer (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:12168:138)
-        at BasicMinimalPluginContext.handler (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/cli-api.C7sYjHmQ.js:13071:6)
-        at _createServer (file:///C:/Users/mooya/develop/test/node_modules/vite/dist/node/chunks/config.js:26249:86)
-  }
-}
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+ 笨・src/tests/MigrationImprovement.test.js (4 tests) 14ms
+ 笶ｯ src/tests/Movement.test.js (4 tests | 1 failed) 47ms
+     笨・should set very long moveDuration for Unit on Rock 7ms
+     笨・should set normal moveDuration on Flat 3ms
+     ﾃ・should prevent Unit from moving/building on Rock checks? 16ms
+     笨・should increase Goblin Hut population and spawn goblin 20ms
+ 笶ｯ src/tests/StuckReassignment.test.js (1 test | 1 failed) 28ms
+     ﾃ・should release job if throttled and not moving for 45s 27ms
+ 笨・src/tests/SafeSpawn.test.js (1 test) 193ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Movement.test.js > Terrain Movement and Logic Tests > should prevent Unit from moving/building on Rock checks?
+AssertionError: expected "addBuilding" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st addBuilding call:
+
+    Array [
+      "house",
+      15,
+      15,
+      false,
+      false,
+      "player",
+    ]
 
 
+Number of calls: 1
+
+ 笶ｯ src/tests/Movement.test.js:110:45
+    108|         unit.tryBuildStructure(100);
+    109| 
+    110|         expect(mockTerrain.addBuilding).not.toHaveBeenCalled();
+       |                                             ^
+    111|     });
+    112| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/StuckReassignment.test.js > Stuck/Throttled Job Reassignment > should release job if throttled and not moving for 45s
+AssertionError: expected null not to be null
+ 笶ｯ src/tests/StuckReassignment.test.js:70:36
+     68|         game.processAssignments();
+     69| 
+     70|         expect(req.assignedTo).not.toBeNull();
+       |                                    ^
+     71|         expect(req.assignedTo == unit1.id).toBe(true);
+     72|         expect(unit1.state.name).toBe('JobState');
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  2 failed | 8 passed (10)
+   Start at  01:13:24
+   Duration  1.48s (transform 1.61s, setup 1.34s, import 807ms, tests 282ms, environment 2.02s)
 

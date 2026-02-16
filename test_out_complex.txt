@@ -1,0 +1,26 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/ComplexAI.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test)
+[Game] Dispose called for Game Instance.
+
+ ❯ src/tests/ComplexAI.test.js (4 tests | 4 failed) 36ms
+     × should drop job gracefully if target building is destroyed 20ms
+     × should prioritize manual jobs even when closer auto jobs appear 7ms
+     × should NOT drop manual job when switching to Sleep at night 3ms
+     × should abandon unreachable job (Abandonment Test) 3ms
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  20:47:18
+   Duration  1.58s (transform 577ms, setup 79ms, import 623ms, tests 36ms, environment 525ms)
+

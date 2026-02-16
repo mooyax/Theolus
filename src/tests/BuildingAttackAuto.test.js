@@ -1,7 +1,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Unit } from '../Unit.js';
-import { UnitWanderState, CombatState } from '../ai/states/UnitStates.js';
+import { Wander, Combat } from '../ai/states/UnitStates.js';
 
 describe('Autonomous Building Attack', () => {
     let unit;
@@ -33,7 +33,7 @@ describe('Autonomous Building Attack', () => {
         unit = new Unit(null, terrain, 10, 10, 'knight');
         unit.id = 1;
         unit.game = game; // Explicitly set game
-        unit.state = new UnitWanderState(unit);
+        unit.state = new Wander(unit);
         console.log('Unit created. Game set:', !!unit.game);
     });
 
@@ -60,23 +60,20 @@ describe('Autonomous Building Attack', () => {
             return null;
         };
 
-        // Time Slicing Bypass: Set frame such that (frame + id + 5) % 10 == 0
-        // id=1. (frame + 6) % 10 == 0 -> frame=4
-        if (window.game) window.game.frameCount = 4;
-
-        unit.searchSurroundings(10, 10, []);
+        // Time Slicing Bypass: Use forceScan=true
+        unit.checkSelfDefense(null, true);
 
         expect(unit.targetBuilding).toBe(hut);
 
         // Now update WanderState
-        unit.checkSelfDefense = vi.fn().mockReturnValue(true); // Allow self defense
+        // unit.checkSelfDefense = vi.fn().mockReturnValue(true); // Allow self defense
 
         unit.state.update(0.1, 0.1);
 
-        expect(unit.state).toBeInstanceOf(CombatState);
+        expect(unit.state).toBeInstanceOf(Combat);
         // Distance is 5, so it should be Chasing initially
         expect(['Fighting', 'Chasing']).toContain(unit.action);
-        console.log('Unit successfully entered CombatState for Building');
+        console.log('Unit successfully entered Combat for Building');
     });
 
     it('should NOT engage if worker (safeguard check)', () => {
@@ -94,27 +91,20 @@ describe('Autonomous Building Attack', () => {
 
         terrain.findBestTarget = (type) => hut; // Even if it finds it...
 
-        // Time Slicing Bypass
-        if (window.game) window.game.frameCount = 4;
+        // Time Slicing Bypass: Set frame such that scan is allowed but NOT forced
+        if (window.game) window.game.frameCount = 4; // Bypasses time-slicing
+        unit.checkSelfDefense(null, false);
+        // Worker with request stays busy, so shouldScan should be false!
 
-        unit.searchSurroundings(10, 10, []);
-        // Worker MIGHT find it.
-
-        // Force busy check
-        unit.isMoving = true;
-
-        // We modified UnitStates to check (this.actor.targetGoblin || this.actor.targetBuilding) inside isAttack
-        // But checkSelfDefense should return false for busy worker
-
-        // Let's manually set target
+        // Let's manually set target to ensure we test the state transition
         unit.targetBuilding = hut;
 
         // Update state
         unit.state.update(0.1, 0.1);
 
-        // Explicitly check that state is NOT CombatState
-        // Worker with request transitions to JobState automatically in WanderState
-        expect(unit.state).not.toBeInstanceOf(CombatState);
+        // Explicitly check that state is NOT Combat
+        // Worker with request transitions to Job automatically in WanderState
+        expect(unit.state).not.toBeInstanceOf(Combat);
         expect(unit.action).not.toBe('Fighting');
         console.log('Worker correctly ignored combat due to job');
     });

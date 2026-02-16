@@ -99,7 +99,8 @@ describe('Terrain Movement and Logic Tests', () => {
     });
 
     it('should prevent Unit from moving/building on Rock checks?', () => {
-        mockTerrain.grid[15][15].height = 10; // Rock
+        // Build logic checks unit's current position (10,10)
+        mockTerrain.grid[10][10].height = 13; // Rock
         vi.spyOn(mockTerrain, 'addBuilding');
 
         unit.tryBuildStructure(100);

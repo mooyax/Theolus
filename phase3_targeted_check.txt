@@ -1,0 +1,1508 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/MovementReset.test.js[2m > [22m[2mActor Movement Reset[2m > [22m[2mshould NOT reset movement timer when calling smartMove frequently for the same target
+[22m[39m[ActorCore] Actor Created. Type: test Pos: 0,0
+
+[90mstdout[2m | src/tests/MovementReset.test.js[2m > [22m[2mActor Movement Reset[2m > [22m[2mshould progress visually even with frequent smartMove calls
+[22m[39m[ActorCore] Actor Created. Type: test Pos: 0,0
+
+ [31m笶ｯ[39m src/tests/MovementReset.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 23[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT reset movement timer when calling smartMove frequently for the same target[39m[32m 17[2mms[22m[39m
+[31m     [31mﾃ・[31m should progress visually even with frequent smartMove calls[39m[32m 3[2mms[22m[39m
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mResource Gathering[2m > [22m[2mshould gather fish if checking neighbors finds water
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mResource Gathering[2m > [22m[2mshould NOT gather fish if completely inland
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould prioritize Farm and ABORT house if farm fails during famine
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould fallback to House if NOT in famine
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould accept role in constructor
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould accept role in constructor
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:1 Role:hunter Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:1 Role:hunter Pos:5,5
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:3 Role:true Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould FAIL buildFarm and IMPROVE LAND if moisture is poor
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+stderr | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor
+[Unit 0] Farm failed: Too dry (0). Improving land.
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould FAIL buildFarm and IMPROVE LAND if moisture is poor
+[22m[39mUnit improved land at 5,5. Moisture 0.50 -> 0.50
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould succeed buildFarm if moisture is optimal
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould check heights during moveRandomly
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+ [31m笶ｯ[39m src/tests/Unit.test.js [2m([22m[2m8 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 59[2mms[22m[39m
+       [32m笨・[39m should gather fish if checking neighbors finds water[32m 11[2mms[22m[39m
+       [32m笨・[39m should NOT gather fish if completely inland[32m 4[2mms[22m[39m
+[31m       [31mﾃ・[31m should prioritize Farm and ABORT house if farm fails during famine[39m[32m 21[2mms[22m[39m
+[31m       [31mﾃ・[31m should fallback to House if NOT in famine[39m[32m 8[2mms[22m[39m
+       [32m笨・[39m should accept role in constructor[32m 3[2mms[22m[39m
+       [32m笨・[39m should FAIL buildFarm and IMPROVE LAND if moisture is poor[32m 4[2mms[22m[39m
+       [32m笨・[39m should succeed buildFarm if moisture is optimal[32m 4[2mms[22m[39m
+       [32m笨・[39m should check heights during moveRandomly[32m 1[2mms[22m[39m
+[90mstdout[2m | src/tests/ComplexAI.test.js[2m > [22m[2mComplex AI Scenarios[2m > [22m[2mshould drop job gracefully if target building is destroyed
+[22m[39m[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+[90mstdout[2m | src/tests/ComplexAI.test.js[2m > [22m[2mComplex AI Scenarios[2m > [22m[2mshould drop job gracefully if target building is destroyed
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: cultivate at (20,20) ID:req_0
+[JobState 0] Entering. Target: 20,20
+[JobState 0] smartMove type: function
+[JobState 0] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+
+[90mstdout[2m | src/tests/ComplexAI.test.js[2m > [22m[2mComplex AI Scenarios[2m > [22m[2mshould prioritize manual jobs even when closer auto jobs appear
+[22m[39m[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+[90mstdout[2m | src/tests/ComplexAI.test.js[2m > [22m[2mComplex AI Scenarios[2m > [22m[2mshould prioritize manual jobs even when closer auto jobs appear
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (50,50) ID:req_0
+[JobState 0] Entering. Target: 50,50
+[JobState 0] smartMove type: function
+[JobState 0] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Game] Request Added: raise at (11,11) ID:req_1
+
+[90mstdout[2m | src/tests/ComplexAI.test.js[2m > [22m[2mComplex AI Scenarios[2m > [22m[2mshould NOT drop manual job when switching to SleepState at night
+[22m[39m[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+[90mstdout[2m | src/tests/ComplexAI.test.js[2m > [22m[2mComplex AI Scenarios[2m > [22m[2mshould NOT drop manual job when switching to SleepState at night
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (50,50) ID:req_0
+[JobState 0] Entering. Target: 50,50
+[JobState 0] smartMove type: function
+[JobState 0] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+
+[90mstdout[2m | src/tests/ComplexAI.test.js[2m > [22m[2mComplex AI Scenarios[2m > [22m[2mshould abandon unreachable job (Abandonment Test)
+[22m[39m[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+stderr | src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test)
+[JobState 0] Abort: Target Unreachable. Req:req_0 at 90,90
+
+[90mstdout[2m | src/tests/ComplexAI.test.js[2m > [22m[2mComplex AI Scenarios[2m > [22m[2mshould abandon unreachable job (Abandonment Test)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (90,90) ID:req_0
+[JobState 0] Entering. Target: 90,90
+[JobState 0] smartMove type: function
+[JobState 0] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Game] Request req_0 Deferred (Excluded) for 3s until 3.1
+
+ [31m笶ｯ[39m src/tests/ComplexAI.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 88[2mms[22m[39m
+[31m     [31mﾃ・[31m should drop job gracefully if target building is destroyed[39m[32m 47[2mms[22m[39m
+     [32m笨・[39m should prioritize manual jobs even when closer auto jobs appear[32m 20[2mms[22m[39m
+     [32m笨・[39m should NOT drop manual job when switching to SleepState at night[32m 10[2mms[22m[39m
+     [32m笨・[39m should abandon unreachable job (Abandonment Test)[32m 9[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 5 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed
+AssertionError: expected { id: 'req_0', 窶ｦ(12) } to be null
+
+- Expected: 
+null
+
++ Received: 
+{
+  "assignedAt": 0,
+  "assignedTo": 0,
+  "building": {
+    "id": "b_1",
+    "isDead": true,
+    "x": 20,
+    "z": 20,
+  },
+  "createdAt": 0,
+  "excludedUntil": 0,
+  "faction": "player",
+  "id": "req_0",
+  "isManual": true,
+  "mesh": Mesh {
+    "animations": [],
+    "castShadow": false,
+    "children": [],
+    "count": 1,
+    "customDepthMaterial": undefined,
+    "customDistanceMaterial": undefined,
+    "frustumCulled": true,
+    "geometry": CylinderGeometry {
+      "attributes": {
+        "normal": Float32BufferAttribute {
+          "array": Float32Array [
+            0,
+            0,
+            1,
+            0.3826834261417389,
+            0,
+            0.9238795042037964,
+            0.7071067690849304,
+            0,
+            0.7071067690849304,
+            0.9238795042037964,
+            0,
+            0.3826834261417389,
+            1,
+            0,
+            6.123234262925839e-17,
+            0.9238795042037964,
+            0,
+            -0.3826834261417389,
+            0.7071067690849304,
+            0,
+            -0.7071067690849304,
+            0.3826834261417389,
+            0,
+            -0.9238795042037964,
+            1.2246468525851679e-16,
+            0,
+            -1,
+            -0.3826834261417389,
+            0,
+            -0.9238795042037964,
+            -0.7071067690849304,
+            0,
+            -0.7071067690849304,
+            -0.9238795042037964,
+            0,
+            -0.3826834261417389,
+            -1,
+            0,
+            -1.8369701465288538e-16,
+            -0.9238795042037964,
+            0,
+            0.3826834261417389,
+            -0.7071067690849304,
+            0,
+            0.7071067690849304,
+            -0.3826834261417389,
+            0,
+            0.9238795042037964,
+            -2.4492937051703357e-16,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0.3826834261417389,
+            0,
+            0.9238795042037964,
+            0.7071067690849304,
+            0,
+            0.7071067690849304,
+            0.9238795042037964,
+            0,
+            0.3826834261417389,
+            1,
+            0,
+            6.123234262925839e-17,
+            0.9238795042037964,
+            0,
+            -0.3826834261417389,
+            0.7071067690849304,
+            0,
+            -0.7071067690849304,
+            0.3826834261417389,
+            0,
+            -0.9238795042037964,
+            1.2246468525851679e-16,
+            0,
+            -1,
+            -0.3826834261417389,
+            0,
+            -0.9238795042037964,
+            -0.7071067690849304,
+            0,
+            -0.7071067690849304,
+            -0.9238795042037964,
+            0,
+            -0.3826834261417389,
+            -1,
+            0,
+            -1.8369701465288538e-16,
+            -0.9238795042037964,
+            0,
+            0.3826834261417389,
+            -0.7071067690849304,
+            0,
+            0.7071067690849304,
+            -0.3826834261417389,
+            0,
+            0.9238795042037964,
+            -2.4492937051703357e-16,
+            0,
+            1,
+          ],
+          "count": 34,
+          "gpuType": 1015,
+          "isBufferAttribute": true,
+          "itemSize": 3,
+          "name": "",
+          "normalized": false,
+          "updateRanges": [],
+          "usage": 35044,
+          "version": 0,
+        },
+        "position": Float32BufferAttribute {
+          "array": Float32Array [
+            0,
+            2.5,
+            0.5,
+            0.19134171307086945,
+            2.5,
+            0.4619397521018982,
+            0.3535533845424652,
+            2.5,
+            0.3535533845424652,
+            0.4619397521018982,
+            2.5,
+            0.19134171307086945,
+            0.5,
+            2.5,
+            3.0616171314629196e-17,
+            0.4619397521018982,
+            2.5,
+            -0.19134171307086945,
+            0.3535533845424652,
+            2.5,
+            -0.3535533845424652,
+            0.19134171307086945,
+            2.5,
+            -0.4619397521018982,
+            6.123234262925839e-17,
+            2.5,
+            -0.5,
+            -0.19134171307086945,
+            2.5,
+            -0.4619397521018982,
+            -0.3535533845424652,
+            2.5,
+            -0.3535533845424652,
+            -0.4619397521018982,
+            2.5,
+            -0.19134171307086945,
+            -0.5,
+            2.5,
+            -9.184850732644269e-17,
+            -0.4619397521018982,
+            2.5,
+            0.19134171307086945,
+            -0.3535533845424652,
+            2.5,
+            0.3535533845424652,
+            -0.19134171307086945,
+            2.5,
+            0.4619397521018982,
+            -1.2246468525851679e-16,
+            2.5,
+            0.5,
+            0,
+            -2.5,
+            0.5,
+            0.19134171307086945,
+            -2.5,
+            0.4619397521018982,
+            0.3535533845424652,
+            -2.5,
+            0.3535533845424652,
+            0.4619397521018982,
+            -2.5,
+            0.19134171307086945,
+            0.5,
+            -2.5,
+            3.0616171314629196e-17,
+            0.4619397521018982,
+            -2.5,
+            -0.19134171307086945,
+            0.3535533845424652,
+            -2.5,
+            -0.3535533845424652,
+            0.19134171307086945,
+            -2.5,
+            -0.4619397521018982,
+            6.123234262925839e-17,
+            -2.5,
+            -0.5,
+            -0.19134171307086945,
+            -2.5,
+            -0.4619397521018982,
+            -0.3535533845424652,
+            -2.5,
+            -0.3535533845424652,
+            -0.4619397521018982,
+            -2.5,
+            -0.19134171307086945,
+            -0.5,
+            -2.5,
+            -9.184850732644269e-17,
+            -0.4619397521018982,
+            -2.5,
+            0.19134171307086945,
+            -0.3535533845424652,
+            -2.5,
+            0.3535533845424652,
+            -0.19134171307086945,
+            -2.5,
+            0.4619397521018982,
+            -1.2246468525851679e-16,
+            -2.5,
+            0.5,
+          ],
+          "count": 34,
+          "gpuType": 1015,
+          "isBufferAttribute": true,
+          "itemSize": 3,
+          "name": "",
+          "normalized": false,
+          "updateRanges": [],
+          "usage": 35044,
+          "version": 0,
+        },
+        "uv": Float32BufferAttribute {
+          "array": Float32Array [
+            0,
+            1,
+            0.0625,
+            1,
+            0.125,
+            1,
+            0.1875,
+            1,
+            0.25,
+            1,
+            0.3125,
+            1,
+            0.375,
+            1,
+            0.4375,
+            1,
+            0.5,
+            1,
+            0.5625,
+            1,
+            0.625,
+            1,
+            0.6875,
+            1,
+            0.75,
+            1,
+            0.8125,
+            1,
+            0.875,
+            1,
+            0.9375,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0.0625,
+            0,
+            0.125,
+            0,
+            0.1875,
+            0,
+            0.25,
+            0,
+            0.3125,
+            0,
+            0.375,
+            0,
+            0.4375,
+            0,
+            0.5,
+            0,
+            0.5625,
+            0,
+            0.625,
+            0,
+            0.6875,
+            0,
+            0.75,
+            0,
+            0.8125,
+            0,
+            0.875,
+            0,
+            0.9375,
+            0,
+            1,
+            0,
+          ],
+          "count": 34,
+          "gpuType": 1015,
+          "isBufferAttribute": true,
+          "itemSize": 2,
+          "name": "",
+          "normalized": false,
+          "updateRanges": [],
+          "usage": 35044,
+          "version": 0,
+        },
+      },
+      "boundingBox": null,
+      "boundingSphere": null,
+      "drawRange": {
+        "count": Infinity,
+        "start": 0,
+      },
+      "groups": [
+        {
+          "count": 96,
+          "materialIndex": 0,
+          "start": 0,
+        },
+      ],
+      "index": Uint16BufferAttribute {
+        "array": Uint16Array [
+          0,
+          17,
+          1,
+          17,
+          18,
+          1,
+          1,
+          18,
+          2,
+          18,
+          19,
+          2,
+          2,
+          19,
+          3,
+          19,
+          20,
+          3,
+          3,
+          20,
+          4,
+          20,
+          21,
+          4,
+          4,
+          21,
+          5,
+          21,
+          22,
+          5,
+          5,
+          22,
+          6,
+          22,
+          23,
+          6,
+          6,
+          23,
+          7,
+          23,
+          24,
+          7,
+          7,
+          24,
+          8,
+          24,
+          25,
+          8,
+          8,
+          25,
+          9,
+          25,
+          26,
+          9,
+          9,
+          26,
+          10,
+          26,
+          27,
+          10,
+          10,
+          27,
+          11,
+          27,
+          28,
+          11,
+          11,
+          28,
+          12,
+          28,
+          29,
+          12,
+          12,
+          29,
+          13,
+          29,
+          30,
+          13,
+          13,
+          30,
+          14,
+          30,
+          31,
+          14,
+          14,
+          31,
+          15,
+          31,
+          32,
+          15,
+          15,
+          32,
+          16,
+          32,
+          33,
+          16,
+        ],
+        "count": 96,
+        "gpuType": 1015,
+        "isBufferAttribute": true,
+        "itemSize": 1,
+        "name": "",
+        "normalized": false,
+        "updateRanges": [],
+        "usage": 35044,
+        "version": 0,
+      },
+      "indirect": null,
+      "isBufferGeometry": true,
+      "morphAttributes": {},
+      "morphTargetsRelative": false,
+      "name": "",
+      "parameters": {
+        "height": 5,
+        "heightSegments": 1,
+        "openEnded": true,
+        "radialSegments": 16,
+        "radiusBottom": 0.5,
+        "radiusTop": 0.5,
+        "thetaLength": 6.283185307179586,
+        "thetaStart": 0,
+      },
+      "type": "CylinderGeometry",
+      "userData": {},
+      "uuid": "2605d44e-70a8-43f1-be4d-aa4033f96228",
+    },
+    "isMesh": true,
+    "isObject3D": true,
+    "layers": Layers {
+      "mask": 1,
+    },
+    "material": ShaderMaterial {
+      "_alphaTest": 0,
+      "allowOverride": true,
+      "alphaHash": false,
+      "alphaToCoverage": false,
+      "blendAlpha": 0,
+      "blendColor": Color {
+        "b": 0,
+        "g": 0,
+        "isColor": true,
+        "r": 0,
+      },
+      "blendDst": 205,
+      "blendDstAlpha": null,
+      "blendEquation": 100,
+      "blendEquationAlpha": null,
+      "blendSrc": 204,
+      "blendSrcAlpha": null,
+      "blending": 2,
+      "clipIntersection": false,
+      "clipShadows": false,
+      "clipping": true,
+      "clippingPlanes": [],
+      "colorWrite": true,
+      "defaultAttributeValues": {
+        "color": [
+          1,
+          1,
+          1,
+        ],
+        "uv": [
+          0,
+          0,
+        ],
+        "uv1": [
+          0,
+          0,
+        ],
+      },
+      "defines": {},
+      "depthFunc": 3,
+      "depthTest": true,
+      "depthWrite": false,
+      "dithering": false,
+      "extensions": {
+        "clipCullDistance": false,
+        "multiDraw": false,
+      },
+      "fog": false,
+      "forceSinglePass": true,
+      "fragmentShader": "
+            #include <clipping_planes_pars_fragment>
+            uniform float uTime;
+            uniform vec3 uColor;
+            varying vec2 vUv;
+
+            // Simple Pseudo-Random Noise
+            float random (vec2 st) {
+                return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+            }
+
+            void main() {
+                #include <clipping_planes_fragment>
+                // Scroll UVs vertically
+                vec2 st = vUv;
+                // ULTRA FINE SETTINGS (Adjusted for Visibility)
+                float time = uTime * 8.0; 
+                
+                // Grid: 60x40 (Fine but visible)
+                vec2 grid = vec2(st.x * 60.0, st.y * 40.0 - time);
+                vec2 ipos = floor(grid);
+                vec2 fpos = fract(grid);
+
+                // Random brightness
+                float noise = random(ipos);
+                
+                // Very Sparse (95% empty) -> Visible Dust
+                float sparkle = step(0.95, noise);
+                
+                // Sharp tiny dots
+                float dist = length(fpos - 0.5);
+                float glow = 1.0 - smoothstep(0.0, 0.4, dist); // Tighter glow
+                
+                // Fade out at top and bottom
+                float alpha = smoothstep(0.0, 0.2, vUv.y) * smoothstep(1.0, 0.8, vUv.y);
+                
+                // Core Pillar Glow (Vertical Beam)
+                float beam = (1.0 - abs(vUv.x - 0.5) * 2.0);
+                beam = smoothstep(0.4, 0.8, beam) * 0.3; // Subtle core
+                
+                // Combine
+                float finalAlpha = (sparkle * glow) + beam;
+                finalAlpha *= alpha;
+
+                gl_FragColor = vec4(uColor, finalAlpha);
+            }
+        ",
+      "glslVersion": null,
+      "index0AttributeName": undefined,
+      "isMaterial": true,
+      "isShaderMaterial": true,
+      "lights": false,
+      "linewidth": 1,
+      "name": "",
+      "opacity": 1,
+      "polygonOffset": false,
+      "polygonOffsetFactor": 0,
+      "polygonOffsetUnits": 0,
+      "precision": null,
+      "premultipliedAlpha": false,
+      "shadowSide": null,
+      "side": 2,
+      "stencilFail": 7680,
+      "stencilFunc": 519,
+      "stencilFuncMask": 255,
+      "stencilRef": 0,
+      "stencilWrite": false,
+      "stencilWriteMask": 255,
+      "stencilZFail": 7680,
+      "stencilZPass": 7680,
+      "toneMapped": true,
+      "transparent": true,
+      "type": "ShaderMaterial",
+      "uniforms": {
+        "uColor": {
+          "value": Color {
+            "b": 0,
+            "g": 1,
+            "isColor": true,
+            "r": 1,
+          },
+        },
+        "uTime": {
+          "value": 0,
+        },
+      },
+      "uniformsGroups": [],
+      "uniformsNeedUpdate": false,
+      "userData": {},
+      "uuid": "4f0c1b4f-0a1b-4be2-95d0-abc6491eef00",
+      "version": 0,
+      "vertexColors": false,
+      "vertexShader": "
+            #include <clipping_planes_pars_vertex>
+            varying vec2 vUv;
+            varying vec3 vViewPosition;
+            void main() {
+                vUv = uv;
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                gl_Position = projectionMatrix * mvPosition;
+                vViewPosition = -mvPosition.xyz;
+                #include <clipping_planes_vertex>
+            }
+        ",
+      "visible": true,
+      "wireframe": false,
+      "wireframeLinewidth": 1,
+    },
+    "matrix": Matrix4 {
+      "elements": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+      ],
+    },
+    "matrixAutoUpdate": true,
+    "matrixWorld": Matrix4 {
+      "elements": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+      ],
+    },
+    "matrixWorldAutoUpdate": true,
+    "matrixWorldNeedsUpdate": false,
+    "morphTargetDictionary": undefined,
+    "morphTargetInfluences": undefined,
+    "name": "",
+    "parent": Scene {
+      "animations": [],
+      "background": {
+        "setHex": [Function setHex],
+      },
+      "backgroundBlurriness": 0,
+      "backgroundIntensity": 1,
+      "backgroundRotation": Euler {
+        "_order": "XYZ",
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "isEuler": true,
+      },
+      "castShadow": false,
+      "children": [
+        Group {
+          "animations": [],
+          "castShadow": false,
+          "children": [],
+          "customDepthMaterial": undefined,
+          "customDistanceMaterial": undefined,
+          "frustumCulled": true,
+          "isGroup": true,
+          "isObject3D": true,
+          "layers": Layers {
+            "mask": 1,
+          },
+          "matrix": Matrix4 {
+            "elements": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+            ],
+          },
+          "matrixAutoUpdate": true,
+          "matrixWorld": Matrix4 {
+            "elements": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+            ],
+          },
+          "matrixWorldAutoUpdate": true,
+          "matrixWorldNeedsUpdate": false,
+          "name": "",
+          "parent": [Circular],
+          "position": Vector3 {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+          },
+          "quaternion": Quaternion {
+            "_onChangeCallback": [Function onQuaternionChange],
+            "_w": 1,
+            "_x": 0,
+            "_y": 0,
+            "_z": 0,
+            "isQuaternion": true,
+          },
+          "receiveShadow": false,
+          "renderOrder": 0,
+          "rotation": Euler {
+            "_onChangeCallback": [Function onRotationChange],
+            "_order": "XYZ",
+            "_x": 0,
+            "_y": 0,
+            "_z": 0,
+            "isEuler": true,
+          },
+          "scale": Vector3 {
+            "x": 1,
+            "y": 1,
+            "z": 1,
+          },
+          "type": "Group",
+          "up": Vector3 {
+            "x": 0,
+            "y": 1,
+            "z": 0,
+          },
+          "userData": {},
+          "uuid": "f53cdfe6-b7a7-4a7a-a299-ba4d19f98dba",
+          "visible": true,
+        },
+        Mesh {
+          "animations": [],
+          "castShadow": false,
+          "children": [],
+          "count": 1,
+          "customDepthMaterial": undefined,
+          "customDistanceMaterial": undefined,
+          "frustumCulled": true,
+          "geometry": ConeGeometry {
+            "attributes": {
+              "normal": Float32BufferAttribute {
+                "array": [Float32Array],
+                "count": 35,
+                "gpuType": 1015,
+                "isBufferAttribute": true,
+                "itemSize": 3,
+                "name": "",
+                "normalized": false,
+                "updateRanges": [Array],
+                "usage": 35044,
+                "version": 0,
+              },
+              "position": Float32BufferAttribute {
+                "array": [Float32Array],
+                "count": 35,
+                "gpuType": 1015,
+                "isBufferAttribute": true,
+                "itemSize": 3,
+                "name": "",
+                "normalized": false,
+                "updateRanges": [Array],
+                "usage": 35044,
+                "version": 0,
+              },
+              "uv": Float32BufferAttribute {
+                "array": [Float32Array],
+                "count": 35,
+                "gpuType": 1015,
+                "isBufferAttribute": true,
+                "itemSize": 2,
+                "name": "",
+                "normalized": false,
+                "updateRanges": [Array],
+                "usage": 35044,
+                "version": 0,
+              },
+            },
+            "boundingBox": null,
+            "boundingSphere": null,
+            "drawRange": {
+              "count": Infinity,
+              "start": 0,
+            },
+            "groups": [
+              {
+                "count": 24,
+                "materialIndex": 0,
+                "start": 0,
+              },
+              {
+                "count": 24,
+                "materialIndex": 2,
+                "start": 24,
+              },
+            ],
+            "index": Uint16BufferAttribute {
+              "array": Uint16Array [
+                9,
+                10,
+                1,
+                10,
+                11,
+                2,
+                11,
+                12,
+                3,
+                12,
+                13,
+                4,
+                13,
+                14,
+                5,
+                14,
+                15,
+                6,
+                15,
+                16,
+                7,
+                16,
+                17,
+                8,
+                27,
+                26,
+                18,
+                28,
+                27,
+                19,
+                29,
+                28,
+                20,
+                30,
+                29,
+                21,
+                31,
+                30,
+                22,
+                32,
+                31,
+                23,
+                33,
+                32,
+                24,
+                34,
+                33,
+                25,
+              ],
+              "count": 48,
+              "gpuType": 1015,
+              "isBufferAttribute": true,
+              "itemSize": 1,
+              "name": "",
+              "normalized": false,
+              "updateRanges": [],
+              "usage": 35044,
+              "version": 0,
+            },
+            "indirect": null,
+            "isBufferGeometry": true,
+            "morphAttributes": {},
+            "morphTargetsRelative": false,
+            "name": "",
+            "parameters": {
+              "height": 1,
+              "heightSegments": 1,
+              "openEnded": false,
+              "radialSegments": 8,
+              "radius": 0.2,
+              "thetaLength": 6.283185307179586,
+              "thetaStart": 0,
+            },
+            "type": "ConeGeometry",
+            "userData": {},
+            "uuid": "9b51d797-b7e7-429e-9cb3-f987ac88304f",
+          },
+          "isMesh": true,
+          "isObject3D": true,
+          "layers": Layers {
+            "mask": 1,
+          },
+          "material": MeshBasicMaterial {
+            "_alphaTest": 0,
+            "allowOverride": true,
+            "alphaHash": false,
+            "alphaMap": null,
+            "alphaToCoverage": false,
+            "aoMap": null,
+            "aoMapIntensity": 1,
+            "blendAlpha": 0,
+            "blendColor": Color {
+              "b": 0,
+              "g": 0,
+              "isColor": true,
+              "r": 0,
+            },
+            "blendDst": 205,
+            "blendDstAlpha": null,
+            "blendEquation": 100,
+            "blendEquationAlpha": null,
+            "blendSrc": 204,
+            "blendSrcAlpha": null,
+            "blending": 1,
+            "clipIntersection": false,
+            "clipShadows": false,
+            "clippingPlanes": null,
+            "color": Color {
+              "b": 0,
+              "g": 0,
+              "isColor": true,
+              "r": 1,
+            },
+            "colorWrite": true,
+            "combine": 0,
+            "depthFunc": 3,
+            "depthTest": true,
+            "depthWrite": true,
+            "dithering": false,
+            "envMap": null,
+            "envMapRotation": Euler {
+              "_order": "XYZ",
+              "_x": 0,
+              "_y": 0,
+              "_z": 0,
+              "isEuler": true,
+            },
+            "fog": true,
+            "forceSinglePass": false,
+            "isMaterial": true,
+            "isMeshBasicMaterial": true,
+            "lightMap": null,
+            "lightMapIntensity": 1,
+            "map": null,
+            "name": "",
+            "opacity": 1,
+            "polygonOffset": false,
+            "polygonOffsetFactor": 0,
+            "polygonOffsetUnits": 0,
+            "precision": null,
+            "premultipliedAlpha": false,
+            "reflectivity": 1,
+            "refractionRatio": 0.98,
+            "shadowSide": null,
+            "side": 0,
+            "specularMap": null,
+            "stencilFail": 7680,
+            "stencilFunc": 519,
+            "stencilFuncMask": 255,
+            "stencilRef": 0,
+            "stencilWrite": false,
+            "stencilWriteMask": 255,
+            "stencilZFail": 7680,
+            "stencilZPass": 7680,
+            "toneMapped": true,
+            "transparent": false,
+            "type": "MeshBasicMaterial",
+            "userData": {},
+            "uuid": "58ee21e4-affe-4ff3-b006-702fd9f5fd30",
+            "version": 0,
+            "vertexColors": false,
+            "visible": true,
+            "wireframe": true,
+            "wireframeLinecap": "round",
+            "wireframeLinejoin": "round",
+            "wireframeLinewidth": 1,
+          },
+          "matrix": Matrix4 {
+            "elements": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+            ],
+          },
+          "matrixAutoUpdate": true,
+          "matrixWorld": Matrix4 {
+            "elements": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+            ],
+          },
+          "matrixWorldAutoUpdate": true,
+          "matrixWorldNeedsUpdate": false,
+          "morphTargetDictionary": undefined,
+          "morphTargetInfluences": undefined,
+          "name": "",
+          "parent": [Circular],
+          "position": Vector3 {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+          },
+          "quaternion": Quaternion {
+            "_onChangeCallback": [Function onQuaternionChange],
+            "_w": 6.123233995736766e-17,
+            "_x": 1,
+            "_y": 0,
+            "_z": 0,
+            "isQuaternion": true,
+          },
+          "receiveShadow": false,
+          "renderOrder": 0,
+          "rotation": Euler {
+            "_onChangeCallback": [Function onRotationChange],
+            "_order": "XYZ",
+            "_x": 3.141592653589793,
+            "_y": 0,
+            "_z": 0,
+            "isEuler": true,
+          },
+          "scale": Vector3 {
+            "x": 1,
+            "y": 1,
+            "z": 1,
+          },
+          "type": "Mesh",
+          "up": Vector3 {
+            "x": 0,
+            "y": 1,
+            "z": 0,
+          },
+          "userData": {},
+          "uuid": "19246113-469d-4d80-b634-dca8a43e817a",
+          "visible": true,
+        },
+        [Circular],
+      ],
+      "customDepthMaterial": undefined,
+      "customDistanceMaterial": undefined,
+      "environment": null,
+      "environmentIntensity": 1,
+      "environmentRotation": Euler {
+        "_order": "XYZ",
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "isEuler": true,
+      },
+      "fog": null,
+      "frustumCulled": true,
+      "isObject3D": true,
+      "isScene": true,
+      "layers": Layers {
+        "mask": 1,
+      },
+      "matrix": Matrix4 {
+        "elements": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+        ],
+      },
+      "matrixAutoUpdate": true,
+      "matrixWorld": Matrix4 {
+        "elements": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+        ],
+      },
+      "matrixWorldAutoUpdate": true,
+      "matrixWorldNeedsUpdate": false,
+      "name": "",
+      "overrideMaterial": null,
+      "parent": null,
+      "position": Vector3 {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+      },
+      "quaternion": Quaternion {
+        "_onChangeCallback": [Function onQuaternionChange],
+        "_w": 1,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "isQuaternion": true,
+      },
+      "receiveShadow": false,
+      "renderOrder": 0,
+      "rotation": Euler {
+        "_onChangeCallback": [Function onRotationChange],
+        "_order": "XYZ",
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "isEuler": true,
+      },
+      "scale": Vector3 {
+        "x": 1,
+        "y": 1,
+        "z": 1,
+      },
+      "type": "Scene",
+      "up": Vector3 {
+        "x": 0,
+        "y": 1,
+        "z": 0,
+      },
+      "userData": {},
+      "uuid": "05d74105-ac2b-445f-becd-bcc568fc2cae",
+      "visible": true,
+    },
+    "position": Vector3 {
+      "x": 20,
+      "y": 7,
+      "z": 20,
+    },
+    "quaternion": Quaternion {
+      "_onChangeCallback": [Function onQuaternionChange],
+      "_w": 1,
+      "_x": 0,
+      "_y": 0,
+      "_z": 0,
+      "isQuaternion": true,
+    },
+    "receiveShadow": false,
+    "renderOrder": 2000,
+    "rotation": Euler {
+      "_onChangeCallback": [Function onRotationChange],
+      "_order": "XYZ",
+      "_x": 0,
+      "_y": 0,
+      "_z": 0,
+      "isEuler": true,
+    },
+    "scale": Vector3 {
+      "x": 1,
+      "y": 1,
+      "z": 1,
+    },
+    "type": "Mesh",
+    "up": Vector3 {
+      "x": 0,
+      "y": 1,
+      "z": 0,
+    },
+    "userData": {},
+    "uuid": "c2776727-fa58-4e5a-9380-44379bf8b720",
+    "visible": true,
+  },
+  "status": "assigned",
+  "type": "cultivate",
+  "x": 20,
+  "z": 20,
+}
+
+ 笶ｯ src/tests/ComplexAI.test.js:106:36
+    104| 
+    105|         // CHECK if it released the request immediately
+    106|         expect(unit.targetRequest).toBeNull();
+       |                                    ^
+    107|         expect(unit.state).not.toBeInstanceOf(JobState);
+    108| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/5]竡ｯ
+
+ FAIL  src/tests/MovementReset.test.js > Actor Movement Reset > should NOT reset movement timer when calling smartMove frequently for the same target
+AssertionError: expected 2 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ 笶ｯ src/tests/MovementReset.test.js:31:35
+     29|         const firstMoveStart = actor.moveStartTime;
+     30|         expect(actor.isMoving).toBe(true);
+     31|         expect(actor.targetGridX).toBe(1); // Linear move moves 1 tile窶ｦ
+       |                                   ^
+     32| 
+     33|         // Advance time slightly
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/5]竡ｯ
+
+ FAIL  src/tests/MovementReset.test.js > Actor Movement Reset > should progress visually even with frequent smartMove calls
+AssertionError: expected 1 to be less than 1
+ 笶ｯ src/tests/MovementReset.test.js:54:24
+     52|         const posMid = actor.getVisualX(timeMid);
+     53|         expect(posMid).toBeGreaterThan(0);
+     54|         expect(posMid).toBeLessThan(1);
+       |                        ^
+     55| 
+     56|         // Call smartMove again at mid-point
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/5]竡ｯ
+
+ FAIL  src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should prioritize Farm and ABORT house if farm fails during famine
+AssertionError: expected "vi.fn()" to be called at least once
+ 笶ｯ src/tests/Unit.test.js:95:36
+     93|             unit.tryBuildStructure(100);
+     94| 
+     95|             expect(unit.buildFarm).toHaveBeenCalled();
+       |                                    ^
+     96|             expect(unit.buildHouse).not.toHaveBeenCalled();
+     97|         });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[4/5]竡ｯ
+
+ FAIL  src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should fallback to House if NOT in famine
+AssertionError: expected "addBuilding" to be called with arguments: [ 'house', 5, 5, Anything, 窶ｦ(2) ]
+
+Number of calls: 0
+
+ 笶ｯ src/tests/Unit.test.js:116:45
+    114| 
+    115|             // Fix: Check addBuilding with relaxed arguments
+    116|             expect(mockTerrain.addBuilding).toHaveBeenCalledWith('hous窶ｦ
+       |                                             ^
+    117|         });
+    118|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[5/5]竡ｯ
+
+
+[2m Test Files [22m [1m[31m3 failed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m5 failed[39m[22m[2m | [22m[1m[32m9 passed[39m[22m[90m (14)[39m
+[2m   Start at [22m 22:43:52
+[2m   Duration [22m 2.61s[2m (transform 1.96s, setup 1.51s, import 968ms, tests 170ms, environment 1.62s)[22m
+

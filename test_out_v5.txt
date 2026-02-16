@@ -1,0 +1,427 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/CombatBalance.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/ComplexAI.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Worker vs Normal Goblin (Expected: Goblin Win due to stats buff)
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.788809, 0.857600) -> Grid(126, 137) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.757290, 0.718286) -> Grid(121, 114) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.758645, 0.810528) -> Grid(121, 129) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.650950, 0.121122) -> Grid(104, 19) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.578587, 0.552235) -> Grid(92, 88) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.010378, 0.830840) -> Grid(1, 132) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.278548, 0.463150) -> Grid(44, 74) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.035731, 0.168741) -> Grid(5, 26) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.541715, 0.621546) -> Grid(86, 99) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Worker vs Normal Goblin (Expected: Goblin Win due to stats buff)
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+Goblin constructor: calling super...
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Actor 0] CHANGE STATE: None -> Wander Request:null
+[Unit 0] State Change: Wander -> Combat
+[GoblinWander Debug] ID:0 State:Wander Update. Timer:0.14 dt:0.0160 findTarget:function
+[GoblinWander Debug] ID:0 State:Wander Update. Timer:0.37 dt:0.0160 findTarget:function
+[GoblinWander Debug] ID:0 State:Wander Update. Timer:0.40 dt:0.0160 findTarget:function
+[GoblinWander Debug] ID:0 State:Wander Update. Timer:0.50 dt:0.0160 findTarget:function
+[GoblinState Debug] ID:0 Calling scanForTargets...
+[Actor 0] CHANGE STATE: Wander -> Combat Request:null
+Goblin hit Unit! Dmg: 15 UnitHP: 44 
+Goblin hit Unit! Dmg: 15 UnitHP: 29.03360000000022 
+Goblin hit Unit! Dmg: 15 UnitHP: 14.06720000000044 
+[Unit 0] Death Counter! Hitting 0
+Unit 0 (worker) DIED. R.I.P.
+Goblin hit Unit! Dmg: 15 UnitHP: 0 
+[Worker vs Normal]
+ Start: Unit(worker HP:59/59 Dmg:12) vs Goblin(normal HP:50/50 Dmg:15)
+End: Winner=Goblin Frames=222
+Final: Unit HP:0.0 Goblin HP:44.0
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Worker vs Normal Goblin (Expected: Goblin Win due to stats buff)
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: cultivate at (20,20) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 20,20 (H:5). Reachable:true Dist:14.14 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 14.1 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[ComplexAI Debug 1] State: Job
+[Actor 0] smartMove to 20,20 (H:5). Reachable:true Dist:14.14 Moving:false Path:1
+[Actor 0] SmartMove Depth:1 Node:20,20 My:10,10 d:10,10
+[Entity 0] startMove -> isMoving:true. Target:20,20 StartTime:0.0000
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Normal Goblin vs House (Expected: Mutually Assured Destruction or House Defense)
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.450757, 0.709458) -> Grid(72, 113) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.855752, 0.909907) -> Grid(136, 145) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.738595, 0.229028) -> Grid(118, 36) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.034459, 0.764873) -> Grid(5, 122) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.590019, 0.811097) -> Grid(94, 129) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.980324, 0.211876) -> Grid(156, 33) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+[Game] Dispose called for Game Instance.
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.499361, 0.624130) -> Grid(79, 99) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.465294, 0.603830) -> Grid(74, 96) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.899947, 0.268395) -> Grid(143, 42) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (50,50) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 50,50 (H:5). Reachable:true Dist:56.57 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 56.6 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[Game] Request Added: raise at (11,11) ID:req_1
+[Actor 0] smartMove to 50,50 (H:5). Reachable:true Dist:56.57 Moving:false Path:1
+[Actor 0] SmartMove Depth:1 Node:50,50 My:10,10 d:40,40
+[Entity 0] startMove -> isMoving:true. Target:50,50 StartTime:0.0000
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Normal Goblin vs House (Expected: Mutually Assured Destruction or House Defense)
+Goblin constructor: calling super...
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+Check updateCombatLogic: function
+Goblin Raid: House population reduced.Rem: 9 
+Goblin Raid: House population reduced.Rem: 8 
+Goblin(normal) died.ID:1 
+[Goblin vs House]
+ Start: Goblin vs House (Pop:10)
+End: Goblin Dead=true House Pop=8 Frames=64
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Normal Goblin vs House (Expected: Mutually Assured Destruction or House Defense)
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+[Actor 0] SmartMove Depth:0 Node:50,50 My:10,10 d:40,40
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Knight vs Normal Goblin (Expected: Knight Stomp)
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.160730, 0.153985) -> Grid(25, 24) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.766775, 0.305263) -> Grid(122, 48) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.495491, 0.938110) -> Grid(79, 150) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.295996, 0.587245) -> Grid(47, 93) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.072004, 0.849205) -> Grid(11, 135) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.909654, 0.364359) -> Grid(145, 58) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Knight vs Normal Goblin (Expected: Knight Stomp)
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:10,10
+Goblin constructor: calling super...
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+Goblin hit Unit! Dmg: 15 UnitHP: 992 
+Goblin hit Unit! Dmg: 15 UnitHP: 977.0336000000011 
+Goblin hit Unit! Dmg: 15 UnitHP: 962.0672000000022 
+Goblin hit Unit! Dmg: 15 UnitHP: 947.1008000000033 
+Goblin hit Unit! Dmg: 15 UnitHP: 932.1344000000045 
+Goblin hit Unit! Dmg: 15 UnitHP: 917.1680000000056 
+Goblin hit Unit! Dmg: 15 UnitHP: 902.2016000000067 
+Goblin hit Unit! Dmg: 15 UnitHP: 887.2352000000078 
+Goblin hit Unit! Dmg: 15 UnitHP: 872.2688000000089 
+Goblin hit Unit! Dmg: 15 UnitHP: 857.30240000001 
+Goblin hit Unit! Dmg: 15 UnitHP: 842.3360000000112 
+Goblin hit Unit! Dmg: 15 UnitHP: 827.3696000000123 
+Goblin hit Unit! Dmg: 15 UnitHP: 812.4032000000134 
+Goblin hit Unit! Dmg: 15 UnitHP: 797.4368000000145 
+Goblin hit Unit! Dmg: 15 UnitHP: 782.4704000000156 
+Goblin hit Unit! Dmg: 15 UnitHP: 767.5040000000167 
+[Knight vs Normal]
+ Start: Unit(knight HP:1007/1007 Dmg:300) vs Goblin(normal HP:50/50 Dmg:15)
+End: Winner=Draw Frames=1000
+Final: Unit HP:767.5 Goblin HP:50.0
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night
+[Game] Dispose called for Game Instance.
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.501248, 0.899429) -> Grid(80, 143) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.702354, 0.853497) -> Grid(112, 136) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.466600, 0.380622) -> Grid(74, 60) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (50,50) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 50,50 (H:5). Reachable:true Dist:56.57 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 56.6 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night
+[Actor 0] smartMove to 50,50 (H:5). Reachable:true Dist:56.57 Moving:false Path:1
+[Actor 0] SmartMove Depth:1 Node:50,50 My:10,10 d:40,40
+[Entity 0] startMove -> isMoving:true. Target:50,50 StartTime:0.0000
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Knight vs Normal Goblin (Expected: Knight Stomp)
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Knight vs King Goblin (Expected: Close or King Advantage)
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.916425, 0.176052) -> Grid(146, 28) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.993549, 0.544479) -> Grid(158, 87) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.678186, 0.519594) -> Grid(108, 83) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.059634, 0.348224) -> Grid(9, 55) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.971072, 0.516148) -> Grid(155, 82) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.249674, 0.593255) -> Grid(39, 94) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test)
+[Game] Dispose called for Game Instance.
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.344154, 0.639175) -> Grid(55, 102) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.046072, 0.832858) -> Grid(7, 133) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.317132, 0.771774) -> Grid(50, 123) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test)
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Game] Request Added: raise at (90,90) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 90,90 (H:5). Reachable:true Dist:28.28 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 28.3 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[Game] Request req_0 Deferred (Excluded) for 3s until 3.1
+[Unit 0] State Change: Job -> Wander
+
+ × src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed 29ms
+   → expected { id: 'req_0', …(12) } to be null
+ ✓ src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear 16ms
+ ✓ src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night 10ms
+ ✓ src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test) 11ms
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Knight vs King Goblin (Expected: Close or King Advantage)
+[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:10,10
+Goblin constructor: calling super...
+[Entity 6] Calling registerEntity...
+[Entity 6] registerEntity returned.
+[Entity 6] Calling updatePosition...
+[Entity 6] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+Goblin hit Unit! Dmg: 80 UnitHP: 930 
+Goblin hit Unit! Dmg: 80 UnitHP: 850.0400000000013 
+Goblin hit Unit! Dmg: 80 UnitHP: 770.0800000000027 
+Goblin hit Unit! Dmg: 80 UnitHP: 690.120000000004 
+Goblin hit Unit! Dmg: 80 UnitHP: 610.1600000000053 
+Goblin hit Unit! Dmg: 80 UnitHP: 530.2000000000066 
+Goblin hit Unit! Dmg: 80 UnitHP: 450.24000000000797 
+Goblin hit Unit! Dmg: 80 UnitHP: 370.2800000000093 
+Goblin hit Unit! Dmg: 80 UnitHP: 290.3200000000106 
+Goblin hit Unit! Dmg: 80 UnitHP: 210.36000000001195 
+Goblin hit Unit! Dmg: 80 UnitHP: 130.40000000001328 
+Goblin hit Unit! Dmg: 80 UnitHP: 50.44000000001461 
+[Unit 2] Death Counter! Hitting 3
+Unit 2 (knight) DIED. R.I.P.
+Goblin hit Unit! Dmg: 80 UnitHP: 0 
+[Knight vs King]
+ Start: Unit(knight HP:1010/1010 Dmg:300) vs Goblin(king HP:1616/1616 Dmg:80)
+End: Winner=Goblin Frames=933
+Final: Unit HP:0.0 Goblin HP:1466.0
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Knight vs King Goblin (Expected: Close or King Advantage)
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Wizard vs Hobgoblin (Expected: Wizard High DPS but Fragile)
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.614267, 0.068298) -> Grid(98, 10) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.371766, 0.970951) -> Grid(59, 155) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.548110, 0.125247) -> Grid(87, 20) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.960103, 0.512638) -> Grid(153, 82) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.102762, 0.342953) -> Grid(16, 54) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.921295, 0.982442) -> Grid(147, 157) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Wizard vs Hobgoblin (Expected: Wizard High DPS but Fragile)
+[Entity 7] Calling registerEntity...
+[Entity 7] registerEntity returned.
+[Entity 7] Calling updatePosition...
+[Entity 7] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:3 Role:wizard Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:3 Role:wizard Pos:10,10
+Goblin constructor: calling super...
+[Entity 8] Calling registerEntity...
+[Entity 8] registerEntity returned.
+[Entity 8] Calling updatePosition...
+[Entity 8] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+Goblin hit Unit! Dmg: 30 UnitHP: 133 
+Goblin hit Unit! Dmg: 30 UnitHP: 103.050133333335 
+Goblin hit Unit! Dmg: 30 UnitHP: 73.10026666666732 
+Goblin hit Unit! Dmg: 30 UnitHP: 43.15039999999965 
+Goblin hit Unit! Dmg: 30 UnitHP: 13.200533333333311 
+[Unit 3] Death Counter! Hitting 4
+Unit 3 (wizard) DIED. R.I.P.
+Goblin hit Unit! Dmg: 30 UnitHP: 0 
+[Wizard vs Hobgoblin]
+ Start: Unit(wizard HP:163/163 Dmg:240) vs Goblin(hobgoblin HP:150/150 Dmg:30)
+End: Winner=Goblin Frames=503
+Final: Unit HP:0.0 Goblin HP:30.0
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Wizard vs Hobgoblin (Expected: Wizard High DPS but Fragile)
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Goblin King should crush Worker
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.965268, 0.693208) -> Grid(154, 110) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.149307, 0.990754) -> Grid(23, 158) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.302918, 0.792188) -> Grid(48, 126) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.777085, 0.038738) -> Grid(124, 6) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.556546, 0.517055) -> Grid(89, 82) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.248423, 0.609464) -> Grid(39, 97) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Goblin King should crush Worker
+[Entity 9] Calling registerEntity...
+[Entity 9] registerEntity returned.
+[Entity 9] Calling updatePosition...
+[Entity 9] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:10,10
+Goblin constructor: calling super...
+[Entity 10] Calling registerEntity...
+[Entity 10] registerEntity returned.
+[Entity 10] Calling updatePosition...
+[Entity 10] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+Worker HP: 59, Dmg: 12
+King HP: 1626, Dmg: 80
+[Unit 4] Death Counter! Hitting 5
+Unit 4 (worker) DIED. R.I.P.
+Goblin hit Unit! Dmg: 80 UnitHP: 0 
+[Worker vs King]
+ Start: Unit(worker HP:59/59 Dmg:12) vs Goblin(king HP:1626/1626 Dmg:80)
+End: Winner=Goblin Frames=33
+Final: Unit HP:0.0 Goblin HP:1620.0
+
+stdout | src/tests/CombatBalance.test.js > Combat Balance Verification > Goblin King should crush Worker
+[Game] Dispose called for Game Instance.
+
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Worker vs Normal Goblin (Expected: Goblin Win due to stats buff) 33ms
+   → Cannot read properties of undefined (reading 'dispose')
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Normal Goblin vs House (Expected: Mutually Assured Destruction or House Defense) 8ms
+   → Cannot read properties of undefined (reading 'dispose')
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Knight vs Normal Goblin (Expected: Knight Stomp) 17ms
+   → expected 'Draw' to be 'Unit' // Object.is equality
+   → Cannot read properties of undefined (reading 'dispose')
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Knight vs King Goblin (Expected: Close or King Advantage) 13ms
+   → Cannot read properties of undefined (reading 'dispose')
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Wizard vs Hobgoblin (Expected: Wizard High DPS but Fragile) 6ms
+   → Cannot read properties of undefined (reading 'dispose')
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Goblin King should crush Worker 6ms
+   → Cannot read properties of undefined (reading 'dispose')
+
+ Test Files  2 failed (2)
+      Tests  7 failed | 3 passed (10)
+   Start at  20:52:23
+   Duration  1.50s (transform 1.06s, setup 184ms, import 1.11s, tests 154ms, environment 946ms)
+

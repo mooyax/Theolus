@@ -1,0 +1,29 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/WorkerReachability.test.js > Worker Job Reachability > findBestRequest filters out unreachable jobs
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/WorkerReachability.test.js > Worker Job Reachability > findBestRequest filters out unreachable jobs
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/WorkerReachability.test.js > Worker Job Reachability > findBestRequest filters out unreachable jobs
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/WorkerReachability.test.js > Worker Job Reachability > findBestRequest filters out unreachable jobs
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/WorkerReachability.test.js > Worker Job Reachability > findBestRequest filters out unreachable jobs
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/WorkerReachability.test.js > Worker Job Reachability > findBestRequest filters out unreachable jobs
+[DEBUG] Game.ts top-level load
+
+ 笨・src/tests/WorkerReachability.test.js (2 tests) 574ms
+     笨・findBestRequest filters out unreachable jobs  559ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  00:06:53
+   Duration  1.33s (transform 522ms, setup 73ms, import 17ms, tests 574ms, environment 481ms)
+

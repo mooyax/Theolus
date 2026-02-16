@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Game } from '../Game.js';
 import { Unit } from '../Unit.js';
-import { JobState, UnitWanderState } from '../ai/states/UnitStates.js';
+import { Job, Wander } from '../ai/states/UnitStates.js';
 
 // Lightweight Mocks
 global.window = {
@@ -114,6 +114,7 @@ vi.mock('three', () => {
     }
     return {
         Vector3: MockVector3,
+        Matrix4: class { constructor() { this.elements = new Float32Array(16); } set() { return this; } copy() { return this; } clone() { return new this.constructor(); } identity() { return this; } multiply() { return this; } makeTranslation() { return this; } makeScale() { return this; } },
         Object3D: MockObject3D,
         Group: class extends MockObject3D { },
         Mesh: class extends MockObject3D { },
@@ -155,6 +156,7 @@ vi.mock('three', () => {
             dispose() { }
             setClearColor() { }
         },
+        Clock: class { constructor() { } getDelta() { return 0.016; } getElapsedTime() { return 0; } },
     };
 });
 
@@ -231,7 +233,7 @@ describe('Real Terrain Restoration Logic', () => {
         req.assignedTo = unit.id;
 
         // Verify Setup
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
         // Async Wait
         await new Promise(resolve => setTimeout(resolve, 0));
         unit.updateLogic(0.016, 0.016, false, []);
@@ -247,7 +249,7 @@ describe('Real Terrain Restoration Logic', () => {
 
         const restoredUnit = game.units[0];
 
-        // ASSERT: Unit should be moving immediately after load (JobState re-entry via loadGame)
+        // ASSERT: Unit should be moving immediately after load (Job re-entry via loadGame)
         expect(restoredUnit).toBeDefined();
         expect(restoredUnit.isMoving).toBe(true);
         expect(restoredUnit.targetRequest).toBeDefined();

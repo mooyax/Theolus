@@ -1,0 +1,12 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+ 笶ｯ src/tests/Animals.test.js (2 tests | 2 failed) 12ms
+     ﾃ・Sheep should move after interval (Manual Time Step) 9ms
+     ﾃ・Fish should move in water 1ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  12:19:59
+   Duration  2.70s (transform 357ms, setup 156ms, import 340ms, tests 12ms, environment 836ms)
+

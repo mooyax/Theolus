@@ -1,0 +1,76 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/IntegrationFlow.test.js
+[22m[39m[DEBUG] Actor.ts loaded
+
+stderr | src/tests/IntegrationFlow.test.js
+THREE.WARNING: Multiple instances of Three.js being imported.
+
+stderr | src/tests/IntegrationFlow.test.js > Integration Flow: Actor -> Terrain -> MockWorker > should successfully request path and move when Worker replies
+[Test] Setup Start
+[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+[Test] Setup FAILED: TypeError: () => ({
+            attributes: {
+                position: { count: 100, array: new Float32Array(300) },
+ ...<omitted>...}) is not a constructor
+    at new Mock (file:///C:/Users/mooya/develop/test/node_modules/@vitest/spy/dist/index.js:262:27)
+    at Terrain.initMeshes (C:/Users/mooya/develop/test/src/Terrain.ts:424:25)
+    at Terrain.initTerrain (C:/Users/mooya/develop/test/src/Terrain.ts:444:14)
+    at new Terrain (C:/Users/mooya/develop/test/src/Terrain.ts:96:14)
+    at C:/Users/mooya/develop/test/src/tests/IntegrationFlow.test.js:72:23
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at runHook (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1511:51)
+
+stderr | src/tests/IntegrationFlow.test.js > Integration Flow: Actor -> Terrain -> MockWorker > should STUCK when Worker DROPS the message
+[Test] Setup Start
+[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+[Test] Setup FAILED: TypeError: () => ({
+            attributes: {
+                position: { count: 100, array: new Float32Array(300) },
+ ...<omitted>...}) is not a constructor
+    at new Mock (file:///C:/Users/mooya/develop/test/node_modules/@vitest/spy/dist/index.js:262:27)
+    at Terrain.initMeshes (C:/Users/mooya/develop/test/src/Terrain.ts:424:25)
+    at Terrain.initTerrain (C:/Users/mooya/develop/test/src/Terrain.ts:444:14)
+    at new Terrain (C:/Users/mooya/develop/test/src/Terrain.ts:96:14)
+    at C:/Users/mooya/develop/test/src/tests/IntegrationFlow.test.js:72:23
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at runHook (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1511:51)
+
+ [31m笶ｯ[39m src/tests/IntegrationFlow.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 24[2mms[22m[39m
+[31m     [31mﾃ・[31m should successfully request path and move when Worker replies[39m[32m 13[2mms[22m[39m
+[31m     [31mﾃ・[31m should STUCK when Worker DROPS the message[39m[32m 9[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/IntegrationFlow.test.js > Integration Flow: Actor -> Terrain -> MockWorker > should successfully request path and move when Worker replies
+ FAIL  src/tests/IntegrationFlow.test.js > Integration Flow: Actor -> Terrain -> MockWorker > should STUCK when Worker DROPS the message
+TypeError: () => ({
+            attributes: {
+                position: { count: 100, array: new Float32Array(300) },
+ ...<omitted>...}) is not a constructor
+ 笶ｯ Terrain.initMeshes src/Terrain.ts:424:25
+    422| 
+    423|         // 1. Create Single Large Geometry
+    424|         this.geometry = new THREE.PlaneGeometry(this.width, this.depth窶ｦ
+       |                         ^
+    425|         const count = this.geometry.attributes.position.count;
+    426|         this.geometry.setAttribute('color', new THREE.BufferAttribute(窶ｦ
+ 笶ｯ Terrain.initTerrain src/Terrain.ts:444:14
+ 笶ｯ new Terrain src/Terrain.ts:96:14
+ 笶ｯ src/tests/IntegrationFlow.test.js:72:23
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 13:55:50
+[2m   Duration [22m 1.15s[2m (transform 360ms, setup 92ms, import 416ms, tests 24ms, environment 443ms)[22m
+

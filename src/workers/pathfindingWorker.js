@@ -3,7 +3,8 @@
 // Internal State
 let width = 0;
 let height = 0;
-let heightMap = null; // Int16Array for height (supports negative and >255 slightly, though terrain is usually -5 to 20)
+let heightMap = null; // Int16Array
+let moistureMap = null; // Float32Array
 
 self.onmessage = function (e) {
     const { type, payload, id } = e.data;
@@ -19,28 +20,55 @@ self.onmessage = function (e) {
             updateCell(payload);
             break;
         case 'FIND_PATH':
-            const path = findPath(payload.sx, payload.sz, payload.ex, payload.ez, payload.maxSteps);
+            const startT = performance.now();
+            console.log(`[Worker] Unit ${payload.unitId} FIND_PATH ReqID:${id} Start`);
+            const path = findPath(payload.sx, payload.sz, payload.ex, payload.ez, payload.maxSteps, payload.unitId);
+            const dur = performance.now() - startT;
+            console.log(`[Worker] Unit ${payload.unitId} FIND_PATH ReqID:${id} Done in ${dur.toFixed(2)}ms. Found:${!!path}`);
             self.postMessage({ type: 'PATH_RESULT', id, payload: path });
+            break;
+        case 'DEBUG_GET_HEIGHT':
+            const h = getHeight(payload.x, payload.z);
+            console.log(`[Worker DEBUG] Height at ${payload.x},${payload.z} is ${h} (Index: ${payload.z * width + payload.x})`);
             break;
         default:
             console.error('Unknown message type:', type);
     }
 };
 
-function initGrid({ w, h, data }) {
+// Expose helper for debug
+const getHeight = (x, z) => {
+    if (!heightMap) return -999;
+    if (x < 0 || x >= width || z < 0 || z >= height) return -999;
+    return heightMap[z * width + x];
+};
+
+const getMoisture = (x, z) => {
+    if (!moistureMap) return 0.5;
+    if (x < 0 || x >= width || z < 0 || z >= height) return 0.5;
+    return moistureMap[z * width + x];
+};
+
+function initGrid({ w, h, data, moistureData }) {
     width = w;
     height = h;
-    // data is expected to be a flattened array of heights
-    // If passed as SharedArrayBuffer or Transferable, use directly if possible
     heightMap = new Int16Array(data);
-    console.log(`[Worker] Grid Initialized: ${width}x${height}`);
+    if (moistureData) {
+        moistureMap = new Float32Array(moistureData);
+    } else {
+        moistureMap = new Float32Array(w * h).fill(0.5); // Fallback
+    }
+    console.log(`[Worker] Grid Initialized: ${width}x${height} (with Moisture)`);
 }
 
-function updateCell({ x, z, h }) {
+function updateCell({ x, z, h, m }) {
     if (!heightMap) return;
     const idx = z * width + x;
     if (idx >= 0 && idx < heightMap.length) {
         heightMap[idx] = h;
+        if (m !== undefined && moistureMap) {
+            moistureMap[idx] = m;
+        }
     }
 }
 
@@ -49,7 +77,7 @@ function updateChunk({ startX, startZ, w, h, data }) {
     // data is flattened array of new heights
 }
 
-function findPath(sx, sz, ex, ez, maxStepsParam = 0) {
+function findPath(sx, sz, ex, ez, maxStepsParam = 0, unitId = -1) {
     if (!heightMap) return null;
 
     // Validate Coords
@@ -66,160 +94,204 @@ function findPath(sx, sz, ex, ez, maxStepsParam = 0) {
 
     // Helper to get height
     const getHeight = (x, z) => heightMap[z * W + x];
+    const getMoisture = (x, z) => moistureMap ? moistureMap[z * W + x] : 0.5;
 
     // FIX: Start/End validation (Water Check)
     let startH = getHeight(sx, sz);
     if (startH <= 0) {
         // Search neighbors
         let found = false;
-        for (let dx = -1; dx <= 1; dx++) {
-            for (let dz = -1; dz <= 1; dz++) {
-                if (dx === 0 && dz === 0) continue;
-                let nsx = (sx + dx + W) % W;
-                let nsz = (sz + dz + H) % H;
-                if (getHeight(nsx, nsz) > 0) {
-                    sx = nsx; sz = nsz; found = true; break;
-                }
-            }
-            if (found) break;
-        }
-        if (!found) return null;
-    }
-
-    let endH = getHeight(ex, ez);
-    if (endH <= 0) {
-        let found = false;
-        for (let r = 1; r <= 2; r++) {
+        // Expanded search radius for start node as well
+        for (let r = 1; r <= 4; r++) {
             for (let dx = -r; dx <= r; dx++) {
                 for (let dz = -r; dz <= r; dz++) {
                     if (dx === 0 && dz === 0) continue;
-                    let nex = (ex + dx + W) % W;
-                    let nez = (ez + dz + H) % H;
-                    if (getHeight(nex, nez) > 0) {
-                        ex = nex; ez = nez; found = true; break;
+                    let nsx = (sx + dx + W) % W;
+                    let nsz = (sz + dz + H) % H;
+                    if (getHeight(nsx, nsz) > 0) {
+                        sx = nsx; sz = nsz; found = true; break;
                     }
                 }
                 if (found) break;
             }
             if (found) break;
         }
-        if (!found) return null;
+        if (!found) {
+            console.log(`[Worker] Unit ${unitId} No Path: Start ${sx},${sz} is invalid and no valid neighbor found.`);
+            return null;
+        }
+    }
+
+    let endH = getHeight(ex, ez);
+    if (endH <= 0) {
+        // console.log(`[Worker] Target ${ex},${ez} is water/invalid (H=${endH}). Searching nearby...`);
+        let found = false;
+        // Expanded search radius from 2 to 4 to find valid land
+        for (let r = 1; r <= 4; r++) {
+            for (let dx = -r; dx <= r; dx++) {
+                for (let dz = -r; dz <= r; dz++) {
+                    if (dx === 0 && dz === 0) continue;
+                    let nex = (ex + dx + W) % W;
+                    let nez = (ez + dz + H) % H;
+                    if (getHeight(nex, nez) > 0) {
+                        ex = nex; ez = nez; found = true;
+                        // console.log(`[Worker] Found valid neighbor at ${ex},${ez}`);
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+            if (found) break;
+        }
+        if (!found) {
+            console.log(`[Worker] Unit ${unitId} No Path: Target ${ex},${ez} is invalid and no valid neighbor found.`);
+            return null;
+        }
     }
 
     // A* Setup
-    // Use Flat Arrays for Open/Closed sets to avoid Object allocation overhead?
-    // For now, simpler Object implementation (like original) to ensure correctness first.
-    // Optimization Phase 3: TypedArrays for A*.
+    // console.log(`[Worker] Unit ${unitId} FIND_PATH Start: ${sx},${sz}(H:${startH}) -> ${ex},${ez}(H:${endH})`);
 
     const startNode = { x: sx, z: sz, g: 0, h: 0, f: 0, parent: null };
-
-    // MinHeap would be better, but using Array.sort as per original
     const openList = [startNode];
-    const openMap = new Map(); // Key: "x,z" -> Node
+    const openMap = new Map();
     openMap.set(`${sx},${sz}`, startNode);
-
-    const closedSet = new Set(); // Key: "x,z"
+    const closedSet = new Set();
 
     let steps = 0;
     const maxSteps = maxStepsParam > 0 ? maxStepsParam : 40000;
     let bestNode = startNode;
     let minH = Infinity;
 
-    while (openList.length > 0) {
-        steps++;
-        if (steps > maxSteps) {
-            // Return partial path
-            const path = [];
-            let curr = bestNode;
-            while (curr) {
-                path.push({ x: curr.x, z: curr.z });
-                curr = curr.parent;
+    try {
+        while (openList.length > 0) {
+            steps++;
+            if (steps > maxSteps) {
+                // Return partial path to best node
+                console.log(`[Worker] Unit ${unitId} MaxSteps Reached (${steps}).`);
+                const path = [];
+                let curr = bestNode;
+                while (curr) {
+                    path.push({ x: curr.x, z: curr.z });
+                    curr = curr.parent;
+                }
+                return path.reverse();
             }
-            return path.reverse();
-        }
 
-        // Pop lowest f
-        // Sort is O(N log N). Ideally explicit MinStack.
-        // Simple optimization: Just scan for min F if list is small? 
-        // Or keep sorted insertion.
-        // Original used sort.
-        openList.sort((a, b) => a.f - b.f);
-        const current = openList.shift();
-
-        // Track closest
-        if (current.h < minH) {
-            minH = current.h;
-            bestNode = current;
-        }
-
-        const key = `${current.x},${current.z}`;
-        openMap.delete(key);
-        closedSet.add(key);
-
-        if (current.x === ex && current.z === ez) {
-            // Reconstruct
-            const path = [];
-            let curr = current;
-            while (curr) {
-                path.push({ x: curr.x, z: curr.z });
-                curr = curr.parent;
+            // O(N) min search is faster than O(N log N) sort for pathfinding open lists
+            let minF = Infinity;
+            let minIdx = -1;
+            for (let i = 0; i < openList.length; i++) {
+                if (openList[i].f < minF) {
+                    minF = openList[i].f;
+                    minIdx = i;
+                }
             }
-            return path.reverse();
-        }
+            const current = openList.splice(minIdx, 1)[0];
 
-        const neighbors = [
-            { x: 1, z: 0, cost: 1 }, { x: -1, z: 0, cost: 1 },
-            { x: 0, z: 1, cost: 1 }, { x: 0, z: -1, cost: 1 },
-            { x: 1, z: 1, cost: 1.414 }, { x: 1, z: -1, cost: 1.414 },
-            { x: -1, z: 1, cost: 1.414 }, { x: -1, z: -1, cost: 1.414 }
-        ];
+            if (current.h < minH) {
+                minH = current.h;
+                bestNode = current;
+            }
 
-        const hStart = getHeight(current.x, current.z);
+            const key = `${current.x},${current.z}`;
+            if (closedSet.has(key)) continue;
+            closedSet.add(key);
+            openMap.delete(key);
 
-        for (const n of neighbors) {
-            let nx = (current.x + n.x + W) % W;
-            let nz = (current.z + n.z + H) % H;
+            // Found Goal
+            if (current.x === ex && current.z === ez) {
+                const path = [];
+                let curr = current;
+                while (curr) {
+                    path.push({ x: curr.x, z: curr.z });
+                    curr = curr.parent;
+                }
+                return path.reverse();
+            }
 
-            const nKey = `${nx},${nz}`;
-            if (closedSet.has(nKey)) continue;
+            const neighbors = [
+                { x: 1, z: 0, cost: 1 }, { x: -1, z: 0, cost: 1 },
+                { x: 0, z: 1, cost: 1 }, { x: 0, z: -1, cost: 1 },
+                { x: 1, z: 1, cost: 1.414 }, { x: 1, z: -1, cost: 1.414 },
+                { x: -1, z: 1, cost: 1.414 }, { x: -1, z: -1, cost: 1.414 }
+            ];
 
-            const hEnd = getHeight(nx, nz);
-            if (hEnd <= 0) continue; // Water
+            const hStart = getHeight(current.x, current.z);
 
-            const slope = Math.abs(hEnd - hStart);
-            if (slope > 2.0) continue; // Steep
+            for (const n of neighbors) {
+                let nx = (current.x + n.x + W) % W;
+                let nz = (current.z + n.z + H) % H;
 
-            let moveCost = 0.8 * n.cost;
-            if (hEnd > 8) moveCost += 2.0; // Mountain
-            moveCost += slope * 1.0;
+                const nKey = `${nx},${nz}`;
+                if (closedSet.has(nKey)) continue;
 
-            const gScore = current.g + moveCost;
-            let existing = openMap.get(nKey);
+                const hEnd = getHeight(nx, nz);
+                if (hEnd <= 0) continue; // Water
 
-            if (existing && existing.g <= gScore) continue;
+                const slope = Math.abs(hEnd - hStart);
+                if (slope > 3.0) continue; // Slope Limit
 
-            // Heuristic (Euclidean * 0.8 - same as original)
-            let dx = Math.abs(nx - ex);
-            let dz = Math.abs(nz - ez);
-            if (dx > W / 2) dx = W - dx;
-            if (dz > H / 2) dz = H - dz;
-            const hScore = Math.sqrt(dx * dx + dz * dz) * 0.8;
+                // --- COST CALCULATION ---
+                // Base Cost
+                let moveCost = 0.8 * n.cost; // Base walking cost
 
-            if (existing) {
-                existing.g = gScore;
-                existing.f = gScore + hScore;
-                existing.parent = current;
-            } else {
-                const newNode = {
-                    x: nx, z: nz,
-                    g: gScore, h: hScore, f: gScore + hScore,
-                    parent: current
-                };
-                openList.push(newNode);
-                openMap.set(nKey, newNode);
+                // 1. Rock Penalty (H > 8)
+                if (hEnd > 8) {
+                    moveCost += 4.0; // Significant penalty (Matches ~6s duration)
+                }
+
+                // 2. Slope Penalty
+                if (slope > 0.1) {
+                    moveCost += 2.0; // Penalty (Matches ~3s duration)
+                }
+
+                // 3. Swamp Penalty (Moisture > 0.6)
+                // Note: Only if NOT rock (Rock overrides swamp usually)
+                if (hEnd <= 8) {
+                    const m = getMoisture(nx, nz);
+                    if (m > 0.6) {
+                        moveCost += 1.2; // Swamp Penalty (Matches ~2s duration)
+                    }
+                }
+
+                const gScore = current.g + moveCost;
+                let existing = openMap.get(nKey);
+
+                if (existing && existing.g <= gScore) continue;
+
+                // Heuristic
+                let dx = Math.abs(nx - ex);
+                let dz = Math.abs(nz - ez);
+                if (dx > W / 2) dx = W - dx;
+                if (dz > H / 2) dz = H - dz;
+                const hScore = Math.sqrt(dx * dx + dz * dz) * 1.0;
+
+                if (existing) {
+                    existing.g = gScore;
+                    existing.f = gScore + hScore;
+                    existing.parent = current;
+                } else {
+                    const newNode = {
+                        x: nx, z: nz,
+                        g: gScore, h: hScore, f: gScore + hScore,
+                        parent: current
+                    };
+                    openList.push(newNode);
+                    openMap.set(nKey, newNode);
+                }
             }
         }
+    } catch (e) {
+        console.error(`[Worker] Unit ${unitId} CRITICAL ERROR in Pathfinding:`, e);
+        // FIX: Ensure main thread knows about the failure immediately
+        self.postMessage({ type: 'PATH_ERROR', id, payload: { error: e.message } });
+        return null;
     }
 
+    // console.log(`[Worker] Unit ${unitId} No Path: OpenList exhausted.`);
     return null;
 }
+
+// Export for Testing
+export { initGrid, updateCell, findPath, getHeight };

@@ -80,6 +80,15 @@ describe('Combat Balance Verification', () => {
         game = new Game(null, mockTerrain, true);
         game.scene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
         game.goblinManager = new GoblinManager(game.scene, mockTerrain, game.particleManager);
+        // Mock Marker Material for Projectiles (Wizard/Shaman)
+        game.markerMaterial = {
+            clone: function () {
+                return {
+                    uniforms: { uColor: { value: { setHex: vi.fn() } } },
+                    position: new THREE.Vector3()
+                };
+            }
+        };
         window.game = game; // Fix: Ensure global game access for Units
     });
 
@@ -119,12 +128,12 @@ describe('Combat Balance Verification', () => {
             // Real Update Calls
             // Unit update logic (handles State Machine)
             if (unit.updateLogic) {
-                unit.updateLogic(time, dt, false, goblins);
+                unit.updateLogic(time, dt, false, [], [], goblins);
             } else if (unit.update) {
-                unit.update(time, dt, false, goblins);
+                unit.updateLogic(time, dt, false, [], [], goblins);
             }
             // Goblin update logic
-            goblin.updateLogic(time, dt, units, buildings);
+            goblin.updateLogic(time, dt, false, units, buildings);
 
             // Manual death check (usually handled by manager)
             if (unit.hp <= 0) unit.isDead = true;

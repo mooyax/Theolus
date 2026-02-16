@@ -1,0 +1,20 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+ 笨・src/tests/GridSearchRegression.test.js > Terrain Grid Search Regression > should find Worker when searching for "unit" using Grid Search (Large Scale Simulation) 139ms
+ ﾃ・src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should NOT trigger spawnCallback for goblin_hut even if overpopulated 149ms
+   竊・Cannot read properties of undefined (reading 'uniforms')
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+Before Update: Pop= [33m15[39m
+
+ ﾃ・src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control) 126ms
+   竊・Cannot read properties of undefined (reading 'uniforms')
+ ﾃ・src/tests/GridSearchRegression.test.js > Terrain Grid Search Regression > should NOT find Sheep or Fish when searching for "unit" 126ms
+   竊・expected { id: 101, gridX: 10, gridZ: 10, 窶ｦ(2) } to be null
+ 笨・src/tests/GridSearchRegression.test.js > Terrain Grid Search Regression > should NOT find Building when searching for unit 136ms
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 2 passed (5)
+   Start at  23:31:38
+   Duration  1.27s (transform 331ms, setup 141ms, import 402ms, tests 680ms, environment 871ms)
+

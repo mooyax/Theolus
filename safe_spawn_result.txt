@@ -1,0 +1,19 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/SafeSpawn.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/SafeSpawn.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/SafeSpawn.test.js > Safe Population Zero > should NOT destroy house when spawning unit resets population to 0
+[Terrain] Constructor. updatePopulation type: function
+
+ 笨・src/tests/SafeSpawn.test.js (1 test) 26ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  23:13:40
+   Duration  1.03s (transform 258ms, setup 78ms, import 268ms, tests 26ms, environment 454ms)
+

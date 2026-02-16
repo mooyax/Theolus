@@ -1,59 +1,288 @@
 
-[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+ RUN  v4.0.15 C:/Users/mooya/develop/test
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould immediately switch to JobState and target the job upon assignment
-[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should initialize with correct default values 11ms
+   竊・expected undefined to be +0 // Object.is equality
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should enable and disable correctly 1ms
+   竊・expected undefined to be false // Object.is equality
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should toggle state 1ms
+   竊・expected undefined to be false // Object.is equality
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure update time 2ms
+   竊・Cannot read properties of undefined (reading 'updateTime')
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure render time 2ms
+   竊・Cannot read properties of undefined (reading 'renderTime')
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should update entity counts 0ms
+   竊・Cannot read properties of undefined (reading 'entities')
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure FPS over time 1ms
+   竊・expected undefined to be +0 // Object.is equality
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should add data to history 0ms
+   竊・Cannot set properties of undefined (setting 'updateTime')
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should limit history length 1ms
+   竊・Cannot read properties of undefined (reading 'maxHistoryLength')
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should get stats correctly 0ms
+   竊・Cannot set properties of undefined (setting 'minFps')
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should reset stats 0ms
+   竊・Cannot set properties of undefined (setting 'minFps')
+ ﾃ・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should update with game instance 0ms
+   竊・Cannot read properties of undefined (reading 'entities')
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould immediately switch to JobState and target the job upon assignment
-[22m[39m[Test] Assigning request...
-[JobState] Entered. Target: lower. ResumeCtx: Approaching Job
-[Test] Update Frame 1...
-[Actor] Path found! Len: 2
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:soldier Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:soldier Pos:10,10
+Goblin constructor: calling super...
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 20,20
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Actor 0] CHANGE STATE: None -> Wander Request:null
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT be distracted by WanderState updates during Job
-[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Goblin should switch target to nearby Unit while moving to distant Building
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT be distracted by WanderState updates during Job
-[22m[39m[JobState] Entered. Target: lower. ResumeCtx: Idle
-[Actor] Path found! Len: 2
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Goblin should switch target to nearby Unit while moving to distant Building
+Goblin constructor: calling super...
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 20,20
+[UnitCore.js] Unit Created ID:1 Role:soldier Pos:20,20 Special:false
+[UnitCore.js] Unit Created ID:1 Role:soldier Pos:20,20
+[GoblinState 3] Encounter! Switching from Building to Nearby Unit 4
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould not freeze due to throttle at low game time
-[22m[39m[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Worker should reduce scan range (Worker Aggression Fix)
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Worker should reduce scan range (Worker Aggression Fix)
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
 [UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould not freeze due to throttle at low game time
-[22m[39m[JobState] Entered. Target: raise. ResumeCtx: Idle
-[Actor] Path found! Len: 2
+ ﾃ・src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building 25ms
+   竊・expected false to be true // Object.is equality
+ 笨・src/tests/EncounterCombat.test.js > Encounter Combat Logic > Goblin should switch target to nearby Unit while moving to distant Building 3ms
+ 笨・src/tests/EncounterCombat.test.js > Encounter Combat Logic > Worker should reduce scan range (Worker Aggression Fix) 2ms
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT Ping-Pong between two manual requests
-[22m[39m[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 13 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT Ping-Pong between two manual requests
-[22m[39m[JobState] Entered. Target: lower. ResumeCtx: Idle
-[PingPong] Unit Busy with Manual? true
-[PingPong] New Req Manual? true
-[PingPong] Calculated Penalty: 1000
-[Actor] Path found! Len: 2
+ FAIL  src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building
+AssertionError: expected false to be true // Object.is equality
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT build a house immediately if pathfinding fails temporarily
-[22m[39m[UnitCore.js] Unit Created ID:4 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:4 Role:worker Pos:10,10
+- Expected
++ Received
 
-[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT build a house immediately if pathfinding fails temporarily
-[22m[39m[JobState] Entered. Target: lower. ResumeCtx: Idle
+- true
++ false
 
- [31m笶ｯ[39m src/tests/WorkerDistraction.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 35[2mms[22m[39m
-[31m     [31mﾃ・[31m should immediately switch to JobState and target the job upon assignment[39m[32m 25[2mms[22m[39m
-[31m     [31mﾃ・[31m should NOT be distracted by WanderState updates during Job[39m[32m 2[2mms[22m[39m
-[31m     [31mﾃ・[31m should not freeze due to throttle at low game time[39m[32m 3[2mms[22m[39m
-     [32m笨・[39m should NOT Ping-Pong between two manual requests[32m 2[2mms[22m[39m
-[31m     [31mﾃ・[31m should NOT build a house immediately if pathfinding fails temporarily[39m[32m 2[2mms[22m[39m
+ 笶ｯ src/tests/EncounterCombat.test.js:147:26
+    145|             }
+    146|         }
+    147|         expect(switched).toBe(true);
+       |                          ^
+    148|     });
+    149| 
 
-[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (5)[39m
-[2m   Start at [22m 22:40:17
-[2m   Duration [22m 937ms[2m (transform 127ms, setup 54ms, import 161ms, tests 35ms, environment 479ms)[22m
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should initialize with correct default values
+AssertionError: expected undefined to be +0 // Object.is equality
+
+- Expected: 
+0
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/PerformanceMonitor.test.js:12:29
+     10| 
+     11|     it('should initialize with correct default values', () => {
+     12|         expect(monitor.fps).toBe(0);
+       |                             ^
+     13|         expect(monitor.enabled).toBe(false);
+     14|         expect(monitor.metrics.entities.total).toBe(0);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should enable and disable correctly
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected: 
+false
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/PerformanceMonitor.test.js:18:33
+     16| 
+     17|     it('should enable and disable correctly', () => {
+     18|         expect(monitor.enabled).toBe(false);
+       |                                 ^
+     19| 
+     20|         monitor.enable();
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should toggle state
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected: 
+false
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/PerformanceMonitor.test.js:28:33
+     26| 
+     27|     it('should toggle state', () => {
+     28|         expect(monitor.enabled).toBe(false);
+       |                                 ^
+     29| 
+     30|         monitor.toggle();
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[4/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure update time
+TypeError: Cannot read properties of undefined (reading 'updateTime')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:44:32
+     42|         monitor.endUpdate();
+     43| 
+     44|         expect(monitor.metrics.updateTime).toBeGreaterThan(0);
+       |                                ^
+     45|         expect(monitor.metrics.lastUpdateDuration).toBeGreaterThan(0);
+     46|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[5/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure render time
+TypeError: Cannot read properties of undefined (reading 'renderTime')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:54:32
+     52|         monitor.endRender();
+     53| 
+     54|         expect(monitor.metrics.renderTime).toBeGreaterThan(0);
+       |                                ^
+     55|         expect(monitor.metrics.lastRenderDuration).toBeGreaterThan(0);
+     56|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[6/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should update entity counts
+TypeError: Cannot read properties of undefined (reading 'entities')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:61:32
+     59|         monitor.updateEntityCount(10, 5, 3);
+     60| 
+     61|         expect(monitor.metrics.entities.units).toBe(10);
+       |                                ^
+     62|         expect(monitor.metrics.entities.goblins).toBe(5);
+     63|         expect(monitor.metrics.entities.buildings).toBe(3);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[7/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure FPS over time
+AssertionError: expected undefined to be +0 // Object.is equality
+
+- Expected: 
+0
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/PerformanceMonitor.test.js:69:29
+     67|     it('should measure FPS over time', () => {
+     68|         // \u521d\u671fFPS\u306f0
+     69|         expect(monitor.fps).toBe(0);
+       |                             ^
+     70| 
+     71|         // \u30d5\u30ec\u30fc\u30e0\u3092\u30b7\u30df\u30e5\u30ec\u30f窶ｦ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[8/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should add data to history
+TypeError: Cannot set properties of undefined (setting 'updateTime')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:83:36
+     81|     it('should add data to history', () => {
+     82|         monitor.fps = 60;
+     83|         monitor.metrics.updateTime = 10;
+       |                                    ^
+     84|         monitor.metrics.renderTime = 5;
+     85|         monitor.metrics.entities.total = 100;
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[9/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should limit history length
+TypeError: Cannot read properties of undefined (reading 'maxHistoryLength')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:97:43
+     95| 
+     96|     it('should limit history length', () => {
+     97|         const maxLength = monitor.history.maxHistoryLength;
+       |                                           ^
+     98| 
+     99|         // \u6700\u5927\u9577\u3088\u308a\u591a\u3044\u30c7\u30fc\u30b窶ｦ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[10/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should get stats correctly
+TypeError: Cannot set properties of undefined (setting 'minFps')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:112:30
+    110|     it('should get stats correctly', () => {
+    111|         monitor.fps = 60;
+    112|         monitor.stats.minFps = 30;
+       |                              ^
+    113|         monitor.stats.maxFps = 75;
+    114|         monitor.metrics.updateTime = 8;
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[11/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should reset stats
+TypeError: Cannot set properties of undefined (setting 'minFps')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:131:30
+    129|     it('should reset stats', () => {
+    130|         // \u521d\u671f\u5024\u3092\u8a2d\u5b9a
+    131|         monitor.stats.minFps = 30;
+       |                              ^
+    132|         monitor.stats.maxFps = 75;
+    133|         monitor.history.fps = [60, 55, 58];
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[12/13]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should update with game instance
+TypeError: Cannot read properties of undefined (reading 'entities')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:152:32
+    150|         monitor.update(mockGame);
+    151| 
+    152|         expect(monitor.metrics.entities.units).toBe(3);
+       |                                ^
+    153|         expect(monitor.metrics.entities.goblins).toBe(2);
+    154|         expect(monitor.metrics.entities.buildings).toBe(1);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[13/13]竡ｯ
+
+
+ Test Files  2 failed (2)
+      Tests  13 failed | 2 passed (15)
+   Start at  16:29:03
+   Duration  1.65s (transform 434ms, setup 202ms, import 456ms, tests 54ms, environment 1.21s)
 

@@ -70,11 +70,12 @@ describe('Unit AI Search Optimization', () => {
         // We simulate findBestTarget returning this goblin
         mockTerrain.findBestTarget.mockReturnValue(goblin);
 
-        // Run Search
-        unit.searchSurroundings(0, 0);
+        // Run Search (Using checkSelfDefense now)
+        unit.checkSelfDefense(null, true);
 
         // Expectation 1: Unit calls findBestTarget
-        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('goblin', 0, 0, 12, expect.any(Function), expect.any(Array));
+        // Default range for non-knight units in checkSelfDefense is 20
+        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('goblin', 0, 0, 20, expect.any(Function), expect.any(Array));
 
         // Expectation 2: Unit sets target
         expect(unit.targetGoblin).toBe(goblin);
@@ -83,6 +84,7 @@ describe('Unit AI Search Optimization', () => {
     it('should find Base using Spatial Search', () => {
         // Setup mock return for building
         const hut = {
+            id: 202,
             userData: { type: 'goblin_hut', gridX: 20, gridZ: 20 },
             gridX: 20, gridZ: 20
         };
@@ -94,14 +96,10 @@ describe('Unit AI Search Optimization', () => {
             return null;
         });
 
-        const consoleSpy = vi.spyOn(console, 'log');
-
-        unit.searchSurroundings(0, 0);
+        unit.checkSelfDefense(null, true);
 
         // Expectation: Calls findBestTarget for building
-        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('building', 0, 0, 25, expect.any(Function));
-
-        // Log removed from source to reduce spam
-        // expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('found Base via Spatial Search'));
+        // Building range for non-knight units in checkSelfDefense is 10
+        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('building', 0, 0, 10, expect.any(Function), expect.any(Array));
     });
 });

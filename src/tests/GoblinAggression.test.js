@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Goblin } from '../Goblin.js';
-import { GoblinCombatState, GoblinWanderState } from '../ai/states/GoblinStates.js';
+import { Combat, Wander } from '../ai/states/GoblinStates.js';
 import * as THREE from 'three';
 
 // Mock THREE
@@ -116,7 +116,7 @@ describe('Goblin Aggression Bug', () => {
         });
 
         // 1. Initial State: Wander
-        expect(goblin.state.constructor.name).toBe('GoblinWanderState');
+        expect(goblin.state.constructor.name).toBe('Wander');
 
         // 2. Run Update to Find Target
         // pass unitTarget in list
@@ -127,7 +127,7 @@ describe('Goblin Aggression Bug', () => {
 
         // Expect Target Found
         expect(goblin.targetUnit).toBe(unitTarget);
-        expect(goblin.state.constructor.name).toBe('GoblinCombatState');
+        expect(goblin.state.constructor.name).toBe('Combat');
         console.log('[Test] Goblin Found Target & Switched to Combat');
 
         // 3. Chase (Distance is 5, Range is 2.5)

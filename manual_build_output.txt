@@ -1,0 +1,76 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/ManualBuild.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/ManualBuild.test.js > Manual Build Job Logic > should complete manual build job when arrived
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+stdout | src/tests/ManualBuild.test.js > Manual Build Job Logic > should complete manual build job when arrived
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 10,10 (H:10). Reachable:true Dist:7.07 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 7.1 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[Actor 0] smartMove to 10,10 (H:10). Reachable:true Dist:0.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:1 Node:10,10 My:10,10 d:0,0
+[Actor 0] Reached Node. Shifting.
+[Unit 0] Moving onto Rock at 10,10 H:10 (Speed Penalty)
+[Entity 0] startMove -> isMoving:true. Target:10,10 StartTime:0.0000
+
+stdout | src/tests/ManualBuild.test.js > Manual Build Job Logic > should NOT freeze if arrived but building fails
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5
+
+stdout | src/tests/ManualBuild.test.js > Manual Build Job Logic > should NOT freeze if arrived but building fails
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 15,15 (H:10). Reachable:true Dist:14.14 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 14.1 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[Actor 0] smartMove to 15,15 (H:10). Reachable:true Dist:0.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:1 Node:15,15 My:15,15 d:0,0
+[Actor 0] Reached Node. Shifting.
+[Unit 0] Moving onto Rock at 15,15 H:10 (Speed Penalty)
+[Entity 0] startMove -> isMoving:true. Target:15,15 StartTime:0.0000
+
+stdout | src/tests/ManualBuild.test.js > Manual Build Job Logic > should handle "Arrived" logic transition
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5
+
+stdout | src/tests/ManualBuild.test.js > Manual Build Job Logic > should handle "Arrived" logic transition
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 20,20 (H:10). Reachable:true Dist:21.21 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 21.2 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[Actor 0] smartMove to 20,20 (H:10). Reachable:true Dist:2.00 Moving:false Path:0
+[Actor 0] smartMove to 20,20 (H:10). Reachable:true Dist:2.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:1 Node:20,20 My:18,20 d:2,0
+[Unit 0] Moving onto Rock at 20,20 H:10 (Speed Penalty)
+[Entity 0] startMove -> isMoving:true. Target:20,20 StartTime:0.0000
+
+ ﾃ・src/tests/ManualBuild.test.js > Manual Build Job Logic > should complete manual build job when arrived 12ms
+   竊・expected { id: 'req_1', 窶ｦ(6) } to be null
+ ﾃ・src/tests/ManualBuild.test.js > Manual Build Job Logic > should NOT freeze if arrived but building fails 3ms
+   竊・expected { id: 'req_2', 窶ｦ(6) } to be null
+ ﾃ・src/tests/ManualBuild.test.js > Manual Build Job Logic > should handle "Arrived" logic transition 2ms
+   竊・expected "vi.fn()" to be called at least once
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  13:03:36
+   Duration  1.19s (transform 420ms, setup 65ms, import 438ms, tests 18ms, environment 425ms)
+

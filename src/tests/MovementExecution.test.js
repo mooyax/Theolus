@@ -1,7 +1,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
 // Mock THREE
@@ -57,8 +57,8 @@ describe('Movement Execution under Pressure', () => {
 
         const moved = unit.smartMove(targetX, targetZ, time);
 
-        // Should return FALSE because we don't fallback to dangerous linear move
-        expect(moved).toBe(false);
+        // Should return TRUE (BUSY) to prevent state exit, but NOT execute move
+        expect(moved).toBe(true);
         expect(unit.executeMove).not.toHaveBeenCalled();
     });
 
@@ -76,7 +76,7 @@ describe('Movement Execution under Pressure', () => {
         // Assuming test keeps fails if logic removed.
         // I should just update it to test "isPathfinding = true" case or similar.
 
-        // Actually, let's keep it simple for now and fix the JobState test primarily.
+        // Actually, let's keep it simple for now and fix the Job test primarily.
 
         terrain.pathfindingCalls = 101;
         unit.lastPathTime = 0;
@@ -84,15 +84,16 @@ describe('Movement Execution under Pressure', () => {
 
         const moved = unit.smartMove(targetX, targetZ, time);
 
-        expect(moved).toBe(false);
+        // Should return TRUE (BUSY) to wait for budget
+        expect(moved).toBe(true);
         expect(unit.executeMove).not.toHaveBeenCalled();
     });
 
-    it('should immediately trigger movement in JobState if currently idle', async () => {
+    it('should immediately trigger movement in Job if currently idle', async () => {
         const req = { id: 'req1', x: 20, z: 20, type: 'raise', status: 'pending', assignedTo: 1, isManual: true };
         unit.targetRequest = req;
 
-        const state = new JobState(unit);
+        const state = new Job(unit);
         unit.state = state;
 
         // Enter state should trigger move

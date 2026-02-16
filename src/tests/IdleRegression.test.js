@@ -2,37 +2,10 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
-import { JobState } from '../ai/states/UnitStates.js'; // Assuming direct export or via UnitStates
+import { Job } from '../ai/states/UnitStates.js'; // Assuming direct export or via UnitStates
 import { Game } from '../Game.js';
 
-// Mock dependencies
-vi.mock('three', () => {
-    const Vector3 = class {
-        constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
-        distanceTo(v) { return Math.sqrt((this.x - v.x) ** 2 + (this.y - v.y) ** 2 + (this.z - v.z) ** 2); }
-        distanceToSquared(v) { return (this.x - v.x) ** 2 + (this.y - v.y) ** 2 + (this.z - v.z) ** 2; }
-        clone() { return new Vector3(this.x, this.y, this.z); }
-        add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
-        sub(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
-        copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
-        dot(v) { return this.x * v.x + this.y * v.y + this.z * v.z; }
-        normalize() { return this; }
-        set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
-    };
-    return {
-        Vector3: Vector3,
-        Group: class { constructor() { this.position = new Vector3(); this.add = vi.fn(); this.remove = vi.fn(); } },
-        Mesh: class { constructor() { this.position = new Vector3(); this.rotation = { y: 0 }; } },
-        MeshStandardMaterial: class { },
-        MeshLambertMaterial: class { },
-        BoxGeometry: class { translate() { } },
-        PlaneGeometry: class { translate() { } },
-        SphereGeometry: class { translate() { } },
-        CylinderGeometry: class { translate() { } },
-        ConeGeometry: class { translate() { } },
-        CanvasTexture: class { },
-    };
-});
+
 
 describe('Job/Moving Idle Regression', () => {
     let unit;
@@ -83,16 +56,16 @@ describe('Job/Moving Idle Regression', () => {
         vi.clearAllMocks();
     });
 
-    it('should NOT abandon JobState when smartMove is throttled (Time Slicing)', () => {
+    it('should NOT abandon Job when smartMove is throttled (Time Slicing)', () => {
         // Setup Job
-        const request = { id: 'req1', type: 'build', x: 50, z: 50, assignedTo: unit.id, isManual: false };
+        const request = { id: 'req1', type: 'build', x: 50, z: 50, assignedTo: unit.id, isManual: false, status: 'assigned' };
         unit.targetRequest = request;
 
-        // Transition to JobState
-        const jobState = new JobState(unit);
+        // Transition to Job
+        const jobState = new Job(unit);
         unit.changeState(jobState);
 
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
         expect(unit.action).toBe('Approaching Job');
 
         // SIMULATE THROTTLING
@@ -109,18 +82,18 @@ describe('Job/Moving Idle Regression', () => {
             unit.updateLogic(i * 0.1, 0.1, false, [], [], []);
         }
 
-        // VERIFY: Still in JobState?
+        // VERIFY: Still in Job?
         // If bug exists, pathFailures would increment -> abandon job -> Idle/Wander
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
         expect(unit.targetRequest).not.toBeNull();
         expect(window.game.releaseRequest).not.toHaveBeenCalled();
     });
 
     it('should NOT increment stuckTimer when smartMove is throttled', () => {
         // Setup Job (Manual = Higher Tolerance 45s)
-        const request = { id: 'req2', type: 'build', x: 50, z: 50, assignedTo: unit.id, isManual: true };
+        const request = { id: 'req2', type: 'build', x: 50, z: 50, assignedTo: unit.id, isManual: true, status: 'assigned' };
         unit.targetRequest = request;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Mock smartMove: return false (not moved) + Throttled
         unit.smartMove = vi.fn().mockImplementation(() => {
@@ -144,7 +117,7 @@ describe('Job/Moving Idle Regression', () => {
             state.update(t, 2.0, false, []);
         }
 
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
         expect(window.game.releaseRequest).not.toHaveBeenCalled();
     });
 

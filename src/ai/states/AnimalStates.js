@@ -1,6 +1,6 @@
-import { State, WanderState } from './State.js';
+import { State, WanderBase } from './State.js';
 
-export class SheepWanderState extends WanderState {
+export class SheepWander extends WanderBase {
     constructor(actor) {
         super(actor);
     }
@@ -11,7 +11,7 @@ export class SheepWanderState extends WanderState {
             const predator = this.actor.checkForPredators();
             if (predator) {
                 this.actor.targetPredator = predator;
-                this.actor.changeState(new SheepFleeState(this.actor));
+                this.actor.changeState(new SheepFlee(this.actor));
                 return;
             }
         }
@@ -20,7 +20,7 @@ export class SheepWanderState extends WanderState {
     }
 }
 
-export class SheepFleeState extends State {
+export class SheepFlee extends State {
     constructor(actor) {
         super(actor);
         this.fleeTimer = 0;
@@ -36,7 +36,7 @@ export class SheepFleeState extends State {
         if (this.fleeTimer > 5.0) {
             // Calm down
             this.actor.targetPredator = null;
-            this.actor.changeState(new SheepWanderState(this.actor));
+            this.actor.changeState(new SheepWander(this.actor));
             return;
         }
 
@@ -60,7 +60,7 @@ export class SheepFleeState extends State {
                 this.actor.moveRandomly(time);
             }
         } else {
-            this.actor.changeState(new SheepWanderState(this.actor));
+            this.actor.changeState(new SheepWander(this.actor));
         }
     }
 }

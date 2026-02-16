@@ -1,0 +1,10 @@
+ [31m笶ｯ[39m src/tests/HelpShowroom.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 35[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/MovementReset.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 26[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/MovementFix.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 26[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/PathfindingOscillation.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 19[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/JobApproachThreshold.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 45[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/ReproUnitMovement.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 45[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/GoblinDestruction.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 11[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/BuildingDistraction.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 16[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/CombatLogic.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1767[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/LoadUpdateLoop.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 55[2mms[22m[39m

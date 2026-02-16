@@ -1,0 +1,40 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/UnitMigration.test.js[2m > [22m[2mUnit Migration Logic[2m > [22m[2mshould return true on successful build
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/UnitMigration.test.js[2m > [22m[2mUnit Migration Logic[2m > [22m[2mshould increment stagnation on failed build
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50
+
+[90mstdout[2m | src/tests/UnitMigration.test.js[2m > [22m[2mUnit Migration Logic[2m > [22m[2mshould migrate after 20 seconds of stagnation
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50
+
+ [31m笶ｯ[39m src/tests/UnitMigration.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 16[2mms[22m[39m
+     [32m笨・[39m should return true on successful build[32m 6[2mms[22m[39m
+     [32m笨・[39m should increment stagnation on failed build[32m 2[2mms[22m[39m
+[31m     [31mﾃ・[31m should migrate after 20 seconds of stagnation[39m[32m 6[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/UnitMigration.test.js > Unit Migration Logic > should migrate after 20 seconds of stagnation
+AssertionError: expected "migrate" to be called at least once
+ 笶ｯ src/tests/UnitMigration.test.js:94:30
+     92|         unit.updateLogic(5000, 1.0);
+     93| 
+     94|         expect(unit.migrate).toHaveBeenCalled();
+       |                              ^
+     95|     });
+     96| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 13:56:42
+[2m   Duration [22m 1.09s[2m (transform 270ms, setup 348ms, import 23ms, tests 16ms, environment 462ms)[22m
+

@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Game } from '../Game.js';
 import { Terrain } from '../Terrain.js';
 import { Unit } from '../Unit.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 import { MockTerrain, MockGame } from './TestHelper.js';
 
 const createMockScene = () => ({
@@ -33,7 +33,9 @@ describe('Terrain Job Reachability Test', () => {
 
         game = new MockGame(scene, terrain);
         game.resources = { grain: 100, fish: 0, meat: 0 };
-        game.completeRequest = vi.fn();
+        game.completeRequest = vi.fn((unit, req) => {
+            req.status = 'completed';
+        });
 
         global.window = { game: game };
     });
@@ -57,7 +59,7 @@ describe('Terrain Job Reachability Test', () => {
         };
 
         worker.targetRequest = request;
-        worker.changeState(new JobState(worker));
+        worker.changeState(new Job(worker));
 
         const dist = worker.getDistance(request.x, request.z);
         expect(dist).toBe(1.0);
@@ -83,7 +85,7 @@ describe('Terrain Job Reachability Test', () => {
         };
 
         worker.targetRequest = request;
-        worker.changeState(new JobState(worker));
+        worker.changeState(new Job(worker));
 
         const dist = worker.getDistance(request.x, request.z);
         // Distance is sqrt(1^2 + 1^2) = 1.414...
@@ -111,7 +113,7 @@ describe('Terrain Job Reachability Test', () => {
         };
 
         worker.targetRequest = request;
-        worker.changeState(new JobState(worker));
+        worker.changeState(new Job(worker));
 
         const dist = worker.getDistance(request.x, request.z);
         expect(dist).toBe(3.0);

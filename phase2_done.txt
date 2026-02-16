@@ -1,0 +1,55 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[MockTerrain] findPath: (0,0) -> (15,15)
+[Unit 1] Moving onto Rock at 15,15 H:10 (Speed Penalty)
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[MockTerrain] findPath: (0,0) -> (10,10)
+[Unit 1] Moving onto Rock at 10,10 H:10 (Speed Penalty)
+[MockTerrain] findPath: (10,10) -> (15,15)
+[Unit 1] Moving onto Rock at 15,15 H:10 (Speed Penalty)
+[Test] Final Target: 15,15 State: UnitWanderState
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould resume MIGRATION after Combat interruption
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould resume MIGRATION after Combat interruption
+[22m[39m[CombatState] Entering. Saved Context: {"action":"Migrating","target":{"x":25,"z":25},"migrationTarget":{"x":25,"z":25}}
+[MockTerrain] findPath: (10,10) -> (25,25)
+[Unit 1] Moving onto Rock at 25,25 H:10 (Speed Penalty)
+
+ [32m笨・[39m src/tests/InterruptResume.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+[90mstdout[2m | src/tests/JobReassignment.test.js[2m > [22m[2mJob Reassignment on Death[2m > [22m[2mshould reassign job when original worker dies
+[22m[39m[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+[90mstdout[2m | src/tests/JobReassignment.test.js[2m > [22m[2mJob Reassignment on Death[2m > [22m[2mshould reassign job when original worker dies
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50
+[Game] Request Added: raise at (12,12) ID:req_0
+[Unit 0] Sync Path failed to 12,12
+[Test] Killing unit1 (ID:0)...
+Unit 0 (worker) DIED. R.I.P.
+[Unit 0] Releasing request via this.game
+[Test] Before Game Update
+[Test] After Game Update
+[Test] Request Status: pending, AssignedTo: null
+[Test] Unit2 Req: null
+
+ [31m笶ｯ[39m src/tests/JobReassignment.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 41[2mms[22m[39m
+[31m     [31mﾃ・[31m should reassign job when original worker dies[39m[32m 39[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 12:53:48
+[2m   Duration [22m 1.62s[2m (transform 821ms, setup 712ms, import 402ms, tests 65ms, environment 1.19s)[22m
+

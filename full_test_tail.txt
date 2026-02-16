@@ -1,0 +1,300 @@
+ 笨・src/tests/Hysteresis.test.js > Unit Combat Hysteresis (Stickiness) > should apply stickiness during checkSelfDefense for entities 4ms
+ 笨・src/tests/GoblinStuckness.test.js > Goblin Combat and Stagnation > should blacklist unreachable targets and transition state 11ms
+ 笨・src/tests/GoblinStuckness.test.js > Goblin Combat and Stagnation > should respect blacklist in findTarget 6ms
+ 笨・src/tests/GoblinStuckness.test.js > Goblin Combat and Stagnation > should not stop movement if already fighting 1ms
+ 笨・src/tests/BuildingStart.test.js > Building Logic > should build house if population is sufficient (Initial State) 9ms
+ 笨・src/tests/BuildingStart.test.js > Building Logic > should build house if population > 8 (with Base Cap 10) 4ms
+ 笨・src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should automatically engage a nearby goblin hut 10ms
+ 笨・src/tests/BuildingAttackAuto.test.js > Autonomous Building Attack > should NOT engage if worker (safeguard check) 6ms
+stdout | src/tests/DebuggingIdle.test.js > Action Label Logic > should maintain Moving action during update loop
+[Unit 0] State Change: Wander -> Wander
+[Actor 0] smartMove to 6,6 (H:10). Reachable:true Dist:1.41 Moving:false Path:0
+[Unit 0] Moving onto Rock at 6,6 H:10 (Speed Penalty)
+[Entity 0] startMove -> isMoving:true. Target:6,6 StartTime:0.0000
+
+stdout | src/tests/UnitInit.test.js > Unit Initialization and Movement Start > should NOT freeze if started at time 0
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[Actor 0] smartMove to 5,5 (H:10). Reachable:true Dist:7.07 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 7.1 Time:6.0 Last:0.0 Throttle:1.00 Action:Idle
+Debug Unit Action after 6s: Idle
+[Actor 0] smartMove to 5,5 (H:10). Reachable:true Dist:7.07 Moving:false Path:1
+[Actor 0] SmartMove Depth:1 Node:5,5 My:10,10 d:5,5
+[Unit 0] Moving onto Rock at 5,5 H:10 (Speed Penalty)
+[Entity 0] startMove -> isMoving:true. Target:5,5 StartTime:6.0000
+
+stdout | src/tests/SheepHarvest.test.js > Sheep Harvest Reward Verification > should grant 1000 meat when a unit kills a sheep
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: sheep Pos: 5,5
+[Actor 1] Sheep Harvested! +1000 Meat. Total: 1000
+
+ 笨・src/tests/UnitInit.test.js > Unit Initialization and Movement Start > should NOT freeze if started at time 0 10ms
+ 笨・src/tests/DebuggingIdle.test.js > Action Label Logic > should maintain Moving action during update loop 12ms
+ 笨・src/tests/SheepHarvest.test.js > Sheep Harvest Reward Verification > should grant 1000 meat when a unit kills a sheep 11ms
+stdout | src/tests/GoblinHutDestruction.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/GoblinHutDestruction.test.js > Goblin Hut Destruction > should be destroyed when HP reaches 0
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[Building] goblin_hut(0) took 150 dmg. Pop: 0. Retaliation: 0
+
+stdout | src/tests/MarkerDistraction.test.js > Marker Distraction and Pathfinding Persistence > should NOT abandon manual job during pathfinding throttle
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+stdout | src/tests/GoblinHutDestruction.test.js > Goblin Hut Destruction > should be removed from Terrain by Game Loop logic
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[Building] goblin_hut(999) took 200 dmg. Pop: 0. Retaliation: 0
+
+stdout | src/tests/GoblinStats.test.js > Goblin Stats Verification > Normal Goblin should have sufficient lifespan and speed
+Goblin constructor: calling super...
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Actor 0] CHANGE STATE: None -> Wander Request:null
+
+ 笨・src/tests/GoblinHutDestruction.test.js > Goblin Hut Destruction > should be destroyed when HP reaches 0 3ms
+ 笨・src/tests/GoblinHutDestruction.test.js > Goblin Hut Destruction > should be removed from Terrain by Game Loop logic 3ms
+stdout | src/tests/GoblinStats.test.js > Goblin Stats Verification > King Goblin should be long lived
+Goblin constructor: calling super...
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+
+stdout | src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,0
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,0
+[Unit 0] State Change: Wander -> Sleep
+
+stdout | src/tests/MarkerDistraction.test.js > Marker Distraction and Pathfinding Persistence > should be more persistent for manual jobs on hard failure
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+ 笨・src/tests/GoblinStats.test.js > Goblin Stats Verification > Normal Goblin should have sufficient lifespan and speed 6ms
+ 笨・src/tests/GoblinStats.test.js > Goblin Stats Verification > King Goblin should be long lived 2ms
+ 笨・src/tests/NightLogic.test.js > Night Logic - Shelter Entry > Worker should engage pathfinding to House but is likely blocked 8ms
+ 笨・src/tests/MarkerDistraction.test.js > Marker Distraction and Pathfinding Persistence > should NOT abandon manual job during pathfinding throttle 8ms
+ 笨・src/tests/MarkerDistraction.test.js > Marker Distraction and Pathfinding Persistence > should be more persistent for manual jobs on hard failure 2ms
+stdout | src/tests/DeathAnimation.test.js > Death Animation and Logic Fixes > should update death animation and remove cross after duration
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+stdout | src/tests/DeathAnimation.test.js > Death Animation and Logic Fixes > should update death animation and remove cross after duration
+Unit 0 (worker) DIED. R.I.P.
+
+stdout | src/tests/DeathAnimation.test.js > Death Animation and Logic Fixes > should Stop moving/updating logic when Dead (Ghost Unit Fix)
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+stdout | src/tests/DeathAnimation.test.js > Death Animation and Logic Fixes > should Stop moving/updating logic when Dead (Ghost Unit Fix)
+Unit 0 (worker) DIED. R.I.P.
+
+ 笨・src/tests/DeathAnimation.test.js > Death Animation and Logic Fixes > should update death animation and remove cross after duration 10ms
+ 笨・src/tests/DeathAnimation.test.js > Death Animation and Logic Fixes > should Stop moving/updating logic when Dead (Ghost Unit Fix) 3ms
+stdout | src/tests/JobAssignment.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+ 笨・src/tests/JobAssignment.test.js > Job Assignment & Continuation > should release old job when a new job is claimed (Sequential assignment) 11ms
+ 笨・src/tests/JobAssignment.test.js > Job Assignment & Continuation > should continue to the next nearby job after completing current one (Chaining) 5ms
+ 笨・src/tests/JobAssignment.test.js > Job Assignment & Continuation > should properly interrupt and change state if a job is snatched by another unit 2ms
+ 笨・src/tests/Minimal.test.js > Minimal Test > should pass 2ms
+ 笨・src/tests/SquadMemory.test.js > Squad-Based Memory (Decoupled) > should link manually spawned units to nearby barracks 2ms
+ 笨・src/tests/SquadMemory.test.js > Squad-Based Memory (Decoupled) > should report enemy immediately on hit 1ms
+ 笨・src/tests/Flatness.test.js > Terrain Flatness Check > should PASS perfectly flat terrain 3ms
+ 笨・src/tests/Flatness.test.js > Terrain Flatness Check > should PASS minor noise (within 0.1) 1ms
+ 笨・src/tests/Flatness.test.js > Terrain Flatness Check > should FAIL excessive noise (> 0.1) 1ms
+ 笨・src/tests/Flatness.test.js > Terrain Flatness Check > should FAIL slope 1ms
+ 笨・src/tests/Flatness.test.js > Terrain Flatness Check > should FAIL water (height 0) 1ms
+stdout | src/tests/WaterEntry.test.js > Water Entry Prevention > Actor prevents linear movement into water
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: worker Pos: 10,8
+[Actor 1] smartMove: triggers pathfinding. Dist: 2.0 Time:1000.0 Last:0.0 Throttle:1.10 Action:Idle
+
+stdout | src/tests/WaterEntry.test.js > Water Entry Prevention > Actor allows movement on land
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: worker Pos: 10,8
+[Actor 1] smartMove: triggers pathfinding. Dist: 2.0 Time:1000.0 Last:0.0 Throttle:1.10 Action:Idle
+
+ 笨・src/tests/WaterEntry.test.js > Water Entry Prevention > Actor prevents linear movement into water 5ms
+ 笨・src/tests/WaterEntry.test.js > Water Entry Prevention > Actor allows movement on land 2ms
+ 笨・src/tests/StuckAndFrozen.test.js > Stuck and Frozen Fix Verification > Job.enter should call smartMove with actor.simTime, not 0 6ms
+ 笨・src/tests/StuckAndFrozen.test.js > Stuck and Frozen Fix Verification > Job.enter should fallback to 0 only if simTime is missing 2ms
+ 笨・src/tests/WanderBehavior.test.js > Wander Behavior Verification > Wander should trigger moveRandomly after interval 10ms
+ 笨・src/tests/WanderBehavior.test.js > Wander Behavior Verification > Wander should also wander and scan for targets 2ms
+stdout | src/tests/CavePersistence.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/ShorelineLoop.test.js > Shoreline Loop Reproduction > should NOT target unrelated region goblin via findTargetGoblin
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:soldier Pos:5,5 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:soldier Pos:5,5
+
+ 笨・src/tests/JobApproachThreshold.test.js > Job Approach Threshold > should complete job if distance is 1.4 (within 1.5 threshold) 7ms
+ 笨・src/tests/JobApproachThreshold.test.js > Job Approach Threshold > should NOT complete job if distance is 1.6 (outside 1.5 threshold) 2ms
+stdout | src/tests/ShorelineLoop.test.js > Shoreline Loop Reproduction > should NOT target land goblin when unit is in water (Region 0)
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:1 Role:soldier Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:1 Role:soldier Pos:5,5
+
+ 笨・src/tests/ShorelineLoop.test.js > Shoreline Loop Reproduction > should NOT target unrelated region goblin via findTargetGoblin 9ms
+ 笨・src/tests/ShorelineLoop.test.js > Shoreline Loop Reproduction > should NOT target land goblin when unit is in water (Region 0) 2ms
+stdout | src/tests/CavePersistence.test.js > GoblinManager Cave Persistence > should destroy cave if submerged (height <= 0)
+[GoblinManager] Cave destroyed: SUBMERGED(H = -1)
+[GoblinManager] Cleaning up cave at 10,10
+
+ 笨・src/tests/CavePersistence.test.js > GoblinManager Cave Persistence > should update cave Y position when terrain height changes 6ms
+ 笨・src/tests/CavePersistence.test.js > GoblinManager Cave Persistence > should destroy cave if submerged (height <= 0) 2ms
+stdout | src/tests/CaveDestruction.test.js > Cave Destruction Bug > should damage cave when attacking directly
+[Test] Creating Unit
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10
+
+stdout | src/tests/MinimalUnit.test.js > Minimal Unit Sanity > can instantiate Unit
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 0,0
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0
+
+stdout | src/tests/CaveDestruction.test.js > Cave Destruction Bug > should damage cave when attacking directly
+Unit 0 attacking cave. HP: 190
+Unit 0 attacking cave. HP: 0
+
+ 笨・src/tests/MinimalUnit.test.js > Minimal Unit Sanity > can instantiate Unit 7ms
+ 笨・src/tests/CaveDestruction.test.js > Cave Destruction Bug > should damage cave when attacking directly 8ms
+stdout | src/tests/WorkerDiversityFixed.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/WorkerDiversityFixed.test.js > Verification Game > Game should be defined
+!!! CHECKING GAME DEFINITION !!!
+Game is defined
+
+stdout | src/tests/WorkerDiversityFixed.test.js > Verification Game > Game.spawnUnit should be updated
+!!! CHECKING SPAWNUNIT !!!
+DEBUG: spawnUnit source:
+spawnUnit(x, z, roleOrSpecial = null, sourceBuilding = null, squadId = null, isManualClick = false, faction = "player") {
+    let role = "citizen";
+    let isSpecial = false;
+    let homeBase = null;
+    if (roleOrSpecial === true) {
+      isSpecial = true;
+      role = "worker";
+      if (isManualClick) this.manualWorkerSpawns++;
+    } else if (typeof roleOrSpecial === "string") {
+      role = roleOrSpecial;
+    } else if (sourceBuilding) {
+      homeBase = sourceBuilding;
+      const bType = sourceBuilding.type || sourceBuilding.userData && sourceBuilding.userData.type;
+      if (bType === "barracks") role = "knight";
+      else if (bType === "tower") role = "wizard";
+      else {
+        const r = Math.random();
+        if (r < 0.2) role = "hunter";
+        else if (r < 0.4) role = "fisher";
+        else role = "worker";
+      };
+      if ((role === "knight" || role === "wizard") && !sourceBuilding.userData.memory) {
+        sourceBuilding.userData.memory = new BattleMemory();
+      };
+      console.log(`Spawned ${role} linked to ${sourceBuilding.type} at ${sourceBuilding.userData.gridX},${sourceBuilding.userData.gridZ} SquadID:${squadId}`);
+    } else {
+      const r = Math.random();
+      if (r < 0.25) role = "hunter";
+      else if (r < 0.5) role = "fisher";
+      else role = "worker";
+    };
+    const unit = new __vite_ssr_import_3__.Unit(this.scene, this.terrain, x, z, role, isSpecial, squadId, faction);
+    unit.game = this;
+    unit.homeBase = homeBase;
+    this.units.push(unit);
+    if (this.unitMap) this.unitMap.set(unit.id, unit);
+    if (unit.role === "worker") {
+      this.processAssignments();
+    };
+    return unit;
+  }
+
+ 笨・src/tests/WorkerDiversityFixed.test.js > Verification Game > Game should be defined 5ms
+ 笨・src/tests/WorkerDiversityFixed.test.js > Verification Game > Game.spawnUnit should be updated 1ms
+
+ Test Files  54 failed | 89 passed (143)
+      Tests  91 failed | 305 passed (396)
+     Errors  5 errors
+   Start at  12:53:11
+   Duration  28.04s (transform 12.57s, setup 17.42s, import 40.29s, tests 11.83s, environment 126.02s)
+

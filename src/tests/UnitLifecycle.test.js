@@ -14,7 +14,7 @@ describe('Unit Lifecycle and Aging', () => {
         Unit.initAssets = vi.fn();
         // Mock complex logic to isolate lifecycle tests
         Unit.prototype.moveRandomly = vi.fn();
-        Unit.prototype.searchSurroundings = vi.fn();
+        Unit.prototype.checkSelfDefense = vi.fn();
         Unit.prototype.triggerMove = vi.fn();
         Unit.prototype.updateMovement = vi.fn();
         Unit.prototype.die = vi.fn(function () { this.isDead = true; });
@@ -33,7 +33,8 @@ describe('Unit Lifecycle and Aging', () => {
         };
         mockGame = {
             raidPoints: [],
-            findBestRequest: vi.fn().mockReturnValue(null)
+            findBestRequest: vi.fn().mockReturnValue(null),
+            minimal: true
         };
         global.window.game = mockGame;
         unit = new Unit({ add: vi.fn() }, mockTerrain, 0, 0, 'worker');

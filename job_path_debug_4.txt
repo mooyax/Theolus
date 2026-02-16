@@ -1,0 +1,68 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+stderr | src/tests/Investigation_JobPath.test.js
+[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39m[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:0
+
+stderr | src/tests/Investigation_JobPath.test.js > Job Path Consistency > should maintain path while processing Job
+!!![TRACE Entity 999] startMove target:5,5
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39m[Actor 999] Pathfinding Result: Success. Target:20,20 Len:5
+[Actor 999] SmartMove Depth:1 Node:0,0 My:0,0 d:0,0 
+[Actor 999] Reached Node.Shifting.
+[Actor 999] SmartMove Depth:2 Node:5,5 My:0,0 d:5,5 
+[Unit 999] canMoveTo(5,5) OK
+[Unit 999] canMoveTo(5,5) checking grid...
+[DIAG] executeMove Actor:999 calling startMove.Current isMoving:false 
+[Entity 999] startMove -> isMoving:true. Target:5,5 StartTime:0.0000
+[DIAG] executeMove Actor:999 finished startMove.New isMoving:true 
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39mInitial Path Length: [33m4[39m
+[Actor 999] SmartMove Depth:0 Node:5,5 My:5,5 d:0,0 
+[Actor 999] Reached Node.Shifting.
+[Actor 999] SmartMove Depth:1 Node:10,10 My:5,5 d:5,5 
+[Unit 999] canMoveTo(10,10) OK
+[Unit 999] canMoveTo(10,10) checking grid...
+[DIAG] executeMove Actor:999 calling startMove.Current isMoving:true 
+[Entity 999] startMove -> isMoving:true. Target:10,10 StartTime:100.0000
+[DIAG] executeMove Actor:999 finished startMove.New isMoving:true 
+[Actor 999] SmartMove Depth:0 Node:10,10 My:5,5 d:5,5 
+[Unit 999] canMoveTo(10,10) OK
+[Unit 999] canMoveTo(10,10) checking grid...
+[Actor 999] SmartMove Depth:0 Node:10,10 My:10,10 d:0,0 
+[Actor 999] Reached Node.Shifting.
+[Actor 999] SmartMove Depth:1 Node:15,15 My:10,10 d:5,5 
+[Unit 999] canMoveTo(15,15) OK
+[Unit 999] canMoveTo(15,15) checking grid...
+[DIAG] executeMove Actor:999 calling startMove.Current isMoving:true 
+[Entity 999] startMove -> isMoving:true. Target:15,15 StartTime:100.0000
+[DIAG] executeMove Actor:999 finished startMove.New isMoving:true 
+
+stderr | src/tests/Investigation_JobPath.test.js > Job Path Consistency > should maintain path while processing Job
+!!![TRACE Entity 999] startMove target:10,10
+!!![TRACE Entity 999] startMove target:15,15
+
+ [32m笨・[39m src/tests/Investigation_JobPath.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 127[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 08:37:05
+[2m   Duration [22m 1.10s[2m (transform 275ms, setup 64ms, import 298ms, tests 127ms, environment 418ms)[22m
+

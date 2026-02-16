@@ -81,8 +81,9 @@ describe('Startup Crash Verification', () => {
         camera.position.set(20, 20, 20);
 
         // Update loop
+        // Update loop
         expect(() => {
-            renderer.update(units, null, camera);
+            renderer.update(units, 0.1, camera.position);
         }).not.toThrow();
     });
 

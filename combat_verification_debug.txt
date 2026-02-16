@@ -1,0 +1,28 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/CombatVerification.test.js > Combat Logic Verification > Scenario A: Worker destroys Cave
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Unit Debug 1] updateLogic. State: Wander
+[Wander Debug 1] Update. Action:Idle
+
+ 笶ｯ src/tests/CombatVerification.test.js (1 test | 1 failed) 13ms
+     ﾃ・Scenario A: Worker destroys Cave 11ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  18:38:52
+   Duration  870ms (transform 198ms, setup 72ms, import 207ms, tests 13ms, environment 411ms)
+

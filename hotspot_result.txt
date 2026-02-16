@@ -1,0 +1,59 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[DEBUG] Game.ts top-level load
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Hotspot Debug] Grouping with existing at 10,10 (Dist: 2.8)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads to intense hotspots (Updated Threshold)
+[Game] Mobilizing Squad 1 to Hotspot at 100,20 (Intensity:100.0)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads
+[Game] Mobilizing Squad 1 to Hotspot at 50,50 (Intensity:100.0)
+
+ 笶ｯ src/tests/Hotspot.test.js (6 tests | 1 failed) 506ms
+     笨・Clusters nearby battle reports  491ms
+     笨・Decays intensity 1ms
+     笨・Mobilizes idle squads to intense hotspots (Updated Threshold) 1ms
+     ﾃ・Triggers autonomous patrol for idle Knights 9ms
+     笨・Mobilizes idle squads 1ms
+     笨・Does not mobilize across regions 1ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Triggers autonomous patrol for idle Knights
+TypeError: this.updateAge is not a function
+ 笶ｯ Object.updateLogic src/Unit.ts:1822:14
+    1820| 
+    1821|         this.simTime = time;
+    1822|         this.updateAge(deltaTime);
+       |              ^
+    1823| 
+    1824|         try {
+ 笶ｯ src/tests/Hotspot.test.js:114:9
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  23:44:35
+   Duration  1.18s (transform 457ms, setup 70ms, import 20ms, tests 506ms, environment 412ms)
+

@@ -1,0 +1,38 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[DEBUG] Game.ts top-level load
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Hotspot Debug] Grouping with existing at 10,10 (Dist: 2.8)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads to intense hotspots (Updated Threshold)
+[Game] Mobilizing Squad 1 to Hotspot at 100,20 (Intensity:100.0)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Mobilizes idle squads
+[Game] Mobilizing Squad 1 to Hotspot at 50,50 (Intensity:100.0)
+
+ 笨・src/tests/Hotspot.test.js (6 tests) 497ms
+     笨・Clusters nearby battle reports  490ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  23:48:59
+   Duration  1.20s (transform 453ms, setup 79ms, import 23ms, tests 497ms, environment 432ms)
+

@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Goblin } from '../Goblin.js';
-import { GoblinCombatState, GoblinWanderState, GoblinRaidState } from '../ai/states/GoblinStates.js';
+import { Combat, Wander, Raid } from '../ai/states/GoblinStates.js';
 
 describe('Goblin Combat and Stagnation', () => {
-    let mockTerrain, mockScene, goblin;
+    let terrain, scene, goblin;
 
     beforeEach(() => {
-        mockTerrain = {
+        terrain = {
             gridToWorld: (v) => v,
             getTileHeight: vi.fn().mockReturnValue(10),
             registerEntity: vi.fn(),
@@ -17,17 +17,22 @@ describe('Goblin Combat and Stagnation', () => {
             logicalDepth: 160,
             findPath: vi.fn()
         };
-        mockScene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
+        scene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
 
-        // Mock window.game
+        // Mock window.game BEFORE creating goblin
         window.game = {
             simTotalTimeSec: 100,
             units: [],
             buildings: [],
-            goblinManager: { reportRaidFailure: vi.fn() }
+            goblinManager: {
+                getClanRaidTarget: vi.fn().mockReturnValue(null),
+                clans: { 0: { active: true } },
+                goblins: []
+            }
         };
 
-        goblin = new Goblin(mockScene, mockTerrain, 10, 10);
+        goblin = new Goblin(scene, terrain, 10, 10);
+        goblin.ignoredTargets = new Map();
     });
 
     afterEach(() => {
@@ -35,15 +40,17 @@ describe('Goblin Combat and Stagnation', () => {
         vi.clearAllMocks();
     });
 
-    it('should blacklist unreachable targets and transition state', () => {
+    it('should blacklist unreachable targets and transition state', async () => {
         const targetUnit = { id: 'victim1', gridX: 20, gridZ: 20, type: 'unit', isDead: false };
         goblin.targetUnit = targetUnit;
-        goblin.changeState(new GoblinCombatState(goblin));
+        // setup state
+        goblin.changeState(new Combat(goblin));
 
         // Mock smartMove failure by making target unreachable
-        goblin.isReachable = vi.fn().mockReturnValue(false);
-        goblin.smartMove = vi.fn().mockReturnValue(false);
-        goblin.isUnreachable = true; // Required by new oscillation fix
+        goblin.smartMove = vi.fn().mockImplementation(() => {
+            goblin.isUnreachable = true;
+            return false;
+        });
 
         // run updateLogic via state
         window.game.simTotalTimeSec = 101;
@@ -57,8 +64,8 @@ describe('Goblin Combat and Stagnation', () => {
         // Target should be cleared
         expect(goblin.targetUnit).toBeNull();
 
-        // Should have transitioned back to Raid state (as per GoblinCombatState.update)
-        expect(goblin.state instanceof GoblinRaidState).toBe(true);
+        // Should have transitioned back to Raid state (as per Combat.update)
+        expect(goblin.state instanceof Raid).toBe(true);
     });
 
     it('should respect blacklist in findTarget', () => {
@@ -70,7 +77,7 @@ describe('Goblin Combat and Stagnation', () => {
         window.game.simTotalTimeSec = 100;
 
         // Mock findBestTarget to simulate the internal loop
-        mockTerrain.findBestTarget.mockImplementation((type, x, z, dist, costFn, list) => {
+        terrain.findBestTarget.mockImplementation((type, x, z, dist, costFn, list) => {
             if (type === 'unit') {
                 const cost = costFn(targetUnit, 2);
                 return (cost === Infinity) ? null : targetUnit;
@@ -92,11 +99,14 @@ describe('Goblin Combat and Stagnation', () => {
     });
 
     it('should not stop movement if already fighting', () => {
+        // Ensure we are ALREADY in Combat state for the re-entry guard to work
+        goblin.changeState(new Combat(goblin));
+
         goblin.action = "Fighting";
         goblin.isMoving = true;
 
-        // Re-entering CombatState
-        goblin.changeState(new GoblinCombatState(goblin));
+        // Re-entering Combat
+        goblin.changeState(new Combat(goblin));
 
         // isMoving should REMAIN true (re-entry guard)
         expect(goblin.isMoving).toBe(true);

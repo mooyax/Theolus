@@ -1,0 +1,149 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/Terrain.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/Terrain.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Population Update > should correctly sum housing population excluding farms
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Population Update > should grow population in a house over time
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Population Update > should grow population in a house over time
+[Terrain] Constructor. updatePopulation type: function
+
+stderr | src/tests/Terrain.test.js > Terrain Logic > Population Update > should grow population in a house over time
+[Terrain] Error in building 0 population update: TypeError: spawnCallback is not a function
+    at C:/Users/mooya/develop/test/src/Terrain.ts:2147:37
+    at Array.forEach (<anonymous>)
+    at Terrain.updatePopulation (C:/Users/mooya/develop/test/src/Terrain.ts:2097:24)
+    at C:/Users/mooya/develop/test/src/tests/Terrain.test.js:72:21
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1650:37
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should grow crops using simDeltaTime (Not raw deltaTime)
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should grow crops using simDeltaTime (Not raw deltaTime)
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should preserve overflow when harvesting
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should preserve overflow when harvesting
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should scale farm yield based on moisture
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should scale farm yield based on moisture
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should reduce food consumption at night
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should reduce food consumption at night
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should consume normal amount during day
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should consume normal amount during day
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should return different colors for seasons
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should return different colors for seasons
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should keep rock color even if dry (desert override check)
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should keep rock color even if dry (desert override check)
+[Terrain] Constructor. updatePopulation type: function
+
+ 笶ｯ src/tests/Terrain.test.js (9 tests | 3 failed) 999ms
+       笨・should correctly sum housing population excluding farms 147ms
+       ﾃ・should grow population in a house over time 122ms
+       笨・should grow crops using simDeltaTime (Not raw deltaTime) 109ms
+       ﾃ・should preserve overflow when harvesting 96ms
+       笨・should scale farm yield based on moisture 117ms
+       笨・should reduce food consumption at night 89ms
+       ﾃ・should consume normal amount during day 99ms
+         笨・should return different colors for seasons 103ms
+         笨・should keep rock color even if dry (desert override check) 115ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 3 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Terrain.test.js > Terrain Logic > Population Update > should grow population in a house over time
+AssertionError: expected 31.99970000299997 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 31.99970000299997
+
+ 笶ｯ src/tests/Terrain.test.js:76:38
+     74|             // Should have grown by 1
+     75|             expect(house.userData.population).toBeGreaterThan(2);
+     76|             expect(house.population).toBe(3);
+       |                                      ^
+     77|         });
+     78|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/3]竡ｯ
+
+ FAIL  src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should preserve overflow when harvesting
+AssertionError: expected +0 to be 4 // Object.is equality
+
+- Expected
++ Received
+
+- 4
++ 0
+
+ 笶ｯ src/tests/Terrain.test.js:99:46
+     97|             terrain.updatePopulation(slowDelta, false, 0, vi.fn());
+     98| 
+     99|             expect(mockGame.resources.grain).toBe(4); // Yield is 4
+       |                                              ^
+    100|             expect(farm.userData.population).toBeCloseTo(15, 0); // 11窶ｦ
+    101|         });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/3]竡ｯ
+
+ FAIL  src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should consume normal amount during day
+AssertionError: expected 999.5 to be 1000 // Object.is equality
+
+- Expected
++ Received
+
+- 1000
++ 999.5
+
+ 笶ｯ src/tests/Terrain.test.js:160:56
+    158|             // For now, we expect NO change, until consumption is re-a窶ｦ
+    159|             // expect(global.window.game.resources.grain).toBeCloseTo(窶ｦ
+    160|             expect(global.window.game.resources.grain).toBe(1000);
+       |                                                        ^
+    161|         });
+    162| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/3]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 6 passed (9)
+   Start at  19:38:31
+   Duration  1.97s (transform 240ms, setup 81ms, import 244ms, tests 999ms, environment 469ms)
+

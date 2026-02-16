@@ -1,0 +1,115 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/ActorLogic.test.js
+[22m[39m[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/ActorLogic.test.js[2m > [22m[2mActor Logic SmartMove[2m > [22m[2mshould retry pathfinding if isUnreachable is true but target is same (and isReachable is true)
+[22m[39m[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+
+[90mstdout[2m | src/tests/ActorLogic.test.js[2m > [22m[2mActor Logic SmartMove[2m > [22m[2mshould retry pathfinding if isUnreachable is true but target is same (and isReachable is true)
+[22m[39m[Actor 1] smartMove(5,5) Unreachable:true
+[Actor 1] Fallthrough return false
+
+[90mstdout[2m | src/tests/ActorLogic.test.js[2m > [22m[2mActor Logic SmartMove[2m > [22m[2mshould be throttled if called too soon
+[22m[39m[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+
+[90mstdout[2m | src/tests/ActorLogic.test.js[2m > [22m[2mActor Logic SmartMove[2m > [22m[2mshould be throttled if called too soon
+[22m[39m[Actor 1] smartMove(5,5) Unreachable:false
+[Actor 1] Fallthrough return false
+
+[90mstdout[2m | src/tests/ActorLogic.test.js[2m > [22m[2mActor Logic SmartMove[2m > [22m[2mshould NOT pathfind if isReachable returns false
+[22m[39m[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+
+[90mstdout[2m | src/tests/ActorLogic.test.js[2m > [22m[2mActor Logic SmartMove[2m > [22m[2mshould NOT pathfind if isReachable returns false
+[22m[39m[Actor 1] smartMove(5,5) Unreachable:false
+[Actor 1] Fallthrough return false
+
+ [31m笶ｯ[39m src/tests/ActorLogic.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 15[2mms[22m[39m
+[31m     [31mﾃ・[31m should retry pathfinding if isUnreachable is true but target is same (and isReachable is true)[39m[32m 10[2mms[22m[39m
+[31m     [31mﾃ・[31m should be throttled if called too soon[39m[32m 2[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT pathfind if isReachable returns false[39m[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 3 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ActorLogic.test.js > Actor Logic SmartMove > should retry pathfinding if isUnreachable is true but target is same (and isReachable is true)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/ActorLogic.test.js:65:24
+     63| 
+     64|         // Assert
+     65|         expect(result).toBe(true); // Should accepted attempt
+       |                        ^
+     66|         expect(mockTerrain.findPathAsync).toHaveBeenCalled();
+     67| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/3]竡ｯ
+
+ FAIL  src/tests/ActorLogic.test.js > Actor Logic SmartMove > should be throttled if called too soon
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/ActorLogic.test.js:78:46
+     76| 
+     77|         expect(result).toBe(false); // Or true if isMoving? isMoving f窶ｦ
+     78|         expect(actor.isPathfindingThrottled).toBe(true);
+       |                                              ^
+     79|         expect(mockTerrain.findPathAsync).not.toHaveBeenCalled();
+     80|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/3]竡ｯ
+
+ FAIL  src/tests/ActorLogic.test.js > Actor Logic SmartMove > should NOT pathfind if isReachable returns false
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/ActorLogic.test.js:90:37
+     88| 
+     89|         expect(result).toBe(false);
+     90|         expect(actor.isUnreachable).toBe(true);
+       |                                     ^
+     91|         expect(mockTerrain.findPathAsync).not.toHaveBeenCalled();
+     92|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/3]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[90m (3)[39m
+[2m   Start at [22m 14:35:32
+[2m   Duration [22m 868ms[2m (transform 98ms, setup 74ms, import 104ms, tests 15ms, environment 475ms)[22m
+

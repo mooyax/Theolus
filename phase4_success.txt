@@ -1,0 +1,123 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 0,0
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
+[22m[39m[Game] Request Added: build at (20,0) ID:req_0
+[JobState 1] Entering. Target: 20,0
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
+[22m[39mTEST: Checking Movement. Req: req_0 Moving: [33mtrue[39m
+TEST: Attempting Cancel...
+[Game] Cancelling Request req_0 at 20,0
+TEST: Cancel result: [33mtrue[39m
+TEST: Updating Unit Post-Cancel...
+TEST: Pre-Update JobState Req Status: null
+TEST: Unit State: UnitWanderState Req: null
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 0,0
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
+[22m[39m[Game] Request Added: build at (20,0) ID:req_0
+[JobState 1] Entering. Target: 20,0
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[Game] Request Added: build at (-20,0) ID:req_1
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
+[22m[39m[Game] Cancelling Request req_0 at 20,0
+[JobState 1] Entering. Target: -20,0
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+[JobState 1] Entering. NO TARGET REQUEST
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould handle cancellation while Working (arrived)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 0,0
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould handle cancellation while Working (arrived)
+[22m[39m[Game] Request Added: build at (20,0) ID:req_0
+[JobState 1] Entering. Target: 20,0
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    if (Math.abs(this.targetGridX - tx) > 0.5 || Math.abs(this.targetGridZ - tz) > 0.5) {
+      this.isUnreachable = false;
+    };
+    this.targetGridX = tx;
+    t
+
+ [32m笨・[39m src/tests/ComplexInteraction.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 52[2mms[22m[39m
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mPopulation Update[2m > [22m[2mshould correctly sum housing population excluding farms
+[22m[39m[Terrain] Generated 8064 trees.
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mPopulation Update[2m > [22m[2mshould handle massive population overflow loop correctly
+[22m[39m[Terrain] Generated 9181 trees.
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould grow crops using simDeltaTime (Not raw deltaTime)
+[22m[39m[Terrain] Generated 9126 trees.
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould preserve overflow when harvesting
+[22m[39m[Terrain] Generated 7694 trees.
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould scale farm yield based on moisture
+[22m[39m[Terrain] Generated 5622 trees.
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould reduce food consumption at night
+[22m[39m[Terrain] Generated 8159 trees.
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould consume normal amount during day
+[22m[39m[Terrain] Generated 10943 trees.
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mSeasonal Colors[2m > [22m[2mshould return different colors for seasons
+[22m[39m[Terrain] Generated 5834 trees.
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mSeasonal Colors[2m > [22m[2mshould keep rock color even if dry (desert override check)
+[22m[39m[Terrain] Generated 4292 trees.
+
+ [32m笨・[39m src/tests/Terrain.test.js [2m([22m[2m9 tests[22m[2m)[22m[33m 5030[2mms[22m[39m
+       [33m[2m笨・[22m[39m should correctly sum housing population excluding farms [33m 622[2mms[22m[39m
+       [33m[2m笨・[22m[39m should handle massive population overflow loop correctly [33m 610[2mms[22m[39m
+       [33m[2m笨・[22m[39m should grow crops using simDeltaTime (Not raw deltaTime) [33m 566[2mms[22m[39m
+       [33m[2m笨・[22m[39m should preserve overflow when harvesting [33m 542[2mms[22m[39m
+       [33m[2m笨・[22m[39m should scale farm yield based on moisture [33m 508[2mms[22m[39m
+       [33m[2m笨・[22m[39m should reduce food consumption at night [33m 526[2mms[22m[39m
+       [33m[2m笨・[22m[39m should consume normal amount during day [33m 528[2mms[22m[39m
+         [33m[2m笨・[22m[39m should return different colors for seasons [33m 510[2mms[22m[39m
+         [33m[2m笨・[22m[39m should keep rock color even if dry (desert override check) [33m 617[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m12 passed[39m[22m[90m (12)[39m
+[2m   Start at [22m 00:44:37
+[2m   Duration [22m 6.14s[2m (transform 862ms, setup 612ms, import 485ms, tests 5.08s, environment 849ms)[22m
+

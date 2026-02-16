@@ -4,7 +4,7 @@ import { Terrain } from '../Terrain.js';
 import { Entity } from '../Entity.js';
 import { GoblinManager } from '../GoblinManager.js';
 import { Goblin } from '../Goblin.js';
-import { GoblinWanderState, GoblinRaidState } from '../ai/states/GoblinStates.js';
+import { Wander, Raid } from '../ai/states/GoblinStates.js';
 import * as THREE from 'three';
 
 // Mock THREE
@@ -121,30 +121,30 @@ describe('Goblin Mobilization Verification', () => {
 
         // Add Idle Goblins of this clan
         const g1 = new Goblin(gm.scene, terrain, 10, 10, 'normal', clanId);
-        g1.changeState(new GoblinWanderState(g1)); // Use object
+        g1.changeState(new Wander(g1)); // Use object
         gm.goblins.push(g1);
 
         const g2 = new Goblin(gm.scene, terrain, 12, 12, 'normal', clanId);
-        g2.changeState(new GoblinWanderState(g2));
+        g2.changeState(new Wander(g2));
         gm.goblins.push(g2);
 
         // Add Goblin of DIFFERENT clan
         const gOther = new Goblin(gm.scene, terrain, 15, 15, 'normal', 'other_clan');
-        gOther.changeState(new GoblinWanderState(gOther));
+        gOther.changeState(new Wander(gOther));
         gm.goblins.push(gOther);
 
         // Trigger Wave
         gm.triggerWave(gm.clans[clanId]);
 
         // Check if Goblins were mobilized
-        expect(g1.state.constructor.name).toBe('GoblinRaidState');
+        expect(g1.state.constructor.name).toBe('Raid');
         expect(g1.raidGoal.x).toBeCloseTo(50, -1);
         expect(g1.raidGoal.z).toBeCloseTo(50, -1);
 
-        expect(g2.state.constructor.name).toBe('GoblinRaidState');
+        expect(g2.state.constructor.name).toBe('Raid');
 
         // Other clan should NOT be mobilized
-        expect(gOther.state.constructor.name).toBe('GoblinWanderState');
+        expect(gOther.state.constructor.name).toBe('Wander');
     });
 
     it('mobilizeClan should rely on getClanRaidTarget fallback', () => {
@@ -160,12 +160,12 @@ describe('Goblin Mobilization Verification', () => {
         };
 
         const g1 = new Goblin(gm.scene, terrain, 5, 5, 'normal', clanId);
-        g1.changeState(new GoblinWanderState(g1));
+        g1.changeState(new Wander(g1));
         gm.goblins.push(g1);
 
         gm.mobilizeClan(gm.clans[clanId]);
 
-        expect(g1.state.constructor.name).toBe('GoblinRaidState');
+        expect(g1.state.constructor.name).toBe('Raid');
         expect(g1.raidGoal.x).toBeCloseTo(60, -1); // Approx check with randomization
     });
 

@@ -1,0 +1,103 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should immediately switch to Job and target the job upon assignment
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should immediately switch to Job and target the job upon assignment
+[Unit 0] State Change: Wander -> Wander
+[Test] Assigning request...
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 50,10 (H:1). Reachable:true Dist:40.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 40.0 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[Actor 0] smartMove to 50,10 (H:1). Reachable:true Dist:40.00 Moving:false Path:2
+[Actor 0] SmartMove Depth:1 Node:10,10 My:10,10 d:0,0
+[Actor 0] Reached Node. Shifting.
+[Actor 0] smartMove to 50,10 (H:1). Reachable:true Dist:40.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:2 Node:50,10 My:10,10 d:40,0
+[Entity 0] startMove -> isMoving:true. Target:50,10 StartTime:0.0000
+[Test] Update Frame 1...
+[Actor 0] smartMove to 50,10 (H:1). Reachable:true Dist:40.00 Moving:true Path:1
+[Actor 0] SmartMove Depth:0 Node:50,10 My:10,10 d:40,0
+[Test] Unit Moving? true Target: 50,10
+
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT be distracted by WanderState updates during Job
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT be distracted by WanderState updates during Job
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 40,10 (H:1). Reachable:true Dist:30.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 30.0 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[Actor 0] smartMove to 40,10 (H:1). Reachable:true Dist:30.00 Moving:false Path:2
+[Actor 0] SmartMove Depth:1 Node:10,10 My:10,10 d:0,0
+[Actor 0] Reached Node. Shifting.
+[Actor 0] smartMove to 40,10 (H:1). Reachable:true Dist:30.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:2 Node:40,10 My:10,10 d:30,0
+[Entity 0] startMove -> isMoving:true. Target:40,10 StartTime:0.0000
+[Actor 0] smartMove to 40,10 (H:1). Reachable:true Dist:30.00 Moving:true Path:1
+[Actor 0] SmartMove Depth:0 Node:40,10 My:10,10 d:30,0
+[Actor 0] smartMove to 40,10 (H:1). Reachable:true Dist:30.00 Moving:true Path:1
+[Actor 0] SmartMove Depth:0 Node:40,10 My:10,10 d:30,0
+
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should not freeze due to throttle at low game time
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should not freeze due to throttle at low game time
+[Unit 0] State Change: Wander -> Wander
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 50,50 (H:1). Reachable:true Dist:56.57 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 56.6 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[Actor 0] smartMove to 50,50 (H:1). Reachable:true Dist:56.57 Moving:false Path:2
+[Actor 0] SmartMove Depth:1 Node:10,10 My:10,10 d:0,0
+[Actor 0] Reached Node. Shifting.
+[Actor 0] smartMove to 50,50 (H:1). Reachable:true Dist:56.57 Moving:false Path:1
+[Actor 0] SmartMove Depth:2 Node:50,50 My:10,10 d:40,40
+[Entity 0] startMove -> isMoving:true. Target:50,50 StartTime:0.0000
+
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:10,10
+
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+[Unit 0] State Change: Wander -> Job
+
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+[JobState] Unit Stuck for 5s. Abandoning Job. DistSq: 3200.0
+[Unit 0] State Change: Job -> Wander
+
+ 笨・src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should immediately switch to Job and target the job upon assignment 6ms
+ 笨・src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT be distracted by WanderState updates during Job 2ms
+ 笨・src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should not freeze due to throttle at low game time 1ms
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+[Unit 0] State Change: Wander -> Build
+
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+[Unit 0] State Change: Build -> Wander
+
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+[Unit 0] State Change: Wander -> Build
+
+ ﾃ・src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily 186ms
+   竊・actual value must be number or bigint, received "undefined"
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  12:58:38
+   Duration  1.29s (transform 205ms, setup 89ms, import 167ms, tests 196ms, environment 605ms)
+

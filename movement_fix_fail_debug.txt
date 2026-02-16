@@ -1,0 +1,85 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould move immediately on first call
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould move immediately on first call
+[22m[39m[Actor 0] smartMove: triggers pathfinding. Dist: 5.0
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould handle throttling correctly
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould handle throttling correctly
+[22m[39m[Actor 0] smartMove: triggers pathfinding. Dist: 5.0
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould continue moving along path even if throttled
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould continue moving along path even if throttled
+[22m[39m[Actor 0] smartMove: triggers pathfinding. Dist: 5.0
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould NOT become idle when throttled
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+ [31m笶ｯ[39m src/tests/MovementFix.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 13[2mms[22m[39m
+[31m     [31mﾃ・[31m should move immediately on first call[39m[32m 9[2mms[22m[39m
+[31m     [31mﾃ・[31m should handle throttling correctly[39m[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m should continue moving along path even if throttled[39m[32m 1[2mms[22m[39m
+     [32m笨・[39m should NOT become idle when throttled[32m 0[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 3 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/MovementFix.test.js > Unit Movement & Throttling Fix > should move immediately on first call
+TypeError: this.terrain.findPathAsync is not a function
+ 笶ｯ Unit.smartMove src/Actor.ts:269:30
+    267|                 if (this.terrain) this.terrain.pathfindingCalls = (thi窶ｦ
+    268| 
+    269|                 this.terrain.findPathAsync(this.gridX, this.gridZ, tx,窶ｦ
+       |                              ^
+    270|                     .then(newPath => {
+    271|                         this.isPathfinding = false;
+ 笶ｯ src/tests/MovementFix.test.js:44:28
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/3]竡ｯ
+
+ FAIL  src/tests/MovementFix.test.js > Unit Movement & Throttling Fix > should handle throttling correctly
+TypeError: this.terrain.findPathAsync is not a function
+ 笶ｯ Unit.smartMove src/Actor.ts:269:30
+    267|                 if (this.terrain) this.terrain.pathfindingCalls = (thi窶ｦ
+    268| 
+    269|                 this.terrain.findPathAsync(this.gridX, this.gridZ, tx,窶ｦ
+       |                              ^
+    270|                     .then(newPath => {
+    271|                         this.isPathfinding = false;
+ 笶ｯ src/tests/MovementFix.test.js:56:14
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/3]竡ｯ
+
+ FAIL  src/tests/MovementFix.test.js > Unit Movement & Throttling Fix > should continue moving along path even if throttled
+TypeError: this.terrain.findPathAsync is not a function
+ 笶ｯ Unit.smartMove src/Actor.ts:269:30
+    267|                 if (this.terrain) this.terrain.pathfindingCalls = (thi窶ｦ
+    268| 
+    269|                 this.terrain.findPathAsync(this.gridX, this.gridZ, tx,窶ｦ
+       |                              ^
+    270|                     .then(newPath => {
+    271|                         this.isPathfinding = false;
+ 笶ｯ src/tests/MovementFix.test.js:86:14
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/3]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 18:31:41
+[2m   Duration [22m 1.39s[2m (transform 537ms, setup 331ms, import 351ms, tests 13ms, environment 477ms)[22m
+

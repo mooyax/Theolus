@@ -21,6 +21,7 @@ export class InputManager {
         const cursorMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
         this.cursor = new THREE.Mesh(cursorGeo, cursorMat);
         this.cursor.rotation.x = Math.PI; // Point down
+        this.cursor.visible = false; // Add this line
         this.scene.add(this.cursor);
 
         this.tooltip = document.getElementById('tooltip');
@@ -49,9 +50,15 @@ export class InputManager {
             window.removeEventListener('mousemove', this._binds.onPointerMove);
         }
         if (this.cursor) {
-            this.scene.remove(this.cursor);
-            this.cursor.geometry.dispose();
-            this.cursor.material.dispose();
+            if (this.scene) this.scene.remove(this.cursor);
+            if (this.cursor.geometry) this.cursor.geometry.dispose();
+            if (this.cursor.material) {
+                if (Array.isArray(this.cursor.material)) {
+                    this.cursor.material.forEach(m => m.dispose());
+                } else {
+                    this.cursor.material.dispose();
+                }
+            }
         }
     }
 
@@ -61,6 +68,7 @@ export class InputManager {
         const btnSpawn = document.getElementById('btn-spawn');
         const btnBarracks = document.getElementById('btn-barracks');
         const btnTower = document.getElementById('btn-tower');
+        const btnHouse = document.getElementById('btn-house');
         const btnCancel = document.getElementById('btn-cancel');
         const btnView = document.getElementById('btn-view'); // New
 
@@ -71,6 +79,7 @@ export class InputManager {
             if (btnSpawn) btnSpawn.classList.toggle('active', mode === 'spawn');
             if (btnBarracks) btnBarracks.classList.toggle('active', mode === 'barracks');
             if (btnTower) btnTower.classList.toggle('active', mode === 'tower');
+            if (btnHouse) btnHouse.classList.toggle('active', mode === 'house');
             if (btnCancel) btnCancel.classList.toggle('active', mode === 'cancel');
             if (btnView) btnView.classList.toggle('active', mode === 'view'); // New
         };
@@ -99,6 +108,9 @@ export class InputManager {
         if (btnTower) {
             btnTower.addEventListener('click', () => updateActive('tower'));
         }
+        if (btnHouse) {
+            btnHouse.addEventListener('click', () => updateActive('house'));
+        }
     }
     isUIInteraction(event) {
         const target = event.target;
@@ -120,15 +132,26 @@ export class InputManager {
     }
 
     onPointerUp(event) {
-        if (this.isUIInteraction(event)) return;
+        if (this.isUIInteraction(event)) {
+            console.log("[Input] Interaction prevented by UI at", event.target);
+            return;
+        }
 
         const upPosition = new THREE.Vector2(event.clientX, event.clientY);
         const dist = this.downPosition.distanceTo(upPosition);
         if (dist > this.dragThreshold) {
-            // console.log(`[Input] Click ignored: Drag detected (${dist.toFixed(1)}px > ${this.dragThreshold}px)`);
+            console.log("[Input] Click ignored: Drag detected (dist=" + dist.toFixed(1) + ")");
             return; // It was a drag (camera control), not a click
         }
 
+        // DEBUG: Why is interaction failing?
+        if (this.game && !this.game.gameActive) {
+            // Suppress log to prevent perf degradation on preview
+            // console.warn("[Input] Click Ignored: Game Not Active");
+            return;
+        }
+
+        console.log("[Input] Processing Click -> Calling handleInteraction");
         this.handleInteraction(event);
     }
 
@@ -137,12 +160,19 @@ export class InputManager {
         if (document.getElementById('help-modal').style.display === 'flex') return;
         if (document.getElementById('save-modal') && document.getElementById('save-modal').style.display === 'flex') return;
 
+        // PERF: Skip Input Logic during Preview/Loading to prevent Raycast spam
+        if (this.game && !this.game.gameActive) return;
+
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         this.lastClientX = event.clientX;
         this.lastClientY = event.clientY;
         this.updateCursor();
-        this.updateTooltip(event.clientX, event.clientY);
+
+        // Throttle Tooltip (Heavy DOM)
+        if (this.game && this.game.frameCounter % 5 === 0) {
+            this.updateTooltip(event.clientX, event.clientY);
+        }
     }
 
     updateTooltip(clientX, clientY) {
@@ -175,31 +205,30 @@ export class InputManager {
                 const b = cell.building;
                 const type = b.userData.type || b.type;
 
+                const cap = b.userData.capacity || 10;
                 if (type === 'house') {
                     const pop = Math.floor(b.userData.population || 0);
-                    text = `House Pop: ${pop}/10`;
+                    text = `House Pop: ${pop}/${cap}`;
                     found = true;
                 } else if (type === 'castle') {
                     const pop = Math.floor(b.userData.population || 0);
-                    text = `Castle Pop: ${pop}/200`;
+                    text = `Castle Pop: ${pop}/${cap}`;
                     found = true;
                 } else if (type === 'barracks') {
                     const pop = Math.floor(b.userData.population || 0);
-                    text = `Barracks Pop: ${pop}/200`;
+                    text = `Barracks Pop: ${pop}/${cap}`;
                     found = true;
                 } else if (type === 'tower') {
                     const pop = Math.floor(b.userData.population || 0);
-                    text = `Tower Pop: ${pop}/300`;
+                    text = `Tower Pop: ${pop}/${cap}`;
                     found = true;
                 } else if (type === 'goblin_hut') {
                     const pop = Math.floor(b.userData.population || 0);
-                    // Cap 5 (defined in Terrain)
-                    text = `Goblin Hut Pop: ${pop}/5\nHP: ${Math.floor(b.userData.hp)}`;
+                    text = `Goblin Hut Pop: ${pop}/${cap}\nHP: ${Math.floor(b.userData.hp)}`;
                     found = true;
                 } else if (type === 'cave') {
                     const pop = Math.floor(b.userData.population || 0);
-                    // Cap 20 (defined in Terrain)
-                    text = `Goblin Cave Pop: ${pop}/20\nHP: ${Math.floor(b.userData.hp)}`;
+                    text = `Goblin Cave Pop: ${pop}/${cap}\nHP: ${Math.floor(b.userData.hp)}`;
                     found = true;
                 } else if (type === 'farm') {
                     text = `Farm HP: ${Math.floor(b.userData.hp)}`;
@@ -261,19 +290,16 @@ export class InputManager {
                     if (ctor === 'Unit' || (candidate.role && !candidate.subType)) {
                         const hp = Math.floor(candidate.hp);
                         const maxHp = candidate.maxHp || 50;
-                        text = `[Human] ${candidate.role} (ID:${candidate.id})\nHP: ${hp}/${maxHp}`;
+                        const age = candidate.age !== undefined ? Math.floor(candidate.age) : '?';
+                        text = `[Human] ${candidate.role} (ID:${candidate.id})\nHP: ${hp}/${maxHp}\nAge: ${age}`;
                         if (candidate.action) text += `\nAction: ${candidate.action}`;
                         found = true;
                     } else if (ctor === 'Goblin' || candidate.type === 'normal' || candidate.type === 'hobgoblin' || candidate.type === 'shaman' || candidate.type === 'king') {
                         const hp = Math.floor(candidate.hp);
                         const maxHp = candidate.maxHp || 30; // Estimate
-                        text = `[Goblin] ${candidate.type || 'Normal'} (ID:${candidate.id})\nHP: ${hp}/${maxHp}`;
-                        if (candidate.state) {
-                            // Format State Name: GoblinRaidState -> "Raid", GoblinCombatState -> "Combat"
-                            let stateName = candidate.state.constructor.name;
-                            stateName = stateName.replace('Goblin', '').replace('State', '');
-                            text += `\nAction: ${stateName}`;
-                        }
+                        const age = candidate.age !== undefined ? Math.floor(candidate.age) : '?';
+                        text = `[Goblin] ${candidate.type || 'Normal'} (ID:${candidate.id})\nHP: ${hp}/${maxHp}\nAge: ${age}`;
+                        if (candidate.action) text += `\nAction: ${candidate.action}`;
                         found = true;
                     } else if (candidate.getTooltip) {
                         text = candidate.getTooltip();
@@ -297,6 +323,49 @@ export class InputManager {
         // Continuous update for tooltip even if mouse doesn't move
         if (this.lastClientX !== undefined && this.lastClientY !== undefined) {
             this.updateTooltip(this.lastClientX, this.lastClientY);
+        }
+
+        // --- NEW: Dynamic Cost Display ---
+        this.updateUICosts();
+    }
+
+    updateUICosts() {
+        if (!this.game) return;
+
+        const elSpawn = document.getElementById('cost-spawn');
+        if (elSpawn) {
+            const manualCount = this.game.manualWorkerSpawns || 0;
+            const baseCost = 100;
+            const cost = Math.floor(baseCost * Math.pow(1.2, manualCount));
+            elSpawn.innerText = cost;
+            // Visual feedback: color red if can't afford
+            elSpawn.style.backgroundColor = (this.game.mana < cost) ? '#f44336' : '#2196F3';
+        }
+
+        // 2. Barracks Cost
+        const elBarracks = document.getElementById('cost-barracks');
+        if (elBarracks) {
+            const count = this.game.terrain ? (this.game.terrain.buildings || []).filter(b => b.userData.type === 'barracks').length : 0;
+            const cost = 1000 * (count + 1);
+            elBarracks.innerText = cost;
+            elBarracks.style.backgroundColor = (this.game.mana < cost) ? '#f44336' : '#2196F3';
+        }
+
+        // 3. Tower Cost
+        const elTower = document.getElementById('cost-tower');
+        if (elTower) {
+            const count = this.game.terrain ? (this.game.terrain.buildings || []).filter(b => b.userData.type === 'tower').length : 0;
+            const cost = 1000 * (count + 1);
+            elTower.innerText = cost;
+            elTower.style.backgroundColor = (this.game.mana < cost) ? '#f44336' : '#2196F3';
+        }
+
+        // 4. House Cost
+        const elHouse = document.getElementById('cost-house');
+        if (elHouse) {
+            const cost = 100;
+            elHouse.innerText = cost;
+            elHouse.style.backgroundColor = (this.game.mana < cost) ? '#f44336' : '#2196F3';
         }
     }
 
@@ -363,6 +432,7 @@ export class InputManager {
     }
 
     handleInteraction(event) {
+        console.log(`[Input] handleInteraction Button:${event.button}`);
         // Prevent gameplay interaction if game is not active (Preview Mode)
         if (this.game && !this.game.gameActive) return;
 
@@ -374,6 +444,10 @@ export class InputManager {
 
         // Optimization: Use terrain.raycast exclusively for consistency with Cursor
         const hitPoint = this.terrain.raycast(this.raycaster.ray.origin, this.raycaster.ray.direction);
+
+        if (!hitPoint) {
+            console.warn("[Input] Raycast Missed Terrain");
+        }
 
         if (hitPoint) {
             const point = hitPoint;
@@ -404,8 +478,51 @@ export class InputManager {
                 const worldZ = point.z;
 
                 if (this.mode === 'view') {
-                    // View Mode: No Action
-                    // Optional: Select unit/building logic could go here later.
+                    // View Mode: Select Unit/Goblin for Debug (Spatial Query)
+                    let bestDistSq = 16.0; // Max 4.0 tiles dist (increased for better UX)
+                    let bestEntity = null;
+
+                    // Unified search candidates
+                    const candidates = [];
+                    if (this.game) {
+                        if (this.game.units) candidates.push(...this.game.units);
+                        if (this.game.goblinManager && this.game.goblinManager.goblins) {
+                            candidates.push(...this.game.goblinManager.goblins);
+                        }
+                    }
+
+                    for (const e of candidates) {
+                        if (!e || e.isDead) continue;
+
+                        // Use wrap-aware distance check (Must use LOGICAL gridX, not World point.x)
+                        if (typeof e.getDistance !== 'function') continue;
+
+                        const dist = e.getDistance(gridX, gridZ);
+                        const dSq = dist * dist;
+
+                        if (dSq < bestDistSq) {
+                            bestDistSq = dSq;
+                            bestEntity = e;
+                        } else if (dSq === bestDistSq && bestEntity && e.id < bestEntity.id) {
+                            // Tie-breaker: stable selection
+                            bestEntity = e;
+                        }
+                    }
+
+                    if (bestEntity) {
+                        window.debugSelectedUnit = bestEntity;
+                        const panel = document.getElementById('unit-debug-panel');
+                        if (panel) {
+                            panel.style.display = 'block';
+                            panel.innerText = "Loading details...";
+                        }
+                    } else {
+                        window.debugSelectedUnit = null;
+                        const panel = document.getElementById('unit-debug-panel');
+                        if (panel) panel.style.display = 'none';
+                    }
+
+                    // Consume click
                     return;
                 } else if (this.mode === 'raise') {
                     if (this.game) {
@@ -426,12 +543,19 @@ export class InputManager {
                         }
                     }
                 } else if (this.mode === 'spawn') {
-                    const cost = 50;
+                    // Exponential Mana Cost based on manual clicks (User Request)
+                    const manualCount = this.game.manualWorkerSpawns || 0;
+                    const baseCost = 100;
+                    const cost = Math.floor(baseCost * Math.pow(1.2, manualCount));
+
                     if (this.game.mana >= cost) {
                         if (this.spawnCallback) {
-                            this.spawnCallback(gridX, gridZ, true);
+                            this.spawnCallback(gridX, gridZ, true, null, null, true);
                             if (this.game) this.game.consumeMana(cost);
+                            console.log(`[Input] Manual Spawn: Cost ${cost} (Count: ${manualCount})`);
                         }
+                    } else {
+                        console.warn(`[Input] Not enough Mana for manual spawn: ${cost} needed, ${this.game.mana} available.`);
                     }
                 } else if (this.mode === 'barracks') {
                     if (this.game) {
@@ -451,6 +575,15 @@ export class InputManager {
                             this.game.consumeMana(cost);
                         }
                     }
+                } else if (this.mode === 'house') {
+                    if (this.game) {
+                        const cost = 100;
+                        if (this.game.mana >= cost) {
+                            this.game.addRequest('build_house', gridX, gridZ, true, worldX, worldZ);
+                            this.game.consumeMana(cost);
+                            console.log(`[Input] Request Queued: Build House at ${gridX},${gridZ}`);
+                        }
+                    }
                 }
             } else if (event.button === 2) { // Right click (Lower Request)
                 if (this.game && !this.game.canAction()) return;
@@ -458,7 +591,13 @@ export class InputManager {
                 // Block Right Click Action in View Mode too? 
                 // User said "Map Rotation Movement" (often requires mouse buttons).
                 // Safest to block modification in View Mode.
-                if (this.mode === 'view') return;
+                if (this.mode === 'view') {
+                    // DEBUG: Trigger Height Query in View Mode
+                    if (this.terrain && this.terrain.debugHeightQuery) {
+                        this.terrain.debugHeightQuery(gridX, gridZ);
+                    }
+                    return;
+                }
 
                 if (this.game) {
                     const worldX = point.x;

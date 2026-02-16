@@ -1,0 +1,62 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/GoblinHutFix.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/GoblinHutFix.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should NOT trigger spawnCallback for goblin_hut even if overpopulated
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+Disposing detached game instance
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+[Terrain] Constructor. updatePopulation type: function
+
+stderr | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+[Terrain] Error in building 0 population update: TypeError: Cannot read properties of undefined (reading 'toFixed')
+    at C:/Users/mooya/develop/test/src/Terrain.ts:2123:110
+    at Array.forEach (<anonymous>)
+    at Terrain.updatePopulation (C:/Users/mooya/develop/test/src/Terrain.ts:2097:24)
+    at Terrain.update (C:/Users/mooya/develop/test/src/Terrain.ts:2286:18)
+    at C:/Users/mooya/develop/test/src/tests/GoblinHutFix.test.js:80:17
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+Before Update: Pop= [33m15[39m
+After Update: Pop= [33m15[39m
+
+ 笶ｯ src/tests/GoblinHutFix.test.js (2 tests | 1 failed) 226ms
+     笨・should NOT trigger spawnCallback for goblin_hut even if overpopulated 117ms
+     ﾃ・should trigger spawnCallback for house when overpopulated (Control) 107ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+AssertionError: expected "vi.fn()" to be called with arguments: [ 2, 2, 'house', 窶ｦ(1) ]
+
+Number of calls: 0
+
+ 笶ｯ src/tests/GoblinHutFix.test.js:83:31
+     81|         console.log("After Update: Pop=", house.userData.population);
+     82| 
+     83|         expect(spawnCallback).toHaveBeenCalledWith(2, 2, 'house', hous窶ｦ
+       |                               ^
+     84|         // And population resets
+     85|         expect(house.userData.population).toBe(0);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  23:09:59
+   Duration  1.19s (transform 241ms, setup 91ms, import 235ms, tests 226ms, environment 462ms)
+

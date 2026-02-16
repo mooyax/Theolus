@@ -1,7 +1,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
 // Mock THREE
@@ -47,7 +47,7 @@ describe('Marker Distraction and Pathfinding Persistence', () => {
     it('should NOT abandon manual job during pathfinding throttle', () => {
         const req = { id: 'req_1', type: 'raise', x: 25, z: 25, status: 'assigned', assignedTo: 123, isManual: true };
         unit.targetRequest = req;
-        const state = new JobState(unit);
+        const state = new Job(unit);
         unit.state = state;
 
         vi.spyOn(unit, 'smartMove').mockImplementation(() => {
@@ -67,7 +67,7 @@ describe('Marker Distraction and Pathfinding Persistence', () => {
     it('should be more persistent for manual jobs on hard failure', () => {
         const req = { id: 'req_2', type: 'lower', x: 25, z: 25, status: 'assigned', assignedTo: 123, isManual: true };
         unit.targetRequest = req;
-        const state = new JobState(unit);
+        const state = new Job(unit);
         unit.state = state;
 
         vi.spyOn(unit, 'smartMove').mockReturnValue(false);

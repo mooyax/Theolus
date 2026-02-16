@@ -1,0 +1,38 @@
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+stdout | src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should prioritize Farm and ABORT house if farm fails during famine
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+ ﾃ・src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should prioritize Farm and ABORT house if farm fails during famine 14ms
+ 笨・src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor 9ms
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+stdout | src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily
+ ﾃ・src/tests/WorkerDistraction.test.js > Worker Distraction Investigation > should NOT build a house immediately if pathfinding fails temporarily 214ms
+stdout | src/tests/ManualBuild.test.js > Manual Build Job Logic > should NOT freeze if arrived but building fails
+stdout | src/tests/ManualBuild.test.js > Manual Build Job Logic > should NOT freeze if arrived but building fails
+ ﾃ・src/tests/ManualBuild.test.js > Manual Build Job Logic > should NOT freeze if arrived but building fails 13ms
+stdout | src/tests/JobPathFailure.test.js
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+ ﾃ・src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly 84ms
+stdout | src/tests/ManualRequestIntegration.test.js > Manual Request Integration > should fail to find path if blocked by water
+stdout | src/tests/ManualRequestIntegration.test.js > Manual Request Integration > should fail to find path if blocked by water
+ 笨・src/tests/ManualRequestIntegration.test.js > Manual Request Integration > should fail to find path if blocked by water 19ms
+stdout | src/tests/UnitMigration.test.js > Unit Migration Logic > should increment stagnation on failed build
+ 笨・src/tests/UnitMigration.test.js > Unit Migration Logic > should increment stagnation on failed build 2ms
+stdout | src/tests/CombatRetaliation.test.js > Combat Retaliation System > should switch strictly for self-defense scan failure in Job (Non-worker)
+stdout | src/tests/CombatRetaliation.test.js > Combat Retaliation System > should switch strictly for self-defense scan failure in Job (Non-worker)
+ 笨・src/tests/CombatRetaliation.test.js > Combat Retaliation System > should switch strictly for self-defense scan failure in Job (Non-worker) 2ms
+stdout | src/tests/MarkerDistraction.test.js > Marker Distraction and Pathfinding Persistence > should be more persistent for manual jobs on hard failure
+ 笨・src/tests/MarkerDistraction.test.js > Marker Distraction and Pathfinding Persistence > should be more persistent for manual jobs on hard failure 2ms
+ 笨・src/tests/Flatness.test.js > Terrain Flatness Check > should FAIL excessive noise (> 0.1) 1ms
+ 笨・src/tests/Flatness.test.js > Terrain Flatness Check > should FAIL slope 1ms
+ 笨・src/tests/Flatness.test.js > Terrain Flatness Check > should FAIL water (height 0) 1ms
+ Test Files  54 failed | 89 passed (143)
+      Tests  91 failed | 305 passed (396)

@@ -205,7 +205,7 @@ describe('Group Combat Simulations', () => {
                         else if (nearest) g.targetUnit = nearest;
                     }
 
-                    if ((g.targetUnit || g.targetBuilding) && g.state.constructor.name !== 'GoblinCombatState') {
+                    if ((g.targetUnit || g.targetBuilding) && g.state.constructor.name !== 'GoblinCombat') {
                         g.state.update = (t, d) => g.executeCombatLogic(t, d);
                     }
 

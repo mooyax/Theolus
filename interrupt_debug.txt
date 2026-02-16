@@ -1,0 +1,111 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/MinimalUnit.test.js[2m > [22m[2mMinimal Unit Sanity[2m > [22m[2mcan instantiate Unit
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[MockTerrain] findPath: (0,0) -> (15,15)
+
+ [32m笨・[39m src/tests/MinimalUnit.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[Unit 1] Change State: UnitWanderState -> UnitWanderState
+[Unit 1] Change State: UnitWanderState -> JobState
+[MockTerrain] findPath: (0,0) -> (10,10)
+[Unit 1] Change State: JobState -> UnitWanderState
+[MockTerrain] findPath: (10,10) -> (15,15)
+[Test] Final Target: 15,15 State: UnitWanderState
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould resume MIGRATION after Combat interruption
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mResource Gathering[2m > [22m[2mshould gather fish if checking neighbors finds water
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould resume MIGRATION after Combat interruption
+[22m[39m[Unit 1] Change State: UnitWanderState -> CombatState
+[Unit 1] Change State: CombatState -> UnitWanderState
+[MockTerrain] findPath: (10,10) -> (25,25)
+[Unit 1] Change State: UnitWanderState -> UnitWanderState
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mResource Gathering[2m > [22m[2mshould NOT gather fish if completely inland
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+ [31m笶ｯ[39m src/tests/InterruptResume.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 31[2mms[22m[39m
+     [32m笨・[39m should return to previous movement target after finishing a job[32m 18[2mms[22m[39m
+[31m     [31mﾃ・[31m should resume MIGRATION after Combat interruption[39m[32m 12[2mms[22m[39m
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould prioritize Farm and ABORT house if farm fails during famine
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould fallback to House if NOT in famine
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould accept role in constructor
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould accept role in constructor
+[22m[39m[UnitCore.js] Unit Created ID:1 Role:hunter Pos:5,5 Special:false
+[Unit 1] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:1 Role:hunter Pos:5,5
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5 Special:false
+[Unit 2] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5
+[UnitCore.js] Unit Created ID:3 Role:true Pos:5,5 Special:false
+[Unit 3] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould FAIL buildFarm and IMPROVE LAND if moisture is poor
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould FAIL buildFarm and IMPROVE LAND if moisture is poor
+[22m[39mUnit improved land at 5,5. Moisture 0.50 -> 0.50
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould succeed buildFarm if moisture is optimal
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould succeed buildFarm if moisture is optimal
+[22m[39m[Unit 0] Moving onto Rock at 5,5 H:10 (Speed Penalty)
+
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould check heights during moveRandomly
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+ [31m笶ｯ[39m src/tests/Unit.test.js [2m([22m[2m8 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 38[2mms[22m[39m
+       [32m笨・[39m should gather fish if checking neighbors finds water[32m 5[2mms[22m[39m
+       [32m笨・[39m should NOT gather fish if completely inland[32m 3[2mms[22m[39m
+[31m       [31mﾃ・[31m should prioritize Farm and ABORT house if farm fails during famine[39m[32m 13[2mms[22m[39m
+[31m       [31mﾃ・[31m should fallback to House if NOT in famine[39m[32m 5[2mms[22m[39m
+       [32m笨・[39m should accept role in constructor[32m 2[2mms[22m[39m
+       [32m笨・[39m should FAIL buildFarm and IMPROVE LAND if moisture is poor[32m 4[2mms[22m[39m
+       [32m笨・[39m should succeed buildFarm if moisture is optimal[32m 3[2mms[22m[39m
+       [32m笨・[39m should check heights during moveRandomly[32m 1[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 11:43:50
+[2m   Duration [22m 1.16s[2m (transform 793ms, setup 1.03s, import 103ms, tests 74ms, environment 1.49s)[22m
+

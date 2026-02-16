@@ -1,0 +1,86 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/ActionLabelStability.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/ActionLabelStability.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/ActionLabelStability.test.js
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/ActionLabelStability.test.js
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/ActionLabelStability.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/ActionLabelStability.test.js
+[DEBUG] Game.ts top-level load
+
+stdout | src/tests/ActionLabelStability.test.js > Action Label Stability > should maintain stable action label during multi-tile job approach
+[Game] Constructor called. Instance ID: 1 (Minimal: true)
+[Game] Init Basic State
+[Game] Init Queues
+[Game] Init Time
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.627165, 0.513517) -> Grid(100, 82) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.875640, 0.804215) -> Grid(140, 128) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.772687, 0.338585) -> Grid(123, 54) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+stderr | src/tests/ActionLabelStability.test.js > Action Label Stability > should maintain stable action label during multi-tile job approach
+[Game] Warning: markerMaterial missing or invalid. Using fallback.
+
+stdout | src/tests/ActionLabelStability.test.js > Action Label Stability > should maintain stable action label during multi-tile job approach
+[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Game] Request Added: raise at (50,50) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Unit 0] State Change: Wander -> Job
+[Actor 0] Resetting Unreachable (Target changed or initializing)
+Unit 0 (worker) DIED (Drowning). R.I.P.
+[Unit 0] Releasing request via this.game
+[Unit 0] State Change: Job -> Wander
+
+ 笶ｯ src/tests/ActionLabelStability.test.js (1 test | 1 failed) 24ms
+     ﾃ・should maintain stable action label during multi-tile job approach 22ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ActionLabelStability.test.js > Action Label Stability > should maintain stable action label during multi-tile job approach
+AssertionError: expected 'Idle' to be 'Approaching Job' // Object.is equality
+
+Expected: "Approaching Job"
+Received: "Idle"
+
+ 笶ｯ src/tests/ActionLabelStability.test.js:93:33
+     91| 
+     92|             // Should stay as Job label
+     93|             expect(unit.action).toBe('Approaching Job');
+       |                                 ^
+     94| 
+     95|             // 2. Movement Update (takes time)
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  00:28:06
+   Duration  1.34s (transform 508ms, setup 77ms, import 576ms, tests 24ms, environment 472ms)
+

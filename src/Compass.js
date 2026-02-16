@@ -56,7 +56,7 @@ export class Compass {
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
         ctx.stroke();
-        ctx.fillStyle = 'rgba(210, 180, 140, 0.3)'; // Tan, semi-transparent background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0)'; // Fully transparent background
         ctx.fill();
 
         // North Arrow

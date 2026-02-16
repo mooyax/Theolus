@@ -1,0 +1,183 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/BuildingStart.test.js[2m > [22m[2mBuilding Logic[2m > [22m[2mshould build house if population is sufficient (Initial State)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Stabilization.test.js[2m > [22m[2mStabilization Verified[2m > [22m[2mshould NOT overwrite Action: Moving with Idle during Wander state self-transition
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Stabilization.test.js[2m > [22m[2mStabilization Verified[2m > [22m[2mshould NOT build on slope (Strict Check)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Stabilization.test.js[2m > [22m[2mStabilization Verified[2m > [22m[2mshould build on flat ground
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Stabilization.test.js[2m > [22m[2mStabilization Verified[2m > [22m[2mshould NOT build infinite houses (Population Cap Logic)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/BuildingStart.test.js[2m > [22m[2mBuilding Logic[2m > [22m[2mshould build house if population > 8 (with Base Cap 10)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+ [31m笶ｯ[39m src/tests/BuildingStart.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 19[2mms[22m[39m
+[31m     [31mﾃ・[31m should build house if population is sufficient (Initial State)[39m[32m 15[2mms[22m[39m
+     [32m笨・[39m should build house if population > 8 (with Base Cap 10)[32m 2[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/Stabilization.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 27[2mms[22m[39m
+     [32m笨・[39m should NOT overwrite Action: Moving with Idle during Wander state self-transition[32m 5[2mms[22m[39m
+     [32m笨・[39m should NOT build on slope (Strict Check)[32m 3[2mms[22m[39m
+     [32m笨・[39m should build on flat ground[32m 4[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT build infinite houses (Population Cap Logic)[39m[32m 14[2mms[22m[39m
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould move immediately on first call
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould move immediately on first call
+[22m[39m[Actor 0] smartMove: triggers pathfinding. Dist: 5.0
+Test 1 moved: [33mfalse[39m
+Test 1 isMoving: [33mfalse[39m
+Test 1 path len: null
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould handle throttling correctly
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould handle throttling correctly
+[22m[39m[Actor 0] smartMove: triggers pathfinding. Dist: 5.0
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould continue moving along path even if throttled
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould continue moving along path even if throttled
+[22m[39m[Actor 0] smartMove: triggers pathfinding. Dist: 5.0
+[Actor 0] smartMove: already pathfinding
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould NOT become idle when throttled
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+ [31m笶ｯ[39m src/tests/MovementFix.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 22[2mms[22m[39m
+[31m     [31mﾃ・[31m should move immediately on first call[39m[32m 15[2mms[22m[39m
+[31m     [31mﾃ・[31m should handle throttling correctly[39m[32m 4[2mms[22m[39m
+[31m     [31mﾃ・[31m should continue moving along path even if throttled[39m[32m 2[2mms[22m[39m
+     [32m笨・[39m should NOT become idle when throttled[32m 0[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 5 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/BuildingStart.test.js > Building Logic > should build house if population is sufficient (Initial State)
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ 笶ｯ src/tests/BuildingStart.test.js:43:23
+     41| 
+     42|         // EXPECTATION: Should fail if base capacity is 10
+     43|         expect(built).toBe(false);
+       |                       ^
+     44| 
+     45|         // This confirms why "Houses are not being built" initially.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/5]竡ｯ
+
+ FAIL  src/tests/MovementFix.test.js > Unit Movement & Throttling Fix > should move immediately on first call
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/MovementFix.test.js:51:23
+     49|         console.log('Test 1 isMoving:', unit.isMoving);
+     50|         console.log('Test 1 path len:', unit.path ? unit.path.length :窶ｦ
+     51|         expect(moved).toBe(true);
+       |                       ^
+     52|         expect(unit.isMoving).toBe(true);
+     53|         expect(unit.lastPathTime).toBe(0);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/5]竡ｯ
+
+ FAIL  src/tests/MovementFix.test.js > Unit Movement & Throttling Fix > should handle throttling correctly
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/MovementFix.test.js:60:31
+     58|         // First call: Success
+     59|         unit.smartMove(15, 10, 0);
+     60|         expect(unit.isMoving).toBe(true);
+       |                               ^
+     61| 
+     62|         // Second call (Immediate): Throttled
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/5]竡ｯ
+
+ FAIL  src/tests/MovementFix.test.js > Unit Movement & Throttling Fix > should continue moving along path even if throttled
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/MovementFix.test.js:101:31
+     99|         // If isMoving is true, it's not a failure.
+    100| 
+    101|         expect(unit.isMoving).toBe(true);
+       |                               ^
+    102|     });
+    103| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[4/5]竡ｯ
+
+ FAIL  src/tests/Stabilization.test.js > Stabilization Verified > should NOT build infinite houses (Population Cap Logic)
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ 笶ｯ src/tests/Stabilization.test.js:118:23
+    116|         const built = unit.tryBuildStructure(100);
+    117| 
+    118|         expect(built).toBe(false); // Population satisfaction met
+       |                       ^
+    119|     });
+    120| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[5/5]竡ｯ
+
+
+[2m Test Files [22m [1m[31m3 failed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m5 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 18:36:59
+[2m   Duration [22m 1.59s[2m (transform 1.18s, setup 1.15s, import 480ms, tests 68ms, environment 1.59s)[22m
+

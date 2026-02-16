@@ -122,7 +122,7 @@ describe('Safe Population Zero', () => {
     let mockScene;
 
     beforeEach(() => {
-        global.window.game = { gameTotalTime: 0, units: [] };
+        global.window.game = { gameTotalTime: 0, units: [], resources: { grain: 100, meat: 0, fish: 0 }, minimal: true };
         mockScene = new THREE.Scene();
         terrain = new Terrain(mockScene, []);
 
@@ -156,7 +156,7 @@ describe('Safe Population Zero', () => {
 
         terrain.frameCount = 19; // Will increment to 20 -> 0.
 
-        terrain.updatePopulation(1.0, false, 0, spawnCb);
+        terrain.updatePopulation(1.0, spawnCb, false, 0);
 
         expect(spawnCb).toHaveBeenCalled();
         expect(house.userData.population).toBe(0);

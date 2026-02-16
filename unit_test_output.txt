@@ -1,20 +1,147 @@
 
-[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+ RUN  v4.0.15 C:/Users/mooya/develop/test
 
-[90mstdout[2m | src/tests/UnitPersistence.test.js[2m > [22m[2mUnit Persistence[2m > [22m[2mshould persist unit type and role
-[22m[39m[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:true
-[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10
+stdout | src/tests/Unit.test.js > Unit Logic > Resource Gathering > should gather fish if checking neighbors finds water
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
 
-[90mstdout[2m | src/tests/UnitPersistence.test.js[2m > [22m[2mUnit Persistence[2m > [22m[2mshould persist worker type correctly
-[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5 Special:false
+stdout | src/tests/Unit.test.js > Unit Logic > Resource Gathering > should NOT gather fish if completely inland
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5 Special:false
 [UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5
 
- [31m笶ｯ[39m src/tests/UnitPersistence.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 12[2mms[22m[39m
-[31m     [31mﾃ・[31m should persist unit type and role[39m[32m 10[2mms[22m[39m
-[31m     [31mﾃ・[31m should persist worker type correctly[39m[32m 1[2mms[22m[39m
+stdout | src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should prioritize Farm and ABORT house if farm fails during famine
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:5,5
 
-[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
-[2m   Start at [22m 14:50:14
-[2m   Duration [22m 854ms[2m (transform 115ms, setup 37ms, import 152ms, tests 12ms, environment 441ms)[22m
+stdout | src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should fallback to House if NOT in famine
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should accept role in constructor
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should accept role in constructor
+[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:5 Role:hunter Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:5 Role:hunter Pos:5,5
+[Entity 6] Calling registerEntity...
+[Entity 6] registerEntity returned.
+[Entity 6] Calling updatePosition...
+[Entity 6] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:5,5
+[Entity 7] Calling registerEntity...
+[Entity 7] registerEntity returned.
+[Entity 7] Calling updatePosition...
+[Entity 7] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:7 Role:true Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:7 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor
+[Entity 8] Calling registerEntity...
+[Entity 8] registerEntity returned.
+[Entity 8] Calling updatePosition...
+[Entity 8] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:8 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:8 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor
+Unit improved land at 5,5. Moisture 0.50 -> 0.50
+[Entity 8] startMove -> isMoving:true. Target:5,5 StartTime:100.0000
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should succeed buildFarm if moisture is optimal
+[Entity 9] Calling registerEntity...
+[Entity 9] registerEntity returned.
+[Entity 9] Calling updatePosition...
+[Entity 9] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:9 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:9 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should succeed buildFarm if moisture is optimal
+[Unit 9] Moving onto Rock at 5,5 H:10 (Speed Penalty)
+[Entity 9] startMove -> isMoving:true. Target:5,5 StartTime:100.0000
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should check heights during moveRandomly
+[Entity 10] Calling registerEntity...
+[Entity 10] registerEntity returned.
+[Entity 10] Calling updatePosition...
+[Entity 10] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:10 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:10 Role:worker Pos:5,5
+
+stdout | src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should check heights during moveRandomly
+[Entity 10] startMove -> isMoving:true. Target:5,5 StartTime:100.0000
+
+ 笨・src/tests/Unit.test.js > Unit Logic > Resource Gathering > should gather fish if checking neighbors finds water 6ms
+ 笨・src/tests/Unit.test.js > Unit Logic > Resource Gathering > should NOT gather fish if completely inland 3ms
+ ﾃ・src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should prioritize Farm and ABORT house if farm fails during famine 7ms
+   竊・expected "vi.fn()" to be called at least once
+ ﾃ・src/tests/Unit.test.js > Unit Logic > Build Priority (Famine) > should fallback to House if NOT in famine 2ms
+   竊・expected "addBuilding" to be called with arguments: [ 'house', 5, 5 ][90m
+
+Number of calls: [1m0[22m
+[39m
+ 笨・src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should accept role in constructor 2ms
+ 笨・src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should FAIL buildFarm and IMPROVE LAND if moisture is poor 2ms
+ ﾃ・src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should succeed buildFarm if moisture is optimal 8ms
+   竊・expected "addBuilding" to be called with arguments: [ 'farm', 5, 5 ][90m
+
+Received: 
+
+[1m  1st addBuilding call:
+
+[22m[2m  [[22m
+[2m    "farm",[22m
+[2m    5,[22m
+[2m    5,[22m
+[31m+   false,[90m
+[31m+   false,[90m
+[31m+   "player",[90m
+[2m  ][22m
+[39m[90m
+
+Number of calls: [1m1[22m
+[39m
+ 笨・src/tests/Unit.test.js > Unit Logic > Advanced Mechanics - Unit > should check heights during moveRandomly 2ms
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 5 passed (8)
+   Start at  12:55:16
+   Duration  1.12s (transform 227ms, setup 72ms, import 238ms, tests 33ms, environment 485ms)
 

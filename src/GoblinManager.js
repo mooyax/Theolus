@@ -2,8 +2,9 @@
 import * as THREE from 'three';
 import { Goblin } from './Goblin.js';
 import { GoblinRenderer } from './GoblinRenderer.js';
-import { GoblinRaidState, GoblinCombatState, GoblinWanderState } from './ai/states/GoblinStates.js';
-import GameConfig from './config/GameConfig.json';
+import { Raid, Combat, Wander } from './ai/states/GoblinStates.js';
+console.log(`[Import Debug] Raid: ${typeof Raid}, Combat: ${typeof Combat}, Wander: ${typeof Wander}`);
+import { GameConfig } from './config/GameConfig';
 
 export class GoblinManager {
     constructor(scene, terrain, game, clippingPlanes) {
@@ -14,10 +15,7 @@ export class GoblinManager {
         this.caves = [];
         this.hutSpawnTimers = new Map(); // Map<Building, float>
 
-        // Use passed clippingPlanes or fallback to terrain's (which should be same)
         const clips = clippingPlanes || terrain.clippingPlanes || [];
-        this.renderer = new GoblinRenderer(scene, terrain, clips);
-        this.renderer.init(); // Fire and forget async init
 
         this.spawnTimer = 0;
         this.spawnInterval = 40; // Adjusted to 40s to balance with human house spawn rate
@@ -105,19 +103,23 @@ export class GoblinManager {
         this.caves.push(cave);
     }
 
-    generateCaves() {
-        console.log("GoblinManager: Generation started...");
-        const caveCount = (GameConfig && GameConfig.goblins && GameConfig.goblins.initialCaves) ? GameConfig.goblins.initialCaves : 5;
+    generateCaves(count = null) {
+        const caveCount = count !== null ? count : ((GameConfig && GameConfig.goblins && GameConfig.goblins.initialCaves) ? GameConfig.goblins.initialCaves : 5);
+        console.log(`[GoblinManager] ${caveCount}個の洞窟を生成中...`);
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 
         let created = 0;
         let attempts = 0;
 
+        console.log(`[GoblinManager] DETERMINISM: generateCaves start. rngState=${this.terrain.rngState}`);
         while (created < caveCount && attempts < 5000) {
             attempts++;
-            const x = Math.floor(Math.random() * logicalW);
-            const z = Math.floor(Math.random() * logicalD);
+            const randW = (this.terrain.seededRandom) ? this.terrain.seededRandom() : Math.random();
+            const randD = (this.terrain.seededRandom) ? this.terrain.seededRandom() : Math.random();
+            const x = Math.floor(randW * logicalW);
+            const z = Math.floor(randD * logicalD);
+            if (attempts <= 3) console.log(`[GoblinManager] DETERMINISM: Attempt ${attempts}: Rnd(${randW.toFixed(6)}, ${randD.toFixed(6)}) -> Grid(${x}, ${z}) rngState=${this.terrain.rngState}`);
 
             if (this.isValidCaveSpot(x, z)) {
                 if (this.createCave(x, z)) {
@@ -125,14 +127,23 @@ export class GoblinManager {
                 }
             }
         }
-        console.log(`GoblinManager: Generated ${created} goblin caves after ${attempts} attempts.`);
+        console.log(`[GoblinManager] 洞窟生成完了: ${created}/${caveCount} (試行回数: ${attempts})`);
     }
 
     isValidCaveSpot(x, z) {
         const height = this.terrain.getTileHeight(x, z);
-        // Height (2-10)
-        if (height <= 2 || height > 10) return false;
-        return true;
+
+        // グリッドが未初期化の場合はスキップ
+        if (!this.terrain.grid || !this.terrain.grid[x] || !this.terrain.grid[x][z]) {
+            return false;
+        }
+
+        const hasBuilding = this.terrain.grid[x][z].hasBuilding;
+        if (hasBuilding) return false;
+
+        // 高度制限のチェック (2-10)
+        const isValidHeight = height >= 2 && height <= 10;
+        return isValidHeight;
     }
 
     createCaveTexture() {
@@ -218,7 +229,15 @@ export class GoblinManager {
         }
     }
 
-    update(time, deltaTime, isNight, units, timeScale = 1.0, camera) {
+    update(time, deltaTime, isNight, units, buildings, timeScale = 1.0, camera) {
+        // 0. Periodic Cave Scan (Ported from duplicate method)
+        this.spawnTimer = (this.spawnTimer || 0) + deltaTime;
+        if (this.spawnTimer > 1.0) {
+            this.spawnTimer = 0;
+            if (this.caves.length === 0) this.scanForCaves();
+            this.scanForCaves();
+        }
+
         // Stress Test Mode: Fast Spawn to 20k
         if (typeof window !== 'undefined' && window.location && window.location.search && window.location.search.includes('stressTest=true')) {
             if (this.goblins.length < this.MAX_GOBLINS) {
@@ -264,16 +283,16 @@ export class GoblinManager {
                 }
                 // VISUAL PERSISTENCE FIX: Sync Mesh Height with Building Height
                 // Terrain.js updates building.y when modifying height.
-                if (cave.mesh.position.y !== cave.building.y) {
+                if (cave.mesh && cave.mesh.position && cave.mesh.position.y !== cave.building.y) {
                     cave.mesh.position.y = cave.building.y;
                 }
-            } else {
+            } else if (cave.mesh && cave.mesh.position) {
                 // Fallback if no building link (legacy?)
                 cave.mesh.position.y = currentHeight;
             }
 
             // Persistence Update: If height changes, move the cave with it
-            if (Math.abs(currentHeight - cave.originalHeight) > 0.1) {
+            if (cave.mesh && cave.mesh.position && Math.abs(currentHeight - cave.originalHeight) > 0.1) {
                 cave.originalHeight = currentHeight;
                 cave.mesh.position.y = currentHeight;
                 cave.mesh.updateMatrix();
@@ -301,7 +320,7 @@ export class GoblinManager {
         this.checkHutSpawns(deltaTime);
 
         // Update Goblins
-        const buildings = this.terrain.buildings || [];
+        const currentBuildings = buildings || this.terrain.buildings || [];
 
         // Dynamic Staggering: Maintain ~30Hz-60Hz logic updates regardless of timeScale
         // Base stagger was 2.
@@ -316,8 +335,8 @@ export class GoblinManager {
 
         // --- PERFORMANCE: GLOBAL SCAN BUDGET ---
         // Limit strict pathfinding/scanning ops per frame to prevent freeze at 5000+ entities
-        this.scanBudget = 50; // Max 50 heavy scans per frame
-        if (this.goblins.length > 2000) this.scanBudget = 30; // Throttling for massive crowds
+        // User Approved: scale to ~10% of population (min 100, max 1000)
+        this.scanBudget = Math.min(1000, Math.max(100, Math.floor(this.goblins.length * 0.1)));
 
         for (let i = this.goblins.length - 1; i >= 0; i--) {
             const goblin = this.goblins[i];
@@ -332,7 +351,7 @@ export class GoblinManager {
                 const distSq = dx * dx + dz * dz;
 
                 // Priority Check: Combat/Siege units ALWAYS update regularly (Simulation Integrity)
-                const isUrgent = goblin.action === 'Fighting' || goblin.action === 'Sieging' || (goblin.state && goblin.state.name === 'CombatState');
+                const isUrgent = goblin.action === 'Fighting' || goblin.action === 'Sieging' || (goblin.state && (goblin.state.constructor.name === 'Combat' || goblin.state.constructor.name === 'Raid'));
 
                 if (!isUrgent) {
                     // FIX: If total goblin count is low (< 50), disable aggressive throttling
@@ -354,9 +373,32 @@ export class GoblinManager {
                             // ACCUMULATE TIME (Prevent Slow Motion)
                             goblin.skippedTime = (goblin.skippedTime || 0) + deltaTime;
                         } else {
-                            // Update Frame: Release accumulated time
-                            timeBudget += (goblin.skippedTime || 0);
-                            goblin.skippedTime = 0;
+                            // Update Frame: Check Budget BEFORE releasing time
+                            if (this.scanBudget > 0) {
+                                this.scanBudget--;
+                                // Budget OK: Release accumulated time
+                                timeBudget += (goblin.skippedTime || 0);
+                                goblin.skippedTime = 0;
+                            } else {
+                                // Budget Depleted: Skip logic this frame, accumulate more time
+                                throttleSkip = true;
+                                goblin.skippedTime = (goblin.skippedTime || 0) + deltaTime;
+                            }
+                        }
+                    } else {
+                        // No Interval throttling, but still check Global Budget!
+                        if (this.scanBudget > 0) {
+                            this.scanBudget--;
+                        } else {
+                            // Budget Depleted: Force throttling even if close?
+                            // No, if close (<30m), we prioritize smoothness/reaction.
+                            // BUT if we have 5000 goblins close by, we die.
+                            // Compromise: If VERY close (<10m), ignore budget.
+                            // Else, respect budget.
+                            if (distSq > 100) { // > 10m
+                                throttleSkip = true;
+                                goblin.skippedTime = (goblin.skippedTime || 0) + deltaTime;
+                            }
                         }
                     }
                 }
@@ -368,13 +410,12 @@ export class GoblinManager {
                     goblin.updateMovement(time);
                 }
 
-                // If dead, update death animation with skipped time to keep it smooth-ish?
-                // Actually, death animation is less critical for stuttering.
-                if (goblin.isDead && goblin.updateDeathAnimation) {
-                    goblin.updateDeathAnimation(deltaTime);
-                    // Note: We don't accumulate skippedTime here because we just consumed it.
-                    // But for logic consistency, maybe just let it accumulate and jump later.
-                    // Let's stick to movement fix primarily.
+                // FIX: Sync Action Label even if logic is skipped
+                if (goblin.isMoving) {
+                    goblin.action = 'Moving';
+                } else if (goblin.action === 'Moving') {
+                    // If arrived, fallback to idle or let next logic cycle decide
+                    goblin.action = 'Idle';
                 }
 
                 continue;
@@ -394,7 +435,7 @@ export class GoblinManager {
                 if (goblin.isDead) {
                     goblin.updateDeathAnimation(timeBudget); // Use accumulated time
                 } else {
-                    goblin.updateLogic(time, timeBudget, units, buildings);
+                    goblin.updateLogic(time, timeBudget, isNight, units, currentBuildings);
                 }
 
                 if (goblin.updateVisuals) goblin.updateVisuals();
@@ -470,11 +511,11 @@ export class GoblinManager {
                 console.log(`[GoblinManager] Clan ${clanId} Aggression: ${clan.aggression.toFixed(1)} / 3.0`);
             }
 
-            if (clan.aggression >= 3.0) {
+            if (clan.aggression >= 15.0) { // Increased from 3.0 (User Request)
                 clan.active = true;
-                clan.waveTimer = 30; // First wave in 30 seconds
+                clan.waveTimer = 120; // First wave in 120 seconds (Increased from 30s)
                 clan.waveLevel = 1;  // Start at Level 1
-                console.log(`[GoblinManager] Clan ${clanId} ACTIVATED! Wave 1 in 30s. Target:`, clan.raidTarget);
+                console.log(`[GoblinManager] Clan ${clanId} ACTIVATED! Wave 1 in 120s. Target:`, clan.raidTarget);
             }
         }
     }
@@ -507,23 +548,13 @@ export class GoblinManager {
             const distSq = dx * dx + dz * dz;
 
             if (distSq < defenseSq) {
-                // If goblin is not already fighting or is fighting but far away?
-                // Priority: Defend Base > Current Action
-                const isBusy = (goblin.state && goblin.state.constructor.name === 'GoblinCombatState');
-
-                // STABILIZATION FIX: If already fighting, DO NOT SWITCH targets.
-                // This prevents "jitter" when multiple enemies attack base and goblin ping-pongs between them.
-                // Exception: If current target is DEAD or very far (abandoned logic)?
-                // GoblinCombatState handles dead targets.
-                if (isBusy) continue;
-
                 // Force Switch to Defend
                 goblin.targetUnit = attacker;
                 goblin.targetBuilding = null;
 
                 // Visual or Logic Interrupt
                 if (goblin.changeState) {
-                    goblin.changeState(new GoblinCombatState(goblin));
+                    goblin.changeState(new Combat(goblin));
                     mobilized++;
                 }
             }
@@ -789,14 +820,14 @@ export class GoblinManager {
                     const clanId = b.userData.clanId || `clan_${b.userData.type}_${b.userData.gridX}_${b.userData.gridZ}`;
                     const fakeCave = { gridX: b.userData.gridX, gridZ: b.userData.gridZ, clanId: clanId, building: b };
 
-                    this.spawnGoblinAtCave(fakeCave);
+                    // Force spawn ignoreCost=true because we manage the 10.0 deduction here
+                    this.spawnGoblinAtCave(fakeCave, 1, true);
 
-                    // CRITICAL FIX: populationを消費してスポーンクールダウンを作る
-                    // 5.0に達したら即座にリセットし、次のスポーンまで時間がかかるようにする
-                    b.userData.population = 0.0;
-                    if (b.population !== undefined) b.population = 0.0;
+                    // Reset population to 0 (Consistent with Human Houses and tests)
+                    b.userData.population = 0;
+                    if (b.population !== undefined) b.population = 0;
 
-                    console.log(`[DEBUG] Goblin born from ${b.userData.type}! Total: ${this.goblins.length}, Reset population to 0`);
+                    console.log(`[DEBUG] Goblin born from ${b.userData.type}! Total: ${this.goblins.length}, Remaining population: ${b.userData.population.toFixed(1)}`);
                 }
             }
         });
@@ -866,7 +897,7 @@ export class GoblinManager {
         let count = 0;
         // Iterate all goblins
         this.goblins.forEach(g => {
-            const isIdle = (g.state instanceof GoblinWanderState || (g.state && g.state.constructor.name === 'GoblinWanderState'));
+            const isIdle = (g.state instanceof Wander);
 
             if (g.clanId === clan.id && !g.isDead && isIdle) {
                 // Force Raid
@@ -874,7 +905,7 @@ export class GoblinManager {
                 // Randomize slightly
                 g.raidGoal.x += (Math.random() - 0.5) * 5;
                 g.raidGoal.z += (Math.random() - 0.5) * 5;
-                g.changeState(new GoblinRaidState(g));
+                g.changeState(new Raid(g));
                 count++;
             }
         });
@@ -885,7 +916,7 @@ export class GoblinManager {
     }
 
     destroyCave(cave, index) {
-        console.warn(`[GoblinManager] Removing invalid cave at ${cave.gridX},${cave.gridZ}`);
+        console.log(`[GoblinManager] Cleaning up cave at ${cave.gridX},${cave.gridZ}`);
         // Trace stack to see who called it
         // console.trace();
         if (cave.mesh) {
@@ -940,7 +971,7 @@ export class GoblinManager {
                         ...(g.clanId && { c: g.clanId }),
                         ...(g.age > 1 && { a: Math.floor(g.age) }),
                         ...(g.lifespan && { l: Math.floor(g.lifespan) }),
-                        s: (g.state && g.state.constructor) ? g.state.constructor.name : 'GoblinWanderState',
+                        s: (g.state && g.state.constructor) ? g.state.constructor.name : 'Wander',
                         ...(g.migrationTarget && { mt: g.migrationTarget }),
                         ...(g.raidGoal && { rg: { x: g.raidGoal.x, z: g.raidGoal.z, ts: g.raidGoal.timestamp } }),
                         ...(g.targetUnit && { tu: g.targetUnit.id }),
@@ -971,7 +1002,7 @@ export class GoblinManager {
                 console.warn("GoblinManager: No data to deserialize");
                 return;
             }
-            console.log("GoblinManager: Deserializing...", data);
+            console.log("GoblinManager: Deserializing...");
 
             this.plunderCount = data.plunderCount || 0;
 
@@ -1026,56 +1057,74 @@ export class GoblinManager {
 
             if (data.goblins && Array.isArray(data.goblins)) {
                 data.goblins.forEach(gd => {
-                    // Restore Stats
-                    const x = gd.x !== undefined ? gd.x : gd.gridX;
-                    const z = gd.z !== undefined ? gd.z : gd.gridZ;
-                    const type = gd.t || gd.type || 'normal';
-                    const clanId = gd.c || gd.clanId || `clan_${x}_${z}`; // Infer clanId if missing
+                    try {
+                        // Restore Stats
+                        const x = gd.x !== undefined ? gd.x : gd.gridX;
+                        const z = gd.z !== undefined ? gd.z : gd.gridZ;
+                        const type = gd.t || gd.type || 'normal';
+                        const clanId = gd.c || gd.clanId || `clan_${x}_${z}`; // Infer clanId if missing
 
-                    // Create Goblin
-                    const goblin = new Goblin(this.scene, this.terrain, x, z, type, clanId);
+                        // Create Goblin
+                        const goblin = new Goblin(this.scene, this.terrain, x, z, type, clanId);
+                        goblin.gridX = x;
+                        goblin.gridZ = z;
+                        goblin.updatePosition();
 
-                    goblin.id = gd.id;
-                    goblin.hp = gd.h || gd.hp || goblin.maxHp; // Use default if stripped
-                    goblin.maxHp = gd.m || gd.maxHp || goblin.maxHp;
-                    goblin.age = gd.a || gd.age || 0;
-                    goblin.lifespan = gd.l || gd.lifespan || 100;
-                    // RESTORE STATE from String
-                    let sName = (gd.s || gd.state || 'idle').toLowerCase();
+                        // Specific Restore: Raid Goal
+                        let raidTarget = null;
+                        if (gd.rg) {
+                            raidTarget = { x: gd.rg.x, z: gd.rg.z, timestamp: gd.rg.ts };
+                            goblin.raidGoal = raidTarget;
+                        }
 
-                    // Legacy Fix for "unitWander" / "UnitWanderState" bugs
-                    if (sName.includes('unitwander') || sName.includes('wander')) {
-                        sName = 'idle'; // Map all wander legacy strings to default idle logic below
-                    }
+                        if (raidTarget) {
+                            goblin.changeState(new Raid(goblin));
+                        } else {
+                            goblin.changeState(new Wander(goblin));
+                        }
 
-                    if (sName.includes('raid')) {
-                        goblin.changeState(new GoblinRaidState(goblin));
-                        // If we had a raid target, set it
-                        if (goblin.raidGoal) goblin.state.raidGoal = goblin.raidGoal; // But raidGoal is on Actor usually?
-                        // checked GoblinStates: RaidState reads actor.raidGoal. So this is fine.
-                    } else if (sName.includes('combat') || sName.includes('fight')) {
-                        goblin.changeState(new GoblinCombatState(goblin));
-                    } else {
-                        // Default / Idle / Wander
-                        goblin.changeState(new GoblinWanderState(goblin));
-                    }
-                    goblin.migrationTarget = gd.mt || gd.migrationTarget;
-                    if (gd.scale) goblin.scale = gd.scale;
+                        goblin.id = gd.id;
+                        goblin.hp = gd.h || gd.hp || goblin.maxHp; // Use default if stripped
+                        goblin.maxHp = gd.m || gd.maxHp || goblin.maxHp;
+                        goblin.age = gd.a || gd.age || 0;
+                        goblin.lifespan = gd.l || gd.lifespan || 100;
+                        // RESTORE STATE from String
+                        let sName = (gd.s || gd.state || 'idle').toLowerCase();
 
-                    // Specific Restore: Raid Goal
-                    if (gd.rg) {
-                        goblin.raidGoal = { x: gd.rg.x, z: gd.rg.z, timestamp: gd.rg.ts };
-                    }
+                        // Legacy Fix for "unitWander" / "UnitWanderState" bugs
+                        if (sName.includes('unitwander') || sName.includes('wander')) {
+                            sName = 'idle'; // Map all wander legacy strings to default idle logic below
+                        }
 
-                    // Late Resolve for Targets
-                    if (gd.tu || gd.tb) {
-                        goblin._restoredTargetUnitId = gd.tu;
-                        goblin._restoredTargetBuildingPos = gd.tb;
-                    }
+                        if (sName.includes('raid')) {
+                            goblin.changeState(new Raid(goblin));
+                        } else if (sName.includes('combat') || sName.includes('fight')) {
+                            goblin.changeState(new Combat(goblin));
+                        } else {
+                            // Default / Idle / Wander
+                            goblin.changeState(new Wander(goblin));
+                        }
+                        goblin.migrationTarget = gd.mt || gd.migrationTarget;
+                        if (gd.scale) goblin.scale = gd.scale;
 
-                    this.goblins.push(goblin);
-                    if (this.terrain.registerEntity) {
-                        this.terrain.registerEntity(goblin, x, z, 'goblin');
+                        // Specific Restore: Raid Goal (redundant but safe for now)
+                        if (gd.rg) {
+                            goblin.raidGoal = { x: gd.rg.x, z: gd.rg.z, timestamp: gd.rg.ts };
+                        }
+
+                        // Late Resolve for Targets
+                        if (gd.tu || gd.tb) {
+                            goblin._restoredTargetUnitId = gd.tu;
+                            goblin._restoredTargetBuildingPos = gd.tb;
+                        }
+
+                        this.goblins.push(goblin);
+                        if (this.terrain && this.terrain.registerEntity) {
+                            this.terrain.registerEntity(goblin, x, z, 'goblin');
+                        }
+                    } catch (innerError) {
+                        console.error(`GoblinManager: Error restoring Goblin ${gd.id}:`, innerError);
+                        throw innerError;
                     }
                 });
                 console.log(`GoblinManager: Restored ${this.goblins.length} goblins.`);
@@ -1099,13 +1148,14 @@ export class GoblinManager {
         }
     }
 
-    scanForCaves() {
-        // Fallback scan
-        const buildings = this.terrain.buildings || [];
-        buildings.forEach(b => {
-            if (b.userData.type === 'cave') {
-                this.registerCave(b);
-            }
-        });
+
+    removeGoblin(g, index) {
+        if (g.mesh) this.scene.remove(g.mesh);
+        if (g.dispose) g.dispose();
+        this.goblins.splice(index, 1);
+        if (this.terrain && this.terrain.removeEntity) {
+            this.terrain.removeEntity(g);
+        }
     }
+
 }

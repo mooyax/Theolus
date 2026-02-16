@@ -1,19 +1,203 @@
 
-[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+ RUN  v4.0.15 C:/Users/mooya/develop/test
 
-[90mstdout[2m | src/tests/LoadJitabata.test.js[2m > [22m[2mPost-Load Jitabata Reproduction[2m > [22m[2mshould NOT flap between Job and Wander after load
-[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+stdout | src/tests/LoadJitabata.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/LoadJitabata.test.js > Post-Load Jitabata Reproduction > should NOT flap between Job and Wander after load
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.179795, 0.723622) -> Grid(28, 115) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.384340, 0.502079) -> Grid(61, 80) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.268803, 0.187330) -> Grid(43, 29) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+stdout | src/tests/LoadJitabata.test.js > Post-Load Jitabata Reproduction > should NOT flap between Job and Wander after load
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
 [UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
 [Game] Request Added: raise at (20,20) ID:req_0
-[JobState] Entered. Target: raise. ResumeCtx: Approaching Job
-Saved to slot 1 (Compressed). Size: 302 chars (Original: 874)
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Unit 0] State Change: Wander -> Job
+[Actor 0]smartMove: triggers pathfinding.Dist: 14.1 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job 
+[Actor 0] smartMove RET returning true (Async Triggered)
+Saved to slot 1 (Compressed). Size: 367 chars (Original: 1075)
+[Game] Dispose called for Game Instance.
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.227774, 0.926776) -> Grid(36, 148) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.031025, 0.330701) -> Grid(4, 52) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.002621, 0.231459) -> Grid(0, 37) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+Load Started...
+[Actor 0] SmartMove Depth:1 Node:20,20 My:10,10 d:10,10 
 [Unit 0] Moving onto Rock at 20,20 H:10 (Speed Penalty)
+[Unit 0] canMoveTo(20,20) OK
+[Unit 0] canMoveTo(20,20) checking grid...
+[DIAG] executeMove Actor:0 calling startMove.Current isMoving:false 
+[Entity 0] startMove -> isMoving:true. Target:20,20 StartTime:0.0000
+[DIAG] executeMove Actor:0 finished startMove.New isMoving:true 
 
- [31mﾃ・[39m src/tests/LoadJitabata.test.js[2m > [22mPost-Load Jitabata Reproduction[2m > [22mshould NOT flap between Job and Wander after load[32m 23[2mms[22m[39m
-[31m   竊・Cannot read properties of null (reading 'requests')[39m
+stdout | src/tests/LoadJitabata.test.js > Post-Load Jitabata Reproduction > should NOT flap between Job and Wander after load
+Loading slot 1, Raw length: 364
+Load: Decompressed successfully.
+Parsed Data for slot 1: {
+  timestamp: [33m1770019140801[39m,
+  data: {
+    slotId: [33m1[39m,
+    timestamp: [33m1770019140800[39m,
+    resources: { grain: [33m0[39m, fish: [33m0[39m, meat: [33m0[39m },
+    gameTime: [33m6[39m,
+    gameTotalTime: [33m0[39m,
+    currentSeasonIndex: [33m0[39m,
+    daysPassed: [33m0[39m,
+    terrain: {
+      h: [],
+      n: [],
+      b: [],
+      logicalWidth: [33m160[39m,
+      logicalDepth: [33m160[39m,
+      version: [33m1[39m
+    },
+    units: [ [36m[Object][39m ],
+    requests: [ [36m[Object][39m ],
+    goblinManager: { plunderCount: [33m0[39m, goblins: [], clans: [], caves: [] },
+    camera: { position: [36m[Object][39m, target: [36m[Object][39m }
+  }
+}
+Load Game: Data found {
+  slotId: [33m1[39m,
+  timestamp: [33m1770019140800[39m,
+  resources: { grain: [33m0[39m, fish: [33m0[39m, meat: [33m0[39m },
+  gameTime: [33m6[39m,
+  gameTotalTime: [33m0[39m,
+  currentSeasonIndex: [33m0[39m,
+  daysPassed: [33m0[39m,
+  terrain: {
+    h: [],
+    n: [],
+    b: [],
+    logicalWidth: [33m160[39m,
+    logicalDepth: [33m160[39m,
+    version: [33m1[39m
+  },
+  units: [
+    {
+      id: [33m0[39m,
+      gridX: [33m10[39m,
+      gridZ: [33m10[39m,
+      age: [33m20[39m,
+      raidTargetX: [1mnull[22m,
+      raidTargetY: [1mnull[22m,
+      raidTargetZ: [1mnull[22m,
+      raidTargetTS: [1mnull[22m,
+      lifespan: [33m82.21336381495941[39m,
+      isDead: [33mfalse[39m,
+      isFinished: [33mfalse[39m,
+      isMoving: [33mfalse[39m,
+      targetX: [33m0[39m,
+      targetZ: [33m0[39m,
+      moveStartTime: [33m0[39m,
+      moveDuration: [33m0.8[39m,
+      startGridX: [33m0[39m,
+      startGridZ: [33m0[39m,
+      targetGridX: [33m0[39m,
+      targetGridZ: [33m0[39m,
+      isSpecial: [33mfalse[39m,
+      role: [32m'worker'[39m,
+      type: [32m'worker'[39m,
+      hp: [33m56[39m,
+      maxHp: [33m56[39m,
+      damage: [33m12[39m,
+      xp: [33m0[39m,
+      level: [33m1[39m,
+      name: [32m'Unit'[39m,
+      squadId: [1mnull[22m,
+      targetRequestId: [32m'req_0'[39m,
+      action: [32m'Approaching Job'[39m,
+      ignoredTargets: []
+    }
+  ],
+  requests: [
+    {
+      id: [32m'req_0'[39m,
+      type: [32m'raise'[39m,
+      x: [33m20[39m,
+      z: [33m20[39m,
+      status: [32m'assigned'[39m,
+      assignedTo: [33m0[39m,
+      createdAt: [33m0[39m,
+      isManual: [33mtrue[39m
+    }
+  ],
+  goblinManager: { plunderCount: [33m0[39m, goblins: [], clans: [], caves: [] },
+  camera: { position: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m }, target: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m } }
+}
 
-[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m   Start at [22m 10:10:46
-[2m   Duration [22m 1.18s[2m (transform 369ms, setup 48ms, import 464ms, tests 25ms, environment 424ms)[22m
+stdout | src/tests/LoadJitabata.test.js > Post-Load Jitabata Reproduction > should NOT flap between Job and Wander after load
+Resetting GoblinManager...
+Clearing 0 projectiles...
+[Game] Deserializing terrain...
+
+stdout | src/tests/LoadJitabata.test.js > Post-Load Jitabata Reproduction > should NOT flap between Job and Wander after load
+[Game] Terrain deserialized.
+
+stdout | src/tests/LoadJitabata.test.js > Post-Load Jitabata Reproduction > should NOT flap between Job and Wander after load
+[Game] Loading resources/time...
+[Game] Updating environment...
+
+stdout | src/tests/LoadJitabata.test.js > Post-Load Jitabata Reproduction > should NOT flap between Job and Wander after load
+[Game] Restoring 1 units...
+
+stdout | src/tests/LoadJitabata.test.js > Post-Load Jitabata Reproduction > should NOT flap between Job and Wander after load
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:1
+[Unit 0] State Change: Wander -> Wander
+[Game] Successfully restored 1 units.
+GoblinManager: Deserializing...
+GoblinManager: Restored 0 goblins.
+[Game] Restoring 1 requests...
+
+stdout | src/tests/LoadJitabata.test.js > Post-Load Jitabata Reproduction > should NOT flap between Job and Wander after load
+[Game] Checking unit 0 for targetRequestId: req_0
+[Game] Re-linked Unit 0 to Request req_0
+[Unit 0] State Change: Wander -> Job
+[Actor 0]smartMove: triggers pathfinding.Dist: 14.1 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job 
+[Actor 0] smartMove RET returning true (Async Triggered)
+[Game] Restored Camera Zoom: 1
+
+stdout | src/tests/LoadJitabata.test.js > Post-Load Jitabata Reproduction > should NOT flap between Job and Wander after load
+[Actor 0]smartMove: triggers pathfinding.Dist: 14.1 Time:300.1 Last:0.0 Throttle:1.00 Action:Approaching Job 
+[Actor 0] smartMove RET returning true (Async Triggered)
+[JobDebug] Exit: Unreachable! MoveStarted:false Unreachable:true Waiting:false
+[Game] Request req_0 Deferred (Excluded) for 3s until 304.2
+[Unit 0] State Change: Job -> Wander
+
+ 笶ｯ src/tests/LoadJitabata.test.js (1 test | 1 failed) 312ms
+     ﾃ・should NOT flap between Job and Wander after load 310ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  16:58:59
+   Duration  1.40s (transform 416ms, setup 62ms, import 467ms, tests 312ms, environment 397ms)
 

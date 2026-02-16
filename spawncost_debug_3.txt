@@ -1,0 +1,106 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/SpawnCost.test.js[2m > [22m[2mUnit Spawn Cost[2m > [22m[2mshould consume food when spawning from House
+[22m[39m[Terrain] Generated 5735 trees.
+
+[90mstdout[2m | src/tests/SpawnCost.test.js[2m > [22m[2mUnit Spawn Cost[2m > [22m[2mshould BLOCK spawn if insufficient food
+[22m[39m[Terrain] Generated 6354 trees.
+
+ [31m笶ｯ[39m src/tests/SpawnCost.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 356[2mms[22m[39m
+[31m     [31mﾃ・[31m should consume food when spawning from House[39m[32m 192[2mms[22m[39m
+[31m     [31mﾃ・[31m should BLOCK spawn if insufficient food[39m[32m 162[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/SpawnCost.test.js > Unit Spawn Cost > should consume food when spawning from House
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ 笶ｯ src/tests/SpawnCost.test.js:132:38
+    130|         // EXPECTATION:
+    131|         // 1. Spawn happened
+    132|         expect(spawnedEvents.length).toBe(1);
+       |                                      ^
+    133| 
+    134|         // 2. Resources consumed (COST: 50)
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/SpawnCost.test.js > Unit Spawn Cost > should BLOCK spawn if insufficient food
+AssertionError: expected 9.950000000000001 to be 10 // Object.is equality
+
+- Expected
++ Received
+
+- 10
++ 9.950000000000001
+
+ 笶ｯ src/tests/SpawnCost.test.js:160:42
+    158|         // EXPECTATION:
+    159|         expect(spawnedEvents.length).toBe(0);
+    160|         expect(mockGame.resources.grain).toBe(10); // Unchanged
+       |                                          ^
+    161|         // Population remains full (waiting) -> logic resets it to cap窶ｦ
+    162|         // Current logic: if failed, pop = cap.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Errors 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: color.setHex is not a function
+ 笶ｯ Terrain.getBiomeColor src/Terrain.ts:912:23
+    910|                 color.setHex(0x00A850); // Vibrant Green
+    911|             } else if (season === 'Autumn' || season === 'Spring') {
+    912|                 color.setHex(0x88DD88); // Spring
+       |                       ^
+    913|             } else {
+    914|                 color.setHex(0x88DD88); // Default
+ 笶ｯ Terrain.updateColors src/Terrain.ts:847:36
+ 笶ｯ Terrain.calculateRegions src/Terrain.ts:552:14
+ 笶ｯ Terrain.generateRandomTerrain src/Terrain.ts:484:14
+ 笶ｯ Terrain.initTerrain src/Terrain.ts:424:14
+ 笶ｯ new Terrain src/Terrain.ts:90:14
+ 笶ｯ src/tests/SpawnCost.test.js:90:19
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:145:11
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:1240:20
+
+This error originated in "src/tests/SpawnCost.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: color.setHex is not a function
+ 笶ｯ Terrain.getBiomeColor src/Terrain.ts:912:23
+    910|                 color.setHex(0x00A850); // Vibrant Green
+    911|             } else if (season === 'Autumn' || season === 'Spring') {
+    912|                 color.setHex(0x88DD88); // Spring
+       |                       ^
+    913|             } else {
+    914|                 color.setHex(0x88DD88); // Default
+ 笶ｯ Terrain.updateColors src/Terrain.ts:847:36
+ 笶ｯ Terrain.calculateRegions src/Terrain.ts:552:14
+ 笶ｯ Terrain.generateRandomTerrain src/Terrain.ts:484:14
+ 笶ｯ Terrain.initTerrain src/Terrain.ts:424:14
+ 笶ｯ new Terrain src/Terrain.ts:90:14
+ 笶ｯ src/tests/SpawnCost.test.js:90:19
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:145:11
+ 笶ｯ node_modules/@vitest/runner/dist/index.js:1240:20
+
+This error originated in "src/tests/SpawnCost.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m     Errors [22m [1m[31m2 errors[39m[22m
+[2m   Start at [22m 13:08:01
+[2m   Duration [22m 1.56s[2m (transform 375ms, setup 338ms, import 145ms, tests 356ms, environment 491ms)[22m
+

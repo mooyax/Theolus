@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
-import { JobState, UnitWanderState } from '../ai/states/UnitStates.js';
+import { Job, Wander } from '../ai/states/UnitStates.js';
 
 // Mock THREE
 vi.mock('three', async () => {
@@ -50,7 +50,7 @@ describe('Unit Snatching and Race Conditions', () => {
         const job = { id: 'job1', x: 20, z: 10, type: 'build', status: 'assigned', assignedTo: unit.id };
 
         unit.targetRequest = job;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
         unit.isMoving = true;
         unit.action = 'Approaching Job';
 
@@ -63,7 +63,7 @@ describe('Unit Snatching and Race Conditions', () => {
         unit.updateLogic(100.16, 0.16, false, []);
 
         expect(unit.isMoving, 'Unit should stop moving').toBe(false);
-        expect(unit.state, 'State should be WanderState').toBeInstanceOf(UnitWanderState);
+        expect(unit.state, 'State should be WanderState').toBeInstanceOf(Wander);
         expect(unit.action, 'Action should be Idle (waiting to wander)').toBe('Idle');
         expect(unit.targetRequest, 'Target request should be null').toBeNull();
     });
@@ -73,7 +73,7 @@ describe('Unit Snatching and Race Conditions', () => {
         const job = { id: 'job1', x: 20, z: 10, type: 'build', status: 'assigned', assignedTo: unit.id };
 
         unit.targetRequest = job;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
         unit.isMoving = true;
 
         // Simulate completion by someone else
@@ -82,7 +82,7 @@ describe('Unit Snatching and Race Conditions', () => {
         unit.updateLogic(100.16, 0.16, false, []);
 
         expect(unit.isMoving, 'Unit should stop moving on completion').toBe(false);
-        expect(unit.state, 'State should switch back to WanderState').toBeInstanceOf(UnitWanderState);
+        expect(unit.state, 'State should switch back to WanderState').toBeInstanceOf(Wander);
         expect(unit.targetRequest, 'Target request should be null after completion').toBe(null);
     });
 });

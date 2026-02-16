@@ -1,6 +1,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 
 describe('Stuck and Frozen Fix Verification', () => {
     let mockActor;
@@ -19,8 +19,8 @@ describe('Stuck and Frozen Fix Verification', () => {
         };
     });
 
-    it('JobState.enter should call smartMove with actor.simTime, not 0', () => {
-        const state = new JobState(mockActor);
+    it('Job.enter should call smartMove with actor.simTime, not 0', () => {
+        const state = new Job(mockActor);
         state.enter(null);
 
         // Verify that smartMove was called with 123.45
@@ -28,9 +28,9 @@ describe('Stuck and Frozen Fix Verification', () => {
         expect(mockActor.smartMove).not.toHaveBeenCalledWith(expect.anything(), expect.anything(), 0);
     });
 
-    it('JobState.enter should fallback to 0 only if simTime is missing', () => {
+    it('Job.enter should fallback to 0 only if simTime is missing', () => {
         mockActor.simTime = undefined;
-        const state = new JobState(mockActor);
+        const state = new Job(mockActor);
         state.enter(null);
 
         expect(mockActor.smartMove).toHaveBeenCalledWith(20, 20, 0);

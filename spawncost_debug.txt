@@ -1,0 +1,32 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/SpawnCost.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 226[2mms[22m[39m
+[31m     [31mﾃ・[31m should consume food when spawning from House[39m[32m 137[2mms[22m[39m
+[31m     [31mﾃ・[31m should BLOCK spawn if insufficient food[39m[32m 88[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/SpawnCost.test.js > Unit Spawn Cost > should consume food when spawning from House
+ FAIL  src/tests/SpawnCost.test.js > Unit Spawn Cost > should BLOCK spawn if insufficient food
+TypeError: Cannot read properties of undefined (reading 'length')
+ 笶ｯ Terrain.updateMesh src/Terrain.ts:650:39
+    648| 
+    649|         // Loop through all vertices of the Super-Grid
+    650|         for (let i = 0; i < positions.length; i += 3) {
+       |                                       ^
+    651|             const x = positions[i];
+    652|             const y = positions[i + 1]; // PlaneGeometry is XY
+ 笶ｯ Terrain.generateRandomTerrain src/Terrain.ts:483:14
+ 笶ｯ Terrain.initTerrain src/Terrain.ts:424:14
+ 笶ｯ new Terrain src/Terrain.ts:90:14
+ 笶ｯ src/tests/SpawnCost.test.js:25:19
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 13:04:22
+[2m   Duration [22m 1.41s[2m (transform 375ms, setup 338ms, import 145ms, tests 226ms, environment 479ms)[22m
+

@@ -32,6 +32,8 @@ describe('ResourceGathering Regression Test', () => {
 
         game = new MockGame(scene, terrain);
         game.resources = { grain: 10, fish: 0, meat: 0 };
+        game.sheepManager = { sheeps: [] };
+        game.fishManager = { fishes: [] };
 
         global.window = { game: game };
     });
@@ -44,6 +46,9 @@ describe('ResourceGathering Regression Test', () => {
         const fisher = new Unit(scene, terrain, 6, 5, 'fisher');
         fisher.game = game;
         game.units.push(fisher);
+
+        // Mock Fish
+        game.fishManager.fishes.push({ gridX: 6, gridZ: 6 });
 
         const gatherSpy = vi.spyOn(fisher, 'gatherResources');
 
@@ -61,6 +66,9 @@ describe('ResourceGathering Regression Test', () => {
         const hunter = new Unit(scene, terrain, 11, 10, 'hunter');
         hunter.game = game;
         game.units.push(hunter);
+
+        // Mock Sheep
+        game.sheepManager.sheeps.push({ gridX: 12, gridZ: 10 });
 
         expect(game.resources.meat).toBe(0);
 

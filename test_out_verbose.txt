@@ -1,0 +1,141 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should detect Worker within range and enter Combat
+Goblin constructor: calling super...
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 20,20
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Actor 0] CHANGE STATE: None -> Wander Request:null
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 30,20
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:30,20 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:30,20
+[Test Debug 1] Target: None, State: Wander
+[GoblinState Debug] ID:100 Calling scanForTargets...
+[Goblin 100] Found Unit Candidate: 200 Dist:?
+[Test Debug 2] Target: 200, State: Combat
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should prioritize Worker if Building is far, or attack Building if close
+Goblin constructor: calling super...
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 20,20
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 30,20
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:30,20 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:30,20
+[Goblin 101] Found Unit Candidate: 201 Dist:?
+[Actor 101] smartMove: triggers pathfinding. Dist: 10.0 Time:0.7 Last:0.0 Throttle:1.10 Action:Fighting
+[Actor 101] smartMove: triggers pathfinding. Dist: 10.0 Time:1.8 Last:0.7 Throttle:1.10 Action:Fighting
+[Actor 101] smartMove: triggers pathfinding. Dist: 10.0 Time:2.9 Last:1.8 Throttle:1.10 Action:Fighting
+[Actor 101] smartMove: triggers pathfinding. Dist: 10.0 Time:4.0 Last:2.9 Throttle:1.10 Action:Fighting
+[Test Debug Priority] Target: 201, BTarget: None, State: Combat
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should switch target to Worker if it encounters one while moving to a far Building
+Goblin constructor: calling super...
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 20,20
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 25,20
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:25,20 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:25,20
+[Goblin 102] Found Unit Candidate: 202 Dist:?
+[Actor 102] smartMove: triggers pathfinding. Dist: 5.0 Time:2.0 Last:0.0 Throttle:1.20 Action:Fighting
+[Actor 102] smartMove: triggers pathfinding. Dist: 5.0 Time:3.5 Last:2.0 Throttle:1.20 Action:Fighting
+[Actor 102] smartMove: triggers pathfinding. Dist: 5.0 Time:5.0 Last:3.5 Throttle:1.20 Action:Fighting
+[Actor 102] smartMove: triggers pathfinding. Dist: 5.0 Time:6.5 Last:5.0 Throttle:1.20 Action:Fighting
+[Actor 102] smartMove: triggers pathfinding. Dist: 5.0 Time:8.0 Last:6.5 Throttle:1.20 Action:Fighting
+[Actor 102] smartMove: triggers pathfinding. Dist: 5.0 Time:9.5 Last:8.0 Throttle:1.20 Action:Fighting
+[Test Debug Switch] Target: 202, BTarget: None, State: Combat
+
+ ✓ src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should detect Worker within range and enter Combat 14ms
+ ✓ src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should prioritize Worker if Building is far, or attack Building if close 4ms
+ ✓ src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should switch target to Worker if it encounters one while moving to a far Building 3ms
+stdout | src/tests/ComplexAI.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/CombatBalance.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test)
+[Game] Dispose called for Game Instance.
+
+ × src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed 16ms
+   → [vitest] No "AdditiveBlending" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+ × src/tests/ComplexAI.test.js > Complex AI Scenarios > should prioritize manual jobs even when closer auto jobs appear 5ms
+   → [vitest] No "AdditiveBlending" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+ × src/tests/ComplexAI.test.js > Complex AI Scenarios > should NOT drop manual job when switching to Sleep at night 2ms
+   → [vitest] No "AdditiveBlending" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+ × src/tests/ComplexAI.test.js > Complex AI Scenarios > should abandon unreachable job (Abandonment Test) 2ms
+   → [vitest] No "AdditiveBlending" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Worker vs Normal Goblin (Expected: Goblin Win due to stats buff) 15ms
+   → [vitest] No "AdditiveBlending" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Normal Goblin vs House (Expected: Mutually Assured Destruction or House Defense) 3ms
+   → [vitest] No "AdditiveBlending" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Knight vs Normal Goblin (Expected: Knight Stomp) 2ms
+   → [vitest] No "AdditiveBlending" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Knight vs King Goblin (Expected: Close or King Advantage) 1ms
+   → [vitest] No "AdditiveBlending" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Wizard vs Hobgoblin (Expected: Wizard High DPS but Fragile) 1ms
+   → [vitest] No "AdditiveBlending" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+ × src/tests/CombatBalance.test.js > Combat Balance Verification > Goblin King should crush Worker 2ms
+   → [vitest] No "AdditiveBlending" export is defined on the "three" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  10 failed | 3 passed (13)
+   Start at  20:49:15
+   Duration  1.30s (transform 1.05s, setup 183ms, import 1.28s, tests 75ms, environment 1.51s)
+

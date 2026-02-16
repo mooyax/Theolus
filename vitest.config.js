@@ -6,5 +6,11 @@ export default defineConfig({
         environment: 'happy-dom',
         setupFiles: ['./src/tests/setup.js'],
         globals: true,
+        pool: 'threads',
+        poolOptions: {
+            threads: {
+                singleThread: true,
+            },
+        },
     },
 });

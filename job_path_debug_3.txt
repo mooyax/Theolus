@@ -1,0 +1,76 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+stderr | src/tests/Investigation_JobPath.test.js
+[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39m[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:0
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39m[Actor 999] Pathfinding Result: Success. Target:20,20 Len:5
+[Actor 999] SmartMove Depth:1 Node:0,0 My:0,0 d:0,0 
+[Actor 999] Reached Node.Shifting.
+[Actor 999] SmartMove Depth:2 Node:5,5 My:0,0 d:5,5 
+[Actor 999] Path Blocked at 5,5 
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39m[Actor 999] Pathfinding Result: Success. Target:20,20 Len:4
+[Actor 999] SmartMove Depth:3 Node:5,5 My:0,0 d:5,5 
+[Actor 999] Path Blocked at 5,5 
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39m[Actor 999] Pathfinding Result: Success. Target:20,20 Len:4
+[Actor 999] SmartMove Depth:4 Node:5,5 My:0,0 d:5,5 
+[Actor 999] Path Blocked at 5,5 
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39m[Actor 999] Pathfinding Result: Success. Target:20,20 Len:4
+[Actor 999] SmartMove Depth:5 Node:5,5 My:0,0 d:5,5 
+[Actor 999] Path Blocked at 5,5 
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39m[Actor 999] Pathfinding Result: Success. Target:20,20 Len:4
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39mInitial Path Length: [33m4[39m
+[Actor 999] SmartMove Depth:0 Node:5,5 My:5,5 d:0,0 
+[Actor 999] Reached Node.Shifting.
+[Actor 999] SmartMove Depth:1 Node:10,10 My:5,5 d:5,5 
+[Actor 999] Path Blocked at 10,10 
+
+ [31m笶ｯ[39m src/tests/Investigation_JobPath.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 149[2mms[22m[39m
+[31m     [31mﾃ・[31m should maintain path while processing Job[39m[32m 148[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Investigation_JobPath.test.js > Job Path Consistency > should maintain path while processing Job
+AssertionError: expected null not to be null
+ 笶ｯ src/tests/Investigation_JobPath.test.js:68:31
+     66|         unit.onMoveFinished(1.0);
+     67| 
+     68|         expect(unit.path).not.toBeNull();
+       |                               ^
+     69|         expect(unit.isMoving).toBe(true);
+     70| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 08:34:52
+[2m   Duration [22m 1.16s[2m (transform 310ms, setup 71ms, import 335ms, tests 149ms, environment 423ms)[22m
+

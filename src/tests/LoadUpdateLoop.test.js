@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Game } from '../Game.js';
 import { Unit } from '../Unit.js';
-import { JobState, UnitWanderState } from '../ai/states/UnitStates.js';
+import { Job, Wander } from '../ai/states/UnitStates.js';
 import LZString from 'lz-string';
 
 // Lightweight Mocks
@@ -15,7 +15,7 @@ global.window = {
     alert: vi.fn(),
 };
 global.document = {
-    getElementById: vi.fn(() => ({ style: {}, innerText: '' })),
+    getElementById: vi.fn(() => ({ style: {}, innerText: '', addEventListener: vi.fn() })),
     createElement: vi.fn(() => ({
         getContext: () => ({ fillRect: () => { }, beginPath: () => { }, moveTo: () => { }, lineTo: () => { }, stroke: () => { } }),
         style: {}, width: 0, height: 0, toDataURL: () => ''
@@ -73,6 +73,7 @@ vi.mock('../Terrain.js', () => ({
             this.setSeason = vi.fn();
             this.findPathAsync = vi.fn((sx, sz, ex, ez) => Promise.resolve([{ x: ex, z: ez }]));
             this.checkYield = () => Promise.resolve();
+            this.getBuildingAt = vi.fn(() => null);
         }
     }
 }));
@@ -101,6 +102,7 @@ vi.mock('three', () => {
         AmbientLight: class extends MockObject3D { },
         DirectionalLight: class extends MockObject3D { },
         BoxGeometry: class { translate() { } },
+        BufferGeometry: class { translate() { } },
         PlaneGeometry: class { translate() { } },
         Plane: class { constant = 0; normal = new MockVector3(); setComponents() { } clone() { return new this.constructor(); } },
         Fog: class { },
@@ -112,10 +114,16 @@ vi.mock('three', () => {
         MeshBasicMaterial: class { },
         CanvasTexture: class { },
         Color: class { constructor(r, g, b) { } setHex() { } set() { } },
+        MOUSE: { LEFT: 0, MIDDLE: 1, RIGHT: 2 },
         Raycaster: class { setFromCamera() { } intersectObjects() { return []; } },
+        Clock: class { constructor() { } getDelta() { return 0.016; } getElapsedTime() { return 0; } },
+        Frustum: class { setFromProjectionMatrix() { } containsPoint() { return true; } intersectsObject() { return true; } },
+        Matrix4: class { constructor() { this.elements = new Float32Array(16); } set() { return this; } copy() { return this; } clone() { return new this.constructor(); } identity() { return this; } multiply() { return this; } makeTranslation() { return this; } makeScale() { return this; } makePerspective() { return this; } fromArray() { return this; } },
         ShaderMaterial: class { },
         AdditiveBlending: 2,
         DoubleSide: 2,
+        PCFSoftShadowMap: 1,
+
         WebGLRenderer: class {
             constructor() {
                 this.domElement = { style: {}, getContext: () => ({}) };
@@ -151,11 +159,11 @@ describe('Load Update Loop Integration', () => {
         game.terrain.updateMesh = vi.fn();
         game.terrain.calculateRegions = vi.fn();
         game.terrain.deserialize = vi.fn().mockResolvedValue(true);
-        // Ensure JobState is available globally if needed by Unit logic relying on window.game
+        // Ensure Job is available globally if needed by Unit logic relying on window.game
         window.game = game;
     });
 
-    it('should maintain JobState after first update loop post-load', async () => {
+    it('should maintain Job after first update loop post-load', async () => {
         // 1. SETUP: Unit with Manual Job
         const unit = new Unit(game.scene, game.terrain, 10, 10, 'worker');
         console.log("Setup Unit updateLogic type:", typeof unit.updateLogic);
@@ -196,22 +204,27 @@ describe('Load Update Loop Integration', () => {
         console.log("Restored Unit Keys:", Object.keys(restoredUnit));
 
         // CHECK 1: Immediate Post-Load State
-        expect(restoredUnit.state).toBeInstanceOf(JobState);
+        expect(restoredUnit.state).toBeInstanceOf(Job);
         expect(restoredUnit.action).toBe('Approaching Job');
 
         // 4. SIMULATE UPDATE LOOP
+        // FIX: Synchronize simTimeSec and frameCount post-load to satisfy AI time-slicing
+        game.simTotalTimeSec = game.gameTotalTime / 1000;
+        game.frameCount = 20; // id 100 % 20 == 0
+
         // Explicitly call updateLogic on unit
-        restoredUnit.updateLogic(game.gameTime, 0.1);
+        restoredUnit.updateLogic(game.simTotalTimeSec, 0.1, false, game.units, game.terrain.buildings, game.goblinManager.goblins);
+
 
         // CHECK 2: State after first update
         // If this fails (reverts to Idle), we found the bug!
-        if (restoredUnit.state instanceof UnitWanderState) {
+        if (restoredUnit.state instanceof Wander) {
             console.log("BUG REPRODUCED: Unit reverted to WanderState/Idle!");
         } else {
-            console.log("Unit maintained JobState.");
+            console.log("Unit maintained Job.");
         }
 
-        expect(restoredUnit.state).toBeInstanceOf(JobState);
+        expect(restoredUnit.state).toBeInstanceOf(Job);
         expect(restoredUnit.action).not.toBe('Idle');
     });
 });

@@ -1,0 +1,96 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/IntegrationFlow.test.js
+[22m[39m[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/IntegrationFlow.test.js[2m > [22m[2mIntegration Flow: Actor -> Terrain -> MockWorker[2m > [22m[2mshould successfully request path and move when Worker replies
+[22m[39m[Test] Setup Start
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:undefined Pos:undefined,undefined Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:20,20
+[UnitCore.js] Unit Construction Finished ID:0
+[Test] Setup Done
+
+stderr | src/tests/IntegrationFlow.test.js > Integration Flow: Actor -> Terrain -> MockWorker > should successfully request path and move when Worker replies
+[Test] Exception in test 1: AssertionError: expected "vi.fn()" to be called at least once
+    at Proxy.<anonymous> (file:///C:/Users/mooya/develop/test/node_modules/@vitest/expect/dist/index.js:1400:10)
+    at Proxy.<anonymous> (file:///C:/Users/mooya/develop/test/node_modules/@vitest/expect/dist/index.js:1090:14)
+    at Proxy.methodWrapper (file:///C:/Users/mooya/develop/test/node_modules/chai/index.js:1700:25)
+    at C:/Users/mooya/develop/test/src/tests/IntegrationFlow.test.js:201:48
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1650:37
+
+[90mstdout[2m | src/tests/IntegrationFlow.test.js[2m > [22m[2mIntegration Flow: Actor -> Terrain -> MockWorker[2m > [22m[2mshould successfully request path and move when Worker replies
+[22m[39m[Test] Test 1 Start
+[Test] Calling smartMove from 0,0 to 5,5...
+[Test] smartMove returned: [90mundefined[39m
+
+[90mstdout[2m | src/tests/IntegrationFlow.test.js[2m > [22m[2mIntegration Flow: Actor -> Terrain -> MockWorker[2m > [22m[2mshould STUCK when Worker DROPS the message
+[22m[39m[Test] Setup Start
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:undefined Pos:undefined,undefined Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:20,20
+[UnitCore.js] Unit Construction Finished ID:1
+[Test] Setup Done
+
+[90mstdout[2m | src/tests/IntegrationFlow.test.js[2m > [22m[2mIntegration Flow: Actor -> Terrain -> MockWorker[2m > [22m[2mshould STUCK when Worker DROPS the message
+[22m[39m[Test] Test 2 Start (Stuck simulation)
+
+ [31m笶ｯ[39m src/tests/IntegrationFlow.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 51[2mms[22m[39m
+[31m     [31mﾃ・[31m should successfully request path and move when Worker replies[39m[32m 32[2mms[22m[39m
+[31m     [31mﾃ・[31m should STUCK when Worker DROPS the message[39m[32m 17[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/IntegrationFlow.test.js > Integration Flow: Actor -> Terrain -> MockWorker > should successfully request path and move when Worker replies
+AssertionError: expected "vi.fn()" to be called at least once
+ 笶ｯ src/tests/IntegrationFlow.test.js:201:48
+    199|             console.log('[Test] smartMove returned:', valid);
+    200| 
+    201|             expect(terrain.worker.postMessage).toHaveBeenCalled();
+       |                                                ^
+    202|             expect(unit.isPathfinding).toBe(true);
+    203| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/IntegrationFlow.test.js > Integration Flow: Actor -> Terrain -> MockWorker > should STUCK when Worker DROPS the message
+AssertionError: expected "vi.fn()" to be called at least once
+ 笶ｯ src/tests/IntegrationFlow.test.js:224:44
+    222|         unit.smartMove(5, 5, 0.1);
+    223| 
+    224|         expect(terrain.worker.postMessage).toHaveBeenCalled();
+       |                                            ^
+    225|         expect(unit.isPathfinding).toBe(true);
+    226| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 14:25:29
+[2m   Duration [22m 1.02s[2m (transform 314ms, setup 79ms, import 328ms, tests 51ms, environment 387ms)[22m
+

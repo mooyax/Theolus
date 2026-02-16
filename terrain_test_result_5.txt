@@ -1,0 +1,67 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/Terrain.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/Terrain.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Population Update > should correctly sum housing population excluding farms
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Population Update > should grow population in a house over time
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Population Update > should grow population in a house over time
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should grow crops using simDeltaTime (Not raw deltaTime)
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should grow crops using simDeltaTime (Not raw deltaTime)
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should preserve overflow when harvesting
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should preserve overflow when harvesting
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should scale farm yield based on moisture
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should scale farm yield based on moisture
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should reduce food consumption at night
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should reduce food consumption at night
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should consume normal amount during day
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should consume normal amount during day
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should return different colors for seasons
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should return different colors for seasons
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should keep rock color even if dry (desert override check)
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should keep rock color even if dry (desert override check)
+[Terrain] Constructor. updatePopulation type: function
+
+ 笨・src/tests/Terrain.test.js (9 tests) 1033ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  23:09:24
+   Duration  2.07s (transform 255ms, setup 80ms, import 257ms, tests 1.03s, environment 512ms)
+

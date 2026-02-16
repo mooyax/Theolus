@@ -1,0 +1,25 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Clusters nearby battle reports
+[Game] New Battle Hotspot at 10,10 (Region:1)
+
+stdout | src/tests/Hotspot.test.js > Global Battle Hotspots Logic > Decays intensity
+[Game] New Battle Hotspot at 10,10 (Region:1)
+
+ 笶ｯ src/tests/Hotspot.test.js (6 tests | 3 failed) 509ms
+     笨・Clusters nearby battle reports  488ms
+     笨・Decays intensity 1ms
+     ﾃ・Mobilizes idle squads to intense hotspots (Updated Threshold) 10ms
+     ﾃ・Triggers autonomous patrol for idle Knights 7ms
+     ﾃ・Mobilizes idle squads 1ms
+     笨・Does not mobilize across regions 1ms
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 3 passed (6)
+   Start at  18:31:51
+   Duration  1.15s (transform 451ms, setup 65ms, import 18ms, tests 509ms, environment 391ms)
+

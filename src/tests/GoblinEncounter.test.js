@@ -3,9 +3,12 @@ import * as THREE from 'three';
 import { Unit } from '../Unit.js';
 import { Goblin } from '../Goblin.js';
 import { Terrain } from '../Terrain.js';
-import { GoblinCombatState, GoblinWanderState, GoblinRaidState } from '../ai/states/GoblinStates.js';
-import { CombatState, UnitWanderState } from '../ai/states/UnitStates.js';
-import GameConfig from '../config/GameConfig.json';
+vi.mock('../PerformanceMonitor.js', async () => {
+    return await vi.importActual('../PerformanceMonitor.js');
+});
+import { Combat, Wander, Raid } from '../ai/states/GoblinStates.js';
+import { Combat, Wander } from '../ai/states/UnitStates.js';
+import { GameConfig } from '../config/GameConfig';
 
 // --- Mocks ---
 vi.mock('three', async () => {
@@ -80,7 +83,7 @@ describe('Goblin Encounter Logic', () => {
         window.game = game;
     });
 
-    it('Goblin should detect Worker within range and enter CombatState', () => {
+    it('Goblin should detect Worker within range and enter Combat', () => {
         const goblin = new Goblin(scene, terrain, 20, 20, 'normal', 'clan1');
         goblin.id = 100;
 
@@ -124,7 +127,7 @@ describe('Goblin Encounter Logic', () => {
 
         expect(goblin.targetUnit, `Failed Detection: ${JSON.stringify(debugInfo, null, 2)}`).not.toBeNull();
         expect(goblin.targetUnit).toBe(worker);
-        expect(goblin.state).toBeInstanceOf(GoblinCombatState);
+        expect(goblin.state.constructor.name).toBe('Combat');
     });
 
     it('Goblin should prioritize Worker if Building is far, or attack Building if close', () => {
@@ -168,7 +171,7 @@ describe('Goblin Encounter Logic', () => {
         // uDist = 10, bDist = 30. uDist < bDist -> Worker.
         expect(goblin.targetUnit).toBe(worker);
         expect(goblin.targetBuilding).toBeNull();
-        expect(goblin.state).toBeInstanceOf(GoblinCombatState);
+        expect(goblin.state.constructor.name).toBe('Combat');
     });
     it('Goblin should switch target to Worker if it encounters one while moving to a far Building', () => {
         // Setup Goblin
@@ -185,7 +188,7 @@ describe('Goblin Encounter Logic', () => {
         // Assign Target Manually (Pretend Raid)
         goblin.targetBuilding = building;
         // Important: Set state to Raid so it scans
-        goblin.state = new GoblinRaidState(goblin);
+        goblin.state = new Raid(goblin);
         goblin.state.raidGoal = { x: 70, z: 20 };
 
         // Setup Worker (Close: Dist 5)
@@ -206,6 +209,6 @@ describe('Goblin Encounter Logic', () => {
 
         expect(goblin.targetUnit).toBe(worker);
         expect(goblin.targetBuilding).toBeNull();
-        expect(goblin.state).toBeInstanceOf(GoblinCombatState);
+        expect(goblin.state.constructor.name).toBe('Combat');
     });
 });

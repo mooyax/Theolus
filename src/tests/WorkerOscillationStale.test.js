@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 import { Actor } from '../Actor.js';
 
 // Mock MockTerrain and MockGame (Same as before)
@@ -81,7 +81,7 @@ describe('Worker Oscillation Debug', () => {
         // 1. Fail Job A
         const reqA = { id: 101, type: 'build', x: 50, z: 50, status: 'assigned', assignedTo: unit.id };
         unit.targetRequest = reqA;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Trigger Fail
         unit.updateLogic(game.simTotalTimeSec, 0.1);
@@ -92,19 +92,19 @@ describe('Worker Oscillation Debug', () => {
 
         unit.updateLogic(game.simTotalTimeSec + 0.1, 0.1); // Process fail
 
-        // Expect false because JobState exit -> WanderState enter -> smartMove clears it!
+        // Expect false because Job exit -> WanderState enter -> smartMove clears it!
         // This confirms that the system naturally clears the flag, preventing oscillation loop.
         // Flag remains true because we throttled and haven't started new pathfinding yet
-        // Flag is cleared by JobState when handling the failure
+        // Flag is cleared by Job when handling the failure
         expect(unit.isUnreachable).toBe(false);
         expect(unit.targetRequest).toBeNull(); // Dropped
 
         // 2. Assign Job B (Reachable)
         const reqB = { id: 202, type: 'build', x: 20, z: 20, status: 'assigned', assignedTo: unit.id };
         unit.targetRequest = reqB;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
-        // CRITICAL CHECK: Entering JobState should have cleared isUnreachable
+        // CRITICAL CHECK: Entering Job should have cleared isUnreachable
         // Should be false now.
         expect(unit.isUnreachable).toBe(false);
 

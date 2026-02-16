@@ -1,7 +1,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 
 vi.mock('three', () => {
     class MockGeometry { constructor() { this.translate = vi.fn().mockReturnThis(); this.rotateX = vi.fn().mockReturnThis(); } }
@@ -54,13 +54,14 @@ describe('Rubber-banding and Chaining Verification', () => {
         window.game = mockGame;
         unit = new Unit({ add: vi.fn() }, terrain, 10, 10, 'worker');
         unit.game = mockGame;
+        unit.workOnRequest = vi.fn((req) => { req.status = 'completed'; });
     });
 
     it('should NOT snap back when arriving at a job during mid-move', () => {
         const targetJob = { id: 1, x: 20, z: 10, type: 'build', status: 'assigned', assignedTo: unit.id };
         mockGame.requestQueue = [targetJob];
         unit.targetRequest = targetJob; // Set before changeState
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Start Moving from 10 to 20
         unit.startMove(20, 10, 0); // Start at time 0
@@ -91,7 +92,7 @@ describe('Rubber-banding and Chaining Verification', () => {
         const job2 = { id: 2, x: 22, z: 10, type: 'build', status: 'pending', assignedTo: 2 };
         mockGame.requestQueue = [job1, job2];
         unit.targetRequest = job1;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Move unit mid-way
         unit.startMove(20, 10, 0);
@@ -111,15 +112,16 @@ describe('Rubber-banding and Chaining Verification', () => {
         unit.state.update(8, 1);
         unit.updateMovement(10); // Completion (Arrival)
         unit.isMoving = false; // Force ensure arrival state
-        // Unit state update is required to trigger arrival logic in JobState
+        // Unit state update is required to trigger arrival logic in Job
         unit.state.update(9, 1);
+        unit.state.update(10, 1); // Extra tick to allow Wander state to trigger findBestRequest
 
         console.error(`[RubberBanding Test] Unit Pos: ${unit.gridX},${unit.gridZ}. TargetReq: ${unit.targetRequest ? unit.targetRequest.id : 'null'}. ClaimCalls: ${mockGame.claimRequest.mock.calls.length}`);
 
         // expect(mockGame.completeRequest).toHaveBeenCalledWith(unit, job1); // Chaining might bypass explicit completion or handle it internally
         expect(mockGame.claimRequest).toHaveBeenCalledWith(unit, expect.objectContaining({ x: 30 }));
         expect(unit.targetRequest).toEqual(expect.objectContaining({ x: 30 }));
-        // Unit stays at arrival point (20) because JobState updates position to destination, 
+        // Unit stays at arrival point (20) because Job updates position to destination, 
         // but since next job is far (30), it should just claim it and NOT move instantly to 30.
         // Wait, update(0,0) in enter() sees dist > approachDist.
         // So unit.gridX remains at arrival point of Job1.

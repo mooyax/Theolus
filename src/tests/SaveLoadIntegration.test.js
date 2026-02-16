@@ -3,8 +3,8 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { Game } from '../Game.js';
 import { Unit } from '../Unit.js';
 import { Goblin } from '../Goblin.js'; // Import Goblin
-import { JobState, UnitWanderState, CombatState } from '../ai/states/UnitStates.js';
-import { GoblinRaidState, GoblinWanderState } from '../ai/states/GoblinStates.js';
+import { Job, Wander, Combat } from '../ai/states/UnitStates.js';
+import { Raid, Wander } from '../ai/states/GoblinStates.js';
 
 // --- MOCKS ---
 // Mock Browser API
@@ -132,7 +132,7 @@ describe('Comprehensive Save/Load Integration', () => {
                         g.id = gd.id;
                         if (gd.raidGoal) g.raidGoal = gd.raidGoal;
                         if (gd.state && gd.state.includes('Raid')) {
-                            g.changeState(new GoblinRaidState(g));
+                            g.changeState(new Raid(g));
                         }
                         return g;
                     });
@@ -144,7 +144,7 @@ describe('Comprehensive Save/Load Integration', () => {
                 clans: game.goblinManager.clans,
                 goblins: game.goblinManager.goblins.map(g => ({
                     id: g.id, x: g.gridX, z: g.gridZ, type: g.type, clanId: g.clanId,
-                    state: g.state ? g.state.constructor.name : 'GoblinWanderState',
+                    state: g.state ? g.state.constructor.name : 'Wander',
                     raidGoal: g.raidGoal
                 }))
             };
@@ -204,7 +204,7 @@ describe('Comprehensive Save/Load Integration', () => {
             worker.targetRequest = req;
             req.status = 'assigned';
             req.assignedTo = worker.id;
-            worker.changeState(new JobState(worker)); // Should be 'Approaching Job'
+            worker.changeState(new Job(worker)); // Should be 'Approaching Job'
 
             // Simulate some movement
             worker.gridX = 12;
@@ -223,7 +223,7 @@ describe('Comprehensive Save/Load Integration', () => {
             const goblin = new Goblin(game.scene, game.terrain, 80, 80, 'warrior', 'clan_A');
             goblin.id = 99;
             goblin.raidGoal = { x: 50, z: 50, timestamp: 100 }; // Explicit Raid Goal
-            goblin.changeState(new GoblinRaidState(goblin));
+            goblin.changeState(new Raid(goblin));
 
             game.goblinManager.goblins.push(goblin);
             game.goblinManager.clans = { 'clan_A': { id: 'clan_A', active: true, aggression: 5.0 } };
@@ -282,7 +282,7 @@ describe('Comprehensive Save/Load Integration', () => {
 
             expect(restoredWorker.targetRequest).toBeDefined();
             expect(restoredWorker.targetRequest.id).toBe('req_integrity_1');
-            expect(restoredWorker.state).toBeInstanceOf(JobState);
+            expect(restoredWorker.state).toBeInstanceOf(Job);
             expect(restoredWorker.action).toBe('Approaching Job');
 
             // 3. Goblin
@@ -290,8 +290,8 @@ describe('Comprehensive Save/Load Integration', () => {
             const restoredGoblin = game.goblinManager.goblins[0];
             expect(restoredGoblin.id).toBe(99);
             expect(restoredGoblin.clanId).toBe('clan_A');
-            // expect(restoredGoblin.state).toBeInstanceOf(GoblinRaidState); // Verification against Mock
-            expect(restoredGoblin.state.constructor.name).toBe('GoblinRaidState');
+            // expect(restoredGoblin.state).toBeInstanceOf(Raid); // Verification against Mock
+            expect(restoredGoblin.state.constructor.name).toBe('Raid');
             expect(restoredGoblin.raidGoal).toBeDefined();
             expect(restoredGoblin.raidGoal.timestamp).toBeDefined(); // Fix #3 Verification
 

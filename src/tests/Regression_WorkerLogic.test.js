@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
-import { JobState, UnitWanderState, CombatState } from '../ai/states/UnitStates.js';
+import { Job, Wander, Combat } from '../ai/states/UnitStates.js';
 import { GlobalGame } from '../Game.js'; // Optional, but we likely use MockGame
 
 // --- MOCK CLASSES ---
@@ -53,6 +53,8 @@ class MockTerrain {
         // console.log(`[MockTerrain] Best:`, best);
         return best;
     }
+    checkFlatArea(x, z, size, tolerance) { return false; }
+    getBuildingSize(type) { return (type === 'house' || type === 'farm' || type === 'goblin_hut' || type === 'cave') ? 2 : 3; }
 }
 
 class MockGame {
@@ -112,7 +114,7 @@ describe('Regression: Worker Logic & Stability', () => {
         // Setup: Unit has a job
         const req = { id: 101, type: 'build', x: 50, z: 50, status: 'assigned', assignedTo: unit.id };
         unit.targetRequest = req;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Override findPathAsync to differ from synchronous checks if needed, 
         // but here we rely on the MockTerrain delay (100ms).
@@ -127,25 +129,25 @@ describe('Regression: Worker Logic & Stability', () => {
             game.simTotalTimeSec += 0.016;
             unit.updateLogic(game.simTotalTimeSec, 0.016);
 
-            // Should stay in JobState
-            expect(unit.state.name).toBe('JobState');
+            // Should stay in Job
+            expect(unit.state.name).toBe('Job');
         }
 
         // Wait for promise resolution
         await new Promise(r => setTimeout(r, 150));
 
         // Final check
-        expect(unit.state.name).toBe('JobState');
+        expect(unit.state.name).toBe('Job');
     });
 
     // 2. Passive Worker Fix (Aggression)
     it('should attack nearby Goblin Hut when idle (Passive Worker Fix)', () => {
         // Setup: Nearby Goblin Hut
-        const hut = { id: 'hut1', type: 'goblin_hut', gridX: 12, gridZ: 12, isDead: false, userData: { hp: 100 } };
+        const hut = { id: 'hut1', type: 'goblin_hut', gridX: 12, gridZ: 12, isDead: false, userData: { hp: 100, type: 'goblin_hut' } };
         terrain.buildings.push(hut);
 
         // State: Wander
-        unit.changeState(new UnitWanderState(unit));
+        unit.changeState(new Wander(unit));
 
         // Logic Update
         // Force scan might be needed due to throttling. 
@@ -156,9 +158,9 @@ describe('Regression: Worker Logic & Stability', () => {
         for (let i = 0; i < 40; i++) {
             game.simTotalTimeSec += 0.016;
             game.frameCount = i;
-            unit.updateLogic(game.simTotalTimeSec, 0.016, false, []);
+            unit.updateLogic(game.simTotalTimeSec, 0.016, false, [], terrain.buildings, []);
 
-            if (unit.state.name === 'CombatState') {
+            if (unit.state.name === 'Combat') {
                 enteredCombat = true;
                 break;
             }
@@ -188,7 +190,7 @@ describe('Regression: Worker Logic & Stability', () => {
         // Setup: Job
         const req = { id: 102, type: 'build', x: 80, z: 80, status: 'assigned', assignedTo: unit.id };
         unit.targetRequest = req;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Logic Update
         let enteredCombat = false;
@@ -199,7 +201,7 @@ describe('Regression: Worker Logic & Stability', () => {
         for (let i = 0; i < 40; i++) {
             game.simTotalTimeSec += 0.016;
             game.frameCount = i;
-            unit.updateLogic(game.simTotalTimeSec, 0.016, false, game.goblinManager.goblins);
+            unit.updateLogic(game.simTotalTimeSec, 0.016, false, [], [], game.goblinManager.goblins);
 
             if (unit.targetGoblin) {
                 console.log('Target set:', unit.targetGoblin);
@@ -208,7 +210,7 @@ describe('Regression: Worker Logic & Stability', () => {
                 }
             }
 
-            if (unit.state.name === 'CombatState') {
+            if (unit.state.name === 'Combat') {
                 enteredCombat = true;
                 break;
             }

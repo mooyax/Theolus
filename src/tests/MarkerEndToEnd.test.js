@@ -1,7 +1,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
 // Mock THREE
@@ -76,9 +76,9 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
                 r.assignedTo = u.id;
                 u.targetRequest = r;
                 try {
-                    u.changeState(new JobState(u));
+                    u.changeState(new Job(u));
                 } catch (e) {
-                    console.error('JobState Error:', e);
+                    console.error('Job Error:', e);
                 }
                 return true;
             }),
@@ -180,7 +180,7 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
     it('should persist through pathfinding delays for manual jobs', () => {
         const req = { id: 'req_manual', type: 'raise', x: 50, z: 50, isManual: true, status: 'assigned', assignedTo: 1 };
         unit.targetRequest = req;
-        const state = new JobState(unit);
+        const state = new Job(unit);
         unit.state = state;
         state.enter();
 

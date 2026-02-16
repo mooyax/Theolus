@@ -100,7 +100,8 @@ describe('Job Reassignment on Death', () => {
         console.log(`[Test] Killing unit1 (ID:${id1})...`);
         unit1.die();
 
-        // 5. Verify reassignment
+        // Explicitly trigger reassignment process
+        game.processAssignments();
         console.log(`[Test] Request Status: ${req.status}, AssignedTo: ${req.assignedTo}`);
 
         try {

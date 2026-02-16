@@ -42,22 +42,20 @@ describe('Goblin Raid Threshold', () => {
         expect(clan.active).toBe(false);
     });
 
-    it('should activate raid on third aggression (3/3)', () => {
+    it('should activate raid on aggression threshold (15.0)', () => {
         const clanId = 'clan_test_active';
         const target = { x: 50, z: 50 };
 
-        // 1st
-        goblinManager.notifyClanActivity(clanId, target);
+        // Pump to 14 (Below Threshold)
+        for (let i = 0; i < 14; i++) {
+            goblinManager.notifyClanActivity(clanId, target);
+        }
+        expect(goblinManager.clans[clanId].aggression).toBe(14.0);
         expect(goblinManager.clans[clanId].active).toBe(false);
 
-        // 2nd
+        // 15th (Activate)
         goblinManager.notifyClanActivity(clanId, target);
-        expect(goblinManager.clans[clanId].aggression).toBe(2.0);
-        expect(goblinManager.clans[clanId].active).toBe(false);
-
-        // 3rd
-        goblinManager.notifyClanActivity(clanId, target);
-        expect(goblinManager.clans[clanId].aggression).toBe(3.0);
+        expect(goblinManager.clans[clanId].aggression).toBe(15.0);
         expect(goblinManager.clans[clanId].active).toBe(true);
     });
 
@@ -73,8 +71,6 @@ describe('Goblin Raid Threshold', () => {
 
         // Simulate 10 seconds passing
         // Decay rate is 0.1 per second (deltaTime * 0.1)
-        // updateClanWaves(deltaTime)
-        // Call it 10 times with dt=1.0
         for (let i = 0; i < 10; i++) {
             goblinManager.updateClanWaves(1.0);
         }
@@ -101,18 +97,18 @@ describe('Goblin Raid Threshold', () => {
         const clanId = 'clan_peace';
         const target = { x: 50, z: 50 };
 
-        // 1. Activate
-        goblinManager.notifyClanActivity(clanId, target);
-        goblinManager.notifyClanActivity(clanId, target);
-        goblinManager.notifyClanActivity(clanId, target);
+        // 1. Activate (15 hits)
+        for (let i = 0; i < 15; i++) {
+            goblinManager.notifyClanActivity(clanId, target);
+        }
         const clan = goblinManager.clans[clanId];
         expect(clan.active).toBe(true);
-        expect(clan.aggression).toBe(3.0);
+        expect(clan.aggression).toBe(15.0);
 
         // 2. Decay logic (War Exhaustion)
-        // Rate: 0.05 per sec. Need 3.0 / 0.05 = 60s
-        // Simulate 70s
-        for (let i = 0; i < 70; i++) {
+        // Rate: 0.05 per sec. Need 15.0 / 0.05 = 300s
+        // Simulate 310s
+        for (let i = 0; i < 310; i++) {
             goblinManager.updateClanWaves(1.0); // 1s
         }
 

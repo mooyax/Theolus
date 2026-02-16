@@ -1,53 +1,76 @@
 
-[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+ RUN  v4.0.15 C:/Users/mooya/develop/test
 
-[90mstdout[2m | src/tests/JitterInvestigation.test.js[2m > [22m[2mMovement Jitter Investigation[2m > [22m[2mshould monitor limb state between tile arrivals
-[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+stdout | src/tests/Terrain.test.js
+[DEBUG] Building.ts loaded
 
-[90mstdout[2m | src/tests/JitterInvestigation.test.js[2m > [22m[2mMovement Jitter Investigation[2m > [22m[2mshould monitor limb state between tile arrivals
-[22m[39m[Actor 0] SmartMove Dist: 2 Path: No
-[Unit 0] Moving onto Rock at 10,11 H:10 (Speed Penalty)
-[JobState] Entered. Target: raise. ResumeCtx: Idle
-[Unit 0] tryBuildStructure BLOCKED by targetRequest: req1
-[JobState 0] Ownership LOST for Job req1. Switching to Wander.
-[Defense Debug 0] shouldScan:true isBusy:false force:false PassedGoblins:None
+stdout | src/tests/Terrain.test.js
+[DEBUG] Terrain.ts top-level load
 
-[90mstdout[2m | src/tests/JitterInvestigation.test.js[2m > [22m[2mMovement Jitter Investigation[2m > [22m[2mshould check if executeMove mid-move resets speed significantly
-[22m[39m[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
-[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+stdout | src/tests/Terrain.test.js > Terrain Logic > Population Update > should correctly sum housing population excluding farms
+[Terrain] Constructor. updatePopulation type: function
 
-[90mstdout[2m | src/tests/JitterInvestigation.test.js[2m > [22m[2mMovement Jitter Investigation[2m > [22m[2mshould check if executeMove mid-move resets speed significantly
-[22m[39m[Test] Mid-move duration: 2.800 (Original: 2.800)
+stdout | src/tests/Terrain.test.js > Terrain Logic > Population Update > should grow population in a house over time
+Disposing detached game instance
 
- [31m笶ｯ[39m src/tests/JitterInvestigation.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 25[2mms[22m[39m
-[31m     [31mﾃ・[31m should monitor limb state between tile arrivals[39m[32m 20[2mms[22m[39m
-     [32m笨・[39m should check if executeMove mid-move resets speed significantly[32m 3[2mms[22m[39m
+stdout | src/tests/Terrain.test.js > Terrain Logic > Population Update > should grow population in a house over time
+[Terrain] Constructor. updatePopulation type: function
 
-竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should grow crops using simDeltaTime (Not raw deltaTime)
+Disposing detached game instance
 
- FAIL  src/tests/JitterInvestigation.test.js > Movement Jitter Investigation > should monitor limb state between tile arrivals
-AssertionError: expected false to be true // Object.is equality
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should grow crops using simDeltaTime (Not raw deltaTime)
+[Terrain] Constructor. updatePopulation type: function
 
-- Expected
-+ Received
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should preserve overflow when harvesting
+Disposing detached game instance
 
-- true
-+ false
+stdout | src/tests/Terrain.test.js > Terrain Logic > Farm Logic > should preserve overflow when harvesting
+[Terrain] Constructor. updatePopulation type: function
 
- 笶ｯ src/tests/JitterInvestigation.test.js:84:31
-     82|         // Same frame: Logic update starts NEW move
-     83|         unit.updateLogic(duration, 0.01);
-     84|         expect(unit.isMoving).toBe(true);
-       |                               ^
-     85|         expect(unit.targetGridZ).toBe(12);
-     86| 
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should scale farm yield based on moisture
+Disposing detached game instance
 
-竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should scale farm yield based on moisture
+[Terrain] Constructor. updatePopulation type: function
 
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should reduce food consumption at night
+Disposing detached game instance
 
-[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
-[2m   Start at [22m 22:04:12
-[2m   Duration [22m 1.09s[2m (transform 139ms, setup 43ms, import 190ms, tests 25ms, environment 572ms)[22m
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should reduce food consumption at night
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should consume normal amount during day
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > should consume normal amount during day
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should return different colors for seasons
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should return different colors for seasons
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should keep rock color even if dry (desert override check)
+Disposing detached game instance
+
+stdout | src/tests/Terrain.test.js > Terrain Logic > Advanced Mechanics > Seasonal Colors > should keep rock color even if dry (desert override check)
+[Terrain] Constructor. updatePopulation type: function
+
+ 笶ｯ src/tests/Terrain.test.js (9 tests | 1 failed) 1246ms
+       笨・should correctly sum housing population excluding farms 153ms
+       ﾃ・should grow population in a house over time 149ms
+       笨・should grow crops using simDeltaTime (Not raw deltaTime) 146ms
+       笨・should preserve overflow when harvesting 151ms
+       笨・should scale farm yield based on moisture 115ms
+       笨・should reduce food consumption at night 152ms
+       笨・should consume normal amount during day 105ms
+         笨・should return different colors for seasons 115ms
+         笨・should keep rock color even if dry (desert override check) 156ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  14:06:46
+   Duration  2.25s (transform 241ms, setup 81ms, import 255ms, tests 1.25s, environment 469ms)
 

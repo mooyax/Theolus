@@ -62,9 +62,12 @@ describe('Action Label Stability', () => {
         game.terrain.findPath = vi.fn().mockImplementation((sx, sz, ex, ez) => {
             return [{ x: sx + 1, z: sz }, { x: sx + 2, z: sz }, { x: ex, z: ez }];
         });
+        game.terrain.findPathAsync = vi.fn().mockImplementation((sx, sz, ex, ez) => {
+            return Promise.resolve([{ x: sx + 1, z: sz }, { x: sx + 2, z: sz }, { x: ex, z: ez }]);
+        });
     });
 
-    it('should maintain stable action label during multi-tile job approach', () => {
+    it('should maintain stable action label during multi-tile job approach', async () => {
         const unit = game.spawnUnit(10, 10, 'worker');
 
         // Add a Request
@@ -84,6 +87,7 @@ describe('Action Label Stability', () => {
 
             // 1. Logic Update
             unit.updateLogic(time, 1.0, false, []);
+            await Promise.resolve(); // Flush microtasks from findPathAsync
 
             // Should stay as Job label
             expect(unit.action).toBe('Approaching Job');

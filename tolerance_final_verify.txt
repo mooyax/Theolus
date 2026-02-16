@@ -1,0 +1,39 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+stderr | src/tests/PathTolerance.test.js
+[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/PathTolerance.test.js[2m > [22m[2mJob Path Tolerance[2m > [22m[2mshould NOT drop path immediately if blocked transiently
+[22m[39m[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:0
+
+stderr | src/tests/PathTolerance.test.js > Job Path Tolerance > should NOT drop path immediately if blocked transiently
+!!![TRACE Entity 999] startMove target:1,1
+[90mstdout[2m | src/tests/PathTolerance.test.js[2m > [22m[2mJob Path Tolerance[2m > [22m[2mshould NOT drop path immediately if blocked transiently
+[22m[39mSimulating Block...
+[DIAG] executeMove Actor:999 calling startMove.Current isMoving:false 
+[Entity 999] startMove -> isMoving:true. Target:1,1 StartTime:1.0000
+[DIAG] executeMove Actor:999 finished startMove.New isMoving:true 
+Test Unexpected: Path preserved?
+Grace Period prevented path drop.
+
+
+ [32m笨・[39m src/tests/PathTolerance.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 147[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 20:39:30
+[2m   Duration [22m 1.26s[2m (transform 320ms, setup 75ms, import 360ms, tests 147ms, environment 478ms)[22m
+

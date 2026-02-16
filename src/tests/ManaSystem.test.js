@@ -4,12 +4,41 @@ import { InputManager } from '../InputManager.js';
 import * as THREE from 'three';
 
 // Mocks
+vi.mock('three', async () => {
+    return {
+        Raycaster: class {
+            constructor() { this.ray = { origin: {}, direction: {} }; }
+            setFromCamera() { }
+            intersectObjects() { return []; }
+        },
+        Vector2: class { x = 0; y = 0; set() { } },
+        Vector3: class { x = 0; y = 0; z = 0; },
+        ConeGeometry: class { dispose() { } },
+        MeshBasicMaterial: class {
+            constructor() {
+                this.color = { setHex: vi.fn() };
+                this.dispose = vi.fn();
+            }
+        },
+        Mesh: class {
+            constructor(geo, mat) {
+                this.position = { set: vi.fn() };
+                this.rotation = { x: 0 };
+                this.material = mat || { color: { setHex: vi.fn() } };
+                this.geometry = geo || { dispose: vi.fn() };
+            }
+        },
+        Scene: class { add() { } remove() { } }
+    };
+});
+
 global.document = {
     getElementById: () => ({
         innerText: '',
         style: {},
         addEventListener: vi.fn(),
-        classList: { toggle: vi.fn() }
+        classList: { toggle: vi.fn() },
+        textContent: ''
     }),
     createElement: () => ({ getContext: () => ({ fillRect: () => { }, fillStyle: '' }) }),
     body: { appendChild: () => { } },
@@ -18,7 +47,8 @@ global.document = {
 global.window = {
     innerWidth: 100, innerHeight: 100,
     devicePixelRatio: 1,
-    addEventListener: () => { }
+    addEventListener: () => { },
+    game: {} // Ensure window.game exists
 };
 
 describe('Mana System', () => {

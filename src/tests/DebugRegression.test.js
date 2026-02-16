@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
-import { JobState, UnitWanderState } from '../ai/states/UnitStates.js';
+import { Job, Wander } from '../ai/states/UnitStates.js';
 
 // Mock THREE
 vi.mock('three', async () => {
@@ -64,8 +64,8 @@ describe('Debug Regression', () => {
 
         unit.targetRequest = job;
         console.log('--- ENTER JOB STATE ---');
-        unit.changeState(new JobState(unit));
-        unit.isMoving = true; // JobState.enter sets it false, then smartMove sets it true. 
+        unit.changeState(new Job(unit));
+        unit.isMoving = true; // Job.enter sets it false, then smartMove sets it true. 
 
         // Simulate Snatch
         const anotherUnitId = 999;

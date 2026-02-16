@@ -1,0 +1,329 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/JobPathFailure.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 0,0
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.023434, 0.247970) -> Grid(2, 24) rngState=undefined
+GoblinManager: Cave registered at 2,24 
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.645274, 0.944854) -> Grid(64, 94) rngState=undefined
+GoblinManager: Cave registered at 64,94 
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.986751, 0.883142) -> Grid(98, 88) rngState=undefined
+GoblinManager: Cave registered at 98,88 
+GoblinManager: Cave registered at 14,0 
+GoblinManager: Cave registered at 76,28 
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+GoblinManager: Force spawning Debug Goblin
+[Game] Generating Preview Terrain...
+[Game] Preview Ready.
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Test Debug] unit.canMoveTo is: [Function: canMoveTo] {
+  _isMockFunction: [33mtrue[39m,
+  getMockImplementation: [36m[Function (anonymous)][39m,
+  mock: {
+    calls: [],
+    contexts: [],
+    instances: [],
+    invocationCallOrder: [],
+    settledResults: [],
+    results: [],
+    lastCall: [36m[Getter][39m
+  },
+  mockImplementation: [36m[Function: mockImplementation][39m,
+  mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+  withImplementation: [36m[Function: withImplementation][39m,
+  mockReturnThis: [36m[Function: mockReturnThis][39m,
+  mockReturnValue: [36m[Function: mockReturnValue][39m,
+  mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+  mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+  mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+  mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+  mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+  mockClear: [36m[Function: mockClear][39m,
+  mockReset: [36m[Function: mockReset][39m,
+  mockRestore: [36m[Function: mockRestore][39m,
+  mockName: [36m[Function: mockName][39m,
+  getMockName: [36m[Function: getMockName][39m,
+  [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+}
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[Test Debug] Changed state to Job. unit.id is: [33m0[39m
+[Test Debug] Changed state to Job. unit.id is: [33m0[39m
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:2 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:3 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:4 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:5 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:1
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:0 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4002.2 Last:4001.1 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4003.3 Last:4002.2 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4004.4 Last:4003.3 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4005.5 Last:4004.4 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4006.6 Last:4005.5 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4007.7 Last:4006.6 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4008.8 Last:4007.7 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4009.9 Last:4008.8 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4011.0 Last:4009.9 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4012.1 Last:4011.0 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4013.2 Last:4012.1 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4014.3 Last:4013.2 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4015.4 Last:4014.3 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4016.5 Last:4015.4 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4017.6 Last:4016.5 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4018.7 Last:4017.6 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4019.8 Last:4018.7 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4020.9 Last:4019.8 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4022.0 Last:4020.9 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:1
+[Actor 0] SmartMove Depth:1 Node:20,0 My:0,0 d:20,0
+[Actor 0] Path Blocked at 20,0
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4023.1 Last:4022.0 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4024.2 Last:4023.1 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4025.3 Last:4024.2 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4026.4 Last:4025.3 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4027.5 Last:4026.4 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4028.6 Last:4027.5 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4029.7 Last:4028.6 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4030.8 Last:4029.7 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4031.9 Last:4030.8 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4033.0 Last:4031.9 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4034.1 Last:4033.0 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4035.2 Last:4034.1 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4036.3 Last:4035.2 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4037.4 Last:4036.3 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4038.5 Last:4037.4 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4039.6 Last:4038.5 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4040.7 Last:4039.6 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4041.8 Last:4040.7 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4042.9 Last:4041.8 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4044.0 Last:4042.9 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove to 20,0 (H:10). Reachable:true Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4045.1 Last:4044.0 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4046.2 Last:4045.1 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4047.3 Last:4046.2 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4048.4 Last:4047.3 Throttle:1.00 Action:Approaching Job
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:4049.5 Last:4048.4 Throttle:1.00 Action:Approaching Job
+
+ ﾃ・src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly 40ms
+   竊・expected { id: 101, x: 20, z: +0, 窶ｦ(3) } to be null
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  23:02:39
+   Duration  1.48s (transform 599ms, setup 89ms, import 653ms, tests 41ms, environment 462ms)
+

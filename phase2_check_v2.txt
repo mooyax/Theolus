@@ -1,0 +1,72 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/BuildingStart.test.js[2m > [22m[2mBuilding Logic[2m > [22m[2mshould build house if population is sufficient (Initial State)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Stabilization.test.js[2m > [22m[2mStabilization Verified[2m > [22m[2mshould NOT overwrite Action: Moving with Idle during Wander state self-transition
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/BuildingStart.test.js[2m > [22m[2mBuilding Logic[2m > [22m[2mshould build house if population > 8 (with Base Cap 10)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Stabilization.test.js[2m > [22m[2mStabilization Verified[2m > [22m[2mshould NOT build on slope (Strict Check)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+[90mstdout[2m | src/tests/Stabilization.test.js[2m > [22m[2mStabilization Verified[2m > [22m[2mshould build on flat ground
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+ [32m笨・[39m src/tests/BuildingStart.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+[90mstdout[2m | src/tests/Stabilization.test.js[2m > [22m[2mStabilization Verified[2m > [22m[2mshould NOT build infinite houses (Population Cap Logic)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 5,5
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:5,5
+
+ [32m笨・[39m src/tests/Stabilization.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould move immediately on first call
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould move immediately on first call
+[22m[39mTest 1 moved: [33mtrue[39m
+Test 1 isMoving: [33mtrue[39m
+Test 1 path len: null
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould handle throttling correctly
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould handle throttling correctly
+[22m[39mTest 2 moved2: [33mtrue[39m
+Test 2 isMoving: [33mtrue[39m
+Moved2 (Throttled): true
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould continue moving along path even if throttled
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/MovementFix.test.js[2m > [22m[2mUnit Movement & Throttling Fix[2m > [22m[2mshould NOT become idle when throttled
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+ [32m笨・[39m src/tests/MovementFix.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 18:45:50
+[2m   Duration [22m 1.66s[2m (transform 1.18s, setup 1.15s, import 467ms, tests 33ms, environment 1.53s)[22m
+

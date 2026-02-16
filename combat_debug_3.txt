@@ -1,0 +1,93 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:soldier Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:soldier Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+Goblin constructor: calling super...
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Actor 0] CHANGE STATE: None -> Wander Request:null 
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Goblin should switch target to nearby Unit while moving to distant Building
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Goblin should switch target to nearby Unit while moving to distant Building
+Goblin constructor: calling super...
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:soldier Pos:20,20 Special:false
+[UnitCore.js] Unit Created ID:1 Role:soldier Pos:20,20
+[UnitCore.js] Unit Construction Finished ID:1
+[GoblinState 3] Encounter! Switching from Building to Nearby Unit 4
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Worker should reduce scan range (Worker Aggression Fix)
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Worker should reduce scan range (Worker Aggression Fix)
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[DIAG] Actor Created ID: 4
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:2
+
+ 笶ｯ src/tests/EncounterCombat.test.js (3 tests | 1 failed) 23ms
+     ﾃ・Unit should switch target to nearby Goblin while moving to distant Building 18ms
+     笨・Goblin should switch target to nearby Unit while moving to distant Building 3ms
+     笨・Worker should reduce scan range (Worker Aggression Fix) 2ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  17:33:58
+   Duration  855ms (transform 201ms, setup 62ms, import 223ms, tests 23ms, environment 394ms)
+

@@ -1,0 +1,25 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/SpawnCost.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/SpawnCost.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/SpawnCost.test.js > Unit Spawn Cost > should consume food when spawning from House
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/SpawnCost.test.js > Unit Spawn Cost > should BLOCK spawn if insufficient food
+Disposing detached game instance
+
+stdout | src/tests/SpawnCost.test.js > Unit Spawn Cost > should BLOCK spawn if insufficient food
+[Terrain] Constructor. updatePopulation type: function
+
+ 笨・src/tests/SpawnCost.test.js (2 tests) 235ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  23:08:52
+   Duration  1.37s (transform 305ms, setup 82ms, import 323ms, tests 235ms, environment 550ms)
+

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
-import { JobState, UnitWanderState } from '../ai/states/UnitStates.js';
+import { Job, Wander } from '../ai/states/UnitStates.js';
 
 // Mock THREE
 vi.mock('three', () => {
@@ -22,21 +22,21 @@ vi.mock('three', () => {
     };
 });
 
-// Mock Window and Game
-// Mock Window and Game
-if (typeof window !== 'undefined') {
-    window.game = {
-        gameTime: 100,
-        units: [],
-        buildings: [],
-        requests: [],
-        isNight: false,
-        findBestRequest: vi.fn(() => null),
-        claimRequest: vi.fn(() => true),
-        releaseRequest: vi.fn(),
-        completeRequest: vi.fn()
-    };
-}
+// Mock Global Window/Game
+const mockGame = {
+    gameTime: 100,
+    units: [],
+    buildings: [],
+    requests: [],
+    isNight: false,
+    findBestRequest: vi.fn(() => null),
+    claimRequest: vi.fn(() => true),
+    releaseRequest: vi.fn(),
+    completeRequest: vi.fn(),
+    totalPopulation: 10
+};
+vi.stubGlobal('game', mockGame);
+vi.stubGlobal('window', { game: mockGame });
 
 const mockScene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
 const mockTerrain = {
@@ -74,21 +74,21 @@ describe('Building Distraction Bug', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockTerrain.buildings = [];
-        window.game.units = [];
+        mockGame.units = [];
 
         // Create Worker Unit
         unit = new Unit(mockScene, mockTerrain, 10, 10, 'worker');
-        window.game.units.push(unit);
+        mockGame.units.push(unit);
     });
 
-    it('should NOT build a house while in JobState moving to target', () => {
+    it('should NOT build a house while in Job moving to target', () => {
         // 1. Assign Job (Move to 20,20)
         // Correctly use ID for assignedTo
         const request = { id: 1, type: 'manual', x: 20, z: 20, assignedTo: unit.id, status: 'assigned' };
         unit.targetRequest = request;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
-        expect(unit.state.constructor.name).toBe('JobState');
+        expect(unit.state.constructor.name).toBe('Job');
 
         // 2. Simulate Movement
         unit.canBuildAt = vi.fn(() => true);
@@ -101,13 +101,13 @@ describe('Building Distraction Bug', () => {
             unit.updateLogic(i * 0.16, 0.16);
 
             // Check if state changed
-            if (unit.state.constructor.name !== 'JobState') {
+            if (unit.state.constructor.name !== 'Job') {
                 console.log(`[Test] State changed to ${unit.state.constructor.name} at frame ${i}`);
             }
         }
 
         // 3. Assetions
-        expect(unit.state.constructor.name).toBe('JobState');
+        expect(unit.state.constructor.name).toBe('Job');
 
         // It SHOULD NOT have called tryBuildStructure
         expect(unit.tryBuildStructure).not.toHaveBeenCalled();
@@ -125,7 +125,7 @@ describe('Building Distraction Bug', () => {
         const currentTime = 6.0;     // Current time 6.0s (Delta 1.0s < 5.0s Cooldown)
 
         // 2. Switch to WanderState
-        unit.changeState(new UnitWanderState(unit));
+        unit.changeState(new Wander(unit));
         console.log(`[Test] Switched to state: ${unit.state.constructor.name}`);
 
         // 3. Mock logic

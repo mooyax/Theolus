@@ -1,7 +1,7 @@
 
 // @vitest-environment happy-dom
 import { Unit } from '../Unit.js';
-import { JobState, UnitWanderState } from '../ai/states/UnitStates.js';
+import { Job, Wander } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 
@@ -76,6 +76,7 @@ describe('Worker Job Logic (Unit.js + States)', () => {
             }),
             completeRequest: vi.fn(function (unit, req) {
                 if (req.type === 'raise') mockTerrain.raise(req.x, req.z);
+                req.status = 'completed'; // FIX: Update status so Job exits
                 const idx = this.requestQueue.indexOf(req);
                 if (idx !== -1) this.requestQueue.splice(idx, 1);
             }),
@@ -92,7 +93,7 @@ describe('Worker Job Logic (Unit.js + States)', () => {
         unit.isReachable = vi.fn().mockReturnValue(true);
 
         // Initial state
-        unit.changeState(new UnitWanderState(unit));
+        unit.changeState(new Wander(unit));
 
         // GLOBAL MOUNT
         window.game = mockGame;
@@ -107,26 +108,26 @@ describe('Worker Job Logic (Unit.js + States)', () => {
         expect(unit.targetRequest).toBe(req);
         expect(req.status).toBe('assigned');
         expect(req.assignedTo).toBe(unit.id);
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
     });
 
     test('Unit moves to target request', () => {
         const req = mockGame.addRequest('raise', 10, 10);
 
-        // Spy on smartMove (which JobState uses) - MOVED BEFORE State Change to catch 'enter' call
+        // Spy on smartMove (which Job uses) - MOVED BEFORE State Change to catch 'enter' call
         vi.spyOn(unit, 'smartMove').mockReturnValue(true);
 
         // Setup Unit State initially
         unit.targetRequest = req;
         req.status = 'assigned';
         req.assignedTo = unit.id;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
         unit.gridX = 0; unit.gridZ = 0;
 
         // Update
         unit.updateLogic(2000, 0.016);
 
-        // In JobState, action is set to 'Approaching Job' when moving
+        // In Job, action is set to 'Approaching Job' when moving
         expect(unit.action).toBe('Approaching Job');
         expect(unit.smartMove).toHaveBeenCalled();
     });
@@ -136,7 +137,7 @@ describe('Worker Job Logic (Unit.js + States)', () => {
         unit.targetRequest = req;
         req.status = 'assigned';
         req.assignedTo = unit.id;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Place Unit AT location (within approach distance 3.0 for raise)
         unit.gridX = 10;

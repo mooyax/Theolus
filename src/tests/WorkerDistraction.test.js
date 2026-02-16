@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
-import { JobState, UnitWanderState } from '../ai/states/UnitStates.js';
+import { Job, Wander } from '../ai/states/UnitStates.js';
 
 // Mocks
 global.window = {
@@ -71,9 +71,9 @@ describe('Worker Distraction Investigation', () => {
         game.units.push(unit);
     });
 
-    it('should immediately switch to JobState and target the job upon assignment', async () => {
+    it('should immediately switch to Job and target the job upon assignment', async () => {
         // 1. Setup: Unit is wandering
-        unit.changeState(new UnitWanderState(unit));
+        unit.changeState(new Wander(unit));
 
         // 2. Create a manual request FAR AWAY (Trigger Pathfinding)
         const req = {
@@ -99,7 +99,7 @@ describe('Worker Distraction Investigation', () => {
         unit.action = 'Approaching Job';
         unit.isMoving = false;
         unit.lastPathTime = 0; // Force pathfind
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // 4. Update Frame 1
         console.log(`[Test] Update Frame 1...`);
@@ -114,7 +114,7 @@ describe('Worker Distraction Investigation', () => {
         expect(unit.isMoving).toBe(true);
         // Expect target to be > 10 (Moving towards 50)
         expect(unit.targetGridX).toBeGreaterThan(10);
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
     });
 
     it('should NOT be distracted by WanderState updates during Job', async () => {
@@ -123,7 +123,7 @@ describe('Worker Distraction Investigation', () => {
         unit.targetRequest = req;
         unit.isMoving = false;
         unit.lastPathTime = 0;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Force movement start
         unit.smartMove(40, 10, 100);
@@ -137,21 +137,21 @@ describe('Worker Distraction Investigation', () => {
         for (let i = 0; i < 5; i++) {
             unit.updateLogic(100.2 + i * 0.1, 0.1);
             // No wait
-            if (unit.state.constructor.name !== 'JobState') {
+            if (unit.state.constructor.name !== 'Job') {
                 console.error(`[Test] State reverted to ${unit.state.constructor.name} at frame ${i}`);
             }
-            expect(unit.state).toBeInstanceOf(JobState);
+            expect(unit.state).toBeInstanceOf(Job);
             expect(unit.targetGridX).toBeGreaterThan(10);
         }
     });
 
     it('should not freeze due to throttle at low game time', async () => {
-        unit.changeState(new UnitWanderState(unit));
+        unit.changeState(new Wander(unit));
         const req = { id: 'req_2', type: 'raise', x: 50, z: 50, status: 'assigned', assignedTo: unit.id, isManual: true };
 
         // Assignment at time 0.5s
         unit.targetRequest = req;
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
         // Frame 1: Time = 0.5
         unit.updateLogic(0.5, 0.1);
@@ -159,13 +159,13 @@ describe('Worker Distraction Investigation', () => {
 
         unit.updateLogic(0.6, 0.1);
 
-        // Check that state is still JobState
-        expect(unit.state).toBeInstanceOf(JobState);
+        // Check that state is still Job
+        expect(unit.state).toBeInstanceOf(Job);
 
         // Advance more
         unit.updateLogic(0.7, 0.1);
 
-        expect(unit.state).toBeInstanceOf(JobState);
+        expect(unit.state).toBeInstanceOf(Job);
     });
 
     it('should NOT build a house immediately if pathfinding fails temporarily', async () => {
@@ -180,25 +180,26 @@ describe('Worker Distraction Investigation', () => {
         unit.targetRequest = req;
 
         // Mock smartMove to FAIL (Simulate Stuck/Unreachable)
-        // We need to trigger the failure counter > 5
-        // MUST mock before changeState because enter() calls update() which calls smartMove()
-        unit.smartMove = vi.fn(() => false);
+        unit.smartMove = vi.fn(() => {
+            unit.isUnreachable = true;
+            return false;
+        });
         unit.isReachable = () => false; // Force unreachable logic
 
-        unit.changeState(new JobState(unit));
+        unit.changeState(new Job(unit));
 
-        // Run update loop 120 times (Trigger Give Up at 100, then wait 2s < 5s cooldown)
-        for (let i = 0; i < 120; i++) {
+        // Run update loop 30 times (Trigger Give Up at frame 0, then wait 3s < 5s cooldown)
+        for (let i = 0; i < 30; i++) {
             unit.updateLogic(100 + i * 0.1, 0.1);
             await new Promise(r => setTimeout(r, 0));
         }
 
         // Expectation:
-        // 1. JobState should HAVE ABORTED (Abandonment restored)
-        // 2. State should be UnitWanderState (or ResumeState)
+        // 1. Job should HAVE ABORTED (Abandonment restored)
+        // 2. State should be Wander (or ResumeState)
         // 3. Request should be globally deferred
 
-        expect(unit.state).not.toBeInstanceOf(JobState);
+        expect(unit.state).not.toBeInstanceOf(Job);
         expect(unit.targetRequest).toBeNull();
         expect(req.excludedUntil).toBeGreaterThan(0);
 

@@ -1,0 +1,181 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[Actor 1] SmartMove Depth:1 Node:0,0 My:0,0 d:0,0 
+[Actor 1] Reached Node.Shifting.
+[Actor 1] SmartMove Depth:2 Node:80,80 My:0,0 d:80,80 
+[Unit 1] Moving onto Rock at 80,80 H:10 (Speed Penalty)
+[Unit 1] canMoveTo(80,80) OK
+[Unit 1] canMoveTo(80,80) checking grid...
+[DIAG] executeMove Actor:1 calling startMove.Current isMoving:false 
+[Entity 1] startMove -> isMoving:true. Target:80,80 StartTime:100.0000
+[DIAG] executeMove Actor:1 finished startMove.New isMoving:true 
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:0
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[Unit Debug 0] updateLogic. State: Wander
+[Unit 0] State Change: Wander -> Combat
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:1
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould return to previous movement target after finishing a job
+[22m[39m[Actor 1] Path Invalidated: Target Changed.Old:80,80 New:30,30 
+[Test] Final Target: 30,30 State: Job
+[Actor 1] SmartMove Depth:1 Node:0,0 My:30,30 d:30,30 
+[Unit 1] Moving onto Rock at 0,0 H:10 (Speed Penalty)
+[Unit 1] canMoveTo(0,0) OK
+[Unit 1] canMoveTo(0,0) checking grid...
+[DIAG] executeMove Actor:1 calling startMove.Current isMoving:false 
+[Entity 1] startMove -> isMoving:true. Target:0,0 StartTime:0.0000
+[DIAG] executeMove Actor:1 finished startMove.New isMoving:true 
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:2
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Actor 2] SmartMove Depth:1 Node:7,0 My:0,0 d:7,0 
+[Unit 2] Moving onto Rock at 7,0 H:10 (Speed Penalty)
+[Unit 2] canMoveTo(7,0) OK
+[Unit 2] canMoveTo(7,0) checking grid...
+[DIAG] executeMove Actor:2 calling startMove.Current isMoving:false 
+[Entity 2] startMove -> isMoving:true. Target:7,0 StartTime:1000.0000
+[DIAG] executeMove Actor:2 finished startMove.New isMoving:true 
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould NOT auto-target distant Huts (Workers are passive)
+[22m[39m[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:3
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould NOT auto-target distant Huts (Workers are passive)
+[22m[39m[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[DIAG] Actor Created ID: 4
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:4
+
+[90mstdout[2m | src/tests/InterruptResume.test.js[2m > [22m[2mUnit Interrupt and Resume[2m > [22m[2mshould resume MIGRATION after Combat interruption
+[22m[39m[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:1
+
+ [31mﾃ・[39m src/tests/InterruptResume.test.js[2m > [22mUnit Interrupt and Resume[2m > [22mshould return to previous movement target after finishing a job[32m 23[2mms[22m[39m
+[31m   竊・expected 30 to be 80 // Object.is equality[39m
+ [32m笨・[39m src/tests/InterruptResume.test.js[2m > [22mUnit Interrupt and Resume[2m > [22mshould resume MIGRATION after Combat interruption[32m 2[2mms[22m[39m
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould auto-target CLOSE Huts for self-defense (Workers)
+[22m[39m[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+[DIAG] Actor Created ID: 5
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:5 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:5 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:5
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould auto-target CLOSE Huts for self-defense (Workers)
+[22m[39m[Entity 6] Calling registerEntity...
+[Entity 6] registerEntity returned.
+[Entity 6] Calling updatePosition...
+[Entity 6] updatePosition returned.
+[DIAG] Actor Created ID: 6
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:6
+[TargetDebug 6] Scanning Building hut_near dist:2.00 range:10 role:worker
+
+ [32m笨・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould prioritize Goblin if it is much closer than Building[32m 5[2mms[22m[39m
+ [32m笨・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould prioritize Building if distances are very close (Siege Mode)[32m 4[2mms[22m[39m
+ [31mﾃ・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould NOT auto-target distant Huts (Workers are passive)[32m 11[2mms[22m[39m
+[31m   竊・expected { userData: { 窶ｦ(4) }, gridX: 10, 窶ｦ(2) } to be falsy[39m
+ [32m笨・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould auto-target CLOSE Huts for self-defense (Workers)[32m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 00:12:19
+[2m   Duration [22m 1.04s[2m (transform 323ms, setup 134ms, import 365ms, tests 50ms, environment 1.05s)[22m
+

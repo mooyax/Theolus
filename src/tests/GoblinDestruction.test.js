@@ -6,14 +6,14 @@ import { Building } from '../Building.js';
 // Mock Dependencies
 const mockTerrain = {
     findBestTarget: vi.fn(),
-    getTileHeight: () => 10,
+    getTileHeight: () => 1,
     gridToWorld: (v) => v,
     getVisualOffset: () => ({ x: 0, y: 0 }),
     moveEntity: vi.fn(),
     registerEntity: vi.fn(),
     unregisterEntity: vi.fn(),
-    getVisualPosition: () => ({ x: 0, y: 5, z: 0 }),
-    removeBuilding: vi.fn((b) => { if (b && b.userData) b.userData.isDead = true; }),
+    getVisualPosition: () => ({ x: 0, y: 1, z: 0 }),
+    removeBuilding: vi.fn((b) => { if (b) { if (b.isDestroyed()) return; b.userData.isDead = true; } }),
     grid: [],
     getBuildingSize: () => 2
 };
@@ -24,16 +24,17 @@ const mockScene = {
     getObjectByName: vi.fn().mockReturnValue({ add: vi.fn(), remove: vi.fn(), children: [] })
 };
 
-// Mock Window Game
+// Mock Global Window/Game
 const mockGame = {
     goblinManager: {
         recordRaidLocation: vi.fn(),
-        increasePlunder: vi.fn()
+        increasePlunder: vi.fn(),
+        notifyClanActivity: vi.fn()
     },
-    reportGlobalBattle: vi.fn()
+    reportGlobalBattle: vi.fn(),
+    totalPopulation: 10
 };
-
-if (typeof window !== 'undefined') { window.game = mockGame; }
+global.window = { game: mockGame };
 
 describe('Goblin Real Building Destruction', () => {
     let goblin;
@@ -42,7 +43,7 @@ describe('Goblin Real Building Destruction', () => {
     beforeEach(() => {
         // Reset mocks
         mockTerrain.removeBuilding.mockClear();
-        window.game.goblinManager.recordRaidLocation.mockClear();
+        mockGame.goblinManager.recordRaidLocation.mockClear();
 
         // Create Goblin
         goblin = new Goblin(mockScene, mockTerrain, 10, 10, 'normal');
@@ -56,6 +57,7 @@ describe('Goblin Real Building Destruction', () => {
         building.hp = 100;
         building.userData.population = 10;
         building.userData.hp = 100;
+        building.userData.defense = 0; // No retaliation for simple test
     });
 
     it('should damage building population', () => {
@@ -63,30 +65,30 @@ describe('Goblin Real Building Destruction', () => {
         // damage 10 -> popDamage 1
         expect(building.population).toBe(9);
         expect(building.userData.population).toBe(9);
+        // HP should also decrease: 100 -> 90
+        expect(building.hp).toBe(90);
     });
 
-    it('should destroy building when Pop and HP reach zero', () => {
-        building.population = 0.5;
-        building.hp = 5;
-        building.userData.population = 0.5;
-        building.userData.hp = 5;
-
-        goblin.attackBuilding(building);
-
-        expect(mockTerrain.removeBuilding).toHaveBeenCalledWith(building);
-        expect(building.userData.isDead).toBe(true);
-    });
-
-    it('should NOT destroy if population remains high', () => {
+    it('should destroy building when HP reaches zero (Universal Rule)', () => {
         building.population = 5.0;
-        building.hp = 0; // Integrity gone but populated
+        building.hp = 5.0; // Low HP
         building.userData.population = 5.0;
-        building.userData.hp = 0;
+        building.userData.hp = 5.0;
 
         goblin.attackBuilding(building);
 
-        expect(mockTerrain.removeBuilding).not.toHaveBeenCalled();
-        // Population should decrease instead
-        expect(building.population).toBe(4.0);
+        expect(mockTerrain.removeBuilding).toHaveBeenCalled();
+        expect(building.hp).toBeLessThanOrEqual(0);
+    });
+
+    it('should decrease HP of a Farm (No population survival)', () => {
+        const farm = new Building(mockScene, mockTerrain, 'farm', 12, 12);
+        farm.hp = 80;
+        farm.population = 50; // 50% growth
+
+        goblin.attackBuilding(farm);
+
+        expect(farm.hp).toBe(70); // 80 - 10
+        expect(farm.userData.hp).toBe(70);
     });
 });

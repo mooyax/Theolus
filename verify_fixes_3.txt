@@ -1,9 +1,0 @@
-
-[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
-
-
-[2m Test Files [22m [1m[31m3 failed[39m[22m[90m (3)[39m
-[2m      Tests [22m [2mno tests[22m
-[2m   Start at [22m 13:11:59
-[2m   Duration [22m 847ms[2m (transform 227ms, setup 86ms, import 0ms, tests 0ms, environment 1.49s)[22m
-

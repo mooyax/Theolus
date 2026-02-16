@@ -1,7 +1,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
-import { UnitWanderState, SleepState } from '../ai/states/UnitStates.js';
+import { Wander, Sleep } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
 // Mock THREE
@@ -50,42 +50,46 @@ describe('Night Movement and Sleep State', () => {
         unit.game = game;
     });
 
-    it('should transition from WanderState to SleepState at night', () => {
-        unit.changeState(new UnitWanderState(unit));
-        expect(unit.state).toBeInstanceOf(UnitWanderState);
+    it('should transition from WanderState to Sleep at night', () => {
+        // Add a shelter so transition condition is met
+        const shelter = { gridX: 20, gridZ: 20, type: 'house', id: 'h1', userData: { hp: 100 } };
+        terrain.buildings = [shelter];
+
+        unit.changeState(new Wander(unit));
+        expect(unit.state).toBeInstanceOf(Wander);
 
         // Update with isNight = true
         unit.updateLogic(101, 1, true, []);
 
-        expect(unit.state).toBeInstanceOf(SleepState);
+        expect(unit.state).toBeInstanceOf(Sleep);
         expect(unit.action).toBe('Sleeping');
     });
 
-    it('should remain in SleepState if isNight persists', () => {
-        unit.changeState(new SleepState(unit));
+    it('should remain in Sleep if isNight persists', () => {
+        unit.changeState(new Sleep(unit));
         game.isNight = true; // Global state also true
 
         unit.updateLogic(101, 1, true, []);
-        expect(unit.state).toBeInstanceOf(SleepState);
+        expect(unit.state).toBeInstanceOf(Sleep);
 
         // Should NOT transition back to Wander if isNight calculation is correct
         // (Even if window.game is used as fallback)
     });
 
     it('should transition back to WanderState when it becomes day', () => {
-        unit.changeState(new SleepState(unit));
+        unit.changeState(new Sleep(unit));
         game.isNight = false;
 
         unit.updateLogic(101, 1, false, []);
 
-        expect(unit.state).toBeInstanceOf(UnitWanderState);
+        expect(unit.state).toBeInstanceOf(Wander);
     });
 
-    it('should move towards shelter when in SleepState', () => {
+    it('should move towards shelter when in Sleep', () => {
         const shelter = { gridX: 20, gridZ: 20, type: 'house', id: 'h1', userData: { hp: 100 } };
         terrain.buildings = [shelter];
 
-        unit.changeState(new SleepState(unit));
+        unit.changeState(new Sleep(unit));
         vi.spyOn(unit, 'smartMove');
 
         unit.updateLogic(101, 1, true, []);

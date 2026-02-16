@@ -1,0 +1,34 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/JitterInvestigation.test.js[2m > [22m[2mMovement Jitter Investigation[2m > [22m[2mshould monitor limb state between tile arrivals
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/JitterInvestigation.test.js[2m > [22m[2mMovement Jitter Investigation[2m > [22m[2mshould monitor limb state between tile arrivals
+[22m[39m[Unit 0] Moving onto Rock at 10,11 H:10 (Speed Penalty)
+
+[90mstdout[2m | src/tests/JitterInvestigation.test.js[2m > [22m[2mMovement Jitter Investigation[2m > [22m[2mshould monitor limb state between tile arrivals
+[22m[39m[Test] Duration: [33m2.8[39m
+[Test] LimbX 99%: [33m-0.062666616782152[39m
+[Unit 0] Moving onto Rock at 10,12 H:10 (Speed Penalty)
+
+[90mstdout[2m | src/tests/JitterInvestigation.test.js[2m > [22m[2mMovement Jitter Investigation[2m > [22m[2mshould check if executeMove mid-move resets speed significantly
+[22m[39m[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] Change State: null -> UnitWanderState
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/JitterInvestigation.test.js[2m > [22m[2mMovement Jitter Investigation[2m > [22m[2mshould check if executeMove mid-move resets speed significantly
+[22m[39m[Test] Fixed Mid-move duration: 1.400 (Original: 2.800)
+
+ [32m笨・[39m src/tests/JitterInvestigation.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/SpawnCost.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 203[2mms[22m[39m
+[31m     [31mﾃ・[31m should consume food when spawning from House[39m[32m 122[2mms[22m[39m
+[31m     [31mﾃ・[31m should BLOCK spawn if insufficient food[39m[32m 80[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 12:09:51
+[2m   Duration [22m 1.42s[2m (transform 1.28s, setup 1.45s, import 196ms, tests 236ms, environment 1.92s)[22m
+

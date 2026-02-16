@@ -1,0 +1,121 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/Regression_WorkerLogic.test.js
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/Regression_WorkerLogic.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/Regression_WorkerLogic.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/Regression_WorkerLogic.test.js
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/Regression_WorkerLogic.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/Regression_WorkerLogic.test.js
+[DEBUG] Game.ts top-level load
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should NOT abort job during long async pathfinding (prevent oscillation)
+[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should NOT abort job during long async pathfinding (prevent oscillation)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should NOT abort job during long async pathfinding (prevent oscillation)
+[Actor 1] Pathfinding SUCCESS: Got 2 nodes to 50,50
+[Entity 1] startMove -> isMoving:true. Target:50,50 StartTime:0.0000
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin Hut when idle (Passive Worker Fix)
+Disposing detached game instance
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin Hut when idle (Passive Worker Fix)
+[Entity 1] CONSTRUCTOR START: type=unit at 10,10
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:1
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin Hut when idle (Passive Worker Fix)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+[DEBUG Unit 1] i=29 PERFORM SCAN: shouldScan=true forceScan=false
+[DEBUG Unit 1] FOUND TARGET? Goblin: false Building: true bestTarget: building
+[Actor 1] Pathfinding SUCCESS: Got 2 nodes to 50,50
+[Entity 1] startMove -> isMoving:true. Target:50,50 StartTime:100.0160
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin even if holding a job (Self Defense)
+Disposing detached game instance
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin even if holding a job (Self Defense)
+[Entity 2] CONSTRUCTOR START: type=unit at 10,10
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:2
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin even if holding a job (Self Defense)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+[DEBUG Unit 1] i=29 PERFORM SCAN: shouldScan=false forceScan=false
+[DEBUG Unit 1] i=30 PERFORM SCAN: shouldScan=true forceScan=true
+[DEBUG Unit 1] FOUND TARGET? Goblin: false Building: false bestTarget: null
+[Actor 1] Pathfinding SUCCESS: Got 2 nodes to 80,80
+[Entity 1] startMove -> isMoving:true. Target:80,80 StartTime:0.0000
+
+ 笶ｯ src/tests/Regression_WorkerLogic.test.js (3 tests | 1 failed) 175ms
+     笨・should NOT abort job during long async pathfinding (prevent oscillation) 157ms
+     笨・should attack nearby Goblin Hut when idle (Passive Worker Fix) 4ms
+     ﾃ・should attack nearby Goblin even if holding a job (Self Defense) 11ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin even if holding a job (Self Defense)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/Regression_WorkerLogic.test.js:219:31
+    217|         }
+    218| 
+    219|         expect(enteredCombat).toBe(true);
+       |                               ^
+    220|         expect(unit.targetGoblin).toBe(goblin);
+    221|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  23:57:52
+   Duration  1.37s (transform 475ms, setup 75ms, import 545ms, tests 175ms, environment 417ms)
+

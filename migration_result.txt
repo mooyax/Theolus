@@ -1,0 +1,126 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/MigrationImprovement.test.js
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should retry migration after 30 seconds timeout
+[Entity 0] CONSTRUCTOR START: type=unit at 50,50
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50
+[UnitCore.js] Unit Construction Finished ID:0
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should retry migration after 30 seconds timeout
+[Actor test-migrant] Resetting Unreachable (Target changed or initializing)
+[Actor test-migrant] Resetting Unreachable (Target changed or initializing)
+[Actor test-migrant] Resetting Unreachable (Target changed or initializing)
+[Actor test-migrant] Pathfinding SUCCESS: Got 1 nodes to 89.7214637914452,47.500937322733336
+[Entity test-migrant] startMove -> isMoving:true. Target:89.7214637914452,47.500937322733336 StartTime:0.0000
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+[Entity 1] CONSTRUCTOR START: type=unit at 50,50
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50
+[UnitCore.js] Unit Construction Finished ID:1
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+[Actor test-migrant] Resetting Unreachable (Target changed or initializing)
+[Test Debug] Action after 1st update: Chasing
+[Actor test-migrant] Resetting Unreachable (Target changed or initializing)
+[Test Debug] Action after 2nd update: Chasing
+[Actor test-migrant] Pathfinding SUCCESS: Got 1 nodes to 26.012714079122865,40.13750541803423
+[Actor test-migrant] Resetting Unreachable (Target changed or initializing)
+[Entity test-migrant] startMove -> isMoving:true. Target:26.012714079122865,40.13750541803423 StartTime:0.0000
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should stop migrating if construction succeeds
+[Entity 2] CONSTRUCTOR START: type=unit at 50,50
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50
+[UnitCore.js] Unit Construction Finished ID:2
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should stop migrating if construction succeeds
+[Actor test-migrant] Resetting Unreachable (Target changed or initializing)
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > should stop migrating if construction succeeds
+[Actor test-migrant] Pathfinding SUCCESS: Got 1 nodes to 70.16013991425109,51.26836849449213
+[Entity test-migrant] startMove -> isMoving:true. Target:70.16013991425109,51.26836849449213 StartTime:0.0000
+
+stdout | src/tests/MigrationImprovement.test.js > Migration Improvements > DEBUG: should log blockage reasons correctly
+[Entity 3] CONSTRUCTOR START: type=unit at 50,50
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:50,50
+[UnitCore.js] Unit Construction Finished ID:3
+
+ 笶ｯ src/tests/MigrationImprovement.test.js (4 tests | 1 failed) 17ms
+     笨・should retry migration after 30 seconds timeout 7ms
+     ﾃ・should interrupt migration if enemy is found (Priority) 7ms
+     笨・should stop migrating if construction succeeds 1ms
+     笨・DEBUG: should log blockage reasons correctly 1ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/MigrationImprovement.test.js > Migration Improvements > should interrupt migration if enemy is found (Priority)
+AssertionError: expected { x: 80, z: 80 } to be null
+
+- Expected: 
+null
+
++ Received: 
+{
+  "x": 80,
+  "z": 80,
+}
+
+ 笶ｯ src/tests/MigrationImprovement.test.js:152:38
+    150| 
+    151|         expect(unit.action).toBe('Chasing');
+    152|         expect(unit.migrationTarget).toBeNull();
+       |                                      ^
+    153| 
+    154|         randSpy.mockRestore();
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  23:43:21
+   Duration  846ms (transform 174ms, setup 70ms, import 149ms, tests 17ms, environment 425ms)
+

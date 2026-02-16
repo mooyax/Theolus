@@ -11,14 +11,14 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // COMPLETELY MOCK state modules to avoid dependency hell
 vi.mock('../ai/states/UnitStates.js', () => ({
-    JobState: class JobState {
+    Job: class Job {
         constructor(actor) {
             this.actor = actor;
             this.targetRequest = actor ? actor.targetRequest : null;
         }
         enter() { }
         update(time, deltaTime) {
-            // Minimal simulation of completion logic in JobState.js
+            // Minimal simulation of completion logic in Job.js
             if (this.targetRequest && this.actor.gridX === this.targetRequest.x && this.actor.gridZ === this.targetRequest.z) {
                 const game = this.actor.game;
                 game.completeRequest(this.actor, this.targetRequest);
@@ -31,7 +31,7 @@ vi.mock('../ai/states/UnitStates.js', () => ({
             }
         }
     },
-    UnitWanderState: class UnitWanderState {
+    Wander: class Wander {
         constructor(actor) { this.actor = actor; }
         enter() { }
         update() { }

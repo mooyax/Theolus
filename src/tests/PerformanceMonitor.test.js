@@ -1,10 +1,23 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+vi.mock('../PerformanceMonitor.js', async () => {
+    return await vi.importActual('../PerformanceMonitor.js');
+});
 import { PerformanceMonitor } from '../PerformanceMonitor.js';
 
 describe('PerformanceMonitor', () => {
     let monitor;
 
     beforeEach(() => {
+        // MOCK DOCUMENT if needed or spy on createElement
+        if (typeof document !== 'undefined') {
+            vi.spyOn(document, 'createElement').mockReturnValue({
+                id: '',
+                style: {},
+                remove: vi.fn(),
+                innerHTML: ''
+            });
+            vi.spyOn(document.body, 'appendChild').mockImplementation(() => { });
+        }
         monitor = new PerformanceMonitor();
     });
 

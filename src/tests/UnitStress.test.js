@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as THREE from 'three';
 import { Game } from '../Game.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 
 // Reuse mocks from MovingFlicker.test.js or use simplified ones
 vi.mock('three', async (importOriginal) => {
@@ -73,8 +73,8 @@ describe('Unit AI Stress Testing', () => {
             game.claimRequest(u, req);
         }
 
-        // Initially all in JobState
-        units.forEach(u => expect(u.state).toBeInstanceOf(JobState));
+        // Initially all in Job
+        units.forEach(u => expect(u.state).toBeInstanceOf(Job));
 
         // Simulation Loop
         // We expect that frame 0 will allow some units to pathfind, others will be throttled
@@ -89,7 +89,7 @@ describe('Unit AI Stress Testing', () => {
             });
 
             // Verify NO unit dropped the job
-            const jobStateCount = units.filter(u => u.state instanceof JobState).length;
+            const jobStateCount = units.filter(u => u.state instanceof Job).length;
             expect(jobStateCount).toBe(numUnits);
 
             // Check if any were throttled (dist is large, so they WANT A*)
@@ -101,7 +101,7 @@ describe('Unit AI Stress Testing', () => {
 
         // Final Verify
         units.forEach(u => {
-            expect(u.state).toBeInstanceOf(JobState);
+            expect(u.state).toBeInstanceOf(Job);
             expect(u.action).toBe('Approaching Job');
         });
     });
@@ -178,7 +178,7 @@ describe('Unit AI Stress Testing', () => {
         // Verify all units eventually moved/pathfound
         expect(movedUnits.size).toBe(numUnits);
         units.forEach(u => {
-            expect(u.state).toBeInstanceOf(JobState);
+            expect(u.state).toBeInstanceOf(Job);
             expect(u.targetRequest).not.toBeNull();
         });
     });

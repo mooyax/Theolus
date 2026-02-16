@@ -1,0 +1,138 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould NOT abort job during long async pathfinding (prevent oscillation)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould NOT abort job during long async pathfinding (prevent oscillation)
+[22m[39m[JobState 1] Entering. Target: 50,50
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    console.log(`[Actor ${this.id}] smartMove called to ${tx},${tz} at ${time}`);
+    this.isUnreachable = false;
+    if (depth > 5) return false;
+    this.isPathf
+[Actor 1] smartMove called to 50,50 at 0
+[Actor 1] smartMove: triggers pathfinding. Dist: 56.6
+[Actor 1] smartMove called to 50,50 at 100
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 50,50 at 100.016
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 50,50 at 100.03200000000001
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 50,50 at 100.04800000000002
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 50,50 at 100.06400000000002
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 50,50 at 100.08000000000003
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 50,50 at 0
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin Hut when idle (Passive Worker Fix)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin Hut when idle (Passive Worker Fix)
+[22m[39m[CombatState] Entering. Saved Context: {"action":"Wandering","target":null,"migrationTarget":null}
+[Actor 1] smartMove called to 12,12 at 100.49600000000017
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin even if holding a job (Self Defense)
+[22m[39m[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+
+[90mstdout[2m | src/tests/Regression_WorkerLogic.test.js[2m > [22m[2mRegression: Worker Logic & Stability[2m > [22m[2mshould attack nearby Goblin even if holding a job (Self Defense)
+[22m[39m[JobState 1] Entering. Target: 80,80
+[JobState 1] smartMove type: function
+[JobState 1] smartMove source: smartMove(tx, tz, time, depth = 0) {
+    console.log(`[Actor ${this.id}] smartMove called to ${tx},${tz} at ${time}`);
+    this.isUnreachable = false;
+    if (depth > 5) return false;
+    this.isPathf
+[Actor 1] smartMove called to 80,80 at 0
+[Actor 1] smartMove: triggers pathfinding. Dist: 42.4
+[Actor 1] smartMove called to 80,80 at 100.016
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.03200000000001
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.04800000000002
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.06400000000002
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.08000000000003
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.09600000000003
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.11200000000004
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.12800000000004
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.14400000000005
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.16000000000005
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.17600000000006
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.19200000000006
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.20800000000007
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.22400000000007
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.24000000000008
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.25600000000009
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.27200000000009
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.2880000000001
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.3040000000001
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.3200000000001
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.33600000000011
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.35200000000012
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.36800000000012
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.38400000000013
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.40000000000013
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.41600000000014
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.43200000000014
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.44800000000015
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.46400000000015
+[Actor 1] smartMove: already pathfinding
+[Actor 1] smartMove called to 80,80 at 100.48000000000016
+[Actor 1] smartMove: already pathfinding
+[JobState 1] Worker found threat/target on path!
+[CombatState 1] Releasing Job 102 to fight!
+[CombatState] Entering. Saved Context: {"action":"Approaching Job","target":null,"migrationTarget":null}
+Target set: {
+  id: [32m'gob1'[39m,
+  gridX: [33m11[39m,
+  gridZ: [33m11[39m,
+  position: { x: [33m11[39m, y: [33m0[39m, z: [33m11[39m },
+  isDead: [33mfalse[39m,
+  hp: [33m10[39m,
+  type: [32m'goblin'[39m,
+  takeDamage: [36m[Function: takeDamage][39m
+}
+[Actor 1] smartMove called to 80,80 at 0
+
+ [32m笨・[39m src/tests/Regression_WorkerLogic.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 172[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 18:16:05
+[2m   Duration [22m 1.62s[2m (transform 561ms, setup 338ms, import 378ms, tests 172ms, environment 489ms)[22m
+

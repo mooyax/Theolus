@@ -18,7 +18,17 @@ export class FishManager {
         console.log("FishManager Refactored: Initialized with Entity-based Fish.");
     }
 
+    reset() {
+        console.log("Resetting FishManager...");
+        for (const f of this.fishes) {
+            if (f.dispose) f.dispose();
+        }
+        this.fishes = [];
+    }
+
     init() {
+        this.reset();
+
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
 

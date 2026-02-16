@@ -85,50 +85,6 @@ describe('Game Request Lifecycle', () => {
     let game;
 
     beforeEach(() => {
-        vi.stubGlobal('document', {
-            body: { appendChild: vi.fn() },
-            getElementById: vi.fn(() => ({
-                appendChild: vi.fn(),
-                getContext: vi.fn(() => ({
-                    fillRect: vi.fn(),
-                    drawImage: vi.fn(),
-                    clearRect: vi.fn(),
-                    measureText: vi.fn(() => ({ width: 0 })),
-                    fillText: vi.fn(),
-                    beginPath: vi.fn(),
-                    moveTo: vi.fn(),
-                    lineTo: vi.fn(),
-                    stroke: vi.fn(),
-                    fill: vi.fn(),
-                    arc: vi.fn(),
-                    save: vi.fn(),
-                    restore: vi.fn(),
-                    translate: vi.fn(),
-                    rotate: vi.fn(),
-                    scale: vi.fn()
-                })),
-                addEventListener: vi.fn(),
-                classList: { toggle: vi.fn(), remove: vi.fn(), add: vi.fn() }
-            })),
-            createElement: vi.fn(() => ({
-                appendChild: vi.fn(),
-                getContext: vi.fn(() => ({
-                    fillRect: vi.fn(),
-                    createImageData: () => ({ data: [] }),
-                    putImageData: vi.fn(),
-                    drawImage: vi.fn()
-                })),
-                addEventListener: vi.fn(),
-                classList: { toggle: vi.fn(), remove: vi.fn(), add: vi.fn() },
-                style: {}
-            })),
-            createElementNS: vi.fn(() => ({
-                width: 0, height: 0,
-                getContext: () => ({}),
-                addEventListener: vi.fn(),
-                style: { display: '' }
-            }))
-        });
         global.requestAnimationFrame = vi.fn();
 
         vi.spyOn(Game.prototype, 'setupLights').mockImplementation(() => { });

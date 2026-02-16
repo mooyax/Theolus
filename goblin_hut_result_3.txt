@@ -1,0 +1,53 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/GoblinHutFix.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/GoblinHutFix.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should NOT trigger spawnCallback for goblin_hut even if overpopulated
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+Disposing detached game instance
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+Before Update: Pop= [33m15[39m
+After Update: Pop= [33m17.499812514061446[39m
+
+ 笶ｯ src/tests/GoblinHutFix.test.js (2 tests | 1 failed) 244ms
+     笨・should NOT trigger spawnCallback for goblin_hut even if overpopulated 129ms
+     ﾃ・should trigger spawnCallback for house when overpopulated (Control) 113ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+AssertionError: expected 17.499812514061446 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 17.499812514061446
+
+ 笶ｯ src/tests/GoblinHutFix.test.js:85:43
+     83|         expect(spawnCallback).toHaveBeenCalledWith(2, 2, 'house', hous窶ｦ
+     84|         // And population resets
+     85|         expect(house.userData.population).toBe(0);
+       |                                           ^
+     86|     });
+     87| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  23:12:41
+   Duration  1.25s (transform 231ms, setup 77ms, import 254ms, tests 244ms, environment 471ms)
+

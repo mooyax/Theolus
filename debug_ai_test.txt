@@ -1,0 +1,22 @@
+TEST START
+--- Creating Unit ---
+--- Unit Created. ID: 0 ---
+DEBUG: unit.updateLogicTEST exists? function
+DEBUG source: updateLogicTEST(time, deltaTime, isNight, units, buildings, goblins) {
+    this.simTime = time;
+    
+DEBUG: unit.action after updateLogicTEST: Moving
+--- Creating Goblin ---
+--- Goblin Created ---
+CAUGHT ERROR: expected 'Idle' to be 'Moving' // Object.is equality
+AssertionError: expected 'Idle' to be 'Moving' // Object.is equality
+    at C:/Users/mooya/develop/test/src/tests/AIUnification.test.js:167:35
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1650:37
+    at Traces.$ (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/traces.U4xDYhzZ.js:115:27)
+    at trace (file:///C:/Users/mooya/develop/test/node_modules/vitest/dist/chunks/test.BT8LKgU9.js:239:21)
+    at runTest (file:///C:/Users/mooya/develop/test/node_modules/@vitest/runner/dist/index.js:1650:12)

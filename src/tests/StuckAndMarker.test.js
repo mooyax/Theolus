@@ -4,7 +4,7 @@ import { Game } from '../Game';
 import { Unit } from '../Unit';
 import * as THREE from 'three';
 import { WanderState } from '../ai/states/State';
-import { UnitWanderState, JobState } from '../ai/states/UnitStates';
+import { Wander, Job } from '../ai/states/UnitStates';
 
 // DOM Mock
 if (!global.document) {
@@ -302,13 +302,13 @@ describe('Stuck and Marker Debugging', () => {
         const unit = new Unit(game.scene, game.terrain, 10, 10, 'worker');
         game.units.push(unit);
         unit.updateLogic(0, 0, false, []); // Init state
-        expect(unit.state).toBeInstanceOf(UnitWanderState);
+        expect(unit.state).toBeInstanceOf(Wander);
 
         // 2. Create Request (Far away to force pathfinding)
         const req = game.addRequest('move', 50, 50); // Correct signature: type, x, z
 
         // 3. Assign Job MANUALLY (Simulate forcing)
-        // This triggers: unit.onJobAssigned -> JobState.enter -> unit.smartMove(path)
+        // This triggers: unit.onJobAssigned -> Job.enter -> unit.smartMove(path)
         // Bug Fix Target: smartMove should Execute Path[0] IMMEDIATELY.
         try {
             console.log('[Test Debug] Calling assignRequestSync...');
@@ -319,15 +319,17 @@ describe('Stuck and Marker Debugging', () => {
 
         // Wait for Async Pathfinding and State Transition
         await vi.waitFor(async () => {
+            await Promise.resolve(); // Flush microtasks from findPathAsync
             // Trigger Update to pick up the path
             unit.updateLogic(0.016, 0.016, false, []);
+            await Promise.resolve(); // Flush microtasks from updateLogic (if any)
 
             // Verify Immediate Movement
             console.log(`[Test Debug] isMoving: ${unit.isMoving}, PathLen: ${unit.path ? unit.path.length : 'null'}, State: ${unit.state.constructor.name}`);
             expect(unit.isMoving).toBe(true);
             expect(unit.path).toBeTruthy();
             expect(unit.path.length).toBeGreaterThan(0);
-            expect(unit.state).toBeInstanceOf(JobState);
+            expect(unit.state).toBeInstanceOf(Job);
         }, { timeout: 1000, interval: 10 });
 
         // 5. Verify targetRequest Persistence

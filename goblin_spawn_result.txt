@@ -1,0 +1,183 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/GoblinSpawnVerification.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/GoblinSpawnVerification.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/GoblinSpawnVerification.test.js
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/GoblinSpawnVerification.test.js
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/GoblinSpawnVerification.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/GoblinSpawnVerification.test.js
+[DEBUG] Game.ts top-level load
+
+stdout | src/tests/GoblinSpawnVerification.test.js > Goblin Spawn Verification > should register caves present in terrain
+[Game] Constructor called. Instance ID: 1 (Minimal: true)
+[Game] Init Basic State
+[Game] Init Queues
+[Game] Init Time
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.441982, 0.980430) -> Grid(70, 156) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.273399, 0.536689) -> Grid(43, 85) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.643912, 0.268705) -> Grid(103, 42) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[Terrain] Constructor. updatePopulation type: function
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=0
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.193796, 0.471917) -> Grid(19, 47) rngState=0
+[Entity 0] CONSTRUCTOR START: type=building at 19,47
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+GoblinManager: Cave registered at 19,47 
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.853200, 0.443425) -> Grid(85, 44) rngState=0
+[Entity 1] CONSTRUCTOR START: type=building at 85,44
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+GoblinManager: Cave registered at 85,44 
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.346495, 0.286249) -> Grid(34, 28) rngState=0
+[Entity 2] CONSTRUCTOR START: type=building at 34,28
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+GoblinManager: Cave registered at 34,28 
+[Entity 3] CONSTRUCTOR START: type=building at 2,50
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+GoblinManager: Cave registered at 2,50 
+[Entity 4] CONSTRUCTOR START: type=building at 34,20
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+GoblinManager: Cave registered at 34,20 
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+GoblinManager: Force spawning Debug Goblin
+
+stdout | src/tests/GoblinSpawnVerification.test.js > Goblin Spawn Verification > should register caves present in terrain
+[Entity 5] CONSTRUCTOR START: type=building at 10,10
+[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+
+stdout | src/tests/GoblinSpawnVerification.test.js > Goblin Spawn Verification > should spawn goblin when population reaches threshold
+Disposing detached game instance
+[Game] Dispose called for Game Instance.
+[Terrain] Dispose called.
+
+stdout | src/tests/GoblinSpawnVerification.test.js > Goblin Spawn Verification > should spawn goblin when population reaches threshold
+[Game] Constructor called. Instance ID: 2 (Minimal: true)
+[Game] Init Basic State
+[Game] Init Queues
+[Game] Init Time
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.987339, 0.402130) -> Grid(157, 64) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.914338, 0.949556) -> Grid(146, 151) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.761455, 0.974674) -> Grid(121, 155) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[Terrain] Constructor. updatePopulation type: function
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=0
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.841720, 0.633957) -> Grid(84, 63) rngState=0
+[Entity 6] CONSTRUCTOR START: type=building at 84,63
+[Entity 6] Calling registerEntity...
+[Entity 6] registerEntity returned.
+[Entity 6] Calling updatePosition...
+[Entity 6] updatePosition returned.
+GoblinManager: Cave registered at 84,63 
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.985842, 0.997881) -> Grid(98, 99) rngState=0
+[Entity 7] CONSTRUCTOR START: type=building at 98,99
+[Entity 7] Calling registerEntity...
+[Entity 7] registerEntity returned.
+[Entity 7] Calling updatePosition...
+[Entity 7] updatePosition returned.
+GoblinManager: Cave registered at 98,99 
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.731658, 0.449799) -> Grid(73, 44) rngState=0
+[Entity 8] CONSTRUCTOR START: type=building at 73,44
+[Entity 8] Calling registerEntity...
+[Entity 8] registerEntity returned.
+[Entity 8] Calling updatePosition...
+[Entity 8] updatePosition returned.
+GoblinManager: Cave registered at 73,44 
+[Entity 9] CONSTRUCTOR START: type=building at 69,86
+[Entity 9] Calling registerEntity...
+[Entity 9] registerEntity returned.
+[Entity 9] Calling updatePosition...
+[Entity 9] updatePosition returned.
+GoblinManager: Cave registered at 69,86 
+[Entity 10] CONSTRUCTOR START: type=building at 38,21
+[Entity 10] Calling registerEntity...
+[Entity 10] registerEntity returned.
+[Entity 10] Calling updatePosition...
+[Entity 10] updatePosition returned.
+GoblinManager: Cave registered at 38,21 
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+GoblinManager: Force spawning Debug Goblin
+[GoblinManager] Cave at 84,63 has insufficient pop: 0.00
+
+stdout | src/tests/GoblinSpawnVerification.test.js > Goblin Spawn Verification > should spawn goblin when population reaches threshold
+[Entity 11] CONSTRUCTOR START: type=building at 20,20
+[Entity 11] Calling registerEntity...
+[Entity 11] registerEntity returned.
+[Entity 11] Calling updatePosition...
+[Entity 11] updatePosition returned.
+[Entity 12] CONSTRUCTOR START: type=goblin at 21,18
+[Entity 12] Calling registerEntity...
+[Entity 12] registerEntity returned.
+[Entity 12] Calling updatePosition...
+[Entity 12] updatePosition returned.
+[DIAG] Actor Created ID: 12
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[DEBUG] Goblin born from cave! Total: 1, Remaining population: 0.1
+
+ 笶ｯ src/tests/GoblinSpawnVerification.test.js (2 tests | 1 failed) 384ms
+     笨・should register caves present in terrain 208ms
+     ﾃ・should spawn goblin when population reaches threshold 174ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/GoblinSpawnVerification.test.js > Goblin Spawn Verification > should spawn goblin when population reaches threshold
+AssertionError: expected 0.09999999999999964 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 0.09999999999999964
+
+ 笶ｯ src/tests/GoblinSpawnVerification.test.js:77:57
+     75|         // Population should be reset to 0 according to checkHutSpawns
+     76|         const updatedCaveBuilding = terrain.buildings.find(b => b.user窶ｦ
+     77|         expect(updatedCaveBuilding.userData.population).toBe(0);
+       |                                                         ^
+     78|     });
+     79| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  23:14:08
+   Duration  1.70s (transform 506ms, setup 81ms, import 573ms, tests 384ms, environment 460ms)
+

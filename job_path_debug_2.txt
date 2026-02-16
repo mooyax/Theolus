@@ -1,0 +1,47 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+stderr | src/tests/Investigation_JobPath.test.js
+[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39m[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:0
+
+[90mstdout[2m | src/tests/Investigation_JobPath.test.js[2m > [22m[2mJob Path Consistency[2m > [22m[2mshould maintain path while processing Job
+[22m[39m[Actor 999] Pathfinding Result: No Path / Empty.
+
+ [31m笶ｯ[39m src/tests/Investigation_JobPath.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 138[2mms[22m[39m
+[31m     [31mﾃ・[31m should maintain path while processing Job[39m[32m 137[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Investigation_JobPath.test.js > Job Path Consistency > should maintain path while processing Job
+AssertionError: expected null not to be null
+ 笶ｯ src/tests/Investigation_JobPath.test.js:56:31
+     54|         await new Promise(resolve => setTimeout(resolve, 10));
+     55| 
+     56|         expect(unit.path).not.toBeNull();
+       |                               ^
+     57|         expect(unit.path.length).toBeGreaterThan(0);
+     58|         console.log('Initial Path Length:', unit.path.length);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 08:33:49
+[2m   Duration [22m 1.18s[2m (transform 293ms, setup 71ms, import 321ms, tests 138ms, environment 466ms)[22m
+

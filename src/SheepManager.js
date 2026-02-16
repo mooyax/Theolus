@@ -21,9 +21,16 @@ export class SheepManager {
         console.log("SheepManager Refactored: Initialized with Entity-based Sheep.");
     }
 
-    initSheeps() {
-        // Clear old if any (though usually empty on init)
+    reset() {
+        console.log("Resetting SheepManager...");
+        for (const s of this.sheeps) {
+            if (s.dispose) s.dispose();
+        }
         this.sheeps = [];
+    }
+
+    initSheeps() {
+        this.reset();
 
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
@@ -40,14 +47,18 @@ export class SheepManager {
             const z = Math.floor(Math.random() * logicalD);
             const height = this.terrain.getTileHeight(x, z);
 
+            const cell = this.terrain.grid[x] && this.terrain.grid[x][z];
             if (height > 0.5) { // Land
                 // Verify no building
-                const cell = this.terrain.grid[x] && this.terrain.grid[x][z];
                 if (!cell || !cell.hasBuilding) {
                     const sheep = new Sheep(this.scene, this.terrain, x, z);
                     this.sheeps.push(sheep);
                     return;
                 }
+            }
+            if (attempts === 49) {
+                // Silently fail if no spot found (e.g. water world or crowded)
+                return;
             }
             attempts++;
         }
@@ -58,6 +69,9 @@ export class SheepManager {
     }
 
     update(time, deltaTime) {
+        if (this.sheeps.length > 0) {
+            // Log suppressed
+        }
         for (let i = this.sheeps.length - 1; i >= 0; i--) {
             const sheep = this.sheeps[i];
 

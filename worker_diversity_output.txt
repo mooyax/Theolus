@@ -1,0 +1,63 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/WorkerDiversityFixed.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/WorkerDiversityFixed.test.js > Verification Game > Game should be defined
+!!! CHECKING GAME DEFINITION !!!
+Game is defined
+
+stdout | src/tests/WorkerDiversityFixed.test.js > Verification Game > Game.spawnUnit should be updated
+!!! CHECKING SPAWNUNIT !!!
+DEBUG: spawnUnit source:
+spawnUnit(x, z, roleOrSpecial = null, sourceBuilding = null, squadId = null, isManualClick = false, faction = "player") {
+    let role = "citizen";
+    let isSpecial = false;
+    let homeBase = null;
+    if (roleOrSpecial === true) {
+      isSpecial = true;
+      role = "worker";
+      if (isManualClick) this.manualWorkerSpawns++;
+    } else if (typeof roleOrSpecial === "string") {
+      role = roleOrSpecial;
+    } else if (sourceBuilding) {
+      homeBase = sourceBuilding;
+      const bType = sourceBuilding.type || sourceBuilding.userData && sourceBuilding.userData.type;
+      if (bType === "barracks") role = "knight";
+      else if (bType === "tower") role = "wizard";
+      else {
+        const r = Math.random();
+        if (r < 0.2) role = "hunter";
+        else if (r < 0.4) role = "fisher";
+        else role = "worker";
+      };
+      if ((role === "knight" || role === "wizard") && !sourceBuilding.userData.memory) {
+        sourceBuilding.userData.memory = new BattleMemory();
+      };
+      console.log(`Spawned ${role} linked to ${sourceBuilding.type} at ${sourceBuilding.userData.gridX},${sourceBuilding.userData.gridZ} SquadID:${squadId}`);
+    } else {
+      const r = Math.random();
+      if (r < 0.25) role = "hunter";
+      else if (r < 0.5) role = "fisher";
+      else role = "worker";
+    };
+    const unit = new __vite_ssr_import_3__.Unit(this.scene, this.terrain, x, z, role, isSpecial, squadId, faction);
+    unit.game = this;
+    unit.homeBase = homeBase;
+    this.units.push(unit);
+    if (this.unitMap) this.unitMap.set(unit.id, unit);
+    if (unit.role === "worker") {
+      this.processAssignments();
+    };
+    return unit;
+  }
+
+ 笨・src/tests/WorkerDiversityFixed.test.js > Verification Game > Game should be defined 2ms
+ 笨・src/tests/WorkerDiversityFixed.test.js > Verification Game > Game.spawnUnit should be updated 0ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  13:02:24
+   Duration  1.27s (transform 511ms, setup 76ms, import 529ms, tests 3ms, environment 430ms)
+

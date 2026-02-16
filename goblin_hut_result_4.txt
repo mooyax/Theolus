@@ -1,0 +1,29 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/GoblinHutFix.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/GoblinHutFix.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should NOT trigger spawnCallback for goblin_hut even if overpopulated
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+Disposing detached game instance
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+[Terrain] Constructor. updatePopulation type: function
+
+stdout | src/tests/GoblinHutFix.test.js > Goblin Hut Fix > should trigger spawnCallback for house when overpopulated (Control)
+Before Update: Pop= [33m15[39m
+After Update: Pop= [33m0[39m
+
+ 笨・src/tests/GoblinHutFix.test.js (2 tests) 269ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  23:13:11
+   Duration  1.38s (transform 262ms, setup 93ms, import 258ms, tests 269ms, environment 497ms)
+

@@ -1,0 +1,181 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/Regression_WorkerLogic.test.js
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/Regression_WorkerLogic.test.js
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/Regression_WorkerLogic.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should NOT abort job during long async pathfinding (prevent oscillation)
+[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should NOT abort job during long async pathfinding (prevent oscillation)
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:3200.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:3200.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:3200.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:3200.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:3200.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:3200.0
+[Unit 1] canMoveTo(50,50) OK
+[Unit 1] canMoveTo(50,50) checking grid...
+[DIAG] executeMove Actor:1 calling startMove.Current isMoving:false 
+[Entity 1] startMove -> isMoving:true. Target:50,50 StartTime:0.0000
+[DIAG] executeMove Actor:1 finished startMove.New isMoving:true 
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin Hut when idle (Passive Worker Fix)
+[Entity 1] CONSTRUCTOR START: type=unit at 10,10
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:1
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin Hut when idle (Passive Worker Fix)
+[Unit Debug 1] updateLogic. State: Wander
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin even if holding a job (Self Defense)
+[Entity 2] CONSTRUCTOR START: type=unit at 10,10
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:2
+
+stdout | src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin even if holding a job (Self Defense)
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[JobDebug 1] moveStarted:true isUnreach:false isWaiting:false distSq:9800.0
+[Unit Debug 1] updateLogic. State: Job
+[UnitDebug 1] shouldScan=TRUE. frame=30 scanTimer=31
+Target set: {
+  id: [32m'gob1'[39m,
+  gridX: [33m11[39m,
+  gridZ: [33m11[39m,
+  position: { x: [33m11[39m, y: [33m0[39m, z: [33m11[39m },
+  isDead: [33mfalse[39m,
+  hp: [33m10[39m,
+  type: [32m'goblin'[39m,
+  takeDamage: [36m[Function: takeDamage][39m
+}
+[Unit 1] canMoveTo(80,80) OK
+[Unit 1] canMoveTo(80,80) checking grid...
+[DIAG] executeMove Actor:1 calling startMove.Current isMoving:false 
+[Entity 1] startMove -> isMoving:true. Target:80,80 StartTime:0.0000
+[DIAG] executeMove Actor:1 finished startMove.New isMoving:true 
+
+ 笨・src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should NOT abort job during long async pathfinding (prevent oscillation) 158ms
+ ﾃ・src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin Hut when idle (Passive Worker Fix) 11ms
+   竊・this.terrain.checkFlatArea is not a function
+ 笨・src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin even if holding a job (Self Defense) 5ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/Regression_WorkerLogic.test.js > Regression: Worker Logic & Stability > should attack nearby Goblin Hut when idle (Passive Worker Fix)
+TypeError: this.terrain.checkFlatArea is not a function
+ 笶ｯ Unit.canBuildAt src/Unit.ts:2378:29
+    2376| 
+    2377|         // Check Flat
+    2378|         return this.terrain.checkFlatArea(x, z, 2, 0.01);
+       |                             ^
+    2379|     }
+    2380| 
+ 笶ｯ Wander.update src/ai/states/UnitStates.ts:150:61
+ 笶ｯ Unit.updateLogic src/Unit.ts:2221:24
+ 笶ｯ src/tests/Regression_WorkerLogic.test.js:159:18
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  23:56:05
+   Duration  1.49s (transform 482ms, setup 73ms, import 549ms, tests 176ms, environment 464ms)
+

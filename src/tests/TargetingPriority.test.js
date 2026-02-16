@@ -2,56 +2,9 @@
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 import { Unit } from '../Unit.js';
 import * as THREE from 'three';
-import { MockGame, MockTerrain } from './TestHelper.js';
+import { setupTestEnv } from './TestUtils.js';
 
-// Mock THREE
-vi.mock('three', () => {
-    class Vector3 {
-        constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
-        set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
-        copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
-        clone() { return new Vector3(this.x, this.y, this.z); }
-        add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
-        sub(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
-        length() { return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
-        distanceTo(v) { return Math.sqrt((this.x - v.x) ** 2 + (this.y - v.y) ** 2 + (this.z - v.z) ** 2); }
-    }
-    return {
-        Vector3,
-        Scene: class { add() { } remove() { } getObjectByName() { return { add: vi.fn(), remove: vi.fn(), children: [] }; } },
-        Color: class { setHex() { return this; } },
-        Mesh: class { constructor() { this.position = new Vector3(); this.rotation = { x: 0 }; this.add = () => { }; } },
-        PlaneGeometry: class {
-            constructor() {
-                this.attributes = {
-                    position: { count: 10, array: new Float32Array(30), itemSize: 3, setX: vi.fn(), setY: vi.fn(), setZ: vi.fn() },
-                    color: { array: new Float32Array(30), itemSize: 3, setX: vi.fn(), setY: vi.fn(), setZ: vi.fn() }
-                };
-            }
-            setAttribute(name, attr) { this.attributes[name] = attr; }
-            getAttribute(name) { return this.attributes[name]; }
-            computeVertexNormals() { }
-            dispose() { }
-        },
-        BufferAttribute: class {
-            constructor(array, itemSize) { this.array = array; this.itemSize = itemSize; this.count = array.length / itemSize; }
-            setX(i, x) { if (this.array) this.array[i * this.itemSize] = x; return this; }
-            setY(i, y) { if (this.array) this.array[i * this.itemSize + 1] = y; return this; }
-            setZ(i, z) { if (this.array) this.array[i * this.itemSize + 2] = z; return this; }
-        },
-        Group: class { add() { } remove() { } },
-        InstancedMesh: class { count() { } setMatrixAt() { } setColorAt() { } },
-        MeshLambertMaterial: class { },
-        LineSegments: class { constructor() { this.position = new Vector3(); } },
-        LineBasicMaterial: class { },
-        Points: class { constructor() { this.position = new Vector3(); } },
-        PointsMaterial: class { },
-        DoubleSide: 2
-    };
-});
-
-global.THREE = THREE;
-if (!global.window) global.window = {};
+// Note: setup.js handles global mocks for THREE
 
 describe('Unit Targeting Priority', () => {
     let unit;
@@ -63,26 +16,26 @@ describe('Unit Targeting Priority', () => {
     });
 
     beforeEach(() => {
-        mockGame = new MockGame();
-        mockTerrain = new MockTerrain(100, 100);
+        const env = setupTestEnv({ useMockTerrain: true });
+        mockGame = env.game;
+        mockTerrain = env.terrain;
 
-        // Ensure squads map exists
+        // Ensure squads map exists (TestUtils default MockGame should have it, but verifying)
         if (!mockGame.squads) mockGame.squads = new Map();
-        mockGame.frameCount = 0;
 
-        global.window.game = mockGame;
-
+        // Setup initial unit
         unit = new Unit(mockGame.scene, mockTerrain, 0, 0, 'knight');
         unit.gridX = 0;
         unit.gridZ = 0;
+        // Mock getDistance for simpler logic in tests if needed, or rely on real method
         unit.getDistance = (x, z) => Math.sqrt(x * x + z * z);
     });
 
     // Helper to run logic through Time Slicing
     const runUpdateLoop = (testUnit, goblins) => {
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 100; i++) {
             mockGame.frameCount = i;
-            testUnit.updateLogic(1000 + i, 0.1, false, goblins, [], []);
+            testUnit.updateLogic(1000 + i, 0.1, false, [], [], goblins);
             if (testUnit.targetGoblin || testUnit.targetBuilding) break;
         }
     };
@@ -114,8 +67,7 @@ describe('Unit Targeting Priority', () => {
         };
         mockTerrain.buildings.push(hut);
 
-        const mockScene = { add: vi.fn(), getObjectByName: vi.fn().mockReturnValue({ add: vi.fn(), remove: vi.fn(), children: [] }) };
-        const testUnit = new Unit(mockScene, mockTerrain, 0, 0, 'knight');
+        const testUnit = new Unit(mockGame.scene, mockTerrain, 0, 0, 'knight');
         testUnit.gridX = 0;
         testUnit.gridZ = 0;
         testUnit.getDistance = (x, z) => Math.sqrt(x * x + z * z);
@@ -135,7 +87,7 @@ describe('Unit Targeting Priority', () => {
         };
         mockTerrain.buildings.push(hut);
 
-        const testUnit = new Unit({ add: vi.fn(), getObjectByName: vi.fn().mockReturnValue({ add: vi.fn(), remove: vi.fn(), children: [] }) }, mockTerrain, 0, 0, 'worker');
+        const testUnit = new Unit(mockGame.scene, mockTerrain, 0, 0, 'worker');
 
         runUpdateLoop(testUnit, []);
 
@@ -151,7 +103,7 @@ describe('Unit Targeting Priority', () => {
         };
         mockTerrain.buildings.push(hut);
 
-        const testUnit = new Unit({ add: vi.fn(), getObjectByName: vi.fn().mockReturnValue({ add: vi.fn(), remove: vi.fn(), children: [] }) }, mockTerrain, 0, 0, 'worker');
+        const testUnit = new Unit(mockGame.scene, mockTerrain, 0, 0, 'worker');
 
         // Note: Workers might skip scan if BUSY (targetRequest). Here they are idle.
         runUpdateLoop(testUnit, []);

@@ -1,0 +1,242 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should enable and disable correctly
+[PerformanceMonitor] Enabled
+[PerformanceMonitor] Disabled
+
+stdout | src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should toggle state
+[PerformanceMonitor] Enabled
+[PerformanceMonitor] Disabled
+
+stdout | src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should reset stats
+[PerformanceMonitor] Stats reset
+
+stdout | src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should update with game instance
+[PerformanceMonitor] Enabled
+
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should initialize with correct default values 3ms
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should enable and disable correctly 11ms
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should toggle state 2ms
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure update time 2ms
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure render time 2ms
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should update entity counts 1ms
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure FPS over time 0ms
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should add data to history 3ms
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should limit history length 1ms
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should get stats correctly 1ms
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should reset stats 1ms
+ 笨・src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should update with game instance 9ms
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:0 Role:soldier Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:soldier Pos:10,10
+Goblin constructor: calling super...
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 20,20
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Actor 0] CHANGE STATE: None -> Wander Request:null
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Goblin should switch target to nearby Unit while moving to distant Building
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Goblin should switch target to nearby Unit while moving to distant Building
+Goblin constructor: calling super...
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 10,10
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 20,20
+[UnitCore.js] Unit Created ID:1 Role:soldier Pos:20,20 Special:false
+[UnitCore.js] Unit Created ID:1 Role:soldier Pos:20,20
+[GoblinState 3] Encounter! Switching from Building to Nearby Unit 4
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Worker should reduce scan range (Worker Aggression Fix)
+[TestDebug] beforeEach finished. game.scene exists? [33mtrue[39m
+
+stdout | src/tests/EncounterCombat.test.js > Encounter Combat Logic > Worker should reduce scan range (Worker Aggression Fix)
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 10,10
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+
+ ﾃ・src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building 22ms
+   竊・expected false to be true // Object.is equality
+ 笨・src/tests/EncounterCombat.test.js > Encounter Combat Logic > Goblin should switch target to nearby Unit while moving to distant Building 2ms
+ 笨・src/tests/EncounterCombat.test.js > Encounter Combat Logic > Worker should reduce scan range (Worker Aggression Fix) 1ms
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should detect Worker within range and enter Combat
+Goblin constructor: calling super...
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 20,20
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Actor 0] CHANGE STATE: None -> Wander Request:null
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 30,20
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:30,20 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:30,20
+[Test Debug] Worker keys: id,scene,terrain,game,frameCount,gridX,gridZ,type,spatialType,position,rotationY,userData,isMoving,moveTimer,moveDuration,moveStartTime,startGridX,startGridZ,targetGridX,targetGridZ,walkAnimTimer,isDead,age,limbs,_spatial,path,pathIndex,stuckCount,stuckTimer,lastPos,pathFailCount,action,lastMoveLog,raidGoal,lifespan,isFinished,mesh,targetRequest,targetItem,heldItem,targetEntity,targetBuilding,hp,maxHp,damage,attackRate,attackCooldown,combatRange,isRanged,baseMoveDuration,lastPathTime,isPathfinding,isPathfindingThrottled,isUnreachable,isWaitingForPath,minDistToTarget,pathStagnation,state,simTime,role,isSpecial,squadId,faction,lastJobResult,lastGridX,lastGridZ,stagnationTimer,buildStagnationCount,lastTime,lastGatherTime,lastHitTime,moveInterval,huntingCooldown,target,targetX,targetZ,wanderCount,migrationTarget,patrolTarget,patrolTimer,ignoredTargets,debugFrame,isSleeping,targetGoblin,targetUnit,targetRaidPoint,lastWaterLogTime,scanTimer,homeBase,residence,xp,crossMesh,level,name,lastPathAttempt,savedHomeBaseX,savedHomeBaseZ,savedTargetRequestId,migrationTimer,moisture,deathTimer
+[GoblinState Debug] ID:100 Calling scanForTargets...
+[Goblin 100] Found Unit Candidate: 200 Dist:?
+[Actor 100] smartMove: triggers pathfinding. Dist: 10.0 Time:0.7 Last:0.0 Throttle:1.00 Action:Fighting
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should detect Worker within range and enter Combat
+[Actor 100] SmartMove Depth:1 Node:20,20 My:20,20 d:0,0
+[Actor 100] Reached Node. Shifting.
+[Actor 100] SmartMove Depth:2 Node:21,20 My:20,20 d:1,0
+[Entity 100] startMove -> isMoving:true. Target:21,20 StartTime:0.7000
+
+ ﾃ・src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should detect Worker within range and enter Combat 6790ms
+   竊・expected Combat{ actor: Goblin{ 窶ｦ(82) }, 窶ｦ(1) } to be an instance of Combat
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should prioritize Worker if Building is far, or attack Building if close
+Goblin constructor: calling super...
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 20,20
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 30,20
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:30,20 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:30,20
+[Goblin 101] Found Unit Candidate: 201 Dist:?
+[Actor 101] smartMove: triggers pathfinding. Dist: 10.0 Time:0.7 Last:0.0 Throttle:1.10 Action:Fighting
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should prioritize Worker if Building is far, or attack Building if close
+[Actor 101] SmartMove Depth:1 Node:20,20 My:20,20 d:0,0
+[Actor 101] Reached Node. Shifting.
+[Actor 101] SmartMove Depth:2 Node:21,20 My:20,20 d:1,0
+[Entity 101] startMove -> isMoving:true. Target:21,20 StartTime:0.7000
+
+ ﾃ・src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should prioritize Worker if Building is far, or attack Building if close 7758ms
+   竊・expected Combat{ actor: Goblin{ 窶ｦ(82) }, 窶ｦ(1) } to be an instance of Combat
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should switch target to Worker if it encounters one while moving to a far Building
+Goblin constructor: calling super...
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[ActorCore] Actor Created. Type: goblin Pos: 20,20
+Goblin constructor: super returned.
+Goblin constructor: checking scene...
+Goblin constructor: setting ID...
+[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 25,20
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:25,20 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:25,20
+[Goblin 102] Found Unit Candidate: 202 Dist:?
+[Actor 102] smartMove: triggers pathfinding. Dist: 5.0 Time:0.8 Last:0.0 Throttle:1.20 Action:Fighting
+
+stdout | src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should switch target to Worker if it encounters one while moving to a far Building
+[Actor 102] SmartMove Depth:1 Node:20,20 My:20,20 d:0,0
+[Actor 102] Reached Node. Shifting.
+[Actor 102] SmartMove Depth:2 Node:21,20 My:20,20 d:1,0
+[Entity 102] startMove -> isMoving:true. Target:21,20 StartTime:0.8000
+
+ ﾃ・src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should switch target to Worker if it encounters one while moving to a far Building 7065ms
+   竊・expected Combat{ actor: Goblin{ 窶ｦ(82) }, 窶ｦ(1) } to be an instance of Combat
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 4 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/EncounterCombat.test.js > Encounter Combat Logic > Unit should switch target to nearby Goblin while moving to distant Building
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ 笶ｯ src/tests/EncounterCombat.test.js:148:26
+    146|             }
+    147|         }
+    148|         expect(switched).toBe(true);
+       |                          ^
+    149|     });
+    150| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/4]竡ｯ
+
+ FAIL  src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should detect Worker within range and enter Combat
+AssertionError: expected Combat{ actor: Goblin{ 窶ｦ(82) }, 窶ｦ(1) } to be an instance of Combat
+ 笶ｯ src/tests/GoblinEncounter.test.js:130:30
+    128|         expect(goblin.targetUnit, `Failed Detection: ${JSON.stringify(窶ｦ
+    129|         expect(goblin.targetUnit).toBe(worker);
+    130|         expect(goblin.state).toBeInstanceOf(Combat);
+       |                              ^
+    131|     });
+    132| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/4]竡ｯ
+
+ FAIL  src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should prioritize Worker if Building is far, or attack Building if close
+AssertionError: expected Combat{ actor: Goblin{ 窶ｦ(82) }, 窶ｦ(1) } to be an instance of Combat
+ 笶ｯ src/tests/GoblinEncounter.test.js:174:30
+    172|         expect(goblin.targetUnit).toBe(worker);
+    173|         expect(goblin.targetBuilding).toBeNull();
+    174|         expect(goblin.state).toBeInstanceOf(Combat);
+       |                              ^
+    175|     });
+    176|     it('Goblin should switch target to Worker if it encounters one whi窶ｦ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/4]竡ｯ
+
+ FAIL  src/tests/GoblinEncounter.test.js > Goblin Encounter Logic > Goblin should switch target to Worker if it encounters one while moving to a far Building
+AssertionError: expected Combat{ actor: Goblin{ 窶ｦ(82) }, 窶ｦ(1) } to be an instance of Combat
+ 笶ｯ src/tests/GoblinEncounter.test.js:212:30
+    210|         expect(goblin.targetUnit).toBe(worker);
+    211|         expect(goblin.targetBuilding).toBeNull();
+    212|         expect(goblin.state).toBeInstanceOf(Combat);
+       |                              ^
+    213|     });
+    214| });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[4/4]竡ｯ
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  4 failed | 14 passed (18)
+   Start at  16:29:50
+   Duration  23.01s (transform 717ms, setup 234ms, import 939ms, tests 21.68s, environment 1.51s)
+

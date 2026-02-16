@@ -2,70 +2,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Game } from '../Game.js';
 import { Unit } from '../Unit.js';
-import { JobState } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
 import LZString from 'lz-string';
 
 // --- MOCKS ---
 // (Copying minimal mocks from SaveLoad.test.js)
-global.window = {
-    innerWidth: 1024, innerHeight: 768, devicePixelRatio: 1,
-    getComputedStyle: () => ({ display: 'none' }),
-    addEventListener: vi.fn(),
-    requestAnimationFrame: vi.fn(),
-    cancelAnimationFrame: vi.fn(),
-};
-global.document = {
-    getElementById: vi.fn(() => ({ style: {}, innerText: '' })),
-    createElement: vi.fn(() => ({
-        getContext: () => ({ fillRect: () => { }, beginPath: () => { }, moveTo: () => { }, lineTo: () => { }, stroke: () => { } }),
-        style: {}, width: 0, height: 0, toDataURL: () => ''
-    })),
-    body: { appendChild: vi.fn(), style: {} }
-};
-global.localStorage = { getItem: vi.fn(), setItem: vi.fn(), clear: vi.fn(), removeItem: vi.fn() };
-global.alert = vi.fn();
-global.Image = class { constructor() { this.onload = null; } };
-
-vi.mock('../SoundManager.js', () => ({ SoundManager: class { play() { } } }));
-vi.mock('../InputManager.js', () => ({ InputManager: class { update() { } updateCursor() { } } }));
-vi.mock('../GoblinManager.js', () => ({ GoblinManager: class { constructor() { this.goblins = []; } update() { } reset() { } scanForCaves() { } serialize() { return {}; } deserialize() { } } }));
-vi.mock('../CloudManager.js', () => ({ CloudManager: class { update() { } draw() { } } }));
-vi.mock('../BirdManager.js', () => ({ BirdManager: class { update() { } draw() { } } }));
-vi.mock('../SheepManager.js', () => ({ SheepManager: class { update() { } draw() { } } }));
-vi.mock('../FishManager.js', () => ({ FishManager: class { update() { } draw() { } } }));
-vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } } }));
-vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
-vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { update() { } dispose() { } init() { } } }));
-vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { update() { } updateLighting() { } dispose() { } init() { } } }));
-vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { update() { } dispose() { } init() { } } }));
-
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        WebGLRenderer: class {
-            constructor() {
-                this.domElement = { style: {}, getContext: () => ({}) };
-                this.shadowMap = {};
-                this.capabilities = { getMaxAnisotropy: () => 1 };
-            }
-            setPixelRatio() { }
-            setSize() { }
-            render() { }
-            dispose() { }
-            setClearColor() { }
-        },
-        CanvasTexture: class { constructor() { } },
-    };
-});
-
-vi.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
-    OrbitControls: class {
-        constructor() { this.target = { set: vi.fn(), clone: vi.fn() }; }
-        update() { }
-        dispose() { }
-    }
-}));
+// Mocks are handled by setup.js
 
 describe('Save/Load Job Restoration', () => {
     let game;
@@ -84,7 +26,7 @@ describe('Save/Load Job Restoration', () => {
         game.terrain.deserialize = vi.fn().mockResolvedValue(true);
     });
 
-    it('should restore unit ID and re-link to JobState correctly', async () => {
+    it('should restore unit ID and re-link to Job correctly', async () => {
         // 1. Setup Test World
         const unit = new Unit(game.scene, game.terrain, 10, 10, 'worker');
         unit.id = 55; // Unusual ID to test persistence
@@ -133,7 +75,7 @@ describe('Save/Load Job Restoration', () => {
         expect(restoredReq.assignedTo).toBe(55); // Link preserved!
 
         expect(restoredUnit.targetRequest).toBe(restoredReq);
-        expect(restoredUnit.state).toBeInstanceOf(JobState); // NEW: Forced transition
+        expect(restoredUnit.state.constructor.name).toBe('Job'); // NEW: Forced transition
         expect(restoredUnit.action).toBe('Approaching Job'); // Corrected expectation
     });
 

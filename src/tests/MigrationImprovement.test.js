@@ -130,8 +130,9 @@ describe('Migration Improvements', () => {
         unit.migrationTarget = { x: 80, z: 80 };
         unit.action = 'Migrating';
 
-        unit.searchSurroundings = vi.fn().mockImplementation(() => {
+        unit.checkSelfDefense = vi.fn().mockImplementation(() => {
             unit.targetGoblin = { id: 'enemy', isDead: false, gridX: 60, gridZ: 60 }; // Dist ~14
+            return true;
         });
         unit.checkSelfDefense = vi.fn().mockImplementation(() => {
             unit.targetGoblin = { id: 'enemy', isDead: false, gridX: 60, gridZ: 60 }; // Fix: Ensure target exists with POS for isAttack check
@@ -143,7 +144,7 @@ describe('Migration Improvements', () => {
         unit.updateLogic(1, 1.0, false, [], [], []);
         console.log('[Test Debug] Action after 1st update:', unit.action);
         // State transition happens (Wander -> Combat). Action set to Fighting. 
-        // Next update triggers CombatState logic (Distance Check -> Chasing).
+        // Next update triggers Combat logic (Distance Check -> Chasing).
         unit.updateLogic(1, 1.0, false, [], [], []);
         console.log('[Test Debug] Action after 2nd update:', unit.action);
 

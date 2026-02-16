@@ -1,0 +1,105 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/ManualJobThrottle.test.ts
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/ManualJobThrottle.test.ts > Manual Job Pathfinding Throttle > should bypass throttle for manual jobs even after first attempt
+[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+
+stdout | src/tests/ManualJobThrottle.test.ts > Manual Job Pathfinding Throttle > should bypass throttle for manual jobs even after first attempt
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+
+stdout | src/tests/ManualJobThrottle.test.ts > Manual Job Pathfinding Throttle > should bypass throttle for manual jobs even after first attempt
+[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,20
+[Entity 1] startMove -> isMoving:true. Target:11,11 StartTime:100.5000
+
+stdout | src/tests/ManualJobThrottle.test.ts > Manual Job Pathfinding Throttle > should still throttle normal actions (e.g. Wander)
+[Entity 1] CONSTRUCTOR START: type=unit at 10,10
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:1
+
+stdout | src/tests/ManualJobThrottle.test.ts > Manual Job Pathfinding Throttle > should still throttle normal actions (e.g. Wander)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+
+stdout | src/tests/ManualJobThrottle.test.ts > Manual Job Pathfinding Throttle > should NOT update lastPathTime if global budget is exceeded
+[Entity 2] CONSTRUCTOR START: type=unit at 10,10
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:2
+
+stdout | src/tests/ManualJobThrottle.test.ts > Manual Job Pathfinding Throttle > should NOT update lastPathTime if global budget is exceeded
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+
+stdout | src/tests/ManualJobThrottle.test.ts > Manual Job Pathfinding Throttle > should NOT update lastPathTime if global budget is exceeded
+[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,20
+[Entity 1] startMove -> isMoving:true. Target:11,11 StartTime:101.0000
+
+ 笶ｯ src/tests/ManualJobThrottle.test.ts (3 tests | 1 failed) 12ms
+     笨・should bypass throttle for manual jobs even after first attempt 5ms
+     笨・should still throttle normal actions (e.g. Wander) 1ms
+     ﾃ・should NOT update lastPathTime if global budget is exceeded 5ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ManualJobThrottle.test.ts > Manual Job Pathfinding Throttle > should NOT update lastPathTime if global budget is exceeded
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st vi.fn() call:
+
+    Array [
+      10,
+      10,
+      20,
+      20,
+      0,
+      1,
+    ]
+
+
+Number of calls: 1
+
+ 笶ｯ src/tests/ManualJobThrottle.test.ts:63:43
+     61| 
+     62|         expect(unit.isWaitingForPath).toBe(true);
+     63|         expect(terrain.findPathAsync).not.toHaveBeenCalled();
+       |                                           ^
+     64|         expect(unit.lastPathTime).toBe(100); // Should NOT have update窶ｦ
+     65|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  23:49:12
+   Duration  850ms (transform 182ms, setup 73ms, import 193ms, tests 12ms, environment 401ms)
+

@@ -1,0 +1,77 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/JobPathFailure.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 0,0
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.536481, 0.022265) -> Grid(53, 2) rngState=undefined
+GoblinManager: Cave registered at 53,2 
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.183315, 0.758350) -> Grid(18, 75) rngState=undefined
+GoblinManager: Cave registered at 18,75 
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.446841, 0.702920) -> Grid(44, 70) rngState=undefined
+GoblinManager: Cave registered at 44,70 
+GoblinManager: Cave registered at 49,35 
+GoblinManager: Cave registered at 15,24 
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+GoblinManager: Force spawning Debug Goblin
+[Game] Generating Preview Terrain...
+[Game] Preview Ready.
+
+stdout | src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly
+[Test Debug] unit.canMoveTo is: [Function: canMoveTo] {
+  _isMockFunction: [33mtrue[39m,
+  getMockImplementation: [36m[Function (anonymous)][39m,
+  mock: {
+    calls: [],
+    contexts: [],
+    instances: [],
+    invocationCallOrder: [],
+    settledResults: [],
+    results: [],
+    lastCall: [36m[Getter][39m
+  },
+  mockImplementation: [36m[Function: mockImplementation][39m,
+  mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+  withImplementation: [36m[Function: withImplementation][39m,
+  mockReturnThis: [36m[Function: mockReturnThis][39m,
+  mockReturnValue: [36m[Function: mockReturnValue][39m,
+  mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+  mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+  mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+  mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+  mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+  mockClear: [36m[Function: mockClear][39m,
+  mockReset: [36m[Function: mockReset][39m,
+  mockRestore: [36m[Function: mockRestore][39m,
+  mockName: [36m[Function: mockName][39m,
+  getMockName: [36m[Function: getMockName][39m,
+  [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+}
+[Unit 0] State Change: Wander -> Job
+[Actor 0] smartMove to 20,0 (H:10). Reachable:false Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:0.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[Actor 0] smartMove: 20,0 unreachable (Region)
+[Test Debug] Changed state to Job. unit.id is: [33m0[39m
+[Test Debug] Changed state to Job. unit.id is: [33m0[39m
+[Actor 0] smartMove to 20,0 (H:10). Reachable:false Dist:20.00 Moving:false Path:0
+[Actor 0] smartMove: triggers pathfinding. Dist: 20.0 Time:1000.0 Last:0.0 Throttle:1.00 Action:Approaching Job
+[Actor 0] smartMove: 20,0 unreachable (Region)
+[Unit 0] State Change: Job -> Wander
+
+ ﾃ・src/tests/JobPathFailure.test.js > Job Pathfinding Failure Handling > should abandon job if smartMove fails repeatedly 33ms
+   竊・expected null to be { id: 101, x: 20, z: +0, 窶ｦ(3) } // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  23:05:31
+   Duration  1.41s (transform 509ms, setup 76ms, import 566ms, tests 34ms, environment 417ms)
+

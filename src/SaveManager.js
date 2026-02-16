@@ -113,8 +113,6 @@ export class SaveManager {
                     const parsed = JSON.parse(json);
                     slots.push({ id: i, timestamp: parsed.timestamp, empty: false });
                 } catch (e) {
-                    // Try parsing as raw just in case (partial compression failure?)
-                    // If fails, assume corrupted or empty-ish
                     console.warn(`Slot ${i} check failed:`, e);
                     slots.push({ id: i, empty: true });
                 }
@@ -123,5 +121,75 @@ export class SaveManager {
             }
         }
         return slots;
+    }
+
+    refreshSlotList(saveCallback, loadCallback) {
+        const list = document.getElementById('slot-list');
+        if (!list) return;
+        list.innerHTML = '';
+
+        const slots = this.getSlots();
+        slots.forEach(slot => {
+            const item = document.createElement('div');
+            item.className = 'slot-item';
+
+            const info = document.createElement('div');
+            info.className = 'slot-info';
+            if (slot.empty) {
+                info.innerHTML = `<strong>Slot ${slot.id}</strong><br><span style="color:#888;">Empty</span>`;
+            } else {
+                const date = new Date(slot.timestamp).toLocaleString();
+                info.innerHTML = `<strong>Slot ${slot.id}</strong><br>${date}`;
+            }
+
+            const actions = document.createElement('div');
+            actions.className = 'slot-actions';
+
+            // SAVE button
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = 'SAVE';
+            saveBtn.onclick = () => {
+                if (!slot.empty) {
+                    if (!confirm('Overwrite Slot ' + slot.id + '?')) return;
+                }
+                const success = saveCallback(slot.id);
+                if (success) {
+                    alert('Saved to Slot ' + slot.id);
+                    this.refreshSlotList(saveCallback, loadCallback);
+                }
+            };
+
+            // LOAD button
+            const loadBtn = document.createElement('button');
+            loadBtn.textContent = 'LOAD';
+            loadBtn.disabled = slot.empty;
+            loadBtn.onclick = () => {
+                if (confirm('Load from Slot ' + slot.id + '? Progress will be lost.')) {
+                    loadCallback(slot.id);
+                    document.getElementById('save-modal').style.display = 'none';
+                }
+            };
+
+            // DELETE button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'DEL';
+            deleteBtn.disabled = slot.empty;
+            deleteBtn.style.background = '#ff4444';
+            deleteBtn.style.color = 'white';
+            deleteBtn.onclick = () => {
+                if (confirm('Delete Slot ' + slot.id + '?')) {
+                    this.delete(slot.id);
+                    this.refreshSlotList(saveCallback, loadCallback);
+                }
+            };
+
+            actions.appendChild(saveBtn);
+            actions.appendChild(loadBtn);
+            actions.appendChild(deleteBtn);
+
+            item.appendChild(info);
+            item.appendChild(actions);
+            list.appendChild(item);
+        });
     }
 }

@@ -59,19 +59,21 @@ describe('Stuck/Throttled Job Reassignment', () => {
     });
 
     it('should release job if throttled and not moving for 45s', () => {
-        const unit1 = game.spawnUnit(10, 10, 'worker');
-        const unit2 = game.spawnUnit(50, 50, 'worker');
+        // Fix: Spawn unit1 OFFICIALLY closer (70,70 for target 80,80) so it wins assignment over unit2 (10,10)
+        const unit1 = game.spawnUnit(70, 70, 'worker');
+        const unit2 = game.spawnUnit(10, 10, 'worker');
 
         // Target is far away. Use AUTO job (isManual=false) so it gets released.
         const req = game.addRequest('raise', 80, 80, false);
         game.processAssignments();
 
         expect(req.assignedTo).toBe(unit1.id);
-        expect(unit1.state.name).toBe('JobState');
+        expect(unit1.state.name).toBe('Job');
 
         // Force stuck position
         unit1.lastPos = { x: 10, z: 10 };
         unit1.stuckTimer = 0;
+        unit1.isPathfinding = false; // FIX: Ensure we aren't stuck "waiting" for a path from a previous call
 
         // Mock smartMove to simulate Throttling persistence
         // vi.spyOn might trigger prototype chain issues or bind issues, so overwrite instance method directly.
@@ -98,6 +100,6 @@ describe('Stuck/Throttled Job Reassignment', () => {
         expect(req.status).toBe('pending');
         expect(req.assignedTo).toBeNull();
         expect(unit1.targetRequest).toBeNull();
-        expect(unit1.state.name).toBe('UnitWanderState');
+        expect(unit1.state.name).toBe('Wander');
     });
 });

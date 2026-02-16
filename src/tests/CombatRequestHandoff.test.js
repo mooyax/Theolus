@@ -93,7 +93,7 @@ describe('Request Responsiveness & Combat Handoff', () => {
         const req = { id: 'req_1', x: 15, z: 15, status: 'assigned', assignedTo: unit.id };
         unit.targetRequest = req;
         if (unit.state) unit.state.targetRequest = req; // Sync state if exists
-        game.requestQueue = [req]; // FIX: UnitJobState verifies request existence!
+        game.requestQueue = [req]; // FIX: UnitJob verifies request existence!
         // Manually set role/state if needed, but 'worker' defaults effectively.
 
         // Simulate combat by putting enemy in range

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { UnitWanderState } from '../ai/states/UnitStates.js';
-import { GoblinWanderState } from '../ai/states/GoblinStates.js';
+import { Wander as UnitWander } from '../ai/states/UnitStates.js';
+import { Wander as GoblinWander } from '../ai/states/GoblinStates.js';
 
 describe('Wander Behavior Verification', () => {
     let mockActor;
@@ -25,8 +25,8 @@ describe('Wander Behavior Verification', () => {
         };
     });
 
-    it('UnitWanderState should trigger moveRandomly after interval', () => {
-        const state = new UnitWanderState(mockActor);
+    it('Wander should trigger moveRandomly after interval', () => {
+        const state = new UnitWander(mockActor);
         state.enter(null);
 
         // First update initializes lastTime
@@ -38,19 +38,19 @@ describe('Wander Behavior Verification', () => {
         state.update(110, 10);
 
         expect(mockActor.moveRandomly).toHaveBeenCalledWith(110);
-        // UnitWanderState resets to 'Idle' in update if not actually moving yet, or 'Wandering' if move starts.
+        // Wander resets to 'Idle' in update if not actually moving yet, or 'Wandering' if move starts.
         // For this test, we just check moveRandomly was called. Action might fluctuate.
         // Let's accept Idle as valid start state
         expect(['Idle', 'Wandering']).toContain(mockActor.action);
     });
 
-    it('GoblinWanderState should also wander and scan for targets', () => {
+    it('Wander should also wander and scan for targets', () => {
         const mockGoblin = {
             ...mockActor,
             type: 'goblin',
             scanForTargets: vi.fn()
         };
-        const state = new GoblinWanderState(mockGoblin);
+        const state = new GoblinWander(mockGoblin);
         state.enter(null);
 
         state.update(100, 0.5); // Init

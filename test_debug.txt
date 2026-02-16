@@ -1,11 +1,176 @@
 
-[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+ RUN  v4.0.15 C:/Users/mooya/develop/test
 
- [31m笶ｯ[39m src/tests/JobCombatRelease.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 35[2mms[22m[39m
-[31m     [31mﾃ・[31m should release assigned job when entering CombatState[39m[32m 33[2mms[22m[39m
+stdout | src/tests/VerifyUnitUpdate.test.js
+[DEBUG] Actor.ts loaded
 
-[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m   Start at [22m 16:00:44
-[2m   Duration [22m 1.30s[2m (transform 185ms, setup 56ms, import 204ms, tests 35ms, environment 638ms)[22m
+stdout | src/tests/ActionLabelStability.test.js
+[DEBUG] Building.ts loaded
+
+stdout | src/tests/ActionLabelStability.test.js
+[DEBUG] Terrain.ts top-level load
+
+stdout | src/tests/VerifyUnitUpdate.test.js > Unit Update Verification > should have updateLogic method
+[Entity 0] CONSTRUCTOR START: type=unit at 20,20
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:20,20 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:20,20
+[UnitCore.js] Unit Construction Finished ID:0
+
+stdout | src/tests/VerifyUnitUpdate.test.js > Unit Update Verification > should increment age in update
+Disposing detached game instance
+
+stdout | src/tests/VerifyUnitUpdate.test.js > Unit Update Verification > should increment age in update
+[Entity 1] CONSTRUCTOR START: type=unit at 20,20
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:20,20 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:20,20
+[UnitCore.js] Unit Construction Finished ID:1
+
+stdout | src/tests/VerifyUnitUpdate.test.js > Unit Update Verification > should call updateMovement in update
+Disposing detached game instance
+
+stdout | src/tests/VerifyUnitUpdate.test.js > Unit Update Verification > should call updateMovement in update
+[Entity 2] CONSTRUCTOR START: type=unit at 20,20
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:20,20 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:20,20
+[UnitCore.js] Unit Construction Finished ID:2
+
+stdout | src/tests/ActionLabelStability.test.js
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/VerifyUnitUpdate.test.js > Unit Update Verification > should call updateLogic fallback in update
+Disposing detached game instance
+
+stdout | src/tests/VerifyUnitUpdate.test.js > Unit Update Verification > should call updateLogic fallback in update
+[Entity 3] CONSTRUCTOR START: type=unit at 20,20
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:20,20 Special:false
+[UnitCore.js] Unit Created ID:3 Role:worker Pos:20,20
+[UnitCore.js] Unit Construction Finished ID:3
+
+ 笶ｯ src/tests/VerifyUnitUpdate.test.js (4 tests | 1 failed) 16ms
+     笨・should have updateLogic method 4ms
+     ﾃ・should increment age in update 6ms
+     笨・should call updateMovement in update 3ms
+     笨・should call updateLogic fallback in update 2ms
+stdout | src/tests/ActionLabelStability.test.js
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/ActionLabelStability.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/ActionLabelStability.test.js
+[DEBUG] Game.ts top-level load
+
+stdout | src/tests/ActionLabelStability.test.js > Action Label Stability > should maintain stable action label during multi-tile job approach
+[Game] Constructor called. Instance ID: 1 (Minimal: true)
+[Game] Init Basic State
+[Game] Init Queues
+[Game] Init Time
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.018526, 0.730950) -> Grid(2, 116) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.780301, 0.904599) -> Grid(124, 144) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.654529, 0.303412) -> Grid(104, 48) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+
+stderr | src/tests/ActionLabelStability.test.js > Action Label Stability > should maintain stable action label during multi-tile job approach
+[Game] Warning: markerMaterial missing or invalid. Using fallback.
+
+stdout | src/tests/ActionLabelStability.test.js > Action Label Stability > should maintain stable action label during multi-tile job approach
+[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Game] Request Added: raise at (50,50) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Unit 0] State Change: Wander -> Job
+[Actor 0] Resetting Unreachable (Target changed or initializing)
+Unit 0 (worker) DIED. R.I.P.
+[Unit 0] Releasing request via this.game
+[Unit 0] State Change: Job -> Wander
+
+ 笶ｯ src/tests/ActionLabelStability.test.js (1 test | 1 failed) 29ms
+     ﾃ・should maintain stable action label during multi-tile job approach 27ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/ActionLabelStability.test.js > Action Label Stability > should maintain stable action label during multi-tile job approach
+AssertionError: expected 'Idle' to be 'Approaching Job' // Object.is equality
+
+Expected: "Approaching Job"
+Received: "Idle"
+
+ 笶ｯ src/tests/ActionLabelStability.test.js:93:33
+     91| 
+     92|             // Should stay as Job label
+     93|             expect(unit.action).toBe('Approaching Job');
+       |                                 ^
+     94| 
+     95|             // 2. Movement Update (takes time)
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/VerifyUnitUpdate.test.js > Unit Update Verification > should increment age in update
+AssertionError: expected 20.4 to be close to 20.2, received difference is 0.1999999999999993, but expected 0.005
+ 笶ｯ src/tests/VerifyUnitUpdate.test.js:49:26
+     47|         // For worker, rate is 0.2. deltaTime=1.0 -> increase 0.2
+     48|         unit.update(100, 1.0);
+     49|         expect(unit.age).toBeCloseTo(20 + 0.2);
+       |                          ^
+     50|     });
+     51| 
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 3 passed (5)
+   Start at  00:13:59
+   Duration  1.27s (transform 656ms, setup 148ms, import 804ms, tests 45ms, environment 966ms)
 

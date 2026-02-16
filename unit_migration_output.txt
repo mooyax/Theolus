@@ -1,0 +1,40 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/UnitMigration.test.js > Unit Migration Logic > should return true on successful build
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 50,50
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:50,50
+
+stdout | src/tests/UnitMigration.test.js > Unit Migration Logic > should increment stagnation on failed build
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 50,50
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:50,50
+
+stdout | src/tests/UnitMigration.test.js > Unit Migration Logic > should migrate after 20 seconds of stagnation
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[ActorCore] Actor Created. Type: unit Pos: 50,50
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:50,50
+
+ 笨・src/tests/UnitMigration.test.js > Unit Migration Logic > should return true on successful build 6ms
+ 笨・src/tests/UnitMigration.test.js > Unit Migration Logic > should increment stagnation on failed build 3ms
+ 笨・src/tests/UnitMigration.test.js > Unit Migration Logic > should migrate after 20 seconds of stagnation 1ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  12:59:03
+   Duration  864ms (transform 182ms, setup 68ms, import 161ms, tests 11ms, environment 432ms)
+

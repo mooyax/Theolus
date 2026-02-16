@@ -62,7 +62,7 @@ describe('Global Battle Hotspots Logic', () => {
         // Score = 40 / (80 + 5) = 40/85 = 0.47 > 0.2
         mockGame.battleHotspots.push({ x: 100, z: 20, intensity: 100, regionId: 1, time: 100 });
 
-        mockGame.mobilizationTimer = 2.0;
+        mockGame.squadMobilizationTimer = 2.0;
         mobFn(0.1);
 
         expect(reportSquadFn).toHaveBeenCalledWith(1, 100, 20);
@@ -102,13 +102,14 @@ describe('Global Battle Hotspots Logic', () => {
             updateDeathAnimation: vi.fn(),
             updateCombatLogic: vi.fn(),
             updateWorkerLogic: vi.fn(),
+            updateAge: vi.fn(),
             checkSelfDefense: vi.fn().mockReturnValue(false),
             executeMove: vi.fn(),
             changeState: vi.fn(function (s) { this.state = s; })
         };
 
-        const { UnitWanderState } = await import('../ai/states/UnitStates.js');
-        mockUnit.state = new UnitWanderState(mockUnit);
+        const { Wander } = await import('../ai/states/UnitStates.js');
+        mockUnit.state = new Wander(mockUnit);
 
         const updateFn = Unit.prototype.updateLogic.bind(mockUnit);
         updateFn(1000, 10, false, [], [], []); // time=1000, deltaTime=10
@@ -130,7 +131,7 @@ describe('Global Battle Hotspots Logic', () => {
         // Setup hotspot
         mockGame.battleHotspots.push({ x: 50, z: 50, intensity: 100, regionId: 1, time: Date.now() });
 
-        mockGame.mobilizationTimer = 2.0;
+        mockGame.squadMobilizationTimer = 2.0;
         mobFn(0.1);
 
         expect(reportSquadFn).toHaveBeenCalledWith(1, 50, 50);
@@ -151,7 +152,7 @@ describe('Global Battle Hotspots Logic', () => {
         // Hotspot is in region 2
         mockGame.battleHotspots.push({ x: 50, z: 50, intensity: 100, regionId: 2, time: Date.now() });
 
-        mockGame.mobilizationTimer = 2.0;
+        mockGame.squadMobilizationTimer = 2.0;
         mobFn(0.1);
 
         expect(reportSquadFn).not.toHaveBeenCalled();

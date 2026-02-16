@@ -1,7 +1,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Unit } from '../Unit.js';
-import { CombatState, UnitWanderState } from '../ai/states/UnitStates.js';
+import { Combat, Wander } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
 // Mock THREE

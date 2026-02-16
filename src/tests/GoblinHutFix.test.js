@@ -11,7 +11,8 @@ describe('Goblin Hut Fix', () => {
         mockScene = { add: vi.fn(), remove: vi.fn() };
         // Valid Game State for Food
         window.game = {
-            resources: { grain: 100, meat: 100, fish: 100 }
+            resources: { grain: 100, meat: 100, fish: 100 },
+            minimal: true
         };
 
         // Partial mock of Terrain with minimal dependencies
@@ -31,7 +32,8 @@ describe('Goblin Hut Fix', () => {
                 population: 10,
                 capacity: 5, // Over capacity
                 popTimer: 0
-            }
+            },
+            material: { uniforms: { uColor: { value: new THREE.Color() } } }
         };
         terrain.buildings.push(hut);
 
@@ -60,7 +62,8 @@ describe('Goblin Hut Fix', () => {
                 population: 15, // Over capacity (10)
                 capacity: 10,
                 popTimer: 100
-            }
+            },
+            material: { uniforms: { uColor: { value: new THREE.Color() } } }
         };
         terrain.buildings.push(house);
 
