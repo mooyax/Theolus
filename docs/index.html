@@ -554,8 +554,71 @@
       color: #555;
       line-height: 1.4;
     }
+
+    /* Game Over Screen */
+    #game-over-screen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 5000;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+    }
+
+    #game-over-title {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      text-shadow: 0 0 20px currentColor;
+    }
+
+    .win-text {
+      color: #FFD700;
+      /* Gold */
+    }
+
+    .lose-text {
+      color: #FF4444;
+      /* Red */
+    }
+
+    #game-over-message {
+      font-size: 1.5rem;
+      margin-bottom: 3rem;
+      color: #ddd;
+    }
+
+    .game-over-btn {
+      padding: 15px 40px;
+      font-size: 1.5rem;
+      margin: 10px;
+      width: auto;
+      height: auto;
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .game-over-btn:hover {
+      background: white;
+      color: black;
+      box-shadow: 0 0 20px white;
+    }
   </style>
-  <script type="module" crossorigin src="./assets/index-Ds8kcu7G.js"></script>
+  <script type="module" crossorigin src="./assets/index-B8YubXe4.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-BwhFW2Gb.css">
 </head>
 
@@ -697,6 +760,17 @@
       <div id="loading-bar" style="width: 0%; height: 100%; background: #4CAF50; transition: width 0.1s;"></div>
     </div>
     <div id="loading-text" style="margin-top: 10px;">0%</div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="game-over-screen">
+    <h1 id="game-over-title">VICTORY</h1>
+    <p id="game-over-message">All enemies have been vanquished!</p>
+    <div>
+      <button id="retry-btn" class="game-over-btn" style="display:none;">Retry Level</button>
+      <button id="next-level-btn" class="game-over-btn" style="display:none;">Next Level</button>
+      <button id="return-title-btn" class="game-over-btn">Title</button>
+    </div>
   </div>
 
   <!-- Save/Load Modal -->
