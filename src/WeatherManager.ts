@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export type WeatherType = 'Clear' | 'Rain' | 'HeavyRain' | 'Snow' | 'HeavySnow';
+export type WeatherType = 'Clear' | 'Rain' | 'HeavyRain' | 'Snow' | 'HeavySnow' | 'Fog';
 
 export class WeatherManager {
     private scene: THREE.Scene;
@@ -26,9 +26,15 @@ export class WeatherManager {
     private readonly HEIGHT_RANGE = 40;
 
     constructor(scene: THREE.Scene, clippingPlanes: THREE.Plane[] = []) {
-        this.currentWeather = 'Clear'; // Explicit initialization
+        console.log('[WeatherManager] Initializing...');
         this.scene = scene;
         this.clippingPlanes = clippingPlanes;
+        this.currentWeather = 'Clear';
+
+        // Initialize Fog (FogExp2 for realistic distance falloff)
+        // Default is very light fog for 'Clear'
+        this.scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
+
         this.initRain();
         this.initHeavyRain();
         this.initSnow();
@@ -168,12 +174,45 @@ export class WeatherManager {
 
     public setWeather(type: WeatherType) {
         console.log(`[WeatherManager] setWeather called with: ${type}`);
-        this.currentWeather = type;
+        this._currentWeather = type;
+
         if (this.rainParticles) this.rainParticles.visible = (type === 'Rain');
         if (this.heavyRainParticles) this.heavyRainParticles.visible = (type === 'HeavyRain');
         if (this.snowParticles) this.snowParticles.visible = (type === 'Snow');
         if (this.heavySnowParticles) this.heavySnowParticles.visible = (type === 'HeavySnow');
-        console.log(`[Weather] Set to ${type}`);
+
+        // Toggle Fog visibility / density logic
+        const baseDensities: Record<WeatherType, number> = {
+            'Clear': 0.002,
+            'Rain': 0.01,
+            'HeavyRain': 0.02,
+            'Snow': 0.015,
+            'HeavySnow': 0.025,
+            'Fog': 0.05 // Heavy fog
+        };
+
+        const baseColors: Record<WeatherType, number> = {
+            'Clear': 0xcccccc,      // Light Grey
+            'Rain': 0xaaddff,       // Blueish Grey
+            'HeavyRain': 0x667788,  // Dark Blue Grey
+            'Snow': 0xeceff1,       // White/Grey
+            'HeavySnow': 0xcfd8dc,  // Grey White
+            'Fog': 0xb0bec5         // Misty Grey
+        };
+
+        const targetDensity = baseDensities[type] || 0.002;
+        const targetColor = baseColors[type] || 0xcccccc;
+
+        // Add randomization: +/- 20% variance
+        const variance = (Math.random() * 0.4) - 0.2; // -0.2 to +0.2
+        const finalDensity = Math.max(0.001, targetDensity * (1 + variance));
+
+        if (this.scene.fog && this.scene.fog instanceof THREE.FogExp2) {
+            this.scene.fog.density = finalDensity;
+            this.scene.fog.color.setHex(targetColor);
+        }
+
+        console.log(`[Weather] Set to ${type}, Density: ${finalDensity.toFixed(4)}`);
     }
 
     private nextWeatherChangeTime: number = 20; // First change quickly

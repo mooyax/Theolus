@@ -544,7 +544,7 @@ export class Game {
                 } else if (e.key === 'w' || e.key === 'W') {
                     // Manual Weather Cycle
                     if (this.weatherManager) {
-                        const types: WeatherType[] = ['Clear', 'Rain', 'HeavyRain', 'Snow', 'HeavySnow'];
+                        const types: WeatherType[] = ['Clear', 'Rain', 'HeavyRain', 'Snow', 'HeavySnow', 'Fog'];
                         const curIndex = types.indexOf(this.weatherManager.currentWeather || 'Clear');
                         const nextType = types[(curIndex + 1) % types.length];
                         this.weatherManager.setWeather(nextType);
