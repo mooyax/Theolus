@@ -22,6 +22,8 @@ export class Terrain {
     public meshes: any[] = []; // Changed to any[] for broad compatibility
     public visibleChunks: { [key: string]: THREE.Mesh } = {};
     public chunkSize: number = 20;
+    public gridLinesMesh: THREE.LineSegments | null = null;
+    public gridDotsMesh: THREE.Points | null = null;
 
     // --- State and Flags ---
     private _biomeColors: any; // Cache for getBiomeColor
@@ -69,9 +71,10 @@ export class Terrain {
     constructor(scene: THREE.Scene, clippingPlanes?: THREE.Plane[], width?: number, depth?: number) {
         this.scene = scene;
         this.clippingPlanes = clippingPlanes || [];
-        // Expanded Map : Dynamic from Config or Constructor
         this.logicalWidth = width || 160;
         this.logicalDepth = depth || 160;
+        this.width = this.logicalWidth; // Assuming 1:1 for now, sync with existing logic if needed
+        this.depth = this.logicalDepth;
 
         // DEBUG: Verify method existence
         console.log('[Terrain] Constructor. updatePopulation type:', typeof this.updatePopulation);
@@ -811,9 +814,10 @@ export class Terrain {
             clippingPlanes: this.clippingPlanes
         });
 
-        const gridMesh = new THREE.LineSegments(gridGeo, gridMat);
-        gridMesh.position.set(0, 0, 0.04); // Slightly below dots
-        this.mesh.add(gridMesh);
+        this.gridLinesMesh = new THREE.LineSegments(gridGeo, gridMat);
+        this.gridLinesMesh.position.set(0, 0, 0.04); // Slightly below dots
+        this.gridLinesMesh.visible = false; // Start hidden by default
+        this.mesh.add(this.gridLinesMesh);
 
         // 2. Grid Dots (Matching Lines)
         const dotsMaterial = new THREE.PointsMaterial({
@@ -826,10 +830,11 @@ export class Terrain {
         });
 
         // We can reuse the main geometry directly because it has vertices at grid intersections
-        const dotsMesh = new THREE.Points(this.geometry, dotsMaterial);
-        dotsMesh.position.set(0, 0, 0.05); // Slight lift to avoid Z-fighting
+        this.gridDotsMesh = new THREE.Points(this.geometry, dotsMaterial);
+        this.gridDotsMesh.position.set(0, 0, 0.05); // Slight lift to avoid Z-fighting
+        this.gridDotsMesh.visible = false; // Start hidden by default
 
-        this.mesh.add(dotsMesh);
+        this.mesh.add(this.gridDotsMesh);
 
         if (this.mesh) {
             const s = this.scene || (window as any).game?.scene;
@@ -3085,14 +3090,30 @@ export class Terrain {
 
         // Clean up meshes
         this.scene.traverse((object: any) => {
-            // Only dispose things that likely belong to Terrain if possible, 
-            // but usually Terrain has its own group or we just dispose everything in the scene via Game.dispose.
-            // Here we focus on shared assets if any.
+            if (object.geometry) object.geometry.dispose();
+            if (object.material) {
+                if (Array.isArray(object.material)) {
+                    object.material.forEach((m: any) => m.dispose());
+                } else {
+                    object.material.dispose();
+                }
+            }
         });
 
         // Clear references
         this.grid = [];
         this.pathCache = [];
         this.buildings = [];
+    }
+
+    toggleGrid() {
+        const visible = !this.gridLinesMesh?.visible;
+        if (this.gridLinesMesh) {
+            this.gridLinesMesh.visible = visible;
+        }
+        if (this.gridDotsMesh) {
+            this.gridDotsMesh.visible = visible;
+        }
+        console.log(`[Terrain] Grid visible: ${visible}`);
     }
 }

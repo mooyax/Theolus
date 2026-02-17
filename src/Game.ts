@@ -549,6 +549,10 @@ export class Game {
                         const nextType = types[(curIndex + 1) % types.length];
                         this.weatherManager.setWeather(nextType);
                     }
+                } else if (e.key === 'g' || e.key === 'G') {
+                    if (this.terrain) {
+                        this.terrain.toggleGrid();
+                    }
                 }
             });
 
