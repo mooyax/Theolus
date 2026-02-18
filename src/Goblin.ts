@@ -898,6 +898,7 @@ export class Goblin extends Actor {
         }
 
         // --- FALLBACK (Legacy Object) ---
+        const bType = building.userData.type;
         const damage = this.damage || 10;
 
         // 1. Ensure HP exists and reduce it
@@ -905,28 +906,29 @@ export class Goblin extends Actor {
         building.userData.hp -= damage;
         if (building.hp !== undefined) building.hp = building.userData.hp;
 
-        // 2. Population Reduction and Retaliation
+        // 2. Population Reduction and Retaliation (Safe version for Mock Objects)
         if (building.userData.population > 0) {
-            // NERF: Limit population reduction.
             const popDamage = Math.max(1, Math.floor(damage * 0.1));
             building.userData.population -= popDamage;
             if (building.population !== undefined) building.population = building.userData.population;
             console.log(`Goblin Raid: House population reduced. Rem: ${building.userData.population} `);
 
-            // Retaliation
-            const typeFactor = (building.userData.type === 'tower') ? 10.0 : 4.0;
-            const effectivePop = Math.max(0, building.userData.population);
-            const retaliation = Math.floor(effectivePop * typeFactor);
+            // Retaliation for Mocks (Farms have 0 retaliation in config, but here we skip by type)
+            if (bType !== 'farm' && !this.isRanged) {
+                // Use defense factor if available, otherwise legacy defaults
+                const factor = (building.userData.defense !== undefined) ? building.userData.defense : (bType === 'tower' ? 10.0 : 4.0);
+                const effectivePop = Math.max(0, building.userData.population);
+                const retaliation = Math.floor(effectivePop * factor);
 
-            if (retaliation > 0 && !this.isRanged) {
-                this.takeDamage(retaliation, null);
+                if (retaliation > 0) {
+                    this.takeDamage(retaliation, null);
+                }
             }
         }
 
         // 3. Destruction Check
         const finalPop = building.userData.population || 0;
         const finalHp = building.userData.hp || 0;
-        const bType = building.userData.type;
 
         // Rule: HP=0 means destroyed (Farms fix: ignore pop, House fix: require pop=0)
         const isDestroyed = (finalHp <= 0) && (bType === 'farm' || finalPop < 1.0);
@@ -938,6 +940,7 @@ export class Goblin extends Actor {
         } else {
             this.attackCooldown = this.attackRate || 1.5;
         }
+
     }
 
 

@@ -202,7 +202,7 @@ export class GoblinManager {
 
         this.caveGroup.add(cave);
 
-        const valid = this.terrain.addBuilding('cave', x, z);
+        const valid = this.terrain.addBuilding('cave', x, z, false, false, 'enemy');
         if (valid) {
             console.log(`GoblinManager: Cave registered at ${x},${z} `);
             // Link mesh to building for very strict checks

@@ -144,7 +144,10 @@ export class Building extends Entity {
             // Use defense factor from Config (userData). Fallback to 2.0 if missing.
             const factor = (this.userData.defense !== undefined) ? this.userData.defense : 2.0;
             // Retaliation based on CURRENT population (survivors fight back)
-            retaliation = Math.floor(this.population * factor);
+            // Fix: Only retaliate if factor > 0
+            if (factor > 0) {
+                retaliation = Math.floor(this.population * factor);
+            }
 
             // 5. Goblin Defense Logic (User Request)
             if (this.type === 'cave' || this.type === 'goblin_hut') {

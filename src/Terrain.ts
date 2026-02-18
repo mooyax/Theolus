@@ -1740,7 +1740,16 @@ export class Terrain {
             }
         }
 
-        building.userData.faction = faction;
+        // Faction Assignment Logic
+        let assignedFaction = faction;
+        if (faction === 'player') { // Only override if it's the default value
+            if (type === 'cave' || type === 'goblin_hut') {
+                assignedFaction = 'enemy';
+            } else if (type === 'ancient_ruin') {
+                assignedFaction = 'neutral';
+            }
+        }
+        building.userData.faction = assignedFaction;
         const size = this.getBuildingSize(type);
 
         if (!force && type !== 'cave') {
@@ -2611,7 +2620,7 @@ export class Terrain {
 
 
     restoreHouse(data) {
-        const building = this.addBuilding('house', data.gridX, data.gridZ, true);
+        const building = this.addBuilding('house', data.gridX, data.gridZ, true, false, 'player');
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
@@ -2622,7 +2631,7 @@ export class Terrain {
     }
 
     restoreFarm(data) {
-        const building = this.addBuilding('farm', data.gridX, data.gridZ, true);
+        const building = this.addBuilding('farm', data.gridX, data.gridZ, true, false, 'player');
         if (building) {
             // HP is correctly initialized in Building constructor using GameConfig
             if (data.rotationY !== undefined) building.rotationY = data.rotationY;
@@ -2630,7 +2639,7 @@ export class Terrain {
     }
 
     restoreMansion(data) {
-        const building = this.addBuilding('mansion', data.gridX, data.gridZ, true);
+        const building = this.addBuilding('mansion', data.gridX, data.gridZ, true, false, 'player');
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
@@ -2642,7 +2651,7 @@ export class Terrain {
 
     // Legacy support
     restoreCastle(data) {
-        const b = this.addBuilding('castle', data.gridX, data.gridZ, true);
+        const b = this.addBuilding('castle', data.gridX, data.gridZ, true, false, 'player');
         if (b) {
             (b as any).population = data.population || 0;
             (b as any).userData.population = data.population || 0;
@@ -2686,7 +2695,7 @@ export class Terrain {
     }
 
     restoreTower(data) {
-        const building = this.addBuilding('tower', data.gridX, data.gridZ, true);
+        const building = this.addBuilding('tower', data.gridX, data.gridZ, true, false, 'player');
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
@@ -2696,7 +2705,7 @@ export class Terrain {
 
     restoreBarracks(data) {
         // Handle migration from Mansion -> Barracks if needed, or just standard restore
-        const building = this.addBuilding('barracks', data.gridX, data.gridZ, true);
+        const building = this.addBuilding('barracks', data.gridX, data.gridZ, true, false, 'player');
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;

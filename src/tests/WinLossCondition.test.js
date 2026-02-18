@@ -13,9 +13,18 @@ describe('Win/Loss Condition Logic', () => {
         scene = new THREE.Scene();
         // Create a real terrain to avoid the mock terrain in minimal mode
         const terrain = new Terrain(scene, [], 160, 160);
+        // Initialize grid
+        terrain.grid = [];
+        for (let x = 0; x < 160; x++) {
+            terrain.grid[x] = [];
+            for (let z = 0; z < 160; z++) {
+                terrain.grid[x][z] = { hasBuilding: false, height: 5 };
+            }
+        }
         game = new Game(scene, terrain, true); // true means minimal
         game.gameActive = true;
     });
+
 
     it('should return "loss" when player units and buildings are all gone', () => {
         // Setup: No player units
@@ -48,6 +57,49 @@ describe('Win/Loss Condition Logic', () => {
         const result = game.evaluateWinLoss();
         expect(result).toBe(null); // Not over yet
     });
+
+    it('should return "loss" even if ancient ruins exist (they should be neutral)', () => {
+        game.units = [];
+
+        // Use addBuilding to reflect real bug (defaults to 'player')
+        game.terrain.addBuilding('ancient_ruin', 2, 2);
+
+        // Add an enemy
+        const cave = new Building(scene, game.terrain, 'cave', 10, 10);
+        cave.userData.faction = 'enemy';
+        game.terrain.buildings.push(cave);
+
+        const result = game.evaluateWinLoss();
+
+        // This will now fail (received null) if the bug exists
+        expect(result).toBe('loss');
+    });
+
+    it('should NOT kill goblin instantly when attacking a farm (Retaliation Bug)', () => {
+        const farm = game.terrain.addBuilding('farm', 5, 5);
+        farm.population = 100; // Representing food
+
+        const goblin = {
+            id: 'goblin_1',
+            type: 'normal',
+            hp: 20,
+            maxHp: 20,
+            damage: 10,
+            takeDamage: vi.fn(function (amt) { this.hp -= amt; })
+        };
+
+        // Simulate Goblin attacking building logic
+        // (Simplified excerpt from Goblin.ts attackBuilding)
+        const retaliation = farm.takeDamage(goblin.damage);
+        if (retaliation > 0) {
+            goblin.takeDamage(retaliation);
+        }
+
+        expect(goblin.hp).toBeGreaterThan(0);
+        expect(retaliation).toBe(0); // Farms should not retaliate
+    });
+
+
 
 
     it('should return "win" when all enemies (goblins, caves, huts, units) are gone', () => {

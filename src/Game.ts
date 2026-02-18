@@ -3594,8 +3594,16 @@ export class Game {
         // 1. Check Defeat: Player Wiped Out
         // Player Units (Must be alive)
         const playerUnits = this.units.filter(u => u.faction === 'player' && !u.isDead);
-        // Player Buildings (Strictly 'player' faction)
-        const playerBuildings = this.terrain.buildings.filter(b => b.userData.faction === 'player');
+        // Player Buildings (Strictly 'player' faction and NOT destroyed)
+        const playerBuildings = this.terrain.buildings.filter(b => {
+            const isAlive = b.isDestroyed ? !b.isDestroyed() : (b.userData.hp > 0);
+            return b.userData.faction === 'player' && isAlive;
+        });
+
+        // Debug Log
+        if (playerUnits.length === 0 && playerBuildings.length === 0) {
+            console.log(`[Game] evaluateWinLoss: Player assets zero. Units:0 Buildings:0`);
+        }
 
         // If no units and no buildings, IT IS OVER.
         if (playerUnits.length === 0 && playerBuildings.length === 0) {
@@ -3606,18 +3614,29 @@ export class Game {
         let goblinCount = 0;
         let caveCount = 0;
         if (this.goblinManager) {
+            // Count alive goblins
             goblinCount = this.goblinManager.goblins.filter(g => !g.isDead).length;
-            caveCount = this.goblinManager.caves ? this.goblinManager.caves.length : 0;
+            // Count alive caves
+            caveCount = this.goblinManager.caves ? this.goblinManager.caves.filter(c => {
+                const b = c.building;
+                return b && (b.isDestroyed ? !b.isDestroyed() : (b.userData.hp > 0));
+            }).length : 0;
         }
 
-        // Enemy Buildings
-        const enemyBuildings = this.terrain.buildings.filter(b => b.userData.faction === 'enemy');
+        // Enemy Buildings (registered in terrain)
+        const enemyBuildings = this.terrain.buildings.filter(b => {
+            const isAlive = b.isDestroyed ? !b.isDestroyed() : (b.userData.hp > 0);
+            return b.userData.faction === 'enemy' && isAlive;
+        });
+
         // Enemy Units (Must be alive)
         const enemyUnits = this.units.filter(u => u.faction === 'enemy' && !u.isDead);
 
         if (goblinCount === 0 && caveCount === 0 && enemyBuildings.length === 0 && enemyUnits.length === 0) {
+            console.log(`[Game] evaluateWinLoss: Enemy assets zero. Goblins:0 Caves:0 enemyBuildings:0 enemyUnits:0`);
             return 'win';
         }
+
 
         return null;
     }
