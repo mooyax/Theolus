@@ -35,8 +35,8 @@ export const Levels: LevelConfig[] = [
             goblinCaves: 1 // Just one cave to start
         },
         generation: {
-            rockHeight: 8, // High threshold -> Almost no rocks
-            moistureBase: 0.8, // Dry/Plains
+            rockHeight: 9, // High threshold -> Almost no rocks
+            moistureBase: 0.55, // Dry/Plains
             treeDensity: 0.2,
             landRatio: 0.6 // Mostly land
         }

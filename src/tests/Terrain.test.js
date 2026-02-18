@@ -192,13 +192,13 @@ describe('Terrain Logic', () => {
                 expect(plainsWinter.g).toBeGreaterThan(plainsWinter.b);
 
                 // Winter Forest -> Snow (White with subtle texture)
-                // Height 6 is Grass (<6). Use Height 10 for Forest.
-                const forestWinter = terrain.getBiomeColor(10, 0.5, 0, false, 'Winter', 10, 10);
+                // Height 7 is Forest (4-9).
+                const forestWinter = terrain.getBiomeColor(7, 0.5, 0, false, 'Winter', 10, 10);
                 expect(forestWinter.r).toBeGreaterThan(0.9);
 
                 // Winter Rock -> Grey
-                // Height 10 is Forest (<12). Use Height 15 for Rock.
-                const rockWinter = terrain.getBiomeColor(15, 0.5, 0, false, 'Winter', 10, 10);
+                // Height 11 is Rock (>9).
+                const rockWinter = terrain.getBiomeColor(11, 0.5, 0, false, 'Winter', 10, 10);
                 // Allow fuzzy match because SimplexNoise might differ slightly even with noise=false if implementation changed
                 const c = new THREE.Color(0x808080);
                 expect(rockWinter.r).toBeCloseTo(c.r, 1);
@@ -207,8 +207,8 @@ describe('Terrain Logic', () => {
             });
 
             it('should keep rock color even if dry (desert override check)', () => {
-                // Height 15 (Rock), Moisture 0.2 (Desert). Should be Rock Color (Grey).
-                const rockDry = terrain.getBiomeColor(15, 0.2, 0, false, 'Summer', 10, 10);
+                // Height 11 (Rock), Moisture 0.2 (Desert). Should be Rock Color (Grey).
+                const rockDry = terrain.getBiomeColor(11, 0.2, 0, false, 'Summer', 10, 10);
                 // 0x808080 is base rock color.
                 const c2 = new THREE.Color(0x808080);
                 expect(rockDry.r).toBeCloseTo(c2.r, 1);

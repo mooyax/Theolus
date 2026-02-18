@@ -32,8 +32,8 @@ export class WeatherManager {
         this.currentWeather = 'Clear';
 
         // Initialize Fog (FogExp2 for realistic distance falloff)
-        // Default is very light fog for 'Clear'
-        this.scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
+        // Default is very light fog for 'Clear', synced with sky color (0x87CEEB)
+        this.scene.fog = new THREE.FogExp2(0x87CEEB, 0.001);
 
         this.initRain();
         this.initHeavyRain();
@@ -183,7 +183,7 @@ export class WeatherManager {
 
         // Toggle Fog visibility / density logic
         const baseDensities: Record<WeatherType, number> = {
-            'Clear': 0.002,
+            'Clear': 0.001, // Reduced for clarity (was 0.002)
             'Rain': 0.01,
             'HeavyRain': 0.02,
             'Snow': 0.015,
@@ -192,7 +192,7 @@ export class WeatherManager {
         };
 
         const baseColors: Record<WeatherType, number> = {
-            'Clear': 0xcccccc,      // Light Grey
+            'Clear': 0x87CEEB,      // Sky Blue (was 0xcccccc)
             'Rain': 0xaaddff,       // Blueish Grey
             'HeavyRain': 0x667788,  // Dark Blue Grey
             'Snow': 0xeceff1,       // White/Grey

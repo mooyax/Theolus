@@ -509,37 +509,35 @@ export class Terrain {
                 const u = x / this.logicalWidth;
                 const v = z / this.logicalDepth;
 
-                // Use Seamless FBM
-                let n = this.seamlessFbm(u, v, this.seed);
+                // Mapping Seeded Noise to 0..1 range
+                // FBM typically lands in [0.2, 0.8] range. We map it to [0.0, 1.0].
+                let rawN = this.seamlessFbm(u, v, this.seed);
+                let n = (rawN - 0.2) / 0.6;
+                n = Math.max(0, Math.min(1.0, n));
 
-                // Stress Test Mode: Forces Flat Terrain
-                if (typeof window !== 'undefined' && window.location && window.location.search && window.location.search.includes('stressTest=true')) {
-                    this.grid[x][z].height = 1;
-                    this.grid[x][z].moisture = 0.5; // Default green
-                    continue;
+                const landRatio = (genParams && genParams.landRatio !== undefined) ? genParams.landRatio : 0.6;
+                const seaLevel = 1.0 - landRatio;
+
+                let height = 0;
+                if (n >= seaLevel) {
+                    // LAND CALCULATION
+                    // Map [seaLevel, 1.0] to [0.0, 1.0] land progress
+                    let landProgress = (n - seaLevel) / (1.0 - seaLevel);
+
+                    // POWER CURVE: Make high peaks (Rock) rare and lowlands (Plains) broad.
+                    // n^1.5 curve creates steeper mountains and flatter valleys.
+                    let curvedProgress = Math.pow(landProgress, 1.6); // 1.6 is a good balance for RTS terrain
+
+                    const rockHeight = (genParams && genParams.rockHeight !== undefined) ? genParams.rockHeight : 12;
+                    height = curvedProgress * rockHeight;
+                } else {
+                    // SEA CALCULATION
+                    // Map [0.0, seaLevel] to [-5, 0.0] depth range
+                    let seaProgress = n / seaLevel;
+                    height = (seaProgress - 1.0) * 5.0; // Max depth 5
                 }
 
-                // Map 0..1 to desired height range
-                // Automatically scale height parameters based on map size (reference: 240)
-                // to maintain consistent roughness/slope regardless of logicalWidth.
-                const sizeRatio = this.logicalWidth / 240;
-
-                const baseScale = (genParams && genParams.heightScale !== undefined) ? genParams.heightScale : 35;
-                const baseOffset = (genParams && genParams.heightOffset !== undefined) ? genParams.heightOffset : 15;
-
-                const hScale = baseScale * sizeRatio;
-                let hOffset = baseOffset * sizeRatio;
-
-                // Parameterized Land Ratio
-                if (genParams && genParams.landRatio !== undefined) {
-                    // hScale * (1.0 - landRatio) means if landRatio is 0.8, sea level is at 0.2 * hScale.
-                    hOffset = hScale * (1.0 - genParams.landRatio);
-                }
-
-                let height = (n * hScale) - hOffset;
-                height = Math.max(-5, height); // Cap depth at -5
-                height = Math.round(height);
-
+                height = Math.round(height); // Snap to step for logic and flat surfaces
                 this.grid[x][z].height = height;
 
                 // Moisture Map (Different seed)
@@ -788,6 +786,7 @@ export class Terrain {
         this.mesh = new THREE.Mesh(this.geometry, material);
         this.mesh.rotation.x = -Math.PI / 2;
         this.mesh.position.set(0, 0, 0); // Centered
+        this.mesh.receiveShadow = true; // Enable shadows on terrain!
 
         // 1. Grid Lines (Gray) - User Request
         const gridGeo = new THREE.BufferGeometry();
@@ -931,16 +930,16 @@ export class Terrain {
         // Visual Params
         const isWinter = season === 'Winter';
 
+        // Pre-calculate random noise function to avoid Math.random() in loop if possible
+        // But for static terrain, deterministic hash is better.
+        const seed = this.seed + 9999;
+
         for (let i = 0; i < count; i++) {
             // Mapping from PlaneGeometry vertex index to Grid Coordinate
             const x = this.geometry.attributes.position.getX(i);
             const z = this.geometry.attributes.position.getY(i); // Plane is XY
 
             // Convert to Logical Grid (Approximate for Visuals)
-            // Assuming 1 unit = 1 grid cell roughly, or use modulo
-            // Simpler: map x,z to grid using logic similar to getVisualPosition inverse
-            // But here we iterate vertices.
-            // Let's assume standard mapping:
             let lx = Math.floor((x + width / 2));
             let lz = Math.floor((-z + depth / 2)); // z is -y in plane
 
@@ -948,14 +947,50 @@ export class Terrain {
             lx = ((lx % width) + width) % width;
             lz = ((lz % depth) + depth) % depth;
 
+            // Get Neighbors for Curvature
             const cell = this.grid[lx][lz];
+
+            // Safety check
             if (cell) {
                 const height = cell.height;
                 const moisture = cell.moisture || 0.5;
                 const noise = cell.noise;
 
-                const color = this.getBiomeColor(height, moisture, noise, isNight, season, lx, lz);
-                colorAttr.setXYZ(i, color.r, color.g, color.b);
+                // 1. Base Color
+                const baseColor = this.getBiomeColor(height, moisture, noise, isNight, season, lx, lz);
+
+                // 2. Micro-Noise (Texture)
+                // Deterministic random using coordinates
+                // simple hash
+                const noiseVal = ((Math.sin(lx * 12.9898 + lz * 78.233 + seed) * 43758.5453) % 1);
+                // Range 0.96 to 1.04 (Multiplicative)
+                // This scales brightness without washing out color (unlike adding white)
+                const noiseScale = 1.0 + (noiseVal - 0.5) * 0.08;
+
+                // 3. Curvature (Pseudo-AO / Ridge Highlight)
+                // Get neighbors (wrapping)
+                const nN = this.grid[lx][(lz - 1 + depth) % depth]?.height ?? height;
+                const nS = this.grid[lx][(lz + 1) % depth]?.height ?? height;
+                const nE = this.grid[(lx + 1) % width][lz]?.height ?? height;
+                const nW = this.grid[(lx - 1 + width) % width][lz]?.height ?? height;
+
+                // Laplacian (Curvature)
+                // Positive = Peak/Ridge (Convex) -> Lighten
+                // Negative = Valley/Bowl (Concave) -> Darken
+                const curvature = (height * 4) - (nN + nS + nE + nW);
+                const curvatureStrength = 0.05; // Tunable
+                // Multiplicative factor: 1.0 +/- adjustment
+                const curveScale = 1.0 + (curvature * curvatureStrength);
+
+                // Apply adjustments via Multiplication (Preserves Hue/Saturation better)
+                // Combine scales
+                const totalScale = noiseScale * curveScale;
+
+                baseColor.r = THREE.MathUtils.clamp(baseColor.r * totalScale, 0, 1);
+                baseColor.g = THREE.MathUtils.clamp(baseColor.g * totalScale, 0, 1);
+                baseColor.b = THREE.MathUtils.clamp(baseColor.b * totalScale, 0, 1);
+
+                colorAttr.setXYZ(i, baseColor.r, baseColor.g, baseColor.b);
             }
         }
         colorAttr.needsUpdate = true;
@@ -984,13 +1019,13 @@ export class Terrain {
         if (!cell) return;
 
         // STRICT BIOME CHECK
-        // Forest is strictly Height 6-12 AND Moisture >= 0.5
+        // Forest is strictly Height 4-9 AND Moisture >= 0.45
         const h = cell.height;
         const m = (cell.moisture !== undefined) ? cell.moisture : 0.5;
 
-        if (h < 6.0) return;   // Eliminate Plains/Water (Safety margin included as water is <= 0)
-        if (h > 12.0) return;  // Eliminate Rock/Snow
-        if (m < 0.5) return;   // Eliminate Desert/Drylands
+        if (h < 4.0) return;   // Eliminate Plains (<= 4.0)
+        if (h > 9.0) return;   // Eliminate Rock (> 9.0)
+        if (m < 0.45) return;  // Eliminate Desert/Drylands
 
         // Density Check (Deterministic using seed + offset)
         const dRand = this.random(x, z, this.seed + 500);
@@ -1050,7 +1085,24 @@ export class Terrain {
         }
 
         // 2. Standard Terrain Logic (Height & Season) - Base Color
-        if (height <= 6) {
+        // FIXED THRESHOLDS: Beach <= 1.0, Plains <= 4.0, Forest <= 9.0, Rock > 9.0
+
+        const brightSand = C.sand.clone().lerp(new THREE.Color(0xFFFFFF), 0.5);
+        const springGrass = C.springGrass;
+        const summerGrass = C.summerGrass;
+        const winterGrass = C.winterGrass;
+
+        if (height <= 0.0) {
+            // DEEP BEACH / UNDERWATER
+            color.copy(brightSand);
+            if (season === 'Winter') color.lerp(new THREE.Color(0xFFFFFF), 0.5);
+        } else if (height === 1.0) {
+            // COASTLINE BLEND (The actual "Beach" look)
+            // 50% Sand, 50% Grass. This creates a narrow transition.
+            let grassCol = (season === 'Summer') ? summerGrass : (season === 'Winter' ? winterGrass : springGrass);
+            color.copy(brightSand).lerp(grassCol, 0.5);
+            if (season === 'Winter') color.lerp(new THREE.Color(0xFFFFFF), 0.2);
+        } else if (height <= 4.0) {
             // Grass / Plains
             if (season === 'Winter') {
                 color.copy(C.winterGrass);
@@ -1061,7 +1113,7 @@ export class Terrain {
             } else {
                 color.copy(C.springGrass); // Spring/Autumn/Default
             }
-        } else if (height <= 12) {
+        } else if (height <= 9.0) {
             // Forest
             if (season === 'Winter') {
                 color.copy(C.winterForest);
@@ -1080,47 +1132,32 @@ export class Terrain {
         }
 
         // 3. Special Biome Logic (Desert / Swamp)
-        // 3. Special Biome Logic (Desert / Swamp)
-        // Desert (Sand)
-        // Priority: Sand only if NOT Rock (Height < 10?)
-        // Originally Rock starts > 12. But Test uses Height 10 as Rock?
-        // Code above: <= 12 is Forest. > 12 is Rock.
-        // So Height 10 IS Forest level in code, hence Desert applies.
-        // Code at line 1025: else (High Altitude) -> Rock.
-        // Refactoring: Rock threshold is > 12.
-        // Test says: "Height 10 (Rock)". This implies Test expects Height 10 to be Rock, or is mistaken?
-        // Wait, Winter Rock test used height 10.
-        // Let's look at "Winter Rock -> Grey" test:
-        // const rockWinter = terrain.getBiomeColor(10, ...).
-        // If height 10 goes to Forest block (line 1014), it gets WinterForest color (White).
-        // White is > 0.9. Correct.
-        // Wait, Test "Winter Rock -> Grey" expects 0x808080.
-        // If height 10 is Forest, it returns White (0xFFFFFF).
-        // 0x808080 check likely failed too?
-        // BUT the failure log Only showed "Desert override" failure.
-        // Ah, the test logic might be assuming old height rules?
-        // Let's stricter the desert check to ignore high altitude.
 
-        if (moisture < 0.5 && height <= 8) { // Lower max height for sand to avoid overriding mountain base
+        // Desert (Sand)
+        // Reform: Reduced max moisture for desert from 0.5 to 0.3.
+        if (moisture < 0.3 && height <= 8) {
             let sandFactor = 1.0;
-            if (moisture > 0.35) sandFactor = 1.0 - ((moisture - 0.35) / 0.15);
+            // Fade out from 0.2 to 0.3
+            if (moisture > 0.2) sandFactor = 1.0 - ((moisture - 0.2) / 0.1);
             color.lerp(C.sand, sandFactor);
         }
 
         // Swamp
-        if (moisture > 0.6 && height <= 3) {
-            let moistFade = Math.min(1.0, Math.max(0, (moisture - 0.6) / 0.15));
-            let heightFade = (height > 2) ? (1.0 - (height - 2)) : 1.0;
+        // Reform: 
+        // 1. Lower bound > 2.5 matches user request to clear coast (0-2.5 kept as Grass/Forest).
+        // 2. Upper bound <= 10 (was 3) to spread swamp inland into forest, avoiding "ring around the coast" effect.
+        if (moisture > 0.8 && height > 2.5 && height <= 10) {
+            let moistFade = Math.min(1.0, Math.max(0, (moisture - 0.8) / 0.1));
+            // Removed steep height fade at top, just fade at bottom if needed
 
             if (season === 'Autumn') {
-                // We need a temp color to mix if we don't want to alloc. 
-                // But lerp targets are immutable constants usually.
-                // Here we just lerp directly towards swampAutumn if season is Autumn
-                color.lerp(C.swampAutumn, moistFade * heightFade);
+                color.lerp(C.swampAutumn, moistFade);
             } else {
-                color.lerp(C.swamp, moistFade * heightFade);
+                color.lerp(C.swamp, moistFade);
             }
         }
+
+        // (Removed complex neighbor check for beach, now based on height 0-1 gradient)
 
         // 4. Night Mode
         if (isNight) {

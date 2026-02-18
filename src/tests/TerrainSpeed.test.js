@@ -100,15 +100,11 @@ describe('Terrain Speed Rules', () => {
                 expect(actor.moveDuration).toBeCloseTo(0.8, 2);
             });
 
-            it('should slow down on Rock (Height > 8)', () => {
+            it('should slow down on Rock (Height > 9)', () => {
                 // Rock: 0,0 (H=1) -> 1,0 (H=10)
-                // Note: Actor might reject climbing if too steep. 
-                // We need to set start height high too to simulate being ON/NEAR rock, 
-                // or ensure climbing logic allows it if we just want to test speed setting.
-
                 // Case A: Moving ONTO rock from high ground (Valid move)
-                terrain.setHeight(0, 0, 9.0);
-                terrain.setHeight(1, 0, 9.0);
+                terrain.setHeight(0, 0, 10.0);
+                terrain.setHeight(1, 0, 10.0);
                 actor.gridX = 0;
                 actor.gridZ = 0;
 

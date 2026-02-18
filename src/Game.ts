@@ -470,12 +470,27 @@ export class Game {
             this.terrain = terrainOverride || new Terrain(this.scene, this.clippingPlanes, initialLevel?.mapWidth || 100, initialLevel?.mapDepth || 100);
         }
 
-        console.log('[Game] Init Managers...');
         // --- 5. Full Mode Managers & Listeners ---
-        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.7); // Increased from 0.5
+        this.directionalLight = new THREE.DirectionalLight(0xffffff, 1.0); // Increased from 0.8
+        this.directionalLight.position.set(20, 40, 20); // Higher and further for better shadows
+
+        // Shadow Settings
+        if (this.directionalLight.shadow) {
+            this.directionalLight.castShadow = true;
+            this.directionalLight.shadow.mapSize.width = 2048;
+            this.directionalLight.shadow.mapSize.height = 2048;
+            this.directionalLight.shadow.camera.left = -100;
+            this.directionalLight.shadow.camera.right = 100;
+            this.directionalLight.shadow.camera.top = 100;
+            this.directionalLight.shadow.camera.bottom = -100;
+            this.directionalLight.shadow.camera.near = 0.5;
+            this.directionalLight.shadow.camera.far = 200;
+            this.directionalLight.shadow.bias = -0.0005; // Reduce artifacts
+        }
+
         this.scene.add(this.ambientLight);
-        this.directionalLight.position.set(10, 20, 10);
+        this.scene.add(this.directionalLight);
         if (this.terrain) {
             console.log('[Game] Init CloudManager');
             this.cloudManager = new CloudManager(this.scene, this.terrain.width, this.terrain.depth);

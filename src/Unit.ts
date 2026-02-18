@@ -448,7 +448,7 @@ export class Unit extends Actor {
         let duration = 0.8; // Base Speed
 
         // 1. Rock Penalty (High Altitude)
-        if (targetH > 8) {
+        if (targetH > 9.0) {
             duration = 6.0; // Very Slow
         }
         // 2. Slope Penalty (Climbing/Descending steep)
