@@ -138,7 +138,23 @@ vi.mock('three', () => {
         PointsMaterial: class { },
         LineBasicMaterial: class { },
         CanvasTexture: class { },
-        Color: class { constructor(r, g, b) { this.r = r; this.g = g; this.b = b; } setHex() { } set() { } lerp() { } getHSL() { return { h: 0, s: 0, l: 0 }; } setHSL() { } },
+        Color: class {
+            constructor(r = 1, g = 1, b = 1) { this.r = r; this.g = g; this.b = b; }
+            setHex() { return this; }
+            set() { return this; }
+            copy(c) { if (c) { this.r = c.r; this.g = c.g; this.b = c.b; } return this; }
+            clone() { return new this.constructor(this.r, this.g, this.b); }
+            lerp(c, t) { return this; }
+            getHSL() { return { h: 0, s: 0, l: 0 }; }
+            setHSL() { return this; }
+            getHex() { return (Math.round(this.r * 255) << 16) | (Math.round(this.g * 255) << 8) | Math.round(this.b * 255); }
+            toArray(array = [], offset = 0) {
+                array[offset] = this.r;
+                array[offset + 1] = this.g;
+                array[offset + 2] = this.b;
+                return array;
+            }
+        },
         Raycaster: class { setFromCamera() { } intersectObjects() { return []; } },
         ShaderMaterial: class { },
         AdditiveBlending: 2,

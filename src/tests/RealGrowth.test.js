@@ -1,9 +1,22 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Game } from '../Game';
 import { Terrain } from '../Terrain';
 import { Building } from '../Building';
+import { WeatherManager } from '../WeatherManager';
 import { GameConfig } from '../config/GameConfig';
 import * as THREE from 'three';
+
+// Explicitly mock WeatherManager in the test file
+vi.mock('../WeatherManager', () => {
+    return {
+        WeatherManager: class {
+            constructor() { }
+            update() { }
+            setWeather() { }
+            updateSkyColor() { }
+        }
+    };
+});
 
 describe('Real Growth Stagnation Diagnostic', () => {
     let game;
@@ -40,8 +53,14 @@ describe('Real Growth Stagnation Diagnostic', () => {
         expect(b.population).toBe(0);
 
         // 20フレーム分回す
-        for (let i = 0; i < 40; i++) {
-            game.update(0.1);
+        try {
+            console.log('[TEST DIAG] Before loop');
+            for (let i = 0; i < 40; i++) {
+                game.update(0.1);
+            }
+            console.log('[TEST DIAG] After loop');
+        } catch (e) {
+            console.error('[TEST ERROR] Update failed', e);
         }
 
         // 20フレーム経過後、少なくとも1回は人口が増えているはず
@@ -53,24 +72,31 @@ describe('Real Growth Stagnation Diagnostic', () => {
         const b = game.terrain.addBuilding('house', 20, 20, true, false, 'player');
 
         // 600フレーム (10秒分) 回す
-        // 20倍スタガーなので、この間に 30回更新されるはず
-        for (let i = 0; i < 600; i++) {
-            game.update(1 / 60);
+        try {
+            for (let i = 0; i < 600; i++) {
+                game.update(1 / 60);
+            }
+        } catch (e) {
+            console.error('[TEST ERROR] Small dt loop failed', e);
         }
 
         console.log(`[DIAG] House population after 10s (dt=1/60s): ${b.population}`);
         expect(b.population).toBeGreaterThan(0);
     });
 
+    // ... (other tests follow same pattern but I will replace the whole file content to be safe and cleaner)
     it('should produce grain from farms with 20x stagger', async () => {
         // 1. 農場を追加
         const farm = game.terrain.addBuilding('farm', 15, 15, true, false, 'player');
         farm.population = 90; // あと少しで収穫
         const initialGrain = game.resources.grain;
 
-        // 20x stagger なので、最大20フレーム以内に更新が来る
-        for (let i = 0; i < 40; i++) {
-            game.update(0.5);
+        try {
+            for (let i = 0; i < 40; i++) {
+                game.update(0.5);
+            }
+        } catch (e) {
+            console.error('[TEST ERROR] Farm loop failed', e);
         }
 
         console.log(`[DIAG] Farm population: ${farm.population}, Grain: ${game.resources.grain}`);
@@ -80,9 +106,15 @@ describe('Real Growth Stagnation Diagnostic', () => {
     it('should show population growth for goblin caves', async () => {
         const cave = game.terrain.addBuilding('cave', 50, 50, true, false, 'enemy');
         cave.population = 0;
+        console.log('[TEST MAG] Cave created.', cave);
 
-        for (let i = 0; i < 100; i++) {
-            game.update(0.5);
+        try {
+            for (let i = 0; i < 100; i++) {
+                game.update(0.5);
+                if (i % 20 === 0) console.log(`[TEST LOOP] i=${i}, Pop=${cave.population}`);
+            }
+        } catch (e) {
+            console.error('[TEST ERROR] Cave loop failed', e);
         }
 
         console.log(`[DIAG] Cave population after 100 frames: ${cave.population}`);

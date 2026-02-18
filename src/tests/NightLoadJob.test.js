@@ -11,13 +11,22 @@ vi.mock('three', async (importOriginal) => {
     const actual = await importOriginal();
 
     class MockColor {
-        constructor() {
+        constructor(r = 1, g = 1, b = 1) {
+            this.r = r; this.g = g; this.b = b;
             this.setHex = vi.fn().mockReturnValue(this);
             this.set = vi.fn().mockReturnValue(this);
             this.copy = vi.fn().mockReturnValue(this);
             this.lerp = vi.fn().mockReturnValue(this);
             this.getHSL = vi.fn(() => ({ h: 0, s: 0, l: 0 }));
             this.setHSL = vi.fn().mockReturnValue(this);
+            this.clone = vi.fn(() => new MockColor(this.r, this.g, this.b));
+            this.getHex = vi.fn(() => (Math.round(this.r * 255) << 16) | (Math.round(this.g * 255) << 8) | Math.round(this.b * 255));
+            this.toArray = vi.fn((array = [], offset = 0) => {
+                array[offset] = this.r;
+                array[offset + 1] = this.g;
+                array[offset + 2] = this.b;
+                return array;
+            });
         }
     }
 
@@ -150,6 +159,15 @@ vi.mock('three/examples/jsm/utils/BufferGeometryUtils.js', () => ({
     mergeVertices: vi.fn(geo => geo),
 }));
 
+vi.mock('../WeatherManager.js', () => ({
+    WeatherManager: class {
+        constructor() { }
+        update() { }
+        setWeather() { }
+        updateSkyColor() { }
+    }
+}));
+
 vi.mock('../Terrain.js', () => ({
     Terrain: class {
         constructor() {
@@ -242,7 +260,8 @@ describe('Night Loading Job Assignment', () => {
             unregisterEntity: () => { }
         };
 
-        game.directionalLight = { intensity: 1, position: new THREE.Vector3() };
+        game.directionalLight = { intensity: 1, position: new THREE.Vector3(), color: new THREE.Color() };
+        game.ambientLight = { intensity: 0.5, color: new THREE.Color() };
         game.controls = { target: new THREE.Vector3(), update: vi.fn() };
         window.alert = vi.fn();
         game.gameActive = true;

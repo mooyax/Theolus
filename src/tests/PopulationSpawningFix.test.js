@@ -62,7 +62,7 @@ vi.mock('three', async () => {
         Group: vi.fn().mockImplementation(function () { return createMockObject(); }),
         Scene: vi.fn().mockImplementation(function () {
             const s = createMockObject();
-            s.background = { set: vi.fn() };
+            s.background = new actual.Color();
             return s;
         }),
         // Materials
@@ -87,8 +87,18 @@ vi.mock('three', async () => {
         Color: actual.Color,
         Plane: actual.Plane,
         Frustum: actual.Frustum,
-        AmbientLight: vi.fn().mockImplementation(function () { return createMockObject(); }),
-        DirectionalLight: vi.fn().mockImplementation(function () { return createMockObject(); })
+        AmbientLight: vi.fn().mockImplementation(function () {
+            const l = createMockObject();
+            l.color = new actual.Color();
+            l.intensity = 1;
+            return l;
+        }),
+        DirectionalLight: vi.fn().mockImplementation(function () {
+            const l = createMockObject();
+            l.color = new actual.Color();
+            l.intensity = 1;
+            return l;
+        })
     };
 });
 

@@ -1,246 +1,63 @@
 
-[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+ RUN  v4.0.15 C:/Users/mooya/develop/test
 
-[90mstdout[2m | src/tests/ComplexInteraction.test.js
-[22m[39m[DEBUG] Actor.ts loaded
+stdout | src/tests/GameLighting.test.js
+[DEBUG] Building.ts loaded
 
-[90mstdout[2m | src/tests/ComplexInteraction.test.js
-[22m[39m[DEBUG] Goblin.ts loaded
+stdout | src/tests/GameLighting.test.js
+[DEBUG] Terrain.ts top-level load
 
-[90mstdout[2m | src/tests/ComplexInteraction.test.js
-[22m[39m[Import Debug] Raid: function, Combat: function, Wander: function
+stdout | src/tests/GameLighting.test.js
+[DEBUG] Actor.ts loaded
 
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Entity 0] CONSTRUCTOR START: type=unit at 0,0
-[Entity 0] Calling updatePosition...
-[Entity 0] updatePosition returned.
-[DIAG] Actor Created ID: 0
-[DIAG] Actor smartMove type: function
-[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
-    if (isNaN(tx) || isNaN(tz)) {
-      console.error(`[Actor $
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
-[Unit 0] State Change: None -> Wander
-[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
-[UnitCore.js] Unit Construction Finished ID:0
+stdout | src/tests/GameLighting.test.js
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/GameLighting.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/GameLighting.test.js
+[DEBUG] Game.ts top-level load
+
+stdout | src/tests/GameLighting.test.js > Game Lighting (Day/Night Cycle) > should have high intensity during noon
+[Game] Init SphereGeometry
+[Game] Minimal/Override Init Start
+[Game] Minimal: Init Clock
+[Game] Minimal: Init Managers
+[Game] Minimal: Init GoblinManager
 [GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
 [GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.715786, 0.672526) -> Grid(71, 67) rngState=undefined
-GoblinManager: Cave registered at 71,67 
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.507308, 0.485466) -> Grid(50, 48) rngState=undefined
-GoblinManager: Cave registered at 50,48 
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.153737, 0.301000) -> Grid(15, 30) rngState=undefined
-GoblinManager: Cave registered at 15,30 
-GoblinManager: Cave registered at 69,66 
-GoblinManager: Cave registered at 6,33 
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
-GoblinManager: Force spawning Debug Goblin
-[Game] Generating Preview Terrain...
-[Game] Preview Ready.
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.845445, 0.786118) -> Grid(135, 125) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.465861, 0.246096) -> Grid(74, 39) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.655235, 0.925268) -> Grid(104, 148) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[Game] Minimal: Init EnemyAI
+[Game] Minimal: Done. Returning.
 
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Game] Request Added: build at (20,0) ID:req_0
-[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
-[Actor 1] Resetting Unreachable (Target changed from undefined,undefined to 20,0)
-[Unit Debug 1] updateLogic. State: Job
-[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Unit Debug 1] updateLogic. State: Job
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould immediately stop unit when job is cancelled mid-approach
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Entity 1] CONSTRUCTOR START: type=unit at 0,0
-[Entity 1] Calling updatePosition...
-[Entity 1] updatePosition returned.
-[DIAG] Actor Created ID: 1
-[DIAG] Actor smartMove type: function
-[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
-    if (isNaN(tx) || isNaN(tz)) {
-      console.error(`[Actor $
-[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0 Special:false
-[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0
-[UnitCore.js] Unit Construction Finished ID:1
-[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
-[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.901936, 0.191969) -> Grid(90, 19) rngState=undefined
-GoblinManager: Cave registered at 90,19 
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.363313, 0.122262) -> Grid(36, 12) rngState=undefined
-GoblinManager: Cave registered at 36,12 
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.958229, 0.979333) -> Grid(95, 97) rngState=undefined
-GoblinManager: Cave registered at 95,97 
-GoblinManager: Cave registered at 82,53 
-GoblinManager: Cave registered at 24,37 
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
-GoblinManager: Force spawning Debug Goblin
-[Game] Generating Preview Terrain...
-[Game] Preview Ready.
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Game] Request Added: build at (20,0) ID:req_0
-[Actor 1] Resetting Unreachable (Target changed from undefined,undefined to 20,0)
-[Game] Request Added: build at (-20,0) ID:req_1
-[Unit Debug 1] updateLogic. State: Job
-[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Unit Debug 1] updateLogic. State: Job
-[Game] Cancelling Request req_0 at 20,0
-[Unit Debug 1] updateLogic. State: Wander
-[Actor 1] Resetting Unreachable (Target changed from undefined,undefined to -20,0)
-[Actor 1] Resetting Unreachable (Target changed from undefined,undefined to -20,0)
-[Actor 1] Resetting Unreachable (Target changed from undefined,undefined to -20,0)
-[Unit Debug 1] updateLogic. State: Job
-[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Unit Debug 1] updateLogic. State: Job
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould pickup NEXT job if current is cancelled
-[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould handle cancellation while Working (arrived)
-[22m[39m[Entity 2] CONSTRUCTOR START: type=unit at 0,0
-[Entity 2] Calling updatePosition...
-[Entity 2] updatePosition returned.
-[DIAG] Actor Created ID: 2
-[DIAG] Actor smartMove type: function
-[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
-    if (isNaN(tx) || isNaN(tz)) {
-      console.error(`[Actor $
-[UnitCore.js] Unit Created ID:2 Role:worker Pos:0,0 Special:false
-[UnitCore.js] Unit Created ID:2 Role:worker Pos:0,0
-[UnitCore.js] Unit Construction Finished ID:2
-[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
-[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.058192, 0.590517) -> Grid(5, 59) rngState=undefined
-GoblinManager: Cave registered at 5,59 
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.195832, 0.459179) -> Grid(19, 45) rngState=undefined
-GoblinManager: Cave registered at 19,45 
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.493510, 0.821059) -> Grid(49, 82) rngState=undefined
-GoblinManager: Cave registered at 49,82 
-GoblinManager: Cave registered at 12,58 
-GoblinManager: Cave registered at 14,19 
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
-GoblinManager: Force spawning Debug Goblin
-[Game] Generating Preview Terrain...
-[Game] Preview Ready.
-
-[90mstdout[2m | src/tests/ComplexInteraction.test.js[2m > [22m[2mComplex Job Interaction and Cancellation[2m > [22m[2mshould handle cancellation while Working (arrived)
-[22m[39m[Game] Request Added: build at (20,0) ID:req_0
-[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
-[Actor 1] Resetting Unreachable (Target changed from undefined,undefined to 20,0)
-[Unit Debug 1] updateLogic. State: Job
-
-stderr | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should handle cancellation while Working (arrived)
-[Actor 1] Pathfinding FAILED: Empty/Short path returned. Current Pos: 20,0 -> Target: 20,0 Len:1 Short:true
-
- [31m笶ｯ[39m src/tests/ComplexInteraction.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 40[2mms[22m[39m
-[31m     [31mﾃ・[31m should immediately stop unit when job is cancelled mid-approach[39m[32m 24[2mms[22m[39m
-     [32m笨・[39m should pickup NEXT job if current is cancelled[32m 11[2mms[22m[39m
-     [32m笨・[39m should handle cancellation while Working (arrived)[32m 3[2mms[22m[39m
+ 笶ｯ src/tests/GameLighting.test.js (4 tests | 1 failed | 3 skipped) 31ms
+     ﾃ・should have high intensity during noon 29ms
+     竊・should have low intensity and blueish color during night
+     竊・should have warm light during dusk
+     竊・should sync fog color with sky color
 
 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
 
- FAIL  src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should immediately stop unit when job is cancelled mid-approach
-AssertionError: expected false to be true // Object.is equality
-
-- Expected
-+ Received
-
-- true
-+ false
-
- 笶ｯ src/tests/ComplexInteraction.test.js:87:31
-     85|         // Expect 'Approaching Job'. No longer overriden by 'Moving'.
-     86|         expect(unit.targetRequest).toBe(req);
-     87|         expect(unit.isMoving).toBe(true);
-       |                               ^
-     88| 
-     89|         // 4. CANCEL Request
+ FAIL  src/tests/GameLighting.test.js > Game Lighting (Day/Night Cycle) > should have high intensity during noon
+TypeError: Cannot read properties of undefined (reading 'copy')
+ 笶ｯ Game.updateEnvironment src/Game.ts:939:41
+    937|         if (this.directionalLight) {
+    938|             this.directionalLight.position.copy(targetPos);
+    939|             this.directionalLight.color.copy(lightColor);
+       |                                         ^
+    940|             this.directionalLight.intensity = lightIntensity;
+    941|         }
+ 笶ｯ src/tests/GameLighting.test.js:36:14
 
 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
 
 
-[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
-[2m   Start at [22m 17:16:35
-[2m   Duration [22m 1.41s[2m (transform 500ms, setup 80ms, import 569ms, tests 40ms, environment 506ms)[22m
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 skipped (4)
+   Start at  13:16:58
+   Duration  1.28s (transform 479ms, setup 77ms, import 537ms, tests 31ms, environment 434ms)
 

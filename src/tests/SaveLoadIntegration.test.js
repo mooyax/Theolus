@@ -38,6 +38,7 @@ vi.mock('../SheepManager.js', () => ({ SheepManager: class { update() { } draw()
 vi.mock('../FishManager.js', () => ({ FishManager: class { update() { } draw() { } } }));
 vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } } }));
 vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
+vi.mock('../WeatherManager.js', () => ({ WeatherManager: class { constructor() { } update() { } setWeather() { } updateSkyColor() { } } }));
 
 // Use Real GoblinManager for true serialization testing
 // Use Real GoblinManager if possible? 

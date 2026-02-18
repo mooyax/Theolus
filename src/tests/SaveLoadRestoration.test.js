@@ -5,6 +5,15 @@ import { Unit } from '../Unit.js';
 import { Job } from '../ai/states/UnitStates.js';
 import LZString from 'lz-string';
 
+vi.mock('../WeatherManager.js', () => ({
+    WeatherManager: class {
+        constructor() { }
+        update() { }
+        setWeather() { }
+        updateSkyColor() { }
+    }
+}));
+
 // --- MOCKS ---
 // (Copying minimal mocks from SaveLoad.test.js)
 // Mocks are handled by setup.js

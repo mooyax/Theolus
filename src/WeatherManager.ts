@@ -41,6 +41,8 @@ export class WeatherManager {
         this.initHeavySnow();
     }
 
+
+
     private initRain() {
         this.rainGeometry = new THREE.BufferGeometry();
         // 2 points per raindrop to create a line segment
@@ -215,6 +217,14 @@ export class WeatherManager {
         console.log(`[Weather] Set to ${type}, Density: ${finalDensity.toFixed(4)}`);
     }
 
+    public updateSkyColor(color: THREE.Color) {
+        if (this.scene.fog && this.scene.fog instanceof THREE.FogExp2) {
+            // Mix the base fog color with the sky color
+            // This ensures morning/evening fog has a reddish tint
+            this.scene.fog.color.copy(color);
+        }
+    }
+
     private nextWeatherChangeTime: number = 20; // First change quickly
 
     private changeWeather(season: string) {
@@ -239,7 +249,7 @@ export class WeatherManager {
             else next = 'HeavyRain';
         }
 
-        console.log(`[WeatherManager] changeWeather: season=${season}, next=${next}, current=${this.currentWeather}`);
+        console.log(`[WeatherManager] changeWeather: season = ${season}, next = ${next}, current = ${this.currentWeather} `);
 
         if (this.currentWeather !== next) {
             this.setWeather(next);

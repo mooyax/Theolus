@@ -1,5 +1,17 @@
 import { vi, beforeEach } from 'vitest';
 
+// 0. WeatherManager Mock (Fix path to match import)
+vi.mock('../WeatherManager', () => {
+    return {
+        WeatherManager: class {
+            constructor() { }
+            update() { }
+            setWeather() { }
+            updateSkyColor() { }
+        }
+    };
+});
+
 // --- Global Mocks (to prevent load errors and side effects) ---
 
 // 1. THREE.js Mock
@@ -34,11 +46,47 @@ vi.mock('three', async () => {
         }
     }
 
+    class MockColor {
+        constructor(r = 1, g = 1, b = 1) {
+            if (typeof r === 'number' && g === 1 && b === 1 && r > 1) {
+                this.setHex(r);
+            } else {
+                this.r = r; this.g = g; this.b = b;
+            }
+        }
+        setHex(h) {
+            this.r = ((h >> 16) & 255) / 255;
+            this.g = ((h >> 8) & 255) / 255;
+            this.b = (h & 255) / 255;
+            return this;
+        }
+        copy(c) { if (c) { this.r = c.r; this.g = c.g; this.b = c.b; } return this; }
+        lerp(c, t) {
+            if (c) {
+                this.r += (c.r - this.r) * t;
+                this.g += (c.g - this.g) * t;
+                this.b += (c.b - this.b) * t;
+            }
+            return this;
+        }
+        getHex() {
+            return (Math.round(this.r * 255) << 16) | (Math.round(this.g * 255) << 8) | Math.round(this.b * 255);
+        }
+        toArray(array = [], offset = 0) {
+            array[offset] = this.r;
+            array[offset + 1] = this.g;
+            array[offset + 2] = this.b;
+            return array;
+        }
+        clone() { return new MockColor(this.r, this.g, this.b); }
+    }
+
     class MockObject {
         constructor() {
             this.position = new MockVector3();
             this.rotation = new MockVector3();
             this.scale = new MockVector3(1, 1, 1);
+            this.color = new MockColor(); // Added color for Lights
             this.quaternion = { setFromAxisAngle: vi.fn().mockReturnThis() };
             this.matrix = new actual.Matrix4(); // Added for UnitRenderer compatibility
             this.userData = {};
@@ -77,6 +125,7 @@ vi.mock('three', async () => {
             }
             setSize() { } render() { } setPixelRatio() { } setClearColor() { } dispose() { }
         },
+        Color: MockColor,
         Vector3: MockVector3,
         Group: MockObject,
         Object3D: MockObject,
@@ -145,8 +194,8 @@ vi.mock('../CloudManager.js', () => ({ CloudManager: class { update() { } dispos
 vi.mock('../BirdManager.js', () => ({ BirdManager: class { update() { } dispose() { } } }));
 vi.mock('../SheepManager.js', () => ({ SheepManager: class { constructor() { this.sheeps = []; } update() { } dispose() { } } }));
 vi.mock('../FishManager.js', () => ({ FishManager: class { constructor() { this.fishes = []; } update() { } dispose() { } } }));
-vi.mock('../WeatherManager.ts', () => ({ WeatherManager: class { constructor() { } setWeather() { } update() { } dispose() { } } }));
-vi.mock('../WeatherManager.js', () => ({ WeatherManager: class { constructor() { } setWeather() { } update() { } dispose() { } } }));
+vi.mock('../WeatherManager.ts', () => ({ WeatherManager: class { constructor() { } init() { } setWeather() { } update() { } updateSkyColor() { } dispose() { } } }));
+vi.mock('../WeatherManager.js', () => ({ WeatherManager: class { constructor() { } init() { } setWeather() { } update() { } updateSkyColor() { } dispose() { } } }));
 
 // Mock Canvas getContext
 const mockContext = {
@@ -220,10 +269,10 @@ vi.stubGlobal('window', {
 vi.stubGlobal('alert', window.alert);
 
 vi.stubGlobal('document', {
-    getElementById: vi.fn((id) => ({ ...mockElement, id })),
-    getElementsByClassName: vi.fn(() => [mockElement]),
-    createElement: vi.fn((tag) => ({ ...mockElement, tagName: tag.toUpperCase() })),
-    body: { ...mockElement, tagName: 'BODY' },
+    getElementById: vi.fn((id) => ({ ...mockElement, style: {}, id })),
+    getElementsByClassName: vi.fn(() => [{ ...mockElement, style: {} }]),
+    createElement: vi.fn((tag) => ({ ...mockElement, style: {}, tagName: tag.toUpperCase() })),
+    body: { ...mockElement, style: {}, tagName: 'BODY' },
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
 });

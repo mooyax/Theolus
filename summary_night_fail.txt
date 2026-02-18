@@ -1,0 +1,252 @@
+
+ RUN  v4.0.15 C:/Users/mooya/develop/test
+
+stdout | src/tests/NightLoadJob.test.js
+[DEBUG] Actor.ts loaded
+
+stdout | src/tests/NightLoadJob.test.js
+[DEBUG] Goblin.ts loaded
+
+stdout | src/tests/NightLoadJob.test.js
+[Import Debug] Raid: function, Combat: function, Wander: function
+
+stdout | src/tests/NightLoadJob.test.js
+[DEBUG] Game.ts top-level load
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should correctly resume manual job when loaded at night
+[Game] Init SphereGeometry
+[Game] Minimal/Override Init Start
+[Game] Minimal: Init Clock
+[Game] Minimal: Init Managers
+[Game] Minimal: Init GoblinManager
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.548821, 0.982257) -> Grid(87, 157) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.048275, 0.953505) -> Grid(7, 152) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.556346, 0.577523) -> Grid(89, 92) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[Game] Minimal: Init EnemyAI
+[Game] Minimal: Done. Returning.
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should wake up unit if they were saved while sleeping but had a job assigned (manual)
+Disposing detached game instance
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should wake up unit if they were saved while sleeping but had a job assigned (manual)
+[Game] Init SphereGeometry
+[Game] Minimal/Override Init Start
+[Game] Minimal: Init Clock
+[Game] Minimal: Init Managers
+[Game] Minimal: Init GoblinManager
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.578205, 0.291904) -> Grid(92, 46) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.633877, 0.601257) -> Grid(101, 96) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.373123, 0.177278) -> Grid(59, 28) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[Game] Minimal: Init EnemyAI
+[Game] Minimal: Done. Returning.
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+Disposing detached game instance
+[Game] Dispose called for Game Instance.
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Game] Init SphereGeometry
+[Game] Minimal/Override Init Start
+[Game] Minimal: Init Clock
+[Game] Minimal: Init Managers
+[Game] Minimal: Init GoblinManager
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.619096, 0.676211) -> Grid(99, 108) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.482999, 0.152811) -> Grid(77, 24) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.832859, 0.817135) -> Grid(133, 130) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[Game] Minimal: Init EnemyAI
+[Game] Minimal: Done. Returning.
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Game] Init SphereGeometry
+[Game] Minimal/Override Init Start
+[Game] Minimal: Init Clock
+[Game] Minimal: Init Managers
+[Game] Minimal: Init GoblinManager
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.343541, 0.268321) -> Grid(54, 42) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.922631, 0.062973) -> Grid(147, 10) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.505064, 0.600873) -> Grid(80, 96) rngState=undefined
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[Game] Minimal: Init EnemyAI
+[Game] Minimal: Done. Returning.
+Load Started...
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+Load Game: Data found {
+  gameTime: [33m20[39m,
+  terrain: {
+    serialize: [36m[Function: serialize][39m,
+    findBestTarget: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    getTileHeight: [36m[Function: getTileHeight][39m
+  },
+  units: [
+    {
+      id: [33m0[39m,
+      role: [32m'worker'[39m,
+      gridX: [33m10[39m,
+      gridZ: [33m10[39m,
+      targetRequestId: [32m'req_legacy'[39m
+    }
+  ],
+  requests: [
+    {
+      id: [32m'req_legacy'[39m,
+      type: [32m'raise'[39m,
+      x: [33m15[39m,
+      z: [33m15[39m,
+      status: [32m'assigned'[39m,
+      assignedTo: [33m0[39m
+    }
+  ],
+  camera: { position: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m }, target: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m } }
+}
+[Game] Load Game: Restored Level=0, Seed=null
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+Resetting GoblinManager...
+Clearing 0 projectiles...
+[Game] Deserializing terrain...
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Game] Terrain deserialized.
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Game] Loading resources/time...
+[Game] Updating environment...
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Game] Restoring 1 units...
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Unit 0] State Change: Wander -> Wander
+[Game] Successfully restored 1 units.
+[Game] Restoring 1 requests...
+
+stderr | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Game] Warning: markerMaterial missing on Load. Using fallback.
+[Game] Checking unit 0 for targetRequestId: req_legacy
+[Game] Re-linked Unit 0 to Request req_legacy
+[Unit 0] State Change: Wander -> Job
+[Actor 0] Resetting Unreachable (Target changed or initializing)
+[Game] Restored Camera Zoom: 1
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+stdout | src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should treat legacy requests (missing isManual) as manual for specific types
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 15,15
+
+ 笶ｯ src/tests/NightLoadJob.test.js (3 tests | 2 failed) 326ms
+     ﾃ・should correctly resume manual job when loaded at night 28ms
+     ﾃ・should wake up unit if they were saved while sleeping but had a job assigned (manual) 9ms
+     笨・should treat legacy requests (missing isManual) as manual for specific types 289ms
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 2 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should correctly resume manual job when loaded at night
+TypeError: Cannot read properties of undefined (reading 'copy')
+ 笶ｯ Game.updateEnvironment src/Game.ts:939:41
+    937|         if (this.directionalLight) {
+    938|             this.directionalLight.position.copy(targetPos);
+    939|             this.directionalLight.color.copy(lightColor);
+       |                                         ^
+    940|             this.directionalLight.intensity = lightIntensity;
+    941|         }
+ 笶ｯ src/tests/NightLoadJob.test.js:265:14
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/2]竡ｯ
+
+ FAIL  src/tests/NightLoadJob.test.js > Night Loading Job Assignment > should wake up unit if they were saved while sleeping but had a job assigned (manual)
+TypeError: Cannot read properties of undefined (reading 'copy')
+ 笶ｯ Game.updateEnvironment src/Game.ts:939:41
+    937|         if (this.directionalLight) {
+    938|             this.directionalLight.position.copy(targetPos);
+    939|             this.directionalLight.color.copy(lightColor);
+       |                                         ^
+    940|             this.directionalLight.intensity = lightIntensity;
+    941|         }
+ 笶ｯ src/tests/NightLoadJob.test.js:312:14
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/2]竡ｯ
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  13:37:08
+   Duration  1.56s (transform 491ms, setup 89ms, import 529ms, tests 326ms, environment 430ms)
+

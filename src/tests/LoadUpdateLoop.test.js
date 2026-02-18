@@ -43,6 +43,7 @@ vi.mock('../SheepManager.js', () => ({ SheepManager: class { update() { } draw()
 vi.mock('../FishManager.js', () => ({ FishManager: class { update() { } draw() { } } }));
 vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } } }));
 vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
+vi.mock('../WeatherManager.js', () => ({ WeatherManager: class { constructor() { } update() { } setWeather() { } updateSkyColor() { } } }));
 vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { init() { return Promise.resolve(); } update() { } dispose() { } } }));
 vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { init() { return Promise.resolve(); } update() { } updateLighting() { } dispose() { } } }));
 vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { init() { return Promise.resolve(); } update() { } dispose() { } } }));
@@ -88,8 +89,30 @@ vi.mock('three', () => {
         sub() { return this; }
         multiplyScalar() { return this; }
     }
+    class MockColor {
+        constructor(r = 1, g = 1, b = 1) { this.r = r; this.g = g; this.b = b; }
+        setHex() { return this; }
+        set() { return this; }
+        copy(c) { if (c) { this.r = c.r; this.g = c.g; this.b = c.b; } return this; }
+        clone() { return new MockColor(this.r, this.g, this.b); }
+        lerp(c, t) { return this; }
+        getHex() { return (Math.round(this.r * 255) << 16) | (Math.round(this.g * 255) << 8) | Math.round(this.b * 255); }
+        toArray(array = [], offset = 0) {
+            array[offset] = this.r;
+            array[offset + 1] = this.g;
+            array[offset + 2] = this.b;
+            return array;
+        }
+    }
     class MockObject3D {
-        constructor() { this.position = new MockVector3(); this.rotation = { x: 0, y: 0, z: 0 }; this.add = vi.fn(); this.remove = vi.fn(); }
+        constructor() {
+            this.position = new MockVector3();
+            this.rotation = { x: 0, y: 0, z: 0 };
+            this.scale = new MockVector3(1, 1, 1);
+            this.color = new MockColor();
+            this.add = vi.fn();
+            this.remove = vi.fn();
+        }
         lookAt() { }
     }
     return {
@@ -113,7 +136,14 @@ vi.mock('three', () => {
         MeshLambertMaterial: class { },
         MeshBasicMaterial: class { },
         CanvasTexture: class { },
-        Color: class { constructor(r, g, b) { } setHex() { } set() { } },
+        Color: class {
+            constructor(r = 1, g = 1, b = 1) { this.r = r; this.g = g; this.b = b; }
+            setHex() { return this; }
+            set() { return this; }
+            copy(c) { if (c) { this.r = c.r; this.g = c.g; this.b = c.b; } return this; }
+            clone() { return new this.constructor(this.r, this.g, this.b); }
+            lerp(c, t) { return this; }
+        },
         MOUSE: { LEFT: 0, MIDDLE: 1, RIGHT: 2 },
         Raycaster: class { setFromCamera() { } intersectObjects() { return []; } },
         Clock: class { constructor() { } getDelta() { return 0.016; } getElapsedTime() { return 0; } },

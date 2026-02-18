@@ -881,11 +881,20 @@ export class Terrain {
         }
     }
 
-    setSeason(season) {
-        if (this.currentSeason !== season) {
-            this.currentSeason = season;
-            this.updateColors(this._lastIsNight);
+    setSeason(season: string) {
+        if (this.currentSeason === season) return;
+        this.currentSeason = season;
+        this.colorsDirty = true;
+
+        // Update weather if available
+        if (this.weatherManager && this.weatherManager.setSeason) {
+            this.weatherManager.setSeason(season);
         }
+
+        // Trigger colors update (compatibility with legacy calls)
+        this.updateColors(this.isNight);
+
+        console.log(`[Terrain] Season set to: ${season}`);
     }
 
 
@@ -2142,6 +2151,9 @@ export class Terrain {
         const staggerCount = isMinimal ? 1 : 20;
         const currentFrame = this.frameCount % staggerCount;
 
+        // DEBUG UNCONDITIONAL
+        if (this.frameCount < 50) console.log(`[Terrain DIAG FRAME] Frame:${this.frameCount} Stagger:${staggerCount} Units:${activeUnits}`);
+
         this.buildings.forEach((building, index) => {
             try {
                 // Skip unless it's this building's turn
@@ -2152,13 +2164,21 @@ export class Terrain {
                 const bx = Math.floor(building.userData.gridX);
                 const bz = Math.floor(building.userData.gridZ);
 
+                if (!(this as any).errorCounts) (this as any).errorCounts = { pop: 0 };
                 const bConfig = GameConfig.buildings[type];
                 const growthVal = (bConfig && bConfig.growthRate !== undefined) ? bConfig.growthRate : 0.05;
                 let rate = growthVal * multiplier;
+
+                // DIAG LOG for RealGrowth.test.js
+                if (activeUnits === 0 && (this as any).errorCounts.pop < 10) {
+                    console.log(`[Terrain DIAG] Type:${type} Frame:${currentFrame}/${staggerCount} GrowthVal:${growthVal} Multiplier:${multiplier} Rate:${rate} HasFood:${hasFood} Pop:${totalPopulation}`);
+                    (this as any).errorCounts.pop++;
+                }
+
                 // 3. Growth rate adjustment
                 let diminishingFactor = 200000 / (200000 + totalPopulation);
                 rate *= diminishingFactor;
-                if (!hasFood && totalPopulation >= 2000) rate *= 0.25;
+                // if (!hasFood && totalPopulation >= 2000) rate *= 0.25; // isNight is no longer a parameter
 
                 // Growth Floor (Bust the stagnation)
                 if (rate < 0.05) rate = 0.05;
@@ -2294,6 +2314,8 @@ export class Terrain {
     }
 
     update(deltaTime, spawnCallback, isNight, activeUnits = 0, isGameActive = true, resources?: any) {
+        console.log(`[Terrain FORCE] update entered. dt:${deltaTime} Active:${isGameActive} Units:${activeUnits}`);
+        // if (this.frameCount && this.frameCount % 60 === 0) console.log(`[Terrain DIAG UPDATE] dt:${deltaTime} Active:${isGameActive} Units:${activeUnits}`);
         // 1. Visual Updates
         if (this.colorsDirty) {
             this.updateColors();
@@ -2322,7 +2344,9 @@ export class Terrain {
         // 4. Logic: Population Growth
         // Use the advanced logic (Food, Diversity, Stagger) inside updatePopulation
         if (isGameActive) {
-            this.updatePopulation(deltaTime, spawnCallback, isNight, activeUnits, resources);
+            if (isGameActive) {
+                this.updatePopulation(deltaTime, spawnCallback, isNight, activeUnits, resources);
+            }
         }
     }
 
@@ -2651,7 +2675,7 @@ export class Terrain {
 
     restoreGoblinHut(data) {
         // Use addBuilding to ensure consistency with other buildings
-        const building = this.addBuilding('goblin_hut', data.gridX, data.gridZ, true);
+        const building = this.addBuilding('goblin_hut', data.gridX, data.gridZ, true, false, 'enemy');
         if (building) {
             building.population = data.population || 1;
             building.userData.population = data.population || 1;
@@ -2685,7 +2709,7 @@ export class Terrain {
         // Special: Caves might be auto-flattened or integrated differently.
         // Just use addBuilding to ensure visual creation.
         // HOWEVER, removeBuilding blocks cave removal. Checks?
-        const building = this.addBuilding('cave', data.gridX, data.gridZ, true);
+        const building = this.addBuilding('cave', data.gridX, data.gridZ, true, false, 'enemy');
         // Cave pop?
         if (building) {
             building.population = data.population || 0;

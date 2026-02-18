@@ -2,6 +2,19 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Game } from '../Game';
 import { Terrain } from '../Terrain';
 import * as THREE from 'three';
+import { WeatherManager } from '../WeatherManager';
+
+// Explicitly mock WeatherManager in the test file
+vi.mock('../WeatherManager', () => {
+    return {
+        WeatherManager: class {
+            constructor() { }
+            update() { }
+            setWeather() { }
+            updateSkyColor() { }
+        }
+    };
+});
 
 // Mock THREE and other dependencies if needed
 vi.mock('three', async () => {
@@ -45,9 +58,13 @@ describe('Economy and Spawning Fix Verification', () => {
             }
         }
 
-        game = new Game(scene, terrain, true); // (scene, terrain, minimal=true)
+        // Use minimal=false to ensure Managers are initialized (mocked locally)
+        game = new Game(scene, terrain, false);
         game.gameActive = true;
         game.resources.grain = 1000; // Provide food to avoid starvation in tests
+
+        // Mock camera for safety
+        game.camera = { position: new THREE.Vector3() };
     });
 
     it('should produce grain from farms', async () => {
@@ -60,14 +77,12 @@ describe('Economy and Spawning Fix Verification', () => {
         farm.population = 95;
         const initialGrain = game.resources.grain;
 
-        // Force an update that covers the farm's turn
         // Farm updates are staggered (1/20), so we need enough updates.
         for (let i = 0; i < 40; i++) {
             game.update(0.5); // 0.5s per update
         }
 
         expect(game.resources.grain).toBeGreaterThan(initialGrain);
-        console.log(`[TEST] Grain increased: ${initialGrain} -> ${game.resources.grain}`);
     });
 
     it('should allow goblin huts to reach spawn threshold', async () => {

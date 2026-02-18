@@ -66,7 +66,7 @@ describe('Save/Load System', () => {
                 gameTime: 6.0,
                 terrain: {
                     logicalWidth: 10, logicalDepth: 10,
-                    grid: [],
+                    grid: Array(10).fill().map(() => Array(10).fill({ h: 10, n: 0, m: 0.5 })),
                     buildings: []
                 },
                 units: [],
@@ -83,6 +83,7 @@ describe('Save/Load System', () => {
         expect(success).toBe(true);
         expect(game.resources.grain).toBe(999);
         expect(game.terrain.deserialize).toHaveBeenCalled();
+        expect(game.isLoaded).toBe(true);
     });
 
     it('should restore request markers with correct renderOrder', async () => {
@@ -102,7 +103,11 @@ describe('Save/Load System', () => {
             data: {
                 resources: {},
                 gameTime: 10,
-                terrain: { logicalWidth: 80, grid: [], buildings: [] },
+                terrain: {
+                    logicalWidth: 80, logicalDepth: 80,
+                    grid: Array(80).fill().map(() => Array(80).fill({ h: 10, n: 0, m: 0.5 })),
+                    buildings: []
+                },
                 units: [],
                 requests: [
                     { id: 'req_1', type: 'raise', x: 5, z: 5, status: 'pending' },

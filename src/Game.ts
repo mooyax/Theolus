@@ -224,6 +224,7 @@ export class Game {
     public markerMaterial!: THREE.MeshBasicMaterial | THREE.ShaderMaterial;
     // Loading
     public isLoading: boolean;
+    public get isLoaded(): boolean { return !this.isLoading; }
     public frameCounter: number;
     public minimal: boolean;
 
@@ -334,13 +335,20 @@ export class Game {
                 mouseButtons: {}
             } as any;
 
-            console.log('[Game] Minimal: Init Clock');
-            this.clock = new THREE.Clock();
+            if (this.minimal) {
+                console.log('[Game] Minimal: Init Clock');
+                this.clock = new THREE.Clock();
+
+            } else {
+                if (!this.clock) this.clock = new THREE.Clock(); // Make sure clock exists if not minimal but overridden
+            }
 
             // Minimal Terrain Mock (Only if not overridden)
             if (terrainOverride) {
+                console.log(`[Game FORCE CONST ${this.instanceId}] Assigning terrainOverride to this.terrain`);
                 this.terrain = terrainOverride;
             } else {
+                console.log(`[Game FORCE CONST ${this.instanceId}] Creating mock terrain`);
                 this.terrain = {
                     width: 160, depth: 160,
                     logicalWidth: 160, logicalDepth: 160,
@@ -863,27 +871,121 @@ export class Game {
         this.gameTime += deltaTime * (this.dayNightSpeed || 0.05);
         if (this.gameTime >= 24) this.gameTime = 0;
 
-        // Simple Day/Night
-        let isNight = false;
-        if (this.gameTime >= 18 || this.gameTime < 6) {
-            isNight = true;
-            if (this.scene.background instanceof THREE.Color) this.scene.background.setHex(0x000033);
-            if (this.directionalLight) this.directionalLight.intensity = 0.2;
-        } else {
-            if (this.scene.background instanceof THREE.Color) this.scene.background.setHex(0x87CEEB);
-            if (this.directionalLight) this.directionalLight.intensity = 1.0;
-        }
-        // Assuming `this.renderer`, `window.innerWidth`, `window.innerHeight` are intended here
-        if (this.renderer) {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            if (this.renderer.setViewport) {
-                this.renderer.setViewport(0, 0, width, height);
-                // @ts-ignore
-                this.renderer.setScissor(0, 0, width, height);
-            }
-        }
+        // 1. Calculate Orb Positions (Sun & Moon)
+        // 6:00 (East) -> 12:00 (Peak) -> 18:00 (West)
+        const dayAngle = ((this.gameTime - 6) / 12) * Math.PI;
+        const radius = 80;
+        const sunX = Math.cos(dayAngle) * radius;
+        const sunY = Math.sin(dayAngle) * radius;
+        const sunZ = 30; // Tilt for nice perspective shadows
+
+        const moonAngle = dayAngle + Math.PI;
+        const moonX = Math.cos(moonAngle) * radius;
+        const moonY = Math.sin(moonAngle) * radius;
+        const moonZ = -30;
+
+        // 2. Determine Day/Night State
+        const isNight = (this.gameTime < 6 || this.gameTime >= 18);
         this.isNight = isNight;
+
+        // 3. Dynamic Color Interpolation
+        // Define key colors
+        const nightSky = new THREE.Color(0x000015); // Deep space
+        const dawnSky = new THREE.Color(0xFF7F50);  // Coral
+        const daySky = new THREE.Color(0x87CEEB);   // Sky Blue
+        const duskSky = new THREE.Color(0xFF4500);  // OrangeRed
+
+        // User requested colors
+        const sunMorning = new THREE.Color(255 / 255, 210 / 255, 160 / 255); // #FFD2A0
+        const sunNoon = new THREE.Color(255 / 255, 255 / 255, 240 / 255);    // #FFFFF0
+        const sunEvening = new THREE.Color(255 / 255, 140 / 255, 90 / 255);  // #FF8C5A
+
+        const moonColor = new THREE.Color(0xCCCCFF);
+
+        let skyColor = daySky.clone();
+        let lightColor = sunNoon.clone();
+        let lightIntensity = 1.0;
+        let ambientIntensity = 0.5;
+        let ambientColor = new THREE.Color(0xFFFFFF); // Base ambient
+        let targetPos = new THREE.Vector3(sunX, sunY, sunZ);
+
+        // Transition Logic
+        if (this.gameTime >= 5 && this.gameTime < 7) {
+            // Dawn (5:00 - 7:00)
+            const t = (this.gameTime - 5) / 2;
+            skyColor.copy(nightSky).lerp(dawnSky, t);
+            if (t > 0.5) skyColor.lerp(daySky, (t - 0.5) * 2);
+
+            // Light: Night -> Morning
+            lightColor.copy(moonColor).lerp(sunMorning, t);
+            lightIntensity = 0.2 + t * 0.8;
+            ambientIntensity = 0.2 + t * 0.3;
+        } else if (this.gameTime >= 7 && this.gameTime < 17) {
+            // Day (7:00 - 17:00)
+            skyColor.copy(daySky);
+
+            // Sun Color Interpolation
+            // 7-10: Morning -> Noon
+            // 10-14: Noon
+            // 14-17: Noon -> Evening
+            if (this.gameTime < 10) {
+                const t = (this.gameTime - 7) / 3;
+                lightColor.copy(sunMorning).lerp(sunNoon, t);
+            } else if (this.gameTime < 14) {
+                lightColor.copy(sunNoon);
+            } else {
+                const t = (this.gameTime - 14) / 3;
+                lightColor.copy(sunNoon).lerp(sunEvening, t);
+            }
+
+            lightIntensity = 1.0;
+            ambientIntensity = 0.5;
+        } else if (this.gameTime >= 17 && this.gameTime < 19) {
+            // Dusk (17:00 - 19:00)
+            const t = (this.gameTime - 17) / 2;
+            skyColor.copy(daySky).lerp(duskSky, t);
+            if (t > 0.5) skyColor.lerp(nightSky, (t - 0.5) * 2);
+
+            // Light: Evening -> Night
+            lightColor.copy(sunEvening).lerp(moonColor, t);
+            lightIntensity = 1.0 - t * 0.8;
+            ambientIntensity = 0.5 - t * 0.3;
+
+            // Evening Shadow Tint (Bluish)
+            // Blend from Normal -> Blue -> Normal (at night)
+            // Or just tint ambient during this transition
+            const blueShadow = new THREE.Color(0x404060); // Dark Blue
+            // Stronger tint as it gets darker
+            ambientColor.lerp(blueShadow, t * 0.7); // Up to 70% blue tint
+        } else {
+            // Night (19:00 - 5:00)
+            skyColor.copy(nightSky);
+            lightColor.copy(moonColor);
+            lightIntensity = 0.2;
+            ambientIntensity = 0.2;
+            targetPos.set(moonX, moonY, moonZ);
+            if (targetPos.y < 0) targetPos.y = -targetPos.y; // Keep moon above or at least visible shadow
+        }
+
+        // Apply to Scene
+        if (this.scene.background instanceof THREE.Color) {
+            this.scene.background.copy(skyColor);
+        }
+        if (this.directionalLight) {
+            this.directionalLight.position.copy(targetPos);
+            this.directionalLight.color.copy(lightColor);
+            this.directionalLight.intensity = lightIntensity;
+        }
+        if (this.ambientLight) {
+            this.ambientLight.intensity = ambientIntensity;
+            this.ambientLight.color.copy(ambientColor).lerp(skyColor, 0.2); // Tint ambient with sky (on top of base/blue)
+        }
+
+        // 4. Sync with WeatherManager (Fog color)
+        if (this.weatherManager) {
+            this.weatherManager.updateSkyColor(skyColor);
+        }
+
         return isNight;
     }
 
@@ -2107,7 +2209,7 @@ export class Game {
                         if (b.update) b.update(simTimeSec, actualDt);
 
                         if (b.isDestroyed && b.isDestroyed()) {
-                            console.log(`[Game] Removing destroyed building: ${b.type} (${b.id})`);
+                            // console.log(`[Game] Removing destroyed building: ${b.type} (${b.id})`);
                             if (this.terrain.removeBuilding) {
                                 this.terrain.removeBuilding(b);
                             }
@@ -2118,7 +2220,10 @@ export class Game {
             const tTerrainEnd = performance.now();
             if (tTerrainEnd - tTerrain > 15) console.log(`[Perf] Terrain.update took ${(tTerrainEnd - tTerrain).toFixed(2)}ms`);
 
-        } catch (e) { this.logErrorThrottle("Env/Season", e); }
+        } catch (e) {
+
+            this.logErrorThrottle("Env/Season", e);
+        }
 
         try { this.updateStats(); } catch (e) { this.logErrorThrottle("Stats", e); }
         try { this.updateCameraControls(); } catch (e) { }
@@ -3228,7 +3333,8 @@ export class Game {
             this.gameActive = true; // FIX: Resume Simulation after Load
             return true;
         } catch (e) {
-            console.error("Critical Load Error:", e);
+            console.error("Critical Load Failure:", e);
+            if (e instanceof Error) console.error(e.stack);
             if (loadingScreen) loadingScreen.style.display = 'none';
             if (typeof alert !== 'undefined') {
                 alert("Load Failed: " + (e instanceof Error ? e.message : "Internal Error"));
@@ -3486,10 +3592,10 @@ export class Game {
     // --- WIN / LOSS LOGIC ---
     evaluateWinLoss(): 'win' | 'loss' | null {
         // 1. Check Defeat: Player Wiped Out
-        // Player Units
-        const playerUnits = this.units.filter(u => u.faction === 'player');
-        // Player Buildings (Check construction too?)
-        const playerBuildings = this.terrain.buildings.filter(b => (!b.userData.faction || b.userData.faction === 'player'));
+        // Player Units (Must be alive)
+        const playerUnits = this.units.filter(u => u.faction === 'player' && !u.isDead);
+        // Player Buildings (Strictly 'player' faction)
+        const playerBuildings = this.terrain.buildings.filter(b => b.userData.faction === 'player');
 
         // If no units and no buildings, IT IS OVER.
         if (playerUnits.length === 0 && playerBuildings.length === 0) {
@@ -3497,22 +3603,17 @@ export class Game {
         }
 
         // 2. Check Victory: Enemies Wiped Out
-        // Goblins
         let goblinCount = 0;
         let caveCount = 0;
         if (this.goblinManager) {
-            goblinCount = this.goblinManager.goblins.length;
+            goblinCount = this.goblinManager.goblins.filter(g => !g.isDead).length;
             caveCount = this.goblinManager.caves ? this.goblinManager.caves.length : 0;
         }
 
-        // Goblin Huts & Enemy Buildings
-        const enemyBuildings = this.terrain.buildings.filter(b =>
-            b.userData.type === 'goblin_hut' ||
-            (b.userData.faction && b.userData.faction !== 'player' && b.userData.faction !== 'neutral')
-        );
-
-        // Enemy Units
-        const enemyUnits = this.units.filter(u => u.faction && u.faction !== 'player' && u.faction !== 'neutral');
+        // Enemy Buildings
+        const enemyBuildings = this.terrain.buildings.filter(b => b.userData.faction === 'enemy');
+        // Enemy Units (Must be alive)
+        const enemyUnits = this.units.filter(u => u.faction === 'enemy' && !u.isDead);
 
         if (goblinCount === 0 && caveCount === 0 && enemyBuildings.length === 0 && enemyUnits.length === 0) {
             return 'win';
@@ -3520,6 +3621,7 @@ export class Game {
 
         return null;
     }
+
 
     checkWinLoss() {
         if (!this.gameActive) return;

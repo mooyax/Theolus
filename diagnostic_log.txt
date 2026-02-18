@@ -1,0 +1,472 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js
+[22m[39m[DEBUG] Building.ts loaded
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js
+[22m[39m[DEBUG] Terrain.ts top-level load
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js
+[22m[39m[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js
+[22m[39m[DEBUG] Goblin.ts loaded
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js
+[22m[39m[Import Debug] Raid: function, Combat: function, Wander: function
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js
+[22m[39m[DEBUG] Game.ts top-level load
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js[2m > [22m[2mEconomy and Spawning Fix Verification[2m > [22m[2mshould produce grain from farms
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+[Game] Init SphereGeometry
+[Game] Minimal/Override Init Start
+[Game FORCE CONST 1] Assigning terrainOverride to this.terrain
+[Game] Init CloudManager
+[Game] Init BirdManager
+[Game] Init SheepManager
+[Game] Init GoblinManager
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=0
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.233343, 0.625637) -> Grid(18, 50) rngState=0
+[Entity 0] CONSTRUCTOR START: type=building at 18,50
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+GoblinManager: Cave registered at 18,50 
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.037202, 0.258153) -> Grid(2, 20) rngState=0
+[Entity 1] CONSTRUCTOR START: type=building at 2,20
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+GoblinManager: Cave registered at 2,20 
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.335455, 0.493799) -> Grid(26, 39) rngState=0
+[Entity 2] CONSTRUCTOR START: type=building at 26,39
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+GoblinManager: Cave registered at 26,39 
+[Entity 3] CONSTRUCTOR START: type=building at 19,72
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+GoblinManager: Cave registered at 19,72 
+[Entity 4] CONSTRUCTOR START: type=building at 61,76
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+GoblinManager: Cave registered at 61,76 
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+GoblinManager: Force spawning Debug Goblin
+[Game] Init FishManager
+[Game] Init Minimap
+[Game] Init Compass
+[Game] Init WeatherManager
+[Game] Init UnitRenderer
+[Game] Init BuildingRenderer
+[Game] Init GoblinRenderer
+[Game] Init TreeRenderer
+[Game] Init PerformanceMonitor
+[Terrain FORCE] update entered. dt:0 Active:false Units:0
+[Game] Initializing Start Screen Listeners...
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js[2m > [22m[2mEconomy and Spawning Fix Verification[2m > [22m[2mshould produce grain from farms
+[22m[39m[Entity 5] CONSTRUCTOR START: type=building at 10,10
+[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:1 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:1/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:2 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:2/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:3 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:3/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:4 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:4/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:5 Stagger:20 Units:0
+[Terrain DIAG] Type:farm Frame:5/20 GrowthVal:0.5 Multiplier:1 Rate:0.5 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:6 Stagger:20 Units:0
+[EnemyAI] Ordering House. Pop: 0, Cap: 0, Pending: 0
+[Game] Request Added: build_house at (33,35) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:7 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:8 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:9 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:10 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:11 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:12 Stagger:20 Units:0
+[EnemyAI] Ordering House. Pop: 0, Cap: 0, Pending: 1
+[Game] Request Added: build_house at (56,44) ID:req_1
+[Game] No worker in radius 80 for Manual Req req_1. Trying Global Scan...
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:13 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:14 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:15 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:16 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:17 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:18 Stagger:20 Units:0
+[EnemyAI] Ordering House. Pop: 0, Cap: 0, Pending: 2
+[Game] Request Added: build_house at (42,34) ID:req_2
+[Game] No worker in radius 80 for Manual Req req_2. Trying Global Scan...
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:19 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:20 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:0/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:21 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:1/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:22 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:2/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:23 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:3/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:24 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:4/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:25 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:26 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:27 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:28 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:29 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:30 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:31 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:32 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:33 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:34 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:35 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:36 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:37 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:38 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:39 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:40 Stagger:20 Units:0
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js[2m > [22m[2mEconomy and Spawning Fix Verification[2m > [22m[2mshould allow goblin huts to reach spawn threshold
+[22m[39mDisposing detached game instance
+[Game] Dispose called for Game Instance.
+[Terrain] Dispose called.
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js[2m > [22m[2mEconomy and Spawning Fix Verification[2m > [22m[2mshould allow goblin huts to reach spawn threshold
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+[Game] Init SphereGeometry
+[Game] Minimal/Override Init Start
+[Game FORCE CONST 2] Assigning terrainOverride to this.terrain
+[Game] Init CloudManager
+[Game] Init BirdManager
+[Game] Init SheepManager
+[Game] Init GoblinManager
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=0
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.433692, 0.246702) -> Grid(34, 19) rngState=0
+[Entity 6] CONSTRUCTOR START: type=building at 34,19
+[Entity 6] Calling registerEntity...
+[Entity 6] registerEntity returned.
+[Entity 6] Calling updatePosition...
+[Entity 6] updatePosition returned.
+GoblinManager: Cave registered at 34,19 
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.485012, 0.264654) -> Grid(38, 21) rngState=0
+[Entity 7] CONSTRUCTOR START: type=building at 38,21
+[Entity 7] Calling registerEntity...
+[Entity 7] registerEntity returned.
+[Entity 7] Calling updatePosition...
+[Entity 7] updatePosition returned.
+GoblinManager: Cave registered at 38,21 
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.958362, 0.280491) -> Grid(76, 22) rngState=0
+[Entity 8] CONSTRUCTOR START: type=building at 76,22
+[Entity 8] Calling registerEntity...
+[Entity 8] registerEntity returned.
+[Entity 8] Calling updatePosition...
+[Entity 8] updatePosition returned.
+GoblinManager: Cave registered at 76,22 
+[Entity 9] CONSTRUCTOR START: type=building at 41,70
+[Entity 9] Calling registerEntity...
+[Entity 9] registerEntity returned.
+[Entity 9] Calling updatePosition...
+[Entity 9] updatePosition returned.
+GoblinManager: Cave registered at 41,70 
+[Entity 10] CONSTRUCTOR START: type=building at 28,42
+[Entity 10] Calling registerEntity...
+[Entity 10] registerEntity returned.
+[Entity 10] Calling updatePosition...
+[Entity 10] updatePosition returned.
+GoblinManager: Cave registered at 28,42 
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+GoblinManager: Force spawning Debug Goblin
+[Game] Init FishManager
+[Game] Init Minimap
+[Game] Init Compass
+[Game] Init WeatherManager
+[Game] Init UnitRenderer
+[Game] Init BuildingRenderer
+[Game] Init GoblinRenderer
+[Game] Init TreeRenderer
+[Game] Init PerformanceMonitor
+[Terrain FORCE] update entered. dt:0 Active:false Units:0
+[Game] Initializing Start Screen Listeners...
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js[2m > [22m[2mEconomy and Spawning Fix Verification[2m > [22m[2mshould allow goblin huts to reach spawn threshold
+[22m[39m[Entity 11] CONSTRUCTOR START: type=building at 20,20
+[Entity 11] Calling registerEntity...
+[Entity 11] registerEntity returned.
+[Entity 11] Calling updatePosition...
+[Entity 11] updatePosition returned.
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:1 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:1/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:2 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:2/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:3 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:3/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:4 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:4/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:5 Stagger:20 Units:0
+[Terrain DIAG] Type:goblin_hut Frame:5/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:6 Stagger:20 Units:0
+[EnemyAI] Ordering House. Pop: 0, Cap: 0, Pending: 0
+[Game] Request Added: build_house at (30,8) ID:req_0
+[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:7 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:8 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:9 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:10 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:11 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:12 Stagger:20 Units:0
+[EnemyAI] Ordering House. Pop: 0, Cap: 0, Pending: 1
+[Game] Request Added: build_house at (7,25) ID:req_1
+[Game] No worker in radius 80 for Manual Req req_1. Trying Global Scan...
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:13 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:14 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:15 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:16 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:17 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:18 Stagger:20 Units:0
+[EnemyAI] Ordering House. Pop: 0, Cap: 0, Pending: 2
+[Game] Request Added: build_house at (22,12) ID:req_2
+[Game] No worker in radius 80 for Manual Req req_2. Trying Global Scan...
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:19 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:20 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:0/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:21 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:1/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:22 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:2/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:23 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:3/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:24 Stagger:20 Units:0
+[Terrain DIAG] Type:cave Frame:4/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:25 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:26 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:27 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:28 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:29 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:30 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:31 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:32 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:33 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:34 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:35 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:36 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:37 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:38 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:39 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:40 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:41 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:42 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:43 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:44 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:45 Stagger:20 Units:0
+[Entity 12] CONSTRUCTOR START: type=goblin at 20,21
+[Entity 12] Calling registerEntity...
+[Entity 12] registerEntity returned.
+[Entity 12] Calling updatePosition...
+[Entity 12] updatePosition returned.
+[DIAG] Actor Created ID: 12
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[DEBUG] Goblin born from goblin_hut! Total: 1, Remaining population: 0.0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:46 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:47 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:48 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain DIAG FRAME] Frame:49 Stagger:20 Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Entity 12] startMove -> isMoving:true. Target:19,21 StartTime:26.5000
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Entity 12] updateMovement ARRIVAL -> isMoving:false. Time:27.5000 StartTime:26.5000 Dur:0.8000 PrevGrid:20,21 Target:19,21
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Entity 12] startMove -> isMoving:true. Target:19,22 StartTime:30.0000
+[Game 2] Active. Frame=60 Time=30.0 Pop=0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Entity 12] updateMovement ARRIVAL -> isMoving:false. Time:31.0000 StartTime:30.0000 Dur:0.8000 PrevGrid:19,21 Target:19,22
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Entity 12] startMove -> isMoving:true. Target:18,22 StartTime:33.5000
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Entity 12] updateMovement ARRIVAL -> isMoving:false. Time:34.5000 StartTime:33.5000 Dur:0.8000 PrevGrid:19,22 Target:18,22
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Entity 12] startMove -> isMoving:true. Target:19,22 StartTime:38.0000
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Entity 12] updateMovement ARRIVAL -> isMoving:false. Time:39.0000 StartTime:38.0000 Dur:0.8000 PrevGrid:18,22 Target:19,22
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Goblin 12] Scouting to 27.4,5.3 
+[Actor 12] Resetting Unreachable (Target changed or initializing)
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Entity 12] startMove -> isMoving:true. Target:18,22 StartTime:45.5000
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Entity 12] updateMovement ARRIVAL -> isMoving:false. Time:46.5000 StartTime:45.5000 Dur:0.8000 PrevGrid:19,22 Target:18,22
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[Entity 12] startMove -> isMoving:true. Target:17,22 StartTime:49.5000
+[Terrain FORCE] update entered. dt:0.5 Active:true Units:0
+[TEST] Goblins count: 1
+[Actor 12] Pathfinding SUCCESS: Got 18 nodes to 27.380304390596784,5.302608278509183
+[Entity 12] startMove -> isMoving:true. Target:19,22 StartTime:41.5000
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js
+[22m[39m[Game] Animation loop STOPPED.
+
+[90mstdout[2m | src/tests/EcoSpawnFix.test.js
+[22m[39m[Terrain FORCE] update entered. dt:0.03752169999999978 Active:true Units:0
+[Entity 12] updateMovement ARRIVAL -> isMoving:false. Time:50.0375 StartTime:41.5000 Dur:0.8000 PrevGrid:18,22 Target:19,22
+[Entity 12] startMove -> isMoving:true. Target:20,21 StartTime:50.0375
+
+ [32m笨・[39m src/tests/EcoSpawnFix.test.js [2m([22m[2m2 tests[22m[2m)[22m[33m 356[2mms[22m[39m
+[90mstdout[2m | Terrain.update (C:\Users\mooya\develop\test\src\Terrain.ts:2308:17)
+[22m[39m[Terrain FORCE] update entered. dt:0.01200779999999986 Active:true Units:0
+
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m   Start at [22m 16:38:38
+[2m   Duration [22m 1.78s[2m (transform 578ms, setup 106ms, import 638ms, tests 356ms, environment 469ms)[22m
+
+[90mstdout[2m | Terrain.update (C:\Users\mooya\develop\test\src\Terrain.ts:2308:17)
+[22m[39m[Terrain FORCE] update entered. dt:0.009076900000000023 Active:true Units:0
+
