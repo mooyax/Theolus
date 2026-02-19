@@ -108,6 +108,7 @@ vi.mock('../Terrain', () => ({
             this.totalHousingPop = 0;
             this.frameCount = 0;
             this.isGameActive = true;
+            this.resetPathfindingBudget = vi.fn(); // Game.ts から呼ばれる
         }
     }
 }));

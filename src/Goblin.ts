@@ -113,7 +113,7 @@ export class Goblin extends Actor {
 
         // Faces
         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0.15, 0.15);
-        Goblin.assets.geometries.facePlane.translate(0, 0, 0.105); // Just in front of head (0.2 depth / 2 + bias)
+        Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // Just in front of head (0.2 depth / 2 + bias)
 
         Goblin.assets.textures.face = Goblin.createFaceTexture();
         Goblin.assets.materials.face = new THREE.MeshStandardMaterial({
@@ -877,7 +877,9 @@ export class Goblin extends Actor {
             const retaliation = building.takeDamage(this.damage || 10);
 
             // Apply Retaliation
-            if (retaliation > 0 && !this.isRanged) {
+            // Fix: Towers can retaliate against Ranged units (Arrows)
+            const isTower = (building.type === 'tower' || (building.userData && building.userData.type === 'tower'));
+            if (retaliation > 0 && (!this.isRanged || isTower)) {
                 this.takeDamage(retaliation, null);
             }
 
@@ -914,7 +916,7 @@ export class Goblin extends Actor {
             console.log(`Goblin Raid: House population reduced. Rem: ${building.userData.population} `);
 
             // Retaliation for Mocks (Farms have 0 retaliation in config, but here we skip by type)
-            if (bType !== 'farm' && !this.isRanged) {
+            if (bType !== 'farm' && (!this.isRanged || bType === 'tower')) {
                 // Use defense factor if available, otherwise legacy defaults
                 const factor = (building.userData.defense !== undefined) ? building.userData.defense : (bType === 'tower' ? 10.0 : 4.0);
                 const effectivePop = Math.max(0, building.userData.population);

@@ -78,11 +78,17 @@ vi.mock('three', async () => {
             array[offset + 2] = this.b;
             return array;
         }
+        multiplyScalar(s) {
+            this.r *= s;
+            this.g *= s;
+            this.b *= s;
+            return this;
+        }
         clone() { return new MockColor(this.r, this.g, this.b); }
     }
 
     class MockObject {
-        constructor() {
+        constructor(geometry, material) {
             this.position = new MockVector3();
             this.rotation = new MockVector3();
             this.scale = new MockVector3(1, 1, 1);
@@ -108,9 +114,9 @@ vi.mock('three', async () => {
             this.translateY = vi.fn().mockReturnThis();
             this.translateZ = vi.fn().mockReturnThis();
 
-            // Added for Mesh/Sprite compatibility in dispose()
-            this.geometry = { dispose: vi.fn() };
-            this.material = { dispose: vi.fn() };
+            // Store provided geometry and material, or create mocks
+            this.geometry = geometry || { dispose: vi.fn() };
+            this.material = material || { dispose: vi.fn() };
         }
     }
 
@@ -192,8 +198,6 @@ vi.mock('../Weather.js', () => ({ Weather: class { update() { } setSeason() { } 
 vi.mock('../SoundManager.js', () => ({ SoundManager: class { play() { } stop() { } update() { } setSkyColor() { } dispose() { } } }));
 vi.mock('../CloudManager.js', () => ({ CloudManager: class { update() { } dispose() { } } }));
 vi.mock('../BirdManager.js', () => ({ BirdManager: class { update() { } dispose() { } } }));
-vi.mock('../SheepManager.js', () => ({ SheepManager: class { constructor() { this.sheeps = []; } update() { } dispose() { } } }));
-vi.mock('../FishManager.js', () => ({ FishManager: class { constructor() { this.fishes = []; } update() { } dispose() { } } }));
 vi.mock('../WeatherManager.ts', () => ({ WeatherManager: class { constructor() { } init() { } setWeather() { } update() { } updateSkyColor() { } dispose() { } } }));
 vi.mock('../WeatherManager.js', () => ({ WeatherManager: class { constructor() { } init() { } setWeather() { } update() { } updateSkyColor() { } dispose() { } } }));
 

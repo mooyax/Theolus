@@ -1,413 +1,85 @@
 
 [1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js
+[90mstdout[2m | src/tests/WeatherSway.test.js
 [22m[39m[DEBUG] Building.ts loaded
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js
+[90mstdout[2m | src/tests/WeatherSway.test.js
 [22m[39m[DEBUG] Terrain.ts top-level load
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js
-[22m[39m[DEBUG] Actor.ts loaded
+[90mstdout[2m | src/tests/WaterWaves.test.js
+[22m[39m[DEBUG] Building.ts loaded
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js
-[22m[39m[DEBUG] Goblin.ts loaded
+[90mstdout[2m | src/tests/WaterWaves.test.js
+[22m[39m[DEBUG] Terrain.ts top-level load
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js
-[22m[39m[Import Debug] Raid: function, Combat: function, Wander: function
-
-[90mstdout[2m | src/tests/WinLossCondition.test.js
-[22m[39m[DEBUG] Game.ts top-level load
-
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould return "loss" when player units and buildings are all gone
+[90mstdout[2m | src/tests/WaterWaves.test.js[2m > [22m[2mWater Waves[2m > [22m[2mshould have a detailed geometry for the water mesh
 [22m[39m[Terrain] Constructor. updatePopulation type: function
-[Game] Init SphereGeometry
-[Game] Minimal/Override Init Start
-[Game] Minimal: Init Clock
-[Game FORCE CONST 1] Assigning terrainOverride to this.terrain
-[Game] Minimal: Init Managers
-[Game] Minimal: Init GoblinManager
-[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
-[GoblinManager] DETERMINISM: generateCaves start. rngState=0
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.649193, 0.670696) -> Grid(103, 107) rngState=0
-[Entity 0] CONSTRUCTOR START: type=building at 103,107
-[Entity 0] Calling registerEntity...
-[Entity 0] registerEntity returned.
-[Entity 0] Calling updatePosition...
-[Entity 0] updatePosition returned.
-GoblinManager: Cave registered at 103,107 
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.810747, 0.345159) -> Grid(129, 55) rngState=0
-[Entity 1] CONSTRUCTOR START: type=building at 129,55
-[Entity 1] Calling registerEntity...
-[Entity 1] registerEntity returned.
-[Entity 1] Calling updatePosition...
-[Entity 1] updatePosition returned.
-GoblinManager: Cave registered at 129,55 
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.974863, 0.273911) -> Grid(155, 43) rngState=0
-[Entity 2] CONSTRUCTOR START: type=building at 155,43
-[Entity 2] Calling registerEntity...
-[Entity 2] registerEntity returned.
-[Entity 2] Calling updatePosition...
-[Entity 2] updatePosition returned.
-GoblinManager: Cave registered at 155,43 
-[Entity 3] CONSTRUCTOR START: type=building at 71,15
-[Entity 3] Calling registerEntity...
-[Entity 3] registerEntity returned.
-[Entity 3] Calling updatePosition...
-[Entity 3] updatePosition returned.
-GoblinManager: Cave registered at 71,15 
-[Entity 4] CONSTRUCTOR START: type=building at 13,145
-[Entity 4] Calling registerEntity...
-[Entity 4] registerEntity returned.
-[Entity 4] Calling updatePosition...
-[Entity 4] updatePosition returned.
-GoblinManager: Cave registered at 13,145 
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
-GoblinManager: Force spawning Debug Goblin
-[Game] Minimal: Init EnemyAI
-[Game] Minimal: Done. Returning.
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould return "loss" when player units and buildings are all gone
-[22m[39m[Entity 5] CONSTRUCTOR START: type=building at 10,10
-[Entity 5] Calling registerEntity...
-[Entity 5] registerEntity returned.
-[Entity 5] Calling updatePosition...
-[Entity 5] updatePosition returned.
-[Game] evaluateWinLoss: Player assets zero. Units:0 Buildings:0
-
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould NOT return "loss" if player still has a building
-[22m[39mDisposing detached game instance
-[Game] Dispose called for Game Instance.
-[Terrain] Dispose called.
-
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould NOT return "loss" if player still has a building
+[90mstdout[2m | src/tests/WaterWaves.test.js[2m > [22m[2mWater Waves[2m > [22m[2mshould have uTime uniform in the water material
 [22m[39m[Terrain] Constructor. updatePopulation type: function
-[Game] Init SphereGeometry
-[Game] Minimal/Override Init Start
-[Game] Minimal: Init Clock
-[Game FORCE CONST 2] Assigning terrainOverride to this.terrain
-[Game] Minimal: Init Managers
-[Game] Minimal: Init GoblinManager
-[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
-[GoblinManager] DETERMINISM: generateCaves start. rngState=0
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.436404, 0.796763) -> Grid(69, 127) rngState=0
-[Entity 6] CONSTRUCTOR START: type=building at 69,127
-[Entity 6] Calling registerEntity...
-[Entity 6] registerEntity returned.
-[Entity 6] Calling updatePosition...
-[Entity 6] updatePosition returned.
-GoblinManager: Cave registered at 69,127 
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.095193, 0.274812) -> Grid(15, 43) rngState=0
-[Entity 7] CONSTRUCTOR START: type=building at 15,43
-[Entity 7] Calling registerEntity...
-[Entity 7] registerEntity returned.
-[Entity 7] Calling updatePosition...
-[Entity 7] updatePosition returned.
-GoblinManager: Cave registered at 15,43 
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.679864, 0.744472) -> Grid(108, 119) rngState=0
-[Entity 8] CONSTRUCTOR START: type=building at 108,119
-[Entity 8] Calling registerEntity...
-[Entity 8] registerEntity returned.
-[Entity 8] Calling updatePosition...
-[Entity 8] updatePosition returned.
-GoblinManager: Cave registered at 108,119 
-[Entity 9] CONSTRUCTOR START: type=building at 140,115
-[Entity 9] Calling registerEntity...
-[Entity 9] registerEntity returned.
-[Entity 9] Calling updatePosition...
-[Entity 9] updatePosition returned.
-GoblinManager: Cave registered at 140,115 
-[Entity 10] CONSTRUCTOR START: type=building at 18,87
-[Entity 10] Calling registerEntity...
-[Entity 10] registerEntity returned.
-[Entity 10] Calling updatePosition...
-[Entity 10] updatePosition returned.
-GoblinManager: Cave registered at 18,87 
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
-GoblinManager: Force spawning Debug Goblin
-[Game] Minimal: Init EnemyAI
-[Game] Minimal: Done. Returning.
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould NOT return "loss" if player still has a building
-[22m[39m[Entity 11] CONSTRUCTOR START: type=building at 5,5
-[Entity 11] Calling registerEntity...
-[Entity 11] registerEntity returned.
-[Entity 11] Calling updatePosition...
-[Entity 11] updatePosition returned.
-[Entity 12] CONSTRUCTOR START: type=building at 10,10
-[Entity 12] Calling registerEntity...
-[Entity 12] registerEntity returned.
-[Entity 12] Calling updatePosition...
-[Entity 12] updatePosition returned.
-
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould return "loss" even if ancient ruins exist (they should be neutral)
-[22m[39mDisposing detached game instance
-[Game] Dispose called for Game Instance.
-[Terrain] Dispose called.
-
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould return "loss" even if ancient ruins exist (they should be neutral)
+[90mstdout[2m | src/tests/WaterWaves.test.js[2m > [22m[2mWater Waves[2m > [22m[2mshould have onBeforeCompile defined for custom shader injection
 [22m[39m[Terrain] Constructor. updatePopulation type: function
-[Game] Init SphereGeometry
-[Game] Minimal/Override Init Start
-[Game] Minimal: Init Clock
-[Game FORCE CONST 3] Assigning terrainOverride to this.terrain
-[Game] Minimal: Init Managers
-[Game] Minimal: Init GoblinManager
-[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
-[GoblinManager] DETERMINISM: generateCaves start. rngState=0
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.489374, 0.340730) -> Grid(78, 54) rngState=0
-[Entity 13] CONSTRUCTOR START: type=building at 78,54
-[Entity 13] Calling registerEntity...
-[Entity 13] registerEntity returned.
-[Entity 13] Calling updatePosition...
-[Entity 13] updatePosition returned.
-GoblinManager: Cave registered at 78,54 
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.392262, 0.729928) -> Grid(62, 116) rngState=0
-[Entity 14] CONSTRUCTOR START: type=building at 62,116
-[Entity 14] Calling registerEntity...
-[Entity 14] registerEntity returned.
-[Entity 14] Calling updatePosition...
-[Entity 14] updatePosition returned.
-GoblinManager: Cave registered at 62,116 
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.829752, 0.853622) -> Grid(132, 136) rngState=0
-[Entity 15] CONSTRUCTOR START: type=building at 132,136
-[Entity 15] Calling registerEntity...
-[Entity 15] registerEntity returned.
-[Entity 15] Calling updatePosition...
-[Entity 15] updatePosition returned.
-GoblinManager: Cave registered at 132,136 
-[Entity 16] CONSTRUCTOR START: type=building at 115,101
-[Entity 16] Calling registerEntity...
-[Entity 16] registerEntity returned.
-[Entity 16] Calling updatePosition...
-[Entity 16] updatePosition returned.
-GoblinManager: Cave registered at 115,101 
-[Entity 17] CONSTRUCTOR START: type=building at 19,100
-[Entity 17] Calling registerEntity...
-[Entity 17] registerEntity returned.
-[Entity 17] Calling updatePosition...
-[Entity 17] updatePosition returned.
-GoblinManager: Cave registered at 19,100 
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
-GoblinManager: Force spawning Debug Goblin
-[Game] Minimal: Init EnemyAI
-[Game] Minimal: Done. Returning.
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould return "loss" even if ancient ruins exist (they should be neutral)
-[22m[39m[Entity 18] CONSTRUCTOR START: type=building at 2,2
-[Entity 18] Calling registerEntity...
-[Entity 18] registerEntity returned.
-[Entity 18] Calling updatePosition...
-[Entity 18] updatePosition returned.
-[Entity 19] CONSTRUCTOR START: type=building at 10,10
-[Entity 19] Calling registerEntity...
-[Entity 19] registerEntity returned.
-[Entity 19] Calling updatePosition...
-[Entity 19] updatePosition returned.
-[Game] evaluateWinLoss: Player assets zero. Units:0 Buildings:0
-
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould NOT kill goblin instantly when attacking a farm (Retaliation Bug)
-[22m[39mDisposing detached game instance
-[Game] Dispose called for Game Instance.
-[Terrain] Dispose called.
-
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould NOT kill goblin instantly when attacking a farm (Retaliation Bug)
+ [32m笨・[39m src/tests/WaterWaves.test.js[2m > [22mWater Waves[2m > [22mshould have a detailed geometry for the water mesh[32m 27[2mms[22m[39m
+ [32m笨・[39m src/tests/WaterWaves.test.js[2m > [22mWater Waves[2m > [22mshould have uTime uniform in the water material[32m 13[2mms[22m[39m
+ [32m笨・[39m src/tests/WaterWaves.test.js[2m > [22mWater Waves[2m > [22mshould have onBeforeCompile defined for custom shader injection[32m 19[2mms[22m[39m
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in water material
 [22m[39m[Terrain] Constructor. updatePopulation type: function
-[Game] Init SphereGeometry
-[Game] Minimal/Override Init Start
-[Game] Minimal: Init Clock
-[Game FORCE CONST 4] Assigning terrainOverride to this.terrain
-[Game] Minimal: Init Managers
-[Game] Minimal: Init GoblinManager
-[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
-[GoblinManager] DETERMINISM: generateCaves start. rngState=0
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.005095, 0.251441) -> Grid(0, 40) rngState=0
-[Entity 20] CONSTRUCTOR START: type=building at 0,40
-[Entity 20] Calling registerEntity...
-[Entity 20] registerEntity returned.
-[Entity 20] Calling updatePosition...
-[Entity 20] updatePosition returned.
-GoblinManager: Cave registered at 0,40 
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.703918, 0.605370) -> Grid(112, 96) rngState=0
-[Entity 21] CONSTRUCTOR START: type=building at 112,96
-[Entity 21] Calling registerEntity...
-[Entity 21] registerEntity returned.
-[Entity 21] Calling updatePosition...
-[Entity 21] updatePosition returned.
-GoblinManager: Cave registered at 112,96 
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.265513, 0.831931) -> Grid(42, 133) rngState=0
-[Entity 22] CONSTRUCTOR START: type=building at 42,133
-[Entity 22] Calling registerEntity...
-[Entity 22] registerEntity returned.
-[Entity 22] Calling updatePosition...
-[Entity 22] updatePosition returned.
-GoblinManager: Cave registered at 42,133 
-[Entity 23] CONSTRUCTOR START: type=building at 64,107
-[Entity 23] Calling registerEntity...
-[Entity 23] registerEntity returned.
-[Entity 23] Calling updatePosition...
-[Entity 23] updatePosition returned.
-GoblinManager: Cave registered at 64,107 
-[Entity 24] CONSTRUCTOR START: type=building at 22,58
-[Entity 24] Calling registerEntity...
-[Entity 24] registerEntity returned.
-[Entity 24] Calling updatePosition...
-[Entity 24] updatePosition returned.
-GoblinManager: Cave registered at 22,58 
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
-GoblinManager: Force spawning Debug Goblin
-[Game] Minimal: Init EnemyAI
-[Game] Minimal: Done. Returning.
+[BuildingRenderer] Initializing Assets...
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould NOT kill goblin instantly when attacking a farm (Retaliation Bug)
-[22m[39m[Entity 25] CONSTRUCTOR START: type=building at 5,5
-[Entity 25] Calling registerEntity...
-[Entity 25] registerEntity returned.
-[Entity 25] Calling updatePosition...
-[Entity 25] updatePosition returned.
-[Building 25] takeDamage ENTER: amount=10, hp=80
-[Building] farm(25) took 10 dmg. Pop: 99. Retaliation: 0
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in water material
+[22m[39mTower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould return "win" when all enemies (goblins, caves, huts, units) are gone
-[22m[39mDisposing detached game instance
-[Game] Dispose called for Game Instance.
-[Terrain] Dispose called.
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in water material
+[22m[39m[BuildingRenderer] Initialization Complete.
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould return "win" when all enemies (goblins, caves, huts, units) are gone
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in water material
+[22m[39m[TreeRenderer] Initializing Assets...
+[TreeRenderer] Initialization Complete.
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in water material
+[22m[39m[Terrain FORCE] update entered. dt:0.1 Active:true Units:0
+[Terrain DIAG FRAME] Frame:1 Stagger:20 Units:0
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in farm material
 [22m[39m[Terrain] Constructor. updatePopulation type: function
-[Game] Init SphereGeometry
-[Game] Minimal/Override Init Start
-[Game] Minimal: Init Clock
-[Game FORCE CONST 5] Assigning terrainOverride to this.terrain
-[Game] Minimal: Init Managers
-[Game] Minimal: Init GoblinManager
-[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
-[GoblinManager] DETERMINISM: generateCaves start. rngState=0
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.474046, 0.343179) -> Grid(75, 54) rngState=0
-[Entity 26] CONSTRUCTOR START: type=building at 75,54
-[Entity 26] Calling registerEntity...
-[Entity 26] registerEntity returned.
-[Entity 26] Calling updatePosition...
-[Entity 26] updatePosition returned.
-GoblinManager: Cave registered at 75,54 
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.601559, 0.969521) -> Grid(96, 155) rngState=0
-[Entity 27] CONSTRUCTOR START: type=building at 96,155
-[Entity 27] Calling registerEntity...
-[Entity 27] registerEntity returned.
-[Entity 27] Calling updatePosition...
-[Entity 27] updatePosition returned.
-GoblinManager: Cave registered at 96,155 
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.183609, 0.123515) -> Grid(29, 19) rngState=0
-[Entity 28] CONSTRUCTOR START: type=building at 29,19
-[Entity 28] Calling registerEntity...
-[Entity 28] registerEntity returned.
-[Entity 28] Calling updatePosition...
-[Entity 28] updatePosition returned.
-GoblinManager: Cave registered at 29,19 
-[Entity 29] CONSTRUCTOR START: type=building at 66,158
-[Entity 29] Calling registerEntity...
-[Entity 29] registerEntity returned.
-[Entity 29] Calling updatePosition...
-[Entity 29] updatePosition returned.
-GoblinManager: Cave registered at 66,158 
-[Entity 30] CONSTRUCTOR START: type=building at 100,44
-[Entity 30] Calling registerEntity...
-[Entity 30] registerEntity returned.
-[Entity 30] Calling updatePosition...
-[Entity 30] updatePosition returned.
-GoblinManager: Cave registered at 100,44 
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
-GoblinManager: Force spawning Debug Goblin
-[Game] Minimal: Init EnemyAI
-[Game] Minimal: Done. Returning.
+[BuildingRenderer] Initializing Assets...
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould return "win" when all enemies (goblins, caves, huts, units) are gone
-[22m[39m[Game] evaluateWinLoss: Enemy assets zero. Goblins:0 Caves:0 enemyBuildings:0 enemyUnits:0
+ [32m笨・[39m src/tests/WeatherSway.test.js[2m > [22mWeather Sway Intensity[2m > [22mshould update uSwayIntensity in water material[32m 90[2mms[22m[39m
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in farm material
+[22m[39mTower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould correctly restore enemy faction for caves and huts during deserialization
-[22m[39mDisposing detached game instance
-[Game] Dispose called for Game Instance.
-[Terrain] Dispose called.
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in farm material
+[22m[39m[BuildingRenderer] Initialization Complete.
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould correctly restore enemy faction for caves and huts during deserialization
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in farm material
+[22m[39m[TreeRenderer] Initializing Assets...
+[TreeRenderer] Initialization Complete.
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in tree leaf material
 [22m[39m[Terrain] Constructor. updatePopulation type: function
-[Game] Init SphereGeometry
-[Game] Minimal/Override Init Start
-[Game] Minimal: Init Clock
-[Game FORCE CONST 6] Assigning terrainOverride to this.terrain
-[Game] Minimal: Init Managers
-[Game] Minimal: Init GoblinManager
-[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
-[GoblinManager] DETERMINISM: generateCaves start. rngState=0
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.144066, 0.871506) -> Grid(23, 139) rngState=0
-[Entity 31] CONSTRUCTOR START: type=building at 23,139
-[Entity 31] Calling registerEntity...
-[Entity 31] registerEntity returned.
-[Entity 31] Calling updatePosition...
-[Entity 31] updatePosition returned.
-GoblinManager: Cave registered at 23,139 
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.877153, 0.633575) -> Grid(140, 101) rngState=0
-[Entity 32] CONSTRUCTOR START: type=building at 140,101
-[Entity 32] Calling registerEntity...
-[Entity 32] registerEntity returned.
-[Entity 32] Calling updatePosition...
-[Entity 32] updatePosition returned.
-GoblinManager: Cave registered at 140,101 
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.815191, 0.059211) -> Grid(130, 9) rngState=0
-[Entity 33] CONSTRUCTOR START: type=building at 130,9
-[Entity 33] Calling registerEntity...
-[Entity 33] registerEntity returned.
-[Entity 33] Calling updatePosition...
-[Entity 33] updatePosition returned.
-GoblinManager: Cave registered at 130,9 
-[Entity 34] CONSTRUCTOR START: type=building at 48,57
-[Entity 34] Calling registerEntity...
-[Entity 34] registerEntity returned.
-[Entity 34] Calling updatePosition...
-[Entity 34] updatePosition returned.
-GoblinManager: Cave registered at 48,57 
-[Entity 35] CONSTRUCTOR START: type=building at 8,40
-[Entity 35] Calling registerEntity...
-[Entity 35] registerEntity returned.
-[Entity 35] Calling updatePosition...
-[Entity 35] updatePosition returned.
-GoblinManager: Cave registered at 8,40 
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
-GoblinManager: Force spawning Debug Goblin
-[Game] Minimal: Init EnemyAI
-[Game] Minimal: Done. Returning.
+[BuildingRenderer] Initializing Assets...
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould correctly restore enemy faction for caves and huts during deserialization
-[22m[39m[Entity 36] CONSTRUCTOR START: type=building at 10,10
-[Entity 36] Calling registerEntity...
-[Entity 36] registerEntity returned.
-[Entity 36] Calling updatePosition...
-[Entity 36] updatePosition returned.
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in tree leaf material
+[22m[39mTower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould correctly restore enemy faction for caves and huts during deserialization
-[22m[39m[Entity 37] CONSTRUCTOR START: type=building at 20,20
-[Entity 37] Calling registerEntity...
-[Entity 37] registerEntity returned.
-[Entity 37] Calling updatePosition...
-[Entity 37] updatePosition returned.
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in tree leaf material
+[22m[39m[BuildingRenderer] Initialization Complete.
 
-[90mstdout[2m | src/tests/WinLossCondition.test.js[2m > [22m[2mWin/Loss Condition Logic[2m > [22m[2mshould correctly restore enemy faction for caves and huts during deserialization
-[22m[39m[Entity 38] CONSTRUCTOR START: type=building at 5,5
-[Entity 38] Calling registerEntity...
-[Entity 38] registerEntity returned.
-[Entity 38] Calling updatePosition...
-[Entity 38] updatePosition returned.
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in tree leaf material
+[22m[39m[TreeRenderer] Initializing Assets...
+[TreeRenderer] Initialization Complete.
 
- [32m笨・[39m src/tests/WinLossCondition.test.js [2m([22m[2m6 tests[22m[2m)[22m[33m 2879[2mms[22m[39m
-     [33m[2m笨・[22m[39m should return "loss" when player units and buildings are all gone [33m 376[2mms[22m[39m
-     [33m[2m笨・[22m[39m should NOT return "loss" if player still has a building [33m 303[2mms[22m[39m
-     [33m[2m笨・[22m[39m should return "loss" even if ancient ruins exist (they should be neutral) [33m 432[2mms[22m[39m
-     [33m[2m笨・[22m[39m should NOT kill goblin instantly when attacking a farm (Retaliation Bug) [33m 529[2mms[22m[39m
-     [33m[2m笨・[22m[39m should return "win" when all enemies (goblins, caves, huts, units) are gone [33m 499[2mms[22m[39m
-     [33m[2m笨・[22m[39m should correctly restore enemy faction for caves and huts during deserialization [33m 738[2mms[22m[39m
+ [32m笨・[39m src/tests/WeatherSway.test.js[2m > [22mWeather Sway Intensity[2m > [22mshould update uSwayIntensity in farm material[32m 82[2mms[22m[39m
+ [32m笨・[39m src/tests/WeatherSway.test.js[2m > [22mWeather Sway Intensity[2m > [22mshould update uSwayIntensity in tree leaf material[32m 55[2mms[22m[39m
 
-[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
 [2m      Tests [22m [1m[32m6 passed[39m[22m[90m (6)[39m
-[2m   Start at [22m 18:05:27
-[2m   Duration [22m 4.18s[2m (transform 521ms, setup 90ms, import 573ms, tests 2.88s, environment 456ms)[22m
+[2m   Start at [22m 00:03:53
+[2m   Duration [22m 1.26s[2m (transform 489ms, setup 171ms, import 527ms, tests 290ms, environment 951ms)[22m
 

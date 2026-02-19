@@ -132,7 +132,7 @@ export class GoblinRenderer extends BaseEntityRenderer {
         this.headMesh.setColorAt(this.count, skinColor);
 
         // 3. Face
-        dummy.position.set(0, 0, 0.12 * baseScale);
+        dummy.position.set(0, 0, 0);
         dummy.position.applyAxisAngle(this._up, rotY);
         dummy.position.add(this._scratchVector.set(instanceX, instanceY + 0.55 * baseScale, instanceZ));
         dummy.rotation.set(0, rotY, 0);

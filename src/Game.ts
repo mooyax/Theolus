@@ -198,6 +198,7 @@ export class Game {
     public dayNightSpeed: number;
     public isNight: boolean;
     public currentSeasonIndex: number;
+    public swayIntensity: number = 1.0;
     public season: string;
     public daysPassed: number;
     public prevTimeOfDay: number;
@@ -368,6 +369,8 @@ export class Game {
                     registerEntity: () => { }, unregisterEntity: () => { }, removeBuilding: () => { },
                     updateMeshPosition: () => { }, updateLights: () => { }, getBuildingAt: () => null, getRegion: () => 1,
                     isValidGrid: () => true, findPath: () => [], findPathAsync: () => Promise.resolve([]),
+                    findBestTarget: () => null,
+                    resetPathfindingBudget: () => { }, // GameLoop内で呼ばれるため必要
                     isAdjacentToRegion: () => false,
                     checkYield: () => Promise.resolve(), checkFlatArea: () => true,
                     generateRandomTerrain: async () => { }, setHeight: () => { }, updateColors: () => { }, // Mock methods
@@ -494,7 +497,7 @@ export class Game {
             this.directionalLight.shadow.camera.bottom = -100;
             this.directionalLight.shadow.camera.near = 0.5;
             this.directionalLight.shadow.camera.far = 200;
-            this.directionalLight.shadow.bias = -0.0005; // Reduce artifacts
+            this.directionalLight.shadow.bias = -0.0001; // Fine-tuned for terrain self-shadow
         }
 
         this.scene.add(this.ambientLight);
@@ -826,6 +829,15 @@ export class Game {
         } else {
             // Human spawn
             this.spawnUnit(x, z, null, sourceBuilding, squadId, false, faction); // Propagate faction
+
+            // BONUS SPAWN: Barracks & Towers also spawn a Worker to ensure economy recovery
+            if (buildingType === 'barracks' || buildingType === 'tower') {
+                console.log(`[Game] Bonus Worker Spawn check for ${buildingType}`);
+                // Checking max capacity is handled by Terrain/Building before calling this.
+                // If we are here, a spawn was triggered.
+                this.spawnUnit(x, z, 'worker', sourceBuilding, null, false, faction);
+            }
+
             return true;
         }
     }
@@ -2169,6 +2181,11 @@ export class Game {
     update(deltaTime: number) {
         if (this.stopped) return;
 
+        // CRITICAL FIX: Reset pathfinding budget every frame to prevent infinite "Calculating..."
+        if (this.terrain) {
+            this.terrain.resetPathfindingBudget();
+        }
+
         const actualDt = deltaTime * (this.timeScale || 1.0);
 
         // Accumulate SIMULATED time (Pause during preview)
@@ -2198,9 +2215,24 @@ export class Game {
                 this.cloudManager.update(simTimeSec, actualDt);
             }
 
+            // 0. Calculate Sway Intensity based on Weather
+            this.swayIntensity = 1.0;
+            if (this.weatherManager) {
+                const w = this.weatherManager.currentWeather;
+                const intensities: Record<string, number> = {
+                    'Clear': 1.0,
+                    'Rain': 1.6,
+                    'HeavyRain': 4.0,
+                    'Snow': 1.2,
+                    'HeavySnow': 3.0,
+                    'Fog': 0.7
+                };
+                this.swayIntensity = intensities[w] || 1.0;
+            }
+
             const tTerrain = performance.now();
             if (this.terrain) {
-                this.terrain.update(actualDt, (x, z, type, b, sid) => this.handleBuildingSpawn(x, z, type, b, sid), this.isNight, this.units.length, this.gameActive, this.resources);
+                this.terrain.update(actualDt, (x, z, type, b, sid) => this.handleBuildingSpawn(x, z, type, b, sid), this.isNight, this.units.length, this.gameActive, this.resources, this.swayIntensity);
 
                 // Only update building logic if game is active
                 if (this.gameActive && this.terrain.buildings) {
@@ -2262,6 +2294,12 @@ export class Game {
                 if (this.enemyAI) this.enemyAI.update(actualDt);
                 if (this.goblinManager) {
                     this.goblinManager.update(this.simTotalTimeSec || 0, actualDt, this.isNight, this.units, this.terrain.buildings, this.timeScale, this.camera);
+                }
+                if (this.sheepManager) {
+                    this.sheepManager.update(this.simTotalTimeSec || 0, actualDt);
+                }
+                if (this.fishManager) {
+                    this.fishManager.update(this.simTotalTimeSec || 0, actualDt);
                 }
             } catch (e) { this.logErrorThrottle("EnemyAI/Goblins", e); }
 
@@ -2509,13 +2547,13 @@ export class Game {
                     this.unitRenderer.update(this.units, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()));
                 }
                 if (this.buildingRenderer) {
-                    this.buildingRenderer.update(this.terrain.buildings, frustum, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()));
+                    this.buildingRenderer.update(this.terrain.buildings, frustum, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
                 }
                 if (this.goblinRenderer && this.goblinManager && this.gameActive) {
                     this.goblinRenderer.update(this.goblinManager.goblins, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()));
                 }
                 if (this.treeRenderer) {
-                    this.treeRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()));
+                    this.treeRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
                 }
 
                 if (this.performanceMonitor) this.performanceMonitor.startRender();
@@ -2691,6 +2729,11 @@ export class Game {
         const config = Levels[levelIndex];
         this.currentLevelIndex = levelIndex;
         console.log(`[Game] Starting Level ${config.levelId}: ${config.title}, W=${config.mapWidth}`);
+
+        // Reset Resources for New Level
+        this.resources = { grain: 50, fish: 50, meat: 0 };
+        this.mana = 100;
+        this.totalPopulation = 0;
 
         let preservedSeed: number | null = specificSeed;
 

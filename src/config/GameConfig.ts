@@ -119,7 +119,7 @@ export const GameConfig = {
         "initialCaves": 5, // Default fallback
         "normal": {
             "hp": 50,
-            "damage": 15,
+            "damage": 10,
             "attackRate": 1.0,
             "lifespan": 100
         },

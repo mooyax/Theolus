@@ -62,10 +62,15 @@ describe('Night Movement and Sleep State', () => {
         unit.updateLogic(101, 1, true, []);
 
         expect(unit.state).toBeInstanceOf(Sleep);
-        expect(unit.action).toBe('Sleeping');
+        // Fix: Sleep.enter()後は'Going Home'状態（移動中）。到着後に'Sleeping'になる
+        expect(unit.action).toBe('Going Home');
     });
 
     it('should remain in Sleep if isNight persists', () => {
+        // shelterを追加してSleep状態を維持できるようにする
+        const shelter = { gridX: 10, gridZ: 10, type: 'house', id: 'h1', userData: { hp: 100 } };
+        terrain.buildings = [shelter];
+
         unit.changeState(new Sleep(unit));
         game.isNight = true; // Global state also true
 

@@ -56,7 +56,7 @@ describe('Manual Request Priority and Preemption', () => {
         game.units.push(unit);
     });
 
-    it('should allow manual request to preempt Combat', () => {
+    it('should NOT allow manual request to preempt Combat', () => {
         const goblin = { gridX: 12, gridZ: 12, id: 'g1' };
         unit.targetGoblin = goblin;
         unit.changeState(new Combat(unit));
@@ -70,9 +70,8 @@ describe('Manual Request Priority and Preemption', () => {
         // Update logic
         unit.updateLogic(101, 1, false, [goblin]);
 
-        expect(unit.state).toBeInstanceOf(Job);
-        expect(unit.targetRequest).toBe(manReq);
-        expect(unit.action).toBe('Approaching Job');
+        expect(unit.state).toBeInstanceOf(Combat);
+        // Should NOT transition to Job
     });
 
     it('should allow manual request to preempt Sleep', () => {

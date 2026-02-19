@@ -83,7 +83,7 @@ describe('Counter Damage Nerf Verification', () => {
         simulateKill(knight, goblin);
         const damageTaken = knight.maxHp - knight.hp;
         expect(goblin.isDead).toBe(true);
-        expect(damageTaken).toBeCloseTo(7.5, 1);
+        expect(damageTaken).toBeCloseTo(5.0, 1); // Goblin normal damage=10, counter=50% = 5.0
     });
 
     it('Unit Counter should do 50% damage', () => {

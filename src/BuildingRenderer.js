@@ -190,9 +190,10 @@ export class BuildingRenderer {
 
         // --- FARM (2x2) ---
         // Size 2x2 tiles. Visual size ~1.8
-        this.assets.farmGeo = new THREE.PlaneGeometry(1.8, 1.8);
-        this.assets.farmGeo.rotateX(-Math.PI / 2);
-        this.assets.farmGeo.translate(0, 0.05, 0);
+        // Convert to Box with segments for waving (1.8 width x 0.2 height x 1.8 depth)
+        this.assets.farmGeo = new THREE.BoxGeometry(1.8, 0.2, 1.8, 4, 1, 4);
+        // Translate so base is at 0 (original was plane at 0.05, let's keep it similar)
+        this.assets.farmGeo.translate(0, 0.1, 0);
 
         const canvas3 = document.createElement('canvas');
         canvas3.width = 64; canvas3.height = 64;
@@ -205,6 +206,36 @@ export class BuildingRenderer {
             map: new THREE.CanvasTexture(canvas3),
             side: THREE.DoubleSide
         });
+
+        // Add Uniforms for Wind Waving
+        const farmUniforms = {
+            uTime: { value: 0 },
+            uSwayIntensity: { value: 1.0 }
+        };
+
+        this.assets.farmMat.onBeforeCompile = (shader) => {
+            shader.uniforms.uTime = farmUniforms.uTime;
+            shader.uniforms.uSwayIntensity = farmUniforms.uSwayIntensity;
+            shader.vertexShader = `
+                uniform float uTime;
+                uniform float uSwayIntensity;
+            ` + shader.vertexShader;
+
+            shader.vertexShader = shader.vertexShader.replace(
+                '#include <begin_vertex>',
+                `
+                vec3 transformed = vec3(position);
+                // Only wave the top of the box (the crops)
+                if (position.y > 0.05) {
+                    float waveX = sin(uTime * 1.5 + position.x * 2.0 + position.z * 1.0) * 0.05 * uSwayIntensity;
+                    float waveZ = cos(uTime * 1.2 + position.z * 2.0 + position.x * 1.0) * 0.03 * uSwayIntensity;
+                    transformed.x += waveX;
+                    transformed.z += waveZ;
+                }
+                `
+            );
+        };
+        (this.assets.farmMat).uniforms = farmUniforms;
 
         await this.terrain.checkYield();
 
@@ -360,8 +391,14 @@ export class BuildingRenderer {
     }
 
 
-    update(buildings, frustum, viewCenter) {
+    update(buildings, frustum, viewCenter, time = 0, swayIntensity = 1.0) {
         if (!this.initialized) return; // Guard: Not initialized
+
+        // Update Shader Uniforms
+        if (this.assets.farmMat && this.assets.farmMat.uniforms) {
+            this.assets.farmMat.uniforms.uTime.value = time;
+            this.assets.farmMat.uniforms.uSwayIntensity.value = swayIntensity;
+        }
 
         if (!buildings) return;
 
@@ -477,6 +514,14 @@ export class BuildingRenderer {
                         hIdx++;
                     } else if (b.type === 'farm' && fIdx < this.MAX_INSTANCES) {
                         this.meshes.farms.setMatrixAt(fIdx, dummy.matrix);
+
+                        // Faction Color for Farms
+                        if (b.userData && b.userData.faction === 'enemy') {
+                            this.meshes.farms.setColorAt(fIdx, new THREE.Color(0x8B4513)); // SaddleBrown
+                        } else {
+                            this.meshes.farms.setColorAt(fIdx, new THREE.Color(0xFFFFFF)); // Default
+                        }
+
                         fIdx++;
                     } else if (b.type === 'barracks' && mIdx < this.MAX_INSTANCES) {
                         this.meshes.barracksWalls.setMatrixAt(mIdx, dummy.matrix);

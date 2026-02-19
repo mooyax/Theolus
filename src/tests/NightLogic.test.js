@@ -82,9 +82,10 @@ describe('Night Logic - Shelter Entry', () => {
         // Run Logic
         u1.updateLogic(time, 100, isNight, [], [], [], []);
 
-        // 2. Unit SHOULD be moving OR Sleeping immediately
-        // Current logic might transition directly to Sleep if Night is severe or Logic changed
-        expect(u1.isMoving || u1.isSleeping).toBe(true);
+        // 2. Sleep状態に遷移し、homeBaseが同じ位置なので、次のupdateでSleepingになるはず
+        // Sleep.enter()後はisSleeping=false, isMoving=false（移動前）なので
+        // 最初のupdateでisSleeping=trueになる（距離0のため）
+        expect(u1.action === 'Going Home' || u1.action === 'Sleeping' || u1.isSleeping).toBe(true);
         // expect(u1.action).toBe('Going Home'); // Legacy check
 
         // Simulate Arrival

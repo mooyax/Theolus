@@ -27,6 +27,10 @@ export class EnemyAI {
         const enemyUnits = this.game.units.filter(u => u.faction === 'enemy');
         const enemyRequests = this.game.requestQueue ? this.game.requestQueue.filter(r => r.faction === 'enemy' && r.status === 'pending') : [];
 
+        // 停止条件：Enemy Unit も Enemy Building も存在しない場合は活動停止
+        // これにより、全滅後も建設リクエストを発行し続けて勝利判定を妨げる問題を防ぐ
+        if (enemyUnits.length === 0 && enemyBuildings.length === 0) return;
+
         // Count Houses
         const numHouses = enemyBuildings.filter(b => b.type === 'house').length;
         const numFarms = enemyBuildings.filter(b => b.type === 'farm').length;

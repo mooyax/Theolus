@@ -60,6 +60,44 @@ export class TreeRenderer {
             shininess: 5, // Reduced for softer look
             specular: 0x111111
         });
+
+        // Add Uniforms for Tree Swaying
+        const treeUniforms = {
+            uTime: { value: 0 },
+            uSwayIntensity: { value: 1.0 }
+        };
+
+        this.assets.leafMat.onBeforeCompile = (shader) => {
+            shader.uniforms.uSwayIntensity = treeUniforms.uSwayIntensity;
+            shader.uniforms.uTime = treeUniforms.uTime;
+            shader.vertexShader = `
+                uniform float uTime;
+                uniform float uSwayIntensity;
+            ` + shader.vertexShader;
+
+            shader.vertexShader = shader.vertexShader.replace(
+                '#include <begin_vertex>',
+                `
+                vec3 transformed = vec3(position);
+                
+                // Get a world-ish position for seed (to make trees sway independently)
+                #ifdef USE_INSTANCING
+                    vec3 wPos = vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);
+                #else
+                    vec3 wPos = vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2]);
+                #endif
+
+                // Sway more at the top (higher y), less at the bottom
+                // position.y range in leaf meshes is approx 0.5 to 1.5
+                float heightFactor = max(0.0, position.y - 0.4); 
+                float swayX = sin(uTime * 1.0 + wPos.x * 0.5 + wPos.z * 0.3) * 0.08 * heightFactor * uSwayIntensity;
+                float swayZ = cos(uTime * 0.8 + wPos.z * 0.5 + wPos.x * 0.3) * 0.05 * heightFactor * uSwayIntensity;
+                transformed.x += swayX;
+                transformed.z += swayZ;
+                `
+            );
+        };
+        (this.assets.leafMat).uniforms = treeUniforms;
     }
 
     applyAO(geo, minY, maxY, minB, maxB) {
@@ -95,8 +133,14 @@ export class TreeRenderer {
         this.meshes.leavesUpper = make(this.assets.leafUpperGeo, this.assets.leafMat);
     }
 
-    update(viewCenter) {
+    update(viewCenter, time = 0, swayIntensity = 1.0) {
         if (!this.initialized || !this.terrain.trees) return;
+
+        // Update Shader Uniforms
+        if (this.assets.leafMat && this.assets.leafMat.uniforms) {
+            this.assets.leafMat.uniforms.uTime.value = time;
+            this.assets.leafMat.uniforms.uSwayIntensity.value = swayIntensity;
+        }
 
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;

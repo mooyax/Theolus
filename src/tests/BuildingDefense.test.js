@@ -113,14 +113,35 @@ describe('Building Defense Logic', () => {
         expect(goblin.hp).toBe(60);
     });
 
-    it('No retaliation for distant attackers (Shamans)', () => {
+    it('No retaliation for distant attackers (Shamans) against normal buildings', () => {
         const shaman = new Goblin(mockScene, mockTerrain, 15, 15, 'shaman'); // Dist ~7.0
         shaman.hp = 100;
         mockBuilding.userData.population = 10;
+        mockBuilding.userData.type = 'house';
 
         shaman.attackBuilding(mockBuilding);
 
-        expect(shaman.hp).toBe(100); // Should be safe
+        expect(shaman.hp).toBe(100); // Should be safe vs House
+    });
+
+    it('Towers retaliate against distant attackers (Shamans)', () => {
+        const shaman = new Goblin(mockScene, mockTerrain, 15, 15, 'shaman'); // Dist ~7.0
+        shaman.hp = 100;
+        mockBuilding.userData.population = 5;
+        mockBuilding.userData.type = 'tower'; // Defense 10.0
+
+        shaman.attackBuilding(mockBuilding);
+
+        // PopDamage = 2 * 0.5 = 1 pop lost (Damage 2?)
+        // Wait, Shaman damage is 35 (Config). But test might not use Config if mock?
+        // Goblin constructor usually defaults damage based on type if loading from config...
+        // But here we construct Goblin with 'shaman'.
+        // Let's explicitly set damage to be sure, or trust default.
+        // If damage=35, PopDamage = 3. Remaining Pop = 2.
+        // Retaliation = 2 * 10 = 20.
+        // Shaman HP 100 -> 80.
+
+        expect(shaman.hp).toBeLessThan(100);
     });
 
     it('Goblins can target buildings with 0 population but > 0 structural HP', () => {

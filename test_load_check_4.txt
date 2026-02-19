@@ -1,0 +1,522 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js
+[22m[39m[DEBUG] Building.ts loaded
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js
+[22m[39m[DEBUG] Terrain.ts top-level load
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js
+[22m[39m[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js
+[22m[39m[DEBUG] Goblin.ts loaded
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js
+[22m[39m[Import Debug] Raid: function, Combat: function, Wander: function
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js
+[22m[39m[DEBUG] Game.ts top-level load
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould remove dead sheep during manager update
+[22m[39m[Game] Init SphereGeometry
+[Game] Minimal/Override Init Start
+[Game] Minimal: Init Clock
+[Game FORCE CONST 1] Creating mock terrain
+[Game] Minimal: Init Managers
+[Game] Minimal: Init GoblinManager
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.699462, 0.613130) -> Grid(111, 98) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.639114, 0.085713) -> Grid(102, 13) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.705317, 0.765293) -> Grid(112, 122) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+[Game] Minimal: Init EnemyAI
+[Game] Minimal: Done. Returning.
+Resetting SheepManager...
+SheepManager Refactored: Initialized with Entity-based Sheep. IDENTIFIER: UNIQUE_LOG_STAMP_12345
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould remove dead sheep during manager update
+[22m[39mDEBUG LAST: sm = SheepManager {
+  scene: MockObject {
+    position: MockVector3 { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m },
+    rotation: MockVector3 { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m },
+    scale: MockVector3 { x: [33m1[39m, y: [33m1[39m, z: [33m1[39m },
+    color: MockColor { r: [33m1[39m, g: [33m1[39m, b: [33m1[39m },
+    quaternion: { setFromAxisAngle: [36m[Function][39m },
+    matrix: Matrix4 { elements: [36m[Array][39m },
+    userData: {},
+    children: [],
+    add: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    remove: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    getObjectByName: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    traverse: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    lookAt: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    updateProjectionMatrix: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    updateMatrix: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    copy: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    rotateX: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    rotateY: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    rotateZ: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    translateX: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    translateY: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    translateZ: [Function: Mock] {
+      _isMockFunction: [33mtrue[39m,
+      getMockImplementation: [36m[Function (anonymous)][39m,
+      mock: [36m[Object][39m,
+      mockImplementation: [36m[Function: mockImplementation][39m,
+      mockImplementationOnce: [36m[Function: mockImplementationOnce][39m,
+      withImplementation: [36m[Function: withImplementation][39m,
+      mockReturnThis: [36m[Function: mockReturnThis][39m,
+      mockReturnValue: [36m[Function: mockReturnValue][39m,
+      mockReturnValueOnce: [36m[Function: mockReturnValueOnce][39m,
+      mockResolvedValue: [36m[Function: mockResolvedValue][39m,
+      mockResolvedValueOnce: [36m[Function: mockResolvedValueOnce][39m,
+      mockRejectedValue: [36m[Function: mockRejectedValue][39m,
+      mockRejectedValueOnce: [36m[Function: mockRejectedValueOnce][39m,
+      mockClear: [36m[Function: mockClear][39m,
+      mockReset: [36m[Function: mockReset][39m,
+      mockRestore: [36m[Function: mockRestore][39m,
+      mockName: [36m[Function: mockName][39m,
+      getMockName: [36m[Function: getMockName][39m,
+      [[32mSymbol(nodejs.dispose)[39m]: [36m[Function (anonymous)][39m
+    },
+    geometry: { dispose: [36m[Function][39m },
+    material: { dispose: [36m[Function][39m }
+  },
+  terrain: {
+    width: [33m160[39m,
+    depth: [33m160[39m,
+    logicalWidth: [33m160[39m,
+    logicalDepth: [33m160[39m,
+    buildings: [],
+    entityGrid: [
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m,
+      ... 60 more items
+    ],
+    initEntityGrid: [36m[Function: initEntityGrid][39m,
+    getTileHeight: [36m[Function: getTileHeight][39m,
+    isWalkable: [36m[Function: isWalkable][39m,
+    isReachable: [36m[Function: isReachable][39m,
+    update: [36m[Function: update][39m,
+    registerEntity: [36m[Function: registerEntity][39m,
+    unregisterEntity: [36m[Function: unregisterEntity][39m,
+    removeBuilding: [36m[Function: removeBuilding][39m,
+    updateMeshPosition: [36m[Function: updateMeshPosition][39m,
+    updateLights: [36m[Function: updateLights][39m,
+    getBuildingAt: [36m[Function: getBuildingAt][39m,
+    getRegion: [36m[Function: getRegion][39m,
+    isValidGrid: [36m[Function: isValidGrid][39m,
+    findPath: [36m[Function: findPath][39m,
+    findPathAsync: [36m[Function: findPathAsync][39m,
+    resetPathfindingBudget: [36m[Function: resetPathfindingBudget][39m,
+    isAdjacentToRegion: [36m[Function: isAdjacentToRegion][39m,
+    checkYield: [36m[Function: checkYield][39m,
+    checkFlatArea: [36m[Function: checkFlatArea][39m,
+    generateRandomTerrain: [36m[AsyncFunction: generateRandomTerrain][39m,
+    setHeight: [36m[Function: setHeight][39m,
+    updateColors: [36m[Function: updateColors][39m,
+    gridToWorld: [36m[Function: gridToWorld][39m,
+    worldToGrid: [36m[Function: worldToGrid][39m,
+    setSeason: [36m[Function: setSeason][39m,
+    addBuilding: [36m[Function: addBuilding][39m,
+    getRandomPointInRegion: [36m[Function: getRandomPointInRegion][39m,
+    serialize: [36m[Function: serialize][39m,
+    deserialize: [36m[Function: deserialize][39m,
+    grid: [
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m, [36m[Array][39m,
+      [36m[Array][39m, [36m[Array][39m,
+      ... 60 more items
+    ]
+  },
+  clippingPlanes: [],
+  sheeps: [],
+  sheepCount: [33m10[39m
+}
+DEBUG LAST: sm type = object
+DEBUG LAST: sm constructor = SheepManager
+DEBUG LAST: sm keys = [ [32m'scene'[39m, [32m'terrain'[39m, [32m'clippingPlanes'[39m, [32m'sheeps'[39m, [32m'sheepCount'[39m ]
+Resetting SheepManager...
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould regenerate sheep when population is low
+[22m[39mDisposing detached game instance
+[Game] Dispose called for Game Instance.
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould regenerate sheep when population is low
+[22m[39m[Game] Init SphereGeometry
+[Game] Minimal/Override Init Start
+[Game] Minimal: Init Clock
+[Game FORCE CONST 2] Creating mock terrain
+[Game] Minimal: Init Managers
+[Game] Minimal: Init GoblinManager
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.380674, 0.417934) -> Grid(60, 66) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.588225, 0.391674) -> Grid(94, 62) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.311645, 0.304920) -> Grid(49, 48) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+[Game] Minimal: Init EnemyAI
+[Game] Minimal: Done. Returning.
+Resetting SheepManager...
+SheepManager Refactored: Initialized with Entity-based Sheep. IDENTIFIER: UNIQUE_LOG_STAMP_12345
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould regenerate sheep when population is low
+[22m[39mResetting SheepManager...
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould ignore dead sheep in hunter targeting
+[22m[39mDisposing detached game instance
+[Game] Dispose called for Game Instance.
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould ignore dead sheep in hunter targeting
+[22m[39m[Game] Init SphereGeometry
+[Game] Minimal/Override Init Start
+[Game] Minimal: Init Clock
+[Game FORCE CONST 3] Creating mock terrain
+[Game] Minimal: Init Managers
+[Game] Minimal: Init GoblinManager
+[GoblinManager] 5個の洞窟を生成中...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.137024, 0.799553) -> Grid(21, 127) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.955117, 0.849102) -> Grid(152, 135) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.895807, 0.124562) -> Grid(143, 19) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
+[Game] Minimal: Init EnemyAI
+[Game] Minimal: Done. Returning.
+Resetting SheepManager...
+SheepManager Refactored: Initialized with Entity-based Sheep. IDENTIFIER: UNIQUE_LOG_STAMP_12345
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould ignore dead sheep in hunter targeting
+[22m[39m[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:player Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:player Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+[Entity 1] CONSTRUCTOR START: type=sheep at 11,11
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 2] CONSTRUCTOR START: type=sheep at 40,40
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+
+ [31m×[39m src/tests/SheepHuntingFix.test.js[2m > [22mSheep Hunting Logic & Manager Update Fix[2m > [22mshould remove dead sheep during manager update[32m 21[2mms[22m[39m
+[31m   → Cannot set properties of undefined (setting 'isDead')[39m
+ [31m×[39m src/tests/SheepHuntingFix.test.js[2m > [22mSheep Hunting Logic & Manager Update Fix[2m > [22mshould regenerate sheep when population is low[32m 30[2mms[22m[39m
+[31m   → expected 0 to be greater than 0[39m
+ [32m✓[39m src/tests/SheepHuntingFix.test.js[2m > [22mSheep Hunting Logic & Manager Update Fix[2m > [22mshould ignore dead sheep in hunter targeting[32m 11[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 20:01:02
+[2m   Duration [22m 1.44s[2m (transform 560ms, setup 89ms, import 640ms, tests 64ms, environment 457ms)[22m
+

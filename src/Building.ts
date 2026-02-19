@@ -30,6 +30,16 @@ export class Building extends Entity {
         this._hp = val;
         if (this.userData) this.userData.hp = val;
     }
+    // Added for compatibility with Unit combat checks
+    get isDead(): boolean {
+        // Destroyed if HP <= 0 OR if custom destruction logic (isDestroyed) says so
+        if (this.hp <= 0) return true;
+        if ((this as any).isDestroyed && typeof (this as any).isDestroyed === 'function') {
+            return (this as any).isDestroyed();
+        }
+        return false;
+    }
+
     private _maxHp: number = 100;
     get maxHp(): number { return this._maxHp; }
     set maxHp(val: number) {
@@ -121,7 +131,7 @@ export class Building extends Entity {
         }
     }
 
-    takeDamage(amount: number, attacker: any = null): number {
+    takeDamage(amount: number, attacker: any = null, isCounter: boolean = false): number {
         console.log(`[Building ${this.id}] takeDamage ENTER: amount=${amount}, hp=${this.hp}`);
         // 1. Calculate Damage reduction?
         // Armor?

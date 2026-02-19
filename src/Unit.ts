@@ -841,7 +841,7 @@ export class Unit extends Actor {
             // 1. Scan Goblins (Optimized with Spatial Partitioning)
             // Reduced ranges per User Request (Knight 50->30, Worker 15->10) -- RE-EVALUATED for soldiers
             const maxDist = (this.role === 'knight' || this.role === 'wizard') ? 50 : 20;
-            const bRange = (this.role === 'knight' || this.role === 'wizard') ? 80 : 10; // Soldiers see buildings further away
+            const bRange = (this.role === 'knight' || this.role === 'wizard') ? 300 : 10; // Soldiers see buildings further away
 
             // Use findBestTarget to avoid O(N) loop over all goblins
             const foundGoblin = this.terrain.findBestTarget('goblin', this.gridX, this.gridZ, maxDist, (g, dist) => {
@@ -1088,7 +1088,8 @@ export class Unit extends Actor {
 
         // 2 Scan for Buildings (Caves / Huts) if no goblin target
         if (!this.targetGoblin && shouldScan) {
-            const scanRange = (this.role === 'worker') ? 10 : 40;
+            // FIX: Increase range for Soldiers to map-wide (300) to find distant huts
+            const scanRange = (this.role === 'worker') ? 10 : 300;
             this.findTargetBuilding(scanRange);
         }
 
@@ -1382,26 +1383,52 @@ export class Unit extends Actor {
     findNearestShelter() {
         if (!this.terrain || !this.terrain.buildings) return null;
 
+        // 1. Priority: Go Home (Source Building)
+        if (this.homeBase) {
+            const b = this.homeBase;
+            const isAlive = (b.userData && b.userData.hp > 0 && !b.isDestroyed?.());
+
+            if (isAlive) {
+                // Check Reachability
+                if (this.isReachable(b.gridX, b.gridZ)) {
+                    // Check Capacity? (Optional, maybe crowd into home is okay)
+                    return b;
+                }
+            }
+        }
+
         let nearest = null;
         let minDist = Infinity;
 
+        // Optimization: Spiral Search or Grid Search instead of full list?
+        // Full list is okay for < 100 buildings.
+
         for (const b of this.terrain.buildings) {
+            // Basic Validity
+            if (!b.userData || b.userData.hp <= 0) continue;
+            if (b.isDestroyed && b.isDestroyed()) continue;
+
+            // Type Check
+            if (b.type !== 'house' && b.type !== 'castle' && b.type !== 'tower' && b.type !== 'barracks') continue;
+            // Only Workers/Citizens hide in Houses. Soldiers might garrison in Towers/Barracks?
+            // For now, allow all shelters.
+
             // Check ignore
             if (this.ignoredTargets && this.ignoredTargets.has(b.id)) continue;
             if (this.ignoredTargets && this.ignoredTargets.has(`${b.gridX},${b.gridZ}`)) continue;
 
-            // Faction Check (Fix: Don't sleep in enemy houses)
-            if (b.userData && b.userData.faction && b.userData.faction !== this.faction) {
+            // Faction Check (Strict)
+            if (b.userData.faction && b.userData.faction !== this.faction) {
                 if (b.userData.faction !== 'neutral') continue;
             }
 
-            if (b.type === 'house' || b.type === 'castle') {
-                if (b.userData && b.userData.hp > 0) {
-                    const d = this.getDistance(b.gridX, b.gridZ);
-                    if (d < minDist) {
-                        minDist = d;
-                        nearest = b;
-                    }
+            // Reachability Check (Expensive but necessary to prevent stuck units)
+            // Perform distance check *first* to avoid expensive A* on far targets
+            const d = this.getDistance(b.gridX, b.gridZ);
+            if (d < minDist) {
+                if (this.isReachable(b.gridX, b.gridZ)) {
+                    minDist = d;
+                    nearest = b;
                 }
             }
         }
@@ -1487,6 +1514,7 @@ export class Unit extends Actor {
 
                 if (targets && targets.length > 0) {
                     for (const t of targets) {
+                        if (t.isDead) continue; // Skip ghost entities
                         const d = this.getDistance(t.gridX, t.gridZ);
                         if (d < minDist) {
                             minDist = d;

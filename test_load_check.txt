@@ -26,19 +26,19 @@
 [Game FORCE CONST 1] Creating mock terrain
 [Game] Minimal: Init Managers
 [Game] Minimal: Init GoblinManager
-[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 5個の洞窟を生成中...
 [GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.730262, 0.033878) -> Grid(116, 5) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.744107, 0.259497) -> Grid(119, 41) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.231097, 0.294306) -> Grid(36, 47) rngState=undefined
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.094752, 0.630665) -> Grid(15, 100) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.984992, 0.438909) -> Grid(157, 70) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.578381, 0.802090) -> Grid(92, 128) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
 [Game] Minimal: Init EnemyAI
 [Game] Minimal: Done. Returning.
+Resetting SheepManager...
+SheepManager Refactored: Initialized with Entity-based Sheep. IDENTIFIER: UNIQUE_LOG_STAMP_12345
 
 [90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould remove dead sheep during manager update
-[22m[39mDEBUG: sm type = object
-DEBUG: sm constructor = SheepManager
-DEBUG: sm methods = [ [32m'constructor'[39m, [32m'update'[39m, [32m'dispose'[39m ]
+[22m[39mResetting SheepManager...
 
 [90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould regenerate sheep when population is low
 [22m[39mDisposing detached game instance
@@ -51,14 +51,19 @@ DEBUG: sm methods = [ [32m'constructor'[39m, [32m'update'[39m, [32m'dispose
 [Game FORCE CONST 2] Creating mock terrain
 [Game] Minimal: Init Managers
 [Game] Minimal: Init GoblinManager
-[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 5個の洞窟を生成中...
 [GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.517392, 0.979612) -> Grid(82, 156) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.143920, 0.181324) -> Grid(23, 29) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.772687, 0.559406) -> Grid(123, 89) rngState=undefined
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.347050, 0.580944) -> Grid(55, 92) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.617085, 0.372289) -> Grid(98, 59) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.007047, 0.658189) -> Grid(1, 105) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
 [Game] Minimal: Init EnemyAI
 [Game] Minimal: Done. Returning.
+Resetting SheepManager...
+SheepManager Refactored: Initialized with Entity-based Sheep. IDENTIFIER: UNIQUE_LOG_STAMP_12345
+
+[90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould regenerate sheep when population is low
+[22m[39mResetting SheepManager...
 
 [90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould ignore dead sheep in hunter targeting
 [22m[39mDisposing detached game instance
@@ -71,14 +76,16 @@ DEBUG: sm methods = [ [32m'constructor'[39m, [32m'update'[39m, [32m'dispose
 [Game FORCE CONST 3] Creating mock terrain
 [Game] Minimal: Init Managers
 [Game] Minimal: Init GoblinManager
-[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] 5個の洞窟を生成中...
 [GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.267643, 0.127586) -> Grid(42, 20) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.696865, 0.326654) -> Grid(111, 52) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.497161, 0.472520) -> Grid(79, 75) rngState=undefined
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.525808, 0.114761) -> Grid(84, 18) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.466633, 0.673985) -> Grid(74, 107) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.559721, 0.792343) -> Grid(89, 126) rngState=undefined
+[GoblinManager] 洞窟生成完了: 0/5 (試行回数: 5000)
 [Game] Minimal: Init EnemyAI
 [Game] Minimal: Done. Returning.
+Resetting SheepManager...
+SheepManager Refactored: Initialized with Entity-based Sheep. IDENTIFIER: UNIQUE_LOG_STAMP_12345
 
 [90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould ignore dead sheep in hunter targeting
 [22m[39m[Entity 0] CONSTRUCTOR START: type=unit at 10,10
@@ -116,13 +123,13 @@ DEBUG: sm methods = [ [32m'constructor'[39m, [32m'update'[39m, [32m'dispose
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
 
- [31m笶ｯ[39m src/tests/SheepHuntingFix.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 41[2mms[22m[39m
-[31m     [31mﾃ・[31m should remove dead sheep during manager update[39m[32m 17[2mms[22m[39m
-[31m     [31mﾃ・[31m should regenerate sheep when population is low[39m[32m 10[2mms[22m[39m
-     [32m笨・[39m should ignore dead sheep in hunter targeting[32m 12[2mms[22m[39m
+ [31m❯[39m src/tests/SheepHuntingFix.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 66[2mms[22m[39m
+[31m     [31m×[31m should remove dead sheep during manager update[39m[32m 24[2mms[22m[39m
+[31m     [31m×[31m should regenerate sheep when population is low[39m[32m 30[2mms[22m[39m
+     [32m✓[39m should ignore dead sheep in hunter targeting[32m 11[2mms[22m[39m
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
 [2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
-[2m   Start at [22m 19:17:11
-[2m   Duration [22m 1.47s[2m (transform 576ms, setup 91ms, import 650ms, tests 41ms, environment 482ms)[22m
+[2m   Start at [22m 19:51:43
+[2m   Duration [22m 1.51s[2m (transform 610ms, setup 89ms, import 714ms, tests 66ms, environment 453ms)[22m
 

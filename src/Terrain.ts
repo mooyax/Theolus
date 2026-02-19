@@ -787,6 +787,7 @@ export class Terrain {
         this.mesh.rotation.x = -Math.PI / 2;
         this.mesh.position.set(0, 0, 0); // Centered
         this.mesh.receiveShadow = true; // Enable shadows on terrain!
+        this.mesh.castShadow = true;    // Enable self-shadowing (terrain casts shadow on itself)
 
         // 1. Grid Lines (Gray) - User Request
         const gridGeo = new THREE.BufferGeometry();
@@ -849,7 +850,8 @@ export class Terrain {
     createWater() {
         if (this.waterMesh) this.scene.remove(this.waterMesh);
 
-        const waterGeo = new THREE.PlaneGeometry(this.width, this.depth);
+        // Increase segments for smoother waves (64x64)
+        const waterGeo = new THREE.PlaneGeometry(this.width, this.depth, 64, 64);
         const waterMat = new THREE.MeshLambertMaterial({
             color: 0x1E90FF,
             transparent: true,
@@ -858,6 +860,38 @@ export class Terrain {
             clippingPlanes: this.clippingPlanes,
             clipShadows: false
         });
+
+        // Add Uniforms for Shader
+        const uniforms = {
+            uTime: { value: 0 },
+            uSwayIntensity: { value: 1.0 }
+        };
+
+        waterMat.onBeforeCompile = (shader) => {
+            shader.uniforms.uTime = uniforms.uTime;
+            shader.uniforms.uSwayIntensity = uniforms.uSwayIntensity;
+
+            // Inject Vertex Shader logic for waves
+            shader.vertexShader = `
+                uniform float uTime;
+                uniform float uSwayIntensity;
+            ` + shader.vertexShader;
+
+            shader.vertexShader = shader.vertexShader.replace(
+                '#include <begin_vertex>',
+                `
+                vec3 transformed = vec3(position);
+                // Reduced amplitudes to prevent clipping with ground (Total max: 0.045 * intensity)
+                float wave1 = sin(position.x * 1.2 + uTime * 1.0) * 0.02 * uSwayIntensity;
+                float wave2 = sin(position.y * 1.5 + uTime * 1.2) * 0.015 * uSwayIntensity;
+                float wave3 = sin((position.x + position.y) * 0.8 + uTime * 0.8) * 0.01 * uSwayIntensity;
+                transformed.z += wave1 + wave2 + wave3;
+                `
+            );
+        };
+
+        // Attach uniforms to material for easy access in update()
+        (waterMat as any).uniforms = uniforms;
 
         this.waterMesh = new THREE.Mesh(waterGeo, waterMat);
         this.waterMesh.rotation.x = -Math.PI / 2;
@@ -2322,7 +2356,7 @@ export class Terrain {
         });
     }
 
-    update(deltaTime, spawnCallback, isNight, activeUnits = 0, isGameActive = true, resources?: any) {
+    update(deltaTime, spawnCallback, isNight, activeUnits = 0, isGameActive = true, resources?: any, swayIntensity: number = 1.0) {
         console.log(`[Terrain FORCE] update entered. dt:${deltaTime} Active:${isGameActive} Units:${activeUnits}`);
         // if (this.frameCount && this.frameCount % 60 === 0) console.log(`[Terrain DIAG UPDATE] dt:${deltaTime} Active:${isGameActive} Units:${activeUnits}`);
         // 1. Visual Updates
@@ -2332,7 +2366,9 @@ export class Terrain {
         }
 
         if (this.waterMesh && (this.waterMesh.material as any) && (this.waterMesh.material as any).uniforms) {
-            (this.waterMesh.material as any).uniforms.uTime.value += deltaTime;
+            const uni = (this.waterMesh.material as any).uniforms;
+            if (uni.uTime) uni.uTime.value += deltaTime;
+            if (uni.uSwayIntensity) uni.uSwayIntensity.value = swayIntensity;
         }
 
         // 2. Deferred Region Recalculation (Performance Optimization)

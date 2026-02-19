@@ -28,17 +28,12 @@
 [Game] Minimal: Init GoblinManager
 [GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
 [GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.730262, 0.033878) -> Grid(116, 5) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.744107, 0.259497) -> Grid(119, 41) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.231097, 0.294306) -> Grid(36, 47) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.219656, 0.225973) -> Grid(35, 36) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.916594, 0.413564) -> Grid(146, 66) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.482316, 0.608711) -> Grid(77, 97) rngState=undefined
 [GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
 [Game] Minimal: Init EnemyAI
 [Game] Minimal: Done. Returning.
-
-[90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould remove dead sheep during manager update
-[22m[39mDEBUG: sm type = object
-DEBUG: sm constructor = SheepManager
-DEBUG: sm methods = [ [32m'constructor'[39m, [32m'update'[39m, [32m'dispose'[39m ]
 
 [90mstdout[2m | src/tests/SheepHuntingFix.test.js[2m > [22m[2mSheep Hunting Logic & Manager Update Fix[2m > [22m[2mshould regenerate sheep when population is low
 [22m[39mDisposing detached game instance
@@ -53,9 +48,9 @@ DEBUG: sm methods = [ [32m'constructor'[39m, [32m'update'[39m, [32m'dispose
 [Game] Minimal: Init GoblinManager
 [GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
 [GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.517392, 0.979612) -> Grid(82, 156) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.143920, 0.181324) -> Grid(23, 29) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.772687, 0.559406) -> Grid(123, 89) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.271522, 0.907804) -> Grid(43, 145) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.955023, 0.958465) -> Grid(152, 153) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.188399, 0.439363) -> Grid(30, 70) rngState=undefined
 [GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
 [Game] Minimal: Init EnemyAI
 [Game] Minimal: Done. Returning.
@@ -73,9 +68,9 @@ DEBUG: sm methods = [ [32m'constructor'[39m, [32m'update'[39m, [32m'dispose
 [Game] Minimal: Init GoblinManager
 [GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
 [GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.267643, 0.127586) -> Grid(42, 20) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.696865, 0.326654) -> Grid(111, 52) rngState=undefined
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.497161, 0.472520) -> Grid(79, 75) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.581965, 0.987701) -> Grid(93, 158) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.245403, 0.120202) -> Grid(39, 19) rngState=undefined
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.302107, 0.118215) -> Grid(48, 18) rngState=undefined
 [GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
 [Game] Minimal: Init EnemyAI
 [Game] Minimal: Done. Returning.
@@ -116,13 +111,14 @@ DEBUG: sm methods = [ [32m'constructor'[39m, [32m'update'[39m, [32m'dispose
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
 
- [31m笶ｯ[39m src/tests/SheepHuntingFix.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 41[2mms[22m[39m
-[31m     [31mﾃ・[31m should remove dead sheep during manager update[39m[32m 17[2mms[22m[39m
-[31m     [31mﾃ・[31m should regenerate sheep when population is low[39m[32m 10[2mms[22m[39m
-     [32m笨・[39m should ignore dead sheep in hunter targeting[32m 12[2mms[22m[39m
+ [31mﾃ・[39m src/tests/SheepHuntingFix.test.js[2m > [22mSheep Hunting Logic & Manager Update Fix[2m > [22mshould remove dead sheep during manager update[32m 20[2mms[22m[39m
+[31m   竊・sm.initSheeps is not a function[39m
+ [31mﾃ・[39m src/tests/SheepHuntingFix.test.js[2m > [22mSheep Hunting Logic & Manager Update Fix[2m > [22mshould regenerate sheep when population is low[32m 17[2mms[22m[39m
+[31m   竊・sm.initSheeps is not a function[39m
+ [32m笨・[39m src/tests/SheepHuntingFix.test.js[2m > [22mSheep Hunting Logic & Manager Update Fix[2m > [22mshould ignore dead sheep in hunter targeting[32m 15[2mms[22m[39m
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
 [2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
-[2m   Start at [22m 19:17:11
-[2m   Duration [22m 1.47s[2m (transform 576ms, setup 91ms, import 650ms, tests 41ms, environment 482ms)[22m
+[2m   Start at [22m 19:25:54
+[2m   Duration [22m 1.49s[2m (transform 584ms, setup 101ms, import 649ms, tests 53ms, environment 484ms)[22m
 

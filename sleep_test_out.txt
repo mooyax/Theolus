@@ -1,0 +1,61 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/SleepBehavior.test.js
+[22m[39m[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/SleepBehavior.test.js[2m > [22m[2mSleep State Behavior[2m > [22m[2mshould stay in Sleep state and move if shelter is found
+[22m[39m[Entity 0] CONSTRUCTOR START: type=unit at worker,10
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:10 Pos:worker,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:10 Pos:worker,10
+[UnitCore.js] Unit Construction Finished ID:0
+
+[90mstdout[2m | src/tests/SleepBehavior.test.js[2m > [22m[2mSleep State Behavior[2m > [22m[2mshould EXIT Sleep state (revert to Wander) if no shelter is found
+[22m[39m[Entity 1] CONSTRUCTOR START: type=unit at worker,10
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:10 Pos:worker,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:10 Pos:worker,10
+[UnitCore.js] Unit Construction Finished ID:1
+
+ [31m笶ｯ[39m src/tests/SleepBehavior.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 19[2mms[22m[39m
+[31m     [31mﾃ・[31m should stay in Sleep state and move if shelter is found[39m[32m 15[2mms[22m[39m
+     [32m笨・[39m should EXIT Sleep state (revert to Wander) if no shelter is found[32m 2[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/SleepBehavior.test.js > Sleep State Behavior > should stay in Sleep state and move if shelter is found
+AssertionError: expected 'Sleeping' to be 'Going Home' // Object.is equality
+
+Expected: "Going Home"
+Received: "Sleeping"
+
+ 笶ｯ src/tests/SleepBehavior.test.js:44:29
+     42|         unit.state.update(0, 1.0, true, [], [], []); // isNight = true
+     43| 
+     44|         expect(unit.action).toBe('Going Home');
+       |                             ^
+     45|         expect(unit.smartMove).toHaveBeenCalledWith(20, 20, 0);
+     46|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m   Start at [22m 13:49:06
+[2m   Duration [22m 1.11s[2m (transform 233ms, setup 115ms, import 225ms, tests 19ms, environment 518ms)[22m
+

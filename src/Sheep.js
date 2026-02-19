@@ -34,6 +34,10 @@ export class Sheep extends Actor {
         this.lastTime = 0;
         this.stagnationTimer = 0;
 
+        // Stats
+        this.hp = 30;
+        this.maxHp = 30;
+
         // Init Visuals
         this.mesh = this.createMesh();
         this.scene.add(this.mesh);
@@ -227,6 +231,50 @@ export class Sheep extends Actor {
             this.mesh.rotation.y = this.rotationY;
             this.mesh.position.copy(this.position);
         }
+    }
+
+    // Fix: Add takeDamage to allow combat resolution
+    takeDamage(amount, attacker) {
+        if (this.isDead) return;
+        this.hp = (this.hp || 10) - amount;
+        if (this.hp <= 0) {
+            this.die();
+            if (attacker && attacker.onKill) {
+                attacker.onKill(this);
+            }
+        } else {
+            // Flee behavior
+            this.startFleeing(attacker);
+        }
+    }
+
+    startFleeing(attacker) {
+        if (!attacker) return;
+        // Simple flee: move away from attacker
+        const dx = this.gridX - attacker.gridX;
+        const dz = this.gridZ - attacker.gridZ;
+        const dist = Math.sqrt(dx * dx + dz * dz);
+
+        if (this.state && this.state.constructor.name !== 'SheepFlee') {
+            this.changeState(new SheepFlee(this, attacker));
+        }
+    }
+
+    die() {
+        if (this.isDead) return;
+        this.isDead = true;
+
+        // Drop Meat (羊からmeatを獲得)
+        if (this.game && this.game.resources) {
+            this.game.resources.meat = (this.game.resources.meat || 0) + 1000;
+            // Visual popup?
+        }
+
+        // Remove from scene (handled by Game update usually, or dispose)
+        // But we should mark it so Game knows to remove it.
+        // Actor.die usually handles animation or flag.
+        // If super.die() exists call it, otherwise just flag.
+        if (super.die) super.die();
     }
 
     // Cleanup

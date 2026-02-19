@@ -66,7 +66,7 @@ export class BaseEntityRenderer {
         this.resetCounts();
 
         for (const entity of entities) {
-            if (entity.isDead || entity.isFinished) continue;
+            if (entity.isDead || entity.isFinished || entity.isSleeping) continue; // 死亡・終了・Sleep中は非表示
 
             const rotY = (entity.rotationY !== undefined) ? entity.rotationY : 0;
             const posX = entity.position.x;

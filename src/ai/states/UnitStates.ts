@@ -86,14 +86,14 @@ export class Wander extends WanderBase {
             }
         }
 
-        // 5. Job Search (moved UP to prioritize finding work even during migration)
+        // 5. Job Search（労働者のみがリクエストを探す）
         const game = (window as any).game;
-        if (game && typeof game.findBestRequest === 'function' && !(this instanceof Job) && !this.actor.targetRequest) {
-            // FIX: At night, only search for MANUAL jobs.
+        if (this.actor.role === 'worker' && game && typeof game.findBestRequest === 'function' && !(this instanceof Job) && !this.actor.targetRequest) {
+            // 夜間はマニュアルジョブのみ検索する
             const allowAuto = !isNight;
             const req = game.findBestRequest(this.actor, allowAuto);
             if (req) {
-                // Double check for night-time manual requirement
+                // 夜間に自動ジョブはスキップ
                 if (isNight && !req.isManual) {
                     // Skip auto jobs at night
                 } else {
@@ -449,25 +449,6 @@ export class Combat extends State {
     update(time: number, deltaTime: number, isNight: boolean, units: any[], buildings: any[], goblins: any[]) {
         if (this.actor.id === 0 || this.actor.id === 1) console.log(`[Combat Debug ${this.actor.id}] Update Start. TargetG:${!!this.actor.targetGoblin} TargetB:${!!this.actor.targetBuilding}`);
 
-        // Priority: Manual Requests Override Combat
-        const game = (this.actor.game) || (window as any).game;
-        if (game && game.findBestRequest) {
-            const manReq = game.findBestRequest(this.actor, false); // Auto=false -> Manual Only
-            if (manReq && manReq.isManual) {
-                if (game.claimRequest(this.actor, manReq)) {
-                    this.actor.targetRequest = manReq;
-                    // Clear Combat Targets
-                    this.actor.targetGoblin = null;
-                    this.actor.targetBuilding = null;
-                    this.actor.targetUnit = null;
-
-                    const newJob = new Job(this.actor);
-                    this.actor.changeState(newJob);
-                    newJob.enter(this);
-                    return;
-                }
-            }
-        }
 
         const target = this.actor.targetGoblin || this.actor.targetBuilding || this.actor.targetUnit;
 
@@ -512,41 +493,70 @@ export class Combat extends State {
             this.actor.action = 'Fighting';
             this.actor.isMoving = false;
             // Generic fallback or specific methods
+            // Generic fallback or specific methods
             if (this.actor.attack) {
                 this.actor.attack(target, time);
-            } else if (target.faction === 'enemy' || target.constructor.name.includes('Goblin')) {
-                if (this.actor.attackGoblin) this.actor.attackGoblin(target);
-            } else if (target.hp !== undefined && (target.gridX !== undefined || target.x !== undefined)) {
-                // Building or Unit
-                if (this.actor.attackBuilding && (target.type === 'building' || target.userData)) {
-                    this.actor.attackBuilding(target);
-                } else if (this.actor.attackUnit) {
-                    this.actor.attackUnit(target);
+            } else {
+                // TYPE CHECK: Building vs Unit
+                const isBuilding = (target.type === 'goblin_hut' || target.type === 'cave' || target.type === 'building' || (target.userData && target.userData.type === 'goblin_hut'));
+
+                if (isBuilding) {
+                    if (this.actor.attackBuilding) this.actor.attackBuilding(target);
+                } else if (target.faction === 'enemy' || target.constructor.name.includes('Goblin')) {
+                    if (this.actor.attackGoblin) this.actor.attackGoblin(target);
+                } else if (target.hp !== undefined && (target.gridX !== undefined || target.x !== undefined)) {
+                    // Fallback
+                    if (this.actor.attackUnit) this.actor.attackUnit(target);
                 }
             }
         } else {
-            this.actor.action = 'Chasing';
-            if (this.actor.smartMove) {
-                const moved = this.actor.smartMove((target.gridX || target.x), (target.gridZ || target.z), time);
+            // CHASING LOGIC
+            const isBuilding = (target.type === 'goblin_hut' || target.type === 'cave' || (target.userData && target.userData.type === 'goblin_hut'));
+            let isInRange = false;
 
-                // FIX: If target is unreachable path-wise ABANDON.
-                // BUT: If it just failed because of throttling or budget (isPathfindingThrottled/isWaitingForPath),
-                // DO NOT abandon. Wait for the next cycle.
-                const isTrulyUnreachable = !moved && !this.actor.isPathfinding && !this.actor.isPathfindingThrottled && !this.actor.isWaitingForPath;
+            if (isBuilding && this.actor.getDistanceToBuilding) {
+                // Use precise distance to building edge
+                const d = this.actor.getDistanceToBuilding(target);
+                // 2.0 (Melee) + 0.5 (Buffer)
+                if (d < 2.5) isInRange = true;
+            } else {
+                if (distSq < 4) isInRange = true;
+            }
 
-                if (isTrulyUnreachable) {
-                    // Start a "Stuck Timer" or just abandon immediately?
-                    // Immediate abandon is safer for "No Path" loops.
-                    console.log(`[Combat] Move Failed (Unreachable/NoPath). Abandoning Combat. Unit:${this.actor.id}`);
+            if (isInRange) {
+                // Just force fight action next frame (or update immediately)
+                this.actor.action = 'Fighting';
+                // We are in range but distSq was >= 4 (center-to-center).
+                // Force attack call here to avoid stutter
+                if (isBuilding && this.actor.attackBuilding) {
+                    this.actor.attackBuilding(target);
+                }
+            } else {
+                this.actor.action = 'Chasing';
+                // ... SmartMove ...
 
-                    // FIX: Add to ignoredTargets to prevent immediate re-targeting by checkSelfDefense
-                    if (this.actor.targetGoblin) this.actor.ignoredTargets.set(this.actor.targetGoblin.id, time + 5.0); // Ignore for 5s
-                    if (this.actor.targetBuilding) this.actor.ignoredTargets.set(this.actor.targetBuilding.id, time + 5.0);
+                if (this.actor.smartMove) {
+                    const moved = this.actor.smartMove((target.gridX || target.x), (target.gridZ || target.z), time);
 
-                    this.actor.targetGoblin = null;
-                    this.actor.targetBuilding = null;
-                    this.actor.targetUnit = null;
-                    this.actor.changeState(new Wander(this.actor));
+                    // FIX: If target is unreachable path-wise ABANDON.
+                    // BUT: If it just failed because of throttling or budget (isPathfindingThrottled/isWaitingForPath),
+                    // DO NOT abandon. Wait for the next cycle.
+                    const isTrulyUnreachable = !moved && !this.actor.isPathfinding && !this.actor.isPathfindingThrottled && !this.actor.isWaitingForPath;
+
+                    if (isTrulyUnreachable) {
+                        // Start a "Stuck Timer" or just abandon immediately?
+                        // Immediate abandon is safer for "No Path" loops.
+                        console.log(`[Combat] Move Failed (Unreachable/NoPath). Abandoning Combat. Unit:${this.actor.id}`);
+
+                        // FIX: Add to ignoredTargets to prevent immediate re-targeting by checkSelfDefense
+                        if (this.actor.targetGoblin) this.actor.ignoredTargets.set(this.actor.targetGoblin.id, time + 5.0); // Ignore for 5s
+                        if (this.actor.targetBuilding) this.actor.ignoredTargets.set(this.actor.targetBuilding.id, time + 5.0);
+
+                        this.actor.targetGoblin = null;
+                        this.actor.targetBuilding = null;
+                        this.actor.targetUnit = null;
+                        this.actor.changeState(new Wander(this.actor));
+                    }
                 }
             }
         }
@@ -560,8 +570,8 @@ export class Sleep extends State {
     }
     enter() {
         this.actor.isMoving = false;
-        this.actor.isSleeping = true;
-        this.actor.action = "Sleeping";
+        this.actor.isSleeping = false; // まだ移動中。到着後にtrue
+        this.actor.action = "Going Home"; // 帰宅中として開始
     }
     update(time: number, deltaTime: number, isNight: boolean, units: any[], buildings: any[], goblins: any[]) {
         if (!isNight) {
@@ -570,22 +580,7 @@ export class Sleep extends State {
             return;
         }
 
-        const shelter = this.actor.findNearestShelter ? this.actor.findNearestShelter() : null;
-        if (shelter) {
-            const dx = shelter.gridX - this.actor.gridX;
-            const dz = shelter.gridZ - this.actor.gridZ;
-            const distSq = dx * dx + dz * dz;
-            if (distSq > 1.0) {
-                this.actor.action = 'Going Home';
-                if (this.actor.smartMove) {
-                    this.actor.smartMove(shelter.gridX, shelter.gridZ, time);
-                }
-            } else {
-                this.actor.action = 'Sleeping';
-                this.actor.isMoving = false;
-            }
-        }
-
+        // ① マニュアルリクエスト優先チェック（shelter有無に関係なく最優先で起動可能）
         if ((window as any).game) {
             const manReq = (window as any).game.findBestRequest(this.actor, false);
             if (manReq && manReq.isManual) {
@@ -596,6 +591,32 @@ export class Sleep extends State {
                     return;
                 }
             }
+        }
+
+        // ② シェルターを探して帰宅
+        const shelter = this.actor.findNearestShelter ? this.actor.findNearestShelter() : null;
+        if (shelter) {
+            const dx = shelter.gridX - this.actor.gridX;
+            const dz = shelter.gridZ - this.actor.gridZ;
+            const distSq = dx * dx + dz * dz;
+            if (distSq > 1.0) {
+                // まだ家に到着していない。移動中
+                this.actor.action = 'Going Home';
+                this.actor.isSleeping = false;
+                if (this.actor.smartMove) {
+                    this.actor.smartMove(shelter.gridX, shelter.gridZ, time);
+                }
+            } else {
+                // 家に到着 → Sleep（非表示化）
+                this.actor.action = 'Sleeping';
+                this.actor.isSleeping = true;
+                this.actor.isMoving = false;
+            }
+        } else {
+            // シェルターなし → Wanderに戻る（外で朝まで待機）
+            this.actor.isSleeping = false;
+            this.actor.changeState(new Wander(this.actor));
+            return;
         }
     }
 }
