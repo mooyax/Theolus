@@ -16,6 +16,7 @@ export class SeaDecorationRenderer {
 
     async init() {
         console.log("[SeaDecorationRenderer] Initializing Assets...");
+        this.dispose(); // Old meshes out
         this.initAssets();
         this.generateDecorationData();
         this.initInstancedMeshes();
@@ -159,6 +160,7 @@ export class SeaDecorationRenderer {
     }
 
     generateDecorationData() {
+        this.decorations = []; // Ensure clear
         const W = this.terrain.logicalWidth;
         const D = this.terrain.logicalDepth;
 

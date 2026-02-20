@@ -2974,6 +2974,10 @@ export class Game {
             this.projectiles.forEach(p => { if (p.mesh) this.scene.remove(p.mesh); });
             this.projectiles = [];
         }
+
+        if (this.seaDecorationRenderer) {
+            this.seaDecorationRenderer.dispose();
+        }
     }
 
     regenerateWorld() {
