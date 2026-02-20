@@ -1,0 +1,31 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/FactionPersistence.test.js
+[22m[39m[DEBUG] Building.ts loaded
+
+[90mstdout[2m | src/tests/FactionPersistence.test.js
+[22m[39m[DEBUG] Terrain.ts top-level load
+
+[90mstdout[2m | src/tests/FactionPersistence.test.js
+[22m[39m[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/FactionPersistence.test.js
+[22m[39m[DEBUG] Goblin.ts loaded
+
+[90mstdout[2m | src/tests/FactionPersistence.test.js
+[22m[39m[Import Debug] Raid: function, Combat: function, Wander: function
+
+[90mstdout[2m | src/tests/FactionPersistence.test.js
+[22m[39m[DEBUG] Game.ts top-level load
+
+ [31m笶ｯ[39m src/tests/FactionPersistence.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 12[2mms[22m[39m
+[31m     [31mﾃ・[31m should persist unit and building faction across save/load[39m[32m 8[2mms[22m[39m
+[31m     [31mﾃ・[31m should only add food to player pool from player farms[39m[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m should allow workers and knights to target enemy human buildings[39m[32m 1[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[90m (3)[39m
+[2m   Start at [22m 13:13:42
+[2m   Duration [22m 1.23s[2m (transform 497ms, setup 85ms, import 552ms, tests 12ms, environment 415ms)[22m
+

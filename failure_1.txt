@@ -1,0 +1,50 @@
+﻿[Game] Successfully restored 1 units.
+[Game] Restoring 0 requests...
+[Game] Checking unit 11 for targetRequestId: null
+[Game] Restored Camera Zoom: 1
+
+[90mstdout[2m | src/tests/GridSearchRegression.test.js[2m > [22m[2mTerrain Grid Search Regression[2m > [22m[2mshould NOT find Building when searching for unit
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+
+ [32m隨ｨ繝ｻ[39m src/tests/GridSearchRegression.test.js [2m([22m[2m3 tests[22m[2m)[22m[33m 1099[2mms[22m[39m
+     [33m[2m隨ｨ繝ｻ[22m[39m should find Worker when searching for "unit" using Grid Search (Large Scale Simulation) [33m 417[2mms[22m[39m
+     [33m[2m隨ｨ繝ｻ[22m[39m should find Sheep but NOT Fish when searching for "unit" [33m 346[2mms[22m[39m
+     [33m[2m隨ｨ繝ｻ[22m[39m should NOT find Building when searching for unit [33m 332[2mms[22m[39m
+[90mstdout[2m | src/tests/ManualRequestIntegration.test.js[2m > [22m[2mManual Request Integration[2m > [22m[2mshould fail to find path if blocked by water
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+[Entity 1] CONSTRUCTOR START: type=unit at 5,5
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:5,5
+[UnitCore.js] Unit Construction Finished ID:1
+
+[90mstdout[2m | src/tests/ManualRequestIntegration.test.js[2m > [22m[2mManual Request Integration[2m > [22m[2mshould fail to find path if blocked by water
+[22m[39m[Actor 1] Resetting Unreachable (Target changed or initializing)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+
+ [32m隨ｨ繝ｻ[39m src/tests/ManualRequestIntegration.test.js [2m([22m[2m2 tests[22m[2m)[22m[33m 1050[2mms[22m[39m
+     [33m[2m隨ｨ繝ｻ[22m[39m should assign a manual request and move unit towards it [33m 752[2mms[22m[39m
+[90mstdout[2m | src/tests/PopulationGrowth.test.js
+[22m[39m[DEBUG] Building.ts loaded
+
+[90mstdout[2m | src/tests/PopulationGrowth.test.js
+[22m[39m[DEBUG] Terrain.ts top-level load
+
+[90mstdout[2m | src/tests/SaveLoadIntegration.test.js[2m > [22m[2mComprehensive Save/Load Integration[2m > [22m[2mshould ignore unreachable jobs after load (IgnoredTarget Persistence)
+[22m[39m[Game] Dispose called for Game Instance.
+
+[90mstdout[2m | src/tests/SaveLoadIntegration.test.js[2m > [22m[2mComprehensive Save/Load Integration[2m > [22m[2mshould expire goblin raid after load (Aggression Persistence)
+[22m[39m[Game] Init SphereGeometry
+[Game] Minimal/Override Init Start
+[Game] Minimal: Init Clock
+[Game FORCE CONST 3] Creating mock terrain
+[Game] Minimal: Init Managers
+[Game] Minimal: Init GoblinManager

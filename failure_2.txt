@@ -1,0 +1,50 @@
+﻿      console.error(`[Actor $
+
+[90mstdout[2m | src/tests/CombatRetaliation.test.js[2m > [22m[2mCombat Retaliation System[2m > [22m[2mshould retaliate when hit while working (Job)
+[22m[39m[Unit 0] State Change: Wander -> Job
+[Actor 0] Resetting Unreachable (Target changed or initializing)
+[Unit 0] State Change: Job -> Wander
+[Unit 0] State Change: Wander -> Combat
+SUCCESS: Unit switched to Combat.
+[Combat Debug 0] Update Start. TargetG:true TargetB:false
+
+[90mstdout[2m | src/tests/CombatRetaliation.test.js[2m > [22m[2mCombat Retaliation System[2m > [22m[2mshould switch strictly for self-defense scan failure in Job (Non-worker)
+[22m[39mDisposing detached game instance
+
+[90mstdout[2m | src/tests/CombatRetaliation.test.js[2m > [22m[2mCombat Retaliation System[2m > [22m[2mshould switch strictly for self-defense scan failure in Job (Non-worker)
+[22m[39m[Entity 2] CONSTRUCTOR START: type=unit at 10,10
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:1 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:1
+Spawning Goblin...
+[Entity 3] CONSTRUCTOR START: type=goblin at 11,10
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+
+[90mstdout[2m | src/tests/CombatRetaliation.test.js[2m > [22m[2mCombat Retaliation System[2m > [22m[2mshould switch strictly for self-defense scan failure in Job (Non-worker)
+[22m[39m[Unit 0] State Change: Wander -> Job
+[Actor 0] Resetting Unreachable (Target changed or initializing)
+[Unit 0] State Change: Job -> Combat
+[Unit 0] State Change: Combat -> Combat
+[Actor 0] Pathfinding SUCCESS: Got 1 nodes to 30,30
+[Entity 0] startMove -> isMoving:true. Target:11,10 StartTime:0.0000
+
+[90mstdout[2m | src/tests/DeepCup.test.js
+[22m[39m[DEBUG] Building.ts loaded
+

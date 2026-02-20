@@ -28,6 +28,8 @@ import { PerformanceMonitor } from './PerformanceMonitor';
 
 import { GameConfig, Levels } from './config/GameConfig'; // Direct Import
 import { EnemyAI } from './ai/EnemyAI';
+import { SmokeManager } from './SmokeManager';
+import { SeaDecorationRenderer } from './SeaDecorationRenderer.js';
 
 export interface Squad {
     id: number;
@@ -158,6 +160,9 @@ export class Game {
     public birdManager: BirdManager;
     public weatherManager!: WeatherManager;
     public soundManager!: SoundManager;
+    public smokeManager!: SmokeManager;
+    public seaDecorationRenderer!: SeaDecorationRenderer;
+    private smokeTimer: number = 0;
 
     // Entity Arrays (Mirroring Terrain for easy access)
     public units: Unit[];
@@ -272,7 +277,7 @@ export class Game {
         this.manualWorkerSpawns = 0;
         this.requestCheckIndex = 0;
 
-        this.gameTime = 6.0; // Start at Dawn instead of Midnight
+        this.gameTime = 7.0; // Start at 7:00 instead of 6:00
         this.gameTotalTime = 0;
         this.simTotalTimeSec = 0;
         this.frameCount = 0;
@@ -410,6 +415,8 @@ export class Game {
             console.log('[Game] Minimal: Init EnemyAI');
             this.enemyAI = new EnemyAI(this); // Init Enemy AI
 
+            this.smokeManager = new SmokeManager(this.scene, 500); // Small pool for minimal mode
+
             this.isLoading = false;
             console.log('[Game] Minimal: Done. Returning.');
             return; // STOP HERE for minimal mode
@@ -522,6 +529,9 @@ export class Game {
         this.compass = new Compass(this);
         console.log('[Game] Init WeatherManager');
         this.weatherManager = new WeatherManager(this.scene, this.clippingPlanes);
+        if (!this.smokeManager) this.smokeManager = new SmokeManager(this.scene, 2000);
+        console.log('[Game] Init SeaDecorationRenderer');
+        this.seaDecorationRenderer = new SeaDecorationRenderer(this.scene, this.terrain, this.clippingPlanes);
 
         console.log('[Game] Init UnitRenderer');
         this.unitRenderer = new UnitRenderer(this.scene, this.terrain, this.clippingPlanes, 12000);
@@ -884,12 +894,11 @@ export class Game {
         if (this.gameTime >= 24) this.gameTime = 0;
 
         // 1. Calculate Orb Positions (Sun & Moon)
-        // 6:00 (East) -> 12:00 (Peak) -> 18:00 (West)
         const dayAngle = ((this.gameTime - 6) / 12) * Math.PI;
         const radius = 80;
         const sunX = Math.cos(dayAngle) * radius;
         const sunY = Math.sin(dayAngle) * radius;
-        const sunZ = 30; // Tilt for nice perspective shadows
+        const sunZ = 30;
 
         const moonAngle = dayAngle + Math.PI;
         const moonX = Math.cos(moonAngle) * radius;
@@ -900,83 +909,70 @@ export class Game {
         const isNight = (this.gameTime < 6 || this.gameTime >= 18);
         this.isNight = isNight;
 
-        // 3. Dynamic Color Interpolation
-        // Define key colors
+        // 3. Dynamic Color Interpolation (Enhanced Vibe)
         const nightSky = new THREE.Color(0x000015); // Deep space
-        const dawnSky = new THREE.Color(0xFF7F50);  // Coral
+        const dawnSky = new THREE.Color(0xFF8C5A);  // Warm Orange
         const daySky = new THREE.Color(0x87CEEB);   // Sky Blue
-        const duskSky = new THREE.Color(0xFF4500);  // OrangeRed
+        const duskSky = new THREE.Color(0x603080);  // Twilight Purple/Orange mix target
 
-        // User requested colors
-        const sunMorning = new THREE.Color(255 / 255, 210 / 255, 160 / 255); // #FFD2A0
-        const sunNoon = new THREE.Color(255 / 255, 255 / 255, 240 / 255);    // #FFFFF0
-        const sunEvening = new THREE.Color(255 / 255, 140 / 255, 90 / 255);  // #FF8C5A
-
+        const sunMorning = new THREE.Color(1.0, 0.82, 0.63); // #FFD2A0
+        const sunNoon = new THREE.Color(1.0, 1.0, 0.94);    // #FFFFF0
+        const sunEvening = new THREE.Color(1.0, 0.55, 0.35);  // #FF8C5A
         const moonColor = new THREE.Color(0xCCCCFF);
 
         let skyColor = daySky.clone();
         let lightColor = sunNoon.clone();
         let lightIntensity = 1.0;
         let ambientIntensity = 0.5;
-        let ambientColor = new THREE.Color(0xFFFFFF); // Base ambient
+        let ambientColor = new THREE.Color(0xFFFFFF);
         let targetPos = new THREE.Vector3(sunX, sunY, sunZ);
 
         // Transition Logic
-        if (this.gameTime >= 5 && this.gameTime < 7) {
-            // Dawn (5:00 - 7:00)
-            const t = (this.gameTime - 5) / 2;
+        if (this.gameTime >= 4 && this.gameTime < 8) {
+            // Dawn (4:00 - 8:00) - Start earlier for pre-dawn glow
+            const t = (this.gameTime - 4) / 4;
             skyColor.copy(nightSky).lerp(dawnSky, t);
-            if (t > 0.5) skyColor.lerp(daySky, (t - 0.5) * 2);
+            if (t > 0.6) skyColor.lerp(daySky, (t - 0.6) * 2.5);
 
-            // Light: Night -> Morning
             lightColor.copy(moonColor).lerp(sunMorning, t);
             lightIntensity = 0.2 + t * 0.8;
-            ambientIntensity = 0.2 + t * 0.3;
-        } else if (this.gameTime >= 7 && this.gameTime < 17) {
-            // Day (7:00 - 17:00)
+            ambientIntensity = 0.2 + t * 0.4;
+            ambientColor.lerp(new THREE.Color(0xFFDAB9), t); // Peach tint
+        } else if (this.gameTime >= 8 && this.gameTime < 16) {
+            // Day (8:00 - 16:00)
             skyColor.copy(daySky);
-
-            // Sun Color Interpolation
-            // 7-10: Morning -> Noon
-            // 10-14: Noon
-            // 14-17: Noon -> Evening
-            if (this.gameTime < 10) {
-                const t = (this.gameTime - 7) / 3;
+            if (this.gameTime < 11) {
+                const t = (this.gameTime - 8) / 3;
                 lightColor.copy(sunMorning).lerp(sunNoon, t);
-            } else if (this.gameTime < 14) {
+            } else if (this.gameTime < 13) {
                 lightColor.copy(sunNoon);
             } else {
-                const t = (this.gameTime - 14) / 3;
+                const t = (this.gameTime - 13) / 3;
                 lightColor.copy(sunNoon).lerp(sunEvening, t);
             }
-
-            lightIntensity = 1.0;
-            ambientIntensity = 0.5;
-        } else if (this.gameTime >= 17 && this.gameTime < 19) {
-            // Dusk (17:00 - 19:00)
-            const t = (this.gameTime - 17) / 2;
-            skyColor.copy(daySky).lerp(duskSky, t);
+            lightIntensity = 1.1; // Bright noon
+            ambientIntensity = 0.6;
+        } else if (this.gameTime >= 16 && this.gameTime < 20) {
+            // Dusk (16:00 - 20:00)
+            const t = (this.gameTime - 16) / 4;
+            skyColor.copy(daySky).lerp(new THREE.Color(0xFF4500), t); // Orange
             if (t > 0.5) skyColor.lerp(nightSky, (t - 0.5) * 2);
 
-            // Light: Evening -> Night
             lightColor.copy(sunEvening).lerp(moonColor, t);
             lightIntensity = 1.0 - t * 0.8;
-            ambientIntensity = 0.5 - t * 0.3;
+            ambientIntensity = 0.6 - t * 0.25; // Adjusted (was 0.4) to end at ~0.35 at 20:00
 
-            // Evening Shadow Tint (Bluish)
-            // Blend from Normal -> Blue -> Normal (at night)
-            // Or just tint ambient during this transition
-            const blueShadow = new THREE.Color(0x404060); // Dark Blue
-            // Stronger tint as it gets darker
-            ambientColor.lerp(blueShadow, t * 0.7); // Up to 70% blue tint
+            const blueShadow = new THREE.Color(0x404080);
+            ambientColor.lerp(blueShadow, t);
         } else {
-            // Night (19:00 - 5:00)
+            // Night (20:00 - 4:00)
             skyColor.copy(nightSky);
             lightColor.copy(moonColor);
-            lightIntensity = 0.2;
-            ambientIntensity = 0.2;
+            lightIntensity = 0.35; // Increased (was 0.25)
+            ambientIntensity = 0.35; // Increased (was 0.25)
+            ambientColor.setHex(0x202040);
             targetPos.set(moonX, moonY, moonZ);
-            if (targetPos.y < 0) targetPos.y = -targetPos.y; // Keep moon above or at least visible shadow
+            if (targetPos.y < 0) targetPos.y = -targetPos.y;
         }
 
         // Apply to Scene
@@ -990,7 +986,7 @@ export class Game {
         }
         if (this.ambientLight) {
             this.ambientLight.intensity = ambientIntensity;
-            this.ambientLight.color.copy(ambientColor).lerp(skyColor, 0.2); // Tint ambient with sky (on top of base/blue)
+            this.ambientLight.color.copy(ambientColor).lerp(skyColor, 0.3);
         }
 
         // 4. Sync with WeatherManager (Fog color)
@@ -2215,6 +2211,53 @@ export class Game {
                 this.cloudManager.update(simTimeSec, actualDt);
             }
 
+            if (this.seaDecorationRenderer) {
+                this.seaDecorationRenderer.update(simTimeSec, actualDt);
+            }
+
+            if (this.smokeManager) {
+                this.smokeManager.update(actualDt);
+
+                // Emit smoke periodically from specific buildings with chimneys
+                this.smokeTimer += actualDt;
+                if (this.smokeTimer > 0.3) {
+                    this.smokeTimer = 0;
+                    if (this.terrain && this.terrain.buildings) {
+                        this.terrain.buildings.forEach(b => {
+                            // Only emit from buildings that have chimneys (House, Barracks)
+                            const type = b.type;
+                            const isResidential = type === 'house' || type === 'mansion' || type === 'castle' || type === 'barracks';
+
+                            if (isResidential && !b.isDestroyed()) {
+                                const pos = this.terrain.getVisualPosition(b.gridX, b.gridZ);
+                                const rotY = b.rotationY || 0;
+
+                                // Default fallback offsets
+                                let ox = 0, oy = 1.6, oz = 0;
+                                let bx = pos.x, bz = pos.z;
+
+                                // Specific chimney offsets matching BuildingRenderer geometry
+                                if (type === 'house') {
+                                    ox = 0.5; oy = 1.25; oz = 0.5; // 1.2 -> 1.25
+                                    bx += 0.5; bz += 0.5;
+                                } else if (type === 'barracks') {
+                                    ox = 0.8; oy = 1.75; oz = 0.8; // 1.7 -> 1.75
+                                    bx += 1.0; bz += 1.0;
+                                }
+
+                                // Rotate offset around Y axis (matches THREE.js CCW rotation)
+                                const cosR = Math.cos(rotY);
+                                const sinR = Math.sin(rotY);
+                                const rx = ox * cosR + oz * sinR;
+                                const rz = -ox * sinR + oz * cosR;
+
+                                this.smokeManager.emit(bx + rx, pos.y + oy, bz + rz);
+                            }
+                        });
+                    }
+                }
+            }
+
             // 0. Calculate Sway Intensity based on Weather
             this.swayIntensity = 1.0;
             if (this.weatherManager) {
@@ -2222,9 +2265,9 @@ export class Game {
                 const intensities: Record<string, number> = {
                     'Clear': 1.0,
                     'Rain': 1.6,
-                    'HeavyRain': 4.0,
+                    'HeavyRain': 2.4, // Reduced from 4.0 to prevent showing ocean floor (0.07 * 2.4 = 0.168 < 0.2)
                     'Snow': 1.2,
-                    'HeavySnow': 3.0,
+                    'HeavySnow': 2.0, // Reduced from 3.0
                     'Fog': 0.7
                 };
                 this.swayIntensity = intensities[w] || 1.0;
@@ -2525,7 +2568,8 @@ export class Game {
                 if (this.gameActive) {
                     try {
                         const tManStart = performance.now();
-                        if (this.cloudManager) this.cloudManager.update(deltaTime, this.camera);
+                        // CloudManager is updated in update() now
+                        // if (this.cloudManager) this.cloudManager.update(deltaTime, this.camera);
 
                         // const tCloudEnd = performance.now();
                         // if (tCloudEnd - tManStart > 5) console.warn(`[Perf] CloudManager took ${(tCloudEnd - tManStart).toFixed(2)}ms`);
@@ -2775,6 +2819,8 @@ export class Game {
         if (this.goblinManager) this.goblinManager.terrain = this.terrain;
         if (this.fishManager) this.fishManager.terrain = this.terrain;
         if (this.sheepManager) this.sheepManager.terrain = this.terrain;
+        if (this.seaDecorationRenderer) this.seaDecorationRenderer.terrain = this.terrain;
+
 
         // 4. Generate Terrain Data (Async)
         console.log("[Game] Generating Level Terrain Data...");
@@ -2796,6 +2842,8 @@ export class Game {
         }
         if (this.fishManager) this.fishManager.init();
         if (this.sheepManager) this.sheepManager.initSheeps();
+        if (this.seaDecorationRenderer) await this.seaDecorationRenderer.init();
+
 
         // Spawn Initial Units
         try {
@@ -3611,6 +3659,7 @@ export class Game {
         if (this.goblinRenderer && this.goblinRenderer.dispose) this.goblinRenderer.dispose();
         if (this.treeRenderer && this.treeRenderer.dispose) this.treeRenderer.dispose();
         if (this.soundManager && this.soundManager.dispose) this.soundManager.dispose();
+        if (this.smokeManager && this.smokeManager.dispose) this.smokeManager.dispose();
         if (this.terrain && (this.terrain as any).dispose) (this.terrain as any).dispose();
 
         // 3. Scene Traversal for Three.js cleanup

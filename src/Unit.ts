@@ -841,7 +841,7 @@ export class Unit extends Actor {
             // 1. Scan Goblins (Optimized with Spatial Partitioning)
             // Reduced ranges per User Request (Knight 50->30, Worker 15->10) -- RE-EVALUATED for soldiers
             const maxDist = (this.role === 'knight' || this.role === 'wizard') ? 50 : 20;
-            const bRange = (this.role === 'knight' || this.role === 'wizard') ? 300 : 10; // Soldiers see buildings further away
+            const bRange = (this.role === 'knight' || this.role === 'wizard') ? 300 : 10; // Soldiers see buildings further away, Workers only 10
 
             // Use findBestTarget to avoid O(N) loop over all goblins
             const foundGoblin = this.terrain.findBestTarget('goblin', this.gridX, this.gridZ, maxDist, (g, dist) => {
@@ -970,58 +970,48 @@ export class Unit extends Actor {
             const range = bRange; // Use the expanded range calculated above
 
             const foundBuilding = this.terrain.findBestTarget('building', this.gridX, this.gridZ, range, (b, dist) => {
-                if (b.userData && b.userData.faction === this.faction) return Infinity; // Friendly Building
+                if (!b.userData) return Infinity;
+                if (b.userData.hp <= 0) return Infinity;
+                if (this.ignoredTargets.has(b.id)) return Infinity;
 
-                // Filter Type for Workers?
-                if (this.role === 'worker') {
-                    const isGoblin = (b.userData.type === 'goblin_hut' || b.userData.type === 'cave');
-                    const isEnemyFaction = (b.userData.faction && b.userData.faction !== this.faction);
-                    if (!isGoblin && !isEnemyFaction) return Infinity;
-                }
+                const bType = b.userData.type;
+                const bFaction = b.userData.faction;
 
-                // Allow targeting anything else (Goblin Huts, Caves, Enemy Faction Buildings)
-                const isGoblinType = (b.userData.type === 'goblin_hut' || b.userData.type === 'cave');
-                if (!isGoblinType && (!b.userData.faction || b.userData.faction === this.faction)) {
-                    return Infinity;
-                }
-                // Wait, logic above is complex.
-                // Simplified:
-                // 1. Must NOT be friendly.
-                // 2. Must be Goblin OR Enemy Faction.
+                const isGoblinType = (bType === 'goblin_hut' || bType === 'cave');
+                const isEnemyFaction = (bFaction && bFaction !== 'neutral' && bFaction !== this.faction);
 
+
+                // Target if it's a Goblin structure OR an explicit enemy faction structure
+                if (!isGoblinType && !isEnemyFaction) return Infinity;
+
+                // Distance Check
+                if (dist > range) return Infinity;
+
+                // Region Check for Buildings
                 const gx = Math.floor(this.gridX);
                 const gz = Math.floor(this.gridZ);
                 const bx = Math.floor(b.gridX);
                 const bz = Math.floor(b.gridZ);
 
-                const isGoblin = (b.userData.type === 'goblin_hut' || b.userData.type === 'cave');
-                const isEnemy = (b.userData.faction && b.userData.faction !== 'neutral' && b.userData.faction !== this.faction);
-
-                if (!isGoblin && !isEnemy) return Infinity;
-
-                if (b.userData && b.userData.hp <= 0) return Infinity;
-                if (this.ignoredTargets.has(b.id)) return Infinity;
-
-                if (dist > range) return Infinity;
-
-                // Region Check for Buildings
                 const myCell = (this.terrain.grid[gx] && this.terrain.grid[gx][gz]);
                 const bCell = (this.terrain.grid[bx] && this.terrain.grid[bx][bz]);
                 if (myCell && bCell) {
-                    if (myCell.regionId > 0 && bCell.regionId > 0 && myCell.regionId !== bCell.regionId) return Infinity;
+                    if (myCell.regionId > 0 && bCell.regionId > 0 && myCell.regionId !== bCell.regionId) {
+                        return Infinity;
+                    }
                 }
 
                 let score = dist - 5.0;
                 if (b.id === currentTargetId) score -= 500.0;
 
+                // Priority for soldiers
                 if (dist < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 2000.0;
 
                 // Worker Priority for Close Buildings
-                if (dist < 4.0 && this.role === 'worker') {
+                if (dist < 5.0 && this.role === 'worker') {
                     score -= 2000.0;
                 }
 
-                // Prioritize finding it, but real comparison is against bestScore
                 return score;
             }, this.terrain.buildings);
 
@@ -2518,6 +2508,7 @@ export class Unit extends Actor {
             xp: this.xp || 0,
             level: this.level || 1,
             name: this.name,
+            faction: this.faction,
             // Squad Persistence
             homeBaseGridX: hbx,
             homeBaseGridZ: hbz,
@@ -2611,7 +2602,7 @@ export class Unit extends Actor {
     static deserialize(data, scene, terrain) {
         // FIX: Prioritize role over type ('unit') to prevent worker-transformation bug
         const role = data.role || data.type || (data.isSpecial ? 'knight' : 'worker');
-        const unit = new Unit(scene, terrain, data.gridX, data.gridZ, role, data.isSpecial);
+        const unit = new Unit(scene, terrain, data.gridX, data.gridZ, role, data.isSpecial, data.squadId, data.faction || 'player');
 
         unit.id = (data.id !== undefined) ? Number(data.id) : unit.id; // Restore ID as Number
         unit.age = data.age || 20;

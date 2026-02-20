@@ -42,7 +42,9 @@ export class Entity {
     public walkAnimTimer: number;
 
     // Optional / Dynamic properties
-    public isDead: boolean = false;
+    protected _isDead: boolean = false;
+    get isDead(): boolean { return this._isDead; }
+    set isDead(val: boolean) { this._isDead = val; }
     public age?: number;
     public limbs?: any; // Used by subclasses
     // Virtual Methods

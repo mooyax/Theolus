@@ -86,13 +86,13 @@ Resetting SheepManager...
 [Game] Init GoblinManager
 [GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
 [GoblinManager] DETERMINISM: generateCaves start. rngState=0
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.828828, 0.778151) -> Grid(99, 93) rngState=0
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.348997, 0.291531) -> Grid(41, 34) rngState=0
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.415096, 0.948612) -> Grid(49, 113) rngState=0
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.850862, 0.739077) -> Grid(102, 88) rngState=0
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.691079, 0.140376) -> Grid(82, 16) rngState=0
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.293542, 0.534564) -> Grid(35, 64) rngState=0
 [GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
 [Game] Init FishManager
 Resetting FishManager...
-[Entity 0] CONSTRUCTOR START: type=fish at 68,5
+[Entity 0] CONSTRUCTOR START: type=fish at 55,89
 [Entity 0] Calling registerEntity...
 [Entity 0] registerEntity returned.
 [Entity 0] Calling updatePosition...
@@ -103,7 +103,7 @@ Resetting FishManager...
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
 [Actor 0] CHANGE STATE: None -> WanderBase Request:null 
-[Entity 1] CONSTRUCTOR START: type=fish at 69,27
+[Entity 1] CONSTRUCTOR START: type=fish at 64,83
 [Entity 1] Calling registerEntity...
 [Entity 1] registerEntity returned.
 [Entity 1] Calling updatePosition...
@@ -113,7 +113,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 2] CONSTRUCTOR START: type=fish at 49,33
+[Entity 2] CONSTRUCTOR START: type=fish at 41,100
 [Entity 2] Calling registerEntity...
 [Entity 2] registerEntity returned.
 [Entity 2] Calling updatePosition...
@@ -123,7 +123,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 3] CONSTRUCTOR START: type=fish at 38,30
+[Entity 3] CONSTRUCTOR START: type=fish at 3,22
 [Entity 3] Calling registerEntity...
 [Entity 3] registerEntity returned.
 [Entity 3] Calling updatePosition...
@@ -133,7 +133,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 4] CONSTRUCTOR START: type=fish at 97,10
+[Entity 4] CONSTRUCTOR START: type=fish at 29,78
 [Entity 4] Calling registerEntity...
 [Entity 4] registerEntity returned.
 [Entity 4] Calling updatePosition...
@@ -143,7 +143,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 5] CONSTRUCTOR START: type=fish at 24,81
+[Entity 5] CONSTRUCTOR START: type=fish at 19,72
 [Entity 5] Calling registerEntity...
 [Entity 5] registerEntity returned.
 [Entity 5] Calling updatePosition...
@@ -153,7 +153,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 6] CONSTRUCTOR START: type=fish at 56,77
+[Entity 6] CONSTRUCTOR START: type=fish at 84,117
 [Entity 6] Calling registerEntity...
 [Entity 6] registerEntity returned.
 [Entity 6] Calling updatePosition...
@@ -163,7 +163,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 7] CONSTRUCTOR START: type=fish at 88,27
+[Entity 7] CONSTRUCTOR START: type=fish at 78,34
 [Entity 7] Calling registerEntity...
 [Entity 7] registerEntity returned.
 [Entity 7] Calling updatePosition...
@@ -173,7 +173,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 8] CONSTRUCTOR START: type=fish at 76,57
+[Entity 8] CONSTRUCTOR START: type=fish at 101,86
 [Entity 8] Calling registerEntity...
 [Entity 8] registerEntity returned.
 [Entity 8] Calling updatePosition...
@@ -183,7 +183,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 9] CONSTRUCTOR START: type=fish at 11,36
+[Entity 9] CONSTRUCTOR START: type=fish at 102,102
 [Entity 9] Calling registerEntity...
 [Entity 9] registerEntity returned.
 [Entity 9] Calling updatePosition...
@@ -193,7 +193,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 10] CONSTRUCTOR START: type=fish at 54,48
+[Entity 10] CONSTRUCTOR START: type=fish at 74,78
 [Entity 10] Calling registerEntity...
 [Entity 10] registerEntity returned.
 [Entity 10] Calling updatePosition...
@@ -203,7 +203,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 11] CONSTRUCTOR START: type=fish at 4,108
+[Entity 11] CONSTRUCTOR START: type=fish at 95,96
 [Entity 11] Calling registerEntity...
 [Entity 11] registerEntity returned.
 [Entity 11] Calling updatePosition...
@@ -213,7 +213,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 12] CONSTRUCTOR START: type=fish at 24,27
+[Entity 12] CONSTRUCTOR START: type=fish at 68,11
 [Entity 12] Calling registerEntity...
 [Entity 12] registerEntity returned.
 [Entity 12] Calling updatePosition...
@@ -223,7 +223,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 13] CONSTRUCTOR START: type=fish at 84,118
+[Entity 13] CONSTRUCTOR START: type=fish at 74,98
 [Entity 13] Calling registerEntity...
 [Entity 13] registerEntity returned.
 [Entity 13] Calling updatePosition...
@@ -233,7 +233,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 14] CONSTRUCTOR START: type=fish at 104,48
+[Entity 14] CONSTRUCTOR START: type=fish at 4,100
 [Entity 14] Calling registerEntity...
 [Entity 14] registerEntity returned.
 [Entity 14] Calling updatePosition...
@@ -243,7 +243,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 15] CONSTRUCTOR START: type=fish at 73,86
+[Entity 15] CONSTRUCTOR START: type=fish at 58,105
 [Entity 15] Calling registerEntity...
 [Entity 15] registerEntity returned.
 [Entity 15] Calling updatePosition...
@@ -253,7 +253,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 16] CONSTRUCTOR START: type=fish at 62,67
+[Entity 16] CONSTRUCTOR START: type=fish at 55,74
 [Entity 16] Calling registerEntity...
 [Entity 16] registerEntity returned.
 [Entity 16] Calling updatePosition...
@@ -263,7 +263,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 17] CONSTRUCTOR START: type=fish at 76,44
+[Entity 17] CONSTRUCTOR START: type=fish at 111,35
 [Entity 17] Calling registerEntity...
 [Entity 17] registerEntity returned.
 [Entity 17] Calling updatePosition...
@@ -273,7 +273,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 18] CONSTRUCTOR START: type=fish at 34,9
+[Entity 18] CONSTRUCTOR START: type=fish at 19,33
 [Entity 18] Calling registerEntity...
 [Entity 18] registerEntity returned.
 [Entity 18] Calling updatePosition...
@@ -283,7 +283,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 19] CONSTRUCTOR START: type=fish at 12,79
+[Entity 19] CONSTRUCTOR START: type=fish at 55,109
 [Entity 19] Calling registerEntity...
 [Entity 19] registerEntity returned.
 [Entity 19] Calling updatePosition...
@@ -293,7 +293,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 20] CONSTRUCTOR START: type=fish at 106,94
+[Entity 20] CONSTRUCTOR START: type=fish at 0,85
 [Entity 20] Calling registerEntity...
 [Entity 20] registerEntity returned.
 [Entity 20] Calling updatePosition...
@@ -303,7 +303,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 21] CONSTRUCTOR START: type=fish at 31,93
+[Entity 21] CONSTRUCTOR START: type=fish at 82,56
 [Entity 21] Calling registerEntity...
 [Entity 21] registerEntity returned.
 [Entity 21] Calling updatePosition...
@@ -313,7 +313,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 22] CONSTRUCTOR START: type=fish at 39,35
+[Entity 22] CONSTRUCTOR START: type=fish at 118,116
 [Entity 22] Calling registerEntity...
 [Entity 22] registerEntity returned.
 [Entity 22] Calling updatePosition...
@@ -323,7 +323,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 23] CONSTRUCTOR START: type=fish at 113,89
+[Entity 23] CONSTRUCTOR START: type=fish at 13,84
 [Entity 23] Calling registerEntity...
 [Entity 23] registerEntity returned.
 [Entity 23] Calling updatePosition...
@@ -333,7 +333,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 24] CONSTRUCTOR START: type=fish at 84,76
+[Entity 24] CONSTRUCTOR START: type=fish at 7,40
 [Entity 24] Calling registerEntity...
 [Entity 24] registerEntity returned.
 [Entity 24] Calling updatePosition...
@@ -343,7 +343,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 25] CONSTRUCTOR START: type=fish at 46,88
+[Entity 25] CONSTRUCTOR START: type=fish at 17,42
 [Entity 25] Calling registerEntity...
 [Entity 25] registerEntity returned.
 [Entity 25] Calling updatePosition...
@@ -353,7 +353,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 26] CONSTRUCTOR START: type=fish at 105,59
+[Entity 26] CONSTRUCTOR START: type=fish at 8,78
 [Entity 26] Calling registerEntity...
 [Entity 26] registerEntity returned.
 [Entity 26] Calling updatePosition...
@@ -363,7 +363,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 27] CONSTRUCTOR START: type=fish at 70,32
+[Entity 27] CONSTRUCTOR START: type=fish at 6,21
 [Entity 27] Calling registerEntity...
 [Entity 27] registerEntity returned.
 [Entity 27] Calling updatePosition...
@@ -373,7 +373,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 28] CONSTRUCTOR START: type=fish at 37,27
+[Entity 28] CONSTRUCTOR START: type=fish at 40,33
 [Entity 28] Calling registerEntity...
 [Entity 28] registerEntity returned.
 [Entity 28] Calling updatePosition...
@@ -383,7 +383,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 29] CONSTRUCTOR START: type=fish at 82,40
+[Entity 29] CONSTRUCTOR START: type=fish at 88,107
 [Entity 29] Calling registerEntity...
 [Entity 29] registerEntity returned.
 [Entity 29] Calling updatePosition...
@@ -393,7 +393,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 30] CONSTRUCTOR START: type=fish at 76,70
+[Entity 30] CONSTRUCTOR START: type=fish at 4,105
 [Entity 30] Calling registerEntity...
 [Entity 30] registerEntity returned.
 [Entity 30] Calling updatePosition...
@@ -403,7 +403,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 31] CONSTRUCTOR START: type=fish at 79,113
+[Entity 31] CONSTRUCTOR START: type=fish at 96,78
 [Entity 31] Calling registerEntity...
 [Entity 31] registerEntity returned.
 [Entity 31] Calling updatePosition...
@@ -413,7 +413,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 32] CONSTRUCTOR START: type=fish at 100,84
+[Entity 32] CONSTRUCTOR START: type=fish at 23,30
 [Entity 32] Calling registerEntity...
 [Entity 32] registerEntity returned.
 [Entity 32] Calling updatePosition...
@@ -423,7 +423,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 33] CONSTRUCTOR START: type=fish at 23,40
+[Entity 33] CONSTRUCTOR START: type=fish at 6,105
 [Entity 33] Calling registerEntity...
 [Entity 33] registerEntity returned.
 [Entity 33] Calling updatePosition...
@@ -433,7 +433,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 34] CONSTRUCTOR START: type=fish at 40,75
+[Entity 34] CONSTRUCTOR START: type=fish at 101,59
 [Entity 34] Calling registerEntity...
 [Entity 34] registerEntity returned.
 [Entity 34] Calling updatePosition...
@@ -443,7 +443,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 35] CONSTRUCTOR START: type=fish at 41,119
+[Entity 35] CONSTRUCTOR START: type=fish at 100,79
 [Entity 35] Calling registerEntity...
 [Entity 35] registerEntity returned.
 [Entity 35] Calling updatePosition...
@@ -453,7 +453,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 36] CONSTRUCTOR START: type=fish at 0,36
+[Entity 36] CONSTRUCTOR START: type=fish at 11,35
 [Entity 36] Calling registerEntity...
 [Entity 36] registerEntity returned.
 [Entity 36] Calling updatePosition...
@@ -463,7 +463,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 37] CONSTRUCTOR START: type=fish at 57,93
+[Entity 37] CONSTRUCTOR START: type=fish at 119,5
 [Entity 37] Calling registerEntity...
 [Entity 37] registerEntity returned.
 [Entity 37] Calling updatePosition...
@@ -473,7 +473,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 38] CONSTRUCTOR START: type=fish at 114,19
+[Entity 38] CONSTRUCTOR START: type=fish at 64,42
 [Entity 38] Calling registerEntity...
 [Entity 38] registerEntity returned.
 [Entity 38] Calling updatePosition...
@@ -483,7 +483,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 39] CONSTRUCTOR START: type=fish at 99,59
+[Entity 39] CONSTRUCTOR START: type=fish at 60,6
 [Entity 39] Calling registerEntity...
 [Entity 39] registerEntity returned.
 [Entity 39] Calling updatePosition...
@@ -493,7 +493,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 40] CONSTRUCTOR START: type=fish at 50,55
+[Entity 40] CONSTRUCTOR START: type=fish at 98,50
 [Entity 40] Calling registerEntity...
 [Entity 40] registerEntity returned.
 [Entity 40] Calling updatePosition...
@@ -503,7 +503,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 41] CONSTRUCTOR START: type=fish at 77,61
+[Entity 41] CONSTRUCTOR START: type=fish at 3,37
 [Entity 41] Calling registerEntity...
 [Entity 41] registerEntity returned.
 [Entity 41] Calling updatePosition...
@@ -513,7 +513,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 42] CONSTRUCTOR START: type=fish at 88,75
+[Entity 42] CONSTRUCTOR START: type=fish at 48,26
 [Entity 42] Calling registerEntity...
 [Entity 42] registerEntity returned.
 [Entity 42] Calling updatePosition...
@@ -523,7 +523,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 43] CONSTRUCTOR START: type=fish at 84,79
+[Entity 43] CONSTRUCTOR START: type=fish at 105,65
 [Entity 43] Calling registerEntity...
 [Entity 43] registerEntity returned.
 [Entity 43] Calling updatePosition...
@@ -533,7 +533,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 44] CONSTRUCTOR START: type=fish at 107,40
+[Entity 44] CONSTRUCTOR START: type=fish at 79,108
 [Entity 44] Calling registerEntity...
 [Entity 44] registerEntity returned.
 [Entity 44] Calling updatePosition...
@@ -543,7 +543,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 45] CONSTRUCTOR START: type=fish at 29,53
+[Entity 45] CONSTRUCTOR START: type=fish at 28,63
 [Entity 45] Calling registerEntity...
 [Entity 45] registerEntity returned.
 [Entity 45] Calling updatePosition...
@@ -553,7 +553,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 46] CONSTRUCTOR START: type=fish at 91,30
+[Entity 46] CONSTRUCTOR START: type=fish at 55,77
 [Entity 46] Calling registerEntity...
 [Entity 46] registerEntity returned.
 [Entity 46] Calling updatePosition...
@@ -563,7 +563,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 47] CONSTRUCTOR START: type=fish at 67,15
+[Entity 47] CONSTRUCTOR START: type=fish at 89,17
 [Entity 47] Calling registerEntity...
 [Entity 47] registerEntity returned.
 [Entity 47] Calling updatePosition...
@@ -573,7 +573,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 48] CONSTRUCTOR START: type=fish at 60,82
+[Entity 48] CONSTRUCTOR START: type=fish at 74,98
 [Entity 48] Calling registerEntity...
 [Entity 48] registerEntity returned.
 [Entity 48] Calling updatePosition...
@@ -583,7 +583,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 49] CONSTRUCTOR START: type=fish at 89,35
+[Entity 49] CONSTRUCTOR START: type=fish at 65,45
 [Entity 49] Calling registerEntity...
 [Entity 49] registerEntity returned.
 [Entity 49] Calling updatePosition...
@@ -593,7 +593,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 50] CONSTRUCTOR START: type=fish at 25,26
+[Entity 50] CONSTRUCTOR START: type=fish at 82,56
 [Entity 50] Calling registerEntity...
 [Entity 50] registerEntity returned.
 [Entity 50] Calling updatePosition...
@@ -603,7 +603,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 51] CONSTRUCTOR START: type=fish at 12,115
+[Entity 51] CONSTRUCTOR START: type=fish at 61,46
 [Entity 51] Calling registerEntity...
 [Entity 51] registerEntity returned.
 [Entity 51] Calling updatePosition...
@@ -613,7 +613,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 52] CONSTRUCTOR START: type=fish at 83,92
+[Entity 52] CONSTRUCTOR START: type=fish at 66,19
 [Entity 52] Calling registerEntity...
 [Entity 52] registerEntity returned.
 [Entity 52] Calling updatePosition...
@@ -623,7 +623,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 53] CONSTRUCTOR START: type=fish at 97,52
+[Entity 53] CONSTRUCTOR START: type=fish at 2,107
 [Entity 53] Calling registerEntity...
 [Entity 53] registerEntity returned.
 [Entity 53] Calling updatePosition...
@@ -633,7 +633,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 54] CONSTRUCTOR START: type=fish at 30,35
+[Entity 54] CONSTRUCTOR START: type=fish at 102,95
 [Entity 54] Calling registerEntity...
 [Entity 54] registerEntity returned.
 [Entity 54] Calling updatePosition...
@@ -643,7 +643,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 55] CONSTRUCTOR START: type=fish at 86,119
+[Entity 55] CONSTRUCTOR START: type=fish at 106,95
 [Entity 55] Calling registerEntity...
 [Entity 55] registerEntity returned.
 [Entity 55] Calling updatePosition...
@@ -653,7 +653,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 56] CONSTRUCTOR START: type=fish at 22,87
+[Entity 56] CONSTRUCTOR START: type=fish at 69,54
 [Entity 56] Calling registerEntity...
 [Entity 56] registerEntity returned.
 [Entity 56] Calling updatePosition...
@@ -663,7 +663,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 57] CONSTRUCTOR START: type=fish at 63,56
+[Entity 57] CONSTRUCTOR START: type=fish at 52,76
 [Entity 57] Calling registerEntity...
 [Entity 57] registerEntity returned.
 [Entity 57] Calling updatePosition...
@@ -673,7 +673,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 58] CONSTRUCTOR START: type=fish at 55,42
+[Entity 58] CONSTRUCTOR START: type=fish at 33,60
 [Entity 58] Calling registerEntity...
 [Entity 58] registerEntity returned.
 [Entity 58] Calling updatePosition...
@@ -683,7 +683,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 59] CONSTRUCTOR START: type=fish at 29,83
+[Entity 59] CONSTRUCTOR START: type=fish at 117,51
 [Entity 59] Calling registerEntity...
 [Entity 59] registerEntity returned.
 [Entity 59] Calling updatePosition...
@@ -693,7 +693,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 60] CONSTRUCTOR START: type=fish at 70,6
+[Entity 60] CONSTRUCTOR START: type=fish at 69,68
 [Entity 60] Calling registerEntity...
 [Entity 60] registerEntity returned.
 [Entity 60] Calling updatePosition...
@@ -703,7 +703,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 61] CONSTRUCTOR START: type=fish at 79,79
+[Entity 61] CONSTRUCTOR START: type=fish at 82,18
 [Entity 61] Calling registerEntity...
 [Entity 61] registerEntity returned.
 [Entity 61] Calling updatePosition...
@@ -713,7 +713,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 62] CONSTRUCTOR START: type=fish at 17,82
+[Entity 62] CONSTRUCTOR START: type=fish at 27,72
 [Entity 62] Calling registerEntity...
 [Entity 62] registerEntity returned.
 [Entity 62] Calling updatePosition...
@@ -723,7 +723,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 63] CONSTRUCTOR START: type=fish at 18,67
+[Entity 63] CONSTRUCTOR START: type=fish at 65,31
 [Entity 63] Calling registerEntity...
 [Entity 63] registerEntity returned.
 [Entity 63] Calling updatePosition...
@@ -733,7 +733,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 64] CONSTRUCTOR START: type=fish at 87,100
+[Entity 64] CONSTRUCTOR START: type=fish at 51,2
 [Entity 64] Calling registerEntity...
 [Entity 64] registerEntity returned.
 [Entity 64] Calling updatePosition...
@@ -743,7 +743,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 65] CONSTRUCTOR START: type=fish at 17,5
+[Entity 65] CONSTRUCTOR START: type=fish at 43,27
 [Entity 65] Calling registerEntity...
 [Entity 65] registerEntity returned.
 [Entity 65] Calling updatePosition...
@@ -753,7 +753,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 66] CONSTRUCTOR START: type=fish at 24,88
+[Entity 66] CONSTRUCTOR START: type=fish at 13,52
 [Entity 66] Calling registerEntity...
 [Entity 66] registerEntity returned.
 [Entity 66] Calling updatePosition...
@@ -763,7 +763,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 67] CONSTRUCTOR START: type=fish at 56,24
+[Entity 67] CONSTRUCTOR START: type=fish at 104,48
 [Entity 67] Calling registerEntity...
 [Entity 67] registerEntity returned.
 [Entity 67] Calling updatePosition...
@@ -773,7 +773,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 68] CONSTRUCTOR START: type=fish at 49,42
+[Entity 68] CONSTRUCTOR START: type=fish at 27,14
 [Entity 68] Calling registerEntity...
 [Entity 68] registerEntity returned.
 [Entity 68] Calling updatePosition...
@@ -783,7 +783,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 69] CONSTRUCTOR START: type=fish at 38,25
+[Entity 69] CONSTRUCTOR START: type=fish at 56,15
 [Entity 69] Calling registerEntity...
 [Entity 69] registerEntity returned.
 [Entity 69] Calling updatePosition...
@@ -793,7 +793,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 70] CONSTRUCTOR START: type=fish at 116,25
+[Entity 70] CONSTRUCTOR START: type=fish at 56,30
 [Entity 70] Calling registerEntity...
 [Entity 70] registerEntity returned.
 [Entity 70] Calling updatePosition...
@@ -803,7 +803,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 71] CONSTRUCTOR START: type=fish at 20,100
+[Entity 71] CONSTRUCTOR START: type=fish at 45,17
 [Entity 71] Calling registerEntity...
 [Entity 71] registerEntity returned.
 [Entity 71] Calling updatePosition...
@@ -813,7 +813,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 72] CONSTRUCTOR START: type=fish at 10,2
+[Entity 72] CONSTRUCTOR START: type=fish at 26,106
 [Entity 72] Calling registerEntity...
 [Entity 72] registerEntity returned.
 [Entity 72] Calling updatePosition...
@@ -823,7 +823,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 73] CONSTRUCTOR START: type=fish at 101,58
+[Entity 73] CONSTRUCTOR START: type=fish at 27,16
 [Entity 73] Calling registerEntity...
 [Entity 73] registerEntity returned.
 [Entity 73] Calling updatePosition...
@@ -833,7 +833,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 74] CONSTRUCTOR START: type=fish at 11,55
+[Entity 74] CONSTRUCTOR START: type=fish at 119,11
 [Entity 74] Calling registerEntity...
 [Entity 74] registerEntity returned.
 [Entity 74] Calling updatePosition...
@@ -854,10 +854,11 @@ FishManager Refactored: Initialized with Entity-based Fish.
 [Game] Init TreeRenderer
 [Game] Init PerformanceMonitor
 [Game] Generating Preview Terrain...
-[Terrain] DETERMINISM: generateRandomTerrain seed=0.274266 intSeed=588982195 rngState=588982195
+[Terrain] DETERMINISM: generateRandomTerrain seed=0.471425 intSeed=1012376722 rngState=1012376722
 
 [90mstdout[2m | src/tests/FactionPersistence.test.js[2m > [22m[2mFaction Persistence and Logic[2m > [22m[2mshould persist unit and building faction across save/load
-[22m[39m[Entity 75] CONSTRUCTOR START: type=unit at 10,10
+[22m[39mStarting persistence test...
+[Entity 75] CONSTRUCTOR START: type=unit at 10,10
 [Entity 75] Calling registerEntity...
 [Entity 75] registerEntity returned.
 [Entity 75] Calling updatePosition...
@@ -894,37 +895,46 @@ FishManager Refactored: Initialized with Entity-based Fish.
 [Entity 78] registerEntity returned.
 [Entity 78] Calling updatePosition...
 [Entity 78] updatePosition returned.
-[Game] Saving Game: Level=0, Seed=0.2742662073589075
-Saved to slot 1 (Compressed). Size: 5443 chars (Original: 129916)
+Units: PlayerID=0 EnemyID=1
+Farms: PlayerFaction=player EnemyFaction=enemy
+Saving game...
+[Game] Saving Game: Level=0, Seed=0.47142464827964004
+Saved to slot 1 (Compressed). Size: 5450 chars (Original: 129844)
+LocalStorage setItem calls: [33m1[39m
+Decompressed faction data check:
+Unit 0 faction: player
+Unit 1 faction: enemy
+Building 0 faction: [90mundefined[39m
+Building 1 faction: [90mundefined[39m
+Loading game...
 Load Started...
 
 [90mstdout[2m | src/tests/FactionPersistence.test.js[2m > [22m[2mFaction Persistence and Logic[2m > [22m[2mshould persist unit and building faction across save/load
-[22m[39m[Terrain] Generated 429 trees (Preview=true, Density=0.2).
+[22m[39m[Terrain] Generated 943 trees (Preview=true, Density=0.2).
 
 [90mstdout[2m | src/tests/FactionPersistence.test.js[2m > [22m[2mFaction Persistence and Logic[2m > [22m[2mshould persist unit and building faction across save/load
 [22m[39mResetting GoblinManager...
 [GoblinManager] 1蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
-[GoblinManager] DETERMINISM: generateCaves start. rngState=588982195
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.592145, 0.186007) -> Grid(71, 22) rngState=399447050
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.220113, 0.437313) -> Grid(26, 52) rngState=939121943
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.915106, 0.178933) -> Grid(109, 21) rngState=384254926
-[Entity 79] CONSTRUCTOR START: type=building at 38,5
+[GoblinManager] DETERMINISM: generateCaves start. rngState=1012376722
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.234056, 0.779509) -> Grid(28, 93) rngState=1673983060
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.209562, 0.101529) -> Grid(25, 12) rngState=218032177
+[Entity 79] CONSTRUCTOR START: type=building at 25,12
 [Entity 79] Calling registerEntity...
 [Entity 79] registerEntity returned.
 [Entity 79] Calling updatePosition...
 [Entity 79] updatePosition returned.
-GoblinManager: Cave registered at 38,5 
-[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 1/1 (隧ｦ陦悟屓謨ｰ: 4)
+GoblinManager: Cave registered at 25,12 
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 1/1 (隧ｦ陦悟屓謨ｰ: 2)
 [Game] Preview Ready.
 
 [90mstdout[2m | src/tests/FactionPersistence.test.js[2m > [22m[2mFaction Persistence and Logic[2m > [22m[2mshould persist unit and building faction across save/load
-[22m[39mLoading slot 1, Raw length: 5443
+[22m[39mLoading slot 1, Raw length: 5450
 Load: Decompressed successfully.
 Parsed Data for slot 1: {
-  timestamp: [33m1771517350451[39m,
+  timestamp: [33m1771548759041[39m,
   data: {
     slotId: [33m1[39m,
-    timestamp: [33m1771517350431[39m,
+    timestamp: [33m1771548759023[39m,
     resources: { grain: [33m0[39m, fish: [33m0[39m, meat: [33m0[39m },
     gameTime: [33m6[39m,
     gameTotalTime: [33m0[39m,
@@ -938,7 +948,7 @@ Parsed Data for slot 1: {
       n: [36m[Array][39m,
       b: [36m[Array][39m,
       m: [36m[Array][39m,
-      seed: [33m0.2742662073589075[39m,
+      seed: [33m0.47142464827964004[39m,
       trees: []
     },
     units: [ [36m[Object][39m, [36m[Object][39m ],
@@ -946,12 +956,12 @@ Parsed Data for slot 1: {
     goblinManager: { plunderCount: [33m0[39m, goblins: [], clans: [], caves: [] },
     camera: { position: [36m[Object][39m, target: [36m[Object][39m },
     currentLevelIndex: [33m0[39m,
-    currentSeed: [33m0.2742662073589075[39m
+    currentSeed: [33m0.47142464827964004[39m
   }
 }
 Load Game: Data found {
   slotId: [33m1[39m,
-  timestamp: [33m1771517350431[39m,
+  timestamp: [33m1771548759023[39m,
   resources: { grain: [33m0[39m, fish: [33m0[39m, meat: [33m0[39m },
   gameTime: [33m6[39m,
   gameTotalTime: [33m0[39m,
@@ -962,47 +972,47 @@ Load Game: Data found {
     logicalDepth: [33m120[39m,
     version: [33m2[39m,
     h: [
-       [33m2[39m,  [33m2[39m,  [33m1[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-2[39m, [33m-2[39m, [33m-3[39m,
-      [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-4[39m,
-      [33m-4[39m, [33m-4[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-2[39m, [33m-1[39m, [33m-1[39m,  [33m0[39m,  [33m0[39m,
-       [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m,
-       [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m1[39m,  [33m2[39m,  [33m2[39m,  [33m2[39m,  [33m1[39m,  [33m1[39m,  [33m1[39m,
-       [33m1[39m,  [33m2[39m,  [33m2[39m,  [33m3[39m,  [33m4[39m,  [33m4[39m,  [33m4[39m,  [33m5[39m,  [33m6[39m,  [33m6[39m,  [33m7[39m,  [33m9[39m,
-       [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m9[39m,  [33m8[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m7[39m,  [33m8[39m,  [33m8[39m,
-       [33m9[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m8[39m,  [33m7[39m,  [33m7[39m,  [33m6[39m,  [33m6[39m,  [33m5[39m,
-       [33m4[39m,  [33m4[39m,  [33m4[39m,  [33m4[39m,
+      [33m-5[39m, [33m-5[39m, [33m-4[39m, [33m-4[39m, [33m-4[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-2[39m, [33m-2[39m,
+      [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-2[39m, [33m-2[39m, [33m-2[39m, [33m-2[39m, [33m-2[39m, [33m-1[39m, [33m-1[39m,  [33m0[39m,
+       [33m0[39m,  [33m0[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m, [33m-2[39m, [33m-2[39m, [33m-2[39m, [33m-3[39m, [33m-4[39m, [33m-4[39m, [33m-4[39m,
+      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-4[39m, [33m-4[39m, [33m-3[39m, [33m-3[39m, [33m-2[39m, [33m-1[39m, [33m-1[39m, [33m-1[39m,
+       [33m0[39m,  [33m0[39m,  [33m0[39m,  [33m0[39m, [33m-1[39m, [33m-1[39m, [33m-2[39m, [33m-2[39m, [33m-2[39m, [33m-2[39m, [33m-3[39m, [33m-3[39m,
+      [33m-4[39m, [33m-3[39m, [33m-3[39m, [33m-3[39m, [33m-4[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m,
+      [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-5[39m, [33m-4[39m, [33m-4[39m, [33m-3[39m, [33m-2[39m,
+      [33m-2[39m, [33m-1[39m,  [33m0[39m,  [33m1[39m,  [33m1[39m,  [33m2[39m,  [33m3[39m,  [33m4[39m,  [33m5[39m,  [33m6[39m,  [33m6[39m,  [33m7[39m,
+       [33m7[39m,  [33m7[39m,  [33m8[39m,  [33m8[39m,
       ... 14300 more items
     ],
     n: [
-          [33m0[39m, [33m-0.01[39m,     [33m0[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.02[39m, [33m-0.02[39m,
-       [33m0.02[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.01[39m, [33m-0.01[39m, [33m-0.01[39m,     [33m0[39m, [33m-0.02[39m, [33m-0.02[39m,
-       [33m0.01[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.01[39m,  [33m0.02[39m, [33m-0.02[39m,
-          [33m0[39m,     [33m0[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.01[39m,     [33m0[39m,  [33m0.01[39m,     [33m0[39m,
-      [33m-0.02[39m,     [33m0[39m,     [33m0[39m, [33m-0.02[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.01[39m,
-      [33m-0.02[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.02[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.01[39m,     [33m0[39m,
-       [33m0.02[39m, [33m-0.02[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m,
-      [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.01[39m,     [33m0[39m, [33m-0.01[39m,
-      [33m-0.01[39m, [33m-0.02[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.01[39m,
-       [33m0.02[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.02[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.02[39m, [33m-0.01[39m, [33m-0.01[39m,
-       [33m0.02[39m,     [33m0[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.02[39m,     [33m0[39m,  [33m0.02[39m,  [33m0.02[39m,
-       [33m0.01[39m,
+       [33m0.01[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.02[39m, [33m-0.01[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.01[39m,
+          [33m0[39m, [33m-0.02[39m, [33m-0.01[39m,     [33m0[39m,  [33m0.02[39m,  [33m0.01[39m,  [33m0.01[39m,     [33m0[39m, [33m-0.01[39m,
+      [33m-0.01[39m, [33m-0.02[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.02[39m,
+          [33m0[39m,     [33m0[39m,     [33m0[39m,     [33m0[39m,  [33m0.01[39m, [33m-0.02[39m,     [33m0[39m,     [33m0[39m,  [33m0.01[39m,
+       [33m0.02[39m, [33m-0.01[39m,  [33m0.01[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.02[39m, [33m-0.02[39m, [33m-0.01[39m, [33m-0.01[39m,
+       [33m0.01[39m, [33m-0.01[39m, [33m-0.01[39m,  [33m0.01[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m,     [33m0[39m,
+       [33m0.01[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.01[39m,  [33m0.01[39m,  [33m0.02[39m, [33m-0.01[39m,
+       [33m0.02[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.01[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.01[39m, [33m-0.02[39m,
+      [33m-0.01[39m,     [33m0[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.02[39m, [33m-0.01[39m,  [33m0.02[39m, [33m-0.01[39m,
+       [33m0.01[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.01[39m, [33m-0.02[39m,  [33m0.02[39m,  [33m0.02[39m,  [33m0.01[39m,  [33m0.01[39m,
+       [33m0.02[39m,     [33m0[39m, [33m-0.01[39m, [33m-0.02[39m,  [33m0.02[39m, [33m-0.02[39m,  [33m0.01[39m,  [33m0.01[39m, [33m-0.02[39m,
+      [33m-0.02[39m,
       ... 14300 more items
     ],
     b: [ [36m[Object][39m, [36m[Object][39m ],
     m: [
-      [33m0.34[39m, [33m0.33[39m, [33m0.31[39m, [33m0.28[39m, [33m0.27[39m, [33m0.26[39m, [33m0.24[39m, [33m0.23[39m, [33m0.23[39m, [33m0.23[39m,
-      [33m0.23[39m, [33m0.23[39m, [33m0.23[39m, [33m0.22[39m, [33m0.21[39m, [33m0.21[39m, [33m0.22[39m, [33m0.22[39m, [33m0.22[39m, [33m0.23[39m,
-      [33m0.24[39m, [33m0.25[39m, [33m0.27[39m, [33m0.29[39m,  [33m0.3[39m, [33m0.29[39m, [33m0.28[39m, [33m0.27[39m, [33m0.27[39m, [33m0.29[39m,
-       [33m0.3[39m, [33m0.32[39m, [33m0.34[39m, [33m0.35[39m, [33m0.35[39m, [33m0.35[39m, [33m0.35[39m, [33m0.37[39m, [33m0.38[39m,  [33m0.4[39m,
-      [33m0.42[39m, [33m0.43[39m, [33m0.45[39m, [33m0.46[39m, [33m0.47[39m, [33m0.49[39m, [33m0.51[39m, [33m0.54[39m, [33m0.55[39m, [33m0.54[39m,
-      [33m0.52[39m, [33m0.49[39m, [33m0.48[39m, [33m0.47[39m, [33m0.46[39m, [33m0.47[39m, [33m0.48[39m, [33m0.49[39m, [33m0.49[39m,  [33m0.5[39m,
-       [33m0.5[39m, [33m0.51[39m, [33m0.52[39m, [33m0.52[39m, [33m0.55[39m, [33m0.58[39m, [33m0.59[39m, [33m0.58[39m, [33m0.56[39m, [33m0.55[39m,
-      [33m0.54[39m, [33m0.54[39m, [33m0.54[39m, [33m0.54[39m, [33m0.55[39m, [33m0.56[39m, [33m0.56[39m, [33m0.57[39m, [33m0.58[39m, [33m0.58[39m,
-      [33m0.57[39m, [33m0.57[39m, [33m0.59[39m, [33m0.62[39m, [33m0.64[39m, [33m0.64[39m, [33m0.64[39m, [33m0.64[39m, [33m0.65[39m, [33m0.66[39m,
-      [33m0.68[39m,  [33m0.7[39m, [33m0.72[39m, [33m0.74[39m, [33m0.77[39m, [33m0.78[39m, [33m0.79[39m, [33m0.78[39m, [33m0.76[39m, [33m0.73[39m,
+      [33m0.34[39m, [33m0.36[39m,  [33m0.4[39m, [33m0.45[39m, [33m0.49[39m, [33m0.52[39m, [33m0.55[39m, [33m0.58[39m, [33m0.61[39m, [33m0.63[39m,
+      [33m0.65[39m, [33m0.66[39m, [33m0.68[39m,  [33m0.7[39m, [33m0.71[39m, [33m0.72[39m, [33m0.73[39m, [33m0.73[39m, [33m0.73[39m, [33m0.73[39m,
+      [33m0.74[39m, [33m0.74[39m, [33m0.73[39m, [33m0.72[39m, [33m0.71[39m, [33m0.72[39m, [33m0.72[39m, [33m0.72[39m, [33m0.71[39m,  [33m0.7[39m,
+      [33m0.69[39m, [33m0.68[39m, [33m0.66[39m, [33m0.65[39m, [33m0.64[39m, [33m0.63[39m, [33m0.62[39m, [33m0.61[39m,  [33m0.6[39m, [33m0.59[39m,
+      [33m0.58[39m, [33m0.56[39m, [33m0.54[39m, [33m0.53[39m, [33m0.53[39m, [33m0.52[39m,  [33m0.5[39m, [33m0.48[39m, [33m0.48[39m, [33m0.48[39m,
+       [33m0.5[39m, [33m0.51[39m,  [33m0.5[39m, [33m0.49[39m, [33m0.48[39m, [33m0.49[39m, [33m0.52[39m, [33m0.53[39m, [33m0.53[39m, [33m0.53[39m,
+      [33m0.53[39m, [33m0.54[39m, [33m0.55[39m, [33m0.55[39m, [33m0.53[39m,  [33m0.5[39m, [33m0.49[39m,  [33m0.5[39m, [33m0.53[39m, [33m0.55[39m,
+      [33m0.56[39m, [33m0.57[39m, [33m0.57[39m, [33m0.58[39m, [33m0.59[39m, [33m0.61[39m, [33m0.61[39m, [33m0.63[39m, [33m0.64[39m, [33m0.63[39m,
+      [33m0.61[39m, [33m0.59[39m, [33m0.59[39m, [33m0.59[39m, [33m0.59[39m, [33m0.59[39m, [33m0.59[39m,  [33m0.6[39m,  [33m0.6[39m, [33m0.61[39m,
+       [33m0.6[39m,  [33m0.6[39m,  [33m0.6[39m,  [33m0.6[39m, [33m0.59[39m, [33m0.58[39m, [33m0.58[39m, [33m0.57[39m, [33m0.56[39m, [33m0.56[39m,
       ... 14300 more items
     ],
-    seed: [33m0.2742662073589075[39m,
+    seed: [33m0.47142464827964004[39m,
     trees: []
   },
   units: [
@@ -1015,7 +1025,7 @@ Load Game: Data found {
       raidTargetY: [1mnull[22m,
       raidTargetZ: [1mnull[22m,
       raidTargetTS: [1mnull[22m,
-      lifespan: [33m83.89435590040355[39m,
+      lifespan: [33m96.97220191960312[39m,
       isDead: [33mfalse[39m,
       isFinished: [33mfalse[39m,
       isMoving: [33mfalse[39m,
@@ -1030,8 +1040,8 @@ Load Game: Data found {
       isSpecial: [33mfalse[39m,
       role: [32m'worker'[39m,
       type: [32m'worker'[39m,
-      hp: [33m54[39m,
-      maxHp: [33m54[39m,
+      hp: [33m57[39m,
+      maxHp: [33m57[39m,
       damage: [33m12[39m,
       xp: [33m0[39m,
       level: [33m1[39m,
@@ -1051,7 +1061,7 @@ Load Game: Data found {
       raidTargetY: [1mnull[22m,
       raidTargetZ: [1mnull[22m,
       raidTargetTS: [1mnull[22m,
-      lifespan: [33m80.24480089514597[39m,
+      lifespan: [33m83.13618243522048[39m,
       isDead: [33mfalse[39m,
       isFinished: [33mfalse[39m,
       isMoving: [33mfalse[39m,
@@ -1066,8 +1076,8 @@ Load Game: Data found {
       isSpecial: [33mfalse[39m,
       role: [32m'knight'[39m,
       type: [32m'knight'[39m,
-      hp: [33m1011[39m,
-      maxHp: [33m1011[39m,
+      hp: [33m1009[39m,
+      maxHp: [33m1009[39m,
       damage: [33m300[39m,
       xp: [33m0[39m,
       level: [33m1[39m,
@@ -1083,9 +1093,9 @@ Load Game: Data found {
   goblinManager: { plunderCount: [33m0[39m, goblins: [], clans: [], caves: [] },
   camera: { position: { x: [33m20[39m, y: [33m20[39m, z: [33m20[39m }, target: { x: [33m0[39m, y: [33m0[39m, z: [33m0[39m } },
   currentLevelIndex: [33m0[39m,
-  currentSeed: [33m0.2742662073589075[39m
+  currentSeed: [33m0.47142464827964004[39m
 }
-[Game] Load Game: Restored Level=0, Seed=0.2742662073589075
+[Game] Load Game: Restored Level=0, Seed=0.47142464827964004
 
 [90mstdout[2m | src/tests/FactionPersistence.test.js[2m > [22m[2mFaction Persistence and Logic[2m > [22m[2mshould persist unit and building faction across save/load
 [22m[39mResetting GoblinManager...
@@ -1168,6 +1178,11 @@ GoblinManager: Restored 0 goblins.
 [Game] Checking unit 0 for targetRequestId: null
 [Game] Checking unit 1 for targetRequestId: null
 
+[90mstdout[2m | src/tests/FactionPersistence.test.js[2m > [22m[2mFaction Persistence and Logic[2m > [22m[2mshould persist unit and building faction across save/load
+[22m[39mLoad result: [33mtrue[39m
+Verifying restored entities...
+Persistence test PASSED
+
 [90mstdout[2m | src/tests/FactionPersistence.test.js[2m > [22m[2mFaction Persistence and Logic[2m > [22m[2mshould only add food to player pool from player farms
 [22m[39mDisposing detached game instance
 [Game] Dispose called for Game Instance.
@@ -1240,13 +1255,13 @@ Resetting SheepManager...
 [Game] Init GoblinManager
 [GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
 [GoblinManager] DETERMINISM: generateCaves start. rngState=0
-[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.557911, 0.638006) -> Grid(66, 76) rngState=0
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.092459, 0.585986) -> Grid(11, 70) rngState=0
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.788856, 0.013786) -> Grid(94, 1) rngState=0
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.999975, 0.463795) -> Grid(119, 55) rngState=0
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.324417, 0.674353) -> Grid(38, 80) rngState=0
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.199954, 0.017401) -> Grid(23, 2) rngState=0
 [GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
 [Game] Init FishManager
 Resetting FishManager...
-[Entity 84] CONSTRUCTOR START: type=fish at 59,37
+[Entity 84] CONSTRUCTOR START: type=fish at 95,67
 [Entity 84] Calling registerEntity...
 [Entity 84] registerEntity returned.
 [Entity 84] Calling updatePosition...
@@ -1256,7 +1271,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 85] CONSTRUCTOR START: type=fish at 14,108
+[Entity 85] CONSTRUCTOR START: type=fish at 105,87
 [Entity 85] Calling registerEntity...
 [Entity 85] registerEntity returned.
 [Entity 85] Calling updatePosition...
@@ -1266,7 +1281,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 86] CONSTRUCTOR START: type=fish at 24,113
+[Entity 86] CONSTRUCTOR START: type=fish at 88,19
 [Entity 86] Calling registerEntity...
 [Entity 86] registerEntity returned.
 [Entity 86] Calling updatePosition...
@@ -1276,7 +1291,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 87] CONSTRUCTOR START: type=fish at 75,93
+[Entity 87] CONSTRUCTOR START: type=fish at 44,13
 [Entity 87] Calling registerEntity...
 [Entity 87] registerEntity returned.
 [Entity 87] Calling updatePosition...
@@ -1286,7 +1301,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 88] CONSTRUCTOR START: type=fish at 119,80
+[Entity 88] CONSTRUCTOR START: type=fish at 23,70
 [Entity 88] Calling registerEntity...
 [Entity 88] registerEntity returned.
 [Entity 88] Calling updatePosition...
@@ -1296,7 +1311,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 89] CONSTRUCTOR START: type=fish at 101,44
+[Entity 89] CONSTRUCTOR START: type=fish at 101,74
 [Entity 89] Calling registerEntity...
 [Entity 89] registerEntity returned.
 [Entity 89] Calling updatePosition...
@@ -1306,7 +1321,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 90] CONSTRUCTOR START: type=fish at 0,9
+[Entity 90] CONSTRUCTOR START: type=fish at 70,21
 [Entity 90] Calling registerEntity...
 [Entity 90] registerEntity returned.
 [Entity 90] Calling updatePosition...
@@ -1316,7 +1331,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 91] CONSTRUCTOR START: type=fish at 90,43
+[Entity 91] CONSTRUCTOR START: type=fish at 105,108
 [Entity 91] Calling registerEntity...
 [Entity 91] registerEntity returned.
 [Entity 91] Calling updatePosition...
@@ -1326,7 +1341,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 92] CONSTRUCTOR START: type=fish at 42,48
+[Entity 92] CONSTRUCTOR START: type=fish at 81,80
 [Entity 92] Calling registerEntity...
 [Entity 92] registerEntity returned.
 [Entity 92] Calling updatePosition...
@@ -1336,7 +1351,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 93] CONSTRUCTOR START: type=fish at 3,27
+[Entity 93] CONSTRUCTOR START: type=fish at 32,92
 [Entity 93] Calling registerEntity...
 [Entity 93] registerEntity returned.
 [Entity 93] Calling updatePosition...
@@ -1346,7 +1361,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 94] CONSTRUCTOR START: type=fish at 52,94
+[Entity 94] CONSTRUCTOR START: type=fish at 89,115
 [Entity 94] Calling registerEntity...
 [Entity 94] registerEntity returned.
 [Entity 94] Calling updatePosition...
@@ -1356,7 +1371,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 95] CONSTRUCTOR START: type=fish at 62,85
+[Entity 95] CONSTRUCTOR START: type=fish at 55,92
 [Entity 95] Calling registerEntity...
 [Entity 95] registerEntity returned.
 [Entity 95] Calling updatePosition...
@@ -1366,7 +1381,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 96] CONSTRUCTOR START: type=fish at 59,107
+[Entity 96] CONSTRUCTOR START: type=fish at 56,25
 [Entity 96] Calling registerEntity...
 [Entity 96] registerEntity returned.
 [Entity 96] Calling updatePosition...
@@ -1376,7 +1391,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 97] CONSTRUCTOR START: type=fish at 96,106
+[Entity 97] CONSTRUCTOR START: type=fish at 22,68
 [Entity 97] Calling registerEntity...
 [Entity 97] registerEntity returned.
 [Entity 97] Calling updatePosition...
@@ -1386,7 +1401,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 98] CONSTRUCTOR START: type=fish at 7,97
+[Entity 98] CONSTRUCTOR START: type=fish at 40,102
 [Entity 98] Calling registerEntity...
 [Entity 98] registerEntity returned.
 [Entity 98] Calling updatePosition...
@@ -1396,7 +1411,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 99] CONSTRUCTOR START: type=fish at 105,70
+[Entity 99] CONSTRUCTOR START: type=fish at 17,63
 [Entity 99] Calling registerEntity...
 [Entity 99] registerEntity returned.
 [Entity 99] Calling updatePosition...
@@ -1406,7 +1421,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 100] CONSTRUCTOR START: type=fish at 23,62
+[Entity 100] CONSTRUCTOR START: type=fish at 34,94
 [Entity 100] Calling registerEntity...
 [Entity 100] registerEntity returned.
 [Entity 100] Calling updatePosition...
@@ -1416,7 +1431,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 101] CONSTRUCTOR START: type=fish at 70,46
+[Entity 101] CONSTRUCTOR START: type=fish at 52,113
 [Entity 101] Calling registerEntity...
 [Entity 101] registerEntity returned.
 [Entity 101] Calling updatePosition...
@@ -1426,7 +1441,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 102] CONSTRUCTOR START: type=fish at 6,1
+[Entity 102] CONSTRUCTOR START: type=fish at 56,82
 [Entity 102] Calling registerEntity...
 [Entity 102] registerEntity returned.
 [Entity 102] Calling updatePosition...
@@ -1436,7 +1451,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 103] CONSTRUCTOR START: type=fish at 18,98
+[Entity 103] CONSTRUCTOR START: type=fish at 19,26
 [Entity 103] Calling registerEntity...
 [Entity 103] registerEntity returned.
 [Entity 103] Calling updatePosition...
@@ -1446,7 +1461,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 104] CONSTRUCTOR START: type=fish at 90,46
+[Entity 104] CONSTRUCTOR START: type=fish at 56,33
 [Entity 104] Calling registerEntity...
 [Entity 104] registerEntity returned.
 [Entity 104] Calling updatePosition...
@@ -1456,7 +1471,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 105] CONSTRUCTOR START: type=fish at 72,72
+[Entity 105] CONSTRUCTOR START: type=fish at 46,47
 [Entity 105] Calling registerEntity...
 [Entity 105] registerEntity returned.
 [Entity 105] Calling updatePosition...
@@ -1466,7 +1481,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 106] CONSTRUCTOR START: type=fish at 105,5
+[Entity 106] CONSTRUCTOR START: type=fish at 32,10
 [Entity 106] Calling registerEntity...
 [Entity 106] registerEntity returned.
 [Entity 106] Calling updatePosition...
@@ -1476,7 +1491,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 107] CONSTRUCTOR START: type=fish at 69,64
+[Entity 107] CONSTRUCTOR START: type=fish at 11,2
 [Entity 107] Calling registerEntity...
 [Entity 107] registerEntity returned.
 [Entity 107] Calling updatePosition...
@@ -1486,7 +1501,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 108] CONSTRUCTOR START: type=fish at 2,52
+[Entity 108] CONSTRUCTOR START: type=fish at 85,93
 [Entity 108] Calling registerEntity...
 [Entity 108] registerEntity returned.
 [Entity 108] Calling updatePosition...
@@ -1496,7 +1511,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 109] CONSTRUCTOR START: type=fish at 11,74
+[Entity 109] CONSTRUCTOR START: type=fish at 35,77
 [Entity 109] Calling registerEntity...
 [Entity 109] registerEntity returned.
 [Entity 109] Calling updatePosition...
@@ -1506,7 +1521,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 110] CONSTRUCTOR START: type=fish at 118,66
+[Entity 110] CONSTRUCTOR START: type=fish at 54,69
 [Entity 110] Calling registerEntity...
 [Entity 110] registerEntity returned.
 [Entity 110] Calling updatePosition...
@@ -1516,7 +1531,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 111] CONSTRUCTOR START: type=fish at 111,85
+[Entity 111] CONSTRUCTOR START: type=fish at 45,35
 [Entity 111] Calling registerEntity...
 [Entity 111] registerEntity returned.
 [Entity 111] Calling updatePosition...
@@ -1526,7 +1541,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 112] CONSTRUCTOR START: type=fish at 87,18
+[Entity 112] CONSTRUCTOR START: type=fish at 21,118
 [Entity 112] Calling registerEntity...
 [Entity 112] registerEntity returned.
 [Entity 112] Calling updatePosition...
@@ -1536,7 +1551,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 113] CONSTRUCTOR START: type=fish at 97,98
+[Entity 113] CONSTRUCTOR START: type=fish at 28,69
 [Entity 113] Calling registerEntity...
 [Entity 113] registerEntity returned.
 [Entity 113] Calling updatePosition...
@@ -1546,7 +1561,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 114] CONSTRUCTOR START: type=fish at 81,35
+[Entity 114] CONSTRUCTOR START: type=fish at 3,13
 [Entity 114] Calling registerEntity...
 [Entity 114] registerEntity returned.
 [Entity 114] Calling updatePosition...
@@ -1556,7 +1571,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 115] CONSTRUCTOR START: type=fish at 103,111
+[Entity 115] CONSTRUCTOR START: type=fish at 61,50
 [Entity 115] Calling registerEntity...
 [Entity 115] registerEntity returned.
 [Entity 115] Calling updatePosition...
@@ -1566,7 +1581,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 116] CONSTRUCTOR START: type=fish at 13,74
+[Entity 116] CONSTRUCTOR START: type=fish at 51,110
 [Entity 116] Calling registerEntity...
 [Entity 116] registerEntity returned.
 [Entity 116] Calling updatePosition...
@@ -1576,7 +1591,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 117] CONSTRUCTOR START: type=fish at 70,117
+[Entity 117] CONSTRUCTOR START: type=fish at 30,25
 [Entity 117] Calling registerEntity...
 [Entity 117] registerEntity returned.
 [Entity 117] Calling updatePosition...
@@ -1586,7 +1601,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 118] CONSTRUCTOR START: type=fish at 45,23
+[Entity 118] CONSTRUCTOR START: type=fish at 28,21
 [Entity 118] Calling registerEntity...
 [Entity 118] registerEntity returned.
 [Entity 118] Calling updatePosition...
@@ -1596,7 +1611,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 119] CONSTRUCTOR START: type=fish at 85,58
+[Entity 119] CONSTRUCTOR START: type=fish at 0,108
 [Entity 119] Calling registerEntity...
 [Entity 119] registerEntity returned.
 [Entity 119] Calling updatePosition...
@@ -1606,7 +1621,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 120] CONSTRUCTOR START: type=fish at 14,108
+[Entity 120] CONSTRUCTOR START: type=fish at 3,42
 [Entity 120] Calling registerEntity...
 [Entity 120] registerEntity returned.
 [Entity 120] Calling updatePosition...
@@ -1616,7 +1631,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 121] CONSTRUCTOR START: type=fish at 39,109
+[Entity 121] CONSTRUCTOR START: type=fish at 98,53
 [Entity 121] Calling registerEntity...
 [Entity 121] registerEntity returned.
 [Entity 121] Calling updatePosition...
@@ -1626,7 +1641,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 122] CONSTRUCTOR START: type=fish at 98,7
+[Entity 122] CONSTRUCTOR START: type=fish at 81,56
 [Entity 122] Calling registerEntity...
 [Entity 122] registerEntity returned.
 [Entity 122] Calling updatePosition...
@@ -1636,7 +1651,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 123] CONSTRUCTOR START: type=fish at 82,50
+[Entity 123] CONSTRUCTOR START: type=fish at 37,59
 [Entity 123] Calling registerEntity...
 [Entity 123] registerEntity returned.
 [Entity 123] Calling updatePosition...
@@ -1646,7 +1661,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 124] CONSTRUCTOR START: type=fish at 105,22
+[Entity 124] CONSTRUCTOR START: type=fish at 92,35
 [Entity 124] Calling registerEntity...
 [Entity 124] registerEntity returned.
 [Entity 124] Calling updatePosition...
@@ -1656,7 +1671,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 125] CONSTRUCTOR START: type=fish at 2,11
+[Entity 125] CONSTRUCTOR START: type=fish at 47,55
 [Entity 125] Calling registerEntity...
 [Entity 125] registerEntity returned.
 [Entity 125] Calling updatePosition...
@@ -1666,7 +1681,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 126] CONSTRUCTOR START: type=fish at 46,46
+[Entity 126] CONSTRUCTOR START: type=fish at 98,93
 [Entity 126] Calling registerEntity...
 [Entity 126] registerEntity returned.
 [Entity 126] Calling updatePosition...
@@ -1676,7 +1691,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 127] CONSTRUCTOR START: type=fish at 109,10
+[Entity 127] CONSTRUCTOR START: type=fish at 103,98
 [Entity 127] Calling registerEntity...
 [Entity 127] registerEntity returned.
 [Entity 127] Calling updatePosition...
@@ -1686,7 +1701,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 128] CONSTRUCTOR START: type=fish at 6,4
+[Entity 128] CONSTRUCTOR START: type=fish at 76,24
 [Entity 128] Calling registerEntity...
 [Entity 128] registerEntity returned.
 [Entity 128] Calling updatePosition...
@@ -1696,7 +1711,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 129] CONSTRUCTOR START: type=fish at 41,74
+[Entity 129] CONSTRUCTOR START: type=fish at 83,91
 [Entity 129] Calling registerEntity...
 [Entity 129] registerEntity returned.
 [Entity 129] Calling updatePosition...
@@ -1706,7 +1721,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 130] CONSTRUCTOR START: type=fish at 12,85
+[Entity 130] CONSTRUCTOR START: type=fish at 37,47
 [Entity 130] Calling registerEntity...
 [Entity 130] registerEntity returned.
 [Entity 130] Calling updatePosition...
@@ -1716,7 +1731,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 131] CONSTRUCTOR START: type=fish at 68,89
+[Entity 131] CONSTRUCTOR START: type=fish at 118,36
 [Entity 131] Calling registerEntity...
 [Entity 131] registerEntity returned.
 [Entity 131] Calling updatePosition...
@@ -1726,7 +1741,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 132] CONSTRUCTOR START: type=fish at 89,15
+[Entity 132] CONSTRUCTOR START: type=fish at 36,98
 [Entity 132] Calling registerEntity...
 [Entity 132] registerEntity returned.
 [Entity 132] Calling updatePosition...
@@ -1736,7 +1751,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 133] CONSTRUCTOR START: type=fish at 92,82
+[Entity 133] CONSTRUCTOR START: type=fish at 73,27
 [Entity 133] Calling registerEntity...
 [Entity 133] registerEntity returned.
 [Entity 133] Calling updatePosition...
@@ -1746,7 +1761,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 134] CONSTRUCTOR START: type=fish at 45,91
+[Entity 134] CONSTRUCTOR START: type=fish at 49,13
 [Entity 134] Calling registerEntity...
 [Entity 134] registerEntity returned.
 [Entity 134] Calling updatePosition...
@@ -1756,7 +1771,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 135] CONSTRUCTOR START: type=fish at 119,49
+[Entity 135] CONSTRUCTOR START: type=fish at 32,101
 [Entity 135] Calling registerEntity...
 [Entity 135] registerEntity returned.
 [Entity 135] Calling updatePosition...
@@ -1766,7 +1781,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 136] CONSTRUCTOR START: type=fish at 62,31
+[Entity 136] CONSTRUCTOR START: type=fish at 60,36
 [Entity 136] Calling registerEntity...
 [Entity 136] registerEntity returned.
 [Entity 136] Calling updatePosition...
@@ -1776,7 +1791,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 137] CONSTRUCTOR START: type=fish at 23,35
+[Entity 137] CONSTRUCTOR START: type=fish at 95,88
 [Entity 137] Calling registerEntity...
 [Entity 137] registerEntity returned.
 [Entity 137] Calling updatePosition...
@@ -1786,7 +1801,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 138] CONSTRUCTOR START: type=fish at 98,43
+[Entity 138] CONSTRUCTOR START: type=fish at 84,103
 [Entity 138] Calling registerEntity...
 [Entity 138] registerEntity returned.
 [Entity 138] Calling updatePosition...
@@ -1796,7 +1811,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 139] CONSTRUCTOR START: type=fish at 87,21
+[Entity 139] CONSTRUCTOR START: type=fish at 0,71
 [Entity 139] Calling registerEntity...
 [Entity 139] registerEntity returned.
 [Entity 139] Calling updatePosition...
@@ -1806,7 +1821,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 140] CONSTRUCTOR START: type=fish at 107,37
+[Entity 140] CONSTRUCTOR START: type=fish at 59,33
 [Entity 140] Calling registerEntity...
 [Entity 140] registerEntity returned.
 [Entity 140] Calling updatePosition...
@@ -1816,7 +1831,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 141] CONSTRUCTOR START: type=fish at 41,53
+[Entity 141] CONSTRUCTOR START: type=fish at 108,41
 [Entity 141] Calling registerEntity...
 [Entity 141] registerEntity returned.
 [Entity 141] Calling updatePosition...
@@ -1826,7 +1841,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 142] CONSTRUCTOR START: type=fish at 60,27
+[Entity 142] CONSTRUCTOR START: type=fish at 103,36
 [Entity 142] Calling registerEntity...
 [Entity 142] registerEntity returned.
 [Entity 142] Calling updatePosition...
@@ -1836,7 +1851,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 143] CONSTRUCTOR START: type=fish at 8,30
+[Entity 143] CONSTRUCTOR START: type=fish at 22,117
 [Entity 143] Calling registerEntity...
 [Entity 143] registerEntity returned.
 [Entity 143] Calling updatePosition...
@@ -1846,7 +1861,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 144] CONSTRUCTOR START: type=fish at 82,86
+[Entity 144] CONSTRUCTOR START: type=fish at 46,38
 [Entity 144] Calling registerEntity...
 [Entity 144] registerEntity returned.
 [Entity 144] Calling updatePosition...
@@ -1856,7 +1871,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 145] CONSTRUCTOR START: type=fish at 79,98
+[Entity 145] CONSTRUCTOR START: type=fish at 110,82
 [Entity 145] Calling registerEntity...
 [Entity 145] registerEntity returned.
 [Entity 145] Calling updatePosition...
@@ -1866,7 +1881,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 146] CONSTRUCTOR START: type=fish at 93,63
+[Entity 146] CONSTRUCTOR START: type=fish at 43,99
 [Entity 146] Calling registerEntity...
 [Entity 146] registerEntity returned.
 [Entity 146] Calling updatePosition...
@@ -1876,7 +1891,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 147] CONSTRUCTOR START: type=fish at 15,41
+[Entity 147] CONSTRUCTOR START: type=fish at 17,105
 [Entity 147] Calling registerEntity...
 [Entity 147] registerEntity returned.
 [Entity 147] Calling updatePosition...
@@ -1886,7 +1901,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 148] CONSTRUCTOR START: type=fish at 55,81
+[Entity 148] CONSTRUCTOR START: type=fish at 103,78
 [Entity 148] Calling registerEntity...
 [Entity 148] registerEntity returned.
 [Entity 148] Calling updatePosition...
@@ -1896,7 +1911,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 149] CONSTRUCTOR START: type=fish at 89,28
+[Entity 149] CONSTRUCTOR START: type=fish at 6,17
 [Entity 149] Calling registerEntity...
 [Entity 149] registerEntity returned.
 [Entity 149] Calling updatePosition...
@@ -1906,7 +1921,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 150] CONSTRUCTOR START: type=fish at 90,5
+[Entity 150] CONSTRUCTOR START: type=fish at 97,71
 [Entity 150] Calling registerEntity...
 [Entity 150] registerEntity returned.
 [Entity 150] Calling updatePosition...
@@ -1916,7 +1931,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 151] CONSTRUCTOR START: type=fish at 53,47
+[Entity 151] CONSTRUCTOR START: type=fish at 12,57
 [Entity 151] Calling registerEntity...
 [Entity 151] registerEntity returned.
 [Entity 151] Calling updatePosition...
@@ -1926,7 +1941,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 152] CONSTRUCTOR START: type=fish at 42,9
+[Entity 152] CONSTRUCTOR START: type=fish at 47,43
 [Entity 152] Calling registerEntity...
 [Entity 152] registerEntity returned.
 [Entity 152] Calling updatePosition...
@@ -1936,7 +1951,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 153] CONSTRUCTOR START: type=fish at 81,61
+[Entity 153] CONSTRUCTOR START: type=fish at 0,66
 [Entity 153] Calling registerEntity...
 [Entity 153] registerEntity returned.
 [Entity 153] Calling updatePosition...
@@ -1946,7 +1961,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 154] CONSTRUCTOR START: type=fish at 117,31
+[Entity 154] CONSTRUCTOR START: type=fish at 52,116
 [Entity 154] Calling registerEntity...
 [Entity 154] registerEntity returned.
 [Entity 154] Calling updatePosition...
@@ -1956,7 +1971,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 155] CONSTRUCTOR START: type=fish at 118,104
+[Entity 155] CONSTRUCTOR START: type=fish at 58,75
 [Entity 155] Calling registerEntity...
 [Entity 155] registerEntity returned.
 [Entity 155] Calling updatePosition...
@@ -1966,7 +1981,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 156] CONSTRUCTOR START: type=fish at 51,74
+[Entity 156] CONSTRUCTOR START: type=fish at 39,114
 [Entity 156] Calling registerEntity...
 [Entity 156] registerEntity returned.
 [Entity 156] Calling updatePosition...
@@ -1976,7 +1991,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 157] CONSTRUCTOR START: type=fish at 6,16
+[Entity 157] CONSTRUCTOR START: type=fish at 115,44
 [Entity 157] Calling registerEntity...
 [Entity 157] registerEntity returned.
 [Entity 157] Calling updatePosition...
@@ -1986,7 +2001,7 @@ Resetting FishManager...
 [DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
     if (isNaN(tx) || isNaN(tz)) {
       console.error(`[Actor $
-[Entity 158] CONSTRUCTOR START: type=fish at 28,0
+[Entity 158] CONSTRUCTOR START: type=fish at 4,9
 [Entity 158] Calling registerEntity...
 [Entity 158] registerEntity returned.
 [Entity 158] Calling updatePosition...
@@ -2007,10 +2022,11 @@ FishManager Refactored: Initialized with Entity-based Fish.
 [Game] Init TreeRenderer
 [Game] Init PerformanceMonitor
 [Game] Generating Preview Terrain...
-[Terrain] DETERMINISM: generateRandomTerrain seed=0.644673 intSeed=1384425014 rngState=1384425014
+[Terrain] DETERMINISM: generateRandomTerrain seed=0.467940 intSeed=1004894468 rngState=1004894468
 
 [90mstdout[2m | src/tests/FactionPersistence.test.js[2m > [22m[2mFaction Persistence and Logic[2m > [22m[2mshould only add food to player pool from player farms
-[22m[39m[Entity 159] CONSTRUCTOR START: type=building at 10,10
+[22m[39mStarting resource test...
+[Entity 159] CONSTRUCTOR START: type=building at 10,10
 [Entity 159] Calling registerEntity...
 [Entity 159] registerEntity returned.
 [Entity 159] Calling updatePosition...
@@ -2020,12 +2036,886 @@ FishManager Refactored: Initialized with Entity-based Fish.
 [Entity 160] registerEntity returned.
 [Entity 160] Calling updatePosition...
 [Entity 160] updatePosition returned.
+Initial resources: grain=0
+[Terrain DIAG FRAME] Frame:1 Stagger:20 Units:0
+[Terrain DIAG] Type:farm Frame:1/20 GrowthVal:0.5 Multiplier:0.5 Rate:0.25 HasFood:true Pop:0
+Resources after update: grain=0
 
- [31m笶ｯ[39m src/tests/FactionPersistence.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 657[2mms[22m[39m
-[31m     [31mﾃ・[31m should persist unit and building faction across save/load[39m[33m 531[2mms[22m[39m
-[31m     [31mﾃ・[31m should only add food to player pool from player farms[39m[32m 123[2mms[22m[39m
+[90mstdout[2m | src/tests/FactionPersistence.test.js[2m > [22m[2mFaction Persistence and Logic[2m > [22m[2mshould allow workers and knights to target enemy human buildings
+[22m[39mDisposing detached game instance
+[Game] Dispose called for Game Instance.
+[Terrain] Dispose called.
+
+[90mstdout[2m | src/tests/FactionPersistence.test.js[2m > [22m[2mFaction Persistence and Logic[2m > [22m[2mshould allow workers and knights to target enemy human buildings
+[22m[39m[Game] Init SphereGeometry
+[Game] Initializing Full Three.js components...
+[Game] Debug Levels: [
+  {
+    levelId: [33m1[39m,
+    title: [32m'The Beginning'[39m,
+    mapWidth: [33m120[39m,
+    mapDepth: [33m120[39m,
+    initialState: {
+      unitCount: [33m1[39m,
+      hasEnemyBase: [33mfalse[39m,
+      hasEnemyGuard: [33mfalse[39m,
+      goblinCaves: [33m1[39m
+    },
+    generation: {
+      rockHeight: [33m9[39m,
+      moistureBase: [33m0.55[39m,
+      treeDensity: [33m0.2[39m,
+      landRatio: [33m0.6[39m
+    }
+  },
+  {
+    levelId: [33m2[39m,
+    title: [32m'Expansion'[39m,
+    mapWidth: [33m120[39m,
+    mapDepth: [33m120[39m,
+    initialState: {
+      unitCount: [33m5[39m,
+      hasEnemyBase: [33mtrue[39m,
+      hasEnemyGuard: [33mfalse[39m,
+      goblinCaves: [33m3[39m
+    },
+    generation: {
+      rockHeight: [33m12[39m,
+      moistureBase: [33m0.4[39m,
+      treeDensity: [33m0.8[39m,
+      landRatio: [33m0.6[39m
+    }
+  },
+  {
+    levelId: [33m3[39m,
+    title: [32m'Warfare'[39m,
+    mapWidth: [33m160[39m,
+    mapDepth: [33m160[39m,
+    initialState: {
+      unitCount: [33m8[39m,
+      hasEnemyBase: [33mtrue[39m,
+      hasEnemyGuard: [33mtrue[39m,
+      goblinCaves: [33m5[39m
+    },
+    generation: {
+      rockHeight: [33m10[39m,
+      moistureBase: [33m0.6[39m,
+      treeDensity: [33m1[39m,
+      landRatio: [33m0.4[39m
+    }
+  }
+]
+[Terrain] Constructor. updatePopulation type: function
+[Game] Init CloudManager
+[Game] Init BirdManager
+[Game] Init SheepManager
+Resetting SheepManager...
+[Game] Init GoblinManager
+[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+[GoblinManager] DETERMINISM: generateCaves start. rngState=0
+[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.775289, 0.175583) -> Grid(93, 21) rngState=0
+[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.776892, 0.488491) -> Grid(93, 58) rngState=0
+[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.787399, 0.611240) -> Grid(94, 73) rngState=0
+[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+[Game] Init FishManager
+Resetting FishManager...
+[Entity 161] CONSTRUCTOR START: type=fish at 112,111
+[Entity 161] Calling registerEntity...
+[Entity 161] registerEntity returned.
+[Entity 161] Calling updatePosition...
+[Entity 161] updatePosition returned.
+[DIAG] Actor Created ID: 161
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 162] CONSTRUCTOR START: type=fish at 92,79
+[Entity 162] Calling registerEntity...
+[Entity 162] registerEntity returned.
+[Entity 162] Calling updatePosition...
+[Entity 162] updatePosition returned.
+[DIAG] Actor Created ID: 162
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 163] CONSTRUCTOR START: type=fish at 27,86
+[Entity 163] Calling registerEntity...
+[Entity 163] registerEntity returned.
+[Entity 163] Calling updatePosition...
+[Entity 163] updatePosition returned.
+[DIAG] Actor Created ID: 163
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 164] CONSTRUCTOR START: type=fish at 2,30
+[Entity 164] Calling registerEntity...
+[Entity 164] registerEntity returned.
+[Entity 164] Calling updatePosition...
+[Entity 164] updatePosition returned.
+[DIAG] Actor Created ID: 164
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 165] CONSTRUCTOR START: type=fish at 98,58
+[Entity 165] Calling registerEntity...
+[Entity 165] registerEntity returned.
+[Entity 165] Calling updatePosition...
+[Entity 165] updatePosition returned.
+[DIAG] Actor Created ID: 165
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 166] CONSTRUCTOR START: type=fish at 78,43
+[Entity 166] Calling registerEntity...
+[Entity 166] registerEntity returned.
+[Entity 166] Calling updatePosition...
+[Entity 166] updatePosition returned.
+[DIAG] Actor Created ID: 166
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 167] CONSTRUCTOR START: type=fish at 90,4
+[Entity 167] Calling registerEntity...
+[Entity 167] registerEntity returned.
+[Entity 167] Calling updatePosition...
+[Entity 167] updatePosition returned.
+[DIAG] Actor Created ID: 167
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 168] CONSTRUCTOR START: type=fish at 43,27
+[Entity 168] Calling registerEntity...
+[Entity 168] registerEntity returned.
+[Entity 168] Calling updatePosition...
+[Entity 168] updatePosition returned.
+[DIAG] Actor Created ID: 168
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 169] CONSTRUCTOR START: type=fish at 23,71
+[Entity 169] Calling registerEntity...
+[Entity 169] registerEntity returned.
+[Entity 169] Calling updatePosition...
+[Entity 169] updatePosition returned.
+[DIAG] Actor Created ID: 169
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 170] CONSTRUCTOR START: type=fish at 23,90
+[Entity 170] Calling registerEntity...
+[Entity 170] registerEntity returned.
+[Entity 170] Calling updatePosition...
+[Entity 170] updatePosition returned.
+[DIAG] Actor Created ID: 170
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 171] CONSTRUCTOR START: type=fish at 99,52
+[Entity 171] Calling registerEntity...
+[Entity 171] registerEntity returned.
+[Entity 171] Calling updatePosition...
+[Entity 171] updatePosition returned.
+[DIAG] Actor Created ID: 171
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 172] CONSTRUCTOR START: type=fish at 87,67
+[Entity 172] Calling registerEntity...
+[Entity 172] registerEntity returned.
+[Entity 172] Calling updatePosition...
+[Entity 172] updatePosition returned.
+[DIAG] Actor Created ID: 172
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 173] CONSTRUCTOR START: type=fish at 104,114
+[Entity 173] Calling registerEntity...
+[Entity 173] registerEntity returned.
+[Entity 173] Calling updatePosition...
+[Entity 173] updatePosition returned.
+[DIAG] Actor Created ID: 173
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 174] CONSTRUCTOR START: type=fish at 89,102
+[Entity 174] Calling registerEntity...
+[Entity 174] registerEntity returned.
+[Entity 174] Calling updatePosition...
+[Entity 174] updatePosition returned.
+[DIAG] Actor Created ID: 174
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 175] CONSTRUCTOR START: type=fish at 109,60
+[Entity 175] Calling registerEntity...
+[Entity 175] registerEntity returned.
+[Entity 175] Calling updatePosition...
+[Entity 175] updatePosition returned.
+[DIAG] Actor Created ID: 175
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 176] CONSTRUCTOR START: type=fish at 20,79
+[Entity 176] Calling registerEntity...
+[Entity 176] registerEntity returned.
+[Entity 176] Calling updatePosition...
+[Entity 176] updatePosition returned.
+[DIAG] Actor Created ID: 176
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 177] CONSTRUCTOR START: type=fish at 119,84
+[Entity 177] Calling registerEntity...
+[Entity 177] registerEntity returned.
+[Entity 177] Calling updatePosition...
+[Entity 177] updatePosition returned.
+[DIAG] Actor Created ID: 177
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 178] CONSTRUCTOR START: type=fish at 27,72
+[Entity 178] Calling registerEntity...
+[Entity 178] registerEntity returned.
+[Entity 178] Calling updatePosition...
+[Entity 178] updatePosition returned.
+[DIAG] Actor Created ID: 178
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 179] CONSTRUCTOR START: type=fish at 94,85
+[Entity 179] Calling registerEntity...
+[Entity 179] registerEntity returned.
+[Entity 179] Calling updatePosition...
+[Entity 179] updatePosition returned.
+[DIAG] Actor Created ID: 179
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 180] CONSTRUCTOR START: type=fish at 98,73
+[Entity 180] Calling registerEntity...
+[Entity 180] registerEntity returned.
+[Entity 180] Calling updatePosition...
+[Entity 180] updatePosition returned.
+[DIAG] Actor Created ID: 180
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 181] CONSTRUCTOR START: type=fish at 87,103
+[Entity 181] Calling registerEntity...
+[Entity 181] registerEntity returned.
+[Entity 181] Calling updatePosition...
+[Entity 181] updatePosition returned.
+[DIAG] Actor Created ID: 181
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 182] CONSTRUCTOR START: type=fish at 44,46
+[Entity 182] Calling registerEntity...
+[Entity 182] registerEntity returned.
+[Entity 182] Calling updatePosition...
+[Entity 182] updatePosition returned.
+[DIAG] Actor Created ID: 182
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 183] CONSTRUCTOR START: type=fish at 44,79
+[Entity 183] Calling registerEntity...
+[Entity 183] registerEntity returned.
+[Entity 183] Calling updatePosition...
+[Entity 183] updatePosition returned.
+[DIAG] Actor Created ID: 183
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 184] CONSTRUCTOR START: type=fish at 35,81
+[Entity 184] Calling registerEntity...
+[Entity 184] registerEntity returned.
+[Entity 184] Calling updatePosition...
+[Entity 184] updatePosition returned.
+[DIAG] Actor Created ID: 184
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 185] CONSTRUCTOR START: type=fish at 97,85
+[Entity 185] Calling registerEntity...
+[Entity 185] registerEntity returned.
+[Entity 185] Calling updatePosition...
+[Entity 185] updatePosition returned.
+[DIAG] Actor Created ID: 185
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 186] CONSTRUCTOR START: type=fish at 116,84
+[Entity 186] Calling registerEntity...
+[Entity 186] registerEntity returned.
+[Entity 186] Calling updatePosition...
+[Entity 186] updatePosition returned.
+[DIAG] Actor Created ID: 186
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 187] CONSTRUCTOR START: type=fish at 24,103
+[Entity 187] Calling registerEntity...
+[Entity 187] registerEntity returned.
+[Entity 187] Calling updatePosition...
+[Entity 187] updatePosition returned.
+[DIAG] Actor Created ID: 187
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 188] CONSTRUCTOR START: type=fish at 97,47
+[Entity 188] Calling registerEntity...
+[Entity 188] registerEntity returned.
+[Entity 188] Calling updatePosition...
+[Entity 188] updatePosition returned.
+[DIAG] Actor Created ID: 188
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 189] CONSTRUCTOR START: type=fish at 41,34
+[Entity 189] Calling registerEntity...
+[Entity 189] registerEntity returned.
+[Entity 189] Calling updatePosition...
+[Entity 189] updatePosition returned.
+[DIAG] Actor Created ID: 189
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 190] CONSTRUCTOR START: type=fish at 86,114
+[Entity 190] Calling registerEntity...
+[Entity 190] registerEntity returned.
+[Entity 190] Calling updatePosition...
+[Entity 190] updatePosition returned.
+[DIAG] Actor Created ID: 190
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 191] CONSTRUCTOR START: type=fish at 53,114
+[Entity 191] Calling registerEntity...
+[Entity 191] registerEntity returned.
+[Entity 191] Calling updatePosition...
+[Entity 191] updatePosition returned.
+[DIAG] Actor Created ID: 191
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 192] CONSTRUCTOR START: type=fish at 111,79
+[Entity 192] Calling registerEntity...
+[Entity 192] registerEntity returned.
+[Entity 192] Calling updatePosition...
+[Entity 192] updatePosition returned.
+[DIAG] Actor Created ID: 192
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 193] CONSTRUCTOR START: type=fish at 37,29
+[Entity 193] Calling registerEntity...
+[Entity 193] registerEntity returned.
+[Entity 193] Calling updatePosition...
+[Entity 193] updatePosition returned.
+[DIAG] Actor Created ID: 193
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 194] CONSTRUCTOR START: type=fish at 91,31
+[Entity 194] Calling registerEntity...
+[Entity 194] registerEntity returned.
+[Entity 194] Calling updatePosition...
+[Entity 194] updatePosition returned.
+[DIAG] Actor Created ID: 194
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 195] CONSTRUCTOR START: type=fish at 8,98
+[Entity 195] Calling registerEntity...
+[Entity 195] registerEntity returned.
+[Entity 195] Calling updatePosition...
+[Entity 195] updatePosition returned.
+[DIAG] Actor Created ID: 195
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 196] CONSTRUCTOR START: type=fish at 2,23
+[Entity 196] Calling registerEntity...
+[Entity 196] registerEntity returned.
+[Entity 196] Calling updatePosition...
+[Entity 196] updatePosition returned.
+[DIAG] Actor Created ID: 196
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 197] CONSTRUCTOR START: type=fish at 90,81
+[Entity 197] Calling registerEntity...
+[Entity 197] registerEntity returned.
+[Entity 197] Calling updatePosition...
+[Entity 197] updatePosition returned.
+[DIAG] Actor Created ID: 197
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 198] CONSTRUCTOR START: type=fish at 105,19
+[Entity 198] Calling registerEntity...
+[Entity 198] registerEntity returned.
+[Entity 198] Calling updatePosition...
+[Entity 198] updatePosition returned.
+[DIAG] Actor Created ID: 198
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 199] CONSTRUCTOR START: type=fish at 79,64
+[Entity 199] Calling registerEntity...
+[Entity 199] registerEntity returned.
+[Entity 199] Calling updatePosition...
+[Entity 199] updatePosition returned.
+[DIAG] Actor Created ID: 199
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 200] CONSTRUCTOR START: type=fish at 108,109
+[Entity 200] Calling registerEntity...
+[Entity 200] registerEntity returned.
+[Entity 200] Calling updatePosition...
+[Entity 200] updatePosition returned.
+[DIAG] Actor Created ID: 200
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 201] CONSTRUCTOR START: type=fish at 79,70
+[Entity 201] Calling registerEntity...
+[Entity 201] registerEntity returned.
+[Entity 201] Calling updatePosition...
+[Entity 201] updatePosition returned.
+[DIAG] Actor Created ID: 201
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 202] CONSTRUCTOR START: type=fish at 110,24
+[Entity 202] Calling registerEntity...
+[Entity 202] registerEntity returned.
+[Entity 202] Calling updatePosition...
+[Entity 202] updatePosition returned.
+[DIAG] Actor Created ID: 202
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 203] CONSTRUCTOR START: type=fish at 5,106
+[Entity 203] Calling registerEntity...
+[Entity 203] registerEntity returned.
+[Entity 203] Calling updatePosition...
+[Entity 203] updatePosition returned.
+[DIAG] Actor Created ID: 203
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 204] CONSTRUCTOR START: type=fish at 56,14
+[Entity 204] Calling registerEntity...
+[Entity 204] registerEntity returned.
+[Entity 204] Calling updatePosition...
+[Entity 204] updatePosition returned.
+[DIAG] Actor Created ID: 204
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 205] CONSTRUCTOR START: type=fish at 8,8
+[Entity 205] Calling registerEntity...
+[Entity 205] registerEntity returned.
+[Entity 205] Calling updatePosition...
+[Entity 205] updatePosition returned.
+[DIAG] Actor Created ID: 205
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 206] CONSTRUCTOR START: type=fish at 63,13
+[Entity 206] Calling registerEntity...
+[Entity 206] registerEntity returned.
+[Entity 206] Calling updatePosition...
+[Entity 206] updatePosition returned.
+[DIAG] Actor Created ID: 206
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 207] CONSTRUCTOR START: type=fish at 56,102
+[Entity 207] Calling registerEntity...
+[Entity 207] registerEntity returned.
+[Entity 207] Calling updatePosition...
+[Entity 207] updatePosition returned.
+[DIAG] Actor Created ID: 207
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 208] CONSTRUCTOR START: type=fish at 32,80
+[Entity 208] Calling registerEntity...
+[Entity 208] registerEntity returned.
+[Entity 208] Calling updatePosition...
+[Entity 208] updatePosition returned.
+[DIAG] Actor Created ID: 208
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 209] CONSTRUCTOR START: type=fish at 15,46
+[Entity 209] Calling registerEntity...
+[Entity 209] registerEntity returned.
+[Entity 209] Calling updatePosition...
+[Entity 209] updatePosition returned.
+[DIAG] Actor Created ID: 209
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 210] CONSTRUCTOR START: type=fish at 110,119
+[Entity 210] Calling registerEntity...
+[Entity 210] registerEntity returned.
+[Entity 210] Calling updatePosition...
+[Entity 210] updatePosition returned.
+[DIAG] Actor Created ID: 210
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 211] CONSTRUCTOR START: type=fish at 34,46
+[Entity 211] Calling registerEntity...
+[Entity 211] registerEntity returned.
+[Entity 211] Calling updatePosition...
+[Entity 211] updatePosition returned.
+[DIAG] Actor Created ID: 211
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 212] CONSTRUCTOR START: type=fish at 39,52
+[Entity 212] Calling registerEntity...
+[Entity 212] registerEntity returned.
+[Entity 212] Calling updatePosition...
+[Entity 212] updatePosition returned.
+[DIAG] Actor Created ID: 212
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 213] CONSTRUCTOR START: type=fish at 103,47
+[Entity 213] Calling registerEntity...
+[Entity 213] registerEntity returned.
+[Entity 213] Calling updatePosition...
+[Entity 213] updatePosition returned.
+[DIAG] Actor Created ID: 213
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 214] CONSTRUCTOR START: type=fish at 110,87
+[Entity 214] Calling registerEntity...
+[Entity 214] registerEntity returned.
+[Entity 214] Calling updatePosition...
+[Entity 214] updatePosition returned.
+[DIAG] Actor Created ID: 214
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 215] CONSTRUCTOR START: type=fish at 47,72
+[Entity 215] Calling registerEntity...
+[Entity 215] registerEntity returned.
+[Entity 215] Calling updatePosition...
+[Entity 215] updatePosition returned.
+[DIAG] Actor Created ID: 215
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 216] CONSTRUCTOR START: type=fish at 82,11
+[Entity 216] Calling registerEntity...
+[Entity 216] registerEntity returned.
+[Entity 216] Calling updatePosition...
+[Entity 216] updatePosition returned.
+[DIAG] Actor Created ID: 216
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 217] CONSTRUCTOR START: type=fish at 33,52
+[Entity 217] Calling registerEntity...
+[Entity 217] registerEntity returned.
+[Entity 217] Calling updatePosition...
+[Entity 217] updatePosition returned.
+[DIAG] Actor Created ID: 217
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 218] CONSTRUCTOR START: type=fish at 88,56
+[Entity 218] Calling registerEntity...
+[Entity 218] registerEntity returned.
+[Entity 218] Calling updatePosition...
+[Entity 218] updatePosition returned.
+[DIAG] Actor Created ID: 218
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 219] CONSTRUCTOR START: type=fish at 32,48
+[Entity 219] Calling registerEntity...
+[Entity 219] registerEntity returned.
+[Entity 219] Calling updatePosition...
+[Entity 219] updatePosition returned.
+[DIAG] Actor Created ID: 219
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 220] CONSTRUCTOR START: type=fish at 107,21
+[Entity 220] Calling registerEntity...
+[Entity 220] registerEntity returned.
+[Entity 220] Calling updatePosition...
+[Entity 220] updatePosition returned.
+[DIAG] Actor Created ID: 220
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 221] CONSTRUCTOR START: type=fish at 96,54
+[Entity 221] Calling registerEntity...
+[Entity 221] registerEntity returned.
+[Entity 221] Calling updatePosition...
+[Entity 221] updatePosition returned.
+[DIAG] Actor Created ID: 221
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 222] CONSTRUCTOR START: type=fish at 116,9
+[Entity 222] Calling registerEntity...
+[Entity 222] registerEntity returned.
+[Entity 222] Calling updatePosition...
+[Entity 222] updatePosition returned.
+[DIAG] Actor Created ID: 222
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 223] CONSTRUCTOR START: type=fish at 91,15
+[Entity 223] Calling registerEntity...
+[Entity 223] registerEntity returned.
+[Entity 223] Calling updatePosition...
+[Entity 223] updatePosition returned.
+[DIAG] Actor Created ID: 223
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 224] CONSTRUCTOR START: type=fish at 0,16
+[Entity 224] Calling registerEntity...
+[Entity 224] registerEntity returned.
+[Entity 224] Calling updatePosition...
+[Entity 224] updatePosition returned.
+[DIAG] Actor Created ID: 224
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 225] CONSTRUCTOR START: type=fish at 70,103
+[Entity 225] Calling registerEntity...
+[Entity 225] registerEntity returned.
+[Entity 225] Calling updatePosition...
+[Entity 225] updatePosition returned.
+[DIAG] Actor Created ID: 225
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 226] CONSTRUCTOR START: type=fish at 31,45
+[Entity 226] Calling registerEntity...
+[Entity 226] registerEntity returned.
+[Entity 226] Calling updatePosition...
+[Entity 226] updatePosition returned.
+[DIAG] Actor Created ID: 226
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 227] CONSTRUCTOR START: type=fish at 99,112
+[Entity 227] Calling registerEntity...
+[Entity 227] registerEntity returned.
+[Entity 227] Calling updatePosition...
+[Entity 227] updatePosition returned.
+[DIAG] Actor Created ID: 227
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 228] CONSTRUCTOR START: type=fish at 79,96
+[Entity 228] Calling registerEntity...
+[Entity 228] registerEntity returned.
+[Entity 228] Calling updatePosition...
+[Entity 228] updatePosition returned.
+[DIAG] Actor Created ID: 228
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 229] CONSTRUCTOR START: type=fish at 72,6
+[Entity 229] Calling registerEntity...
+[Entity 229] registerEntity returned.
+[Entity 229] Calling updatePosition...
+[Entity 229] updatePosition returned.
+[DIAG] Actor Created ID: 229
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 230] CONSTRUCTOR START: type=fish at 58,37
+[Entity 230] Calling registerEntity...
+[Entity 230] registerEntity returned.
+[Entity 230] Calling updatePosition...
+[Entity 230] updatePosition returned.
+[DIAG] Actor Created ID: 230
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 231] CONSTRUCTOR START: type=fish at 21,13
+[Entity 231] Calling registerEntity...
+[Entity 231] registerEntity returned.
+[Entity 231] Calling updatePosition...
+[Entity 231] updatePosition returned.
+[DIAG] Actor Created ID: 231
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 232] CONSTRUCTOR START: type=fish at 69,52
+[Entity 232] Calling registerEntity...
+[Entity 232] registerEntity returned.
+[Entity 232] Calling updatePosition...
+[Entity 232] updatePosition returned.
+[DIAG] Actor Created ID: 232
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 233] CONSTRUCTOR START: type=fish at 32,105
+[Entity 233] Calling registerEntity...
+[Entity 233] registerEntity returned.
+[Entity 233] Calling updatePosition...
+[Entity 233] updatePosition returned.
+[DIAG] Actor Created ID: 233
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 234] CONSTRUCTOR START: type=fish at 86,64
+[Entity 234] Calling registerEntity...
+[Entity 234] registerEntity returned.
+[Entity 234] Calling updatePosition...
+[Entity 234] updatePosition returned.
+[DIAG] Actor Created ID: 234
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[Entity 235] CONSTRUCTOR START: type=fish at 85,102
+[Entity 235] Calling registerEntity...
+[Entity 235] registerEntity returned.
+[Entity 235] Calling updatePosition...
+[Entity 235] updatePosition returned.
+[DIAG] Actor Created ID: 235
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+Spawned initial fish.
+FishManager Refactored: Initialized with Entity-based Fish.
+[Game] Init Minimap
+[Game] Init Compass
+[Game] Init WeatherManager
+[Game] Init UnitRenderer
+[Game] Init BuildingRenderer
+[Game] Init GoblinRenderer
+[Game] Init TreeRenderer
+[Game] Init PerformanceMonitor
+[Game] Generating Preview Terrain...
+[Terrain] DETERMINISM: generateRandomTerrain seed=0.672342 intSeed=1443843326 rngState=1443843326
+
+[90mstdout[2m | src/tests/FactionPersistence.test.js[2m > [22m[2mFaction Persistence and Logic[2m > [22m[2mshould allow workers and knights to target enemy human buildings
+[22m[39mStarting enemy building targeting test...
+[Entity 236] CONSTRUCTOR START: type=unit at 10,10
+[Entity 236] Calling registerEntity...
+[Entity 236] registerEntity returned.
+[Entity 236] Calling updatePosition...
+[Entity 236] updatePosition returned.
+[DIAG] Actor Created ID: 236
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10 Special:false
+[UnitCore.js] Unit Created ID:2 Role:worker Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:2
+[Entity 237] CONSTRUCTOR START: type=building at 12,10
+[Entity 237] Calling registerEntity...
+[Entity 237] registerEntity returned.
+[Entity 237] Calling updatePosition...
+[Entity 237] updatePosition returned.
+Worker Faction: player, Tower Faction: enemy
+
+ [31m笶ｯ[39m src/tests/FactionPersistence.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 702[2mms[22m[39m
+     [33m[2m笨・[22m[39m should persist unit and building faction across save/load [33m 479[2mms[22m[39m
+[31m     [31mﾃ・[31m should only add food to player pool from player farms[39m[32m 108[2mms[22m[39m
+[31m     [31mﾃ・[31m should allow workers and knights to target enemy human buildings[39m[32m 107[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 09:52:37
+[2m   Duration [22m 1.94s[2m (transform 499ms, setup 95ms, import 539ms, tests 702ms, environment 423ms)[22m
+
 [90mstdout[2m | Terrain.generateTrees (C:\Users\mooya\develop\test\src\Terrain.ts:1054:17)
-[22m[39m[Terrain] Generated 252 trees (Preview=true, Density=0.2).
+[22m[39m[Terrain] Generated 506 trees (Preview=true, Density=0.2).
 
 [90mstdout[2m | GoblinManager.reset (C:\Users\mooya\develop\test\src\GoblinManager.js:43:17)
 [22m[39mResetting GoblinManager...
@@ -2034,40 +2924,32 @@ FishManager Refactored: Initialized with Entity-based Fish.
 [22m[39m[GoblinManager] 1蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
 
 [90mstdout[2m | GoblinManager.generateCaves (C:\Users\mooya\develop\test\src\GoblinManager.js:115:17)
-[22m[39m[GoblinManager] DETERMINISM: generateCaves start. rngState=1384425014
+[22m[39m[GoblinManager] DETERMINISM: generateCaves start. rngState=1443843326
 
 [90mstdout[2m | GoblinManager.generateCaves (C:\Users\mooya\develop\test\src\GoblinManager.js:122:40)
-[22m[39m[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.021372, 0.191632) -> Grid(2, 22) rngState=411526498
-[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.758333, 0.309223) -> Grid(91, 37) rngState=664051607
-[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.113084, 0.597695) -> Grid(13, 71) rngState=1283540430
+[22m[39m[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.051022, 0.527313) -> Grid(6, 63) rngState=1132394995
 
 [90mstdout[2m | new Entity (C:\Users\mooya\develop\test\src\Entity.ts:56:17)
-[22m[39m[Entity 161] CONSTRUCTOR START: type=building at 55,18
+[22m[39m[Entity 238] CONSTRUCTOR START: type=building at 6,63
 
 [90mstdout[2m | new Entity (C:\Users\mooya\develop\test\src\Entity.ts:89:21)
-[22m[39m[Entity 161] Calling registerEntity...
+[22m[39m[Entity 238] Calling registerEntity...
 
 [90mstdout[2m | new Entity (C:\Users\mooya\develop\test\src\Entity.ts:91:21)
-[22m[39m[Entity 161] registerEntity returned.
+[22m[39m[Entity 238] registerEntity returned.
 
 [90mstdout[2m | new Entity (C:\Users\mooya\develop\test\src\Entity.ts:95:17)
-[22m[39m[Entity 161] Calling updatePosition...
+[22m[39m[Entity 238] Calling updatePosition...
 
 [90mstdout[2m | new Entity (C:\Users\mooya\develop\test\src\Entity.ts:97:17)
-[22m[39m[Entity 161] updatePosition returned.
+[22m[39m[Entity 238] updatePosition returned.
 
 [90mstdout[2m | GoblinManager.createCave (C:\Users\mooya\develop\test\src\GoblinManager.js:207:21)
-[22m[39mGoblinManager: Cave registered at 55,18 
+[22m[39mGoblinManager: Cave registered at 6,63 
 
 [90mstdout[2m | GoblinManager.generateCaves (C:\Users\mooya\develop\test\src\GoblinManager.js:130:17)
-[22m[39m[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 1/1 (隧ｦ陦悟屓謨ｰ: 4)
+[22m[39m[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 1/1 (隧ｦ陦悟屓謨ｰ: 1)
 
 [90mstdout[2m | src\Game.ts:666:25
 [22m[39m[Game] Preview Ready.
-
-
-[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
-[2m   Start at [22m 01:09:08
-[2m   Duration [22m 2.07s[2m (transform 575ms, setup 88ms, import 650ms, tests 657ms, environment 440ms)[22m
 

@@ -24,6 +24,31 @@ export class Fish extends Actor {
 
         // Material
         Fish.assets.materials.fish = new THREE.MeshLambertMaterial({ color: 0x44AAFF });
+        Fish.assets.materials.fish.onBeforeCompile = (shader) => {
+            shader.vertexShader = shader.vertexShader.replace('#include <common>', `
+                #include <common>
+                varying vec3 vWorldPos;
+            `);
+            shader.vertexShader = shader.vertexShader.replace('#include <worldpos_vertex>', `
+                #include <worldpos_vertex>
+                vWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;
+            `);
+
+            shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `
+                #include <common>
+                varying vec3 vWorldPos;
+            `);
+            shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `
+                #include <color_fragment>
+                float depth = max(0.0, 0.25 - vWorldPos.y);
+                vec3 waterColor = vec3(0.0, 0.1, 0.2);
+                diffuseColor.rgb = mix(diffuseColor.rgb, waterColor, clamp(depth * 1.5, 0.0, 0.5));
+                
+                float dist = distance(vWorldPos, cameraPosition);
+                float fog = smoothstep(20.0, 60.0, dist);
+                diffuseColor.rgb = mix(diffuseColor.rgb, waterColor, fog * 0.8);
+            `);
+        };
 
         Fish.assets.initialized = true;
     }

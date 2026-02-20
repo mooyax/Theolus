@@ -34,10 +34,14 @@ export class Building extends Entity {
     get isDead(): boolean {
         // Destroyed if HP <= 0 OR if custom destruction logic (isDestroyed) says so
         if (this.hp <= 0) return true;
+        if (this._isDead) return true; // Respect flag from Entity.die()
         if ((this as any).isDestroyed && typeof (this as any).isDestroyed === 'function') {
             return (this as any).isDestroyed();
         }
         return false;
+    }
+    set isDead(val: boolean) {
+        this._isDead = val;
     }
 
     private _maxHp: number = 100;
@@ -56,6 +60,7 @@ export class Building extends Entity {
         super(scene, terrain, x, z, 'building');
 
         this.type = type;
+        this.userData.faction = 'player'; // Default
 
         // Stats Configuration
         let hp = 100;
@@ -73,7 +78,7 @@ export class Building extends Entity {
 
         // Backward Compatibility Data Structure
         // Many systems access building.userData directly.
-        this.userData = {
+        Object.assign(this.userData, {
             type: type,
             gridX: x,
             gridZ: z,
@@ -83,7 +88,7 @@ export class Building extends Entity {
             capacity: capacity,
             defense: defense,
             id: this.id // Link internal ID
-        };
+        });
 
         // Align Internal Loop Properties with userData
         this._population = 0;
@@ -203,6 +208,7 @@ export class Building extends Entity {
             population: this.population,
             hp: this.hp,
             rotationY: this.rotationY,
+            faction: this.userData ? this.userData.faction : 'player',
             id: this.id
         };
     }

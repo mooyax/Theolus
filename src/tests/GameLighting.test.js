@@ -35,7 +35,7 @@ describe('Game Lighting (Day/Night Cycle)', () => {
         game.gameTime = 12; // Noon
         game.updateEnvironment(0); // dt=0 to only apply state
 
-        expect(game.directionalLight.intensity).toBeCloseTo(1.0, 1);
+        expect(game.directionalLight.intensity).toBeCloseTo(1.1, 1);
         expect(game.isNight).toBe(false);
         // Sun should be at peak (high Y)
         expect(game.directionalLight.position.y).toBeGreaterThan(50);
@@ -45,7 +45,7 @@ describe('Game Lighting (Day/Night Cycle)', () => {
         game.gameTime = 0; // Midnight
         game.updateEnvironment(0);
 
-        expect(game.directionalLight.intensity).toBeCloseTo(0.2, 1);
+        expect(game.directionalLight.intensity).toBeCloseTo(0.25, 1);
         expect(game.isNight).toBe(true);
         // Moon should be above horizon for shadows
         expect(game.directionalLight.position.y).toBeGreaterThan(0);

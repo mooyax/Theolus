@@ -35,41 +35,68 @@ export class BuildingRenderer {
             clipShadows: true
         };
 
-        // --- HOUSE (New: Mini Castle Style 2x2) ---
-        // Fits in 2x2. Size approx 1.8
-        this.assets.houseWallGeo = new THREE.BoxGeometry(1.6, 0.8, 1.6);
-        this.assets.houseWallGeo.translate(0, 0.4, 0);
+        const houseWallMain = new THREE.BoxGeometry(1.6, 0.8, 1.6);
+        houseWallMain.translate(0, 0.4, 0);
 
-        // Stone Texture (Reuse Castle Logic)
+        // UV for Wall: Map V to [0.5, 1.0] (Upper half with windows)
+        const wallUv = houseWallMain.getAttribute('uv');
+        for (let i = 0; i < wallUv.count; i++) {
+            wallUv.setY(i, wallUv.getY(i) * 0.5 + 0.5);
+        }
+
+        const houseChimney = new THREE.BoxGeometry(0.3, 0.8, 0.3);
+        houseChimney.translate(0.5, 0.8, 0.5);
+
+        // UV for Chimney: Side faces map to windows-less stone, Top face to hole shadow
+        const chimneyUv = houseChimney.getAttribute('uv');
+        for (let i = 0; i < chimneyUv.count; i++) {
+            // i=8..11 are top face (Standard Cube UV ordering)
+            if (i >= 8 && i <= 11) {
+                // Map to Hole Shadow Area (Bottom right: 124,124 to 128,128)
+                // V: 124/128..128/128 -> UV V: 1.0 - (0.97..1.0) = 0..0.03
+                chimneyUv.setXY(i, 0.98, 0.02);
+            } else {
+                // Map to Plain Stone Area (Lower half: V 0.1 to 0.45)
+                chimneyUv.setY(i, chimneyUv.getY(i) * 0.35 + 0.1);
+            }
+        }
+
+        this.assets.houseWallGeo = BufferGeometryUtils.mergeGeometries([houseWallMain, houseChimney]);
+
+        // Stone Texture (Enlarged to 128x128 to separate areas)
         const canvasC = document.createElement('canvas');
-        canvasC.width = 128; canvasC.height = 64;
+        canvasC.width = 128; canvasC.height = 128; // Increased height
         const ctxC = canvasC.getContext('2d');
 
         const canvasCE = document.createElement('canvas');
-        canvasCE.width = 128; canvasCE.height = 64;
+        canvasCE.width = 128; canvasCE.height = 128; // Increased height
         const ctxCE = canvasCE.getContext('2d');
 
-        // B1. Base Stone Gray/Brown
-        ctxC.fillStyle = '#654321'; ctxC.fillRect(0, 0, 128, 64);
-        ctxCE.fillStyle = '#000000'; ctxCE.fillRect(0, 0, 128, 64);
+        // B1. Base Stone Gray/Brown (Entire Canvas)
+        ctxC.fillStyle = '#654321'; ctxC.fillRect(0, 0, 128, 128);
+        ctxCE.fillStyle = '#000000'; ctxCE.fillRect(0, 0, 128, 128);
 
-        // B2. Stone Bricks Pattern
+        // B2. Stone Bricks Pattern (Upper Half for Wall, Lower Half for Chimney Side)
         ctxC.fillStyle = '#5A3A1A';
-        for (let y = 0; y < 64; y += 16) {
+        for (let y = 0; y < 128; y += 16) {
             for (let x = 0; x < 128; x += 16) {
                 if (((x + y) / 16) % 2 === 0) ctxC.fillRect(x + 1, y + 1, 14, 14);
             }
         }
 
-        // B3. Windows 
+        // B2.5 Hole Shadow (Bottom Right corner)
+        ctxC.fillStyle = '#111';
+        ctxC.fillRect(124, 124, 4, 4);
+
+        // B3. Windows (ONLY in Upper Half: Y 0-64)
         const drawCastleWindow = (cx, cy) => {
             ctxC.fillStyle = '#111';
             ctxC.fillRect(cx - 6, cy - 8, 12, 16);
             ctxCE.fillStyle = '#FFFFFF';
             ctxCE.fillRect(cx - 4, cy - 6, 8, 12);
         };
-        drawCastleWindow(32, 32);
-        drawCastleWindow(96, 32);
+        drawCastleWindow(32, 24); // Y within 0-64
+        drawCastleWindow(96, 24); // Y within 0-64
 
         this.assets.houseWallMat = new THREE.MeshLambertMaterial({
             ...matOptions,
@@ -243,8 +270,19 @@ export class BuildingRenderer {
         // Center of 3x3 is (x+1, z+1). 
         // Visual size ~2.5x2.5
         // Taller Walls (User Request): 0.8 -> 1.2
-        this.assets.barracksGeo = new THREE.BoxGeometry(2.4, 1.2, 2.4);
-        this.assets.barracksGeo.translate(0, 0.6, 0);
+        const barracksWallMain = new THREE.BoxGeometry(2.4, 1.2, 2.4);
+        barracksWallMain.translate(0, 0.6, 0);
+
+        const barracksChimney = new THREE.BoxGeometry(0.4, 1.0, 0.4);
+        barracksChimney.translate(0.8, 1.2, 0.8);
+
+        // UV Adjustment for Barracks Chimney Hole
+        const buvAttr = barracksChimney.getAttribute('uv');
+        for (let i = 8; i <= 11; i++) {
+            buvAttr.setXY(i, 0.96, 0.05); // Fixed V
+        }
+
+        this.assets.barracksGeo = BufferGeometryUtils.mergeGeometries([barracksWallMain, barracksChimney]);
 
         // Barracks Texture (Medieval Stone - Wider)
         const canvasM = document.createElement('canvas');
@@ -266,6 +304,10 @@ export class BuildingRenderer {
                 if (((x + y) / 16) % 2 === 0) ctxM.fillRect(x + 1, y + 1, 14, 14);
             }
         }
+
+        // M2.5 Special Shadow for Chimney Hole
+        ctxM.fillStyle = '#0a0a0a';
+        ctxM.fillRect(120, 56, 8, 8);
 
         // M3. Windows (3 Windows for wider facade)
         const drawMansionWindow = (cx, cy) => {
@@ -444,11 +486,11 @@ export class BuildingRenderer {
 
         // Colors
         const colorRoof = new THREE.Color(0xFFFFFF); // White to show texture
-        const colorRoofEnemy = new THREE.Color(0x4169E1); // Royal Blue
+        const colorRoofEnemy = new THREE.Color(0x5D4037); // Dark Brown (User request: Faction distinction)
         const colorBarracksRoof = new THREE.Color(0xFFFFFF);
         const colorGoblinHut = new THREE.Color(0xAAAAAA);
         const colorTowerPlayer = new THREE.Color(0xeeeeee);
-        const colorTowerEnemy = new THREE.Color(0x8B4513); // Saddle Brown
+        const colorTowerEnemy = new THREE.Color(0x4D342E); // Darker Brown
 
 
 
@@ -517,9 +559,9 @@ export class BuildingRenderer {
 
                         // Faction Color for Farms
                         if (b.userData && b.userData.faction === 'enemy') {
-                            this.meshes.farms.setColorAt(fIdx, new THREE.Color(0x8B4513)); // SaddleBrown
+                            this.meshes.farms.setColorAt(fIdx, new THREE.Color(0x3E2723)); // Dark Muddy Brown
                         } else {
-                            this.meshes.farms.setColorAt(fIdx, new THREE.Color(0xFFFFFF)); // Default
+                            this.meshes.farms.setColorAt(fIdx, new THREE.Color(0xA8E4A0)); // Soft Green (Mixed with yellow texture = healthy field)
                         }
 
                         fIdx++;
@@ -543,14 +585,14 @@ export class BuildingRenderer {
                         this.meshes.towers.setMatrixAt(tIdx, dummy.matrix);
                         // Faction Color (Tower Body)
                         if (b.userData && b.userData.faction === 'enemy') {
-                            this.meshes.towers.setColorAt(tIdx, colorRoofEnemy); // Unified Blue
+                            this.meshes.towers.setColorAt(tIdx, colorRoofEnemy); // Dark Brown
                         } else {
                             this.meshes.towers.setColorAt(tIdx, colorTowerPlayer);
                         }
 
                         this.meshes.towerRims.setMatrixAt(tIdx, dummy.matrix);
                         if (b.userData && b.userData.faction === 'enemy') {
-                            this.meshes.towerRims.setColorAt(tIdx, colorRoofEnemy); // Unified Blue
+                            this.meshes.towerRims.setColorAt(tIdx, colorTowerEnemy); // Darker Brown
                         } else {
                             this.meshes.towerRims.setColorAt(tIdx, colorTowerPlayer);
                         }
@@ -581,14 +623,23 @@ export class BuildingRenderer {
         this.meshes.houseWalls.instanceMatrix.needsUpdate = true;
         this.meshes.houseRoofs.instanceMatrix.needsUpdate = true;
         if (this.meshes.houseRoofs.instanceColor) this.meshes.houseRoofs.instanceColor.needsUpdate = true;
+
         this.meshes.farms.instanceMatrix.needsUpdate = true;
+        if (this.meshes.farms.instanceColor) this.meshes.farms.instanceColor.needsUpdate = true;
+
         this.meshes.goblinHuts.instanceMatrix.needsUpdate = true;
         if (this.meshes.goblinHuts.instanceColor) this.meshes.goblinHuts.instanceColor.needsUpdate = true;
+
         this.meshes.barracksWalls.instanceMatrix.needsUpdate = true;
         this.meshes.barracksRoofs.instanceMatrix.needsUpdate = true;
         if (this.meshes.barracksRoofs.instanceColor) this.meshes.barracksRoofs.instanceColor.needsUpdate = true;
+
         this.meshes.towers.instanceMatrix.needsUpdate = true;
+        if (this.meshes.towers.instanceColor) this.meshes.towers.instanceColor.needsUpdate = true;
+
         this.meshes.towerRims.instanceMatrix.needsUpdate = true;
+        if (this.meshes.towerRims.instanceColor) this.meshes.towerRims.instanceColor.needsUpdate = true;
+
         this.meshes.caves.count = cIdx;
         this.meshes.caves.instanceMatrix.needsUpdate = true;
     }

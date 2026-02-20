@@ -24,6 +24,7 @@ export class Terrain {
     public chunkSize: number = 20;
     public gridLinesMesh: THREE.LineSegments | null = null;
     public gridDotsMesh: THREE.Points | null = null;
+    private terrainUniforms: any = { uTime: { value: 0 } };
 
     // --- State and Flags ---
     private _biomeColors: any; // Cache for getBiomeColor
@@ -789,6 +790,86 @@ export class Terrain {
         this.mesh.receiveShadow = true; // Enable shadows on terrain!
         this.mesh.castShadow = true;    // Enable self-shadowing (terrain casts shadow on itself)
 
+        // --- CAUSTICS SHADER INJECTION ---
+        material.onBeforeCompile = (shader) => {
+            shader.uniforms.uTime = this.terrainUniforms.uTime;
+
+            shader.vertexShader = shader.vertexShader.replace('#include <common>', `
+                #include <common>
+                varying vec3 vWorldPosition;
+            `);
+
+            shader.vertexShader = shader.vertexShader.replace(
+                '#include <worldpos_vertex>',
+                `
+                #include <worldpos_vertex>
+                vWorldPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;
+                `
+            );
+
+            shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `
+                #include <common>
+                uniform float uTime;
+                varying vec3 vWorldPosition;
+
+                // Simple Voronoi-like Caustics
+                float getCaustics(vec2 p, float time) {
+                    p *= 0.8;
+                    vec2 i = floor(p);
+                    vec2 f = fract(p);
+                    float res = 1.0;
+                    for (int y = -1; y <= 1; y++) {
+                        for (int x = -1; x <= 1; x++) {
+                            vec2 b = vec2(float(x), float(y));
+                            vec2 r = b - f + sin(6.28 * (fract(sin(dot(i + b, vec2(12.9898, 78.233))) * 43758.5453) + time * 0.5));
+                            res = min(res, dot(r, r));
+                        }
+                    }
+                    return pow(1.0 - sqrt(res), 3.0) * 1.5;
+                }
+            `);
+
+            shader.fragmentShader = shader.fragmentShader.replace(
+                '#include <color_fragment>',
+                `
+                #include <color_fragment>
+                
+                // Only apply below water level (y < 0.2)
+                if (vWorldPosition.y < 0.25) {
+                    float time = uTime * 0.25; // Slowed down from 0.8
+                    vec2 uv = vWorldPosition.xz * 0.4;
+                    
+                    // Layer 1
+                    float c1 = getCaustics(uv + vec2(time * 0.05, time * 0.02), time);
+                    // Layer 2
+                    float c2 = getCaustics(uv * 1.5 - vec2(time * 0.03, time * 0.06), time * 1.2);
+                    
+                    float caustics = max(c1, c2 * 0.6);
+                    
+                    // --- UNDERWATER FOG & TINT ---
+                    // 1. Depth-based blue-green tint
+                    float depth = max(0.0, 0.25 - vWorldPosition.y);
+                    vec3 waterTint = vec3(0.0, 0.2, 0.3) * depth * 0.8;
+                    diffuseColor.rgb = mix(diffuseColor.rgb, waterTint, clamp(depth * 2.0, 0.0, 0.6));
+
+                    // 2. Caustics (Modified)
+                    // Fade out near water surface
+                    float depthFade = smoothstep(0.25, -0.1, vWorldPosition.y);
+                    caustics *= depthFade;
+                    
+                    // Bright cyan highlight for caustics (Slightly milder)
+                    diffuseColor.rgb += vec3(0.2, 0.5, 0.6) * caustics * 0.45;
+
+                    // 3. Simple Underwater Distance "Fog"
+                    // Make far away objects look more bluish/blurred
+                    float dist = distance(vWorldPosition, cameraPosition);
+                    float fogFactor = smoothstep(20.0, 60.0, dist);
+                    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.0, 0.1, 0.2), fogFactor * depthFade);
+                }
+                `
+            );
+        };
+
         // 1. Grid Lines (Gray) - User Request
         const gridGeo = new THREE.BufferGeometry();
         gridGeo.setAttribute('position', this.geometry.attributes.position);
@@ -847,60 +928,136 @@ export class Terrain {
         }
     }
 
+    private createWaterNormalTexture(): THREE.Texture {
+        const size = 256;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.fillStyle = 'rgb(128, 128, 255)'; // Default normal
+            ctx.fillRect(0, 0, size, size);
+            for (let i = 0; i < 400; i++) {
+                const x = Math.random() * size;
+                const y = Math.random() * size;
+                const r = 10 + Math.random() * 15;
+                const nx = 128 + (Math.random() - 0.5) * 180;
+                const ny = 128 + (Math.random() - 0.5) * 180;
+
+                // Draw multiple times to ensure seamless tiling
+                for (let dx = -1; dx <= 1; dx++) {
+                    for (let dy = -1; dy <= 1; dy++) {
+                        const px = x + dx * size;
+                        const py = y + dy * size;
+
+                        const grad = ctx.createRadialGradient(px, py, 0, px, py, r);
+                        grad.addColorStop(0, `rgba(${Math.floor(nx)}, ${Math.floor(ny)}, 255, 0.5)`);
+                        grad.addColorStop(1, 'rgba(128, 128, 255, 0)');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(px - r, py - r, r * 2, r * 2);
+                    }
+                }
+            }
+        }
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        return tex;
+    }
+
     createWater() {
         if (this.waterMesh) this.scene.remove(this.waterMesh);
 
-        // Increase segments for smoother waves (64x64)
-        const waterGeo = new THREE.PlaneGeometry(this.width, this.depth, 64, 64);
-        const waterMat = new THREE.MeshLambertMaterial({
-            color: 0x1E90FF,
+        const waterGeo = new THREE.PlaneGeometry(this.width, this.depth, 128, 128);
+        const normalMap = this.createWaterNormalTexture();
+
+        const waterMat = new THREE.MeshPhongMaterial({
+            color: 0x0077be, // Ocean Blue
             transparent: true,
-            opacity: 0.6,
+            opacity: 0.65,
+            shininess: 60,      // Reduced to prevent "too strong" reflection
+            specular: 0x111111,  // Darker (was 0x666666)
             side: THREE.DoubleSide,
             clippingPlanes: this.clippingPlanes,
             clipShadows: false
         });
 
-        // Add Uniforms for Shader
         const uniforms = {
             uTime: { value: 0 },
-            uSwayIntensity: { value: 1.0 }
+            uSwayIntensity: { value: 1.0 },
+            uNormalMap: { value: normalMap }
         };
 
         waterMat.onBeforeCompile = (shader) => {
             shader.uniforms.uTime = uniforms.uTime;
             shader.uniforms.uSwayIntensity = uniforms.uSwayIntensity;
+            shader.uniforms.uNormalMap = uniforms.uNormalMap;
 
-            // Inject Vertex Shader logic for waves
             shader.vertexShader = `
                 uniform float uTime;
                 uniform float uSwayIntensity;
+                varying vec2 vScrollingUv1;
+                varying vec2 vScrollingUv2;
             ` + shader.vertexShader;
 
             shader.vertexShader = shader.vertexShader.replace(
                 '#include <begin_vertex>',
                 `
-                vec3 transformed = vec3(position);
-                // Reduced amplitudes to prevent clipping with ground (Total max: 0.045 * intensity)
-                float wave1 = sin(position.x * 1.2 + uTime * 1.0) * 0.02 * uSwayIntensity;
-                float wave2 = sin(position.y * 1.5 + uTime * 1.2) * 0.015 * uSwayIntensity;
-                float wave3 = sin((position.x + position.y) * 0.8 + uTime * 0.8) * 0.01 * uSwayIntensity;
-                transformed.z += wave1 + wave2 + wave3;
+                #include <begin_vertex>
+                vScrollingUv1 = uv * 3.5 + vec2(uTime * 0.05, uTime * 0.02); 
+                vScrollingUv2 = uv * 3.5 + vec2(uTime * -0.04, uTime * 0.05); 
+
+                float wave = sin(position.x * 0.6 + uTime * 1.2) * 0.04 * uSwayIntensity;
+                wave += cos(position.y * 0.8 + uTime * 1.0) * 0.03 * uSwayIntensity;
+                transformed.z += wave;
+                `
+            );
+
+            shader.fragmentShader = `
+                uniform float uSwayIntensity;
+                uniform sampler2D uNormalMap;
+                varying vec2 vScrollingUv1;
+                varying vec2 vScrollingUv2;
+            ` + shader.fragmentShader;
+
+            // USE THE MOST STABLE INJECTION POINTS
+            shader.fragmentShader = shader.fragmentShader.replace(
+                '#include <normal_fragment_begin>',
+                `
+                #include <normal_fragment_begin>
+                vec3 n1 = texture2D(uNormalMap, vScrollingUv1).rgb * 2.0 - 1.0;
+                vec3 n2 = texture2D(uNormalMap, vScrollingUv2).rgb * 2.0 - 1.0;
+                
+                // Pure horizontal perturbation for "Flow"
+                vec3 horizontalFlow = n1 + n2;
+                horizontalFlow.z *= 0.1; // Minimize Z contribution to keep normal upright
+                
+                normal = normalize(normal + normalize(horizontalFlow) * 0.4); 
+                `
+            );
+
+            shader.fragmentShader = shader.fragmentShader.replace(
+                '#include <dithering_fragment>',
+                `
+                #include <dithering_fragment>
+                
+                vec3 viewDir = normalize(vViewPosition);
+                float fresnel = pow(1.0 - max(dot(viewDir, normal), 0.0), 3.0);
+                
+                // Overlay subtle highlights and modify opacity
+                gl_FragColor.rgb += vec3(fresnel * 0.1); 
+                gl_FragColor.a = 0.5 + fresnel * 0.4;
                 `
             );
         };
 
-        // Attach uniforms to material for easy access in update()
         (waterMat as any).uniforms = uniforms;
 
         this.waterMesh = new THREE.Mesh(waterGeo, waterMat);
         this.waterMesh.rotation.x = -Math.PI / 2;
-        this.waterMesh.position.set(0, 0.2, 0); // Slightly above 0
+        this.waterMesh.position.set(0, 0.2, 0);
 
         const s = this.scene || (window as any).game?.scene;
-        if (s && s.add) {
-            s.add(this.waterMesh);
-        }
+        if (s && s.add) s.add(this.waterMesh);
     }
 
     updateLights(gameTime) {
@@ -2341,10 +2498,17 @@ export class Terrain {
                         else building.userData.population -= 100;
 
                         if (currentResources) {
-                            const moisture = this.grid[bx] && this.grid[bx][bz] ? (this.grid[bx][bz].moisture || 0.5) : 0.5;
-                            const efficiency = Math.max(0.2, 1.0 - Math.abs(moisture - 0.5) * 2.0);
-                            const baseYield = (GameConfig.economy && GameConfig.economy.food && GameConfig.economy.food.farmBaseYield) || 4;
-                            currentResources.grain += Math.max(1, Math.floor(baseYield * efficiency));
+                            // ONLY add resources to player pool if the farm belongs to the player
+                            const faction = building.userData ? building.userData.faction : null;
+                            const isPlayerFarm = (faction === 'player' || !faction);
+
+                            if (isPlayerFarm) {
+                                const moisture = this.grid[bx] && this.grid[bx][bz] ? (this.grid[bx][bz].moisture || 0.5) : 0.5;
+                                const efficiency = Math.max(0.2, 1.0 - Math.abs(moisture - 0.5) * 2.0);
+                                const baseYield = (GameConfig.economy && GameConfig.economy.food && GameConfig.economy.food.farmBaseYield) || 4;
+                                const added = Math.max(1, Math.floor(baseYield * efficiency));
+                                currentResources.grain += added;
+                            }
                         }
                     }
                 }
@@ -2357,12 +2521,15 @@ export class Terrain {
     }
 
     update(deltaTime, spawnCallback, isNight, activeUnits = 0, isGameActive = true, resources?: any, swayIntensity: number = 1.0) {
-        console.log(`[Terrain FORCE] update entered. dt:${deltaTime} Active:${isGameActive} Units:${activeUnits}`);
-        // if (this.frameCount && this.frameCount % 60 === 0) console.log(`[Terrain DIAG UPDATE] dt:${deltaTime} Active:${isGameActive} Units:${activeUnits}`);
         // 1. Visual Updates
         if (this.colorsDirty) {
             this.updateColors();
             this.colorsDirty = false;
+        }
+
+        // Update Uniforms
+        if (this.terrainUniforms && this.terrainUniforms.uTime) {
+            this.terrainUniforms.uTime.value += deltaTime;
         }
 
         if (this.waterMesh && (this.waterMesh.material as any) && (this.waterMesh.material as any).uniforms) {
@@ -2432,7 +2599,8 @@ export class Terrain {
             l: b.userData.level || 1,
             x: b.gridX !== undefined ? b.gridX : b.userData.gridX,
             z: b.gridZ !== undefined ? b.gridZ : b.userData.gridZ,
-            r: (b.rotationY !== undefined) ? Math.round(b.rotationY * 100) / 100 : 0
+            r: (b.rotationY !== undefined) ? Math.round(b.rotationY * 100) / 100 : 0,
+            f: b.userData.faction // ADDED: persistent faction
         }));
 
         const data: any = {
@@ -2537,6 +2705,8 @@ export class Terrain {
                         if (await this.checkYield()) {
                             if (onProgress) onProgress(50 + Math.floor((i / data.b.length) * 40));
                         }
+                        // Diagnostic log for building restoration
+                        console.log(`[Terrain] Restoring building ${i + 1}/${data.b.length}: Type=${bd.t}, Pos=(${bd.x},${bd.z}), Faction=${bd.f}`);
 
                         const restoreData = {
                             gridX: bd.x,
@@ -2544,7 +2714,8 @@ export class Terrain {
                             type: bd.t,
                             population: bd.p,
                             level: bd.l || 1,
-                            rotationY: bd.r
+                            rotationY: bd.r,
+                            faction: bd.f // RESTORE: faction
                         };
 
                         try {
@@ -2609,6 +2780,7 @@ export class Terrain {
                                 type: type,
                                 population: (bData.p !== undefined) ? bData.p : bData.population,
                                 rotationY: (bData.r !== undefined) ? bData.r : bData.rotationY,
+                                faction: bData.f || bData.faction || 'player', // Legacy support
                                 userData: bData.userData || {}
                             };
 
@@ -2656,7 +2828,7 @@ export class Terrain {
 
 
     restoreHouse(data) {
-        const building = this.addBuilding('house', data.gridX, data.gridZ, true, false, 'player');
+        const building = this.addBuilding('house', data.gridX, data.gridZ, true, false, data.faction || 'player');
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
@@ -2667,7 +2839,7 @@ export class Terrain {
     }
 
     restoreFarm(data) {
-        const building = this.addBuilding('farm', data.gridX, data.gridZ, true, false, 'player');
+        const building = this.addBuilding('farm', data.gridX, data.gridZ, true, false, data.faction || 'player');
         if (building) {
             // HP is correctly initialized in Building constructor using GameConfig
             if (data.rotationY !== undefined) building.rotationY = data.rotationY;
@@ -2675,7 +2847,7 @@ export class Terrain {
     }
 
     restoreMansion(data) {
-        const building = this.addBuilding('mansion', data.gridX, data.gridZ, true, false, 'player');
+        const building = this.addBuilding('mansion', data.gridX, data.gridZ, true, false, data.faction || 'player');
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
@@ -2687,7 +2859,7 @@ export class Terrain {
 
     // Legacy support
     restoreCastle(data) {
-        const b = this.addBuilding('castle', data.gridX, data.gridZ, true, false, 'player');
+        const b = this.addBuilding('castle', data.gridX, data.gridZ, true, false, data.faction || 'player');
         if (b) {
             (b as any).population = data.population || 0;
             (b as any).userData.population = data.population || 0;
@@ -2720,7 +2892,7 @@ export class Terrain {
 
     restoreGoblinHut(data) {
         // Use addBuilding to ensure consistency with other buildings
-        const building = this.addBuilding('goblin_hut', data.gridX, data.gridZ, true, false, 'enemy');
+        const building = this.addBuilding('goblin_hut', data.gridX, data.gridZ, true, false, data.faction || 'enemy');
         if (building) {
             building.population = data.population || 1;
             building.userData.population = data.population || 1;
@@ -2731,7 +2903,7 @@ export class Terrain {
     }
 
     restoreTower(data) {
-        const building = this.addBuilding('tower', data.gridX, data.gridZ, true, false, 'player');
+        const building = this.addBuilding('tower', data.gridX, data.gridZ, true, false, data.faction || 'player');
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
@@ -2741,7 +2913,7 @@ export class Terrain {
 
     restoreBarracks(data) {
         // Handle migration from Mansion -> Barracks if needed, or just standard restore
-        const building = this.addBuilding('barracks', data.gridX, data.gridZ, true, false, 'player');
+        const building = this.addBuilding('barracks', data.gridX, data.gridZ, true, false, data.faction || 'player');
         if (building) {
             building.population = data.population || 0;
             building.userData.population = data.population || 0;
@@ -2754,7 +2926,7 @@ export class Terrain {
         // Special: Caves might be auto-flattened or integrated differently.
         // Just use addBuilding to ensure visual creation.
         // HOWEVER, removeBuilding blocks cave removal. Checks?
-        const building = this.addBuilding('cave', data.gridX, data.gridZ, true, false, 'enemy');
+        const building = this.addBuilding('cave', data.gridX, data.gridZ, true, false, data.faction || 'enemy');
         // Cave pop?
         if (building) {
             building.population = data.population || 0;
