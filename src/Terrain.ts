@@ -812,6 +812,24 @@ export class Terrain {
                 uniform float uTime;
                 varying vec3 vWorldPosition;
 
+                // Simple hash-based noise
+                float hash(vec2 p) {
+                    p = fract(p * vec2(123.34, 456.21));
+                    p += dot(p, p + 45.32);
+                    return fract(p.x * p.y);
+                }
+
+                float getNoise(vec2 p) {
+                    vec2 i = floor(p);
+                    vec2 f = fract(p);
+                    float a = hash(i);
+                    float b = hash(i + vec2(1.0, 0.0));
+                    float c = hash(i + vec2(0.0, 1.0));
+                    float d = hash(i + vec2(1.0, 1.0));
+                    vec2 u = f * f * (3.0 - 2.0 * f);
+                    return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+                }
+
                 // Simple Voronoi-like Caustics
                 float getCaustics(vec2 p, float time) {
                     p *= 0.8;
@@ -834,9 +852,26 @@ export class Terrain {
                 `
                 #include <color_fragment>
                 
-                // Only apply below water level (y < 0.2)
+                // --- 1. CLOUD SHADOWS (Applies to everything) ---
+                float cloudTime = uTime * 0.12; 
+                // Combine two noise layers for more realistic cloud shapes
+                float c1 = getNoise(vWorldPosition.xz * 0.03 + vec2(cloudTime, cloudTime * 0.5));
+                float c2 = getNoise(vWorldPosition.xz * 0.08 - vec2(cloudTime * 0.4, cloudTime * 0.8));
+                float cloud = smoothstep(0.3, 0.9, c1 * c2 + c1 * 0.4);
+                diffuseColor.rgb *= mix(1.0, 0.55, cloud); // Stronger contrast (45% darker)
+
+                // --- 2. MICRO-NOISE (Texture detail) ---
+                float micro = hash(vWorldPosition.xz * 128.0);
+                diffuseColor.rgb *= 0.94 + 0.12 * micro;
+
+                // --- 3. SLOPE DARKENING (Depth/3D feel) ---
+                // vNormal is world normal in MeshPhongMaterial after build
+                float slope = 1.0 - vNormal.y;
+                diffuseColor.rgb *= mix(1.0, 0.82, smoothstep(0.3, 0.8, slope));
+
+                // --- 4. UNDERWATER EFFECTS ---
                 if (vWorldPosition.y < 0.25) {
-                    float time = uTime * 0.25; // Slowed down from 0.8
+                    float time = uTime * 0.25; 
                     vec2 uv = vWorldPosition.xz * 0.4;
                     
                     // Layer 1
