@@ -257,7 +257,7 @@ export class Minimap {
     }
 
     private drawViewFrame(scaleX: number, scaleY: number, logicalW: number, logicalD: number) {
-        if (!this.ctx) return;
+        if (!this.ctx || !this.canvas) return;
 
         const cx = this.game.controls ? this.game.controls.target.x : this.game.camera.position.x;
         const cz = this.game.controls ? this.game.controls.target.z : this.game.camera.position.z;
@@ -266,20 +266,31 @@ export class Minimap {
         let gx = cx + logicalW / 2;
         let gz = cz + logicalD / 2;
 
-        // Modulo
+        // Modulo to wrap around logical bounds
         gx = ((gx % logicalW) + logicalW) % logicalW;
         gz = ((gz % logicalD) + logicalD) % logicalD;
 
         const mx = gx * scaleX;
         const my = gz * scaleY;
 
-        // Fixed radius
+        // Fixed radius from config
         const viewRadius = GameConfig.render && GameConfig.render.viewRadius ? GameConfig.render.viewRadius : 60;
         const rX = viewRadius * scaleX;
         const rY = viewRadius * scaleY;
 
         this.ctx.strokeStyle = 'white';
         this.ctx.lineWidth = 1;
-        this.ctx.strokeRect(mx - rX, my - rY, rX * 2, rY * 2);
+
+        // Draw multiple times to handle wrapping (3x3 grid)
+        const cw = this.canvas.width;
+        const ch = this.canvas.height;
+
+        for (let ox = -1; ox <= 1; ox++) {
+            for (let oy = -1; oy <= 1; oy++) {
+                const drawX = mx - rX + (ox * cw);
+                const drawY = my - rY + (oy * ch);
+                this.ctx.strokeRect(drawX, drawY, rX * 2, rY * 2);
+            }
+        }
     }
 }
