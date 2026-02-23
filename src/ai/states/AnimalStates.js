@@ -24,6 +24,7 @@ export class SheepFlee extends State {
     constructor(actor) {
         super(actor);
         this.fleeTimer = 0;
+        this.refreshTimer = 0;
     }
 
     enter() {
@@ -33,34 +34,43 @@ export class SheepFlee extends State {
 
     update(time, deltaTime) {
         this.fleeTimer += deltaTime;
+        this.refreshTimer += deltaTime;
+
+        const pred = this.actor.targetPredator;
+
+        // 1. EXIT CONDITIONS
+        // - Dead predator
+        // - Too far away (Escaped!)
+        // - Flee timer elapsed (5s)
+        let shouldStop = false;
+
+        if (!pred || pred.isDead) {
+            shouldStop = true;
+        } else {
+            const distSq = this.actor.getDistance(pred.gridX, pred.gridZ);
+            if (distSq > 10.0) {
+                shouldStop = true; // Escaped the range!
+            }
+        }
+
         if (this.fleeTimer > 5.0) {
-            // Calm down
+            shouldStop = true;
+        }
+
+        if (shouldStop) {
             this.actor.targetPredator = null;
             this.actor.changeState(new SheepWander(this.actor));
             return;
         }
 
-        if (this.actor.targetPredator) {
-            // Run away!
-            // Naive flee: Move away from predator
-            const pred = this.actor.targetPredator;
-            const dx = this.actor.gridX - pred.gridX;
-            const dz = this.actor.gridZ - pred.gridZ;
-
-            // Normalize and step
-            // Just verify we move AWAY.
-            // If too close, panic run.
-
-            // TODO: Implement flee movement logic in Sheep.js or here?
-            // Calling actor.fleeFrom(predator) is best.
+        // 2. MOVEMENT (Throttled update to avoid jitter)
+        if (this.refreshTimer > 0.6) {
+            this.refreshTimer = 0;
             if (this.actor.fleeFrom) {
                 this.actor.fleeFrom(pred, time);
             } else {
-                // Fallback: Just wander randomly (panic)
                 this.actor.moveRandomly(time);
             }
-        } else {
-            this.actor.changeState(new SheepWander(this.actor));
         }
     }
 }

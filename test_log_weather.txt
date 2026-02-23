@@ -1,0 +1,81 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/WeatherSway.test.js
+[22m[39m[DEBUG] Building.ts loaded
+
+[90mstdout[2m | src/tests/WeatherSway.test.js
+[22m[39m[DEBUG] Terrain.ts top-level load
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in water material
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+[BuildingRenderer] Initializing Assets...
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in water material
+[22m[39mTower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in water material
+[22m[39m[BuildingRenderer] Initialization Complete.
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in water material
+[22m[39m[TreeRenderer] Initializing Assets...
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in farm material
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+[BuildingRenderer] Initializing Assets...
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in farm material
+[22m[39mTower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in farm material
+[22m[39m[BuildingRenderer] Initialization Complete.
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in farm material
+[22m[39m[TreeRenderer] Initializing Assets...
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in tree leaf material
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+[BuildingRenderer] Initializing Assets...
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in tree leaf material
+[22m[39mTower Geometry Initialized (Split Mode)
+Tower Debug: Generated High-Res Tower Texture + Cap Material
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in tree leaf material
+[22m[39m[BuildingRenderer] Initialization Complete.
+
+[90mstdout[2m | src/tests/WeatherSway.test.js[2m > [22m[2mWeather Sway Intensity[2m > [22m[2mshould update uSwayIntensity in tree leaf material
+[22m[39m[TreeRenderer] Initializing Assets...
+
+ [31m笶ｯ[39m src/tests/WeatherSway.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 342[2mms[22m[39m
+[31m     [31mﾃ・[31m should update uSwayIntensity in water material[39m[32m 128[2mms[22m[39m
+[31m     [31mﾃ・[31m should update uSwayIntensity in farm material[39m[32m 96[2mms[22m[39m
+[31m     [31mﾃ・[31m should update uSwayIntensity in tree leaf material[39m[32m 116[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 3 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/WeatherSway.test.js > Weather Sway Intensity > should update uSwayIntensity in water material
+ FAIL  src/tests/WeatherSway.test.js > Weather Sway Intensity > should update uSwayIntensity in farm material
+ FAIL  src/tests/WeatherSway.test.js > Weather Sway Intensity > should update uSwayIntensity in tree leaf material
+TypeError: geo.setAttribute is not a function
+ 笶ｯ TreeRenderer.applyAO src/TreeRenderer.js:116:13
+    114|             colors.push(b, b, b);
+    115|         }
+    116|         geo.setAttribute('color', new THREE.Float32BufferAttribute(col窶ｦ
+       |             ^
+    117|     }
+    118| 
+ 笶ｯ TreeRenderer.initAssets src/TreeRenderer.js:36:14
+ 笶ｯ TreeRenderer.init src/TreeRenderer.js:18:14
+ 笶ｯ src/tests/WeatherSway.test.js:29:28
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/3]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[90m (3)[39m
+[2m   Start at [22m 15:57:13
+[2m   Duration [22m 1.36s[2m (transform 274ms, setup 98ms, import 272ms, tests 342ms, environment 459ms)[22m
+

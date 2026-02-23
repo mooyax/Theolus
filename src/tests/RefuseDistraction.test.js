@@ -32,17 +32,17 @@ describe('Refuse Distraction Reconstructed', () => {
         unit.id = 1; // Explicit ID
         game.units = [unit];
         window.game = game;
-    });
 
+    });
     afterEach(() => {
         vi.restoreAllMocks();
-    });
 
+    });
     it('should initialize correctly', () => {
         expect(game).toBeDefined();
         expect(unit.id).toBe(1);
-    });
 
+    });
     it('should prioritize MANUAL move marker over autonomous HOUSE BUILDING', () => {
         const manualReq = game.addRequest('move', 30, 30, true);
         unit.targetRequest = manualReq;
@@ -52,8 +52,8 @@ describe('Refuse Distraction Reconstructed', () => {
         unit.changeState(new Job(unit));
         const canBuild = unit.tryBuildStructure(100);
         expect(canBuild).toBe(false);
-    });
 
+    });
     it('should NOT Switch to a better Auto-Job if Manual Job is active', () => {
         const manualReq = game.addRequest('move', 30, 30, true);
         unit.targetRequest = manualReq;
@@ -71,5 +71,6 @@ describe('Refuse Distraction Reconstructed', () => {
             console.log(`[FAILURE] Picked ${picked?.id} instead of ${manualReq.id}`);
         }
         expect(picked?.id).toBe(manualReq.id);
-    });
+
+});
 });

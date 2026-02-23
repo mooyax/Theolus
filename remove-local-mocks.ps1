@@ -15,8 +15,8 @@ foreach ($file in $testFiles) {
     $content = Get-Content $file.FullName -Raw -Encoding UTF8
     
     # Pattern to match vi.mock('three', ...) blocks
-    # Matches from vi.mock('three' until the closing });
-    $pattern = "vi\.mock\('three',\s*\(\)\s*=>\s*\{[\s\S]*?\}\);(\r?\n)*"
+    # Matches: vi.mock('three', or "three", with optional async () => { ... });
+    $pattern = "vi\.mock\(['""]three['""][\s\S]*?\}\);(\r?\n)*"
     
     if ($content -match $pattern) {
         Write-Host "  📝 修正: $($file.Name)" -ForegroundColor Yellow

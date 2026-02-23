@@ -28,8 +28,8 @@ describe('Goblin Raid Threshold', () => {
         // Clear any auto-generated caves/clans to start fresh
         goblinManager.clans = {};
         goblinManager.caves = [];
-    });
 
+    });
     it('should NOT activate raid on first aggression (1/3)', () => {
         const clanId = 'clan_test';
         const target = { x: 50, z: 50 };
@@ -40,8 +40,8 @@ describe('Goblin Raid Threshold', () => {
         expect(clan).toBeDefined();
         expect(clan.aggression).toBe(1.0);
         expect(clan.active).toBe(false);
-    });
 
+    });
     it('should activate raid on aggression threshold (15.0)', () => {
         const clanId = 'clan_test_active';
         const target = { x: 50, z: 50 };
@@ -57,8 +57,8 @@ describe('Goblin Raid Threshold', () => {
         goblinManager.notifyClanActivity(clanId, target);
         expect(goblinManager.clans[clanId].aggression).toBe(15.0);
         expect(goblinManager.clans[clanId].active).toBe(true);
-    });
 
+    });
     it('should decay aggression over time', () => {
         const clanId = 'clan_decay';
         const target = { x: 50, z: 50 };
@@ -78,8 +78,8 @@ describe('Goblin Raid Threshold', () => {
         // Expected: 2.0 - (10 * 0.1) = 1.0
         expect(clan.aggression).toBeCloseTo(1.0, 1);
         expect(clan.active).toBe(false);
-    });
 
+    });
     it('should reset aggression decay if it drops below zero', () => {
         const clanId = 'clan_zero';
         goblinManager.notifyClanActivity(clanId, { x: 50, z: 50 }); // 1.0
@@ -91,8 +91,8 @@ describe('Goblin Raid Threshold', () => {
 
         const clan = goblinManager.clans[clanId];
         expect(clan.aggression).toBe(0);
-    });
 
+    });
     it('should DEACTIVATE raid state if aggression decays to zero', () => {
         const clanId = 'clan_peace';
         const target = { x: 50, z: 50 };
@@ -115,5 +115,6 @@ describe('Goblin Raid Threshold', () => {
         // 3. Verify Deactivation
         expect(clan.aggression).toBe(0);
         expect(clan.active).toBe(false); // Should return to peace
-    });
+
+});
 });

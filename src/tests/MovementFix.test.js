@@ -37,16 +37,16 @@ describe('Unit Movement & Throttling Fix', () => {
 
         unit = new Unit(scene, terrain, 10, 10, 'worker');
         unit.game = game;
-    });
 
+    });
     it('should move immediately on first call (Linear Fallback)', () => {
         const moved = unit.smartMove(11, 10, 0);
 
         expect(moved).toBe(true);
         expect(unit.isMoving).toBe(true);
         expect(unit.lastPathTime).toBe(0);
-    });
 
+    });
     it('should trigger pathfinding for longer distances', () => {
         // Distance 3.0 (> 1.5 threshold) -> Asynchronous pathfinding
         const moved = unit.smartMove(13, 10, 0);
@@ -55,8 +55,8 @@ describe('Unit Movement & Throttling Fix', () => {
         // Initially NOT moving until path resolves
         expect(unit.isMoving).toBe(false);
         expect(unit.isPathfinding).toBe(true);
-    });
 
+    });
     it('should handle throttling correctly', () => {
         // First call triggers pathfinding
         unit.smartMove(15, 10, 1.0);
@@ -68,8 +68,8 @@ describe('Unit Movement & Throttling Fix', () => {
         expect(moved2).toBe(true);
         expect(unit.isPathfindingThrottled).toBe(true);
         expect(unit.isMoving).toBe(false);
-    });
 
+    });
     it('should continue moving along path even if throttled', () => {
         // Simulate already moving along a path
         unit.path = [{ x: 11, z: 10 }, { x: 12, z: 10 }];
@@ -83,5 +83,6 @@ describe('Unit Movement & Throttling Fix', () => {
         expect(res).toBe(true);
         expect(unit.isPathfindingThrottled).toBe(true);
         expect(unit.isMoving).toBe(true);
-    });
+
+});
 });

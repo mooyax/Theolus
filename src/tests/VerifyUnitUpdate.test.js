@@ -34,12 +34,12 @@ describe('Unit Update Verification', () => {
 
         // Use global THREE mocks from setup.js
         unit = new Unit(new THREE.Scene(), mockTerrain, 20, 20, 'worker');
-    });
 
+    });
     it('should have updateLogic method', () => {
         expect(typeof unit.updateLogic).toBe('function');
-    });
 
+    });
     it('should increment age in update', () => {
         // Reset age for predictability
         unit.age = 20;
@@ -47,18 +47,19 @@ describe('Unit Update Verification', () => {
         // For worker, rate is 0.2. deltaTime=1.0 -> increase 0.2
         unit.update(100, 1.0);
         expect(unit.age).toBeCloseTo(20 + 0.2);
-    });
 
+    });
     it('should call updateMovement in update', () => {
         // We can spy on the existing method
         const spy = vi.spyOn(unit, 'updateMovement');
         unit.update(100, 1.0);
         expect(spy).toHaveBeenCalledWith(100);
-    });
 
+    });
     it('should call updateLogic fallback in update', () => {
         const spy = vi.spyOn(unit, 'updateLogic');
         unit.update(100, 1.0);
         expect(spy).toHaveBeenCalled();
-    });
+
+});
 });

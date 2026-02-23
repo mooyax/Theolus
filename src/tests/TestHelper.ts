@@ -238,13 +238,26 @@ export class MockTerrain {
         let best = null;
         let bestScore = Infinity;
         for (const c of candidatesList) {
+            // Type Filtering for Building
+            if (type === 'building') {
+                if (!c.userData || !['house', 'farm', 'barracks', 'tower', 'mansion', 'goblin_hut', 'cave'].includes(c.userData.type)) {
+                    continue; // Skip invalid buildings like decorations
+                }
+                if (c.userData.hp !== undefined && c.userData.hp <= 0) continue;
+            } else if (type === 'goblin') {
+                if (c.type !== 'goblin') continue;
+            } else if (type === 'unit') {
+                if (c.role === undefined && !c.type) continue;
+            }
+
             // Priority: Direct property (Unit/Goblin) then userData (Building/Entity)
             const cx = c.gridX !== undefined ? c.gridX : (c.userData ? c.userData.gridX : undefined);
             const cz = c.gridZ !== undefined ? c.gridZ : (c.userData ? c.userData.gridZ : undefined);
 
             if (cx === undefined || cz === undefined) continue;
-            const dx = cx - x;
-            const dz = cz - z;
+            const dx = Math.abs(cx - x);
+            const dz = Math.abs(cz - z);
+            // Ignore wrapping for simple test mock if needed, but let's keep it simple
             const dist = Math.sqrt(dx * dx + dz * dz);
 
             if (dist <= range) {

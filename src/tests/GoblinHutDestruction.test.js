@@ -24,13 +24,9 @@ describe('Goblin Hut Destruction', () => {
             resources: {},
             goblinManager: { notifyClanActivity: vi.fn() }
         };
-        global.window = {
-            game: mockGame,
-            addEventListener: vi.fn(),
-            removeEventListener: vi.fn()
-        };
-    });
+        
 
+    });
     it('should be destroyed when HP reaches 0', () => {
         const hut = new Building(mockScene, mockTerrain, 'goblin_hut', 5, 5);
         hut.hp = 100;
@@ -39,8 +35,8 @@ describe('Goblin Hut Destruction', () => {
 
         expect(hut.hp).toBeLessThanOrEqual(0);
         expect(hut.isDestroyed()).toBe(true);
-    });
 
+    });
     it('should be removed from Terrain by Game Loop logic', () => {
         const hut = new Building(mockScene, mockTerrain, 'goblin_hut', 5, 5);
         hut.id = 999;
@@ -55,7 +51,6 @@ describe('Goblin Hut Destruction', () => {
         mockTerrain.removeBuilding = vi.fn((b) => {
             const idx = mockTerrain.buildings.indexOf(b);
             if (idx > -1) mockTerrain.buildings.splice(idx, 1);
-        });
 
         const buildings = [...mockTerrain.buildings];
         // Logic currently in Game.ts (Fixed Version):
@@ -68,11 +63,13 @@ describe('Goblin Hut Destruction', () => {
                     mockTerrain.removeBuilding(b);
                 }
             }
-        });
 
         // Assertion: It should be removed!
         expect(mockTerrain.buildings.length).toBe(0);
         expect(mockTerrain.removeBuilding).toHaveBeenCalledWith(hut);
-    });
-});
 
+
+});
+});
+});
+});

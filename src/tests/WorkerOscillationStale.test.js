@@ -75,8 +75,8 @@ describe('Worker Oscillation Debug', () => {
         unit.game = game;
         unit.id = 1;
         game.units.push(unit);
-    });
 
+    });
     it('should clear isUnreachable flag when entering new job', async () => {
         // 1. Fail Job A
         const reqA = { id: 101, type: 'build', x: 50, z: 50, status: 'assigned', assignedTo: unit.id };
@@ -113,5 +113,6 @@ describe('Worker Oscillation Debug', () => {
 
         // If flag was stale (true), it would be dropped here.
         expect(unit.targetRequest).toBe(reqB);
-    });
+
+});
 });

@@ -1,29 +1,20 @@
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Terrain } from '../Terrain.js';
 import * as THREE from 'three';
 
-// Minimal Mock
-vi.mock('three', () => ({
-    Vector3: class { constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; } },
-    Group: class { constructor() { this.add = vi.fn(); } },
-    Mesh: class { constructor() { this.add = vi.fn(); } },
-    Scene: class { constructor() { this.add = vi.fn(); } },
-    BoxGeometry: class { }, PlaneGeometry: class { }, CylinderGeometry: class { }, ConeGeometry: class { }, SphereGeometry: class { },
-    MeshStandardMaterial: class { }, MeshBasicMaterial: class { },
-    TextureLoader: class { load() { return {}; } },
-    Color: class { setHex() { } set() { } },
-    MathUtils: { clamp: (v, min, max) => Math.min(Math.max(v, min), max) }
-}));
+global.THREE = THREE;
 
-describe('Deep Cup Pathfinding', () => {
+describe('Deep U-Shape / Cup Pathfinding', () => {
     let terrain;
 
     beforeEach(() => {
-        vi.spyOn(Terrain.prototype, 'initTerrain').mockImplementation(() => { });
+        vi.spyOn(Terrain.prototype, 'initMeshes').mockImplementation(() => { });
         vi.spyOn(Terrain.prototype, 'initEntityGrid').mockImplementation(() => { });
+        vi.spyOn(Terrain.prototype, 'calculateRegions').mockImplementation(() => Promise.resolve());
+        vi.spyOn(Terrain.prototype, 'syncToWorker').mockImplementation(() => { });
 
-        terrain = new Terrain();
+        terrain = new Terrain(new THREE.Scene());
         terrain.logicalWidth = 100;
         terrain.logicalDepth = 100;
         terrain.grid = [];
@@ -35,8 +26,8 @@ describe('Deep Cup Pathfinding', () => {
         }
 
         // Deep U-Shape / Cup
-        // Unit at (50, 50). Target at (90, 50).
-        // Wall blocks direct East path. x=60.
+        // Unit inside at (55, 50). Target outside at (90, 50).
+        // Wall blocks direct East path at x=60.
         for (let z = 20; z <= 80; z++) {
             terrain.grid[60][z] = { height: 100, regionId: 1, type: 'wall' };
         }
@@ -47,10 +38,15 @@ describe('Deep Cup Pathfinding', () => {
         }
 
         terrain.isWalkable = (x, z) => {
-            if (!terrain.grid[x] || !terrain.grid[x][z]) return false;
+            if (x < 0 || x >= 100 || z < 0 || z >= 100) return false;
             return terrain.grid[x][z].height < 10;
         };
         terrain.getTileHeight = (x, z) => terrain.grid[x][z].height;
+        terrain.isValidGrid = (x, z) => x >= 0 && x < 100 && z >= 0 && z < 100;
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
     it('should find path out of Deep Cup within maxSteps (Trap Check)', () => {
@@ -59,25 +55,15 @@ describe('Deep Cup Pathfinding', () => {
         const targetX = 90;
         const targetZ = 50;
 
-        // Use default maxSteps (now 40000)
+        // Path should go around the wall (likely to z < 20 or z > 80)
         const path = terrain.findPath(startX, startZ, targetX, targetZ);
 
-        if (path) {
-            console.log(`Path Found! Length: ${path.length}`);
-            const end = path[path.length - 1];
-            console.log(`End Node: ${end.x},${end.z}`);
-
-            const isPartial = (end.x !== targetX || end.z !== targetZ);
-            if (isPartial) {
-                console.warn("WARNING: Returned Partial Path!");
-                if (end.x >= 58 && end.x <= 60) console.log("CONFIRMED: Unit stuck at Greedy Local Minimum (Wall).");
-            } else {
-                console.log("SUCCESS: Full Path Found.");
-            }
-        } else {
-            console.error("Path Failed (null).");
-        }
-
         expect(path).toBeDefined();
+        expect(path.length).toBeGreaterThan(0);
+
+        const end = path[path.length - 1];
+        // In some cases it might return a partial path if maxSteps is hit, 
+        // but it should at least return something.
+        expect(end).toBeDefined();
     });
 });

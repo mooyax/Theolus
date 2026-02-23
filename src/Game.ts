@@ -233,6 +233,8 @@ export class Game {
     public get isLoaded(): boolean { return !this.isLoading; }
     public frameCounter: number;
     public minimal: boolean;
+    public readyPromise: Promise<void>;
+    private resolveReady!: () => void;
 
     // Raid Logic
 
@@ -277,7 +279,7 @@ export class Game {
         this.manualWorkerSpawns = 0;
         this.requestCheckIndex = 0;
 
-        this.gameTime = 7.0; // Start at 7:00 instead of 6:00
+        this.gameTime = 8.0; // Start at 8:00
         this.gameTotalTime = 0;
         this.simTotalTimeSec = 0;
         this.frameCount = 0;
@@ -291,6 +293,9 @@ export class Game {
         this.prevTimeOfDay = 0;
         this.lastHeartbeat = 0;
         this.requestIdCounter = 0;
+        this.readyPromise = new Promise(resolve => {
+            this.resolveReady = resolve;
+        });
 
         // --- 2. Core Managers ---
         this.battleMemory = new BattleMemory();
@@ -655,46 +660,22 @@ export class Game {
             // Fix: Initialize isNight for preview
             this.isNight = false;
 
-            // Check safe access to grid
-            const hasData = this.terrain && this.terrain.grid && this.terrain.grid[0] && this.terrain.grid[0][0] && this.terrain.grid[0][0].height;
-            if (this.terrain && !hasData) { // If empty/flat
-                console.log("[Game] Generating Preview Terrain...");
-                if (this.terrain.generateRandomTerrain) {
-                    const previewConfig = Levels[0]?.generation || null;
-                    await this.terrain.generateRandomTerrain(true, previewConfig); // Preview Mode
+            // Simplified: Use the newly async regenerateWorld to setup the initial preview
+            console.log("[Game] Generating Initial Preview World...");
+            await this.regenerateWorld();
 
-                    // Fix: Terrain regeneration clears grid, so caves generated in Constructor are gone.
-                    // We must regenerate caves for the preview.
-                    if (this.goblinManager) {
-                        this.goblinManager.reset();
-                        const caveCount = Levels[0]?.initialState?.goblinCaves || 5;
-                        this.goblinManager.generateCaves(caveCount);
-                    }
-                }
-                if (this.terrain.updateMesh) this.terrain.updateMesh();
-                if (this.terrain.updateColors) this.terrain.updateColors(this.isNight || false);
-                console.log("[Game] Preview Ready.");
+            // Initial Camera Position for Preview (Center & Orbit)
+            const w = this.terrain.logicalWidth || 80;
+            const d = this.terrain.logicalDepth || 80;
+            const cx = Math.floor(w / 2);
+            const cz = Math.floor(d / 2);
+            let h = 0;
+            if (this.terrain.getTileHeight) h = this.terrain.getTileHeight(cx, cz);
 
-                // Initial Camera Position for Preview
-                // Wait for Logical Width/Depth to be set if async
-                const w = this.terrain.logicalWidth || 80;
-                const d = this.terrain.logicalDepth || 80;
-                const cx = Math.floor(w / 2);
-                const cz = Math.floor(d / 2);
-
-                // Safe height check
-                let h = 0;
-                if (this.terrain.getTileHeight) {
-                    h = this.terrain.getTileHeight(cx, cz);
-                }
-
-                if (this.controls) {
-                    this.controls.target.set(0, h, 0); // Look at center
-                    // Orbit around center
-                    this.camera.position.set(40, h + 40, 40);
-                    // this.controls.autoRotate = true; // DISABLED for Perf
-                    this.controls.update();
-                }
+            if (this.controls) {
+                this.controls.target.set(0, h, 0);
+                this.camera.position.set(40, h + 40, 40);
+                this.controls.update();
             }
 
             // Should hide loading screen AFTER terrain is ready
@@ -704,8 +685,11 @@ export class Game {
             // Initialize Start Screen UI
             this.initStartScreen();
 
+            this.resolveReady();
+
         })().catch(err => {
             console.error("FATAL INIT ERROR:", err);
+            this.resolveReady(); // Resolve anyway to avoid hanging tests
             const ui = document.getElementById('ui');
             if (ui) {
                 ui.innerHTML += `<div style="position:absolute;top:0;left:0;color:red;background:black;z-index:9999;padding:20px;">FATAL ERROR: ${err.message}<br><pre>${err.stack}</pre></div>`;
@@ -960,7 +944,7 @@ export class Game {
 
             lightColor.copy(sunEvening).lerp(moonColor, t);
             lightIntensity = 1.0 - t * 0.8;
-            ambientIntensity = 0.6 - t * 0.25; // Adjusted (was 0.4) to end at ~0.35 at 20:00
+            ambientIntensity = 0.6 - t * 0.2; // Smooth transition toward 0.4
 
             const blueShadow = new THREE.Color(0x404080);
             ambientColor.lerp(blueShadow, t);
@@ -968,11 +952,25 @@ export class Game {
             // Night (20:00 - 4:00)
             skyColor.copy(nightSky);
             lightColor.copy(moonColor);
-            lightIntensity = 0.35; // Increased (was 0.25)
-            ambientIntensity = 0.35; // Increased (was 0.25)
-            ambientColor.setHex(0x202040);
+
+            // Adjust Moon Intensity based on Height to avoid over-brightness at 23:00
+            // moonY peaks at ~23:50 (angle +PI)
+            const absMoonY = Math.abs(moonY);
+            lightIntensity = 0.35 - (absMoonY / radius) * 0.05; // Slightly lower when moon is high
+
+            ambientIntensity = 0.4; // Base ambient for visibility (was 0.35)
+            ambientColor.setHex(0x252550); // Slightly brighter/bluer night (was 0x202040)
             targetPos.set(moonX, moonY, moonZ);
-            if (targetPos.y < 0) targetPos.y = -targetPos.y;
+        }
+
+        // --- NEW: Sub-horizon Light Inversion (Avoid "flat" look during pre-dawn/post-dusk) ---
+        // If the source is below the ground, mirror it UP but keep the low angle.
+        // This ensures buildings/terrain have shadows even when sun/moon is just below horizon.
+        if (targetPos.y < 5) {
+            // Lerp upward when passing horizon to maintain shading depth
+            const minY = 5.0;
+            if (targetPos.y < 0) targetPos.y = Math.abs(targetPos.y) + minY;
+            else targetPos.y = Math.max(minY, targetPos.y);
         }
 
         // Apply to Scene
@@ -986,7 +984,8 @@ export class Game {
         }
         if (this.ambientLight) {
             this.ambientLight.intensity = ambientIntensity;
-            this.ambientLight.color.copy(ambientColor).lerp(skyColor, 0.3);
+            // Mix ambient with sky color for atmospheric scattering effect
+            this.ambientLight.color.copy(ambientColor).lerp(skyColor, 0.2);
         }
 
         // 4. Sync with WeatherManager (Fog color)
@@ -1723,7 +1722,6 @@ export class Game {
         const TIMEOUT = 300;
 
         // 1. REMOVE COMPLETED/TIMED-OUT REQUESTS (Reverse loop to handle splice safely)
-        // Note: No budget here, we want these gone ASAP to free memory/visuals.
         for (let i = this.requestQueue.length - 1; i >= 0; i--) {
             const req = this.requestQueue[i];
             if (!req) continue;
@@ -1732,24 +1730,25 @@ export class Game {
             if (req.status === 'completed') {
                 if (!req.completedAt) req.completedAt = currentTime;
                 if (currentTime - (req.completedAt || 0) > 0.2) {
-                    this.removeRequestAt(i);
-                    continue; // i is removed, move to next
+                    this.removeRequest(req);
+                    continue;
                 }
             }
 
             // Handle Timeout (Only for pending)
             if (req.status === 'pending' && (currentTime - (req.createdAt || 0) > TIMEOUT)) {
                 console.log(`[Game] Request Timed Out: ${req.type} ID:${req.id}`);
-                this.removeRequestAt(i);
+                this.removeRequest(req);
                 continue;
             }
         }
 
-        // 2. BUDGETED ZOMBIE/RETRY CHECK (Process at most 50 requests per frame)
+        // 2. BUDGETED ZOMBIE/RETRY CHECK (Proactive Marker-Led Management)
         const BUDGET = 50;
         const total = this.requestQueue.length;
         if (total === 0) return;
 
+        if (this.requestCheckIndex === undefined) this.requestCheckIndex = 0;
         const startIdx = this.requestCheckIndex % total;
 
         for (let i = 0; i < Math.min(total, BUDGET); i++) {
@@ -1757,28 +1756,45 @@ export class Game {
             const req = this.requestQueue[idx];
             if (!req) continue;
 
-            // ZOMBIE WATCHDOG: Check for Broken Assignments
+            // --- SELF-HEALING (WATCHDOG) ---
             if (req.status === 'assigned') {
                 const assigneeId = req.assignedTo;
                 if (assigneeId !== null) {
-                    const unit = this.unitMap.get(Number(assigneeId));
                     let isBroken = false;
-                    if (!unit || unit.isDead) isBroken = true;
-                    else if (!unit.targetRequest || String(unit.targetRequest.id) !== String(req.id)) {
-                        isBroken = true;
-                    } else if (unit.targetGoblin || (unit.targetBuilding && unit.targetBuilding.userData && unit.targetBuilding.userData.hp > 0)) {
-                        const assignedAt = req.assignedAt || req.createdAt || 0;
-                        if (currentTime - assignedAt > 60.0) isBroken = true;
-                    } else if (unit.action === 'Going to Work' || unit.action === 'Approaching Job' || unit.action === 'Moving') {
-                        const assignedAt = req.assignedAt || req.createdAt || 0;
-                        if (currentTime - assignedAt > 300.0) isBroken = true; // Extended from 120s to 300s for large maps
+                    let reason = "";
+                    const unit = this.unitMap ? this.unitMap.get(Number(assigneeId)) : this.units.find(u => String(u.id) === String(assigneeId));
+                    const assignedAt = req.assignedAt || req.createdAt || 0;
+
+                    if (!unit || unit.isDead) {
+                        isBroken = true; reason = "Unit Dead/Missing";
+                    } else if (unit.targetRequest && String(unit.targetRequest.id) !== String(req.id)) {
+                        isBroken = true; reason = "Unit has different request";
+                    } else if (!unit.targetRequest) {
+                        isBroken = true; reason = "Unit abandoned request";
+                    } else if (unit.ignoredTargets && unit.ignoredTargets.has(req.id)) {
+                        isBroken = true; reason = "Unit ignored request (Unreachable)";
+                    } else if (unit.action === 'Idle' && unit.state && unit.state.constructor.name === 'Wander') {
+                        // Anti-flap guard: If assigned but unit literally went back to wandering
+                        isBroken = true; reason = "Unit state decoupled";
+                    } else {
+                        // Timeout Fallback
+                        const maxStuck = req.isManual ? 120.0 : 300.0;
+                        if (currentTime - assignedAt > maxStuck) {
+                            isBroken = true; reason = "Assignment Timed Out";
+                        }
                     }
+
                     if (isBroken) {
-                        console.warn(`[Game] Detected ZOMBIE Request ${req.id} (Assigned to ${assigneeId}). Resetting.`);
+                        console.warn(`[Game] Watchdog: Detected ZOMBIE Request ${req.id} (Assigned to ${assigneeId}). Reason: ${reason}. Resetting.`);
                         req.status = 'pending';
                         req.assignedTo = null;
-                        this.forceAssignRequest(req);
+                        if (req.mesh && this.markerMaterial) Object.assign(req.mesh.material, this.markerMaterial);
+                        this.assignRequestSync(req);
                     }
+                } else {
+                    // Status assigned but no one assigned
+                    req.status = 'pending';
+                    this.assignRequestSync(req);
                 }
             }
 
@@ -1786,7 +1802,7 @@ export class Game {
             if (req.status === 'pending') {
                 if (!req.lastAttempt) req.lastAttempt = req.createdAt || currentTime;
                 if (currentTime - (req.lastAttempt || 0) > 1.0) {
-                    this.forceAssignRequest(req);
+                    this.assignRequestSync(req);
                     req.lastAttempt = currentTime;
                 }
             }
@@ -1977,10 +1993,12 @@ export class Game {
                         mat.uniforms.uTime.value = (req.markerTime || 0); // Use stored offset
                     }
                 }
-            } else {
-                // If failed (e.g. invalid location), remove immediately to prevent getting stuck
-                this.removeRequest(req);
             }
+        } else {
+            // Execution Failed (e.g. invalid location, building collision)
+            // Remove immediately to free unit and clear queue
+            console.log(`[Game] Request Execution Failed (${req.type}). Removing from queue.`);
+            this.removeRequest(req);
         }
     }
 
@@ -2057,6 +2075,13 @@ export class Game {
         (document.getElementById('season-val') as HTMLElement).innerText = this.season || 'Spring';
 
         (document.getElementById('pop-val') as HTMLElement).innerText = Math.floor(this.totalPopulation || 0).toString();
+
+        // Level Display Update
+        const levelNum = (this.currentLevelIndex || 0) + 1;
+        const elLevelVal = document.getElementById('level-val');
+        if (elLevelVal) elLevelVal.innerText = `Level ${levelNum}`;
+        const elStartLevel = document.getElementById('start-level-display');
+        if (elStartLevel) elStartLevel.innerText = `Level ${levelNum}`;
 
         // Active Unit Counts
         const knights = playerUnits.filter(u => u.role === 'knight').length;
@@ -2208,11 +2233,29 @@ export class Game {
                 this.weatherManager.update(simTimeSec, actualDt, this.camera, this.season || 'Spring');
             }
             if (this.cloudManager) {
-                this.cloudManager.update(simTimeSec, actualDt);
+                this.cloudManager.update(actualDt, this.camera);
+                // Sync cloud color with sky color for atmosphere
+                if ((this.cloudManager as any).updateColor) {
+                    (this.cloudManager as any).updateColor(this.ambientLight.color);
+                }
             }
 
-            if (this.seaDecorationRenderer) {
-                this.seaDecorationRenderer.update(simTimeSec, actualDt);
+            if (this.gameActive) {
+                if (this.seaDecorationRenderer) {
+                    this.seaDecorationRenderer.update(simTimeSec, actualDt);
+                }
+
+                if (this.birdManager) {
+                    this.birdManager.update(actualDt, simTimeSec, this.frustum);
+                }
+
+                // Environment Objects Logic - Move back inside gameActive to freeze in preview
+                if (this.sheepManager) {
+                    this.sheepManager.update(simTimeSec, actualDt);
+                }
+                if (this.fishManager) {
+                    this.fishManager.update(simTimeSec, actualDt);
+                }
             }
 
             if (this.smokeManager) {
@@ -2338,12 +2381,6 @@ export class Game {
                 if (this.goblinManager) {
                     this.goblinManager.update(this.simTotalTimeSec || 0, actualDt, this.isNight, this.units, this.terrain.buildings, this.timeScale, this.camera);
                 }
-                if (this.sheepManager) {
-                    this.sheepManager.update(this.simTotalTimeSec || 0, actualDt);
-                }
-                if (this.fishManager) {
-                    this.fishManager.update(this.simTotalTimeSec || 0, actualDt);
-                }
             } catch (e) { this.logErrorThrottle("EnemyAI/Goblins", e); }
 
             // Debug Log for Active State (Throttled)
@@ -2355,8 +2392,9 @@ export class Game {
             }
 
             // Unit Updates (Time-Sliced)
-            // Scale budget to ~10% of units (min 100, max 500)
-            this.unitScanBudget = Math.min(500, Math.max(100, Math.floor(this.units.length * 0.1)));
+            // Scale budget to ~30% of units (min 200, max 1000)
+            // Increased to prevent "starvation" of high-ID units in dense populations.
+            this.unitScanBudget = Math.min(1000, Math.max(200, Math.floor(this.units.length * 0.3)));
 
             try {
                 const camX = this.camera ? this.camera.position.x : 0;
@@ -2513,21 +2551,14 @@ export class Game {
     }
 
     animate() {
-
-        // DEBUG: Force stop loop to check if idle load exists
-        // return; 
-
         if (this.stopped) {
             console.log("[Game] Animation loop STOPPED.");
             return;
         }
 
-
-
         try {
             this.frameCounter = (this.frameCounter || 0) + 1;
 
-            // DIAGNOSTIC LOG: Check loop health every ~1 sec (60 frames)
             if (this.frameCounter % 60 === 0) {
                 console.log(`[Game Heartbeat] Active:${this.gameActive} Loading:${this.isLoading} Units:${this.units.length} ` +
                     `Goblins:${this.goblinManager ? this.goblinManager.goblins.length : '?'} ` +
@@ -2541,22 +2572,16 @@ export class Game {
 
             this.update(deltaTime);
 
-            // Update Clipping Planes to follow camera target
             if (this.clippingPlanes && this.clippingPlanes.length === 4 && this.controls && this.controls.target) {
                 const tx = this.controls.target.x;
                 const tz = this.controls.target.z;
                 const r = this.viewRadius;
-
-                // x+r >= 0, -x+r >= 0, z+r >= 0, -z+r >= 0 relative to origin?
-                // No, we want x > tx - r  => x - tx + r > 0 => x + (r - tx) > 0
-                this.clippingPlanes[0].constant = r - tx; // Plane(1,0,0) -> x + c > 0 => x > -c => x > tx - r
-                this.clippingPlanes[1].constant = r + tx; // Plane(-1,0,0) -> -x + c > 0 => x < c => x < tx + r
-                this.clippingPlanes[2].constant = r - tz; // Plane(0,0,1) -> z + c > 0 => z > -c => z > tz - r
-                this.clippingPlanes[3].constant = r + tz; // Plane(0,0,-1) -> -z + c > 0 => z < c => z < tz + r
+                this.clippingPlanes[0].constant = r - tx;
+                this.clippingPlanes[1].constant = r + tx;
+                this.clippingPlanes[2].constant = r - tz;
+                this.clippingPlanes[3].constant = r + tz;
             }
 
-
-            // --- RENDER VISUALS ---
             if (!this.isLoading) {
                 let frustum = new THREE.Frustum();
                 if (this.camera) {
@@ -2564,54 +2589,41 @@ export class Game {
                     frustum.setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse));
                 }
 
-                // PERF: Skip heavy managers in preview to ensure smooth camera/terrain interaction
-                if (this.gameActive) {
-                    try {
-                        const tManStart = performance.now();
-                        // CloudManager is updated in update() now
-                        // if (this.cloudManager) this.cloudManager.update(deltaTime, this.camera);
+                try {
+                    if (this.birdManager) this.birdManager.update(deltaTime, this.simTotalTimeSec || 0, frustum);
+                    if (this.sheepManager) this.sheepManager.update(this.simTotalTimeSec || 0, deltaTime);
+                    if (this.fishManager) this.fishManager.update(this.simTotalTimeSec || 0, deltaTime, frustum);
 
-                        // const tCloudEnd = performance.now();
-                        // if (tCloudEnd - tManStart > 5) console.warn(`[Perf] CloudManager took ${(tCloudEnd - tManStart).toFixed(2)}ms`);
+                    this.terrain.updateMeshPosition(this.camera);
 
-                        if (this.birdManager) this.birdManager.update(deltaTime, this.simTotalTimeSec || 0, frustum);
-                        if (this.sheepManager) this.sheepManager.update(this.simTotalTimeSec || 0, deltaTime);
-                        if (this.fishManager) this.fishManager.update(this.simTotalTimeSec || 0, deltaTime, frustum);
-                    } catch (e) { this.logErrorThrottle("ManagerUpdate", e); }
-                }
+                    if (this.gameActive) {
+                        this.terrain.updateLights(this.gameTime);
+                        if (this.buildingRenderer) this.buildingRenderer.updateLighting(this.isNight);
+                    }
 
-                this.terrain.updateMeshPosition(this.camera);
+                    if (this.unitRenderer) {
+                        this.unitRenderer.update(this.units, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()));
+                    }
+                    if (this.buildingRenderer) {
+                        this.buildingRenderer.update(this.terrain.buildings, frustum, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
+                    }
+                    if (this.goblinRenderer && this.goblinManager) {
+                        this.goblinRenderer.update(this.goblinManager.goblins, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()));
+                    }
+                    if (this.treeRenderer) {
+                        this.treeRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
+                    }
 
-                if (this.gameActive) {
-                    this.terrain.updateLights(this.gameTime);
-                    if (this.buildingRenderer) this.buildingRenderer.updateLighting(this.isNight);
-                }
+                    if (this.performanceMonitor) this.performanceMonitor.startRender();
 
-                if (this.unitRenderer && this.gameActive) {
-                    this.unitRenderer.update(this.units, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()));
-                }
-                if (this.buildingRenderer) {
-                    this.buildingRenderer.update(this.terrain.buildings, frustum, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
-                }
-                if (this.goblinRenderer && this.goblinManager && this.gameActive) {
-                    this.goblinRenderer.update(this.goblinManager.goblins, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()));
-                }
-                if (this.treeRenderer) {
-                    this.treeRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
-                }
-
-                if (this.performanceMonitor) this.performanceMonitor.startRender();
-
-                // DEBUG PANEL UPDATE
-                if ((window as any).debugSelectedUnit) {
+                    // DEBUG PANEL UPDATE
                     const u = (window as any).debugSelectedUnit;
                     const panel = document.getElementById('unit-debug-panel');
-                    if (panel) {
+                    if (panel && u) {
                         const isGoblin = u.type === 'goblin';
                         const isUnit = u.type === 'unit';
                         const typeLabel = isGoblin ? 'Goblin' : (isUnit ? 'Human' : (u.constructor ? u.constructor.name : 'Entity'));
 
-                        // Generic Info
                         const hpVal = Math.floor(u.hp || 0);
                         const hpMaxVal = Math.floor(u.maxHp || 100);
                         const hpInfo = `HP: ${hpVal} / ${hpMaxVal}`;
@@ -2656,13 +2668,11 @@ export class Game {
                         const lastPathInfo = `LastP:${(u.lastPathTime || 0).toFixed(1)} `;
                         const failsafeInfo = `Unreachable:${u.isUnreachable || false} Dead:${u.isDead} Stuck:${u.stuckCount || 0}`;
 
-                        // Failure Persistence (Diagnostic)
                         let failInfo = "No Recent Fail";
                         if (u.lastFailureReason && (now - (u.lastFailureTime || 0) < 5.0)) {
                             failInfo = `FAIL: ${u.lastFailureReason} (${(now - u.lastFailureTime).toFixed(1)}s ago)`;
                         }
 
-                        // List check (is it still active?)
                         let isStillActive = false;
                         if (isUnit) isStillActive = this.units.includes(u);
                         else if (isGoblin && this.goblinManager) isStillActive = this.goblinManager.goblins.includes(u);
@@ -2684,6 +2694,8 @@ export class Game {
                         }
                         panel.style.display = 'block';
                     }
+                } catch (e) {
+                    this.logErrorThrottle("RenderError", e);
                 }
 
                 this.renderer.render(this.scene, this.camera);
@@ -2692,15 +2704,13 @@ export class Game {
                     this.performanceMonitor.update(this);
                 }
             }
-
         } catch (fatalError) {
             this.logErrorThrottle("FATAL_GAME_LOOP", fatalError);
         }
-
         requestAnimationFrame(this.animate.bind(this));
     }
 
-    saveGame(slotId) {
+    saveGame(slotId: string) {
         if (!this.saveManager) return false;
         try {
             const saveData = {
@@ -2709,10 +2719,8 @@ export class Game {
                 resources: this.resources,
                 gameTime: this.gameTime,
                 gameTotalTime: this.gameTotalTime,
-                // Season Persistence
                 currentSeasonIndex: this.currentSeasonIndex,
                 daysPassed: this.daysPassed,
-
                 terrain: this.terrain.serialize(),
                 units: this.units.map(u => u.serialize()),
                 requests: this.requestQueue.map(req => ({
@@ -2727,7 +2735,6 @@ export class Game {
                     isManual: req.isManual,
                 })),
                 goblinManager: this.goblinManager ? this.goblinManager.serialize() : null,
-                // Camera State
                 camera: {
                     position: { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z },
                     zoom: this.camera.zoom,
@@ -2735,7 +2742,6 @@ export class Game {
                         { x: this.controls.target.x, y: this.controls.target.y, z: this.controls.target.z } :
                         { x: 0, y: 0, z: 0 }
                 },
-                // Level & Seed Persistence
                 currentLevelIndex: this.currentLevelIndex,
                 currentSeed: this.currentSeed || (this.terrain ? this.terrain.seed : null)
             };
@@ -2750,18 +2756,19 @@ export class Game {
 
 
     async startNewGame() {
-        console.log(`DEBUG: startNewGame. CurrentSeed=${this.terrain?.seed}`);
+        console.log(`DEBUG: startNewGame. CurrentLevel=${this.currentLevelIndex} CurrentSeed=${this.terrain?.seed}`);
         if (this.gameActive || this.isLoading) return; // Prevent Double Click
 
         this.isLoading = true; // LOCK
-        console.log("[Game] Starting New Campaign from Level 1");
+        console.log(`[Game] Starting Level ${this.currentLevelIndex + 1} with Seed ${this.terrain?.seed}`);
 
-        // RESET Resources for new game
-        this.resources = { grain: 50, fish: 50, meat: 0 }; // Start with 100 food
+        // Reset Resources for New Campaign/Level Start
+        this.resources = { grain: 50, fish: 50, meat: 0 };
         this.mana = 100;
         this.totalPopulation = 0;
 
-        await this.startLevel(0);
+        // Use the seed that was generated during preview
+        await this.startLevel(this.currentLevelIndex, this.terrain?.seed || null);
     }
 
     async startLevel(levelIndex: number, specificSeed: number | null = null) {
@@ -2943,7 +2950,19 @@ export class Game {
         if (this.units) {
             this.units.forEach(u => {
                 if (u.dispose) u.dispose();
-                if (u.mesh) this.scene.remove(u.mesh);
+                if (u.mesh) {
+                    this.scene.remove(u.mesh);
+                    // Ensure mesh children are also gone
+                    u.mesh.traverse((child: any) => {
+                        if (child.isMesh) {
+                            if (child.geometry) child.geometry.dispose();
+                            if (child.material) {
+                                if (Array.isArray(child.material)) child.material.forEach((m: any) => m.dispose());
+                                else child.material.dispose();
+                            }
+                        }
+                    });
+                }
                 if (u.crossMesh) this.scene.remove(u.crossMesh);
             });
             this.units = [];
@@ -2980,32 +2999,52 @@ export class Game {
         }
     }
 
-    regenerateWorld() {
+    async regenerateWorld() {
         console.log("[Game] Regenerating World...");
         console.trace("[DEBUG] regenerateWorld Trace");
         this.gameActive = false; // Pause sim
 
-        // 1. Reset Terrain
-        if (this.terrain) {
-            this.terrain.buildings = [];
-            const previewConfig = Levels[0]?.generation || null;
-            this.terrain.generateRandomTerrain(false, previewConfig);
-            // Force visual update
-            this.terrain.updateMesh();
-            this.terrain.updateColors(this.isNight);
-        }
+        this.terrain.buildings = [];
+
+        // Use current level config instead of Levels[0] fixed
+        const config = Levels[this.currentLevelIndex] || Levels[0];
+        const previewConfig = config.generation || null;
+
+        // Await terrain generation to ensure heights are ready before placing objects
+        await this.terrain.generateRandomTerrain(false, previewConfig);
+
+        // Force visual update
+        this.terrain.updateMesh();
+        this.terrain.updateColors(this.isNight);
 
         // 2. Clear Entities
         this.clearEntities();
 
         if (this.goblinManager) {
-            // Note: generateRandomTerrain also nukes buildings, but goblinManager tracks caves too?
-            // Need to rescan/regen caves maybe?
-            // In fact, generateRandomTerrain only makes land. 
-            // We should let GoblinManager init caves if needed, or leave empty until Start.
-            // Actually, for PREVIEW, maybe we want to see caves?
-            // Let's call generateCaves!
-            if (this.goblinManager.generateCaves) this.goblinManager.generateCaves();
+            if (this.goblinManager.generateCaves) {
+                this.goblinManager.reset();
+                this.goblinManager.generateCaves(config.initialState.goblinCaves);
+            }
+        }
+
+        // 3. Re-init Visual Environment Objects for Preview
+        if (this.sheepManager) this.sheepManager.initSheeps();
+        if (this.fishManager) this.fishManager.init();
+        if (this.seaDecorationRenderer) {
+            await this.seaDecorationRenderer.init();
+            // Force an initial update to set instance matrices even if gameActive is false
+            this.seaDecorationRenderer.update(0, 0);
+        }
+
+        // 4. Force Bird Re-init
+        if (this.birdManager) {
+            // Birds are usually managed by scene removal in clearEntities if implemented, 
+            // but BirdManager might need a specific reset. Let's ensure they are fresh.
+            if ((this.birdManager as any).birds) {
+                (this.birdManager as any).birds.forEach(b => this.scene.remove(b));
+                (this.birdManager as any).birds = [];
+                (this.birdManager as any).initBirds();
+            }
         }
 
         // 描画バッファを強制リフレッシュ
@@ -3280,7 +3319,9 @@ export class Game {
                     const mesh = new THREE.Mesh(geometry, material);
                     mesh.renderOrder = 2000; // CRITICAL: Ensure visibility over terrain
                     mesh.position.set(rData.x, h + 2, rData.z);
-                    this.scene.add(mesh);
+                    if (this.scene) {
+                        this.scene.add(mesh);
+                    }
 
                     const req = {
                         id: rData.id,
@@ -3802,11 +3843,25 @@ export class Game {
     }
 
     async nextLevel() {
-        console.log("Advancing to Next Level...");
-        // Check if next level exists
+        console.log("Advancing to Next Level (Preview Flow)...");
         const nextIdx = this.currentLevelIndex + 1;
         if (Levels[nextIdx]) {
-            await this.startLevel(nextIdx, null); // New random seed
+            this.currentLevelIndex = nextIdx;
+
+            // 1. Reset Game State to Preview
+            this.gameActive = false;
+            this.isLoading = true; // Show loading while regenerating
+
+            // 2. Show Start Screen again for the new level
+            const startScreen = document.getElementById('start-screen');
+            const mainUI = document.getElementById('ui');
+            if (startScreen) startScreen.style.display = 'flex';
+            if (mainUI) mainUI.style.display = 'none';
+
+            // 3. Regenerate for the NEW level as preview
+            await this.regenerateWorld();
+
+            this.isLoading = false;
         } else {
             alert("Congratulations! You have completed all levels!");
             this.returnToTitle();

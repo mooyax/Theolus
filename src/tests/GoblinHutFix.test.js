@@ -21,8 +21,8 @@ describe('Goblin Hut Fix', () => {
         terrain.logicalDepth = 10;
         terrain.grid = Array(10).fill(null).map(() => Array(10).fill({ height: 1, noise: 0 }));
         terrain.buildings = [];
-    });
 
+    });
     it('should NOT trigger spawnCallback for goblin_hut even if overpopulated', () => {
         const hut = {
             userData: {
@@ -51,8 +51,8 @@ describe('Goblin Hut Fix', () => {
         terrain.update(1.0, spawnCallback, false); // 1s delta
 
         expect(spawnCallback).not.toHaveBeenCalled();
-    });
 
+    });
     it('should trigger spawnCallback for house when overpopulated (Control)', () => {
         const house = {
             userData: {
@@ -83,5 +83,6 @@ describe('Goblin Hut Fix', () => {
         expect(spawnCallback).toHaveBeenCalledWith(2, 2, 'house', house);
         // And population resets
         expect(house.userData.population).toBe(0);
-    });
+
+});
 });

@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+
+import { describe, it, expect, vi, beforeEach, beforeAll, afterEach } from 'vitest';
 import { Unit } from '../Unit.js';
 import * as THREE from 'three';
 
 global.THREE = THREE;
-if (!global.window) global.window = {};
+if (!global.window) global.window = { game: null };
 
 describe('Unit Lifecycle and Aging', () => {
     let unit;
@@ -13,11 +14,11 @@ describe('Unit Lifecycle and Aging', () => {
     beforeAll(() => {
         Unit.initAssets = vi.fn();
         // Mock complex logic to isolate lifecycle tests
-        Unit.prototype.moveRandomly = vi.fn();
-        Unit.prototype.checkSelfDefense = vi.fn();
-        Unit.prototype.triggerMove = vi.fn();
-        Unit.prototype.updateMovement = vi.fn();
-        Unit.prototype.die = vi.fn(function () { this.isDead = true; });
+        vi.spyOn(Unit.prototype, 'moveRandomly').mockImplementation(() => { });
+        vi.spyOn(Unit.prototype, 'checkSelfDefense').mockImplementation(() => { });
+        vi.spyOn(Unit.prototype, 'triggerMove').mockImplementation(() => { });
+        vi.spyOn(Unit.prototype, 'updateMovement').mockImplementation(() => { });
+        vi.spyOn(Unit.prototype, 'die').mockImplementation(function () { this.isDead = true; });
     });
 
     beforeEach(() => {
@@ -29,7 +30,10 @@ describe('Unit Lifecycle and Aging', () => {
             grid: Array(100).fill().map(() => Array(100).fill({})),
             buildings: [],
             logicalWidth: 100,
-            logicalDepth: 100
+            logicalDepth: 100,
+            getWidth: () => 100,
+            getDepth: () => 100,
+            moveEntity: vi.fn()
         };
         mockGame = {
             raidPoints: [],
@@ -38,6 +42,10 @@ describe('Unit Lifecycle and Aging', () => {
         };
         global.window.game = mockGame;
         unit = new Unit({ add: vi.fn() }, mockTerrain, 0, 0, 'worker');
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
     it('should initialize with age 20', () => {
@@ -90,5 +98,4 @@ describe('Unit Lifecycle and Aging', () => {
 
         Math.random = originalRandom;
     });
-
 });

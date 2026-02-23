@@ -34,8 +34,8 @@ describe('Sleep State Behavior', () => {
         // Initial state setup
         mockUnit.state = new Sleep(mockUnit);
         mockUnit.state.enter();
-    });
 
+    });
     it('should stay in Sleep state and move if shelter is found', () => {
         const shelter = { gridX: 20, gridZ: 20 };
         mockUnit.findNearestShelter.mockReturnValue(shelter);
@@ -46,8 +46,8 @@ describe('Sleep State Behavior', () => {
         expect(mockUnit.action).toBe('Going Home');
         expect(mockUnit.smartMove).toHaveBeenCalledWith(20, 20, 0);
         expect(mockUnit.state).toBeInstanceOf(Sleep); // Still in Sleep state
-    });
 
+    });
     it('should EXIT Sleep state (revert to Wander) if no shelter is found', () => {
         // Condition: No shelter found
         mockUnit.findNearestShelter.mockReturnValue(null);
@@ -58,5 +58,6 @@ describe('Sleep State Behavior', () => {
         // Expectation: Should match the fix behavior (switch to Wander)
         expect(mockUnit.state).toBeInstanceOf(Wander);
         expect(mockUnit.isSleeping).toBe(false);
-    });
+
+});
 });

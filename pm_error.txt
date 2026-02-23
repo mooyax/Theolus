@@ -1,0 +1,197 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+ [31m笶ｯ[39m src/tests/PerformanceMonitor.test.js [2m([22m[2m12 tests[22m[2m | [22m[31m12 failed[39m[2m)[22m[32m 17[2mms[22m[39m
+[31m     [31mﾃ・[31m should initialize with correct default values[39m[32m 9[2mms[22m[39m
+[31m     [31mﾃ・[31m should enable and disable correctly[39m[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m should toggle state[39m[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m should measure update time[39m[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m should measure render time[39m[32m 1[2mms[22m[39m
+[31m     [31mﾃ・[31m should update entity counts[39m[32m 0[2mms[22m[39m
+[31m     [31mﾃ・[31m should measure FPS over time[39m[32m 0[2mms[22m[39m
+[31m     [31mﾃ・[31m should add data to history[39m[32m 0[2mms[22m[39m
+[31m     [31mﾃ・[31m should limit history length[39m[32m 0[2mms[22m[39m
+[31m     [31mﾃ・[31m should get stats correctly[39m[32m 0[2mms[22m[39m
+[31m     [31mﾃ・[31m should reset stats[39m[32m 0[2mms[22m[39m
+[31m     [31mﾃ・[31m should update with game instance[39m[32m 0[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 12 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should initialize with correct default values
+AssertionError: expected undefined to be +0 // Object.is equality
+
+- Expected: 
+0
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/PerformanceMonitor.test.js:22:29
+     20| 
+     21|     it('should initialize with correct default values', () => {
+     22|         expect(monitor.fps).toBe(0);
+       |                             ^
+     23|         expect(monitor.enabled).toBe(false);
+     24|         expect(monitor.metrics.entities.total).toBe(0);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/12]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should enable and disable correctly
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected: 
+false
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/PerformanceMonitor.test.js:28:33
+     26| 
+     27|     it('should enable and disable correctly', () => {
+     28|         expect(monitor.enabled).toBe(false);
+       |                                 ^
+     29|         monitor.enable();
+     30|         expect(monitor.enabled).toBe(true);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/12]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should toggle state
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected: 
+false
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/PerformanceMonitor.test.js:36:33
+     34| 
+     35|     it('should toggle state', () => {
+     36|         expect(monitor.enabled).toBe(false);
+       |                                 ^
+     37|         monitor.toggle();
+     38|         expect(monitor.enabled).toBe(true);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/12]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure update time
+TypeError: Cannot read properties of undefined (reading 'updateTime')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:48:32
+     46|         while (performance.now() - start < 1) { /* busy wait */ }
+     47|         monitor.endUpdate();
+     48|         expect(monitor.metrics.updateTime).toBeGreaterThan(0);
+       |                                ^
+     49|         expect(monitor.metrics.lastUpdateDuration).toBeGreaterThan(0);
+     50|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[4/12]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure render time
+TypeError: Cannot read properties of undefined (reading 'renderTime')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:57:32
+     55|         while (performance.now() - start < 1) { /* busy wait */ }
+     56|         monitor.endRender();
+     57|         expect(monitor.metrics.renderTime).toBeGreaterThan(0);
+       |                                ^
+     58|         expect(monitor.metrics.lastRenderDuration).toBeGreaterThan(0);
+     59|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[5/12]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should update entity counts
+TypeError: Cannot read properties of undefined (reading 'entities')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:63:32
+     61|     it('should update entity counts', () => {
+     62|         monitor.updateEntityCount(10, 5, 3);
+     63|         expect(monitor.metrics.entities.units).toBe(10);
+       |                                ^
+     64|         expect(monitor.metrics.entities.goblins).toBe(5);
+     65|         expect(monitor.metrics.entities.buildings).toBe(3);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[6/12]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should measure FPS over time
+AssertionError: expected undefined to be +0 // Object.is equality
+
+- Expected: 
+0
+
++ Received: 
+undefined
+
+ 笶ｯ src/tests/PerformanceMonitor.test.js:70:29
+     68| 
+     69|     it('should measure FPS over time', () => {
+     70|         expect(monitor.fps).toBe(0);
+       |                             ^
+     71|         for (let i = 0; i < 60; i++) {
+     72|             monitor.measureFps();
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[7/12]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should add data to history
+TypeError: Cannot set properties of undefined (setting 'updateTime')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:79:36
+     77|     it('should add data to history', () => {
+     78|         monitor.fps = 60;
+     79|         monitor.metrics.updateTime = 10;
+       |                                    ^
+     80|         monitor.metrics.renderTime = 5;
+     81|         monitor.metrics.entities.total = 100;
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[8/12]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should limit history length
+TypeError: Cannot read properties of undefined (reading 'maxHistoryLength')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:91:43
+     89| 
+     90|     it('should limit history length', () => {
+     91|         const maxLength = monitor.history.maxHistoryLength;
+       |                                           ^
+     92|         for (let i = 0; i < maxLength + 50; i++) {
+     93|             monitor.fps = i;
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[9/12]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should get stats correctly
+TypeError: Cannot set properties of undefined (setting 'minFps')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:102:30
+    100|     it('should get stats correctly', () => {
+    101|         monitor.fps = 60;
+    102|         monitor.stats.minFps = 30;
+       |                              ^
+    103|         monitor.stats.maxFps = 75;
+    104|         monitor.metrics.updateTime = 8;
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[10/12]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should reset stats
+TypeError: Cannot set properties of undefined (setting 'minFps')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:118:30
+    116| 
+    117|     it('should reset stats', () => {
+    118|         monitor.stats.minFps = 30;
+       |                              ^
+    119|         monitor.stats.maxFps = 75;
+    120|         monitor.history.fps = [60, 55, 58];
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[11/12]竡ｯ
+
+ FAIL  src/tests/PerformanceMonitor.test.js > PerformanceMonitor > should update with game instance
+TypeError: Cannot read properties of undefined (reading 'entities')
+ 笶ｯ src/tests/PerformanceMonitor.test.js:135:32
+    133|         monitor.enable();
+    134|         monitor.update(mockGame);
+    135|         expect(monitor.metrics.entities.units).toBe(3);
+       |                                ^
+    136|         expect(monitor.metrics.entities.goblins).toBe(2);
+    137|         expect(monitor.metrics.entities.buildings).toBe(1);
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[12/12]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m12 failed[39m[22m[90m (12)[39m
+[2m   Start at [22m 23:05:13
+[2m   Duration [22m 794ms[2m (transform 97ms, setup 105ms, import 28ms, tests 17ms, environment 448ms)[22m
+

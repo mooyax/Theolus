@@ -1,56 +1,7 @@
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { Game } from '../Game';
-
-// Mock Dependencies
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    class Color {
-        constructor() { }
-        setHex(h) { return this; }
-        set(c) { return this; }
-        lerp(c, alpha) { return this; }
-        clone() { return new Color(); }
-    }
-    return {
-        ...actual,
-        Color,
-        WebGLRenderer: class {
-            constructor() { this.domElement = {}; }
-            setPixelRatio() { }
-            setSize() { }
-            render() { }
-            dispose() { }
-        },
-        Scene: class {
-            constructor() { this.children = []; this.position = { x: 0, y: 0, z: 0, isVector3: true }; }
-            add() { }
-            remove() { }
-            getObjectByName() { return { add: vi.fn(), remove: vi.fn(), children: [] }; }
-        },
-        Group: class {
-            constructor() { this.children = []; }
-            add() { }
-        },
-        Mesh: class {
-            constructor() {
-                this.material = { clone: () => ({ uniforms: { uColor: { value: new Color() } }, dispose: vi.fn() }), dispose: vi.fn() };
-                this.geometry = { dispose: vi.fn() };
-                this.position = { set: vi.fn(), copy: vi.fn(), x: 0, y: 0, z: 0 };
-            }
-        },
-        PlaneGeometry: class {
-            constructor() { this.attributes = {}; }
-            setAttribute() { }
-            translate() { }
-            rotateX() { }
-            dispose() { }
-        },
-        BufferAttribute: class {
-            constructor() { }
-        }
-    };
-});
+import { Game } from '../Game.js';
+import * as THREE from 'three';
 
 // Mock OrbitControls
 vi.mock('three/examples/jsm/controls/OrbitControls', () => {
@@ -67,41 +18,45 @@ vi.mock('three/examples/jsm/controls/OrbitControls', () => {
 });
 
 // Mock Managers
-vi.mock('../InputManager.js', () => ({ InputManager: class { constructor() { } } }));
-vi.mock('../rendering/UnitRenderer.js', () => ({ UnitRenderer: class { constructor() { this.init = vi.fn(); } } }));
-vi.mock('../rendering/BuildingRenderer.js', () => ({ BuildingRenderer: class { constructor() { this.init = vi.fn(); } } }));
-vi.mock('../rendering/CloudManager.js', () => ({ CloudManager: class { constructor() { } } }));
-vi.mock('../BirdManager.js', () => ({ BirdManager: class { constructor() { } } }));
-vi.mock('../ai/BirdManager.js', () => ({ BirdManager: class { constructor() { } } })); // Check path
-vi.mock('../ai/SheepManager.js', () => ({ SheepManager: class { constructor() { } } }));
-vi.mock('../ai/GoblinManager.js', () => ({ GoblinManager: class { constructor() { } } }));
-vi.mock('../ai/FishManager.js', () => ({ FishManager: class { constructor() { } } }));
-vi.mock('../ui/Minimap.js', () => ({ Minimap: class { constructor() { } } }));
-vi.mock('../ui/Compass.js', () => ({ Compass: class { constructor() { } } }));
-vi.mock('../PerformanceMonitor.js', () => ({ PerformanceMonitor: class { constructor() { } } }));
-
+vi.mock('../InputManager.js', () => ({ InputManager: class { constructor() { this.reset = vi.fn(); this.update = vi.fn(); } } }));
+vi.mock('../rendering/UnitRenderer.js', () => ({ UnitRenderer: class { constructor() { this.init = vi.fn(); this.reset = vi.fn(); this.update = vi.fn(); } } }));
+vi.mock('../rendering/BuildingRenderer.js', () => ({ BuildingRenderer: class { constructor() { this.init = vi.fn().mockResolvedValue(); this.reset = vi.fn(); this.update = vi.fn(); this.dispose = vi.fn(); } } }));
+vi.mock('../rendering/CloudManager.js', () => ({ CloudManager: class { constructor() { this.update = vi.fn(); } } }));
+vi.mock('../BirdManager.js', () => ({ BirdManager: class { constructor() { this.update = vi.fn(); } } }));
+vi.mock('../ai/BirdManager.js', () => ({ BirdManager: class { constructor() { this.update = vi.fn(); } } }));
+vi.mock('../ai/SheepManager.js', () => ({ SheepManager: class { constructor() { this.reset = vi.fn(); this.initSheeps = vi.fn(); this.update = vi.fn(); } } }));
+vi.mock('../ai/GoblinManager.js', () => ({ GoblinManager: class { constructor() { this.reset = vi.fn(); this.generateCaves = vi.fn(); this.update = vi.fn(); this.goblins = []; } } }));
+vi.mock('../ai/FishManager.js', () => ({ FishManager: class { constructor() { this.reset = vi.fn(); this.init = vi.fn(); this.update = vi.fn(); } } }));
+vi.mock('../ui/Minimap.js', () => ({ Minimap: class { constructor() { this.update = vi.fn(); } } }));
+vi.mock('../ui/Compass.js', () => ({ Compass: class { constructor() { this.update = vi.fn(); } } }));
+vi.mock('../PerformanceMonitor.js', () => ({ PerformanceMonitor: class { constructor() { this.update = vi.fn(); } } }));
 
 describe('Game Request Lifecycle', () => {
     let game;
 
     beforeEach(() => {
         global.requestAnimationFrame = vi.fn();
-
         vi.spyOn(Game.prototype, 'setupLights').mockImplementation(() => { });
         vi.spyOn(Game.prototype, 'animate').mockImplementation(() => { });
+        vi.spyOn(Game.prototype, 'initMarkerMaterial').mockImplementation(() => { });
 
-        game = new Game(undefined, undefined, true);
-        game.renderer = { domElement: {}, render: vi.fn() };
+        game = new Game(new THREE.Scene(), undefined, true);
+        game.renderer = { domElement: {}, render: vi.fn(), setPixelRatio: vi.fn(), setSize: vi.fn(), setClearColor: vi.fn() };
         game.controls = { update: vi.fn() };
         game.terrain = {
             update: vi.fn(),
             getTileHeight: vi.fn(() => 5),
             logicalWidth: 40,
             logicalDepth: 40,
+            getWidth: () => 40,
+            getDepth: () => 40,
             grid: Array(40).fill(null).map(() => Array(40).fill({ height: 5 })),
             setSeason: vi.fn(),
+            calculateRegions: vi.fn().mockResolvedValue(true),
+            syncToWorker: vi.fn(),
+            initMeshes: vi.fn(),
+            dispose: vi.fn()
         };
-        game.initMarkerMaterial = vi.fn();
         game.updateRequestMarkers = vi.fn();
         game.resources = { mana: 100 };
         game.consumeMana = vi.fn((amount) => { game.resources.mana -= amount; });
@@ -138,7 +93,7 @@ describe('Game Request Lifecycle', () => {
 
     it('should NOT cleanup assigned requests even if old', () => {
         const start = 100000;
-        vi.spyOn(Date, 'now').mockReturnValue(start);
+        game.simTotalTimeSec = start;
         const req = game.addRequest('raise', 10, 10);
         req.status = 'assigned';
         const checkTime = start + 60000;

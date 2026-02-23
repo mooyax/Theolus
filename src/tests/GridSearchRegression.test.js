@@ -23,8 +23,8 @@ describe('Terrain Grid Search Regression', () => {
 
         // Mock generic methods
         terrain.getTileHeight = vi.fn().mockReturnValue(1);
-    });
 
+    });
     it('should find Worker when searching for "unit" using Grid Search (Large Scale Simulation)', () => {
         // 1. Setup Grid Search Condition
         // Force Grid Search by passing null candidates list
@@ -53,8 +53,8 @@ describe('Terrain Grid Search Regression', () => {
         expect(result).not.toBeNull();
         expect(result.id).toBe(999);
         expect(result._spatial.type).toBe('worker');
-    });
 
+    });
     it('should find Sheep but NOT Fish when searching for "unit"', () => {
         // Setup
         const cx = 10, cz = 10;
@@ -75,8 +75,8 @@ describe('Terrain Grid Search Regression', () => {
 
         // verify fish is still NOT found via unit search specifically? 
         // findBestTarget only returns one (the best).
-    });
 
+    });
     it('should NOT find Building when searching for unit', () => {
         const house = {
             id: 888,
@@ -91,5 +91,6 @@ describe('Terrain Grid Search Regression', () => {
 
         // Should ignore building even with wildcard
         expect(found).toBeNull();
-    });
+
+});
 });

@@ -38,8 +38,8 @@ describe('WeatherManager Seasonal Logic', () => {
             }
         }
         expect(true).toBe(true);
-    });
 
+    });
     it('should NOT allow Rain in Winter', () => {
         for (let i = 0; i < 1000; i++) {
             const weather = simulateWeatherChange('Winter', () => Math.random());
@@ -49,5 +49,6 @@ describe('WeatherManager Seasonal Logic', () => {
             }
         }
         expect(true).toBe(true);
-    });
+
+});
 });

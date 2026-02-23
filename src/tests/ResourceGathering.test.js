@@ -40,6 +40,7 @@ describe('ResourceGathering Regression Test', () => {
 
     afterEach(() => {
         delete global.window;
+        vi.restoreAllMocks();
     });
 
     it('Fisher should gather fish when near water', () => {
@@ -47,14 +48,12 @@ describe('ResourceGathering Regression Test', () => {
         fisher.game = game;
         game.units.push(fisher);
 
-        // Mock Fish
         game.fishManager.fishes.push({ gridX: 6, gridZ: 6 });
 
         const gatherSpy = vi.spyOn(fisher, 'gatherResources');
 
         expect(game.resources.fish).toBe(0);
 
-        // Update loop a few times
         fisher.updateLogic(0, 0.1, false, [], [], []);
         fisher.updateLogic(6.0, 0.1, false, [], [], []);
 
@@ -67,7 +66,6 @@ describe('ResourceGathering Regression Test', () => {
         hunter.game = game;
         game.units.push(hunter);
 
-        // Mock Sheep
         game.sheepManager.sheeps.push({ gridX: 12, gridZ: 10 });
 
         expect(game.resources.meat).toBe(0);
@@ -94,17 +92,13 @@ describe('ResourceGathering Regression Test', () => {
     it('Fisher should seek water during patrol', () => {
         const fisher = new Unit(scene, terrain, 15, 15, 'fisher');
         fisher.game = game;
-
-        // Force checkerboard: water and land mixed
         const originalMock = terrain.getTileHeight;
         terrain.getTileHeight = vi.fn((x, z) => {
             return (x + z) % 2 === 0 ? 0 : 2;
         });
 
         expect(fisher.patrolTarget).toBeNull();
-
         fisher.patrol(0);
-
         expect(fisher.patrolTarget).not.toBeNull();
         terrain.getTileHeight = originalMock;
     });
@@ -112,15 +106,11 @@ describe('ResourceGathering Regression Test', () => {
     it('Hunter should seek forest during patrol', () => {
         const hunter = new Unit(scene, terrain, 0, 0, 'hunter');
         hunter.game = game;
-
         const originalMock = terrain.getTileHeight;
-        // Force all tiles within range to be forest
         terrain.getTileHeight = vi.fn(() => 6);
 
         expect(hunter.patrolTarget).toBeNull();
-
         hunter.patrol(0);
-
         expect(hunter.patrolTarget).not.toBeNull();
         terrain.getTileHeight = originalMock;
     });

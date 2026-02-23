@@ -20,13 +20,13 @@ describe('Combat Logic Verification', () => {
         game.terrain = terrain;
 
         scene = game.scene;
-    });
 
+    });
     afterEach(() => {
         window.game = undefined;
         vi.restoreAllMocks();
-    });
 
+    });
     it('Scenario A: Worker destroys Cave', () => {
         const worker = new Unit(scene, terrain, 10, 10, 'worker');
         worker.id = 1;
@@ -86,5 +86,6 @@ describe('Combat Logic Verification', () => {
         }
         expect(cave.userData.hp).toBeLessThan(hpBefore);
         */
-    });
+
+});
 });

@@ -31,21 +31,39 @@ export class SeaDecorationRenderer {
         const matOptions = {
             clippingPlanes: this.clippingPlanes,
             side: THREE.DoubleSide,
-            transparent: true,
-            alphaTest: 0.5
+            transparent: false,
+            alphaTest: 0.1
         };
 
-        // 1. Seaweed Geometry (Bushier Cluster)
+        // 1. Seaweed Geometry (Thicker & Bushier Cluster for better top-visibility)
         const partsSeaweed = [];
-        for (let i = 0; i < 4; i++) {
-            const blade = new THREE.PlaneGeometry(0.35, 1.0, 1, 4);
+        const bladeCount = 8;
+        for (let i = 0; i < bladeCount; i++) {
+            // Increased width from 0.35 to 0.5 for better profile from top
+            const blade = new THREE.PlaneGeometry(0.5, 1.0, 1, 4);
             blade.translate(0, 0.5, 0);
-            blade.rotateY(i * Math.PI / 4);
-            // Tilt some blades for better top visibility
-            blade.rotateX((Math.random() - 0.5) * 0.4);
+
+            // Scatter angles to cover all 360 degrees with extra randomness
+            blade.rotateY((i / bladeCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.4);
+
+            // Random tilting to ensure surfaces are visible from top
+            blade.rotateX((Math.random() - 0.5) * 0.6);
+            blade.rotateZ((Math.random() - 0.5) * 0.2);
+
+            // Slight height variation within the cluster
+            const s = 0.8 + Math.random() * 0.4;
+            blade.scale(1, s, 1);
+
             partsSeaweed.push(blade);
         }
         this.assets.seaweedGeo = BufferGeometryUtils.mergeGeometries(partsSeaweed);
+
+        // Add random phase attribute for Wave synchronization breaking
+        const phaseArray = new Float32Array(this.MAX_INSTANCES);
+        for (let i = 0; i < this.MAX_INSTANCES; i++) {
+            phaseArray[i] = Math.random() * Math.PI * 2;
+        }
+        this.assets.seaweedGeo.setAttribute('aPhase', new THREE.InstancedBufferAttribute(phaseArray, 1));
 
         // Seaweed Texture (Procedural)
         const seaweedCanvas = document.createElement('canvas');
@@ -58,8 +76,10 @@ export class SeaDecorationRenderer {
         ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.moveTo(32, 128);
-        ctx.quadraticCurveTo(5, 64, 32, 0);
-        ctx.quadraticCurveTo(59, 64, 32, 128);
+        if (ctx.quadraticCurveTo) {
+            ctx.quadraticCurveTo(5, 64, 32, 0);
+            ctx.quadraticCurveTo(59, 64, 32, 128);
+        }
         ctx.fill();
 
         const seaweedTex = new THREE.CanvasTexture(seaweedCanvas);
@@ -77,10 +97,11 @@ export class SeaDecorationRenderer {
                     shader.vertexShader = shader.vertexShader.replace('#include <common>', `
                         #include <common>
                         uniform float uTime;
+                        attribute float aPhase;
                     `);
                     shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `
                         vec3 transformed = vec3(position);
-                        float wave = sin(uTime * 1.5 + position.y * 2.0) * 0.15 * position.y;
+                        float wave = sin(uTime * 1.5 + aPhase + position.y * 2.0) * 0.15 * position.y;
                         transformed.x += wave;
                         transformed.z += wave * 0.5;
                     `);
@@ -170,7 +191,13 @@ export class SeaDecorationRenderer {
             const h = this.terrain.getTileHeight(x, z);
 
             if (h <= -1.0) { // Sea floor
-                const type = Math.random() > 0.4 ? 'seaweed' : (Math.random() > 0.3 ? 'coral' : 'rock');
+                let type = Math.random() > 0.4 ? 'seaweed' : (Math.random() > 0.3 ? 'coral' : 'rock');
+
+                // Deepen seaweed and coral to prevent sticking out of water
+                if ((type === 'seaweed' || type === 'coral') && h > -1.8) {
+                    type = 'rock'; // Fallback to rock which safe to stick out
+                }
+
                 this.decorations.push({
                     gridX: x,
                     gridZ: z,

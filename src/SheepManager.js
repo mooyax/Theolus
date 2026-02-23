@@ -52,12 +52,20 @@ export class SheepManager {
             const height = this.terrain.getTileHeight(x, z);
 
             const cell = this.terrain.grid && this.terrain.grid[x] && this.terrain.grid[x][z];
-            if (height > 0.5) { // Land
-                // Verify no building
+            if (height >= 1.0) { // Solid Land (1.0+)
+                // Verify no building and safe surroundings
                 if (!cell || !cell.hasBuilding) {
-                    const sheep = new Sheep(this.scene, this.terrain, x, z);
-                    this.sheeps.push(sheep);
-                    return;
+                    // Extra safe: check neighbors aren't deep water to prevent immediate drowning on wander
+                    const n1 = this.terrain.getTileHeight(x + 1, z);
+                    const n2 = this.terrain.getTileHeight(x - 1, z);
+                    const n3 = this.terrain.getTileHeight(x, z + 1);
+                    const n4 = this.terrain.getTileHeight(x, z - 1);
+
+                    if (n1 > 0 && n2 > 0 && n3 > 0 && n4 > 0) {
+                        const sheep = new Sheep(this.scene, this.terrain, x, z);
+                        this.sheeps.push(sheep);
+                        return;
+                    }
                 }
             }
             attempts++;

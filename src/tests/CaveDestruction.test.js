@@ -4,29 +4,6 @@ import { Unit } from '../Unit.js';
 import { Combat, Wander } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
-// Mock THREE
-vi.mock('three', () => {
-    return {
-        Vector3: class {
-            constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
-            clone() { return new this.constructor(this.x, this.y, this.z); }
-            add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
-            sub(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
-            multiplyScalar(s) { this.x *= s; this.y *= s; this.z *= s; return this; }
-            distanceTo(v) { return Math.sqrt((this.x - v.x) ** 2 + (this.z - v.z) ** 2); }
-            copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
-            set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
-        },
-        Group: class { constructor() { this.position = { x: 0, y: 0, z: 0 }; this.add = vi.fn(); this.remove = vi.fn(); } },
-        Mesh: class { constructor() { this.position = { x: 0, y: 0, z: 0 }; this.scale = { set: vi.fn() }; this.rotation = { y: 0 }; } },
-        MeshStandardMaterial: class { },
-        SphereGeometry: class { },
-        BoxGeometry: class { },
-        CylinderGeometry: class { },
-        CanvasTexture: class { },
-    };
-});
-
 // Mock Window
 if (typeof window !== 'undefined') {
     window.game = {
@@ -98,10 +75,10 @@ describe('Cave Destruction Bug', () => {
 
         // Set Unit Target
         unit.targetBuilding = cave;
-    });
 
     // Simplified to Direct Unit Test for Robustness
 
+    });
     it('should damage cave when attacking directly', () => {
         // Setup
         const hpStart = cave.userData.hp; // 200
@@ -118,5 +95,6 @@ describe('Cave Destruction Bug', () => {
         unit.attackCooldown = 0; // RESET COOLDOWN
         unit.attackBuilding(cave);
         expect(cave.userData.hp).toBeLessThan(10);
-    });
+
+});
 });

@@ -4,17 +4,6 @@ import { Unit } from '../Unit.js';
 import { Job } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
-// Mock THREE
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        Group: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); } },
-        Mesh: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); } },
-        Scene: class { constructor() { this.add = vi.fn(); } },
-    };
-});
-
 describe('Marker End-to-End: Persistence and Wrap Support', () => {
     let terrain, unit, game;
 
@@ -170,13 +159,13 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
         // FIX: Assign game to unit!
         unit.game = game;
         window.game = game;
-    });
 
+    });
     it('should calculate shortest distance across map boundaries (Wrap Support)', () => {
         const dist = unit.getDistance(155, 155);
         expect(dist).toBeLessThan(15);
-    });
 
+    });
     it('should persist through pathfinding delays for manual jobs', () => {
         const req = { id: 'req_manual', type: 'raise', x: 50, z: 50, isManual: true, status: 'assigned', assignedTo: 1 };
         unit.targetRequest = req;
@@ -201,8 +190,8 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
         console.log(`[Test] Unit TargetReq: ${unit.targetRequest ? unit.targetRequest.id : 'null'}`);
         expect(unit.targetRequest).not.toBeNull();
         expect(unit.targetRequest.id).toBe('req_manual');
-    });
 
+    });
     it('should handle sequential manual instructions with efficient preemption', () => {
         // Initial job (far)
         const req1 = game.addRequest('raise', 80, 80, true);
@@ -217,8 +206,8 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
         const req3 = game.addRequest('raise', 6, 6, true);
         expect(unit.targetRequest.id).toBe(req3.id);
         expect(req1.status).toBe('pending'); // Returned to queue!
-    });
 
+    });
     it('should assign pending jobs to newly spawned workers', () => {
         // Occupation: unit 1 is busy with far job
         const req1 = game.addRequest('raise', 80, 80, true);
@@ -231,13 +220,14 @@ describe('Marker End-to-End: Persistence and Wrap Support', () => {
         // Spawn new unit -> should pick up req2
         const unit2 = game.spawnUnit(50, 50);
         expect(unit2.targetRequest.id).toBe(req2.id);
-    });
 
+    });
     it('should handle job cancellation and release worker', () => {
         const req = game.addRequest('raise', 40, 40, true);
         expect(unit.targetRequest.id).toBe(req.id);
 
         game.tryCancelRequest(40, 40);
         expect(unit.targetRequest).toBeNull();
-    });
+
+});
 });

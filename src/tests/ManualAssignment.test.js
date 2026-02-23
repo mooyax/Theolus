@@ -6,51 +6,6 @@ import * as THREE from 'three';
 
 // Mocks
 // Mocks
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-
-    class MockWebGLRenderer {
-        constructor() {
-            this.domElement = document.createElement('canvas');
-            this.clippingPlanes = [];
-            this.shadowMap = { enabled: false, type: 0 };
-        }
-        setSize() { }
-        setPixelRatio() { }
-        render() { }
-        compile() { }
-        getParameters() { return { maxTextures: 16 }; }
-    }
-
-    class MockAudioListener {
-        constructor() {
-            this.position = { set: vi.fn() };
-            this.rotation = { set: vi.fn() };
-            this.up = { set: vi.fn() };
-        }
-    }
-
-    class MockAudio {
-        constructor() {
-            this.isPlaying = false;
-        }
-        setBuffer() { }
-        setLoop() { }
-        setVolume() { }
-        play() { }
-        stop() { }
-    }
-
-    return {
-        ...actual,
-        WebGLRenderer: MockWebGLRenderer,
-        TextureLoader: class { load() { return new actual.Texture(); } },
-        AudioListener: MockAudioListener,
-        Audio: MockAudio,
-        AudioLoader: class { load() { } },
-    };
-});
-
 // Mock OrbitControls
 vi.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
     OrbitControls: class {
@@ -133,12 +88,12 @@ describe('Manual Assignment Debugging', () => {
         if (!game.terrain) {
             game.terrain = new (require('../Terrain.js').Terrain)();
         }
-    });
 
+    });
     afterEach(() => {
         vi.clearAllMocks();
-    });
 
+    });
     it('should assign a manual request to an Idle worker', () => {
         const u = new Unit(game.scene, game.terrain, 0, 0, 'worker');
         u.id = 1;
@@ -150,8 +105,8 @@ describe('Manual Assignment Debugging', () => {
 
         expect(req.assignedTo).toBe(u.id);
         expect(u.targetRequest).toBe(req);
-    });
 
+    });
     it('should NOT assign to a Busy worker (already working)', () => {
         const u = new Unit(game.scene, game.terrain, 0, 0, 'worker');
         u.id = 1;
@@ -162,8 +117,8 @@ describe('Manual Assignment Debugging', () => {
         const req = game.addRequest('build', 10, 10);
 
         expect(req.assignedTo).toBeNull();
-    });
 
+    });
     it('should assign to a Wandering worker (Low Priority)', () => {
         const u = new Unit(game.scene, game.terrain, 0, 0, 'worker');
         u.id = 1;
@@ -176,8 +131,8 @@ describe('Manual Assignment Debugging', () => {
         // This confirms if "Wander" is treated as Busy
         expect(req.assignedTo).toBe(u.id);
         expect(u.targetRequest).toBe(req);
-    });
 
+    });
     it('should assign to a Moving worker (Low Priority)', () => {
         const u = new Unit(game.scene, game.terrain, 0, 0, 'worker');
         u.id = 1;
@@ -188,8 +143,8 @@ describe('Manual Assignment Debugging', () => {
         const req = game.addRequest('build', 10, 10);
 
         expect(req.assignedTo).toBe(u.id);
-    });
 
+    });
     it('should re-assign a unit that is "Moving" to a job (Not yet Working)', () => {
         // Setup a unit that is already assigned to a request but still moving (not Working)
         const u = new Unit(game.scene, game.terrain, 0, 0, 'worker');
@@ -209,5 +164,6 @@ describe('Manual Assignment Debugging', () => {
         expect(u.targetRequest).toBe(req);
         expect(req.assignedTo).toBe(u.id);
         expect(req.status).toBe('assigned');
-    });
+
+});
 });

@@ -8,8 +8,9 @@ export class Compass {
         this.wrapper = document.createElement('div');
         this.wrapper.id = 'compass-wrapper';
         this.wrapper.style.position = 'absolute';
-        this.wrapper.style.top = '60px'; // Adjusted per user feedback (was 150, too low)
-        this.wrapper.style.left = '180px'; // Moved further right to avoid stats
+        this.wrapper.style.top = '180px'; // Positioned below the 160px minimap
+        this.wrapper.style.left = 'auto';
+        this.wrapper.style.right = '60px'; // Centered below the 160px width minimap (10px right + 160/2 - 30)
         this.wrapper.style.width = '60px'; // Resized from 100
         this.wrapper.style.height = '60px';
         this.wrapper.style.pointerEvents = 'none';

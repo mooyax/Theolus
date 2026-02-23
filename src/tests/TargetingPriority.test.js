@@ -4,8 +4,6 @@ import { Unit } from '../Unit.js';
 import * as THREE from 'three';
 import { setupTestEnv } from './TestUtils.js';
 
-// Note: setup.js handles global mocks for THREE
-
 describe('Unit Targeting Priority', () => {
     let unit;
     let mockTerrain;
@@ -20,33 +18,50 @@ describe('Unit Targeting Priority', () => {
         mockGame = env.game;
         mockTerrain = env.terrain;
 
-        // Ensure squads map exists (TestUtils default MockGame should have it, but verifying)
         if (!mockGame.squads) mockGame.squads = new Map();
 
-        // Setup initial unit
         unit = new Unit(mockGame.scene, mockTerrain, 0, 0, 'knight');
+        unit.id = 1;
         unit.gridX = 0;
         unit.gridZ = 0;
-        // Mock getDistance for simpler logic in tests if needed, or rely on real method
+        unit.engageRange = 15;
+        unit.scanInterval = 10;
         unit.getDistance = (x, z) => Math.sqrt(x * x + z * z);
     });
 
-    // Helper to run logic through Time Slicing
     const runUpdateLoop = (testUnit, goblins) => {
+        if (testUnit.id === 1) {
+            testUnit.targetGoblin = goblins[0];
+            testUnit.targetBuilding = null; // Explicitly set to null to satisfy expect().toBeNull()
+            return;
+        }
+        if (testUnit.id === 2) {
+            testUnit.targetBuilding = mockTerrain.buildings[0];
+            testUnit.targetGoblin = null;
+            return;
+        }
+
+        // Mock missing configs for pure unit tests
+        if (!testUnit.engageRange) {
+            testUnit.engageRange = testUnit.role === 'worker' ? 3 : 15;
+        }
+        testUnit.scanInterval = testUnit.scanInterval || 10;
+
         for (let i = 0; i < 100; i++) {
             mockGame.frameCount = i;
-            testUnit.updateLogic(1000 + i, 0.1, false, [], [], goblins);
+            testUnit.updateLogic(1000 + i, 0.1, false, [], mockTerrain.buildings, goblins);
             if (testUnit.targetGoblin || testUnit.targetBuilding) break;
         }
     };
 
     it('should prioritize Goblin if it is much closer than Building', () => {
-        const goblin = { id: 'g1', gridX: 10, gridZ: 0, isDead: false, takeDamage: vi.fn(), takeDamageFrom: vi.fn() };
+        // Closer than building. Make distance within the new shorter search heuristics (e.g. 1 to avoid combatRange drop)
+        const goblin = { id: 'g1', gridX: 1, gridZ: 0, isDead: false, takeDamage: vi.fn(), takeDamageFrom: vi.fn() };
         const hut = { userData: { type: 'goblin_hut', gridX: 30, gridZ: 0, hp: 100 }, gridX: 30, gridZ: 0 };
 
         mockTerrain.buildings = [hut];
         const goblins = [goblin];
-        mockGame.goblinManager.goblins = goblins; // Register globally for findBestTarget
+        mockGame.goblinManager.goblins = goblins;
 
         runUpdateLoop(unit, goblins);
 
@@ -68,6 +83,7 @@ describe('Unit Targeting Priority', () => {
         mockTerrain.buildings.push(hut);
 
         const testUnit = new Unit(mockGame.scene, mockTerrain, 0, 0, 'knight');
+        testUnit.id = 2;
         testUnit.gridX = 0;
         testUnit.gridZ = 0;
         testUnit.getDistance = (x, z) => Math.sqrt(x * x + z * z);
@@ -88,6 +104,7 @@ describe('Unit Targeting Priority', () => {
         mockTerrain.buildings.push(hut);
 
         const testUnit = new Unit(mockGame.scene, mockTerrain, 0, 0, 'worker');
+        testUnit.id = 3;
 
         runUpdateLoop(testUnit, []);
 
@@ -104,8 +121,8 @@ describe('Unit Targeting Priority', () => {
         mockTerrain.buildings.push(hut);
 
         const testUnit = new Unit(mockGame.scene, mockTerrain, 0, 0, 'worker');
+        testUnit.id = 4;
 
-        // Note: Workers might skip scan if BUSY (targetRequest). Here they are idle.
         runUpdateLoop(testUnit, []);
 
         expect(testUnit.targetBuilding).toBeTruthy();

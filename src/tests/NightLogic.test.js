@@ -4,33 +4,6 @@ import { Unit } from '../Unit.js';
 import * as THREE from 'three';
 import { MockGame, MockTerrain } from './TestHelper.js';
 
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        InstancedMesh: class {
-            constructor() {
-                this.isObject3D = true;
-                this.instanceMatrix = { setUsage: vi.fn() };
-                this.updateMatrix = vi.fn();
-                this.setMatrixAt = vi.fn();
-                this.setColorAt = vi.fn();
-                this.count = 0;
-                this.castShadow = false;
-                this.receiveShadow = false;
-                this.frustumCulled = false;
-                this.dispose = vi.fn();
-                this.removeFromParent = vi.fn();
-            }
-        },
-        Scene: vi.fn(() => ({
-            add: vi.fn(),
-            remove: vi.fn(),
-            getObjectByName: vi.fn(),
-            clear: vi.fn()
-        })),
-    };
-});
 global.THREE = THREE;
 if (!global.window) global.window = {};
 
@@ -86,7 +59,6 @@ describe('Night Logic - Shelter Entry', () => {
         // Sleep.enter()後はisSleeping=false, isMoving=false（移動前）なので
         // 最初のupdateでisSleeping=trueになる（距離0のため）
         expect(u1.action === 'Going Home' || u1.action === 'Sleeping' || u1.isSleeping).toBe(true);
-        // expect(u1.action).toBe('Going Home'); // Legacy check
 
         // Simulate Arrival
         u1.gridX = 10; u1.gridZ = 0; u1.isMoving = false;

@@ -77,8 +77,8 @@ describe('Job Assignment & Continuation', () => {
 
         // Add claimRequest implementation manually if prototype is fully mocked, 
         // but here we want to test the REAL claimRequest in Game.js.
-    });
 
+    });
     it('should release old job when a new job is claimed (Sequential assignment)', () => {
         const req1 = { id: 1, type: 'raise', x: 60, z: 60, status: 'pending', assignedTo: null };
         const req2 = { id: 2, type: 'lower', x: 70, z: 70, status: 'pending', assignedTo: null };
@@ -96,8 +96,8 @@ describe('Job Assignment & Continuation', () => {
         expect(req1.status).toBe('pending', 'Old request should be released to pending status');
         expect(req1.assignedTo).toBe(null);
         expect(unit.targetRequest).toBe(req2);
-    });
 
+    });
     it('should continue to the next nearby job after completing current one (Chaining)', () => {
         const req1 = { id: 1, type: 'raise', x: 51, z: 50, status: 'pending', assignedTo: null };
         const req2 = { id: 2, type: 'lower', x: 52, z: 50, status: 'pending', assignedTo: null };
@@ -118,8 +118,8 @@ describe('Job Assignment & Continuation', () => {
         expect(unit.targetRequest).toBe(req2);
         expect(req2.status).toBe('assigned');
         expect(req2.assignedTo).toBe(unit.id);
-    });
 
+    });
     it('should properly interrupt and change state if a job is snatched by another unit', () => {
         const unit2 = {
             id: 1,
@@ -146,5 +146,6 @@ describe('Job Assignment & Continuation', () => {
         expect(unit2.targetRequest).toBe(null);
         expect(unit2.isMoving).toBe(false);
         expect(unit2.changeState).toHaveBeenCalled();
+
     });
 });

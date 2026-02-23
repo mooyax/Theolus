@@ -39,12 +39,12 @@ describe('Unit Interrupt and Resume', () => {
         unit.id = 1;
         unit.game = game;
         game.units = [unit];
-    });
 
+    });
     afterEach(() => {
         vi.restoreAllMocks();
-    });
 
+    });
     it('should return to previous movement target after finishing a job', async () => {
         // 1. Initial Move (Long distance)
         const initialTargetX = 80;
@@ -92,8 +92,8 @@ describe('Unit Interrupt and Resume', () => {
         expect(unit.targetGridX).toBe(initialTargetX);
         expect(unit.targetGridZ).toBe(initialTargetZ);
         expect(unit.state).toBeInstanceOf(Wander);
-    });
 
+    });
     it('should resume MIGRATION after Combat interruption', () => {
         // 1. Setup Migration State
         unit.action = 'Migrating';
@@ -118,5 +118,6 @@ describe('Unit Interrupt and Resume', () => {
         expect(unit.action).toBe('Migrating');
         expect(unit.targetGridX).toBe(90);
         expect(unit.targetGridZ).toBe(90);
-    });
+
+});
 });

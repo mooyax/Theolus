@@ -2,31 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Game } from '../Game.js';
 import { Levels } from '../config/GameConfig.js';
 
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        Scene: class { add() { } remove() { } traverse() { } },
-        WebGLRenderer: class {
-            render() { }
-            setSize() { }
-            setPixelRatio() { }
-            dispose() { }
-            domElement = { parentNode: { removeChild: vi.fn() } }
-        },
-        AmbientLight: class { },
-        DirectionalLight: class { position = { set: () => { } } },
-        Clock: class { getDelta() { return 0.1; } },
-        PerspectiveCamera: class { position = { set: () => { } }; lookAt() { } },
-        OrthographicCamera: class { position = { set: () => { } }; lookAt() { } updateMatrixWorld() { } },
-        TextureLoader: class { load() { return {}; } },
-        Plane: class { },
-        Vector3: class { set() { } },
-        Matrix4: class { multiplyMatrices() { } },
-        Frustum: class { setFromProjectionMatrix() { } },
-    };
-});
-
 vi.mock('../GoblinManager.js', () => ({
     GoblinManager: class {
         reset() { }
@@ -64,4 +39,3 @@ describe('Double Spawn Issue (Concurrency)', () => {
         expect(workers.length).toBe(1);
     });
 });
-

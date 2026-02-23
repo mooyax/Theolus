@@ -2,69 +2,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as THREE from 'three';
 
-// Mock THREE
-vi.mock('three', () => {
-    class Vector3 {
-        constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
-        set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
-        clone() { return new Vector3(this.x, this.y, this.z); }
-        copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
-    }
-    return {
-        Scene: class { add() { } remove() { } },
-        Vector3: Vector3,
-        Color: class { setHex() { return this; } lerp() { return this; } setHSL() { return this; } },
-        DoubleSide: 2,
-        Plane: class { clone() { return new this.constructor(); } },
-        PlaneGeometry: class {
-            constructor() {
-                this.attributes = {
-                    position: { count: 10, array: new Float32Array(30), itemSize: 3, setX: vi.fn(), setY: vi.fn(), setZ: vi.fn(), getX: (i) => 0, getY: (i) => 0 },
-                    color: { array: new Float32Array(30), itemSize: 3, setX: vi.fn(), setY: vi.fn(), setZ: vi.fn() },
-                    normal: { array: new Float32Array(30), itemSize: 3, setXYZ: vi.fn() },
-                    uv: { array: new Float32Array(20), itemSize: 2 }
-                };
-            }
-            setAttribute(name, attr) { this.attributes[name] = attr; }
-            getAttribute(name) { return this.attributes[name]; }
-            computeVertexNormals() { }
-            dispose() { }
-            translate() { }
-        },
-        BufferAttribute: class {
-            constructor(array, itemSize) { this.array = array; this.itemSize = itemSize; this.count = array.length / itemSize; }
-            setX(i, x) { if (this.array) this.array[i * this.itemSize] = x; return this; }
-            setY(i, y) { if (this.array) this.array[i * this.itemSize + 1] = y; return this; }
-            setZ(i, z) { if (this.array) this.array[i * this.itemSize + 2] = z; return this; }
-            setXYZ(i, x, y, z) { this.setX(i, x); this.setY(i, y); this.setZ(i, z); return this; }
-            getX(i) { return this.array ? this.array[i * this.itemSize] : 0; }
-            getY(i) { return this.array ? this.array[i * this.itemSize + 1] : 0; }
-        },
-        BufferGeometry: class {
-            constructor() { this.attributes = { position: { array: [], count: 0 }, color: { array: [], count: 0 } }; }
-            setIndex(indices) { this.index = indices; }
-            setAttribute() { }
-            dispose() { }
-        },
-        LineSegments: class { constructor() { this.position = new Vector3(); } dispose() { } },
-        MeshLambertMaterial: class { dispose() { } },
-        MeshStandardMaterial: class { dispose() { } }, // ADDED
-        LineBasicMaterial: class { dispose() { } },
-        PointsMaterial: class { dispose() { } },
-        Group: class { constructor() { this.children = []; this.position = new Vector3(); } add() { } remove() { } }, // ADDED
-        BoxGeometry: class { constructor() { } translate() { } }, // ADDED
-        ConeGeometry: class { constructor() { } translate() { } }, // ADDED
-        CylinderGeometry: class { constructor() { } translate() { } }, // ADDED
-        Mesh: class {
-            constructor() { this.position = new Vector3(); this.rotation = { x: 0 }; this.scale = new Vector3(1, 1, 1); this.children = []; }
-            add() { }
-            remove() { }
-        },
-        Points: class { constructor() { this.position = new Vector3(); } },
-        MathUtils: { lerp: (a, b, t) => a + (b - a) * t }
-    };
-});
-
 // Mock Terrain (Partial)
 import { Terrain } from '../Terrain';
 
@@ -92,12 +29,12 @@ describe('Terrain Ghost House Test', () => {
         terrain.updateMesh = vi.fn();
         terrain.updateColors = vi.fn();
         terrain.calculateRegions = vi.fn();
-    });
 
+    });
     afterEach(() => {
         vi.useRealTimers();
-    });
 
+    });
     it('should NOT accumulate ghost buildings (cleared during deserialize)', async () => {
         // 1. Add checks for initial state
         expect(terrain.buildings.length).toBe(0);
@@ -156,5 +93,6 @@ describe('Terrain Ghost House Test', () => {
 
         // Extra check: Old building should NOT be in grid
         expect(entities).not.toContain(b1);
-    });
+
+});
 });

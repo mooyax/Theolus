@@ -21,8 +21,8 @@ describe('Jitabata Bug Reproduction (Interrupt Loop)', () => {
         unit = new Unit(mockGame.scene, mockTerrain, 10, 10, 'knight');
         unit.game = mockGame;
         unit.changeState(new Wander(unit));
-    });
 
+    });
     it('should NOT trigger Jitabata (Stop-and-Go) when a distant Raid Point appears during Migration', () => {
         const time = 1000;
         const deltaTime = 0.016;
@@ -59,5 +59,6 @@ describe('Jitabata Bug Reproduction (Interrupt Loop)', () => {
 
         expect(unit.isMoving).toBe(true);
         expect(unit.action).toBe("Migrating");
-    });
+
+});
 });

@@ -31,8 +31,8 @@ describe('Stagnation Integration Test', () => {
         // Ensure some initial variety for growth
         mockResources.grain = 10;
         mockResources.fish = 10;
-    });
 
+    });
     it('should show population and grain growth in a farm over time', () => {
         const bx = 10;
         const bz = 10;
@@ -60,8 +60,8 @@ describe('Stagnation Integration Test', () => {
         // Each 100 resets buffer and adds grain.
         // So Grain should be at least 10 + 6 = 16.
         expect(mockResources.grain).toBeGreaterThan(10);
-    });
 
+    });
     it('should spawn workers from a house when population reaches cap and food is available', () => {
         const bx = 15;
         const bz = 15;
@@ -86,5 +86,6 @@ describe('Stagnation Integration Test', () => {
         // Spawn count should be > 0 and Grain should be consumed
         expect(spawnCount).toBeGreaterThan(0);
         expect(mockResources.grain).toBeLessThan(100);
-    });
+
+});
 });

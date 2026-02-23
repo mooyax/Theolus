@@ -18,11 +18,11 @@ describe('Global Battle Hotspots Logic', () => {
             // But better to test the ACTUAL code. 
             // We can manually attach the functions from Game.js if we import it.
         };
-    });
 
     // Strategy: Import Game but don't call constructor
     // Since Game is a class, we can get methods from prototype
 
+    });
     it('Clusters nearby battle reports', async () => {
         // Dynamic import to avoid side effects if any
         const { Game } = await import('../Game.js');
@@ -33,8 +33,8 @@ describe('Global Battle Hotspots Logic', () => {
 
         expect(mockGame.battleHotspots.length).toBe(1);
         expect(mockGame.battleHotspots[0].intensity).toBeGreaterThan(20);
-    });
 
+    });
     it('Decays intensity', async () => {
         const { Game } = await import('../Game.js');
         const reportFn = Game.prototype.reportGlobalBattle.bind(mockGame);
@@ -45,8 +45,8 @@ describe('Global Battle Hotspots Logic', () => {
 
         updateFn(1.0);
         expect(mockGame.battleHotspots[0].intensity).toBe(initial - 2.0); // Reduced decay
-    });
 
+    });
     it('Mobilizes idle squads to intense hotspots (Updated Threshold)', async () => {
         const { Game } = await import('../Game.js');
         const mobFn = Game.prototype.updateSquadMobilization.bind(mockGame);
@@ -66,8 +66,8 @@ describe('Global Battle Hotspots Logic', () => {
         mobFn(0.1);
 
         expect(reportSquadFn).toHaveBeenCalledWith(1, 100, 20);
-    });
 
+    });
     it('Triggers autonomous patrol for idle Knights', async () => {
         const { Unit } = await import('../Unit.js');
 
@@ -116,8 +116,8 @@ describe('Global Battle Hotspots Logic', () => {
 
         expect(mockUnit.action).toBe("Patrolling");
         expect(mockUnit.patrol).toHaveBeenCalled();
-    });
 
+    });
     it('Mobilizes idle squads', async () => {
         const { Game } = await import('../Game.js');
         const mobFn = Game.prototype.updateSquadMobilization.bind(mockGame);
@@ -135,8 +135,8 @@ describe('Global Battle Hotspots Logic', () => {
         mobFn(0.1);
 
         expect(reportSquadFn).toHaveBeenCalledWith(1, 50, 50);
-    });
 
+    });
     it('Does not mobilize across regions', async () => {
         const { Game } = await import('../Game.js');
         const mobFn = Game.prototype.updateSquadMobilization.bind(mockGame);
@@ -156,5 +156,6 @@ describe('Global Battle Hotspots Logic', () => {
         mobFn(0.1);
 
         expect(reportSquadFn).not.toHaveBeenCalled();
-    });
+
+});
 });

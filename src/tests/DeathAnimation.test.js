@@ -3,12 +3,7 @@ import * as THREE from 'three';
 import { Unit } from '../Unit.js';
 
 // Minimal Mocks
-global.window = {
-    game: {
-        releaseRequest: vi.fn(),
-        resources: { meat: 0 }
-    }
-};
+
 
 describe('Death Animation and Logic Fixes', () => {
     let unit;
@@ -35,8 +30,8 @@ describe('Death Animation and Logic Fixes', () => {
         unit = new Unit(scene, terrain, 10, 10, 'worker');
         unit.id = 0;
         unit.game = window.game;
-    });
 
+    });
     it('should update death animation and remove cross after duration', () => {
         // 1. Kill the unit
         unit.die();
@@ -57,8 +52,8 @@ describe('Death Animation and Logic Fixes', () => {
         expect(unit.crossMesh).toBeNull();
         expect(scene.remove).toHaveBeenCalled();
         expect(unit.isFinished).toBe(true);
-    });
 
+    });
     it('should Stop moving/updating logic when Dead (Ghost Unit Fix)', () => {
         unit.isMoving = true;
         unit.targetGridX = 20;
@@ -76,5 +71,6 @@ describe('Death Animation and Logic Fixes', () => {
         // 1. Should NOT call state.update (Ghost Unit fix)
         // 2. Should NOT behave as moving (conceptually) - though isMoving might stay true, logic shouldn't run.
         expect(unit.state.update).not.toHaveBeenCalled();
-    });
+
+});
 });

@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+
+import { describe, it, expect, vi, beforeEach, beforeAll, afterEach } from 'vitest';
 import { Unit } from '../Unit.js';
 import * as THREE from 'three';
 
 global.THREE = THREE;
-if (!global.window) global.window = {};
+if (!global.window) global.window = { game: null };
 
 describe('Unit Movement Wrapping', () => {
     let mockTerrain;
@@ -22,32 +23,28 @@ describe('Unit Movement Wrapping', () => {
             grid: grid,
             logicalWidth: 80, // Use 80 as in game
             logicalDepth: 80,
+            getWidth: () => 80,
+            getDepth: () => 80,
             getVisualPosition: () => ({ x: 0, y: 0, z: 0 }),
             moveEntity: vi.fn(),
             registerEntity: vi.fn(),
             getBuildingSize: () => 1,
             findPath: (sx, sz, ex, ez) => {
-                // Return path with intermediate step ONLY for short distances (to satisfy "normal move" test)
-                // For long distances (wrapping tests), we return direct target to satisfy existing expectations (Teleport mock)
                 const dx = ex - sx;
                 const dz = ez - sz;
                 const distSq = dx * dx + dz * dz;
 
                 if (distSq < 100 && (Math.abs(dx) > 1 || Math.abs(dz) > 1)) {
-                    // Simple interpolate: Start -> Start+Dir -> End
                     return [
-                        { x: sx + Math.sign(dx), z: sz + Math.sign(dz) },
+                        { x: (sx + Math.sign(dx) + 80) % 80, z: (sz + Math.sign(dz) + 80) % 80 },
                         { x: ex, z: ez }
                     ];
                 }
                 return [{ x: ex, z: ez }];
-                return [{ x: ex, z: ez }];
             },
             findPathAsync: async function (sx, sz, ex, ez) {
-                // Mock async wrapper
                 return this.findPath(sx, sz, ex, ez);
             },
-            pathfindingCalls: 0,
             getRegion: (x, z) => 1,
             isAdjacentToRegion: () => true,
             isValidGrid: (x, z) => x >= 0 && x < 80 && z >= 0 && z < 80,
@@ -60,9 +57,11 @@ describe('Unit Movement Wrapping', () => {
         unit.targetGridX = 0; unit.targetGridZ = 0;
     });
 
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
     it('should move normally for short distances', async () => {
-        // Actor.js: executeMove sets targetGridX/Z immediately to the calculated next step.
-        // For short distances, smartMove calculates the next tile.
         unit.gridX = 10;
         unit.gridZ = 10;
         unit.triggerMove(15, 10, 1000);
@@ -74,24 +73,17 @@ describe('Unit Movement Wrapping', () => {
     });
 
     it('should wrap LEFT if target is across right boundary', async () => {
-        // Unit at 10. Target at 70 (Shortest path is wrapping: -20 steps)
         unit.gridX = 10;
         unit.gridZ = 10;
         unit.triggerMove(70, 10, 1000);
         await new Promise(r => setTimeout(r, 0));
         unit.triggerMove(70, 10, 1001);
 
-        // Dist (60) > 15.0 -> A* triggers immediately.
-        // My recent change in Actor.js makes it consume the FIRST point of the path.
-        // If findPath returns [{x:sx, z:sz}, {x:ex, z:ez}], shift() gets sx (10), 
-        // then next shift() or direct move could be ex (70).
-        // Let's check what MockTerrain.findPath returns.
         expect(unit.targetGridX).toBe(70);
         expect(unit.targetGridZ).toBe(10);
     });
 
     it('should wrap RIGHT if target is across left boundary', async () => {
-        // Unit at 70. Target at 10
         unit.gridX = 70;
         unit.gridZ = 10;
         unit.triggerMove(10, 10, 1000);

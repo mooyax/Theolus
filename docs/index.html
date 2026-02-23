@@ -3,6 +3,15 @@
 
 <head>
   <meta charset="UTF-8" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8DCBNPEE37"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-8DCBNPEE37');
+  </script>
   <link rel="icon" type="image/svg+xml" href="./vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Theolus</title>
@@ -258,25 +267,41 @@
       /* background set inline for easy tuning */
       display: flex;
       flex-direction: column;
-      flex-direction: column;
       align-items: flex-start;
-      /* User Request: Align Left */
-      padding-left: 10%;
-      /* Indent slightly */
-      padding-top: 100px;
+      /* Left aligned but with large margin to avoid stats */
+      justify-content: flex-start;
+      padding: 150px 200px;
+      /* Adjusted left padding to avoid overlap with stats-container without being too far right */
+      box-sizing: border-box;
       z-index: 3000;
       color: white;
       pointer-events: none;
       /* Allow clicks to pass through to canvas */
     }
 
+    #start-level-display {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 8rem;
+      font-weight: 900;
+      color: rgba(76, 175, 80, 0.4);
+      /* Semitransparent Green */
+      text-shadow: 0 0 30px rgba(76, 175, 80, 0.8), 0 0 60px rgba(76, 175, 80, 0.4);
+      margin: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      letter-spacing: 0.5rem;
+      text-transform: uppercase;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
     #start-screen h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-      /* User Request: Reduce Gap */
-      text-shadow: 0 0 10px #4CAF50;
+      font-size: 4rem;
+      margin-bottom: 2rem;
+      text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
       pointer-events: auto;
-      /* Allow interaction */
     }
 
     .start-btn {
@@ -618,7 +643,7 @@
       box-shadow: 0 0 20px white;
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-Dy3OXP7K.js"></script>
+  <script type="module" crossorigin src="./assets/index-C6CXJ-_C.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-BwhFW2Gb.css">
 </head>
 
@@ -630,6 +655,10 @@
   </div>
 
   <div id="stats-container">
+    <div class="stat-row" title="Current Level">
+      <span class="material-symbols-outlined">layers</span>
+      <span id="level-val">Level 1</span>
+    </div>
     <div id="time-display" class="stat-row">
       <span class="material-symbols-outlined">schedule</span>
       <span id="day-val" style="margin-right: 10px;">Day 1</span>
@@ -684,14 +713,17 @@
   <div id="unit-debug-panel"></div>
 
   <div id="start-screen">
-    <h1>Theolus</h1>
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <button id="start-new-btn" class="start-btn">NEW</button>
+    <div id="start-level-display">LEVEL 1</div>
+    <h1 style="color: white; text-shadow: 2px 2px 10px rgba(0,0,0,1);">Theolus</h1>
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <button id="start-new-btn" class="start-btn">START</button>
       <button id="regenerate-btn" class="start-btn"
         style="padding: 15px; width: 60px; height: 60px; border-radius: 50%; font-size: 2rem;"
         title="Regenerate Terrain">♻️</button>
     </div>
-    <button id="start-load-btn" class="start-btn">LOAD</button>
+    <div style="margin-top: 20px;">
+      <button id="start-load-btn" class="start-btn" style="padding: 10px 30px; font-size: 1.2rem;">LOAD</button>
+    </div>
   </div>
 
   <div id="ui" style="display: none;">
@@ -739,6 +771,10 @@
       style="display: flex; gap: 5px; margin-left: 15px; border-left: 1px solid rgba(255,255,255,0.3); padding-left: 15px;">
       <button id="save-load-btn" title="Save/Load"><span class="material-symbols-outlined">save</span></button>
       <button id="help-btn" title="Help / Guide"><span class="material-symbols-outlined">help</span></button>
+      <a href="https://github.com/mooyax/Theolus/discussions" target="_blank" style="text-decoration: none;">
+        <button id="feedback-btn" title="Feedback / BBS" style="background: #2ea44f;"><span
+            class="material-symbols-outlined" style="color:white;">forum</span></button>
+      </a>
       <button id="debug-speed-btn" onclick="toggleDebugSpeed()" title="Toggle Speed"><span
           class="material-symbols-outlined">fast_forward</span></button>
     </div>
@@ -1316,7 +1352,7 @@
       // Import Showroom dynamically
       // Note: Since this is inside DOMContentLoaded which is inside a script tag (not module),
       // we need to use dynamic import.
-      import('./assets/HelpShowroom-DSiQRGkV.js').then((module) => {
+      import('./assets/HelpShowroom-D_WVwKyr.js').then((module) => {
         const HelpShowroom = module.HelpShowroom;
 
         let showroomOthers = null;

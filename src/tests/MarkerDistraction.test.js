@@ -4,17 +4,6 @@ import { Unit } from '../Unit.js';
 import { Job } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
-// Mock THREE
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        Group: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); } },
-        Mesh: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); } },
-        Scene: class { constructor() { this.add = vi.fn(); } },
-    };
-});
-
 describe('Marker Distraction and Pathfinding Persistence', () => {
     let terrain, unit;
 
@@ -35,7 +24,7 @@ describe('Marker Distraction and Pathfinding Persistence', () => {
         const mockScene = new THREE.Scene();
         unit = new Unit(mockScene, terrain, 10, 10, 'worker');
         unit.role = 'worker';
-        unit.id = 123; // Set specific ID
+        unit.id = 123;
         unit.ignoredTargets = new Map();
         unit.simTime = 100;
         unit.isReachable = vi.fn(() => true);
@@ -76,7 +65,6 @@ describe('Marker Distraction and Pathfinding Persistence', () => {
         state.enter();
         unit.isPathfindingThrottled = false;
 
-        // Threshold is 50 for manual jobs. 10 failures should be fine.
         for (let i = 0; i < 10; i++) {
             state.update(100 + i, 0.1);
         }

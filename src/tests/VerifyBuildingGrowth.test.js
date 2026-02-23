@@ -1,33 +1,8 @@
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Building } from '../Building';
 import { GameConfig } from '../config/GameConfig';
 import * as THREE from 'three';
-
-// Mock THREE
-
-vi.mock('three', () => {
-    class MockVector3 {
-        constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
-        set = vi.fn().mockReturnThis();
-        copy = vi.fn().mockReturnThis();
-        clone = vi.fn(() => new MockVector3(this.x, this.y, this.z));
-    }
-    class MockObject {
-        position = new MockVector3();
-        rotation = { x: 0, y: 0, z: 0 };
-        add = vi.fn();
-        remove = vi.fn();
-    }
-    return {
-        Scene: MockObject,
-        Vector3: MockVector3,
-        Object3D: MockObject,
-        Group: MockObject,
-        Mesh: MockObject,
-        BoxGeometry: vi.fn(),
-        MeshLambertMaterial: vi.fn(),
-    };
-});
 
 // Mock Entity to avoid inheritance issues if deep
 vi.mock('../Entity.js', () => {
@@ -47,7 +22,6 @@ describe('Building Population Growth', () => {
 
     beforeEach(() => {
         // Reset config to known state for test
-        // In JS test environment we can just mute the property or use Object.assign if needed
         GameConfig.buildings.cave = {
             hp: 200,
             capacity: 20,

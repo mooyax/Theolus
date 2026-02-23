@@ -4,23 +4,7 @@ import * as THREE from 'three';
 import fs from 'fs';
 
 // Refined Mock: Use Actual Three for Math, Mock only Renderer/DOM bits
-vi.mock('three', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual,
-        WebGLRenderer: class {
-            constructor() { this.domElement = document.createElement('div'); }
-            setSize() { }
-            setClearColor() { }
-            render() { }
-            setPixelRatio() { }
-            dispose() { }
-        },
-        TextureLoader: class {
-            load(url, cb) { if (cb) cb({}); return {}; }
-        }
-    };
-});
+
 
 vi.mock('../ui/ActionLabel.js', () => ({
     ActionLabel: class { update() { } }
@@ -109,8 +93,8 @@ describe('Moving Flicker Check', () => {
             checkYield: () => Promise.resolve(),
             isReachable: () => true
         };
-    });
 
+    });
     afterEach(() => {
         if (game) {
             game.dispose();
@@ -118,8 +102,8 @@ describe('Moving Flicker Check', () => {
         }
         window.game = null;
         vi.restoreAllMocks();
-    });
 
+    });
     it('should NOT flicker to Idle while moving to a distant job', async () => {
         unit = game.spawnUnit(10, 10, 'worker');
         unit.id = 0;
@@ -176,8 +160,8 @@ describe('Moving Flicker Check', () => {
             throw new Error(msg);
         }
         expect(idleFrames.length).toBe(0);
-    });
 
+    });
     it('should reproduce flicker when pathfinding budget is exhausted', async () => {
         // Mock budget exhaustion
         game.terrain.pathfindingCalls = 100;
@@ -213,8 +197,8 @@ describe('Moving Flicker Check', () => {
 
         expect(states[9]).toBe('Job');
         expect(unit.action).toBe('Approaching Job');
-    });
 
+    });
     it('should NOT drop manual job if temporarily blocked mid-move', async () => {
         unit = game.spawnUnit(10, 10, 'worker');
         unit.id = 0;
@@ -248,8 +232,8 @@ describe('Moving Flicker Check', () => {
 
         expect(unit.state).toBeInstanceOf(Job);
         expect(unit.action).toBe('Approaching Job');
-    });
 
+    });
     it('should resume job after combat interruption', () => {
         unit = game.spawnUnit(10, 10, 'worker');
         unit.id = 0;
@@ -285,5 +269,6 @@ describe('Moving Flicker Check', () => {
         expect(unit.state).toBeInstanceOf(Job);
         expect(unit.action).toBe('Approaching Job');
         expect(unit.targetRequest).toBe(req);
-    });
+
+});
 });

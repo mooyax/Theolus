@@ -5,33 +5,6 @@ import { Goblin } from '../Goblin.js';
 import * as THREE from 'three';
 import { MockGame, MockTerrain } from './TestHelper.js';
 
-// Mock Three.js essentials
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        InstancedMesh: class {
-            constructor() {
-                this.instanceMatrix = { setUsage: vi.fn(), needsUpdate: false };
-                this.instanceColor = { needsUpdate: false };
-                this.updateMatrix = vi.fn();
-                this.setMatrixAt = vi.fn();
-                this.setColorAt = vi.fn();
-                this.count = 0;
-                this.dispose = vi.fn();
-            }
-        },
-        Scene: class {
-            add() { }
-            remove() { }
-        },
-        Group: class {
-            add() { }
-            remove() { }
-        }
-    };
-});
-
 describe('Goblin Activity & Persistence', () => {
     let goblinManager;
     let mockGame;
@@ -45,7 +18,6 @@ describe('Goblin Activity & Persistence', () => {
         mockGame = new MockGame();
         mockTerrain = new MockTerrain(100, 100);
 
-        // Setup simple valid terrain with INDEPENDENT objects for grid cells
         mockTerrain.grid = Array.from({ length: 100 }, () =>
             Array.from({ length: 100 }, () => ({ height: 1.0, hasBuilding: false }))
         );
@@ -62,13 +34,12 @@ describe('Goblin Activity & Persistence', () => {
         });
         mockTerrain.moveEntity = vi.fn();
         mockTerrain.unregisterEntity = vi.fn();
-        mockTerrain.buildings = []; // Initialize empty
+        mockTerrain.buildings = [];
 
         mockGame.terrain = mockTerrain;
 
         goblinManager = new GoblinManager(mockGame.scene, mockTerrain);
         mockGame.goblinManager = goblinManager;
-        global.window = { game: mockGame };
     });
 
     afterEach(() => {
@@ -84,47 +55,25 @@ describe('Goblin Activity & Persistence', () => {
             clanId: 'test_clan'
         };
         mockTerrain.buildings.push(cave.building);
-
-        // Also ensure grid has building flag if manager checks it
         mockTerrain.grid[50][50].hasBuilding = true;
 
-        // 1. Spawn
-        try {
-            goblinManager.spawnGoblinAtCave(cave);
-            console.log("Spawn called. Goblins count:", goblinManager.goblins.length);
-        } catch (e) {
-            console.error("Spawn ERROR:", e);
-        }
+        goblinManager.spawnGoblinAtCave(cave);
         expect(goblinManager.goblins.length).toBe(1);
 
         const goblin = goblinManager.goblins[0];
-        // Goblin spawns at neighbor, so check distance is small
         expect(Math.abs(goblin.gridX - 50)).toBeLessThanOrEqual(2);
         expect(Math.abs(goblin.gridZ - 50)).toBeLessThanOrEqual(2);
         expect(goblin.isDead).toBe(false);
 
-        // 2. Simulate Updates (Activity)
-        // 2. Simulate Updates (Activity)
         goblinManager.update(0.1, 0.016, false, [], 1.0, { position: { x: 50, z: 50 } });
-
         expect(goblin.state).toBeDefined();
 
-        // Move forward in time
-        const startPos = goblin.position.clone();
-
-        // Run loop for 5 seconds logic time
         for (let i = 0; i < 300; i++) {
             goblinManager.update(0.1 + i * 0.016, 0.016, false, [], 1.0, { position: { x: 50, z: 50 } });
-            if (goblin.isDead) {
-                console.error(`Goblin died at iteration ${i}. Pos: ${goblin.gridX},${goblin.gridZ}`);
-                break;
-            }
+            if (goblin.isDead) break;
         }
 
-        // 3. Verify Persistence
         expect(goblin.isDead).toBe(false);
         expect(goblinManager.goblins.length).toBe(1);
-
-        console.log(`Goblin End Pos: ${goblin.position.x},${goblin.position.z} (Start: 50,50)`);
     });
 });

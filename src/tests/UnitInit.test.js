@@ -3,9 +3,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
 import * as THREE from 'three';
 
-global.THREE = THREE;
-if (!global.window) global.window = {};
-
 describe('Unit Initialization and Movement Start', () => {
     let unit;
     let mockTerrain;
@@ -14,48 +11,41 @@ describe('Unit Initialization and Movement Start', () => {
         mockTerrain = {
             findBestTarget: vi.fn(() => null),
             getTileHeight: () => 10,
-            getInterpolatedHeight: () => 1, // Mock this
-            getVisualOffset: () => ({ x: 0, y: 0 }), // Mock this
-            modifyMoisture: vi.fn(), // Mock this
+            getInterpolatedHeight: () => 1,
+            getVisualOffset: () => ({ x: 0, y: 0 }),
+            modifyMoisture: vi.fn(),
             registerEntity: vi.fn(),
             unregisterEntity: vi.fn(),
-            grid: Array(100).fill().map(() => Array(100).fill({ moisture: 0.5 })), // Moisture 0.5 to avoid improveLand
+            grid: Array(100).fill().map(() => Array(100).fill({ moisture: 0.5 })),
             getRegion: () => 1,
             getRandomPointInRegion: () => ({ x: 5, z: 5 }),
             buildings: [],
             logicalWidth: 100,
             logicalDepth: 100,
-            findPath: vi.fn(), // Mock findPath
-            findPathAsync: vi.fn().mockResolvedValue([{ x: 5, z: 5 }]), // Mock findPathAsync
-            pathfindingCalls: 0 // Mock Budget
+            findPath: vi.fn(),
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 5, z: 5 }]),
+            pathfindingCalls: 0
         };
-        // Mock initAssets prevent crash
         Unit.initAssets = vi.fn();
-
         unit = new Unit(null, mockTerrain, 10, 10, 'worker');
-        // moveInterval is 2.0 - 5.0 seconds
+    });
+
+    it('should correctly initialize and update logic', () => {
         const interval = unit.moveInterval || 3.0;
         expect(interval).toBeGreaterThanOrEqual(2.0);
 
-        // Advance time by 1.0s
         unit.lastMoveAttempt = 0;
         unit.updateLogic(1.0, 1.0, false, [], [], []);
 
-        // Advance time by 6s -> Should trigger
-        unit.isMoving = false; // Force ensure
+        unit.isMoving = false;
         unit.updateLogic(6.0, 1.0, false, [], [], []);
 
-        // Verify state change or property update
-        // expect(unit.isMoving).toBe(true); 
-        console.log(`Debug Unit Action after 6s: ${unit.action}`);
+        expect(unit.action).toBeDefined();
     });
 
     it('should NOT freeze if started at time 0', () => {
-        // Some logic might divide by zero or get stuck?
-        unit.updateLogic(0, 0.1, false, [], [], []); // Frame 0
-
-        unit.updateLogic(5.0, 0.1, false, [], [], []); // Frame N
-        // Check if alive/active
+        unit.updateLogic(0, 0.1, false, [], [], []);
+        unit.updateLogic(5.0, 0.1, false, [], [], []);
         expect(unit.age).toBeDefined();
     });
 });

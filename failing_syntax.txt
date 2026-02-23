@@ -1,0 +1,21 @@
+EcoSpawnFix.test.js; Unexpected token '}'
+GroupCombat.test.js; missing ) after argument list
+JobAssignment.test.js; await is only valid in async functions and the top level bodies of modules
+Lighting.test.js; missing ) after argument list
+ManualRequestIntegration.test.js; Unexpected token 'return'
+MigrationImprovement.test.js; Illegal return statement
+NightLoadJob.test.js; Illegal return statement
+PathfindingTimeout.test.js; Unexpected identifier 'vi'
+PerformanceMonitor.test.js; Unexpected identifier 'vi'
+PopulationSpawningFix.test.js; Unexpected token 'const'
+ResourceGathering.test.js; Unexpected identifier 'describe'
+SquadAi.test.js; Unexpected token 'return'
+SquadMemory.test.js; Unexpected token ')'
+StressTest.test.js; Unexpected string
+StuckAndMarker.test.js; Unexpected token ','
+Terrain.test.js; Unexpected identifier 'terrain'
+TerrainJobReach.test.js; Unexpected identifier 'describe'
+TerrainSpeed.test.js; Unexpected token ')'
+UnitStress.test.js; missing ) after argument list
+UnitVisibility.test.js; missing ) after argument list
+WorkerDistraction.test.js; await is only valid in async functions and the top level bodies of modules

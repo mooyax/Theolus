@@ -1,45 +1,16 @@
-
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Game } from '../Game.js';
 import { Unit } from '../Unit.js';
-import { Job, Wander } from '../ai/states/UnitStates.js';
+import { Job } from '../ai/states/UnitStates.js';
+import * as THREE from 'three';
 
-// Lightweight Mocks
-global.window = {
-    innerWidth: 1024, innerHeight: 768, devicePixelRatio: 1,
-    getComputedStyle: () => ({ display: 'none' }),
-    addEventListener: vi.fn(),
-    requestAnimationFrame: vi.fn(),
-    cancelAnimationFrame: vi.fn(),
-    alert: vi.fn(),
-    game: null
-};
-global.Worker = class {
-    constructor() { }
-    postMessage() { }
-    terminate() { }
-    addEventListener() { }
-};
-global.document = {
-    getElementById: vi.fn(() => ({ style: {}, innerText: '' })),
-    createElement: vi.fn(() => ({
-        getContext: () => ({ fillRect: () => { }, beginPath: () => { }, moveTo: () => { }, lineTo: () => { }, stroke: () => { } }),
-        style: {}, width: 0, height: 0, toDataURL: () => ''
-    })),
-    createElementNS: vi.fn(() => ({
-        style: {}, width: 0, height: 0, getContext: () => ({})
-    })),
-    body: { appendChild: vi.fn(), style: {} }
-};
+
+
+
 
 const store = {};
-global.localStorage = {
-    getItem: vi.fn((key) => store[key] || null),
-    setItem: vi.fn((key, val) => { store[key] = val.toString(); }),
-    clear: vi.fn(() => { for (const k in store) delete store[k]; }),
-    removeItem: vi.fn((key) => { delete store[key]; })
-};
-global.alert = vi.fn();
+
+
 
 vi.mock('../SoundManager.js', () => ({ SoundManager: class { play() { } } }));
 vi.mock('../SaveManager.js', () => ({
@@ -60,122 +31,6 @@ vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { update() { } dispos
 vi.mock('../BuildingRenderer.js', () => ({ BuildingRenderer: class { update() { } updateLighting() { } dispose() { } init() { } } }));
 vi.mock('../GoblinRenderer.js', () => ({ GoblinRenderer: class { update() { } dispose() { } init() { } } }));
 
-vi.mock('three', () => {
-    class MockVector3 {
-        constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
-        set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
-        copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
-        clone() { return new MockVector3(this.x, this.y, this.z); }
-        add() { return this; }
-        sub() { return this; }
-        multiplyScalar() { return this; }
-    }
-    class MockObject3D {
-        constructor() { this.position = new MockVector3(); this.rotation = { x: 0, y: 0, z: 0 }; this.scale = new MockVector3(1, 1, 1); this.add = vi.fn(); this.remove = vi.fn(); this.children = []; this.traverse = vi.fn(); }
-        lookAt() { }
-    }
-    class MockBufferAttribute {
-        constructor(array, itemSize) {
-            this.array = array;
-            this.itemSize = itemSize;
-            this.count = array.length / itemSize;
-            this.needsUpdate = false;
-        }
-        getX(i) { return this.array[i * this.itemSize]; }
-        getY(i) { return this.array[i * this.itemSize + 1]; }
-        setX(i, v) { this.array[i * this.itemSize] = v; }
-        setY(i, v) { this.array[i * this.itemSize + 1] = v; }
-        setXYZ(i, x, y, z) {
-            this.array[i * this.itemSize] = x;
-            this.array[i * this.itemSize + 1] = y;
-            this.array[i * this.itemSize + 2] = z;
-        }
-    }
-    class MockPlaneGeometry {
-        constructor(width, height, widthSegments, heightSegments) {
-            this.parameters = { width, height, widthSegments, heightSegments };
-            const count = (widthSegments + 1) * (heightSegments + 1);
-            const positions = new Float32Array(count * 3);
-            for (let i = 0; i < count; i++) {
-                positions[i * 3] = (i % (widthSegments + 1)) - width / 2;
-                positions[i * 3 + 1] = Math.floor(i / (widthSegments + 1)) - height / 2;
-                positions[i * 3 + 2] = 0;
-            }
-            this.attributes = {
-                position: new MockBufferAttribute(positions, 3),
-                color: new MockBufferAttribute(new Float32Array(count * 3), 3)
-            };
-            this.index = null;
-        }
-        setAttribute(name, attr) { this.attributes[name] = attr; }
-        setIndex(idx) { this.index = idx; }
-        computeVertexNormals() { }
-        dispose() { }
-    }
-    return {
-        Vector3: MockVector3,
-        Matrix4: class { constructor() { this.elements = new Float32Array(16); } set() { return this; } copy() { return this; } clone() { return new this.constructor(); } identity() { return this; } multiply() { return this; } makeTranslation() { return this; } makeScale() { return this; } },
-        Object3D: MockObject3D,
-        Group: class extends MockObject3D { },
-        Mesh: class extends MockObject3D { },
-        Points: class extends MockObject3D { },
-        LineSegments: class extends MockObject3D { },
-        Scene: class extends MockObject3D { },
-        OrthographicCamera: class extends MockObject3D { constructor() { super(); this.left = 0; this.right = 0; this.top = 0; this.bottom = 0; this.updateProjectionMatrix = vi.fn(); } },
-        AmbientLight: class extends MockObject3D { },
-        DirectionalLight: class extends MockObject3D { },
-        BoxGeometry: class { translate() { } },
-        PlaneGeometry: MockPlaneGeometry,
-        BufferGeometry: class { setAttribute() { } setIndex() { } },
-        BufferAttribute: MockBufferAttribute,
-        Plane: class { constant = 0; normal = new MockVector3(); setComponents() { } clone() { return new this.constructor(); } },
-        CylinderGeometry: class { translate() { } },
-        ConeGeometry: class { translate() { } },
-        SphereGeometry: class { translate() { } },
-        MeshStandardMaterial: class { },
-        MeshLambertMaterial: class { },
-        MeshBasicMaterial: class { },
-        PointsMaterial: class { },
-        LineBasicMaterial: class { },
-        CanvasTexture: class { },
-        Color: class {
-            constructor(r = 1, g = 1, b = 1) { this.r = r; this.g = g; this.b = b; }
-            setHex() { return this; }
-            set() { return this; }
-            copy(c) { if (c) { this.r = c.r; this.g = c.g; this.b = c.b; } return this; }
-            clone() { return new this.constructor(this.r, this.g, this.b); }
-            lerp(c, t) { return this; }
-            getHSL() { return { h: 0, s: 0, l: 0 }; }
-            setHSL() { return this; }
-            getHex() { return (Math.round(this.r * 255) << 16) | (Math.round(this.g * 255) << 8) | Math.round(this.b * 255); }
-            toArray(array = [], offset = 0) {
-                array[offset] = this.r;
-                array[offset + 1] = this.g;
-                array[offset + 2] = this.b;
-                return array;
-            }
-        },
-        Raycaster: class { setFromCamera() { } intersectObjects() { return []; } },
-        ShaderMaterial: class { },
-        AdditiveBlending: 2,
-        DoubleSide: 2,
-        Fog: class { constructor() { } },
-        WebGLRenderer: class {
-            constructor() {
-                this.domElement = { style: {}, getContext: () => ({}) };
-                this.shadowMap = {};
-                this.capabilities = { getMaxAnisotropy: () => 1 };
-            }
-            setPixelRatio() { }
-            setSize() { }
-            render() { }
-            dispose() { }
-            setClearColor() { }
-        },
-        Clock: class { constructor() { } getDelta() { return 0.016; } getElapsedTime() { return 0; } },
-    };
-});
-
 vi.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
     OrbitControls: class {
         constructor() { this.target = { set: vi.fn(), clone: vi.fn() }; }
@@ -193,21 +48,17 @@ describe('Real Terrain Restoration Logic', () => {
         vi.spyOn(Game.prototype, 'animate').mockImplementation(() => { });
         Unit.nextId = 0;
 
-        // Force Flat Terrain
         const { Terrain } = await import('../Terrain.js');
         vi.spyOn(Terrain.prototype, 'generateRandomTerrain').mockImplementation(function () {
             const w = this.logicalWidth || 80;
             const d = this.logicalDepth || 80;
-
             if (!this.grid) return;
-
             for (let x = 0; x < w; x++) {
                 for (let z = 0; z < d; z++) {
                     if (!this.grid[x]) continue;
                     if (typeof this.grid[x][z] === 'undefined') {
                         this.grid[x][z] = {};
                     }
-
                     this.grid[x][z].height = 1;
                     this.grid[x][z].type = 'grass';
                     this.grid[x][z].regionId = 1;
@@ -217,10 +68,10 @@ describe('Real Terrain Restoration Logic', () => {
             this.needsRegionRecalc = false;
         });
 
-        game = new Game(null, null, true); // Use minimal init
+        game = new Game(null, null, true);
         game.terrain.logicalWidth = 80;
         game.terrain.logicalDepth = 80;
-        game.terrain.getTileHeight = () => 10; // Allow movement
+        game.terrain.getTileHeight = () => 10;
         game.terrain.findPath = vi.fn().mockImplementation((sx, sz, tx, tz) => [{ x: tx, z: tz }]);
         game.terrain.findPathAsync = vi.fn().mockImplementation((sx, sz, tx, tz) => Promise.resolve([{ x: tx, z: tz }]));
         window.game = game;
@@ -248,40 +99,31 @@ describe('Real Terrain Restoration Logic', () => {
         req.status = 'assigned';
         req.assignedTo = unit.id;
 
-        // Verify Setup
         unit.changeState(new Job(unit));
-        // Async Wait
         await new Promise(resolve => setTimeout(resolve, 0));
         unit.updateLogic(0.016, 0.016, false, []);
         expect(unit.isMoving).toBe(true);
-        // expect(unit.path).toBeDefined(); // Linear move may not have path
 
         game.saveGame(1);
-
         game.units = [];
         game.requestQueue = [];
 
         await game.loadGame(1);
-
         const restoredUnit = game.units[0];
 
-        // ASSERT: Unit should be moving immediately after load (Job re-entry via loadGame)
         expect(restoredUnit).toBeDefined();
         expect(restoredUnit.isMoving).toBe(true);
         expect(restoredUnit.targetRequest).toBeDefined();
         expect(restoredUnit.targetRequest.id).toBe('req_manual_persistent');
 
-        // Verify Path Validity - Allow null path if linear moving
         if (restoredUnit.isMoving && (!restoredUnit.path || restoredUnit.path.length === 0)) {
             console.log("Unit is moving linearly (No Path array). This is valid for short distances.");
         } else if (!restoredUnit.isMoving) {
             throw new Error("Unit is NOT moving!");
         }
 
-        // Run one update to confirm it continues moving
         restoredUnit.updateLogic(game.gameTime, 0.1);
         expect(restoredUnit.isMoving).toBe(true);
-
-        console.log(`Test Success: Unit is ID ${restoredUnit.id} State: ${restoredUnit.state.constructor.name} PathLen: ${restoredUnit.path ? restoredUnit.path.length : 'linear'}`);
     });
+
 });

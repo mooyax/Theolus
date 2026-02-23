@@ -4,17 +4,6 @@ import { Unit } from '../Unit.js';
 import { Job, Combat, Sleep } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
-// Mock THREE
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        Group: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); } },
-        Mesh: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); } },
-        Scene: class { constructor() { this.add = vi.fn(); this.remove = vi.fn(); } },
-    };
-});
-
 describe('Manual Request Priority and Preemption', () => {
     let terrain, unit, game;
 
@@ -54,8 +43,8 @@ describe('Manual Request Priority and Preemption', () => {
         unit.simTime = 100;
         unit.game = game;
         game.units.push(unit);
-    });
 
+    });
     it('should NOT allow manual request to preempt Combat', () => {
         const goblin = { gridX: 12, gridZ: 12, id: 'g1' };
         unit.targetGoblin = goblin;
@@ -72,8 +61,8 @@ describe('Manual Request Priority and Preemption', () => {
 
         expect(unit.state).toBeInstanceOf(Combat);
         // Should NOT transition to Job
-    });
 
+    });
     it('should allow manual request to preempt Sleep', () => {
         unit.changeState(new Sleep(unit));
         unit.isSleeping = true;
@@ -88,8 +77,8 @@ describe('Manual Request Priority and Preemption', () => {
         expect(unit.state).toBeInstanceOf(Job);
         expect(unit.targetRequest).toBe(manReq);
         expect(unit.isSleeping).toBe(false);
-    });
 
+    });
     it('should NOT allow auto request to preempt Combat', () => {
         const goblin = { gridX: 12, gridZ: 12, id: 'g1' };
         unit.targetGoblin = goblin;
@@ -101,5 +90,6 @@ describe('Manual Request Priority and Preemption', () => {
         unit.updateLogic(101, 1, false, [goblin]);
 
         expect(unit.state).toBeInstanceOf(Combat);
-    });
+
+});
 });

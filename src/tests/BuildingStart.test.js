@@ -18,8 +18,8 @@ describe('Building Logic', () => {
 
         // Mock proper checkFlatArea behavior
         // Default mock returns true (TestHelper), so we can focus on Logic
-    });
 
+    });
     it('should build house if population is sufficient (Initial State)', () => {
         // Initial: 5 Units, 0 Houses
         // Logic: if (currentPop >= housingCapacity - 2)
@@ -45,8 +45,8 @@ describe('Building Logic', () => {
         // This confirms why "Houses are not being built" initially.
         // The user probably has 5-10 units and 0 houses, but the Castle provides 10 cap.
         // So until they reach 8 units, no house is built.
-    });
 
+    });
     it('should build house if population > 8 (with Base Cap 10)', () => {
         game.units = [];
         for (let i = 0; i < 9; i++) game.spawnUnit(0, 0, 'worker'); // 9 Units
@@ -54,6 +54,7 @@ describe('Building Logic', () => {
 
         const built = unit.tryBuildStructure(100);
         expect(built).toBe(true);
-    });
-});
 
+
+});
+});

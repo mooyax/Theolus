@@ -81,5 +81,5 @@ describe('Bonus Worker Spawn Test', () => {
         expect(spawnLog.length).toBe(0); // Handled by goblinManager
         expect(mockGame.goblinManager.spawnGoblin).toHaveBeenCalled();
     });
-
 });
+

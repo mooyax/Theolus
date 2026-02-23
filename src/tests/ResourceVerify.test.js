@@ -1,3 +1,4 @@
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as THREE from 'three';
 import { Terrain } from '../Terrain';
@@ -21,7 +22,7 @@ describe('Resource Growth Verification', () => {
             resources: { grain: 100, fish: 100, meat: 100 },
             minimal: true
         };
-        global.window = { game: mockGame };
+        window.game = mockGame;
     });
 
     it('should harvest grain from farm and increase resources', () => {
@@ -42,19 +43,10 @@ describe('Resource Growth Verification', () => {
         terrain.buildings.push(farm);
 
         // Force update for index 0 (Farm is the only building)
-        // Stagger count is 20. We want index 0 to update.
-        // updatePopulation increments frameCount.
-        // If we set frameCount = 19, next is 20. 20 % 20 === 0. Matches index 0.
         terrain.frameCount = 19;
 
         // Run update
-        // growthRate is approx 10. dt=1.0. Staggered means simDeltaTime = 1.0 * 20 = 20.
-        // Growth = 10 * 20 = 200.
-        // 95 + 200 = 295 >= 100 -> Harvest.
         terrain.updatePopulation(1.0, vi.fn(), false, 0);
-
-        console.log(`[Test] Initial Grain: 100`);
-        console.log(`[Test] Post-Update Grain: ${mockGame.resources.grain}`);
 
         // Grain should increase from 100 (at least +1)
         expect(mockGame.resources.grain).toBeGreaterThan(100);

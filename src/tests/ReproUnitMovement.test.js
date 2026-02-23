@@ -24,13 +24,13 @@ describe('Unit Movement Reproduction', () => {
 
         scene = new THREE.Scene();
         // Mock global window/game
-        global.window = { game: game };
+        
 
         unit = new Unit(scene, terrain, 10, 10, 'worker');
         game.units.push(unit);
         unit.game = game;
-    });
 
+    });
     it('should move to target using smartMove', async () => {
         const targetX = 20;
         const targetZ = 10;
@@ -61,8 +61,8 @@ describe('Unit Movement Reproduction', () => {
         // With duration 0.8, at T=0.9 it should have arrived (Progress 1.1)
         expect(unit.gridX).toBeGreaterThan(10);
         expect(unit.isMoving).toBe(false); // Arrived
-    });
 
+    });
     it('should stay stuck if pathfinding is never resolved', async () => {
         // Mock findPathAsync to NEVER resolve (simulate dropped message)
         const neverResolvingPromise = new Promise(() => { }); // Eternally pending
@@ -83,5 +83,6 @@ describe('Unit Movement Reproduction', () => {
         // 3. Advancing time doesn't help
         unit.updateMovement(10.0);
         expect(unit.isPathfinding).toBe(true); // Still stuck
-    });
+
+});
 });

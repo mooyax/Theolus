@@ -29,8 +29,8 @@ describe('Human Spawning Survival', () => {
                 }
             }
         };
-    });
 
+    });
     it('should allow population growth (slowly) even with 0 food', () => {
         const house = {
             userData: {
@@ -58,5 +58,6 @@ describe('Human Spawning Survival', () => {
 
         expect(house.userData.population).toBeGreaterThan(0);
         console.log("Population after update:", house.userData.population);
-    });
+
+});
 });

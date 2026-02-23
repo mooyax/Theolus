@@ -15,7 +15,7 @@ describe('Manual Job Pathfinding Throttle', () => {
             findPathAsync: vi.fn().mockResolvedValue([{ x: 11, z: 11 }]),
             pathfindingCalls: 0
         };
-        unit = new Unit(null, terrain, 10, 10, 'worker');
+        unit = new Unit(null as any, terrain, 10, 10, 'worker');
         unit.id = 1;
         // Mock getDistance to avoid world-wrapping complexity in this test
         unit.getDistance = (tx, tz, ox, oz) => {

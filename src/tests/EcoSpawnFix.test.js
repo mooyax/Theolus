@@ -16,29 +16,6 @@ vi.mock('../WeatherManager', () => {
     };
 });
 
-// Mock THREE and other dependencies if needed
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    class MockScene {
-        add = vi.fn();
-        remove = vi.fn();
-        traverse = vi.fn();
-        children = [];
-    }
-    return {
-        ...actual,
-        WebGLRenderer: vi.fn().mockImplementation(() => ({
-            setSize: vi.fn(),
-            render: vi.fn(),
-            dispose: vi.fn(),
-            domElement: document.createElement('canvas'),
-            capabilities: { isWebGL2: false },
-            getContext: vi.fn(() => ({})),
-        })),
-        Scene: MockScene,
-    };
-});
-
 describe('Economy and Spawning Fix Verification', () => {
     let game;
 
@@ -48,20 +25,26 @@ describe('Economy and Spawning Fix Verification', () => {
         // Use real Terrain but it will use the mocked THREE
         const terrain = new Terrain(scene, [], 80, 80);
 
-        // IMPORTANT: Terrain defaults to height 0 (water). 
-        // We must set height > 0 to allow building construction.
-        for (let x = 0; x < 80; x++) {
-            for (let z = 0; z < 80; z++) {
-                if (terrain.grid[x] && terrain.grid[x][z]) {
-                    terrain.grid[x][z].height = 5;
-                }
-            }
-        }
-
         // Use minimal=false to ensure Managers are initialized (mocked locally)
         game = new Game(scene, terrain, false);
+        await game.readyPromise;
+
+        // 1. Ensure a safe building zone (Land, flat)
+        for (let x = 5; x < 30; x++) {
+            for (let z = 5; z < 30; z++) {
+                game.terrain.setHeight(x, z, 5);
+                game.terrain.grid[x][z].type = 'grass';
+            }
+        }
+        game.terrain.updateMesh();
+
         game.gameActive = true;
         game.resources.grain = 1000; // Provide food to avoid starvation in tests
+
+        // 2. Ensure at least one cave exists for goblin/spawning tests
+        if (game.goblinManager.caves.length === 0) {
+            game.goblinManager.generateCaves(1);
+        }
 
         // Mock camera for safety
         game.camera = { position: new THREE.Vector3() };
@@ -80,8 +63,12 @@ describe('Economy and Spawning Fix Verification', () => {
         // Farm updates are staggered (1/20), so we need enough updates.
         for (let i = 0; i < 40; i++) {
             game.update(0.5); // 0.5s per update
+            if (i % 10 === 0) {
+                console.log(`[TEST DEBUG] Update ${i}, Grain: ${game.resources.grain}, Farm Pop: ${farm.userData.population}`);
+            }
         }
 
+        console.log(`[TEST DEBUG] Final Grain: ${game.resources.grain}`);
         expect(game.resources.grain).toBeGreaterThan(initialGrain);
     });
 
@@ -101,11 +88,14 @@ describe('Economy and Spawning Fix Verification', () => {
         // So we check if a goblin was spawned instead of checking for pop >= 10.
         for (let i = 0; i < 100; i++) {
             game.update(0.5);
+            if (i % 20 === 0) {
+                console.log(`[TEST DEBUG] Update ${i}, Hut Pop: ${hut.userData.population}, Goblins: ${game.goblinManager.goblins.length}`);
+            }
         }
 
         // We expect at least one goblin to be born.
         expect(game.goblinManager.goblins.length).toBeGreaterThan(0);
-        console.log(`[TEST] Goblins count: ${game.goblinManager.goblins.length}`);
+        console.log(`[TEST] Goblins count: ${game.goblinManager.goblins.length} `);
     });
 
     /*
@@ -128,7 +118,7 @@ describe('Economy and Spawning Fix Verification', () => {
 
         expect(unit.isFinished).toBe(true);
         expect(unit.crossMesh).toBeNull();
-        console.log(`[TEST] Dead unit finalized: isFinished=${unit.isFinished}`);
+        console.log(`[TEST] Dead unit finalized: isFinished = ${ unit.isFinished } `);
     });
     */
 });

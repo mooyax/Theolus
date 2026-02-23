@@ -23,9 +23,9 @@ describe('Win/Loss Condition Logic', () => {
         }
         game = new Game(scene, terrain, true); // true means minimal
         game.gameActive = true;
+
+
     });
-
-
     it('should return "loss" when player units and buildings are all gone', () => {
         // Setup: No player units
         game.units = [];
@@ -40,8 +40,8 @@ describe('Win/Loss Condition Logic', () => {
 
         // Assertion: Should be loss because player has nothing
         expect(result).toBe('loss');
-    });
 
+    });
     it('should NOT return "loss" if player still has a building', () => {
         game.units = [];
 
@@ -56,8 +56,8 @@ describe('Win/Loss Condition Logic', () => {
 
         const result = game.evaluateWinLoss();
         expect(result).toBe(null); // Not over yet
-    });
 
+    });
     it('should return "loss" even if ancient ruins exist (they should be neutral)', () => {
         game.units = [];
 
@@ -73,8 +73,8 @@ describe('Win/Loss Condition Logic', () => {
 
         // This will now fail (received null) if the bug exists
         expect(result).toBe('loss');
-    });
 
+    });
     it('should NOT kill goblin instantly when attacking a farm (Retaliation Bug)', () => {
         const farm = game.terrain.addBuilding('farm', 5, 5);
         farm.population = 100; // Representing food
@@ -97,11 +97,11 @@ describe('Win/Loss Condition Logic', () => {
 
         expect(goblin.hp).toBeGreaterThan(0);
         expect(retaliation).toBe(0); // Farms should not retaliate
+
+
+
+
     });
-
-
-
-
     it('should return "win" when all enemies (goblins, caves, huts, units) are gone', () => {
         // Player exists
         const worker = { faction: 'player', isDead: false };
@@ -118,8 +118,8 @@ describe('Win/Loss Condition Logic', () => {
 
         const result = game.evaluateWinLoss();
         expect(result).toBe('win');
-    });
 
+    });
     it('should correctly restore enemy faction for caves and huts during deserialization', async () => {
         const terrain = game.terrain;
         const saveData = {
@@ -143,5 +143,6 @@ describe('Win/Loss Condition Logic', () => {
         expect(cave.userData.faction).toBe('enemy');
         expect(hut.userData.faction).toBe('enemy');
         expect(house.userData.faction).toBe('player');
-    });
+
+});
 });

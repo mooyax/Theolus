@@ -521,7 +521,7 @@ export class Unit extends Actor {
 
     die(reason?: string) {
         if (this.isDead) return;
-        this.isDead = true;
+        super.die(); // Sets isDead = true and hides mesh
 
         console.log(`Unit ${this.id} (${this.role}) DIED${reason ? ` (${reason})` : ''}. R.I.P.`);
 
@@ -878,13 +878,13 @@ export class Unit extends Actor {
                 const targetH = this.terrain.getTileHeight(g.gridX, g.gridZ);
                 if (Math.abs(myH - targetH) > 10.0) return Infinity;
 
-                let score = dist - 1000.0; // Base priority for Goblins
+                let score = dist + 0; // Goblins are Priority 1
 
                 // Height Penalty (Attacking uphill)
                 if (targetH > 8) score += 20;
 
                 // Sticky Bonus
-                if (g.id === currentTargetId) score -= 500.0;
+                if (g.id === currentTargetId) score -= 30;
 
                 return score;
             }, goblins);
@@ -892,10 +892,10 @@ export class Unit extends Actor {
             if (foundGoblin) {
                 // Recalculate score for the found goblin to set as baseline
                 const d = this.getDistance(foundGoblin.gridX, foundGoblin.gridZ);
-                let score = d - 1000.0;
+                let score = d + 0;
                 const h = this.terrain.getTileHeight(foundGoblin.gridX, foundGoblin.gridZ);
                 if (h > 8) score += 20;
-                if (foundGoblin.id === currentTargetId) score -= 500.0;
+                if (foundGoblin.id === currentTargetId) score -= 30;
 
                 bestScore = score;
                 bestTarget = { type: 'goblin', obj: foundGoblin };
@@ -934,19 +934,11 @@ export class Unit extends Actor {
                 // if (u.id === currentTargetId) limit = maxDist * 2.0; // Needs unified ID?
                 if (dist > limit) return Infinity;
 
-                let score = dist - 800.0; // Slightly lower priority than Goblins (-1000)? Or higher?
-                if (u.type === 'sheep') score = dist - 600.0; // Even lower priority than enemy humans
-                // Let's make Goblins priority 1, Enemy Faction priority 2
-                // Goblin base score: dist - 1000
-                // Enemy score: -900 + dist (Higher cost than Goblin) -> Goblin Preferred.
+                let score = dist + 10; // Enemy humans are Priority 2
+                if (u.type === 'sheep') score = dist + 50; // Sheep are Priority 4 (lowest unit)
 
-                // If we want Player to prioritize Enemy Humans:
-                // Enemy Cost: -1100 + dist.
-
-                // Let's assume Goblins are threats to everyone.
-                // Player vs Enemy:
-                // If current Target is Enemy, stick to it.
-                if (u.id === currentTargetId) score -= 500.0;
+                // Stickiness
+                if (u.id === currentTargetId) score -= 30;
 
                 return score;
             }, candidates);
@@ -954,9 +946,9 @@ export class Unit extends Actor {
             if (foundEnemyUnit) {
                 // Calculate score to compare with bestTarget (Goblin)
                 const d = this.getDistance(foundEnemyUnit.gridX, foundEnemyUnit.gridZ);
-                let score = d - 800.0; // Matches logic above
-                if (foundEnemyUnit.type === 'sheep') score = d - 600.0;
-                if (foundEnemyUnit.id === currentTargetId) score -= 500.0;
+                let score = d + 10; // Matches logic above
+                if (foundEnemyUnit.type === 'sheep') score = d + 50;
+                if (foundEnemyUnit.id === currentTargetId) score -= 30;
 
                 if (score < bestScore) {
                     bestScore = score;
@@ -1001,15 +993,15 @@ export class Unit extends Actor {
                     }
                 }
 
-                let score = dist - 5.0;
-                if (b.id === currentTargetId) score -= 500.0;
+                let score = dist + 100; // Buildings are Priority 5 (Lowest default)
+                if (b.id === currentTargetId) score -= 30;
 
-                // Priority for soldiers
-                if (dist < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 2000.0;
+                // Priority for soldiers to siege nearby buildings
+                if (dist < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 150.0;
 
-                // Worker Priority for Close Buildings
+                // Worker Priority for Close Buildings (Self-Defense/Clearance)
                 if (dist < 5.0 && this.role === 'worker') {
-                    score -= 2000.0;
+                    score -= 150.0;
                 }
 
                 return score;
@@ -1018,10 +1010,10 @@ export class Unit extends Actor {
             if (foundBuilding) {
                 // Recalculate score to compare with Goblin
                 const dist = this.getDistance(foundBuilding.gridX, foundBuilding.gridZ);
-                let score = dist - 5.0;
-                if (foundBuilding.id === currentTargetId) score -= 500.0;
-                if (dist < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 2000.0;
-                if (dist < 4.0 && this.role === 'worker') score -= 2000.0;
+                let score = dist + 100;
+                if (foundBuilding.id === currentTargetId) score -= 30;
+                if (dist < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 150.0;
+                if (dist < 4.0 && this.role === 'worker') score -= 150.0;
 
                 if (score < bestScore) {
                     bestScore = score;
@@ -1875,8 +1867,8 @@ export class Unit extends Actor {
             }
 
             // 9. Visibility Sync
-            if (this.mesh) {
-                const visible = !this.isSleeping && !this.isDead;
+            if (this.mesh && !this.isDead) {
+                const visible = !this.isSleeping;
                 if (this.mesh.visible !== visible) this.mesh.visible = visible;
             }
 

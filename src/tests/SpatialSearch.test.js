@@ -19,8 +19,8 @@ describe('Spatial Partitioning', () => {
 
         // Re-init grid with forced size
         terrain.initEntityGrid();
-    });
 
+    });
     it('should register and retrieve an entity', () => {
         const entity = { id: 1, type: 'unit' }; // mocking entity
 
@@ -33,8 +33,8 @@ describe('Spatial Partitioning', () => {
         expect(entity._spatial.x).toBe(5);
         expect(entity._spatial.z).toBe(5);
         expect(entity._spatial.type).toBe('unit');
-    });
 
+    });
     it('should move entity correctly between cells', () => {
         const entity = { id: 1 };
 
@@ -48,8 +48,8 @@ describe('Spatial Partitioning', () => {
         expect(terrain.entityGrid[5][5].includes(entity)).toBe(false);
         expect(terrain.entityGrid[6][5].includes(entity)).toBe(true);
         expect(entity._spatial.x).toBe(6);
-    });
 
+    });
     it('should unregister entity', () => {
         const entity = { id: 1 };
         terrain.registerEntity(entity, 5, 5, 'unit');
@@ -58,8 +58,8 @@ describe('Spatial Partitioning', () => {
 
         expect(terrain.entityGrid[5][5].includes(entity)).toBe(false);
         expect(entity._spatial).toBeNull();
-    });
 
+    });
     it('should find nearest entity using spatial search', () => {
         // Setup Grid
         const target = { id: 'target', gridX: 5, gridZ: 5, type: 'food' };
@@ -86,5 +86,6 @@ describe('Spatial Partitioning', () => {
         const result = terrain.findNearestEntity('food', 4, 4, 5);
 
         expect(result).toBe(target);
-    });
+
+});
 });

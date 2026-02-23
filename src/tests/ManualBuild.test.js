@@ -1,4 +1,4 @@
-﻿import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit';
 import { Game } from '../Game';
 import { Job } from '../ai/states/UnitStates';
@@ -20,8 +20,8 @@ describe('Manual Build Job Logic', () => {
         unit.executeMove = Unit.prototype.executeMove;
         unit.smartMove = Unit.prototype.smartMove;
         unit.getDistance = Unit.prototype.getDistance;
-    });
 
+    });
     it('should complete manual build job when arrived', () => {
         // Setup Request
         const req = {
@@ -53,8 +53,8 @@ describe('Manual Build Job Logic', () => {
         // Expect completion
         expect(game.completeRequest).toHaveBeenCalled();
         expect(unit.targetRequest).toBeNull();
-    });
 
+    });
     it('should NOT freeze if arrived but building fails', () => {
         // Setup Request
         const req = {
@@ -82,8 +82,8 @@ describe('Manual Build Job Logic', () => {
 
         expect(game.completeRequest).toHaveBeenCalled();
         expect(unit.targetRequest).toBeNull(); // Should be cleared
-    });
 
+    });
     it('should handle "Arrived" logic transition', () => {
         // Test exact boundary of 2.1 distance
         const req = { id: 'req_3', x: 20, z: 20, status: 'assigned', assignedTo: unit.id, isManual: true };
@@ -111,6 +111,7 @@ describe('Manual Build Job Logic', () => {
         game.completeRequest.mockClear();
         state.update(100, 0.1, false, []);
         expect(game.completeRequest).not.toHaveBeenCalled();
-    });
-});
 
+
+});
+});

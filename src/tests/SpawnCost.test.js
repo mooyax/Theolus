@@ -1,4 +1,4 @@
-﻿
+
 import { describe, it, expect, beforeEach } from 'vitest';
 import { setupTestEnv, createTestBuilding } from './TestUtils';
 
@@ -15,8 +15,8 @@ describe('Unit Spawn Cost', () => {
         mockGame = env.game;
         terrain = env.terrain;
         spawnedEvents = [];
-    });
 
+    });
     it('should consume food when spawning from House', () => {
         // Setup House
         const house = createTestBuilding('house', 5, 5, 10);
@@ -44,8 +44,8 @@ describe('Unit Spawn Cost', () => {
         // Spawn cost: grain 50
         // Total: 100 - 20 - 0.05 = 79.95
         expect(mockGame.resources.grain).toBeCloseTo(79.95, 2);
-    });
 
+    });
     it('should BLOCK spawn if insufficient food', () => {
         // Setup House
         const house = createTestBuilding('house', 5, 5, 10);
@@ -64,5 +64,6 @@ describe('Unit Spawn Cost', () => {
         expect(spawnedEvents.length).toBe(0);
         expect(mockGame.resources.grain).toBeCloseTo(9.95, 2); // 10 - 0.05
         expect(house.userData.population).toBe(10);
-    });
+
+});
 });

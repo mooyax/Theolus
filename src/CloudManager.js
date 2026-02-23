@@ -94,23 +94,48 @@ export class CloudManager {
             const sprite = new THREE.Sprite(this.material);
 
             // Randomize Scale & Aspect
-            // Noise clouds can be larger
             const baseScale = 20 + Math.random() * 10;
             const aspect = 1.2 + Math.random() * 0.6;
             sprite.scale.set(baseScale * aspect, baseScale, 1);
 
+            // Layering Logic: High clouds move slower, Low clouds move faster
+            const isHigh = Math.random() > 0.6;
+            const height = isHigh ? (40 + Math.random() * 10) : (20 + Math.random() * 10);
+            const speedFact = isHigh ? 0.5 : 1.2;
+
             sprite.material = this.material.clone();
             sprite.material.rotation = Math.random() * Math.PI * 2;
+
+            // Store meta for update
+            sprite.userData = {
+                height: height,
+                speedMultiplier: speedFact,
+                baseOpacity: 0.7 + Math.random() * 0.2
+            };
 
             // Random Position
             sprite.position.set(
                 (Math.random() - 0.5) * this.spreadRadius * 2,
-                20 + Math.random() * 10,
+                height,
                 (Math.random() - 0.5) * this.spreadRadius * 2
             );
 
             this.scene.add(sprite);
             this.clouds.push(sprite);
+        }
+    }
+
+    updateColor(color) {
+        // Sync cloud base color with ambient light color (for dawn/dusk/night Tint)
+        // We tint the material base color to match the environment tone
+        if (this.material) {
+            this.material.color.lerp(color, 0.4); // Blend with sky to pick up atmosphere
+        }
+        // Also update cloned materials
+        for (const cloud of this.clouds) {
+            if (cloud.material) {
+                cloud.material.color.lerp(color, 0.4);
+            }
         }
     }
 
@@ -122,7 +147,9 @@ export class CloudManager {
         const range = this.spreadRadius;
 
         for (const cloud of this.clouds) {
-            cloud.position.addScaledVector(this.windDir, this.windSpeed * deltaTime);
+            // Apply parallax speed
+            const speed = this.windSpeed * (cloud.userData.speedMultiplier || 1.0);
+            cloud.position.addScaledVector(this.windDir, speed * deltaTime);
 
             let dx = cloud.position.x - camX;
             let dz = cloud.position.z - camZ;
@@ -132,6 +159,11 @@ export class CloudManager {
 
             if (dz > range) cloud.position.z -= range * 2;
             else if (dz < -range) cloud.position.z += range * 2;
+
+            // Keep height consistent
+            if (cloud.userData.height) {
+                cloud.position.y = cloud.userData.height;
+            }
         }
     }
 }

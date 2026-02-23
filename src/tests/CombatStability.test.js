@@ -3,44 +3,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // Mocks MUST be hoisted
 // Mocks MUST be hoisted
-vi.mock('three', () => {
-    class MockGeometry {
-        translate() { }
-        rotateX() { }
-        rotateY() { }
-        rotateZ() { }
-        dispose() { }
-    }
-    return {
-        Vector3: class {
-            constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
-            clone() { return new this.constructor(this.x, this.y, this.z); }
-            copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
-            set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
-            add() { return this; }
-            sub() { return this; }
-            length() { return 0; }
-            normalize() { return this; }
-            multiplyScalar() { return this; }
-            distanceTo() { return 0; } // Fallback
-        },
-        Group: class {
-            constructor() { this.children = []; this.position = { set: () => { }, copy: () => { } }; }
-            add() { }
-            remove() { }
-        },
-        Mesh: class { constructor() { this.position = { set: () => { }, copy: () => { } }; this.rotation = {}; } },
-        BoxGeometry: class extends MockGeometry { },
-        SphereGeometry: class extends MockGeometry { },
-        MeshLambertMaterial: class { },
-        MeshStandardMaterial: class { },
-        CanvasTexture: class { },
-        ConeGeometry: class extends MockGeometry { },
-        CylinderGeometry: class extends MockGeometry { },
-        PlaneGeometry: class extends MockGeometry { }
-    };
-});
-
 // vi.mock('../config/GameConfig.json'); // Removed to use real file
 
 import { Unit } from '../Unit.js'; // Adjust path if needed
@@ -111,8 +73,8 @@ describe('Combat Stability Tests', () => {
             console.error("CRASH in beforeEach:", e);
             throw e;
         }
-    });
 
+    });
     it('Should attack goblin in SAME region within 8 tiles', () => {
         // Setup Same Region
         terrain.grid[10][10].regionId = 1;
@@ -125,8 +87,8 @@ describe('Combat Stability Tests', () => {
 
         // Verify result
         expect(unit.targetGoblin).toBe(goblin);
-    });
 
+    });
     it('Should IGNORE goblin in DIFFERENT region (Unreachable)', () => {
         // Setup Different Region
         terrain.grid[10][10].regionId = 1;
@@ -137,8 +99,8 @@ describe('Combat Stability Tests', () => {
 
         // Verify result
         expect(unit.targetGoblin).toBeNull();
-    });
 
+    });
     it('Should IGNORE goblin OUTSIDE general range (>8) for self defense check', () => {
         // Setup Far Goblin (Dist 30)
         goblin.gridX = 40; // 30 tiles away
@@ -150,8 +112,8 @@ describe('Combat Stability Tests', () => {
 
         // Verify result
         expect(unit.targetGoblin).toBeNull();
-    });
 
+    });
     it('Should PRIORITIZE goblin closer than 8 tiles', () => {
         const farGoblin = new Goblin(null, terrain, 10, 15); // Dist 5
         farGoblin.id = 200;
@@ -163,8 +125,8 @@ describe('Combat Stability Tests', () => {
         unit.checkSelfDefense([farGoblin, closeGoblin], true);
 
         expect(unit.targetGoblin).toBe(closeGoblin);
-    });
 
+    });
     it('Should NOT attack across Water (Region 0)', () => {
         // Unit on Land (1), Goblin on Water (0) -> Ignored?
         // Or Unit on Land (1), Goblin on Island (2) across Water?
@@ -177,5 +139,6 @@ describe('Combat Stability Tests', () => {
 
         unit.checkSelfDefense([goblin], true);
         expect(unit.targetGoblin).toBeNull();
-    });
+
+});
 });

@@ -1,7 +1,4 @@
 
-// テスト: 三すくみ戦闘ロジックの確認
-// Gameクラスへの直接依存を排除し、チェックロジックをモックで検証する
-
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('Faction War Logic（三すくみ戦闘）', () => {
@@ -11,7 +8,6 @@ describe('Faction War Logic（三すくみ戦闘）', () => {
     let goblin;
 
     beforeEach(() => {
-        // ターゲン検索モック
         terrain = {
             grid: [],
             getTileHeight: () => 1,
@@ -27,7 +23,6 @@ describe('Faction War Logic（三すくみ戦闘）', () => {
             }
         }
 
-        // プレイヤーユニットのモック
         playerKnight = {
             id: 1,
             faction: 'player',
@@ -42,12 +37,10 @@ describe('Faction War Logic（三すくみ戦闘）', () => {
             terrain,
             getDistance: (x, z) => Math.sqrt((x - 10) ** 2 + (z - 10) ** 2),
             isReachable: vi.fn().mockReturnValue(true),
-            // checkSelfDefenseのロジックをシンプルに再現
             checkSelfDefense: function (goblins, force) {
                 const foundGoblin = this.terrain.findBestTarget('goblin', this.gridX, this.gridZ, 50, null, goblins);
                 const foundUnit = this.terrain.findBestTarget('unit', this.gridX, this.gridZ, 50, null);
 
-                // ゴブリン優先（高スコア）
                 if (foundGoblin && foundGoblin.obj) {
                     this.targetGoblin = foundGoblin.obj;
                     this.targetUnit = null;
@@ -62,7 +55,6 @@ describe('Faction War Logic（三すくみ戦闘）', () => {
             }
         };
 
-        // 敵ユニットのモック
         enemyKnight = {
             id: 2,
             faction: 'enemy',
@@ -95,7 +87,6 @@ describe('Faction War Logic（三すくみ戦闘）', () => {
             }
         };
 
-        // ゴブリンのモック
         goblin = {
             id: 3,
             faction: 'goblin',
@@ -140,7 +131,6 @@ describe('Faction War Logic（三すくみ戦闘）', () => {
 
         playerKnight.checkSelfDefense([goblin], true);
 
-        // ゴブリン優先
         expect(playerKnight.targetGoblin).toBe(goblin);
         expect(playerKnight.targetUnit).toBeNull();
     });

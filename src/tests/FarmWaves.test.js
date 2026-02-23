@@ -1,8 +1,19 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import * as THREE from 'three';
 
-// Unmock the target renderer because it is mocked globally in setup.js
-vi.unmock('../BuildingRenderer.js');
+vi.mock('../BuildingRenderer.js', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        BuildingRenderer: class extends actual.BuildingRenderer {
+            constructor(scene, terrain, buildings) {
+                super(scene, terrain, buildings);
+            }
+        }
+    };
+});
+
 import { BuildingRenderer } from '../BuildingRenderer';
 
 describe('Farm Waves', () => {
@@ -22,10 +33,13 @@ describe('Farm Waves', () => {
         await renderer.init();
     });
 
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
     it('should use BoxGeometry for farms to provide 3D volume', () => {
         const farmGeo = renderer.assets.farmGeo;
         expect(farmGeo.type).toBe('BoxGeometry');
-        // Check dimensions (1.8, 0.2, 1.8)
         expect(farmGeo.parameters.width).toBe(1.8);
         expect(farmGeo.parameters.height).toBe(0.2);
         expect(farmGeo.parameters.depth).toBe(1.8);

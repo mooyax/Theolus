@@ -47,8 +47,8 @@ describe('Worker Diversity Spawning', () => {
         // CRITICAL FIX: Suppress Unit.initAssets() which uses document.createElement('canvas')
         // JSDOM or THREE.CanvasTexture in this env causes crash. By setting initialized=true, we skip it.
         Unit.assets.initialized = true;
-    });
 
+    });
     it('should spawn diverse roles (Worker/Hunter/Fisher) from a House', () => {
         const sourceHouse = {
             type: 'house',
@@ -78,17 +78,18 @@ describe('Worker Diversity Spawning', () => {
         expect(roles.fisher).toBeGreaterThanOrEqual(8); // At least 8% (Allow variance from 20)
         expect(roles.worker).toBeGreaterThan(40); // At least 40% (Allow variance from 60)
         expect(roles.worker).toBeLessThan(80);    // Should not be 100%
-    });
 
+    });
     it('should spawn Knights from Barracks', () => {
         const barracks = { type: 'barracks', userData: { gridX: 10, gridZ: 10 } };
         const unit = Game.prototype.spawnUnit.call(mockGame, 10, 10, null, barracks);
         expect(unit.role).toBe('knight');
-    });
 
+    });
     it('should spawn Wizards from Towers', () => {
         const tower = { type: 'tower', userData: { gridX: 10, gridZ: 10 } };
         const unit = Game.prototype.spawnUnit.call(mockGame, 10, 10, null, tower);
         expect(unit.role).toBe('wizard');
-    });
+
+});
 });

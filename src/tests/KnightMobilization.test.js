@@ -63,8 +63,8 @@ describe('Knight Mobilization Debug', () => {
         unit.id = 1;
         unit.role = 'knight';
         game.units.push(unit);
-    });
 
+    });
     it('should mobilize to global hotspot in SAME region', () => {
         // Hotspot in Region 1
         game.battleHotspots.push({ x: 20, z: 20, intensity: 50, time: 100, regionId: 1 });
@@ -75,8 +75,8 @@ describe('Knight Mobilization Debug', () => {
 
         expect(unit.targetRaidPoint).not.toBeNull();
         expect(unit.targetRaidPoint.x).toBe(20);
-    });
 
+    });
     it('should IGNORE global hotspot in DIFFERENT region if no proxy found', () => {
         // Hotspot in Region 2 (Unreachable)
         game.battleHotspots.push({ x: 70, z: 70, intensity: 50, time: 100, regionId: 2 });
@@ -87,8 +87,8 @@ describe('Knight Mobilization Debug', () => {
         const res = unit.findRaidTarget();
         expect(res).toBeFalsy();
         expect(unit.targetRaidPoint).toBeNull();
-    });
 
+    });
     it('should USE PROXY for global hotspot in DIFFERENT region', () => {
         // Hotspot in Region 2 (Unreachable)
         game.battleHotspots.push({ x: 70, z: 70, intensity: 50, time: 100, regionId: 2 });
@@ -98,5 +98,6 @@ describe('Knight Mobilization Debug', () => {
         const res = unit.findRaidTarget();
         expect(res).toBe(true);
         expect(unit.targetRaidPoint).toEqual({ x: 55, z: 55 });
-    });
+
+});
 });

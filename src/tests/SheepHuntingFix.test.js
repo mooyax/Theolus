@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Game } from '../Game.ts';
@@ -101,9 +100,7 @@ describe('Sheep Hunting Logic & Manager Update Fix', () => {
         sm.sheeps.push(liveSheep);
 
         // Run Unit Idle/Targeting logic
-        // We simulate the part of Unit.updateLogic that picks targets
         const targets = game.sheepManager.sheeps;
-        let bestScore = Infinity;
         let bestEntity = null;
         let minDist = 100.0;
 

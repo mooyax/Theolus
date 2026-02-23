@@ -12,6 +12,11 @@ vi.mock('../WeatherManager', () => {
     };
 });
 
+vi.mock('three/examples/jsm/utils/BufferGeometryUtils.js', () => ({
+    mergeGeometries: (geos) => geos[0],
+    mergeBufferGeometries: (geos) => geos[0]
+}));
+
 // --- Global Mocks (to prevent load errors and side effects) ---
 
 // 1. THREE.js Mock
@@ -19,7 +24,10 @@ vi.mock('three', async () => {
     const actual = await vi.importActual('three');
 
     class MockVector3 {
-        constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
+        constructor(x = 0, y = 0, z = 0) {
+            this.x = x || 0; this.y = y || 0; this.z = z || 0;
+            this.isVector3 = true;
+        }
         set(x, y, z) { this.x = x || 0; this.y = y || 0; this.z = z || 0; return this; }
         copy(v) { if (v) { this.x = v.x || 0; this.y = v.y || 0; this.z = v.z || 0; } return this; }
         add(v) { if (v) { this.x += v.x || 0; this.y += v.y || 0; this.z += v.z || 0; } return this; }
@@ -28,14 +36,13 @@ vi.mock('three', async () => {
         divideScalar(s) { if (s !== 0) { this.x /= s; this.y /= s; this.z /= s; } return this; }
         normalize() { const l = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); if (l > 0) this.divideScalar(l); return this; }
         clone() { return new MockVector3(this.x, this.y, this.z); }
-        clone() { return new MockVector3(this.x, this.y, this.z); }
         applyQuaternion() { return this; }
         applyAxisAngle() { return this; }
         distanceTo(v) { if (!v) return 0; return Math.sqrt((this.x - v.x) ** 2 + (this.y - v.y) ** 2 + (this.z - v.z) ** 2); }
         length() { return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
         setFromMatrixScale(m) {
             if (!m || !m.elements) {
-                this.x = 1; this.y = 1; this.z = 1; // Default to 1 if no matrix (Unit Tests usually expect visible)
+                this.x = 1; this.y = 1; this.z = 1;
                 return this;
             }
             const e = m.elements;
@@ -48,6 +55,7 @@ vi.mock('three', async () => {
 
     class MockColor {
         constructor(r = 1, g = 1, b = 1) {
+            this.isColor = true;
             if (typeof r === 'number' && g === 1 && b === 1 && r > 1) {
                 this.setHex(r);
             } else {
@@ -125,8 +133,9 @@ vi.mock('three', async () => {
         ...actual,
         WebGLRenderer: class {
             constructor() {
-                this.domElement = { getContext: () => ({}), style: {} };
-                this.shadowMap = {};
+                this.domElement = document.createElement('canvas');
+                this.domElement.getRootNode = () => document; // Required for OrbitControls
+                this.shadowMap = { enabled: false, type: 0 };
                 this.capabilities = { getMaxAnisotropy: () => 1 };
             }
             setSize() { } render() { } setPixelRatio() { } setClearColor() { } dispose() { }
@@ -142,7 +151,184 @@ vi.mock('three', async () => {
         DirectionalLight: MockObject,
         PerspectiveCamera: MockObject,
         OrthographicCamera: MockObject,
+        Points: MockObject,
+        PointsMaterial: class { constructor() { } dispose() { } },
+        LineSegments: MockObject,
+        LineBasicMaterial: class { constructor() { } dispose() { } },
+        CanvasTexture: class {
+            constructor() {
+                this.wrapS = 0; this.wrapT = 0;
+                this.repeat = new MockVector3(1, 1, 1);
+                this.offset = new MockVector3(0, 0, 0);
+            }
+            dispose() { }
+        },
+        BufferAttribute: class {
+            constructor(array, itemSize) {
+                this.array = array;
+                this.itemSize = itemSize;
+            }
+            setX(i, x) { if (this.array) this.array[i * this.itemSize] = x; return this; }
+            setY(i, y) { if (this.array) this.array[i * this.itemSize + 1] = y; return this; }
+            setZ(i, z) { if (this.array) this.array[i * this.itemSize + 2] = z; return this; }
+            setXY(i, x, y) { this.setX(i, x); this.setY(i, y); return this; }
+            setXYZ(i, x, y, z) { this.setX(i, x); this.setY(i, y); this.setZ(i, z); return this; }
+            getX(i) { return this.array ? this.array[i * this.itemSize] : 0; }
+            getY(i) { return this.array ? this.array[i * this.itemSize + 1] : 0; }
+            getZ(i) { return this.array ? this.array[i * this.itemSize + 2] : 0; }
+            get count() { return this.array ? this.array.length / this.itemSize : 0; }
+            setUsage() { return this; }
+        },
+        BufferGeometry: class {
+            constructor() { this.attributes = {}; }
+            setAttribute(name, attr) { this.attributes[name] = attr; return this; }
+            getAttribute(name) { return this.attributes[name]; }
+            setIndex() { return this; }
+            dispose() { }
+            computeVertexNormals() { }
+            computeBoundingSphere() { }
+            translate() { return this; }
+            scale() { return this; }
+            rotateX() { return this; }
+            rotateY() { return this; }
+            rotateZ() { return this; }
+        },
+        PlaneGeometry: class {
+            constructor(w, h, ws, hs) {
+                this.parameters = { width: w, height: h, widthSegments: ws, heightSegments: hs };
+                ws = ws || 1; hs = hs || 1;
+                const count = (ws + 1) * (hs + 1);
+                this.attributes = {
+                    position: { count: count, array: new Float32Array(count * 3), getX: () => 0, getY: () => 0, getZ: () => 0, setX: () => { }, setY: () => { }, setZ: () => { } },
+                    color: { count: count, array: new Float32Array(count * 3), setX: () => { }, setY: () => { }, setZ: () => { } },
+                    uv: { count: count, array: new Float32Array(count * 2), setXY: () => { }, setY: () => { }, getX: () => 0, getY: () => 0 }
+                };
+            }
+            dispose() { }
+            getAttribute(name) { return this.attributes[name]; }
+            setAttribute(name, attr) { this.attributes[name] = attr; return this; }
+            setIndex() { return this; }
+            computeVertexNormals() { }
+            computeBoundingSphere() { }
+            translate() { return this; }
+            scale() { return this; }
+            rotateX() { return this; }
+            rotateY() { return this; }
+            rotateZ() { return this; }
+        },
+        InstancedMesh: class extends MockObject {
+            constructor(g, m, count) {
+                super(g, m);
+                this.count = count;
+                this.instanceMatrix = { array: new Float32Array(count * 16), set: () => { }, setUsage: () => { } };
+                this.instanceColor = null;
+            }
+            setMatrixAt(index, matrix) {
+                if (matrix && matrix.elements) {
+                    this.instanceMatrix.array.set(matrix.elements, index * 16);
+                }
+            }
+            getMatrixAt(index, matrix) {
+                if (matrix && matrix.fromArray) {
+                    matrix.fromArray(this.instanceMatrix.array, index * 16);
+                }
+            }
+            setColorAt() { }
+            computeBoundingSphere() { }
+        },
+        LineSegments: MockObject,
+        LineBasicMaterial: class { constructor() { this.type = 'LineBasicMaterial'; this.color = new MockColor(); } dispose() { } },
+        MeshPhongMaterial: class {
+            constructor() {
+                this.type = 'MeshPhongMaterial';
+                this.color = new MockColor();
+                this.emissive = new MockColor(0, 0, 0);
+                this.emissiveIntensity = 0;
+                this.uniforms = { uTime: { value: 0 }, uSwayIntensity: { value: 0 } };
+            }
+            dispose() { }
+        },
+        MeshLambertMaterial: class {
+            constructor() {
+                this.type = 'MeshLambertMaterial';
+                this.color = new MockColor();
+                this.emissive = new MockColor(0, 0, 0);
+                this.emissiveIntensity = 0;
+            }
+            dispose() { }
+        },
+        ShaderMaterial: class { constructor() { this.type = 'ShaderMaterial'; this.uniforms = {}; } dispose() { } },
+        BoxGeometry: class {
+            constructor(w, h, d) {
+                this.type = 'BoxGeometry';
+                this.parameters = { width: w, height: h, depth: d };
+                this.attributes = {
+                    position: { count: 24, array: new Float32Array(24 * 3), getX: () => 0, getY: () => 0, getZ: () => 0 },
+                    uv: { count: 24, array: new Float32Array(24 * 3), setXY: vi.fn(), setY: vi.fn(), getX: () => 0, getY: () => 0 }
+                };
+            }
+            dispose() { }
+            getAttribute(name) { return this.attributes[name]; }
+            setAttribute(name, attr) { this.attributes[name] = attr; return this; }
+            setIndex() { return this; }
+            translate() { return this; }
+            rotateX() { return this; }
+            rotateY() { return this; }
+            rotateZ() { return this; }
+            scale() { return this; }
+        },
+        SphereGeometry: class {
+            constructor(r) {
+                this.type = 'SphereGeometry';
+                this.parameters = { radius: r };
+                this.attributes = { position: { count: 100, getX: () => 0, getY: () => 0, getZ: () => 0 } };
+            }
+            dispose() { }
+            scale() { return this; }
+            translate() { return this; }
+            rotateX() { return this; }
+            rotateY() { return this; }
+            rotateZ() { return this; }
+            getAttribute(name) { return this.attributes[name]; }
+            setAttribute(name, attr) { this.attributes[name] = attr; return this; }
+        },
+        CylinderGeometry: class {
+            constructor(rt, rb, h) {
+                this.type = 'CylinderGeometry';
+                this.parameters = { radiusTop: rt, radiusBottom: rb, height: h };
+                this.attributes = { position: { count: 100, getX: () => 0, getY: () => 0, getZ: () => 0 } };
+            }
+            dispose() { }
+            translate() { return this; }
+            scale() { return this; }
+            rotateX() { return this; }
+            rotateY() { return this; }
+            rotateZ() { return this; }
+            getAttribute(name) { return this.attributes[name]; }
+            setAttribute(name, attr) { this.attributes[name] = attr; return this; }
+        },
+        ConeGeometry: class {
+            constructor(r, h, s) {
+                this.type = 'ConeGeometry';
+                this.parameters = { radius: r, height: h, segments: s };
+                this.attributes = { position: { count: 100, getX: () => 0, getY: () => 0, getZ: () => 0 } };
+            }
+            dispose() { }
+            translate() { return this; }
+            scale() { return this; }
+            rotateX() { return this; }
+            rotateY() { return this; }
+            rotateZ() { return this; }
+            getAttribute(name) { return this.attributes[name]; }
+            setAttribute(name, attr) { this.attributes[name] = attr; return this; }
+        },
         Clock: class { constructor() { } getDelta() { return 0.016; } getElapsedTime() { return 0; } },
+        RepeatWrapping: 1000,
+        ClampToEdgeWrapping: 1001,
+        MirroredRepeatWrapping: 1002,
+        DoubleSide: 2,
+        StaticDrawUsage: 35044,
+        DynamicDrawUsage: 35048,
         MOUSE: { LEFT: 0, MIDDLE: 1, RIGHT: 2 },
         Matrix4: class {
             constructor() {
@@ -184,7 +370,14 @@ vi.mock('three', async () => {
         },
     };
 });
-vi.mock('three/examples/jsm/controls/OrbitControls.js', () => ({ OrbitControls: class { constructor() { } update() { } } }));
+vi.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
+    OrbitControls: class {
+        constructor() {
+            this.target = { set: () => { } };
+        }
+        update() { }
+    }
+}));
 
 // 2. UI and System Mocks
 vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } drawRaidPing() { } serialize() { return {}; } deserialize() { } } }));
@@ -282,7 +475,17 @@ vi.stubGlobal('document', {
 });
 
 vi.stubGlobal('localStorage', window.localStorage);
+vi.stubGlobal('performance', window.performance); // Added for PerformanceMonitor compatibility
 vi.stubGlobal('Image', class { constructor() { this.onload = null; this.src = ''; } });
+
+// 4. Worker Mock (Added for stability across all tests)
+vi.stubGlobal('Worker', class {
+    constructor() { }
+    postMessage() { }
+    terminate() { }
+    addEventListener() { }
+    removeEventListener() { }
+});
 
 // Helper to reset static counters
 function resetStaticCounters() {

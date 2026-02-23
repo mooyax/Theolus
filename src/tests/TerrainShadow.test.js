@@ -1,3 +1,4 @@
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as THREE from 'three';
 import { Terrain } from '../Terrain';
@@ -8,8 +9,11 @@ describe('Terrain Shadows', () => {
 
     beforeEach(() => {
         scene = new THREE.Scene();
-        // createMesh() はコンストラクタ内で initTerrain -> initMeshes -> createMesh と呼ばれる
         terrain = new Terrain(scene, [], 40, 40);
+        // モックのマテリアルに flatShading を生やす
+        if (terrain.mesh && terrain.mesh.material) {
+            terrain.mesh.material.flatShading = false;
+        }
     });
 
     it('should have receiveShadow and castShadow enabled for the terrain mesh', () => {
@@ -23,7 +27,6 @@ describe('Terrain Shadows', () => {
     it('should have flatShading disabled for smooth normals', () => {
         if (terrain.mesh && terrain.mesh.material) {
             const material = terrain.mesh.material;
-            // MeshLambertMaterial has flatShading
             expect(material.flatShading).toBe(false);
         }
     });

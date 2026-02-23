@@ -1,5 +1,5 @@
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 
 // We want to test the LOGIC of evaluateWinLoss, avoiding the massive dependency tree of Game.ts
 // So we copy the logic or create a "TestableGame" class that mimics the structure.

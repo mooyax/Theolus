@@ -54,8 +54,17 @@ export class HelpShowroom {
             logicalDepth: 1000,
             entityGrid: [],
             getTileHeight: () => 0,
-            getVisualPosition: (x, z) => new THREE.Vector3(x, 0, z),
+            getVisualPosition: (x, z, isCentered = true) => new THREE.Vector3(x, 0, z),
             getInterpolatedHeight: () => 0,
+            getBuildingSize: (type) => {
+                if (type === 'tower') return 3;
+                if (type === 'barracks') return 3;
+                if (type === 'farm') return 2;
+                if (type === 'house') return 2;
+                if (type === 'mansion') return 3;
+                if (type === 'castle') return 4;
+                return 1;
+            },
             registerEntity: () => { },
             unregisterEntity: () => { },
             checkYield: async () => { }, // Added for UnitRenderer init

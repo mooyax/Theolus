@@ -1,0 +1,71 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/Terrain.test.js
+[22m[39m[DEBUG] Building.ts loaded
+
+[90mstdout[2m | src/tests/Terrain.test.js
+[22m[39m[DEBUG] Terrain.ts top-level load
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mPopulation Update[2m > [22m[2mshould correctly sum housing population excluding farms
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mPopulation Update[2m > [22m[2mshould correctly sum housing population excluding farms
+[22m[39m[Terrain DIAG FRAME] Frame:1 Stagger:1 Units:
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mPopulation Update[2m > [22m[2mshould grow population in a house over time
+[22m[39mDisposing detached game instance
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mPopulation Update[2m > [22m[2mshould grow population in a house over time
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mPopulation Update[2m > [22m[2mshould grow population in a house over time
+[22m[39m[Terrain DIAG FRAME] Frame:1 Stagger:1 Units:
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould grow crops using simDeltaTime
+[22m[39mDisposing detached game instance
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould grow crops using simDeltaTime
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould grow crops using simDeltaTime
+[22m[39m[Terrain DIAG FRAME] Frame:1 Stagger:1 Units:
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould preserve overflow when harvesting
+[22m[39mDisposing detached game instance
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould preserve overflow when harvesting
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mFarm Logic[2m > [22m[2mshould preserve overflow when harvesting
+[22m[39m[Terrain DIAG FRAME] Frame:20 Stagger:1 Units:0
+[Terrain DIAG] Type:farm Frame:0/1 GrowthVal:0.5 Multiplier:0.5 Rate:0.25 HasFood:true Pop:0
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould consume food during day
+[22m[39mDisposing detached game instance
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould consume food during day
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mAdvanced Mechanics[2m > [22m[2mshould consume food during day
+[22m[39m[Terrain DIAG FRAME] Frame:1 Stagger:1 Units:
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mSeasonal Colors[2m > [22m[2mshould return different colors for seasons
+[22m[39mDisposing detached game instance
+
+[90mstdout[2m | src/tests/Terrain.test.js[2m > [22m[2mTerrain Logic[2m > [22m[2mSeasonal Colors[2m > [22m[2mshould return different colors for seasons
+[22m[39m[Terrain] Constructor. updatePopulation type: function
+
+ [31m笶ｯ[39m src/tests/Terrain.test.js [2m([22m[2m6 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 382[2mms[22m[39m
+       [32m笨・[39m should correctly sum housing population excluding farms[32m 84[2mms[22m[39m
+[31m       [31mﾃ・[31m should grow population in a house over time[39m[32m 68[2mms[22m[39m
+       [32m笨・[39m should grow crops using simDeltaTime[32m 48[2mms[22m[39m
+       [32m笨・[39m should preserve overflow when harvesting[32m 45[2mms[22m[39m
+       [32m笨・[39m should consume food during day[32m 63[2mms[22m[39m
+       [32m笨・[39m should return different colors for seasons[32m 73[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 09:38:58
+[2m   Duration [22m 1.36s[2m (transform 303ms, setup 135ms, import 283ms, tests 382ms, environment 405ms)[22m
+

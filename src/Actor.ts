@@ -60,17 +60,23 @@ export class Actor extends Entity {
         this.hp -= amount;
         if (this.hp <= 0) {
             this.hp = 0;
-            this.isDead = true;
-            // console.log(`[Actor ${this.id}] Died.`);
-
-            // --- SHEEP HARVEST REWARD ---
-            if (this.type === 'sheep') {
-                const game = this.game || (window as any).game;
-                if (game && game.resources) {
-                    game.resources.meat = (game.resources.meat || 0) + 1000;
-                    console.log(`[Actor ${this.id}] Sheep Harvested! +1000 Meat. Total: ${game.resources.meat}`);
-                }
+            if ((this as any).die) {
+                (this as any).die();
+            } else {
+                this.isDead = true;
             }
+        }
+    }
+
+    die() {
+        if (this.isDead) {
+            if (this.mesh) this.mesh.visible = false;
+            return;
+        }
+        this.isDead = true;
+        if (this.mesh) this.mesh.visible = false;
+        if (this.terrain && this.terrain.unregisterEntity) {
+            this.terrain.unregisterEntity(this);
         }
     }
 
@@ -191,8 +197,13 @@ export class Actor extends Entity {
             // SPECIAL RULE: Land (>0) to Water (0) (e.g. Raise Land Task)
             if (mRegion > 0 && tRegion === 0) {
                 const dist = this.getDistance(tx, tz);
-                if (dist < 3.0) return true;
-                if (this.terrain.isAdjacentToRegion(checkX, checkZ, mRegion)) return true;
+
+                // Relaxed range for Manual Tasks (Users often click slightly out of reach)
+                const isManual = (this as any).targetRequest && (this as any).targetRequest.isManual;
+                const maxDirectDist = isManual ? 7.0 : 3.0;
+
+                if (dist < maxDirectDist) return true;
+                if (this.terrain.isAdjacentToRegion && this.terrain.isAdjacentToRegion(checkX, checkZ, mRegion)) return true;
                 return false;
             }
 

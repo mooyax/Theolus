@@ -6,9 +6,7 @@ import * as THREE from 'three';
 
 // Mock Three.js
 global.THREE = THREE;
-global.document = {
-    createElement: () => ({ getContext: () => ({ fillRect: () => { }, fillStyle: '' }) })
-};
+
 
 describe('Advanced Units', () => {
     let mockScene;
@@ -38,7 +36,7 @@ describe('Advanced Units', () => {
             reportGlobalBattle: vi.fn(),
             projectiles: []
         };
-        global.window = { game: mockGame };
+        
     });
 
     it('should initialize Knight with high stats', () => {

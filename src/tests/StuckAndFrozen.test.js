@@ -17,8 +17,8 @@ describe('Stuck and Frozen Fix Verification', () => {
             changeState: vi.fn(),
             isMoving: false
         };
-    });
 
+    });
     it('Job.enter should call smartMove with actor.simTime, not 0', () => {
         const state = new Job(mockActor);
         state.enter(null);
@@ -26,13 +26,14 @@ describe('Stuck and Frozen Fix Verification', () => {
         // Verify that smartMove was called with 123.45
         expect(mockActor.smartMove).toHaveBeenCalledWith(20, 20, 123.45);
         expect(mockActor.smartMove).not.toHaveBeenCalledWith(expect.anything(), expect.anything(), 0);
-    });
 
+    });
     it('Job.enter should fallback to 0 only if simTime is missing', () => {
         mockActor.simTime = undefined;
         const state = new Job(mockActor);
         state.enter(null);
 
         expect(mockActor.smartMove).toHaveBeenCalledWith(20, 20, 0);
-    });
+
+});
 });

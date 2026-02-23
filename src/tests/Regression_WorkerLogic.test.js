@@ -101,15 +101,15 @@ describe('Regression: Worker Logic & Stability', () => {
         terrain = new MockTerrain();
         game = new MockGame();
         global.THREE = THREE;
-        global.window = { game };
+        
 
         unit = new Unit(new THREE.Scene(), terrain, 10, 10, 'worker');
         unit.game = game;
         unit.id = 1;
         game.units.push(unit);
-    });
 
     // 1. Worker Oscillation Fix (Async Delay)
+    });
     it('should NOT abort job during long async pathfinding (prevent oscillation)', async () => {
         // Setup: Unit has a job
         const req = { id: 101, type: 'build', x: 50, z: 50, status: 'assigned', assignedTo: unit.id };
@@ -138,9 +138,9 @@ describe('Regression: Worker Logic & Stability', () => {
 
         // Final check
         expect(unit.state.name).toBe('Job');
-    });
 
     // 2. Passive Worker Fix (Aggression)
+    });
     it('should attack nearby Goblin Hut when idle (Passive Worker Fix)', () => {
         // Setup: Nearby Goblin Hut
         const hut = { id: 'hut1', type: 'goblin_hut', gridX: 12, gridZ: 12, isDead: false, userData: { hp: 100, type: 'goblin_hut' } };
@@ -168,8 +168,8 @@ describe('Regression: Worker Logic & Stability', () => {
 
         expect(enteredCombat).toBe(true);
         expect(unit.targetBuilding).toBe(hut);
-    });
 
+    });
     it('should attack nearby Goblin even if holding a job (Self Defense)', () => {
         // Setup: Nearby Goblin (POJO Mock to avoid Class issues)
         const goblin = {
@@ -218,5 +218,6 @@ describe('Regression: Worker Logic & Stability', () => {
 
         expect(enteredCombat).toBe(true);
         expect(unit.targetGoblin).toBe(goblin);
-    });
+
+});
 });

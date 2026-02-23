@@ -3,20 +3,6 @@ import * as THREE from 'three';
 import { Unit } from '../Unit.js';
 import { Job, Wander } from '../ai/states/UnitStates.js';
 
-// Mock THREE
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        WebGLRenderer: vi.fn(() => ({
-            setSize: vi.fn(),
-            render: vi.fn(),
-            dispose: vi.fn(),
-            domElement: document.createElement('canvas')
-        })),
-    };
-});
-
 describe('Unit Snatching and Race Conditions', () => {
     let mockScene, mockTerrain, mockGame;
 
@@ -43,8 +29,8 @@ describe('Unit Snatching and Race Conditions', () => {
         };
         window.game = mockGame;
         Unit.nextId = 0;
-    });
 
+    });
     it('should stop and wander if another unit snatches its job', () => {
         const unit = new Unit(mockScene, mockTerrain, 10, 10, 'worker');
         const job = { id: 'job1', x: 20, z: 10, type: 'build', status: 'assigned', assignedTo: unit.id };
@@ -66,8 +52,8 @@ describe('Unit Snatching and Race Conditions', () => {
         expect(unit.state, 'State should be WanderState').toBeInstanceOf(Wander);
         expect(unit.action, 'Action should be Idle (waiting to wander)').toBe('Idle');
         expect(unit.targetRequest, 'Target request should be null').toBeNull();
-    });
 
+    });
     it('should stop if the job is completed by someone else', () => {
         const unit = new Unit(mockScene, mockTerrain, 10, 10, 'worker');
         const job = { id: 'job1', x: 20, z: 10, type: 'build', status: 'assigned', assignedTo: unit.id };
@@ -84,5 +70,6 @@ describe('Unit Snatching and Race Conditions', () => {
         expect(unit.isMoving, 'Unit should stop moving on completion').toBe(false);
         expect(unit.state, 'State should switch back to WanderState').toBeInstanceOf(Wander);
         expect(unit.targetRequest, 'Target request should be null after completion').toBe(null);
-    });
+
+});
 });

@@ -4,20 +4,6 @@ import * as THREE from 'three';
 import { Unit } from '../Unit.js';
 import { Job, Wander } from '../ai/states/UnitStates.js';
 
-// Mock THREE
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        WebGLRenderer: vi.fn(() => ({
-            setSize: vi.fn(),
-            render: vi.fn(),
-            dispose: vi.fn(),
-            domElement: document.createElement('canvas')
-        })),
-    };
-});
-
 describe('Debug Regression', () => {
     let mockScene, mockTerrain, mockGame;
 
@@ -49,8 +35,8 @@ describe('Debug Regression', () => {
         };
         window.game = mockGame;
         Unit.nextId = 0;
-    });
 
+    });
     it('reproduce Snatch movement', () => {
         const unit = new Unit(mockScene, mockTerrain, 10, 10, 'worker');
 
@@ -83,5 +69,6 @@ describe('Debug Regression', () => {
         // expect(unit.isMoving).toBe(false); 
         expect(unit.targetRequest).toBeNull();
         expect(unit.action).not.toContain('Job');
-    });
+
+});
 });

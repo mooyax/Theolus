@@ -52,8 +52,8 @@ describe('Goblin Raid Expiry Persistence', () => {
         vi.spyOn(console, 'error');
 
         goblinManager = new GoblinManager(mockScene, mockTerrain, {});
-    });
 
+    });
     it('should serialize and deserialize raidGoal timestamp', () => {
         // 1. Create Goblin in RaidState with explicit Timestamp
         const goblin = new Goblin(mockScene, mockTerrain, 10, 10, 'normal');
@@ -83,8 +83,8 @@ describe('Goblin Raid Expiry Persistence', () => {
 
         // This is the CRITICAL Assertion
         expect(restoredGoblin.raidGoal.timestamp).toBe(40.0);
-    });
 
+    });
     it('should expire RaidState after load if timestamp is preserved', () => {
         // Setup serialized data with timestamp (simulating proper save)
         const savedData = {
@@ -108,5 +108,6 @@ describe('Goblin Raid Expiry Persistence', () => {
 
         // Should switch to Wander because 100 - 10 > 60
         expect(goblin.state.constructor.name).toBe('Wander');
-    });
+
+});
 });

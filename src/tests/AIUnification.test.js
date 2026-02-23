@@ -41,24 +41,7 @@ describe('AI Unification & Tooltip Format', () => {
             claimRequest: vi.fn(),
             assignRequestSync: vi.fn()
         };
-        global.window = {
-            game: {
-                units: [],
-                buildings: [],
-                goblinManager: {
-                    goblins: [],
-                    clans: { 0: { active: true } },
-                    getClanRaidTarget: vi.fn()
-                },
-                simTotalTimeSec: 0,
-                getSquad: vi.fn(),
-                reportSquadTarget: vi.fn(),
-                reportGlobalBattle: vi.fn(),
-                findBestRequest: vi.fn(),
-                claimRequest: vi.fn(),
-                assignRequestSync: vi.fn()
-            }
-        };
+        
     });
 
     it('should show Moving action for both Human and Goblin when isMoving is true', () => {

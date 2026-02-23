@@ -20,8 +20,8 @@ describe('Action Label Logic', () => {
         // Use Real Logic for move
         unit.smartMove = Unit.prototype.smartMove;
         unit.executeMove = Unit.prototype.executeMove;
-    });
 
+    });
     it('should maintain Moving action during update loop', async () => {
         // Setup: Unit needs ONE update to initialize
         // State: Idle -> Wander
@@ -64,6 +64,7 @@ describe('Action Label Logic', () => {
                 // expect(unit.action).not.toBe('Idle'); // Or maybe it arrived? 1.4 dist / speed ~0.8 * 1.4 = 1.1s
             }
         }
-    });
-});
 
+
+});
+});

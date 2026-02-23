@@ -58,19 +58,26 @@ describe('Job Approach Threshold', () => {
         expect(jobState.actor.action).toBe('Working');
         // Note: production code calls workOnRequest, not completeRequest directly
         // completeRequest would only be called when req.status === 'completed'
+
     });
+        it('should NOT complete job if distance is 1.6 (outside 1.5 threshold)', () => {
+            // Distance 1.6: set target coordinates to be exactly 1.6 units away (outside 1.5 threshold)
+            // Actor is at (10, 10), set target at (11.6, 10) for distance 1.6
+            mockActor.targetRequest.x = 11.6;
+            mockActor.targetRequest.z = 10;
+        });
 
-    it('should NOT complete job if distance is 1.6 (outside 1.5 threshold)', () => {
-        // Distance 1.6: set target coordinates to be exactly 1.6 units away (outside 1.5 threshold)
-        // Actor is at (10, 10), set target at (11.6, 10) for distance 1.6
-        mockActor.targetRequest.x = 11.6;
-        mockActor.targetRequest.z = 10;
-        jobState.targetRequest = mockActor.targetRequest;
+        it('should NOT complete job if distance is 1.6 (outside 1.5 threshold)', () => {
+            // Distance 1.6: set target coordinates to be exactly 1.6 units away (outside 1.5 threshold)
+            // Actor is at (10, 10), set target at (11.6, 10) for distance 1.6
+            mockActor.targetRequest.x = 11.6;
+            mockActor.targetRequest.z = 10;
+            jobState.targetRequest = mockActor.targetRequest;
 
-        jobState.update(100, 0.1, false, []);
+            jobState.update(100, 0.1, false, []);
 
-        // When distance is too far, action should remain 'Approaching Job'
-        expect(jobState.actor.action).toBe('Approaching Job');
-        expect(mockGame.completeRequest).not.toHaveBeenCalled();
+            // When distance is too far, action should remain 'Approaching Job'
+            expect(jobState.actor.action).toBe('Approaching Job');
+            expect(mockGame.completeRequest).not.toHaveBeenCalled();
+        });
     });
-});

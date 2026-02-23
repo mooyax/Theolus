@@ -10,8 +10,8 @@ describe('PathfindingWorker', () => {
         // Initialize a flat 10x10 grid with height 5 (Safe Land)
         const data = new Int16Array(WIDTH * HEIGHT).fill(5);
         initGrid({ w: WIDTH, h: HEIGHT, data: data });
-    });
 
+    });
     it('should find a simple path on flat terrain', () => {
         // (0,0) -> (0,5)
         const path = findPath(0, 0, 0, 5, 100, 1);
@@ -21,8 +21,8 @@ describe('PathfindingWorker', () => {
         const last = path[path.length - 1];
         expect(last.x).toBe(0);
         expect(last.z).toBe(5);
-    });
 
+    });
     it('should avoid water (Height <= 0)', () => {
         // Surround (0,0) with water
         // Neighbors of (0,0) are (1,0), (9,0), (0,1), (0,9), (1,1), (9,1), (1,9), (9,9)
@@ -41,8 +41,8 @@ describe('PathfindingWorker', () => {
 
         // Should fail
         expect(path).toBeNull();
-    });
 
+    });
     it('should avoid steep slopes (Height Diff > 3)', () => {
         // Surround (0,0) with walls
         const neighbors = [
@@ -60,8 +60,8 @@ describe('PathfindingWorker', () => {
 
         // Should fail
         expect(path).toBeNull();
-    });
 
+    });
     it('should climb allowed slopes (Height Diff <= 3)', () => {
         // Create a single step at z=1 for the path
         updateCell({ x: 0, z: 1, h: 8 }); // 5 -> 8 (Diff 3 <= 3)
@@ -73,8 +73,8 @@ describe('PathfindingWorker', () => {
         // Should succeed
         expect(path).not.toBeNull();
         expect(path.length).toBeGreaterThan(0);
-    });
 
+    });
     it('should handle diagonal movement correctly', () => {
         // (0,0) -> (2,2)
         const path = findPath(0, 0, 2, 2, 100, 5);
@@ -93,6 +93,7 @@ describe('PathfindingWorker', () => {
         const first = path[0];
         expect(first.x).toBe(0);
         expect(first.z).toBe(0);
-    });
-});
 
+
+});
+});

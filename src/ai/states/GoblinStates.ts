@@ -26,9 +26,10 @@ export class Combat extends State {
 
         // --- BUILDING PERSISTENCE CHECK ---
         if (this.actor.targetBuilding) {
-            // FIX: Don't use O(N) includes check. Use HP check.
             const b = this.actor.targetBuilding;
-            const isDead = (b.isDestroyed && b.isDestroyed()) || (b.userData.hp <= 0 && (b.userData.population || 0) < 1.0);
+            // FIX: Ensure farms can be destroyed. A Farm without pop dies on HP.
+            const isFarm = (b.type === 'farm' || (b.userData && b.userData.type === 'farm'));
+            const isDead = (b.isDestroyed && b.isDestroyed()) || (b.userData && b.userData.hp <= 0 && (isFarm || (b.userData.population || 0) < 1.0));
 
             if (isDead) {
                 console.log(`[GoblinCombat ${this.actor.id}] Target Dead/Destroyed. Switching to Raid.`);
@@ -54,21 +55,23 @@ export class Combat extends State {
         this.stagnationTimer += deltaTime;
         if (this.stagnationTimer > 15.0) {
             // STABILIZATION: Blacklist target to prevent immediate re-engagement (Flip-Flop)
-            // If we stuck for 15s, we can't reach it. Ignore for 10s.
             const now = (window as any).game ? (window as any).game.simTotalTimeSec : 0;
             if (this.actor.targetUnit) {
-                if (this.actor.ignoredTargets) this.actor.ignoredTargets.set(this.actor.targetUnit.id, now + 10.0);
-                // console.log(`[GoblinState] Stagnation: Ignoring Unit ${this.actor.targetUnit.id} for 10s`);
+                if (!this.actor.ignoredTargets) this.actor.ignoredTargets = new Map();
+                this.actor.ignoredTargets.set(this.actor.targetUnit.id, now + 10.0);
             }
             if (this.actor.targetBuilding) {
-                if (this.actor.ignoredTargets && this.actor.targetBuilding.userData) {
-                    const id = this.actor.targetBuilding.id || this.actor.targetBuilding.userData.id;
+                if (!this.actor.ignoredTargets) this.actor.ignoredTargets = new Map();
+                const id = this.actor.targetBuilding.id || (this.actor.targetBuilding.userData ? this.actor.targetBuilding.userData.id : null);
+                if (id !== null) {
                     this.actor.ignoredTargets.set(id, now + 15.0);
                     console.log(`[GoblinCombat ${this.actor.id}] Stagnation (15s). Blacklisting Building ${id}. Switching to Raid.`);
                 }
             }
 
-            if (this.approachTarget(target.gridX, target.gridZ, 1.5, time)) {
+            // Adjust fallback approach to match range
+            const approachRange = this.actor.attackRange ? this.actor.attackRange + 1.0 : 2.5;
+            if (this.approachTarget(target.gridX, target.gridZ, approachRange, time)) {
                 this.actor.isRaiding = false;
                 this.actor.changeState(new Wander(this.actor));
                 return;
@@ -83,7 +86,6 @@ export class Combat extends State {
         // Use logic from Goblin.js
         if (this.actor.executeCombatLogic) {
             // ENCOUNTER COMBAT START
-            // If target is Building or far Unit, check for nearby enemies to engage
             const primaryTarget = this.actor.targetUnit || this.actor.targetBuilding;
 
             if (primaryTarget) {
@@ -91,29 +93,18 @@ export class Combat extends State {
                     this.actor.getDistance(this.actor.targetUnit.gridX, this.actor.targetUnit.gridZ) :
                     (this.actor.getDistanceToBuilding ? this.actor.getDistanceToBuilding(this.actor.targetBuilding) : 999);
 
-                if (dist < 3.0) {
-                    this.stagnationTimer = 0;
+                const dynamicRange = this.actor.attackRange ? this.actor.attackRange : 1.8;
+                if (dist <= dynamicRange + 1.5) {
+                    this.stagnationTimer = 0; // Close enough, not stagnating
                 } else if (dist > 8.0) {
-                    // If primary target is far, scan for nearby (5.0) opportunity targets
+                    // Far away, look for better targets.
                     const range = 5.0;
-                    // Use fallback check if scanForTargets not suitable (scanForTargets usually sets target directly)
-                    // But we want to find ONE and compare.
-
-                    // Optimization: Use simple distance check against KNOWN units if accessing ALL units is heavy?
-                    // GoblinManager has list of units? No, simple scanForTargets re-run is easiest but might override target.
-                    // Goblin.js `scanForTargets` implementation:
-                    // It checks nearby units/buildings and sets `this.targetUnit`.
-
-                    // Let's manually scan nearby units
-                    // FIX: Use passed units argument (from update args) first, fallback to (window as any).game
-                    // Also renamed variable to avoid shadowing the 'units' arg from update(...)
                     const scanUnits: any[] = (units && units.length > 0) ? units : (((window as any).game && (window as any).game.units) ? (window as any).game.units : []);
                     let bestUnit: any = null;
                     let bestDist = range;
 
                     for (const u of scanUnits) {
                         if (u.isDead) continue;
-                        // Optimization: Manhattan check first
                         if (Math.abs(u.gridX - this.actor.gridX) > range || Math.abs(u.gridZ - this.actor.gridZ) > range) continue;
 
                         const d = this.actor.getDistance(u.gridX, u.gridZ);
@@ -124,17 +115,14 @@ export class Combat extends State {
                     }
 
                     if (bestUnit && (!this.actor.targetUnit || bestUnit.id !== this.actor.targetUnit.id)) {
-                        console.log(`[GoblinState ${this.actor.id}] Encounter! Switching from ${this.actor.targetUnit ? 'Unit' : 'Building'} to Nearby Unit ${bestUnit.id}`);
+                        console.log(`[GoblinState ${this.actor.id}] Encounter! Switching to Nearby Unit ${bestUnit.id}`);
                         this.actor.targetUnit = bestUnit;
-                        // Prioritize Unit over Building, but KEEP targetBuilding to resume later!
-                        // this.actor.targetBuilding = null; 
                     }
                 }
             }
             // ENCOUNTER COMBAT END
 
             this.actor.executeCombatLogic(time, deltaTime);
-        } else {
         }
 
         // If after update logic, we lost targets (killed/destroyed), switch back

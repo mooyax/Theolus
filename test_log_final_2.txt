@@ -1,0 +1,536 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+Cannot parse C:/Users/mooya/develop/test/src/tests/RealGrowth.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/ComplexInteraction.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/GameLighting.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/RealTerrainRestoration.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/SaveLoadRestoration.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/LoadUpdateLoop.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/FarmWaves.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/JobIdempotency.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/VisualDebug.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/SaveLoadIntegration.test.js:
+Expected ',', got '}'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/NightLoadJob.test.js:
+Expression expected.
+Cannot parse C:/Users/mooya/develop/test/src/tests/PopulationSpawningFix.test.js:
+Expected ',', got 'const'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/Lighting.test.js:
+Expected '}', got '<eof>'.
+ [32m笨・[39m src/tests/JitterInvestigation.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 57[2mms[22m[39m
+ [32m笨・[39m src/tests/BuildingDefense.test.js [2m([22m[2m9 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+ [32m笨・[39m src/tests/GoblinActivity.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m笨・[39m src/tests/GoblinSpawn.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 40[2mms[22m[39m
+ [32m笨・[39m src/tests/HelpShowroom.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m笨・[39m src/tests/ForceAssignment.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 77[2mms[22m[39m
+ [32m笨・[39m src/tests/ComplexAI.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 152[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/DoubleSpawn.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 218[2mms[22m[39m
+[31m     [31mﾃ・[31m should prevent double spawn on concurrent startNewGame calls[39m[32m 216[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/EcoSpawnFix.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 529[2mms[22m[39m
+[31m     [31mﾃ・[31m should produce grain from farms[39m[33m 304[2mms[22m[39m
+[31m     [31mﾃ・[31m should allow goblin huts to reach spawn threshold[39m[32m 221[2mms[22m[39m
+Cannot parse C:/Users/mooya/develop/test/src/tests/GoblinEncounter.test.js:
+'import', and 'export' cannot be used outside of module code.
+Cannot parse C:/Users/mooya/develop/test/src/tests/MovingFlicker.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/WeatherSway.test.js:
+Expected '}', got '<eof>'.
+ [32m笨・[39m src/tests/TerrainDetection.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 790[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/MultiJob.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 2282[2mms[22m[39m
+[31m     [31mﾃ・[31m should NOT interrupt busy units when a new job is added[39m[33m 2279[2mms[22m[39m
+Cannot parse C:/Users/mooya/develop/test/src/tests/LoadJitabata.test.js:
+'import', and 'export' cannot be used outside of module code.
+Cannot parse C:/Users/mooya/develop/test/src/tests/CombatBalance.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/RequestLifecycle.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/SheepHuntingFix.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/ManualAssignment.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/LevelResourceReset.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/WinLossDelay.test.js:
+'import', and 'export' cannot be used outside of module code.
+Cannot parse C:/Users/mooya/develop/test/src/tests/StuckReassignment.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/CounterBalance.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/StuckAndMarker.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/GameLoopVerify.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/PerformanceMonitor.test.js:
+'import', and 'export' cannot be used outside of module code.
+Cannot parse C:/Users/mooya/develop/test/src/tests/ActionLabelStability.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/TreeSway.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/GoblinFixes.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/UnitVisibility.test.js:
+Expected ',', got 'renderer'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/CombatStability.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/JobReassignment.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/StartupCrash.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/CombatRetaliation.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/EncounterCombat.test.js:
+Expected '}', got '<eof>'.
+ [32m笨・[39m src/tests/ManualJobThrottle.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+Cannot parse C:/Users/mooya/develop/test/src/tests/JobAssignment.test.js:
+Expected '}', got '<eof>'.
+Cannot parse C:/Users/mooya/develop/test/src/tests/CavePersistence.test.js:
+'import', and 'export' cannot be used outside of module code.
+Cannot parse C:/Users/mooya/develop/test/src/tests/VerifyBuildingGrowth.test.js:
+Expected '}', got '<eof>'.
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Suites 171 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/AAAA_DIAG.test.js [ src/tests/AAAA_DIAG.test.js ]
+ FAIL  src/tests/ActionLabelStability.test.js [ src/tests/ActionLabelStability.test.js ]
+ FAIL  src/tests/AdvancedUnits.test.js [ src/tests/AdvancedUnits.test.js ]
+ FAIL  src/tests/AIUnification.test.js [ src/tests/AIUnification.test.js ]
+ FAIL  src/tests/Animals.test.js [ src/tests/Animals.test.js ]
+ FAIL  src/tests/BehaviorReproduction.test.js [ src/tests/BehaviorReproduction.test.js ]
+ FAIL  src/tests/BonusWorkerSpawn.test.js [ src/tests/BonusWorkerSpawn.test.js ]
+ FAIL  src/tests/BuildingAttackAuto.test.js [ src/tests/BuildingAttackAuto.test.js ]
+ FAIL  src/tests/BuildingDestruction.test.js [ src/tests/BuildingDestruction.test.js ]
+ FAIL  src/tests/BuildingDistraction.test.js [ src/tests/BuildingDistraction.test.js ]
+ FAIL  src/tests/BuildingStart.test.js [ src/tests/BuildingStart.test.js ]
+ FAIL  src/tests/CaveDestruction.test.js [ src/tests/CaveDestruction.test.js ]
+ FAIL  src/tests/CaveDeterminism.test.js [ src/tests/CaveDeterminism.test.js ]
+ FAIL  src/tests/CavePersistence.test.js [ src/tests/CavePersistence.test.js ]
+ FAIL  src/tests/CombatBalance.test.js [ src/tests/CombatBalance.test.js ]
+ FAIL  src/tests/CombatFix.test.js [ src/tests/CombatFix.test.js ]
+ FAIL  src/tests/CombatFixes.test.js [ src/tests/CombatFixes.test.js ]
+ FAIL  src/tests/CombatLogic.test.js [ src/tests/CombatLogic.test.js ]
+ FAIL  src/tests/CombatRequestHandoff.test.js [ src/tests/CombatRequestHandoff.test.js ]
+ FAIL  src/tests/CombatRetaliation.test.js [ src/tests/CombatRetaliation.test.js ]
+ FAIL  src/tests/CombatStability.test.js [ src/tests/CombatStability.test.js ]
+ FAIL  src/tests/CombatStuck.test.js [ src/tests/CombatStuck.test.js ]
+ FAIL  src/tests/CombatVerification.test.js [ src/tests/CombatVerification.test.js ]
+ FAIL  src/tests/ComplexInteraction.test.js [ src/tests/ComplexInteraction.test.js ]
+ FAIL  src/tests/CounterBalance.test.js [ src/tests/CounterBalance.test.js ]
+ FAIL  src/tests/DeathAnimation.test.js [ src/tests/DeathAnimation.test.js ]
+ FAIL  src/tests/DebuggingIdle.test.js [ src/tests/DebuggingIdle.test.js ]
+ FAIL  src/tests/DebugRegression.test.js [ src/tests/DebugRegression.test.js ]
+ FAIL  src/tests/DeepCup.test.js [ src/tests/DeepCup.test.js ]
+ FAIL  src/tests/DefeatCondition.test.js [ src/tests/DefeatCondition.test.js ]
+ FAIL  src/tests/EncounterCombat.test.js [ src/tests/EncounterCombat.test.js ]
+ FAIL  src/tests/FactionPersistence.test.js [ src/tests/FactionPersistence.test.js ]
+ FAIL  src/tests/FactionWar.test.js [ src/tests/FactionWar.test.js ]
+ FAIL  src/tests/FarmWaves.test.js [ src/tests/FarmWaves.test.js ]
+ FAIL  src/tests/Flatness.test.js [ src/tests/Flatness.test.js ]
+ FAIL  src/tests/ForceBuild.test.js [ src/tests/ForceBuild.test.js ]
+ FAIL  src/tests/GameLighting.test.js [ src/tests/GameLighting.test.js ]
+ FAIL  src/tests/GameLoopVerify.test.js [ src/tests/GameLoopVerify.test.js ]
+ FAIL  src/tests/GhostHouse.test.js [ src/tests/GhostHouse.test.js ]
+ FAIL  src/tests/GoblinAggression.test.js [ src/tests/GoblinAggression.test.js ]
+ FAIL  src/tests/GoblinDestruction.test.js [ src/tests/GoblinDestruction.test.js ]
+ FAIL  src/tests/GoblinEncounter.test.js [ src/tests/GoblinEncounter.test.js ]
+ FAIL  src/tests/GoblinFixes.test.js [ src/tests/GoblinFixes.test.js ]
+ FAIL  src/tests/GoblinHutDestruction.test.js [ src/tests/GoblinHutDestruction.test.js ]
+ FAIL  src/tests/GoblinHutFix.test.js [ src/tests/GoblinHutFix.test.js ]
+ FAIL  src/tests/GoblinMobilization.test.js [ src/tests/GoblinMobilization.test.js ]
+ FAIL  src/tests/GoblinRaidExpiry.test.js [ src/tests/GoblinRaidExpiry.test.js ]
+ FAIL  src/tests/GoblinRaidThreshold.test.js [ src/tests/GoblinRaidThreshold.test.js ]
+ FAIL  src/tests/GoblinSpawnVerification.test.js [ src/tests/GoblinSpawnVerification.test.js ]
+ FAIL  src/tests/GoblinStats.test.js [ src/tests/GoblinStats.test.js ]
+ FAIL  src/tests/GoblinStuckness.test.js [ src/tests/GoblinStuckness.test.js ]
+ FAIL  src/tests/GoblinTypes.test.js [ src/tests/GoblinTypes.test.js ]
+ FAIL  src/tests/GridSearchRegression.test.js [ src/tests/GridSearchRegression.test.js ]
+ FAIL  src/tests/GroupCombat.test.js [ src/tests/GroupCombat.test.js ]
+ FAIL  src/tests/Hotspot.test.js [ src/tests/Hotspot.test.js ]
+ FAIL  src/tests/HumanSpawningSurvival.test.js [ src/tests/HumanSpawningSurvival.test.js ]
+ FAIL  src/tests/Hysteresis.test.js [ src/tests/Hysteresis.test.js ]
+ FAIL  src/tests/IdleRegression.test.js [ src/tests/IdleRegression.test.js ]
+ FAIL  src/tests/InterruptResume.test.js [ src/tests/InterruptResume.test.js ]
+ FAIL  src/tests/JobApproachThreshold.test.js [ src/tests/JobApproachThreshold.test.js ]
+ FAIL  src/tests/JobAssignment.test.js [ src/tests/JobAssignment.test.js ]
+ FAIL  src/tests/JobIdempotency.test.js [ src/tests/JobIdempotency.test.js ]
+ FAIL  src/tests/JobPathFailure.test.js [ src/tests/JobPathFailure.test.js ]
+ FAIL  src/tests/JobReassignment.test.js [ src/tests/JobReassignment.test.js ]
+ FAIL  src/tests/KnightMobilization.test.js [ src/tests/KnightMobilization.test.js ]
+ FAIL  src/tests/LevelResourceReset.test.js [ src/tests/LevelResourceReset.test.js ]
+ FAIL  src/tests/Lighting.test.js [ src/tests/Lighting.test.js ]
+ FAIL  src/tests/LoadJitabata.test.js [ src/tests/LoadJitabata.test.js ]
+ FAIL  src/tests/LoadUpdateLoop.test.js [ src/tests/LoadUpdateLoop.test.js ]
+ FAIL  src/tests/ManaSystem.test.js [ src/tests/ManaSystem.test.js ]
+ FAIL  src/tests/ManualAssignment.test.js [ src/tests/ManualAssignment.test.js ]
+ FAIL  src/tests/ManualBuild.test.js [ src/tests/ManualBuild.test.js ]
+ FAIL  src/tests/ManualJobFlicker.test.js [ src/tests/ManualJobFlicker.test.js ]
+ FAIL  src/tests/ManualJobRetry.test.js [ src/tests/ManualJobRetry.test.js ]
+ FAIL  src/tests/ManualPriority.test.js [ src/tests/ManualPriority.test.js ]
+ FAIL  src/tests/ManualRequestIntegration.test.js [ src/tests/ManualRequestIntegration.test.js ]
+ FAIL  src/tests/MarkerDistraction.test.js [ src/tests/MarkerDistraction.test.js ]
+ FAIL  src/tests/MarkerEndToEnd.test.js [ src/tests/MarkerEndToEnd.test.js ]
+ FAIL  src/tests/MigrationConflict.test.js [ src/tests/MigrationConflict.test.js ]
+ FAIL  src/tests/MigrationImprovement.test.js [ src/tests/MigrationImprovement.test.js ]
+ FAIL  src/tests/Minimal.test.js [ src/tests/Minimal.test.js ]
+ FAIL  src/tests/Movement.test.js [ src/tests/Movement.test.js ]
+ FAIL  src/tests/MovementExecution.test.js [ src/tests/MovementExecution.test.js ]
+ FAIL  src/tests/MovementFix.test.js [ src/tests/MovementFix.test.js ]
+ FAIL  src/tests/MovementReset.test.js [ src/tests/MovementReset.test.js ]
+ FAIL  src/tests/MovingFlicker.test.js [ src/tests/MovingFlicker.test.js ]
+ FAIL  src/tests/NightLoadJob.test.js [ src/tests/NightLoadJob.test.js ]
+ FAIL  src/tests/NightLogic.test.js [ src/tests/NightLogic.test.js ]
+ FAIL  src/tests/NightManualWork.test.js [ src/tests/NightManualWork.test.js ]
+ FAIL  src/tests/NightMovement.test.js [ src/tests/NightMovement.test.js ]
+ FAIL  src/tests/PathChurn.test.js [ src/tests/PathChurn.test.js ]
+ FAIL  src/tests/PathfindingOscillation.test.js [ src/tests/PathfindingOscillation.test.js ]
+ FAIL  src/tests/PathfindingTimeout.test.js [ src/tests/PathfindingTimeout.test.js ]
+ FAIL  src/tests/PathfindingWorker.test.js [ src/tests/PathfindingWorker.test.js ]
+ FAIL  src/tests/PerformanceMonitor.test.js [ src/tests/PerformanceMonitor.test.js ]
+ FAIL  src/tests/PopulationGrowth.test.js [ src/tests/PopulationGrowth.test.js ]
+ FAIL  src/tests/PopulationSpawningFix.test.js [ src/tests/PopulationSpawningFix.test.js ]
+ FAIL  src/tests/RealGrowth.test.js [ src/tests/RealGrowth.test.js ]
+ FAIL  src/tests/RealTerrainRestoration.test.js [ src/tests/RealTerrainRestoration.test.js ]
+ FAIL  src/tests/RefuseDistraction.test.js [ src/tests/RefuseDistraction.test.js ]
+ FAIL  src/tests/Regression_WorkerLogic.test.js [ src/tests/Regression_WorkerLogic.test.js ]
+ FAIL  src/tests/ReproduceGoblinCrash.test.js [ src/tests/ReproduceGoblinCrash.test.js ]
+ FAIL  src/tests/ReproductionJitabata.test.js [ src/tests/ReproductionJitabata.test.js ]
+ FAIL  src/tests/ReproUnitMovement.test.js [ src/tests/ReproUnitMovement.test.js ]
+ FAIL  src/tests/RequestLifecycle.test.js [ src/tests/RequestLifecycle.test.js ]
+ FAIL  src/tests/ResourceGathering.test.js [ src/tests/ResourceGathering.test.js ]
+ FAIL  src/tests/ResourceVerify.test.js [ src/tests/ResourceVerify.test.js ]
+ FAIL  src/tests/RubberBanding.test.js [ src/tests/RubberBanding.test.js ]
+ FAIL  src/tests/SafeSpawn.test.js [ src/tests/SafeSpawn.test.js ]
+ FAIL  src/tests/SaveLoad.test.js [ src/tests/SaveLoad.test.js ]
+ FAIL  src/tests/SaveLoadIntegration.test.js [ src/tests/SaveLoadIntegration.test.js ]
+ FAIL  src/tests/SaveLoadRestoration.test.js [ src/tests/SaveLoadRestoration.test.js ]
+ FAIL  src/tests/SheepHarvest.test.js [ src/tests/SheepHarvest.test.js ]
+ FAIL  src/tests/SheepHuntingFix.test.js [ src/tests/SheepHuntingFix.test.js ]
+ FAIL  src/tests/ShorelineLoop.test.js [ src/tests/ShorelineLoop.test.js ]
+ FAIL  src/tests/SimpleRegion.test.js [ src/tests/SimpleRegion.test.js ]
+ FAIL  src/tests/SleepBehavior.test.js [ src/tests/SleepBehavior.test.js ]
+ FAIL  src/tests/SlopeSpeed.test.js [ src/tests/SlopeSpeed.test.js ]
+ FAIL  src/tests/SpatialSearch.test.js [ src/tests/SpatialSearch.test.js ]
+ FAIL  src/tests/SpawnCost.test.js [ src/tests/SpawnCost.test.js ]
+ FAIL  src/tests/SquadAi.test.js [ src/tests/SquadAi.test.js ]
+ FAIL  src/tests/SquadMemory.test.js [ src/tests/SquadMemory.test.js ]
+ FAIL  src/tests/Stabilization.test.js [ src/tests/Stabilization.test.js ]
+ FAIL  src/tests/StagnationIntegration.test.js [ src/tests/StagnationIntegration.test.js ]
+ FAIL  src/tests/StartupCrash.test.js [ src/tests/StartupCrash.test.js ]
+ FAIL  src/tests/StressTest.test.js [ src/tests/StressTest.test.js ]
+ FAIL  src/tests/StuckAndFrozen.test.js [ src/tests/StuckAndFrozen.test.js ]
+ FAIL  src/tests/StuckAndMarker.test.js [ src/tests/StuckAndMarker.test.js ]
+ FAIL  src/tests/StuckDebug.test.js [ src/tests/StuckDebug.test.js ]
+ FAIL  src/tests/StuckReassignment.test.js [ src/tests/StuckReassignment.test.js ]
+ FAIL  src/tests/TargetingPriority.test.js [ src/tests/TargetingPriority.test.js ]
+ FAIL  src/tests/Terrain.test.js [ src/tests/Terrain.test.js ]
+ FAIL  src/tests/TerrainDetection.test.js [ src/tests/TerrainDetection.test.js ]
+ FAIL  src/tests/TerrainJobReach.test.js [ src/tests/TerrainJobReach.test.js ]
+ FAIL  src/tests/TerrainParams.test.js [ src/tests/TerrainParams.test.js ]
+ FAIL  src/tests/TerrainShadow.test.js [ src/tests/TerrainShadow.test.js ]
+ FAIL  src/tests/TerrainSpeed.test.js [ src/tests/TerrainSpeed.test.js ]
+ FAIL  src/tests/TreeSway.test.js [ src/tests/TreeSway.test.js ]
+ FAIL  src/tests/Unit.test.js [ src/tests/Unit.test.js ]
+ FAIL  src/tests/UnitAISearch.test.js [ src/tests/UnitAISearch.test.js ]
+ FAIL  src/tests/UnitBehavior.test.js [ src/tests/UnitBehavior.test.js ]
+ FAIL  src/tests/UnitInit.test.js [ src/tests/UnitInit.test.js ]
+ FAIL  src/tests/UnitLifecycle.test.js [ src/tests/UnitLifecycle.test.js ]
+ FAIL  src/tests/UnitMigration.test.js [ src/tests/UnitMigration.test.js ]
+ FAIL  src/tests/UnitPerformance.test.js [ src/tests/UnitPerformance.test.js ]
+ FAIL  src/tests/UnitSheepTargeting.test.js [ src/tests/UnitSheepTargeting.test.js ]
+ FAIL  src/tests/UnitSnatch.test.js [ src/tests/UnitSnatch.test.js ]
+ FAIL  src/tests/UnitStress.test.js [ src/tests/UnitStress.test.js ]
+ FAIL  src/tests/UnitVisibility.test.js [ src/tests/UnitVisibility.test.js ]
+ FAIL  src/tests/UnitWrapping.test.js [ src/tests/UnitWrapping.test.js ]
+ FAIL  src/tests/VerifyBuildingGrowth.test.js [ src/tests/VerifyBuildingGrowth.test.js ]
+ FAIL  src/tests/VerifySetup.test.js [ src/tests/VerifySetup.test.js ]
+ FAIL  src/tests/VerifyUnitUpdate.test.js [ src/tests/VerifyUnitUpdate.test.js ]
+ FAIL  src/tests/VisualDebug.test.js [ src/tests/VisualDebug.test.js ]
+ FAIL  src/tests/WanderBehavior.test.js [ src/tests/WanderBehavior.test.js ]
+ FAIL  src/tests/WaterEntry.test.js [ src/tests/WaterEntry.test.js ]
+ FAIL  src/tests/WaterWaves.test.js [ src/tests/WaterWaves.test.js ]
+ FAIL  src/tests/WeatherSeason.test.js [ src/tests/WeatherSeason.test.js ]
+ FAIL  src/tests/WeatherSway.test.js [ src/tests/WeatherSway.test.js ]
+ FAIL  src/tests/WinLossCondition.test.js [ src/tests/WinLossCondition.test.js ]
+ FAIL  src/tests/WinLossDelay.test.js [ src/tests/WinLossDelay.test.js ]
+ FAIL  src/tests/WorkerDistraction.test.js [ src/tests/WorkerDistraction.test.js ]
+ FAIL  src/tests/WorkerDiversity.test.js [ src/tests/WorkerDiversity.test.js ]
+ FAIL  src/tests/WorkerDiversityFixed.test.js [ src/tests/WorkerDiversityFixed.test.js ]
+ FAIL  src/tests/WorkerLogic.test.js [ src/tests/WorkerLogic.test.js ]
+ FAIL  src/tests/WorkerOscillation.test.js [ src/tests/WorkerOscillation.test.js ]
+ FAIL  src/tests/WorkerOscillationStale.test.js [ src/tests/WorkerOscillationStale.test.js ]
+ FAIL  src/tests/WorkerPerformance.test.js [ src/tests/WorkerPerformance.test.js ]
+ FAIL  src/tests/WorkerReachability.test.js [ src/tests/WorkerReachability.test.js ]
+ FAIL  src/tests/WorkerRequest.test.js [ src/tests/WorkerRequest.test.js ]
+ FAIL  src/tests/WrapDistance.test.js [ src/tests/WrapDistance.test.js ]
+Error: Failed to parse source for import analysis because the content contains invalid JS syntax. If you are using JSX, make sure to name the file with the .jsx or .tsx extension.
+  Plugin: vite:import-analysis
+  File: C:/Users/mooya/develop/test/src/tests/AAAA_DIAG.test.js:1:0
+  1  |  import { describe, it, expect } from 'vitest';
+     |  ^
+  2  |  import * as THREE from 'three';
+  3  |  
+ 笶ｯ TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/config.js:29647:43
+ 笶ｯ TransformPluginContext.error node_modules/vite/dist/node/chunks/config.js:29644:14
+ 笶ｯ TransformPluginContext.transform node_modules/vite/dist/node/chunks/config.js:27730:10
+ 笶ｯ EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/config.js:29445:14
+ 笶ｯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:23316:26
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/175]竡ｯ
+
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 4 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/DoubleSpawn.test.js > Double Spawn Issue (Concurrency) > should prevent double spawn on concurrent startNewGame calls
+TypeError: colorAttr.setXYZ is not a function
+ 笶ｯ Terrain.updateColors src/Terrain.ts:1228:27
+    1226|                 baseColor.b = THREE.MathUtils.clamp(baseColor.b * tota窶ｦ
+    1227| 
+    1228|                 colorAttr.setXYZ(i, baseColor.r, baseColor.g, baseColo窶ｦ
+       |                           ^
+    1229|             }
+    1230|         }
+ 笶ｯ Game.startLevel src/Game.ts:2835:22
+ 笶ｯ Game.startNewGame src/Game.ts:2764:9
+ 笶ｯ src/tests/DoubleSpawn.test.js:35:9
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[2/175]竡ｯ
+
+ FAIL  src/tests/EcoSpawnFix.test.js > Economy and Spawning Fix Verification > should produce grain from farms
+ FAIL  src/tests/EcoSpawnFix.test.js > Economy and Spawning Fix Verification > should allow goblin huts to reach spawn threshold
+TypeError: tailGeo.rotateX is not a function
+ 笶ｯ Function.initAssets src/Fish.js:22:17
+     20|         // Tail: Cone rotated
+     21|         const tailGeo = new THREE.ConeGeometry(0.1, 0.3, 4);
+     22|         tailGeo.rotateX(-Math.PI / 2); // Point back
+       |                 ^
+     23|         Fish.assets.geometries.tail = tailGeo;
+     24| 
+ 笶ｯ new FishManager src/FishManager.js:12:14
+ 笶ｯ new Game src/Game.ts:524:28
+ 笶ｯ src/tests/EcoSpawnFix.test.js:39:16
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/175]竡ｯ
+
+ FAIL  src/tests/MultiJob.test.js > Multi-Job Juggling Verification > should NOT interrupt busy units when a new job is added
+TypeError: tailGeo.rotateX is not a function
+ 笶ｯ Function.initAssets src/Fish.js:22:17
+     20|         // Tail: Cone rotated
+     21|         const tailGeo = new THREE.ConeGeometry(0.1, 0.3, 4);
+     22|         tailGeo.rotateX(-Math.PI / 2); // Point back
+       |                 ^
+     23|         Fish.assets.geometries.tail = tailGeo;
+     24| 
+ 笶ｯ new FishManager src/FishManager.js:12:14
+ 笶ｯ new Game src/Game.ts:524:28
+ 笶ｯ src/tests/MultiJob.test.js:46:20
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[4/175]竡ｯ
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Errors 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+Vitest caught 15 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/BuildingDefense.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/BuildingDefense.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/BuildingDefense.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/BuildingDefense.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/BuildingDefense.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/BuildingDefense.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/BuildingDefense.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/BuildingDefense.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/ComplexAI.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "should drop job gracefully if target building is destroyed". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/ComplexAI.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "should prioritize manual jobs even when closer auto jobs appear". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/ComplexAI.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/ComplexAI.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/EcoSpawnFix.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/EcoSpawnFix.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+竡ｯ竡ｯ竡ｯ竡ｯ Unhandled Rejection 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+TypeError: Goblin.assets.geometries.facePlane.translate is not a function
+ 笶ｯ Function.initAssets src/Goblin.ts:116:44
+    114|         // Faces
+    115|         Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0窶ｦ
+    116|         Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // 窶ｦ
+       |                                            ^
+    117| 
+    118|         Goblin.assets.textures.face = Goblin.createFaceTexture();
+
+This error originated in "src/tests/MultiJob.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+
+[2m Test Files [22m [1m[31m174 failed[39m[22m[2m | [22m[1m[32m9 passed[39m[22m[90m (183)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m29 passed[39m[22m[90m (33)[39m
+[2m     Errors [22m [1m[31m15 errors[39m[22m
+[2m   Start at [22m 20:56:29
+[2m   Duration [22m 20.12s[2m (transform 3.68s, setup 10.74s, import 7.30s, tests 4.27s, environment 177.52s)[22m
+

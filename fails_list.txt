@@ -1,0 +1,51 @@
+[Actor 12] Pathfinding FAILED: Empty/Short path returned. Current Pos: 18,18 -> Target: 20,20 Len:0 Short:false
+[Actor 10] Pathfinding FAILED: Empty/Short path returned. Current Pos: 12,12 -> Target: 20,20 Len:0 Short:false
+[Actor 10] Pathfinding FAILED: Empty/Short path returned. Current Pos: 12,12 -> Target: 20,20 Len:0 Short:false
+[Actor 1] Pathfinding FAILED: Empty/Short path returned. Current Pos: 5,5 -> Target: 10,5 Len:0 Short:false
+[Actor 1] Pathfinding FAILED: Empty/Short path returned. Current Pos: 20,0 -> Target: 20,0 Len:1 Short:true
+[Actor 1] Pathfinding FAILED: Empty/Short path returned. Current Pos: 10,8 -> Target: 10,10 Len:0 Short:false
+[Actor 2] Pathfinding FAILED: Empty/Short path returned. Current Pos: 10,8 -> Target: 10,6 Len:0 Short:false
+[Actor 1] Pathfinding FAILED: Empty/Short path returned. Current Pos: 10,10 -> Target: 50,50 Len:0 Short:false
+[Actor 1] Pathfinding FAILED: Empty/Short path returned. Current Pos: 10,10 -> Target: 50,50 Len:0 Short:false
+[Actor 1] Pathfinding FAILED: Empty/Short path returned. Current Pos: 10,10 -> Target: 50,50 Len:0 Short:false
+ FAIL  src/tests/CavePersistence.test.js [ src/tests/CavePersistence.test.js ]
+ FAIL  src/tests/CombatFixes.test.js [ src/tests/CombatFixes.test.js ]
+ FAIL  src/tests/CombatRetaliation.test.js [ src/tests/CombatRetaliation.test.js ]
+ FAIL  src/tests/ForceAssignment.test.js [ src/tests/ForceAssignment.test.js ]
+ FAIL  src/tests/GoblinFixes.test.js [ src/tests/GoblinFixes.test.js ]
+ FAIL  src/tests/JobReassignment.test.js [ src/tests/JobReassignment.test.js ]
+ FAIL  src/tests/LevelResourceReset.test.js [ src/tests/LevelResourceReset.test.js ]
+ FAIL  src/tests/RequestLifecycle.test.js [ src/tests/RequestLifecycle.test.js ]
+ FAIL  src/tests/DeepCup.test.js [ src/tests/DeepCup.test.js ]
+ FAIL  src/tests/FarmWaves.test.js [ src/tests/FarmWaves.test.js ]
+ FAIL  src/tests/GameLighting.test.js [ src/tests/GameLighting.test.js ]
+ FAIL  src/tests/GoblinEncounter.test.js [ src/tests/GoblinEncounter.test.js ]
+ FAIL  src/tests/GoblinSpawn.test.js [ src/tests/GoblinSpawn.test.js ]
+ FAIL  src/tests/GoblinStats.test.js [ src/tests/GoblinStats.test.js ]
+ FAIL  src/tests/GoblinTypes.test.js [ src/tests/GoblinTypes.test.js ]
+ FAIL  src/tests/JobIdempotency.test.js [ src/tests/JobIdempotency.test.js ]
+ FAIL  src/tests/LoadJitabata.test.js [ src/tests/LoadJitabata.test.js ]
+ FAIL  src/tests/Movement.test.js [ src/tests/Movement.test.js ]
+ FAIL  src/tests/NightLoadJob.test.js [ src/tests/NightLoadJob.test.js ]
+ FAIL  src/tests/NightLogic.test.js [ src/tests/NightLogic.test.js ]
+ FAIL  src/tests/RealGrowth.test.js [ src/tests/RealGrowth.test.js ]
+ FAIL  src/tests/SafeSpawn.test.js [ src/tests/SafeSpawn.test.js ]
+ FAIL  src/tests/TerrainParams.test.js [ src/tests/TerrainParams.test.js ]
+ FAIL  src/tests/Unit.test.js [ src/tests/Unit.test.js ]
+ FAIL  src/tests/UnitInit.test.js [ src/tests/UnitInit.test.js ]
+ FAIL  src/tests/UnitLifecycle.test.js [ src/tests/UnitLifecycle.test.js ]
+ FAIL  src/tests/UnitWrapping.test.js [ src/tests/UnitWrapping.test.js ]
+ FAIL  src/tests/VerifyBuildingGrowth.test.js [ src/tests/VerifyBuildingGrowth.test.js ]
+ FAIL  src/tests/WinLossDelay.test.js [ src/tests/WinLossDelay.test.js ]
+ FAIL  src/tests/CombatStuck.test.js > Combat Stuck Investigation > should NOT get stuck in Combat state if target is unreachable
+ FAIL  src/tests/CounterBalance.test.js > Counter Damage Nerf Verification > Goblin Counter should do 50% damage
+ FAIL  src/tests/CounterBalance.test.js > Counter Damage Nerf Verification > Unit Counter should do 50% damage
+ FAIL  src/tests/FactionWar.test.js > Faction War Logic・井ｸ峨☆縺上∩謌ｦ髣假ｼ・[2m > 繝励Ξ繧､繝､繝ｼ縺ｯ繧ｴ繝悶Μ繝ｳ縺後＞縺ｪ縺・ｴ蜷医↓謨ｵ繝ｦ繝九ャ繝医ｒ謾ｻ謦・☆繧・Error: Calling the test function inside another test function is not allowed. Please put it inside "describe" or "suite" so it can be properly collected.
+ FAIL  src/tests/GoblinStuckness.test.js > Goblin Combat and Stagnation > should blacklist unreachable targets and transition state
+ FAIL  src/tests/IdleRegression.test.js > Job/Moving Idle Regression > should NOT abandon Job when smartMove is throttled (Time Slicing)
+ FAIL  src/tests/Lighting.test.js > BuildingRenderer Lighting > should turn on barracks lights at night
+ FAIL  src/tests/MarkerDistraction.test.js > Marker Distraction and Pathfinding Persistence > should NOT abandon manual job during pathfinding throttle
+ FAIL  src/tests/PathfindingTimeout.test.js > Terrain Pathfinding Timeout > should resolve if worker responds in time
+ FAIL  src/tests/SheepHarvest.test.js > Sheep Harvest Reward Verification > should grant 1000 meat when a unit kills a sheep
+ FAIL  src/tests/ShorelineLoop.test.js > Shoreline Loop Reproduction > should NOT target unrelated region goblin via checkSelfDefense
+ FAIL  src/tests/Terrain.test.js > Terrain Logic > Population Update > should grow population in a house over time

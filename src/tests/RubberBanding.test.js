@@ -3,26 +3,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
 import { Job } from '../ai/states/UnitStates.js';
 
-vi.mock('three', () => {
-    class MockGeometry { constructor() { this.translate = vi.fn().mockReturnThis(); this.rotateX = vi.fn().mockReturnThis(); } }
-    return {
-        Vector3: class { constructor(x, y, z) { this.x = x; this.y = y; this.z = z; } set() { return this; } copy() { return this; } },
-        Mesh: class { constructor() { this.position = { set: vi.fn() }; this.rotation = { y: 0 }; this.geometry = new MockGeometry(); this.add = vi.fn(); } },
-        Group: class { constructor() { this.position = { set: vi.fn() }; this.add = vi.fn(); } },
-        BoxGeometry: class extends MockGeometry { },
-        SphereGeometry: class extends MockGeometry { },
-        CylinderGeometry: class extends MockGeometry { },
-        PlaneGeometry: class extends MockGeometry { },
-        ConeGeometry: class extends MockGeometry { },
-        CapsuleGeometry: class extends MockGeometry { },
-        MeshStandardMaterial: class { constructor() { this.setValues = vi.fn(); } },
-        MeshLambertMaterial: class { },
-        MeshBasicMaterial: class { },
-        CanvasTexture: class { },
-        Color: class { setHex() { } set() { } }
-    };
-});
-
 describe('Rubber-banding and Chaining Verification', () => {
     let unit, terrain, mockGame;
 
@@ -55,8 +35,8 @@ describe('Rubber-banding and Chaining Verification', () => {
         unit = new Unit({ add: vi.fn() }, terrain, 10, 10, 'worker');
         unit.game = mockGame;
         unit.workOnRequest = vi.fn((req) => { req.status = 'completed'; });
-    });
 
+    });
     it('should NOT snap back when arriving at a job during mid-move', () => {
         const targetJob = { id: 1, x: 20, z: 10, type: 'build', status: 'assigned', assignedTo: unit.id };
         mockGame.requestQueue = [targetJob];
@@ -85,8 +65,8 @@ describe('Rubber-banding and Chaining Verification', () => {
 
         // Entity movement should still be active at 80% progress
         expect(unit.isMoving).toBe(true);
-    });
 
+    });
     it('should use visual position for chaining the next job', () => {
         const job1 = { id: 1, x: 20, z: 10, type: 'build', status: 'assigned', assignedTo: unit.id };
         const job2 = { id: 2, x: 22, z: 10, type: 'build', status: 'pending', assignedTo: 2 };
@@ -105,7 +85,6 @@ describe('Rubber-banding and Chaining Verification', () => {
             // Check if unit passed to findBestRequest has the correct visual pos
             // Note: findBestRequest in Game.js uses unit.getVisualX(now)
             return { ...job2, x: 30, assignedTo: u.id };
-        });
         mockGame.claimRequest.mockReturnValue(true);
 
         unit.state.update(8, 1);
@@ -126,5 +105,7 @@ describe('Rubber-banding and Chaining Verification', () => {
         // Wait, update(0,0) in enter() sees dist > approachDist.
         // So unit.gridX remains at arrival point of Job1.
         expect(unit.gridX).toBe(20);
-    });
+
+});
+});
 });

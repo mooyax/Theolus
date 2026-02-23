@@ -26,15 +26,15 @@ describe('Pathfinding Oscillation Debug', () => {
             completeRequest: vi.fn(), // Added mock
             gameActive: true
         };
-        global.window = { game: mockGame };
+        
 
         unit = new Unit(mockScene, mockTerrain, 0, 0);
         unit.id = 1;
         unit.game = mockGame;
         unit.role = 'worker';
         unit.smartMove = vi.spyOn(unit, 'smartMove'); // Spy on real method
-    });
 
+    });
     it('should NOT re-call pathfinding if target differs slightly from path end', async () => {
         // Setup Request at float likely from Mouse Click
         const request = {
@@ -109,6 +109,7 @@ describe('Pathfinding Oscillation Debug', () => {
         // I will stick to "expect(mockTerrain.findPathAsync).not.toHaveBeenCalled()" 
         // effectively asserting that "It should be fine".
         // If this PASSES, then I failed to reproduce the bug.
-    });
-});
 
+
+});
+});

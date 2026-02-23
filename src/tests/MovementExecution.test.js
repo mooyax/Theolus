@@ -4,17 +4,6 @@ import { Unit } from '../Unit.js';
 import { Job } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
-// Mock THREE
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        Group: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); } },
-        Mesh: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); } },
-        Scene: class { constructor() { this.add = vi.fn(); } },
-    };
-});
-
 describe('Movement Execution under Pressure', () => {
     let terrain, unit;
 
@@ -41,8 +30,8 @@ describe('Movement Execution under Pressure', () => {
         unit.simTime = 100;
         vi.spyOn(unit, 'executeMove');
         vi.spyOn(Math, 'random').mockReturnValue(0.99); // Disable urgent bypass
-    });
 
+    });
     it('should WAIT (return false) when pathfinding is throttled', () => {
         // Target is far away (>4 tiles)
         const targetX = 50;
@@ -60,8 +49,8 @@ describe('Movement Execution under Pressure', () => {
         // Should return TRUE (BUSY) to prevent state exit, but NOT execute move
         expect(moved).toBe(true);
         expect(unit.executeMove).not.toHaveBeenCalled();
-    });
 
+    });
     it('should WAIT (return false) when pathfinding budget is exhausted', () => {
         const targetX = 50;
         const targetZ = 50;
@@ -87,8 +76,8 @@ describe('Movement Execution under Pressure', () => {
         // Should return TRUE (BUSY) to wait for budget
         expect(moved).toBe(true);
         expect(unit.executeMove).not.toHaveBeenCalled();
-    });
 
+    });
     it('should immediately trigger movement in Job if currently idle', async () => {
         const req = { id: 'req1', x: 20, z: 20, type: 'raise', status: 'pending', assignedTo: 1, isManual: true };
         unit.targetRequest = req;
@@ -109,5 +98,6 @@ describe('Movement Execution under Pressure', () => {
         // A* Path (mocked) returns target from mockImplementation
         expect(unit.executeMove).toHaveBeenCalledWith(20, 20, expect.any(Number));
         expect(unit.isMoving).toBe(true);
-    });
+
+});
 });

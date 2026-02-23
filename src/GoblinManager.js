@@ -335,8 +335,8 @@ export class GoblinManager {
 
         // --- PERFORMANCE: GLOBAL SCAN BUDGET ---
         // Limit strict pathfinding/scanning ops per frame to prevent freeze at 5000+ entities
-        // User Approved: scale to ~10% of population (min 100, max 1000)
-        this.scanBudget = Math.min(1000, Math.max(100, Math.floor(this.goblins.length * 0.1)));
+        // User Approved: scale to ~10% of population (min 100, max 1000) -> Modified: Min 500, Max 5000 for high pop
+        this.scanBudget = Math.min(5000, Math.max(500, Math.floor(this.goblins.length * 0.1)));
 
         for (let i = this.goblins.length - 1; i >= 0; i--) {
             const goblin = this.goblins[i];
@@ -373,7 +373,7 @@ export class GoblinManager {
                             // ACCUMULATE TIME (Prevent Slow Motion)
                             goblin.skippedTime = (goblin.skippedTime || 0) + deltaTime;
                         } else {
-                            // Update Frame: Check Budget BEFORE releasing time
+                            // Budget checking logic modified to prevent complete stalls
                             if (this.scanBudget > 0) {
                                 this.scanBudget--;
                                 // Budget OK: Release accumulated time
@@ -392,10 +392,9 @@ export class GoblinManager {
                         } else {
                             // Budget Depleted: Force throttling even if close?
                             // No, if close (<30m), we prioritize smoothness/reaction.
-                            // BUT if we have 5000 goblins close by, we die.
-                            // Compromise: If VERY close (<10m), ignore budget.
+                            // Compromise: If VERY close (<15m), ignore budget.
                             // Else, respect budget.
-                            if (distSq > 100) { // > 10m
+                            if (distSq > 225) { // > 15m
                                 throttleSkip = true;
                                 goblin.skippedTime = (goblin.skippedTime || 0) + deltaTime;
                             }

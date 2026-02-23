@@ -21,8 +21,8 @@ describe('Manual Job Retry and Water Reachability Logic Test', () => {
             // (1,1) is water but adjacent (diagonally) to (0,0) [Region 1]
             const result = Terrain.prototype.isReachable.call(mockTerrain, 0, 0, 1, 1);
             expect(result).toBe(true);
-        });
 
+    });
         it('should return false for water NOT adjacent to same region land', () => {
             const mockTerrain = {
                 logicalWidth: 10,
@@ -45,9 +45,8 @@ describe('Manual Job Retry and Water Reachability Logic Test', () => {
             // Result for Region 1 reaching (6,6) should be false
             const result = Terrain.prototype.isReachable.call(mockTerrain, 0, 0, 6, 6);
             expect(result).toBe(false);
-        });
-    });
 
+    });
     describe('Game.findBestRequest Logic', () => {
         it('should pick a manual job even if on water (due to improved isReachable)', () => {
             const mockGame = {
@@ -83,9 +82,8 @@ describe('Manual Job Retry and Water Reachability Logic Test', () => {
             const result = Game.prototype.findBestRequest.call(mockGame, mockUnit);
             expect(result).toBe(req);
             expect(mockUnit.isReachable).toHaveBeenCalledWith(1, 1);
-        });
-    });
 
+    });
     describe('Job Deferral Logic', () => {
         it('should use 3s deferTime for manual requests', () => {
             const mockActor = {
@@ -122,8 +120,8 @@ describe('Manual Job Retry and Water Reachability Logic Test', () => {
 
             expect(mockActor.game.deferRequest).toHaveBeenCalledWith(mockRequest, 3.0);
             expect(mockActor.ignoredTargets.get('req_manual')).toBe(103.0);
-        });
 
+    });
         it('should use 15s deferTime for automatic requests', () => {
             const mockActor = {
                 id: 1,
@@ -159,6 +157,9 @@ describe('Manual Job Retry and Water Reachability Logic Test', () => {
 
             expect(mockActor.game.deferRequest).toHaveBeenCalledWith(mockRequest, 15.0);
             expect(mockActor.ignoredTargets.get('req_auto')).toBe(115.0);
-        });
-    });
+
+});
+});
+});
+});
 });

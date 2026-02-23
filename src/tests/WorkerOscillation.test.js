@@ -75,8 +75,8 @@ describe('Worker Oscillation Debug', () => {
         unit.game = game;
         unit.id = 1;
         game.units.push(unit);
-    });
 
+    });
     it('should blacklist unreachable jobs and NOT pick them up immediately', async () => {
         // 1. Create Unreachable Request
         const req = { id: 101, type: 'build', x: 50, z: 50, status: 'assigned', assignedTo: unit.id }; // assignedTo matches unit
@@ -118,8 +118,8 @@ describe('Worker Oscillation Debug', () => {
         // 6. Verify Game.findBestRequest rejects it
         const best = game.findBestRequest(unit);
         expect(best).toBeNull(); // Should act as if no job exists
-    });
 
+    });
     it('should NOT oscillate (Ping Pong) between Job and Idle', async () => {
         // Simulate extended timeframe
         const req = { id: 102, type: 'build', x: 50, z: 50, status: 'assigned', assignedTo: unit.id };
@@ -157,5 +157,6 @@ describe('Worker Oscillation Debug', () => {
         game.simTotalTimeSec += 6.0; // 116 > 115
         best = game.findBestRequest(unit);
         expect(best).toBe(req); // NOW it should pick it up
-    });
+
+});
 });

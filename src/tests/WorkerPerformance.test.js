@@ -25,8 +25,8 @@ describe('Pathfinding Worker Performance', () => {
         console.log(`[Perf] 100x100 Flat: ${(end - start).toFixed(2)}ms Steps: ???`);
         expect(path).not.toBeNull();
         expect(end - start).toBeLessThan(500); // Should be very fast
-    });
 
+    });
     it('should handle worst-case zig-zag maze without freezing', () => {
         const size = 60; // 60x60 = 3600 nodes
         const data = new Int16Array(size * size).fill(10);
@@ -54,5 +54,6 @@ describe('Pathfinding Worker Performance', () => {
         expect(path).not.toBeNull();
         // If this takes > 2000ms, it's a freeze risk
         expect(end - start).toBeLessThan(2000);
-    });
+
+});
 });

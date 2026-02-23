@@ -6,34 +6,8 @@ import { Goblin } from '../Goblin.js';
 import { GoblinManager } from '../GoblinManager.js';
 import { MockGame, MockTerrain } from './TestHelper.js';
 
-// Mock THREE module
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        InstancedMesh: class {
-            constructor() {
-                this.isObject3D = true; // Required
-                this.instanceMatrix = { setUsage: vi.fn() };
-                this.updateMatrix = vi.fn();
-                this.setMatrixAt = vi.fn();
-                this.setColorAt = vi.fn();
-                this.count = 0;
-                this.castShadow = false;
-                this.receiveShadow = false;
-                this.frustumCulled = false;
-                this.dispose = vi.fn();
-                this.removeFromParent = vi.fn(); // Required for Object3D.add
-                this.dispatchEvent = vi.fn(); // Required for EventDispatcher
-                this.addEventListener = vi.fn();
-                this.removeEventListener = vi.fn();
-            }
-        },
-    };
-});
-
 global.THREE = THREE;
-if (!global.window) global.window = {};
+if (!global.window) global.window = { game: null };
 
 describe('Terrain Movement and Logic Tests', () => {
     let mockTerrain;
@@ -79,9 +53,6 @@ describe('Terrain Movement and Logic Tests', () => {
 
         unit.executeMove(10, 11, 100);
 
-        console.error(`DEBUG: MoveDur=${unit.moveDuration}`);
-        console.error(`DEBUG: Heights Cur=${mockTerrain.getTileHeight(10, 10)} Next=${mockTerrain.getTileHeight(10, 11)}`);
-
         expect(unit.isMoving).toBe(true);
         expect(unit.moveDuration).toBeGreaterThan(4.5); // 4.5s
     });
@@ -92,8 +63,6 @@ describe('Terrain Movement and Logic Tests', () => {
         unit.gridX = 10; unit.gridZ = 10;
 
         unit.executeMove(10, 11, 100);
-
-        console.error(`DEBUG: Normal MoveDur=${unit.moveDuration}`);
 
         expect(unit.moveDuration).toBeCloseTo(0.8, 1); // 0.8s
     });
@@ -113,7 +82,10 @@ describe('Terrain Movement and Logic Tests', () => {
         mockGame.goblinManager = gm;
         vi.spyOn(gm, 'spawnGoblinAtCave');
 
-        const hut = { userData: { type: 'goblin_hut', population: 9.7, capacity: 10, clanId: 'test', gridX: 10, gridZ: 10 } };
+        const hut = {
+            type: 'goblin_hut',
+            userData: { type: 'goblin_hut', population: 9.7, capacity: 10, clanId: 'test', gridX: 10, gridZ: 10 }
+        };
         mockTerrain.buildings.push(hut);
         // Correctly register on grid to prevent "Self-healing" destruction
         mockTerrain.grid[10][10].hasBuilding = true;
@@ -124,7 +96,7 @@ describe('Terrain Movement and Logic Tests', () => {
         gm.checkHutSpawns(1.0);
 
         expect(gm.spawnGoblinAtCave).toHaveBeenCalled();
-        // Population is reset to 0.0 after spawning (changed to prevent infinite spawning bug)
+        // Population is reset to 0.0 after spawning
         expect(hut.userData.population).toBe(0.0);
     });
 });

@@ -526,6 +526,8 @@ export class InputManager {
                     return;
                 } else if (this.mode === 'raise') {
                     if (this.game) {
+                        // Prevent placing on completely disconnected deep water if we want to restrict it.
+                        // For now simply warning if height is very low.
                         this.game.addRequest('raise', gridX, gridZ, true, worldX, worldZ);
                         this.game.consumeMana(10);
                         console.log(`[Input] Request Queued: Raise at ${gridX},${gridZ}`);

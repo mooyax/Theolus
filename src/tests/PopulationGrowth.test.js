@@ -27,12 +27,12 @@ describe('Terrain Population Growth', () => {
         };
         terrain.game = mockGame;
         global.window.game = mockGame;
-    });
 
+    });
     it('should exist and be callable', () => {
         expect(terrain.updatePopulation).toBeDefined();
-    });
 
+    });
     it('should increase population for Caves/Goblin Huts explicitly', () => {
         // Start building
         const cave = terrain.addBuilding('cave', 20, 20);
@@ -51,5 +51,6 @@ describe('Terrain Population Growth', () => {
 
         expect(cave.userData.population).toBeGreaterThan(0);
         expect(hut.userData.population).toBeGreaterThan(0);
-    });
+
+});
 });

@@ -71,14 +71,14 @@ describe('Migration Conflict Regression (Jitabata Bug)', () => {
             if (dz > terrain.logicalDepth / 2) dz = terrain.logicalDepth - dz;
             return Math.sqrt(dx * dx + dz * dz);
         };
-    });
 
+    });
     it('should handle basic Unit update without crash', () => {
         const time = 1000;
         unit.updateLogic(time, 0.016);
         expect(unit.action).toBeDefined();
-    });
 
+    });
     it('should NOT allow WanderState to interfere with Migration Movement', async () => {
         const time = 1000;
 
@@ -99,8 +99,8 @@ describe('Migration Conflict Regression (Jitabata Bug)', () => {
         // 3. Verify Integrity
         expect(unit.action).toBe('Migrating');
         expect(unit.isMoving).toBe(true);
-    });
 
+    });
     it('should allow Migration Logic to control repeated movement', () => {
         // Test multiple frames to ensure "Jitabata" (Reset loop) doesn't occur
         const time = 2000;
@@ -130,5 +130,6 @@ describe('Migration Conflict Regression (Jitabata Bug)', () => {
             // But moveRandomly calls getPointInRegion.
             // If moveRandomly triggers, it might pick Random.
         }
-    });
+
+});
 });

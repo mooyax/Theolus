@@ -34,7 +34,7 @@ const mockGame = {
     reportGlobalBattle: vi.fn(),
     totalPopulation: 10
 };
-global.window = { game: mockGame };
+
 
 describe('Goblin Real Building Destruction', () => {
     let goblin;
@@ -58,8 +58,8 @@ describe('Goblin Real Building Destruction', () => {
         building.userData.population = 10;
         building.userData.hp = 100;
         building.userData.defense = 0; // No retaliation for simple test
-    });
 
+    });
     it('should damage building population', () => {
         goblin.attackBuilding(building);
         // damage 10 -> popDamage 1
@@ -67,8 +67,8 @@ describe('Goblin Real Building Destruction', () => {
         expect(building.userData.population).toBe(9);
         // HP should also decrease: 100 -> 90
         expect(building.hp).toBe(90);
-    });
 
+    });
     it('should destroy building when HP reaches zero (Universal Rule)', () => {
         building.population = 5.0;
         building.hp = 5.0; // Low HP
@@ -79,8 +79,8 @@ describe('Goblin Real Building Destruction', () => {
 
         expect(mockTerrain.removeBuilding).toHaveBeenCalled();
         expect(building.hp).toBeLessThanOrEqual(0);
-    });
 
+    });
     it('should decrease HP of a Farm (No population survival)', () => {
         const farm = new Building(mockScene, mockTerrain, 'farm', 12, 12);
         farm.hp = 80;
@@ -90,5 +90,6 @@ describe('Goblin Real Building Destruction', () => {
 
         expect(farm.hp).toBe(70); // 80 - 10
         expect(farm.userData.hp).toBe(70);
-    });
+
+});
 });

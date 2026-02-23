@@ -7,27 +7,6 @@ import { Goblin } from '../Goblin.js';
 import { GoblinManager } from '../GoblinManager.js';
 
 // Mocks
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        WebGLRenderer: vi.fn(function () {
-            return {
-                setPixelRatio: vi.fn(),
-                setSize: vi.fn(),
-                render: vi.fn(),
-                dispose: vi.fn(),
-                shadowMap: { enabled: false, type: 0 },
-                domElement: document.createElement('canvas'),
-            };
-        }),
-        TextureLoader: vi.fn().mockImplementation(() => ({
-            load: vi.fn(),
-        })),
-    };
-});
-
-// Mock UI Components
 vi.mock('../Minimap.js', () => ({
     Minimap: class { update() { } serialize() { return {}; } deserialize() { } }
 }));
@@ -83,7 +62,7 @@ describe('Counter Damage Nerf Verification', () => {
         simulateKill(knight, goblin);
         const damageTaken = knight.maxHp - knight.hp;
         expect(goblin.isDead).toBe(true);
-        expect(damageTaken).toBeCloseTo(5.0, 1); // Goblin normal damage=10, counter=50% = 5.0
+        expect(damageTaken).toBeCloseTo(5.0, 1);
     });
 
     it('Unit Counter should do 50% damage', () => {
@@ -100,29 +79,23 @@ describe('Counter Damage Nerf Verification', () => {
 
     it('Unit hitting Building should take retaliation dmg', () => {
         const knight = new Unit(game.scene, mockTerrain, 10, 10, 'knight');
-
         const cave = {
             id: 999,
             type: 'cave',
             hp: 200,
             population: 10,
             userData: { type: 'cave', hp: 200, population: 10, gridX: 10, gridZ: 10 },
-            takeDamage: vi.fn(),
+            takeDamage: vi.fn().mockImplementation((amt) => {
+                knight.takeDamage(20, cave);
+            }),
             isDestroyed: () => false,
         };
-        cave.takeDamage.mockImplementation((amt) => {
-            return 20;
-        });
 
-        // Inject into target
         knight.targetBuilding = cave;
         knight.attackCooldown = 0;
-
-        // Call attackBuilding DIRECTLY to test logic
         knight.attackBuilding(cave);
 
         expect(cave.takeDamage).toHaveBeenCalled();
-        // HP should be max - 20
         expect(knight.hp).toBe(knight.maxHp - 20);
     });
 });

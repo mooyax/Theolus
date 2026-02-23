@@ -46,8 +46,8 @@ describe('Worker Job Reachability', () => {
             assignRequestSync: vi.fn(),
             releaseRequest: vi.fn()
         };
-    });
 
+    });
     it('findBestRequest filters out unreachable jobs', async () => {
         const { Game } = await import('../Game.js');
         const findBestRequest = Game.prototype.findBestRequest.bind(mockGame);
@@ -66,8 +66,8 @@ describe('Worker Job Reachability', () => {
         expect(best).toBeDefined();
         expect(best.id).toBe(102);
         expect(mockUnit.isReachable).toHaveBeenCalled();
-    });
 
+    });
     it('forceAssignRequest skips unreachable units', async () => {
         const { Game } = await import('../Game.js');
         const forceAssignRequest = Game.prototype.forceAssignRequest.bind(mockGame);
@@ -88,5 +88,6 @@ describe('Worker Job Reachability', () => {
 
         expect(req.status).toBe('pending'); // Still pending because no valid unit was found
         expect(req.assignedTo).toBeUndefined();
-    });
+
+});
 });

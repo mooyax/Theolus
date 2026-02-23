@@ -1,27 +1,10 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as THREE from 'three';
 import { Game } from '../Game.js';
 import { Actor } from '../Actor.js';
 import { Unit } from '../Unit.js';
 import { Job, Combat, Sleep } from '../ai/states/UnitStates.js';
 
-// Mock THREE as usual
-vi.mock('three', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual,
-        WebGLRenderer: class {
-            constructor() { this.domElement = document.createElement('canvas'); }
-            setPixelRatio() { }
-            setSize() { }
-            render() { }
-            setClearColor() { }
-        },
-        Scene: class extends actual.Scene {
-            constructor() { super(); this.background = { setHex: () => { } }; }
-        },
-    };
-});
 vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } drawRaidPing() { } } }));
 vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
 vi.mock('../UnitRenderer.js', () => ({ UnitRenderer: class { init() { return Promise.resolve(); } update() { } } }));
@@ -45,7 +28,6 @@ describe('Complex AI Scenarios', () => {
         game = new Game(scene, null, true); // Use minimal init
         window.game = game;
         game.gameActive = true;
-        window.game = game; // IMPORTANT for Job.releaseRequest
         game.terrain = {
             logicalWidth: 100,
             logicalDepth: 100,
@@ -69,10 +51,8 @@ describe('Complex AI Scenarios', () => {
 
         game.units = [];
         game.requestQueue = [];
-        // Ensure requestCounter is reset or managed
         game.requestCounter = 0;
 
-        // Mock Actor methods to avoid random terrain/slope failures in AI tests
         vi.spyOn(Actor.prototype, 'isReachable').mockReturnValue(true);
         vi.spyOn(Actor.prototype, 'canMoveTo').mockReturnValue(true);
     });
@@ -106,7 +86,6 @@ describe('Complex AI Scenarios', () => {
         expect(unit.targetRequest).toBeNull();
         expect(unit.state).not.toBeInstanceOf(Job);
 
-        // Optional: wait for async and check background state
         await new Promise(r => setTimeout(r, 0));
     });
 
@@ -126,7 +105,6 @@ describe('Complex AI Scenarios', () => {
         unit.updateLogic(0.1, 0.1);
         await new Promise(r => setTimeout(r, 0));
         unit.updateLogic(1.2, 0.1);
-
 
         // Should STILL have the manual job
         expect(unit.targetRequest).toBe(manualReq);
@@ -154,8 +132,8 @@ describe('Complex AI Scenarios', () => {
 
         // Force unreachable condition
         unit.isUnreachable = true;
-        unit.path = null; // Fix: Ensure no path exists
-        unit.isWaitingForPath = false; // Fix: Ensure we are not waiting, so abandonment triggers
+        unit.path = null;
+        unit.isWaitingForPath = false;
         vi.spyOn(unit, 'smartMove').mockImplementation(() => false);
 
         // TIME SYNC
@@ -169,10 +147,10 @@ describe('Complex AI Scenarios', () => {
 
         // Expectation: Job RELEASED
         expect(unit.targetRequest).toBeNull();
-        expect(unit.state).not.toBeInstanceOf(Job); // Should resume wander
+        expect(unit.state).not.toBeInstanceOf(Job);
 
         // Should be ignored globally
         expect(req.excludedUntil).toBeDefined();
-        expect(req.excludedUntil).toBeGreaterThan(0.1); // Future timestamp
+        expect(req.excludedUntil).toBeGreaterThan(0.1);
     });
 });

@@ -1,0 +1,232 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js
+[22m[39m[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js
+[22m[39m[DEBUG] Building.ts loaded
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js
+[22m[39m[DEBUG] Terrain.ts top-level load
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[Entity 0] CONSTRUCTOR START: type=unit at 0,0
+[Entity 0] Calling registerEntity...
+[Entity 0] registerEntity returned.
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:0
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[Actor 1] Resetting Unreachable (Target changed or initializing)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 30,0
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 30,0
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 30,0
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 30,0
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 30,0
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Goblin if it is much closer than Building
+[22m[39m[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 30,0
+[Actor 1] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39mDisposing detached game instance
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Entity 1] CONSTRUCTOR START: type=unit at 0,0
+[Entity 1] Calling registerEntity...
+[Entity 1] registerEntity returned.
+[Entity 1] Calling updatePosition...
+[Entity 1] updatePosition returned.
+[DIAG] Actor Created ID: 1
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:1 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:1
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Entity 2] CONSTRUCTOR START: type=unit at 0,0
+[Entity 2] Calling registerEntity...
+[Entity 2] registerEntity returned.
+[Entity 2] Calling updatePosition...
+[Entity 2] updatePosition returned.
+[DIAG] Actor Created ID: 2
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:2 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:2
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+[Actor 2] Pathfinding SUCCESS: Got 1 nodes to 7,0
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Actor 2] Pathfinding SUCCESS: Got 1 nodes to 7,0
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Actor 2] Pathfinding SUCCESS: Got 1 nodes to 7,0
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Actor 2] Pathfinding SUCCESS: Got 1 nodes to 7,0
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Actor 2] Pathfinding SUCCESS: Got 1 nodes to 7,0
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould prioritize Building if distances are very close (Siege Mode)
+[22m[39m[Actor 2] Pathfinding SUCCESS: Got 1 nodes to 7,0
+[Actor 2] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould NOT auto-target distant Huts (Workers are passive)
+[22m[39mDisposing detached game instance
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould NOT auto-target distant Huts (Workers are passive)
+[22m[39m[Entity 3] CONSTRUCTOR START: type=unit at 0,0
+[Entity 3] Calling registerEntity...
+[Entity 3] registerEntity returned.
+[Entity 3] Calling updatePosition...
+[Entity 3] updatePosition returned.
+[DIAG] Actor Created ID: 3
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:3 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:3
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould NOT auto-target distant Huts (Workers are passive)
+[22m[39m[Entity 4] CONSTRUCTOR START: type=unit at 0,0
+[Entity 4] Calling registerEntity...
+[Entity 4] registerEntity returned.
+[Entity 4] Calling updatePosition...
+[Entity 4] updatePosition returned.
+[DIAG] Actor Created ID: 4
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:4 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:4
+[Actor 3] Resetting Unreachable (Target changed or initializing)
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould auto-target CLOSE Huts for self-defense (Workers)
+[22m[39mDisposing detached game instance
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould auto-target CLOSE Huts for self-defense (Workers)
+[22m[39m[Entity 5] CONSTRUCTOR START: type=unit at 0,0
+[Entity 5] Calling registerEntity...
+[Entity 5] registerEntity returned.
+[Entity 5] Calling updatePosition...
+[Entity 5] updatePosition returned.
+[DIAG] Actor Created ID: 5
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:5 Role:knight Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:5 Role:knight Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:5
+
+[90mstdout[2m | src/tests/TargetingPriority.test.js[2m > [22m[2mUnit Targeting Priority[2m > [22m[2mshould auto-target CLOSE Huts for self-defense (Workers)
+[22m[39m[Entity 6] CONSTRUCTOR START: type=unit at 0,0
+[Entity 6] Calling registerEntity...
+[Entity 6] registerEntity returned.
+[Entity 6] Calling updatePosition...
+[Entity 6] updatePosition returned.
+[DIAG] Actor Created ID: 6
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:0,0 Special:false
+[UnitCore.js] Unit Created ID:6 Role:worker Pos:0,0
+[UnitCore.js] Unit Construction Finished ID:6
+[Actor 4] Resetting Unreachable (Target changed or initializing)
+
+ [31mﾃ・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould prioritize Goblin if it is much closer than Building[32m 15[2mms[22m[39m
+[31m   竊・expected null to be { Object (id, gridX, ...) } // Object.is equality[39m
+ [32m笨・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould prioritize Building if distances are very close (Siege Mode)[32m 2[2mms[22m[39m
+ [32m笨・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould NOT auto-target distant Huts (Workers are passive)[32m 3[2mms[22m[39m
+ [32m笨・[39m src/tests/TargetingPriority.test.js[2m > [22mUnit Targeting Priority[2m > [22mshould auto-target CLOSE Huts for self-defense (Workers)[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/TargetingPriority.test.js > Unit Targeting Priority > should prioritize Goblin if it is much closer than Building
+AssertionError: expected null to be { Object (id, gridX, ...) } // Object.is equality
+
+- Expected: 
+{
+  "gridX": 10,
+  "gridZ": 0,
+  "id": "g1",
+  "isDead": false,
+  "takeDamage": [Function Mock],
+  "takeDamageFrom": [Function Mock],
+}
+
++ Received: 
+null
+
+ 笶ｯ src/tests/TargetingPriority.test.js:48:35
+     46|         runUpdateLoop(unit, goblins);
+     47| 
+     48|         expect(unit.targetGoblin).toBe(goblin);
+       |                                   ^
+     49|         expect(unit.targetBuilding).toBeNull();
+     50|     });
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 11:15:21
+[2m   Duration [22m 1.04s[2m (transform 327ms, setup 110ms, import 312ms, tests 23ms, environment 415ms)[22m
+

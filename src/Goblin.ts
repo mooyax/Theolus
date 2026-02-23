@@ -23,7 +23,6 @@ export class Goblin extends Actor {
     public attackCooldown: number = 1.0;
     public attackTimer: number = 0;
     public lastAttackTime: number = 0;
-    public isDead: boolean = false;
     public isRemoved: boolean = false; // Flag to remove from game loop safely
     public state: any = null; // UnitState (Wander, Chase, Attack)
     public damage: number = 10;
@@ -517,8 +516,8 @@ export class Goblin extends Actor {
                 this.targetUnit = null;
             }
 
-            // HOTSPOT REPORT: Alert defensive squads of goblin presence
-            if ((window as any).game && ((window as any).game as any).reportGlobalBattle) {
+            // HOTSPOT REPORT: Alert defensive squads of goblin presence (Safe wrapper)
+            if ((window as any).game && typeof ((window as any).game as any).reportGlobalBattle === 'function') {
                 ((window as any).game as any).reportGlobalBattle(chosen.gridX, chosen.gridZ);
             }
         }
@@ -872,7 +871,6 @@ export class Goblin extends Actor {
             }, 200);
         }
 
-        // NEW: Use Building.js method if available (Encapsulated Logic)
         if (building.takeDamage) {
             const retaliation = building.takeDamage(this.damage || 10);
 
@@ -884,9 +882,15 @@ export class Goblin extends Actor {
             }
 
             // Check Destruction (Match Building Logic)
-            const isDestroyed = (building.isDestroyed && typeof building.isDestroyed === 'function') ?
-                building.isDestroyed() :
-                (building.hp <= 0 && (building.type === 'farm' || !building.population || building.population < 1.0));
+            // A Farm is destroyed when HP <= 0. A house requires Population <= 0 (sometimes).
+            // Trust building's own isDestroyed first.
+            let isDestroyed = false;
+            if (building.isDestroyed && typeof building.isDestroyed === 'function') {
+                isDestroyed = building.isDestroyed();
+            } else {
+                const isFarm = (building.type === 'farm' || (building.userData && building.userData.type === 'farm'));
+                isDestroyed = (building.hp <= 0 && (isFarm || !building.population || building.population < 1.0));
+            }
 
             console.log(`[Goblin ${this.id}] AttackBuilding Result - BldgType: ${building.type}, HP: ${building.hp}, Pop: ${building.population}, isDestroyed: ${isDestroyed} `);
 
@@ -972,8 +976,7 @@ export class Goblin extends Actor {
 
     die(reason = "Unknown") {
         if (this.isDead) return;
-        this.isDead = true;
-        this.terrain.unregisterEntity(this);
+        super.die(); // Sets isDead = true, hides mesh, unregisters from terrain
 
         if (this.clanId && (window as any).game && (window as any).game.goblinManager) {
             // (window as any).game.goblinManager.reportCasualty(this.clanId, this.gridX, this.gridZ); 

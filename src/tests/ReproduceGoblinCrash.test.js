@@ -14,5 +14,6 @@ describe('Reproduce Goblin Crash', () => {
         expect(() => {
             Goblin.createFaceTexture();
         }).not.toThrow();
-    });
+
+});
 });

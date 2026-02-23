@@ -105,13 +105,26 @@ export class TreeRenderer {
         const colors = [];
         const pos = geo.attributes.position;
         for (let i = 0; i < count; i++) {
+            const x = pos.getX(i);
             const y = pos.getY(i);
-            // Normalize y
+            const z = pos.getZ(i);
+
+            // 1. Vertical AO (Height-based gradient)
             let t = (y - minY) / (maxY - minY);
             t = Math.max(0, Math.min(1, t));
-            // Lerp brightness
-            const b = minB + t * (maxB - minB);
-            colors.push(b, b, b);
+            const baseB = minB + t * (maxB - minB);
+
+            // 2. Surface "Mottle" Noise (Individual leaf detail)
+            // We use spatial noise to create patches of light/dark on the same mesh
+            const noise = (
+                Math.sin(x * 15.0) * Math.cos(z * 15.0) * Math.sin(y * 8.0) * 0.12 +
+                Math.sin(x * 30.0 + y * 10.0) * 0.05
+            );
+
+            // Apply noise as a multiplicative factor to the brightness
+            const finalB = Math.max(0.1, Math.min(1.0, baseB + noise));
+
+            colors.push(finalB, finalB, finalB);
         }
         geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
     }
@@ -187,7 +200,7 @@ export class TreeRenderer {
                     const rand = seed - Math.floor(seed);
 
                     // Individual variance (5-15% brightness)
-                    const leafVar = 0.85 + (rand * 0.15);
+                    let leafVar = 0.85 + (rand * 0.15);
 
                     // Seasonal Leaf Color
                     const season = this.terrain.currentSeason || 'Spring';
@@ -207,15 +220,23 @@ export class TreeRenderer {
                             leafBaseColor.setHex(0x228B22); // Keep some Green
                         }
                     } else {
-                        // Spring/Summer: Add slight variety
-                        if (rand > 0.8) leafBaseColor.setHex(0x1B5E20); // Darker
-                        else if (rand > 0.6) leafBaseColor.setHex(0x388E3C); // Lighter
+                        // Spring/Summer: Subdued variety to let individual leaf detail shine
+                        const palette = [
+                            0x2E7D32, // Forest Green (Base)
+                            0x348E38, // Slightly lighter
+                            0x296B2C, // Slightly darker
+                            0x388E3C, // Grass Green
+                            0x33691E  // Deep Dark Green (Replaced Grayish Olive)
+                        ];
+                        const colorIdx = Math.floor(rand * palette.length);
+                        leafBaseColor.setHex(palette[colorIdx]);
                     }
 
-                    // Apply individual variance
+                    // Apply individual variance (smaller range) - reuse existing variable
+                    leafVar = 0.9 + (rand * 0.1);
                     const finalLower = leafBaseColor.clone().multiplyScalar(leafVar);
                     // Upper foliage is slightly brighter to emphasize 3D tiers
-                    const finalUpper = finalLower.clone().multiplyScalar(1.15);
+                    const finalUpper = finalLower.clone().multiplyScalar(1.1);
 
                     this.meshes.leavesLower.setColorAt(idx, finalLower);
                     this.meshes.leavesUpper.setColorAt(idx, finalUpper);

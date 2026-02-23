@@ -21,8 +21,8 @@ describe('Cave Determinism', () => {
         terrain = new Terrain(mockScene, mockClippingPlanes, 80, 80);
         goblinManager = new GoblinManager(mockScene, terrain);
         terrain.goblinManager = goblinManager; // Link back if needed
-    });
 
+    });
     it('should generate identical caves with same terrain seed', async () => {
         const SEED = 0.54321;
 
@@ -55,6 +55,7 @@ describe('Cave Determinism', () => {
             expect(caves1[i].x).toBe(caves2[i].x);
             expect(caves1[i].z).toBe(caves2[i].z);
         }
-    });
-});
 
+
+});
+});

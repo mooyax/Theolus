@@ -1,0 +1,1336 @@
+
+  all_tests_v4.txt:1:
+  all_tests_v4.txt:2: RUN  v4.0.15 C:/Users/mooya/develop/test
+  all_tests_v4.txt:3:
+  all_tests_v4.txt:4: 笶ｯ src/tests/FactionWar.test.js (1 test | 1 failed) 6ms
+  all_tests_v4.txt:5:     ﾃ・[31m 繝励Ξ繧､繝､繝ｼ縺ｯ繧ｴ繝悶Μ繝ｳ縺後＞縺ｪ縺・ｴ蜷医↓謨ｵ繝ｦ繝九ャ繝医ｒ謾ｻ謦・☆繧・[39m 5ms
+> all_tests_v4.txt:6: 笶ｯ src/tests/PerformanceMonitor.test.js (12 tests | 12 failed) 26ms
+  all_tests_v4.txt:7:     ﾃ・[31m should initialize with correct default values 12ms
+  all_tests_v4.txt:8:     ﾃ・[31m should enable and disable correctly 2ms
+  all_tests_v4.txt:9:     ﾃ・[31m should toggle state 2ms
+  all_tests_v4.txt:10:     ﾃ・[31m should measure update time 2ms
+  all_tests_v4.txt:11:     ﾃ・[31m should measure render time 2ms
+  all_tests_v4.txt:12:     ﾃ・[31m should update entity counts 1ms
+  all_tests_v4.txt:13:     ﾃ・[31m should measure FPS over time 1ms
+  all_tests_v4.txt:14:     ﾃ・[31m should add data to history 0ms
+  all_tests_v4.txt:15:     ﾃ・[31m should limit history length 1ms
+  all_tests_v4.txt:16:     ﾃ・[31m should get stats correctly 0ms
+  all_tests_v4.txt:17:     ﾃ・[31m should reset stats 0ms
+  all_tests_v4.txt:18:     ﾃ・[31m should update with game instance 0ms
+  all_tests_v4.txt:19:stdout | src/tests/IdleRegression.test.js
+  all_tests_v4.txt:20:[DEBUG] Actor.ts loaded
+  all_tests_v4.txt:21:
+  all_tests_v4.txt:22:stdout | src/tests/GoblinStuckness.test.js
+  all_tests_v4.txt:23:[DEBUG] Actor.ts loaded
+  all_tests_v4.txt:24:
+  all_tests_v4.txt:25:stdout | src/tests/CombatStuck.test.js
+  all_tests_v4.txt:26:[DEBUG] Building.ts loaded
+  all_tests_v4.txt:27:
+  all_tests_v4.txt:28:stdout | src/tests/CombatBalance.test.js
+  all_tests_v4.txt:29:[DEBUG] Building.ts loaded
+  all_tests_v4.txt:30:
+  all_tests_v4.txt:31:stdout | src/tests/TerrainShadow.test.js
+  all_tests_v4.txt:32:[DEBUG] Building.ts loaded
+  all_tests_v4.txt:33:
+  all_tests_v4.txt:34:stdout | src/tests/CombatBalance.test.js
+  all_tests_v4.txt:35:[DEBUG] Terrain.ts top-level load
+  all_tests_v4.txt:36:
+  all_tests_v4.txt:37:stdout | src/tests/CombatStuck.test.js
+  all_tests_v4.txt:38:[DEBUG] Terrain.ts top-level load
+  all_tests_v4.txt:39:
+  all_tests_v4.txt:40:stdout | src/tests/TerrainShadow.test.js
+  all_tests_v4.txt:41:[DEBUG] Terrain.ts top-level load
+  all_tests_v4.txt:42:
+  all_tests_v4.txt:43:stdout | src/tests/CounterBalance.test.js
+  all_tests_v4.txt:44:[DEBUG] Building.ts loaded
+  all_tests_v4.txt:45:
+  all_tests_v4.txt:46:stdout | src/tests/CounterBalance.test.js
+  all_tests_v4.txt:47:[DEBUG] Terrain.ts top-level load
+  all_tests_v4.txt:48:
+  all_tests_v4.txt:49:stdout | src/tests/Terrain.test.js
+  all_tests_v4.txt:50:[DEBUG] Building.ts loaded
+  all_tests_v4.txt:51:
+  all_tests_v4.txt:52:stdout | src/tests/Terrain.test.js
+  all_tests_v4.txt:53:[DEBUG] Terrain.ts top-level load
+  all_tests_v4.txt:54:
+  all_tests_v4.txt:55:stdout | src/tests/ResourceVerify.test.js
+  all_tests_v4.txt:56:[DEBUG] Building.ts loaded
+  all_tests_v4.txt:3060:[Entity 74] CONSTRUCTOR START: type=fish at 14,105
+  all_tests_v4.txt:3061:[Entity 74] Calling registerEntity...
+  all_tests_v4.txt:3062:[Entity 74] registerEntity returned.
+  all_tests_v4.txt:3063:[Entity 74] Calling updatePosition...
+  all_tests_v4.txt:3064:[Entity 74] updatePosition returned.
+  all_tests_v4.txt:3065:[DIAG] Actor Created ID: 74
+  all_tests_v4.txt:3066:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:3067:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:3068:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:3069:      console.error(`[Actor $
+  all_tests_v4.txt:3070:Spawned initial fish.
+  all_tests_v4.txt:3071:FishManager Refactored: Initialized with Entity-based Fish.
+  all_tests_v4.txt:3072:[Game] Init Minimap
+  all_tests_v4.txt:3073:[Game] Init Compass
+  all_tests_v4.txt:3074:[Game] Init WeatherManager
+  all_tests_v4.txt:3075:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:3076:[Game] Init UnitRenderer
+  all_tests_v4.txt:3077:[Game] Init BuildingRenderer
+  all_tests_v4.txt:3078:[Game] Init GoblinRenderer
+  all_tests_v4.txt:3079:[Game] Init TreeRenderer
+> all_tests_v4.txt:3080:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:3081:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:3082:[Terrain] DETERMINISM: generateRandomTerrain seed=0.511575 intSeed=1098598421 rngState=1098598421
+  all_tests_v4.txt:3083:
+  all_tests_v4.txt:3084:stdout | src/tests/SaveLoadRestoration.test.js
+  all_tests_v4.txt:3085:[DEBUG] Game.ts top-level load
+  all_tests_v4.txt:3086:
+  all_tests_v4.txt:3087:stdout | src/tests/BuildingDestruction.test.js > Building Destruction Logic > should successfully remove a building from the list
+  all_tests_v4.txt:3088:[Terrain] Constructor. updatePopulation type: function
+  all_tests_v4.txt:3089:
+  all_tests_v4.txt:3090:stdout | src/tests/WinLossCondition.test.js > Win/Loss Condition Logic > should return "loss" when player units and buildings are all gone
+  all_tests_v4.txt:3091:[Terrain] Constructor. updatePopulation type: function
+  all_tests_v4.txt:3092:[Game] Init SphereGeometry
+  all_tests_v4.txt:3093:[Game] Minimal/Override Init Start
+  all_tests_v4.txt:3094:[Game] Minimal: Init Clock
+  all_tests_v4.txt:3095:[Game FORCE CONST 1] Assigning terrainOverride to this.terrain
+  all_tests_v4.txt:3096:[Game] Minimal: Init Managers
+  all_tests_v4.txt:3097:[Game] Minimal: Init GoblinManager
+  all_tests_v4.txt:3098:[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+  all_tests_v4.txt:3099:[GoblinManager] DETERMINISM: generateCaves start. rngState=0
+  all_tests_v4.txt:3100:[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.622450, 0.725384) -> Grid(99, 116) rngState=0
+  all_tests_v4.txt:3101:[Entity 0] CONSTRUCTOR START: type=building at 99,116
+  all_tests_v4.txt:3102:[Entity 0] Calling registerEntity...
+  all_tests_v4.txt:3103:[Entity 0] registerEntity returned.
+  all_tests_v4.txt:3104:[Entity 0] Calling updatePosition...
+  all_tests_v4.txt:3105:[Entity 0] updatePosition returned.
+  all_tests_v4.txt:3106:GoblinManager: Cave registered at 99,116 
+  all_tests_v4.txt:3107:[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.393624, 0.512382) -> Grid(62, 81) rngState=0
+  all_tests_v4.txt:3108:[Entity 1] CONSTRUCTOR START: type=building at 62,81
+  all_tests_v4.txt:3109:[Entity 1] Calling registerEntity...
+  all_tests_v4.txt:3110:[Entity 1] registerEntity returned.
+  all_tests_v4.txt:3111:[Entity 1] Calling updatePosition...
+  all_tests_v4.txt:3112:[Entity 1] updatePosition returned.
+  all_tests_v4.txt:3113:GoblinManager: Cave registered at 62,81 
+  all_tests_v4.txt:3114:[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.243425, 0.414800) -> Grid(38, 66) rngState=0
+  all_tests_v4.txt:3115:[Entity 2] CONSTRUCTOR START: type=building at 38,66
+  all_tests_v4.txt:3116:[Entity 2] Calling registerEntity...
+  all_tests_v4.txt:3117:[Entity 2] registerEntity returned.
+  all_tests_v4.txt:3118:[Entity 2] Calling updatePosition...
+  all_tests_v4.txt:3119:[Entity 2] updatePosition returned.
+  all_tests_v4.txt:3120:GoblinManager: Cave registered at 38,66 
+  all_tests_v4.txt:3121:[Entity 3] CONSTRUCTOR START: type=building at 57,14
+  all_tests_v4.txt:3122:[Entity 3] Calling registerEntity...
+  all_tests_v4.txt:3123:[Entity 3] registerEntity returned.
+  all_tests_v4.txt:3124:[Entity 3] Calling updatePosition...
+  all_tests_v4.txt:3125:[Entity 3] updatePosition returned.
+  all_tests_v4.txt:3126:GoblinManager: Cave registered at 57,14 
+  all_tests_v4.txt:3127:[Entity 4] CONSTRUCTOR START: type=building at 43,61
+  all_tests_v4.txt:3128:[Entity 4] Calling registerEntity...
+  all_tests_v4.txt:3129:[Entity 4] registerEntity returned.
+  all_tests_v4.txt:3130:[Entity 4] Calling updatePosition...
+  all_tests_v4.txt:4317:[Entity 74] CONSTRUCTOR START: type=fish at 3,18
+  all_tests_v4.txt:4318:[Entity 74] Calling registerEntity...
+  all_tests_v4.txt:4319:[Entity 74] registerEntity returned.
+  all_tests_v4.txt:4320:[Entity 74] Calling updatePosition...
+  all_tests_v4.txt:4321:[Entity 74] updatePosition returned.
+  all_tests_v4.txt:4322:[DIAG] Actor Created ID: 74
+  all_tests_v4.txt:4323:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:4324:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:4325:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:4326:      console.error(`[Actor $
+  all_tests_v4.txt:4327:Spawned initial fish.
+  all_tests_v4.txt:4328:FishManager Refactored: Initialized with Entity-based Fish.
+  all_tests_v4.txt:4329:[Game] Init Minimap
+  all_tests_v4.txt:4330:[Game] Init Compass
+  all_tests_v4.txt:4331:[Game] Init WeatherManager
+  all_tests_v4.txt:4332:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:4333:[Game] Init UnitRenderer
+  all_tests_v4.txt:4334:[Game] Init BuildingRenderer
+  all_tests_v4.txt:4335:[Game] Init GoblinRenderer
+  all_tests_v4.txt:4336:[Game] Init TreeRenderer
+> all_tests_v4.txt:4337:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:4338:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:4339:[Terrain] DETERMINISM: generateRandomTerrain seed=0.695444 intSeed=1493453848 rngState=1493453848
+  all_tests_v4.txt:4340:
+  all_tests_v4.txt:4341:stdout | src/tests/FactionPersistence.test.js > Faction Persistence and Logic > should persist unit and building faction across save/load
+  all_tests_v4.txt:4342:[Terrain] deserialize: Restoring Grid Data...
+  all_tests_v4.txt:4343:
+  all_tests_v4.txt:4344:stdout | src/tests/SpatialSearch.test.js > Spatial Partitioning > should register and retrieve an entity
+  all_tests_v4.txt:4345:[Terrain] Constructor. updatePopulation type: function
+  all_tests_v4.txt:4346:
+  all_tests_v4.txt:4347:stdout | src/tests/FactionPersistence.test.js > Faction Persistence and Logic > should persist unit and building faction across save/load
+  all_tests_v4.txt:4348:[Terrain] deserialize: Restoring 2 Buildings...
+  all_tests_v4.txt:4349:
+  all_tests_v4.txt:4350:stdout | src/tests/FactionPersistence.test.js > Faction Persistence and Logic > should persist unit and building faction across save/load
+  all_tests_v4.txt:4351:[Terrain] Restoring building 1/2: Type=farm, Pos=(30,30), Faction=player
+  all_tests_v4.txt:4352:[Entity 4] CONSTRUCTOR START: type=building at 30,30
+  all_tests_v4.txt:4353:[Entity 4] Calling registerEntity...
+  all_tests_v4.txt:4354:[Entity 4] registerEntity returned.
+  all_tests_v4.txt:4355:[Entity 4] Calling updatePosition...
+  all_tests_v4.txt:4356:[Entity 4] updatePosition returned.
+  all_tests_v4.txt:4357:
+  all_tests_v4.txt:4358:stdout | src/tests/FactionPersistence.test.js > Faction Persistence and Logic > should persist unit and building faction across save/load
+  all_tests_v4.txt:4359:[Terrain] Restoring building 2/2: Type=farm, Pos=(40,40), Faction=enemy
+  all_tests_v4.txt:4360:[Entity 5] CONSTRUCTOR START: type=building at 40,40
+  all_tests_v4.txt:4361:[Entity 5] Calling registerEntity...
+  all_tests_v4.txt:4362:[Entity 5] registerEntity returned.
+  all_tests_v4.txt:4363:[Entity 5] Calling updatePosition...
+  all_tests_v4.txt:4364:[Entity 5] updatePosition returned.
+  all_tests_v4.txt:4365:
+  all_tests_v4.txt:4366:stdout | src/tests/FactionPersistence.test.js > Faction Persistence and Logic > should persist unit and building faction across save/load
+  all_tests_v4.txt:4367:[Terrain] Synced Grid to Pathfinding Worker.
+  all_tests_v4.txt:4368:
+  all_tests_v4.txt:4369:stdout | src/tests/FactionPersistence.test.js > Faction Persistence and Logic > should persist unit and building faction across save/load
+  all_tests_v4.txt:4370:[Game] Terrain deserialized.
+  all_tests_v4.txt:4371:
+  all_tests_v4.txt:4372:stdout | src/tests/FactionPersistence.test.js > Faction Persistence and Logic > should persist unit and building faction across save/load
+  all_tests_v4.txt:4373:[Game] Loading resources/time...
+  all_tests_v4.txt:4374:[Game] Updating environment...
+  all_tests_v4.txt:4375:
+  all_tests_v4.txt:4376:stdout | src/tests/FactionPersistence.test.js > Faction Persistence and Logic > should persist unit and building faction across save/load
+  all_tests_v4.txt:4377:[Terrain] Season set to: Spring
+  all_tests_v4.txt:4378:
+  all_tests_v4.txt:4379:stdout | src/tests/FactionPersistence.test.js > Faction Persistence and Logic > should persist unit and building faction across save/load
+  all_tests_v4.txt:4380:[Game] Restoring 2 units...
+  all_tests_v4.txt:4381:
+  all_tests_v4.txt:4382:stdout | src/tests/FactionPersistence.test.js > Faction Persistence and Logic > should persist unit and building faction across save/load
+  all_tests_v4.txt:4383:[Entity 6] CONSTRUCTOR START: type=unit at 10,10
+  all_tests_v4.txt:4384:[Entity 6] Calling registerEntity...
+  all_tests_v4.txt:4385:[Entity 6] registerEntity returned.
+  all_tests_v4.txt:4386:[Entity 6] Calling updatePosition...
+  all_tests_v4.txt:4387:[Entity 6] updatePosition returned.
+  all_tests_v4.txt:5246:[Entity 149] CONSTRUCTOR START: type=fish at 92,47
+  all_tests_v4.txt:5247:[Entity 149] Calling registerEntity...
+  all_tests_v4.txt:5248:[Entity 149] registerEntity returned.
+  all_tests_v4.txt:5249:[Entity 149] Calling updatePosition...
+  all_tests_v4.txt:5250:[Entity 149] updatePosition returned.
+  all_tests_v4.txt:5251:[DIAG] Actor Created ID: 149
+  all_tests_v4.txt:5252:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:5253:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:5254:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:5255:      console.error(`[Actor $
+  all_tests_v4.txt:5256:Spawned initial fish.
+  all_tests_v4.txt:5257:FishManager Refactored: Initialized with Entity-based Fish.
+  all_tests_v4.txt:5258:[Game] Init Minimap
+  all_tests_v4.txt:5259:[Game] Init Compass
+  all_tests_v4.txt:5260:[Game] Init WeatherManager
+  all_tests_v4.txt:5261:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:5262:[Game] Init UnitRenderer
+  all_tests_v4.txt:5263:[Game] Init BuildingRenderer
+  all_tests_v4.txt:5264:[Game] Init GoblinRenderer
+  all_tests_v4.txt:5265:[Game] Init TreeRenderer
+> all_tests_v4.txt:5266:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:5267:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:5268:[Terrain] DETERMINISM: generateRandomTerrain seed=0.399960 intSeed=858908061 rngState=858908061
+  all_tests_v4.txt:5269:
+  all_tests_v4.txt:5270:stdout | src/tests/SaveLoad.test.js > Save/Load System > should load game data correctly
+  all_tests_v4.txt:5271:Load Started...
+  all_tests_v4.txt:5272:
+  all_tests_v4.txt:5273:stdout | src/tests/BuildingDestruction.test.js > Building Destruction Logic > should handle identity mismatch (Ghost Building)
+  all_tests_v4.txt:5274:[Terrain] Constructor. updatePopulation type: function
+  all_tests_v4.txt:5275:
+  all_tests_v4.txt:5276:stdout | src/tests/BuildingDestruction.test.js > Building Destruction Logic > should handle identity mismatch (Ghost Building)
+  all_tests_v4.txt:5277:[Entity 3] CONSTRUCTOR START: type=building at 20,20
+  all_tests_v4.txt:5278:[Entity 3] Calling registerEntity...
+  all_tests_v4.txt:5279:[Entity 3] registerEntity returned.
+  all_tests_v4.txt:5280:[Entity 3] Calling updatePosition...
+  all_tests_v4.txt:5281:[Entity 3] updatePosition returned.
+  all_tests_v4.txt:5282:[Terrain] removeBuilding: Identity mismatch! searching by coord 20,20 
+  all_tests_v4.txt:5283:[Terrain] Swapping ghost building object for authoritative one.
+  all_tests_v4.txt:5284:[Terrain] Building removed at 20,20 
+  all_tests_v4.txt:5285:
+  all_tests_v4.txt:5286:stdout | src/tests/WinLossCondition.test.js > Win/Loss Condition Logic > should return "loss" even if ancient ruins exist (they should be neutral)
+  all_tests_v4.txt:5287:[Terrain] Constructor. updatePopulation type: function
+  all_tests_v4.txt:5288:[Game] Init SphereGeometry
+  all_tests_v4.txt:5289:[Game] Minimal/Override Init Start
+  all_tests_v4.txt:5290:[Game] Minimal: Init Clock
+  all_tests_v4.txt:5291:[Game FORCE CONST 3] Assigning terrainOverride to this.terrain
+  all_tests_v4.txt:5292:[Game] Minimal: Init Managers
+  all_tests_v4.txt:5293:[Game] Minimal: Init GoblinManager
+  all_tests_v4.txt:5294:[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+  all_tests_v4.txt:5295:[GoblinManager] DETERMINISM: generateCaves start. rngState=0
+  all_tests_v4.txt:5296:[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.052610, 0.074780) -> Grid(8, 11) rngState=0
+  all_tests_v4.txt:5297:[Entity 13] CONSTRUCTOR START: type=building at 8,11
+  all_tests_v4.txt:5298:[Entity 13] Calling registerEntity...
+  all_tests_v4.txt:5299:[Entity 13] registerEntity returned.
+  all_tests_v4.txt:5300:[Entity 13] Calling updatePosition...
+  all_tests_v4.txt:5301:[Entity 13] updatePosition returned.
+  all_tests_v4.txt:5302:GoblinManager: Cave registered at 8,11 
+  all_tests_v4.txt:5303:[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.041596, 0.669042) -> Grid(6, 107) rngState=0
+  all_tests_v4.txt:5304:[Entity 14] CONSTRUCTOR START: type=building at 6,107
+  all_tests_v4.txt:5305:[Entity 14] Calling registerEntity...
+  all_tests_v4.txt:5306:[Entity 14] registerEntity returned.
+  all_tests_v4.txt:5307:[Entity 14] Calling updatePosition...
+  all_tests_v4.txt:5308:[Entity 14] updatePosition returned.
+  all_tests_v4.txt:5309:GoblinManager: Cave registered at 6,107 
+  all_tests_v4.txt:5310:[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.661260, 0.506112) -> Grid(105, 80) rngState=0
+  all_tests_v4.txt:5311:[Entity 15] CONSTRUCTOR START: type=building at 105,80
+  all_tests_v4.txt:5312:[Entity 15] Calling registerEntity...
+  all_tests_v4.txt:5313:[Entity 15] registerEntity returned.
+  all_tests_v4.txt:5314:[Entity 15] Calling updatePosition...
+  all_tests_v4.txt:5315:[Entity 15] updatePosition returned.
+  all_tests_v4.txt:5316:GoblinManager: Cave registered at 105,80 
+  all_tests_v4.txt:6915:[Entity 225] CONSTRUCTOR START: type=fish at 63,14
+  all_tests_v4.txt:6916:[Entity 225] Calling registerEntity...
+  all_tests_v4.txt:6917:[Entity 225] registerEntity returned.
+  all_tests_v4.txt:6918:[Entity 225] Calling updatePosition...
+  all_tests_v4.txt:6919:[Entity 225] updatePosition returned.
+  all_tests_v4.txt:6920:[DIAG] Actor Created ID: 225
+  all_tests_v4.txt:6921:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:6922:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:6923:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:6924:      console.error(`[Actor $
+  all_tests_v4.txt:6925:Spawned initial fish.
+  all_tests_v4.txt:6926:FishManager Refactored: Initialized with Entity-based Fish.
+  all_tests_v4.txt:6927:[Game] Init Minimap
+  all_tests_v4.txt:6928:[Game] Init Compass
+  all_tests_v4.txt:6929:[Game] Init WeatherManager
+  all_tests_v4.txt:6930:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:6931:[Game] Init UnitRenderer
+  all_tests_v4.txt:6932:[Game] Init BuildingRenderer
+  all_tests_v4.txt:6933:[Game] Init GoblinRenderer
+  all_tests_v4.txt:6934:[Game] Init TreeRenderer
+> all_tests_v4.txt:6935:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:6936:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:6937:[Terrain] DETERMINISM: generateRandomTerrain seed=0.945248 intSeed=2029904579 rngState=2029904579
+  all_tests_v4.txt:6938:
+  all_tests_v4.txt:6939:stdout | src/tests/WinLossCondition.test.js > Win/Loss Condition Logic > should return "win" when all enemies (goblins, caves, huts, units) are gone
+  all_tests_v4.txt:6940:[Game] evaluateWinLoss: Enemy assets zero. Goblins:0 Caves:0 enemyBuildings:0 enemyUnits:0
+  all_tests_v4.txt:6941:
+  all_tests_v4.txt:6942: 笨・[39m src/tests/FactionPersistence.test.js (3 tests) 1577ms
+  all_tests_v4.txt:6943:     笨・[22m should persist unit and building faction across save/load  909ms
+  all_tests_v4.txt:6944:     笨・[22m should only add food to player pool from player farms  336ms
+  all_tests_v4.txt:6945:     笨・[22m should allow workers and knights to target enemy human buildings  326ms
+  all_tests_v4.txt:6946:stdout | src/tests/EcoSpawnFix.test.js
+  all_tests_v4.txt:6947:[DEBUG] Goblin.ts loaded
+  all_tests_v4.txt:6948:
+  all_tests_v4.txt:6949:stdout | src/tests/EcoSpawnFix.test.js
+  all_tests_v4.txt:6950:[Import Debug] Raid: function, Combat: function, Wander: function
+  all_tests_v4.txt:6951:
+  all_tests_v4.txt:6952:stdout | src/tests/WinLossCondition.test.js > Win/Loss Condition Logic > should correctly restore enemy faction for caves and huts during deserialization
+  all_tests_v4.txt:6953:Disposing detached game instance
+  all_tests_v4.txt:6954:[Game] Dispose called for Game Instance.
+  all_tests_v4.txt:6955:[Terrain] Dispose called.
+  all_tests_v4.txt:6956:
+  all_tests_v4.txt:6957:stdout | src/tests/EcoSpawnFix.test.js
+  all_tests_v4.txt:6958:[DEBUG] Game.ts top-level load
+  all_tests_v4.txt:6959:
+  all_tests_v4.txt:6960:stdout | src/tests/GridSearchRegression.test.js > Terrain Grid Search Regression > should NOT find Building when searching for unit
+  all_tests_v4.txt:6961:[Terrain] Constructor. updatePopulation type: function
+  all_tests_v4.txt:6962:
+  all_tests_v4.txt:6963: 笨・[39m src/tests/GridSearchRegression.test.js (3 tests) 1084ms
+  all_tests_v4.txt:6964:     笨・[22m should find Worker when searching for "unit" using Grid Search (Large Scale Simulation)  358ms
+  all_tests_v4.txt:6965:     笨・[22m should find Sheep but NOT Fish when searching for "unit"  333ms
+  all_tests_v4.txt:6966:     笨・[22m should NOT find Building when searching for unit  391ms
+  all_tests_v4.txt:6967:stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+  all_tests_v4.txt:6968:Load Started...
+  all_tests_v4.txt:6969:
+  all_tests_v4.txt:6970:stdout | src/tests/SaveLoad.test.js > Save/Load System > should restore request markers with correct renderOrder
+  all_tests_v4.txt:6971:Loading slot 1, Raw length: 2075
+  all_tests_v4.txt:6972:Load: Decompressed successfully.
+  all_tests_v4.txt:6973:Parsed Data for slot 1: {
+  all_tests_v4.txt:6974:  timestamp: 1771682234342,
+  all_tests_v4.txt:6975:  data: {
+  all_tests_v4.txt:6976:    resources: {},
+  all_tests_v4.txt:6977:    gameTime: 10,
+  all_tests_v4.txt:6978:    terrain: {
+  all_tests_v4.txt:6979:      logicalWidth: 80,
+  all_tests_v4.txt:6980:      logicalDepth: 80,
+  all_tests_v4.txt:6981:      grid: [Array],
+  all_tests_v4.txt:6982:      buildings: []
+  all_tests_v4.txt:6983:    },
+  all_tests_v4.txt:6984:    units: [],
+  all_tests_v4.txt:6985:    requests: [ [Object], [Object] ]
+  all_tests_v4.txt:7891:[Entity 152] CONSTRUCTOR START: type=fish at 78,54
+  all_tests_v4.txt:7892:[Entity 152] Calling registerEntity...
+  all_tests_v4.txt:7893:[Entity 152] registerEntity returned.
+  all_tests_v4.txt:7894:[Entity 152] Calling updatePosition...
+  all_tests_v4.txt:7895:[Entity 152] updatePosition returned.
+  all_tests_v4.txt:7896:[DIAG] Actor Created ID: 152
+  all_tests_v4.txt:7897:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:7898:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:7899:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:7900:      console.error(`[Actor $
+  all_tests_v4.txt:7901:Spawned initial fish.
+  all_tests_v4.txt:7902:FishManager Refactored: Initialized with Entity-based Fish.
+  all_tests_v4.txt:7903:[Game] Init Minimap
+  all_tests_v4.txt:7904:[Game] Init Compass
+  all_tests_v4.txt:7905:[Game] Init WeatherManager
+  all_tests_v4.txt:7906:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:7907:[Game] Init UnitRenderer
+  all_tests_v4.txt:7908:[Game] Init BuildingRenderer
+  all_tests_v4.txt:7909:[Game] Init GoblinRenderer
+  all_tests_v4.txt:7910:[Game] Init TreeRenderer
+> all_tests_v4.txt:7911:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:7912:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:7913:[Terrain] DETERMINISM: generateRandomTerrain seed=0.726104 intSeed=1559296930 rngState=1559296930
+  all_tests_v4.txt:7914:
+  all_tests_v4.txt:7915:stdout | src/tests/SaveLoadRestoration.test.js > Save/Load Job Restoration > should reset ghost-assigned requests during load
+  all_tests_v4.txt:7916:Load Started...
+  all_tests_v4.txt:7917:
+  all_tests_v4.txt:7918:stdout | src/tests/GoblinSpawnVerification.test.js > Goblin Spawn Verification > should spawn goblin when population reaches threshold
+  all_tests_v4.txt:7919:[Entity 11] CONSTRUCTOR START: type=building at 20,20
+  all_tests_v4.txt:7920:[Entity 11] Calling registerEntity...
+  all_tests_v4.txt:7921:[Entity 11] registerEntity returned.
+  all_tests_v4.txt:7922:[Entity 11] Calling updatePosition...
+  all_tests_v4.txt:7923:[Entity 11] updatePosition returned.
+  all_tests_v4.txt:7924:[Entity 12] CONSTRUCTOR START: type=goblin at 20,18
+  all_tests_v4.txt:7925:[Entity 12] Calling registerEntity...
+  all_tests_v4.txt:7926:[Entity 12] registerEntity returned.
+  all_tests_v4.txt:7927:[Entity 12] Calling updatePosition...
+  all_tests_v4.txt:7928:[Entity 12] updatePosition returned.
+  all_tests_v4.txt:7929:[DIAG] Actor Created ID: 12
+  all_tests_v4.txt:7930:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:7931:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:7932:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:7933:      console.error(`[Actor $
+  all_tests_v4.txt:7934:[DEBUG] Goblin born from cave! Total: 1, Remaining population: 0.0
+  all_tests_v4.txt:7935:
+  all_tests_v4.txt:7936: 笨・[39m src/tests/GoblinSpawnVerification.test.js (2 tests) 652ms
+  all_tests_v4.txt:7937:     笨・[22m should register caves present in terrain  350ms
+  all_tests_v4.txt:7938:     笨・[22m should spawn goblin when population reaches threshold  300ms
+  all_tests_v4.txt:7939:stdout | src/tests/WeatherSway.test.js > Weather Sway Intensity > should update uSwayIntensity in water material
+  all_tests_v4.txt:7940:Tower Geometry Initialized (Split Mode)
+  all_tests_v4.txt:7941:Tower Debug: Generated High-Res Tower Texture + Cap Material
+  all_tests_v4.txt:7942:
+  all_tests_v4.txt:7943:stdout | src/tests/WeatherSway.test.js > Weather Sway Intensity > should update uSwayIntensity in water material
+  all_tests_v4.txt:7944:[BuildingRenderer] Initialization Complete.
+  all_tests_v4.txt:7945:
+  all_tests_v4.txt:7946:stdout | src/tests/WeatherSway.test.js > Weather Sway Intensity > should update uSwayIntensity in water material
+  all_tests_v4.txt:7947:[TreeRenderer] Initializing Assets...
+  all_tests_v4.txt:7948:[TreeRenderer] Initialization Complete.
+  all_tests_v4.txt:7949:
+  all_tests_v4.txt:7950:stdout | src/tests/WeatherSway.test.js > Weather Sway Intensity > should update uSwayIntensity in water material
+  all_tests_v4.txt:7951:[Terrain DIAG FRAME] Frame:1 Stagger:20 Units:0
+  all_tests_v4.txt:7952:
+  all_tests_v4.txt:7953:stdout | src/tests/WinLossCondition.test.js > Win/Loss Condition Logic > should correctly restore enemy faction for caves and huts during deserialization
+  all_tests_v4.txt:7954:[Terrain] Constructor. updatePopulation type: function
+  all_tests_v4.txt:7955:[Game] Init SphereGeometry
+  all_tests_v4.txt:7956:[Game] Minimal/Override Init Start
+  all_tests_v4.txt:7957:[Game] Minimal: Init Clock
+  all_tests_v4.txt:7958:[Game FORCE CONST 6] Assigning terrainOverride to this.terrain
+  all_tests_v4.txt:7959:[Game] Minimal: Init Managers
+  all_tests_v4.txt:7960:[Game] Minimal: Init GoblinManager
+  all_tests_v4.txt:7961:[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+  all_tests_v4.txt:8303:[Entity 14] CONSTRUCTOR START: type=building at 47,34
+  all_tests_v4.txt:8304:[Entity 14] Calling registerEntity...
+  all_tests_v4.txt:8305:[Entity 14] registerEntity returned.
+  all_tests_v4.txt:8306:[Entity 14] Calling updatePosition...
+  all_tests_v4.txt:8307:[Entity 14] updatePosition returned.
+  all_tests_v4.txt:8308:GoblinManager: Cave registered at 47,34 
+  all_tests_v4.txt:8309:[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+  all_tests_v4.txt:8310:GoblinManager: Force spawning Debug Goblin
+  all_tests_v4.txt:8311:[Game] Init FishManager
+  all_tests_v4.txt:8312:Resetting FishManager...
+  all_tests_v4.txt:8313:Spawned initial fish.
+  all_tests_v4.txt:8314:FishManager Refactored: Initialized with Entity-based Fish.
+  all_tests_v4.txt:8315:[Game] Init Minimap
+  all_tests_v4.txt:8316:[Game] Init Compass
+  all_tests_v4.txt:8317:[Game] Init WeatherManager
+  all_tests_v4.txt:8318:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:8319:[Game] Init UnitRenderer
+  all_tests_v4.txt:8320:[Game] Init BuildingRenderer
+  all_tests_v4.txt:8321:[Game] Init GoblinRenderer
+  all_tests_v4.txt:8322:[Game] Init TreeRenderer
+> all_tests_v4.txt:8323:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:8324:[Game] Initializing Start Screen Listeners...
+  all_tests_v4.txt:8325:
+  all_tests_v4.txt:8326:stdout | src/tests/EcoSpawnFix.test.js > Economy and Spawning Fix Verification > should produce grain from farms
+  all_tests_v4.txt:8327:[Entity 15] CONSTRUCTOR START: type=building at 10,10
+  all_tests_v4.txt:8328:[Entity 15] Calling registerEntity...
+  all_tests_v4.txt:8329:[Entity 15] registerEntity returned.
+  all_tests_v4.txt:8330:[Entity 15] Calling updatePosition...
+  all_tests_v4.txt:8331:[Entity 15] updatePosition returned.
+  all_tests_v4.txt:8332:[Terrain DIAG FRAME] Frame:1 Stagger:20 Units:0
+  all_tests_v4.txt:8333:[Terrain DIAG] Type:cave Frame:1/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+  all_tests_v4.txt:8334:[Terrain DIAG FRAME] Frame:2 Stagger:20 Units:0
+  all_tests_v4.txt:8335:[Terrain DIAG] Type:cave Frame:2/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+  all_tests_v4.txt:8336:[Terrain DIAG FRAME] Frame:3 Stagger:20 Units:0
+  all_tests_v4.txt:8337:[Terrain DIAG] Type:cave Frame:3/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+  all_tests_v4.txt:8338:[Terrain DIAG FRAME] Frame:4 Stagger:20 Units:0
+  all_tests_v4.txt:8339:[Terrain DIAG] Type:cave Frame:4/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+  all_tests_v4.txt:8340:[Terrain DIAG FRAME] Frame:5 Stagger:20 Units:0
+  all_tests_v4.txt:8341:[Terrain DIAG] Type:farm Frame:5/20 GrowthVal:0.5 Multiplier:1 Rate:0.5 HasFood:true Pop:0
+  all_tests_v4.txt:8342:[Terrain DIAG FRAME] Frame:6 Stagger:20 Units:0
+  all_tests_v4.txt:8343:[EnemyAI] Ordering House. Pop: 0, Cap: 0, Pending: 0
+  all_tests_v4.txt:8344:[Game] Request Added: build_house at (54,59) ID:req_0
+  all_tests_v4.txt:8345:[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+  all_tests_v4.txt:8346:[Terrain DIAG FRAME] Frame:7 Stagger:20 Units:0
+  all_tests_v4.txt:8347:[Entity 9] startMove -> isMoving:true. Target:27,0 StartTime:3.5000
+  all_tests_v4.txt:8348:[Entity 3] startMove -> isMoving:true. Target:12,4 StartTime:3.5000
+  all_tests_v4.txt:8349:[Terrain DIAG FRAME] Frame:8 Stagger:20 Units:0
+  all_tests_v4.txt:8350:[Entity 5] startMove -> isMoving:true. Target:25,17 StartTime:4.0000
+  all_tests_v4.txt:8351:[Terrain DIAG FRAME] Frame:9 Stagger:20 Units:0
+  all_tests_v4.txt:8352:[Entity 9] updateMovement ARRIVAL -> isMoving:false. Time:4.5000 StartTime:3.5000 Dur:1.0000 PrevGrid:28,0 Target:27,0
+  all_tests_v4.txt:8353:[Entity 6] startMove -> isMoving:true. Target:58,55 StartTime:4.5000
+  all_tests_v4.txt:8354:[Entity 3] updateMovement ARRIVAL -> isMoving:false. Time:4.5000 StartTime:3.5000 Dur:1.0000 PrevGrid:13,4 Target:12,4
+  all_tests_v4.txt:8355:[Terrain DIAG FRAME] Frame:10 Stagger:20 Units:0
+  all_tests_v4.txt:8356:[Entity 5] updateMovement ARRIVAL -> isMoving:false. Time:5.0000 StartTime:4.0000 Dur:1.0000 PrevGrid:26,17 Target:25,17
+  all_tests_v4.txt:8357:[Entity 4] startMove -> isMoving:true. Target:61,37 StartTime:5.0000
+  all_tests_v4.txt:8358:[Entity 2] startMove -> isMoving:true. Target:30,26 StartTime:5.0000
+  all_tests_v4.txt:8359:[Entity 1] startMove -> isMoving:true. Target:29,36 StartTime:5.0000
+  all_tests_v4.txt:8360:[Entity 0] startMove -> isMoving:true. Target:3,74 StartTime:5.0000
+  all_tests_v4.txt:8361:[Terrain DIAG FRAME] Frame:11 Stagger:20 Units:0
+  all_tests_v4.txt:8362:[Entity 8] startMove -> isMoving:true. Target:77,47 StartTime:5.5000
+  all_tests_v4.txt:8363:[Entity 7] startMove -> isMoving:true. Target:42,1 StartTime:5.5000
+  all_tests_v4.txt:8364:[Entity 6] updateMovement ARRIVAL -> isMoving:false. Time:5.5000 StartTime:4.5000 Dur:1.0000 PrevGrid:58,56 Target:58,55
+  all_tests_v4.txt:8365:[Terrain DIAG FRAME] Frame:12 Stagger:20 Units:0
+  all_tests_v4.txt:8366:[EnemyAI] Ordering House. Pop: 0, Cap: 0, Pending: 1
+  all_tests_v4.txt:8367:[Game] Request Added: build_house at (41,5) ID:req_1
+  all_tests_v4.txt:8368:[Game] No worker in radius 80 for Manual Req req_1. Trying Global Scan...
+  all_tests_v4.txt:8369:[Entity 4] updateMovement ARRIVAL -> isMoving:false. Time:6.0000 StartTime:5.0000 Dur:1.0000 PrevGrid:62,37 Target:61,37
+  all_tests_v4.txt:8370:[Entity 3] startMove -> isMoving:true. Target:12,5 StartTime:6.0000
+  all_tests_v4.txt:8371:[Entity 2] updateMovement ARRIVAL -> isMoving:false. Time:6.0000 StartTime:5.0000 Dur:1.0000 PrevGrid:30,27 Target:30,26
+  all_tests_v4.txt:8372:[Entity 1] updateMovement ARRIVAL -> isMoving:false. Time:6.0000 StartTime:5.0000 Dur:1.0000 PrevGrid:30,36 Target:29,36
+  all_tests_v4.txt:8373:[Entity 0] updateMovement ARRIVAL -> isMoving:false. Time:6.0000 StartTime:5.0000 Dur:1.0000 PrevGrid:3,73 Target:3,74
+  all_tests_v4.txt:8656:[Entity 30] CONSTRUCTOR START: type=building at 73,24
+  all_tests_v4.txt:8657:[Entity 30] Calling registerEntity...
+  all_tests_v4.txt:8658:[Entity 30] registerEntity returned.
+  all_tests_v4.txt:8659:[Entity 30] Calling updatePosition...
+  all_tests_v4.txt:8660:[Entity 30] updatePosition returned.
+  all_tests_v4.txt:8661:GoblinManager: Cave registered at 73,24 
+  all_tests_v4.txt:8662:[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+  all_tests_v4.txt:8663:GoblinManager: Force spawning Debug Goblin
+  all_tests_v4.txt:8664:[Game] Init FishManager
+  all_tests_v4.txt:8665:Resetting FishManager...
+  all_tests_v4.txt:8666:Spawned initial fish.
+  all_tests_v4.txt:8667:FishManager Refactored: Initialized with Entity-based Fish.
+  all_tests_v4.txt:8668:[Game] Init Minimap
+  all_tests_v4.txt:8669:[Game] Init Compass
+  all_tests_v4.txt:8670:[Game] Init WeatherManager
+  all_tests_v4.txt:8671:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:8672:[Game] Init UnitRenderer
+  all_tests_v4.txt:8673:[Game] Init BuildingRenderer
+  all_tests_v4.txt:8674:[Game] Init GoblinRenderer
+  all_tests_v4.txt:8675:[Game] Init TreeRenderer
+> all_tests_v4.txt:8676:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:8677:[Game] Initializing Start Screen Listeners...
+  all_tests_v4.txt:8678:
+  all_tests_v4.txt:8679:stdout | src/tests/EcoSpawnFix.test.js > Economy and Spawning Fix Verification > should allow goblin huts to reach spawn threshold
+  all_tests_v4.txt:8680:[Entity 31] CONSTRUCTOR START: type=building at 20,20
+  all_tests_v4.txt:8681:[Entity 31] Calling registerEntity...
+  all_tests_v4.txt:8682:[Entity 31] registerEntity returned.
+  all_tests_v4.txt:8683:[Entity 31] Calling updatePosition...
+  all_tests_v4.txt:8684:[Entity 31] updatePosition returned.
+  all_tests_v4.txt:8685:[Terrain DIAG FRAME] Frame:1 Stagger:20 Units:0
+  all_tests_v4.txt:8686:[Terrain DIAG] Type:cave Frame:1/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+  all_tests_v4.txt:8687:[Terrain DIAG FRAME] Frame:2 Stagger:20 Units:0
+  all_tests_v4.txt:8688:[Terrain DIAG] Type:cave Frame:2/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+  all_tests_v4.txt:8689:[Terrain DIAG FRAME] Frame:3 Stagger:20 Units:0
+  all_tests_v4.txt:8690:[Terrain DIAG] Type:cave Frame:3/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+  all_tests_v4.txt:8691:[Terrain DIAG FRAME] Frame:4 Stagger:20 Units:0
+  all_tests_v4.txt:8692:[Terrain DIAG] Type:cave Frame:4/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+  all_tests_v4.txt:8693:[Terrain DIAG FRAME] Frame:5 Stagger:20 Units:0
+  all_tests_v4.txt:8694:[Terrain DIAG] Type:goblin_hut Frame:5/20 GrowthVal:0.08 Multiplier:1 Rate:0.08 HasFood:true Pop:0
+  all_tests_v4.txt:8695:[Terrain DIAG FRAME] Frame:6 Stagger:20 Units:0
+  all_tests_v4.txt:8696:[EnemyAI] Ordering House. Pop: 0, Cap: 0, Pending: 0
+  all_tests_v4.txt:8697:[Game] Request Added: build_house at (54,29) ID:req_0
+  all_tests_v4.txt:8698:[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+  all_tests_v4.txt:8699:[Entity 19] startMove -> isMoving:true. Target:58,18 StartTime:3.0000
+  all_tests_v4.txt:8700:[Terrain DIAG FRAME] Frame:7 Stagger:20 Units:0
+  all_tests_v4.txt:8701:[Entity 20] startMove -> isMoving:true. Target:76,63 StartTime:3.5000
+  all_tests_v4.txt:8702:[Entity 16] startMove -> isMoving:true. Target:76,7 StartTime:3.5000
+  all_tests_v4.txt:8703:[Terrain DIAG FRAME] Frame:8 Stagger:20 Units:0
+  all_tests_v4.txt:8704:[Entity 22] startMove -> isMoving:true. Target:32,51 StartTime:4.0000
+  all_tests_v4.txt:8705:[Entity 19] updateMovement ARRIVAL -> isMoving:false. Time:4.0000 StartTime:3.0000 Dur:1.0000 PrevGrid:59,18 Target:58,18
+  all_tests_v4.txt:8706:[Terrain DIAG FRAME] Frame:9 Stagger:20 Units:0
+  all_tests_v4.txt:8707:[Entity 23] startMove -> isMoving:true. Target:59,3 StartTime:4.5000
+  all_tests_v4.txt:8708:[Entity 21] startMove -> isMoving:true. Target:78,66 StartTime:4.5000
+  all_tests_v4.txt:8709:[Entity 20] updateMovement ARRIVAL -> isMoving:false. Time:4.5000 StartTime:3.5000 Dur:1.0000 PrevGrid:76,62 Target:76,63
+  all_tests_v4.txt:8710:[Entity 16] updateMovement ARRIVAL -> isMoving:false. Time:4.5000 StartTime:3.5000 Dur:1.0000 PrevGrid:76,8 Target:76,7
+  all_tests_v4.txt:8711:[Terrain DIAG FRAME] Frame:10 Stagger:20 Units:0
+  all_tests_v4.txt:8712:[Entity 24] startMove -> isMoving:true. Target:1,5 StartTime:5.0000
+  all_tests_v4.txt:8713:[Entity 22] updateMovement ARRIVAL -> isMoving:false. Time:5.0000 StartTime:4.0000 Dur:1.0000 PrevGrid:32,50 Target:32,51
+  all_tests_v4.txt:8714:[Terrain DIAG FRAME] Frame:11 Stagger:20 Units:0
+  all_tests_v4.txt:8715:[Entity 25] startMove -> isMoving:true. Target:25,31 StartTime:5.5000
+  all_tests_v4.txt:8716:[Entity 23] updateMovement ARRIVAL -> isMoving:false. Time:5.5000 StartTime:4.5000 Dur:1.0000 PrevGrid:60,3 Target:59,3
+  all_tests_v4.txt:8717:[Entity 21] updateMovement ARRIVAL -> isMoving:false. Time:5.5000 StartTime:4.5000 Dur:1.0000 PrevGrid:78,65 Target:78,66
+  all_tests_v4.txt:8718:[Entity 18] startMove -> isMoving:true. Target:31,35 StartTime:5.5000
+  all_tests_v4.txt:8719:[Entity 17] startMove -> isMoving:true. Target:28,33 StartTime:5.5000
+  all_tests_v4.txt:8720:[Terrain DIAG FRAME] Frame:12 Stagger:20 Units:0
+  all_tests_v4.txt:8721:[EnemyAI] Ordering House. Pop: 0, Cap: 0, Pending: 1
+  all_tests_v4.txt:8722:[Game] Request Added: build_house at (79,10) ID:req_1
+  all_tests_v4.txt:8723:[Game] No worker in radius 80 for Manual Req req_1. Trying Global Scan...
+  all_tests_v4.txt:8724:[Entity 24] updateMovement ARRIVAL -> isMoving:false. Time:6.0000 StartTime:5.0000 Dur:1.0000 PrevGrid:1,4 Target:1,5
+  all_tests_v4.txt:8725:[Entity 16] startMove -> isMoving:true. Target:76,8 StartTime:6.0000
+  all_tests_v4.txt:8726:[Terrain DIAG FRAME] Frame:13 Stagger:20 Units:0
+  all_tests_v4.txt:9157:      console.error(`[Actor $
+  all_tests_v4.txt:9158:[Game] Init GoblinManager
+  all_tests_v4.txt:9159:[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+  all_tests_v4.txt:9160:[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+  all_tests_v4.txt:9161:[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.533105, 0.623647) -> Grid(53, 62) rngState=undefined
+  all_tests_v4.txt:9162:[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.063537, 0.108891) -> Grid(6, 10) rngState=undefined
+  all_tests_v4.txt:9163:[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.868832, 0.067819) -> Grid(86, 6) rngState=undefined
+  all_tests_v4.txt:9164:[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+  all_tests_v4.txt:9165:[Game] Init FishManager
+  all_tests_v4.txt:9166:Resetting FishManager...
+  all_tests_v4.txt:9167:Spawned initial fish.
+  all_tests_v4.txt:9168:FishManager Refactored: Initialized with Entity-based Fish.
+  all_tests_v4.txt:9169:[Game] Init Minimap
+  all_tests_v4.txt:9170:[Game] Init Compass
+  all_tests_v4.txt:9171:[Game] Init WeatherManager
+  all_tests_v4.txt:9172:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:9173:[Game] Init UnitRenderer
+  all_tests_v4.txt:9174:[Game] Init BuildingRenderer
+  all_tests_v4.txt:9175:[Game] Init GoblinRenderer
+  all_tests_v4.txt:9176:[Game] Init TreeRenderer
+> all_tests_v4.txt:9177:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:9178:[Game] Initializing Start Screen Listeners...
+  all_tests_v4.txt:9179:
+  all_tests_v4.txt:9180:stdout | src/tests/MultiJob.test.js > Multi-Job Juggling Verification > should NOT interrupt busy units when a new job is added
+  all_tests_v4.txt:9181:[Actor 1] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:9182:[Actor 2] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:9183:[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
+  all_tests_v4.txt:9184:[Entity 1] startMove -> isMoving:true. Target:20,0 StartTime:0.0000
+  all_tests_v4.txt:9185:[Actor 2] Pathfinding SUCCESS: Got 1 nodes to 0,20
+  all_tests_v4.txt:9186:[Entity 2] startMove -> isMoving:true. Target:0,20 StartTime:0.0000
+  all_tests_v4.txt:9187:
+  all_tests_v4.txt:9188:stdout | src/tests/MultiJob.test.js > Multi-Job Juggling Verification > should NOT interrupt busy units when a new job is added
+  all_tests_v4.txt:9189:[Game] Request Added: build at (10,10) ID:req_0
+  all_tests_v4.txt:9190:
+  all_tests_v4.txt:9191:stdout | src/tests/ForceBuild.test.js > Terrain Force Build Logic > should clear existing buildings when placing a new one
+  all_tests_v4.txt:9192:[Entity 0] CONSTRUCTOR START: type=building at 10,10
+  all_tests_v4.txt:9193:[Entity 0] Calling registerEntity...
+  all_tests_v4.txt:9194:[Entity 0] registerEntity returned.
+  all_tests_v4.txt:9195:[Entity 0] Calling updatePosition...
+  all_tests_v4.txt:9196:[Entity 0] updatePosition returned.
+  all_tests_v4.txt:9197:[Terrain] Clearing obstacle: house for new construction.
+  all_tests_v4.txt:9198:[Terrain] Building removed at 10,10 
+  all_tests_v4.txt:9199:[Entity 1] CONSTRUCTOR START: type=building at 10,10
+  all_tests_v4.txt:9200:[Entity 1] Calling registerEntity...
+  all_tests_v4.txt:9201:[Entity 1] registerEntity returned.
+  all_tests_v4.txt:9202:[Entity 1] Calling updatePosition...
+  all_tests_v4.txt:9203:[Entity 1] updatePosition returned.
+  all_tests_v4.txt:9204:
+  all_tests_v4.txt:9205:stdout | src/tests/ForceBuild.test.js > Terrain Force Build Logic > should clear buildings partially in the way
+  all_tests_v4.txt:9206:[Terrain] Constructor. updatePopulation type: function
+  all_tests_v4.txt:9207:
+  all_tests_v4.txt:9208:stdout | src/tests/ForceBuild.test.js > Terrain Force Build Logic > should clear buildings partially in the way
+  all_tests_v4.txt:9209:[Entity 2] CONSTRUCTOR START: type=building at 10,10
+  all_tests_v4.txt:9210:[Entity 2] Calling registerEntity...
+  all_tests_v4.txt:9211:[Entity 2] registerEntity returned.
+  all_tests_v4.txt:9212:[Entity 2] Calling updatePosition...
+  all_tests_v4.txt:9213:[Entity 2] updatePosition returned.
+  all_tests_v4.txt:9214:Pre-Barracks Buildings: [ 'house' ]
+  all_tests_v4.txt:9215:[Terrain] Clearing obstacle: house for new construction.
+  all_tests_v4.txt:9216:[Terrain] Building removed at 10,10 
+  all_tests_v4.txt:9217:[Entity 3] CONSTRUCTOR START: type=building at 9,9
+  all_tests_v4.txt:9218:[Entity 3] Calling registerEntity...
+  all_tests_v4.txt:9219:[Entity 3] registerEntity returned.
+  all_tests_v4.txt:9220:[Entity 3] Calling updatePosition...
+  all_tests_v4.txt:9221:[Entity 3] updatePosition returned.
+  all_tests_v4.txt:9222:Post-Barracks Buildings: [ 'barracks' ]
+  all_tests_v4.txt:9223:
+  all_tests_v4.txt:9224: 笨・[39m src/tests/MultiJob.test.js (1 test) 3832ms
+  all_tests_v4.txt:9225:     笨・[22m should NOT interrupt busy units when a new job is added  3823ms
+  all_tests_v4.txt:9226:stdout | src/tests/ManualRequestIntegration.test.js > Manual Request Integration > should fail to find path if blocked by water
+  all_tests_v4.txt:9227:[Terrain] Constructor. updatePopulation type: function
+  all_tests_v4.txt:16098:      rockHeight: 10,
+  all_tests_v4.txt:16099:      moistureBase: 0.6,
+  all_tests_v4.txt:16100:      treeDensity: 1,
+  all_tests_v4.txt:16101:      landRatio: 0.4
+  all_tests_v4.txt:16102:    }
+  all_tests_v4.txt:16103:  }
+  all_tests_v4.txt:16104:]
+  all_tests_v4.txt:16105:[Game] Init CloudManager
+  all_tests_v4.txt:16106:[Game] Init BirdManager
+  all_tests_v4.txt:16107:[Game] Init SheepManager
+  all_tests_v4.txt:16108:[Game] Init GoblinManager
+  all_tests_v4.txt:16109:[Game] Init FishManager
+  all_tests_v4.txt:16110:[Game] Init Minimap
+  all_tests_v4.txt:16111:[Game] Init Compass
+  all_tests_v4.txt:16112:[Game] Init WeatherManager
+  all_tests_v4.txt:16113:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:16114:[Game] Init UnitRenderer
+  all_tests_v4.txt:16115:[Game] Init BuildingRenderer
+  all_tests_v4.txt:16116:[Game] Init GoblinRenderer
+  all_tests_v4.txt:16117:[Game] Init TreeRenderer
+> all_tests_v4.txt:16118:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:16119:[Game] Initializing Start Screen Listeners...
+  all_tests_v4.txt:16120:
+  all_tests_v4.txt:16121:stdout | src/tests/LoadUpdateLoop.test.js > Load Update Loop Integration > should maintain Job after first update loop post-load
+  all_tests_v4.txt:16122:[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+  all_tests_v4.txt:16123:[Entity 0] Calling registerEntity...
+  all_tests_v4.txt:16124:[Entity 0] registerEntity returned.
+  all_tests_v4.txt:16125:[Entity 0] Calling updatePosition...
+  all_tests_v4.txt:16126:[Entity 0] updatePosition returned.
+  all_tests_v4.txt:16127:[DIAG] Actor Created ID: 0
+  all_tests_v4.txt:16128:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:16129:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:16130:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:16131:      console.error(`[Actor $
+  all_tests_v4.txt:16132:[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+  all_tests_v4.txt:16133:[Unit 0] State Change: None -> Wander
+  all_tests_v4.txt:16134:[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+  all_tests_v4.txt:16135:[UnitCore.js] Unit Construction Finished ID:0
+  all_tests_v4.txt:16136:[Game] Request Added: raise at (15,15) ID:req_0
+  all_tests_v4.txt:16137:[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+  all_tests_v4.txt:16138:[Actor 100] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:16139:[Game] Saving Game: Level=0, Seed=undefined
+  all_tests_v4.txt:16140:Load Started...
+  all_tests_v4.txt:16141:[Actor 100] Pathfinding SUCCESS: Got 1 nodes to 15,15
+  all_tests_v4.txt:16142:[Entity 100] startMove -> isMoving:true. Target:15,15 StartTime:0.0000
+  all_tests_v4.txt:16143:
+  all_tests_v4.txt:16144:stdout | src/tests/WorkerReachability.test.js > Worker Job Reachability > findBestRequest filters out unreachable jobs
+  all_tests_v4.txt:16145:[DEBUG] Game.ts top-level load
+  all_tests_v4.txt:16146:
+  all_tests_v4.txt:16147:stdout | src/tests/RealTerrainRestoration.test.js > Real Terrain Restoration Logic > should successfully restore Terrain regions and Unit pathfinding
+  all_tests_v4.txt:16148:[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+  all_tests_v4.txt:16149:[Entity 0] Calling registerEntity...
+  all_tests_v4.txt:16150:[Entity 0] registerEntity returned.
+  all_tests_v4.txt:16151:[Entity 0] Calling updatePosition...
+  all_tests_v4.txt:16152:[Entity 0] updatePosition returned.
+  all_tests_v4.txt:16153:[DIAG] Actor Created ID: 0
+  all_tests_v4.txt:16154:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:16155:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:16156:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:16157:      console.error(`[Actor $
+  all_tests_v4.txt:16158:[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+  all_tests_v4.txt:16159:[Unit 0] State Change: None -> Wander
+  all_tests_v4.txt:16160:[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+  all_tests_v4.txt:16161:[UnitCore.js] Unit Construction Finished ID:0
+  all_tests_v4.txt:16162:[Game] Request Added: raise at (15,15) ID:req_0
+  all_tests_v4.txt:16163:[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+  all_tests_v4.txt:16164:[Actor 100] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:16165:[Actor 100] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:16166:
+  all_tests_v4.txt:16167:stdout | src/tests/RealTerrainRestoration.test.js > Real Terrain Restoration Logic > should successfully restore Terrain regions and Unit pathfinding
+  all_tests_v4.txt:16168:[Actor 100] Pathfinding SUCCESS: Got 1 nodes to 15,15
+  all_tests_v4.txt:17578:[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.463074, 0.745906) -> Grid(46, 74) rngState=undefined
+  all_tests_v4.txt:17579:GoblinManager: Cave registered at 46,74 
+  all_tests_v4.txt:17580:[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.746076, 0.159591) -> Grid(74, 15) rngState=undefined
+  all_tests_v4.txt:17581:GoblinManager: Cave registered at 74,15 
+  all_tests_v4.txt:17582:GoblinManager: Cave registered at 23,57 
+  all_tests_v4.txt:17583:GoblinManager: Cave registered at 50,83 
+  all_tests_v4.txt:17584:[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+  all_tests_v4.txt:17585:GoblinManager: Force spawning Debug Goblin
+  all_tests_v4.txt:17586:[Game] Init FishManager
+  all_tests_v4.txt:17587:Resetting FishManager...
+  all_tests_v4.txt:17588:Spawned initial fish.
+  all_tests_v4.txt:17589:FishManager Refactored: Initialized with Entity-based Fish.
+  all_tests_v4.txt:17590:[Game] Init Minimap
+  all_tests_v4.txt:17591:[Game] Init Compass
+  all_tests_v4.txt:17592:[Game] Init WeatherManager
+  all_tests_v4.txt:17593:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:17594:[Game] Init UnitRenderer
+  all_tests_v4.txt:17595:[Game] Init BuildingRenderer
+  all_tests_v4.txt:17596:[Game] Init GoblinRenderer
+  all_tests_v4.txt:17597:[Game] Init TreeRenderer
+> all_tests_v4.txt:17598:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:17599:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:17600:[Game] Preview Ready.
+  all_tests_v4.txt:17601:[Game] Initializing Start Screen Listeners...
+  all_tests_v4.txt:17602:
+  all_tests_v4.txt:17603:stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should immediately stop unit when job is cancelled mid-approach
+  all_tests_v4.txt:17604:[Game] Request Added: build at (20,0) ID:req_0
+  all_tests_v4.txt:17605:[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+  all_tests_v4.txt:17606:[Actor 1] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:17607:
+  all_tests_v4.txt:17608:stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should immediately stop unit when job is cancelled mid-approach
+  all_tests_v4.txt:17609:[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
+  all_tests_v4.txt:17610:[Entity 1] startMove -> isMoving:true. Target:20,0 StartTime:0.0000
+  all_tests_v4.txt:17611:
+  all_tests_v4.txt:17612:stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should immediately stop unit when job is cancelled mid-approach
+  all_tests_v4.txt:17613:[Game] Cancelling Request req_0 at 20,0
+  all_tests_v4.txt:17614:
+  all_tests_v4.txt:17615:stdout | src/tests/SheepHuntingFix.test.js > Sheep Hunting Logic & Manager Update Fix > should remove dead sheep during manager update
+  all_tests_v4.txt:17616:[Game] Init SphereGeometry
+  all_tests_v4.txt:17617:[Game] Minimal/Override Init Start
+  all_tests_v4.txt:17618:[Game] Minimal: Init Clock
+  all_tests_v4.txt:17619:[Game FORCE CONST 1] Creating mock terrain
+  all_tests_v4.txt:17620:[Game] Minimal: Init Managers
+  all_tests_v4.txt:17621:[Game] Minimal: Init GoblinManager
+  all_tests_v4.txt:17622:[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+  all_tests_v4.txt:17623:[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+  all_tests_v4.txt:17624:[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.900025, 0.957741) -> Grid(144, 153) rngState=undefined
+  all_tests_v4.txt:17625:[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.677199, 0.814948) -> Grid(108, 130) rngState=undefined
+  all_tests_v4.txt:17626:[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.778619, 0.917850) -> Grid(124, 146) rngState=undefined
+  all_tests_v4.txt:17627:[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+  all_tests_v4.txt:17628:[Game] Minimal: Init EnemyAI
+  all_tests_v4.txt:17629:[Game] Minimal: Done. Returning.
+  all_tests_v4.txt:17630:Resetting SheepManager...
+  all_tests_v4.txt:17631:[Entity 0] CONSTRUCTOR START: type=sheep at 53,49
+  all_tests_v4.txt:17632:[Entity 0] Calling registerEntity...
+  all_tests_v4.txt:17633:[Entity 0] registerEntity returned.
+  all_tests_v4.txt:17634:[Entity 0] Calling updatePosition...
+  all_tests_v4.txt:17635:[Entity 0] updatePosition returned.
+  all_tests_v4.txt:17636:[DIAG] Actor Created ID: 0
+  all_tests_v4.txt:17637:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:17638:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:17639:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:17640:      console.error(`[Actor $
+  all_tests_v4.txt:17641:[Actor 0] CHANGE STATE: None -> SheepWander Request:null 
+  all_tests_v4.txt:17642:[Entity 1] CONSTRUCTOR START: type=sheep at 76,148
+  all_tests_v4.txt:17643:[Entity 1] Calling registerEntity...
+  all_tests_v4.txt:17644:[Entity 1] registerEntity returned.
+  all_tests_v4.txt:17645:[Entity 1] Calling updatePosition...
+  all_tests_v4.txt:17646:[Entity 1] updatePosition returned.
+  all_tests_v4.txt:17647:[DIAG] Actor Created ID: 1
+  all_tests_v4.txt:17648:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:17837:[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.231640, 0.723361) -> Grid(23, 72) rngState=undefined
+  all_tests_v4.txt:17838:GoblinManager: Cave registered at 23,72 
+  all_tests_v4.txt:17839:[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.561224, 0.364124) -> Grid(56, 36) rngState=undefined
+  all_tests_v4.txt:17840:GoblinManager: Cave registered at 56,36 
+  all_tests_v4.txt:17841:GoblinManager: Cave registered at 96,6 
+  all_tests_v4.txt:17842:GoblinManager: Cave registered at 88,20 
+  all_tests_v4.txt:17843:[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+  all_tests_v4.txt:17844:GoblinManager: Force spawning Debug Goblin
+  all_tests_v4.txt:17845:[Game] Init FishManager
+  all_tests_v4.txt:17846:Resetting FishManager...
+  all_tests_v4.txt:17847:Spawned initial fish.
+  all_tests_v4.txt:17848:FishManager Refactored: Initialized with Entity-based Fish.
+  all_tests_v4.txt:17849:[Game] Init Minimap
+  all_tests_v4.txt:17850:[Game] Init Compass
+  all_tests_v4.txt:17851:[Game] Init WeatherManager
+  all_tests_v4.txt:17852:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:17853:[Game] Init UnitRenderer
+  all_tests_v4.txt:17854:[Game] Init BuildingRenderer
+  all_tests_v4.txt:17855:[Game] Init GoblinRenderer
+  all_tests_v4.txt:17856:[Game] Init TreeRenderer
+> all_tests_v4.txt:17857:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:17858:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:17859:[Game] Preview Ready.
+  all_tests_v4.txt:17860:[Game] Initializing Start Screen Listeners...
+  all_tests_v4.txt:17861:
+  all_tests_v4.txt:17862:stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should pickup NEXT job if current is cancelled
+  all_tests_v4.txt:17863:[Game] Request Added: build at (20,0) ID:req_0
+  all_tests_v4.txt:17864:[Actor 1] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:17865:[Game] Request Added: build at (-20,0) ID:req_1
+  all_tests_v4.txt:17866:[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 20,0
+  all_tests_v4.txt:17867:[Entity 1] startMove -> isMoving:true. Target:20,0 StartTime:0.0000
+  all_tests_v4.txt:17868:
+  all_tests_v4.txt:17869:stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should pickup NEXT job if current is cancelled
+  all_tests_v4.txt:17870:[Game] Cancelling Request req_0 at 20,0
+  all_tests_v4.txt:17871:[Actor 1] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:17872:[Actor 1] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:17873:[Actor 1] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:17874:
+  all_tests_v4.txt:17875:stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should pickup NEXT job if current is cancelled
+  all_tests_v4.txt:17876:[Actor 1] Pathfinding SUCCESS: Got 1 nodes to -20,0
+  all_tests_v4.txt:17877:[Entity 1] startMove -> isMoving:true. Target:-20,0 StartTime:3.0000
+  all_tests_v4.txt:17878:
+  all_tests_v4.txt:17879:stdout | src/tests/SheepHuntingFix.test.js > Sheep Hunting Logic & Manager Update Fix > should remove dead sheep during manager update
+  all_tests_v4.txt:17880:Resetting SheepManager...
+  all_tests_v4.txt:17881:[Entity 10] CONSTRUCTOR START: type=sheep at 20,132
+  all_tests_v4.txt:17882:[Entity 10] Calling registerEntity...
+  all_tests_v4.txt:17883:[Entity 10] registerEntity returned.
+  all_tests_v4.txt:17884:[Entity 10] Calling updatePosition...
+  all_tests_v4.txt:17885:[Entity 10] updatePosition returned.
+  all_tests_v4.txt:17886:[DIAG] Actor Created ID: 10
+  all_tests_v4.txt:17887:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:17888:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:17889:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:17890:      console.error(`[Actor $
+  all_tests_v4.txt:17891:[Entity 11] CONSTRUCTOR START: type=sheep at 79,125
+  all_tests_v4.txt:17892:[Entity 11] Calling registerEntity...
+  all_tests_v4.txt:17893:[Entity 11] registerEntity returned.
+  all_tests_v4.txt:17894:[Entity 11] Calling updatePosition...
+  all_tests_v4.txt:17895:[Entity 11] updatePosition returned.
+  all_tests_v4.txt:17896:[DIAG] Actor Created ID: 11
+  all_tests_v4.txt:17897:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:17898:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:17899:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:17900:      console.error(`[Actor $
+  all_tests_v4.txt:17901:[Entity 12] CONSTRUCTOR START: type=sheep at 71,102
+  all_tests_v4.txt:17902:[Entity 12] Calling registerEntity...
+  all_tests_v4.txt:17903:[Entity 12] registerEntity returned.
+  all_tests_v4.txt:17904:[Entity 12] Calling updatePosition...
+  all_tests_v4.txt:17905:[Entity 12] updatePosition returned.
+  all_tests_v4.txt:17906:[DIAG] Actor Created ID: 12
+  all_tests_v4.txt:17907:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:18090:[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.545356, 0.133297) -> Grid(54, 13) rngState=undefined
+  all_tests_v4.txt:18091:GoblinManager: Cave registered at 54,13 
+  all_tests_v4.txt:18092:[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.119715, 0.501814) -> Grid(11, 50) rngState=undefined
+  all_tests_v4.txt:18093:GoblinManager: Cave registered at 11,50 
+  all_tests_v4.txt:18094:GoblinManager: Cave registered at 4,91 
+  all_tests_v4.txt:18095:GoblinManager: Cave registered at 65,51 
+  all_tests_v4.txt:18096:[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 5/5 (隧ｦ陦悟屓謨ｰ: 5)
+  all_tests_v4.txt:18097:GoblinManager: Force spawning Debug Goblin
+  all_tests_v4.txt:18098:[Game] Init FishManager
+  all_tests_v4.txt:18099:Resetting FishManager...
+  all_tests_v4.txt:18100:Spawned initial fish.
+  all_tests_v4.txt:18101:FishManager Refactored: Initialized with Entity-based Fish.
+  all_tests_v4.txt:18102:[Game] Init Minimap
+  all_tests_v4.txt:18103:[Game] Init Compass
+  all_tests_v4.txt:18104:[Game] Init WeatherManager
+  all_tests_v4.txt:18105:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:18106:[Game] Init UnitRenderer
+  all_tests_v4.txt:18107:[Game] Init BuildingRenderer
+  all_tests_v4.txt:18108:[Game] Init GoblinRenderer
+  all_tests_v4.txt:18109:[Game] Init TreeRenderer
+> all_tests_v4.txt:18110:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:18111:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:18112:[Game] Preview Ready.
+  all_tests_v4.txt:18113:[Game] Initializing Start Screen Listeners...
+  all_tests_v4.txt:18114:
+  all_tests_v4.txt:18115:stdout | src/tests/ComplexInteraction.test.js > Complex Job Interaction and Cancellation > should handle cancellation while Working (arrived)
+  all_tests_v4.txt:18116:[Game] Request Added: build at (20,0) ID:req_0
+  all_tests_v4.txt:18117:[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+  all_tests_v4.txt:18118:[Actor 1] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:18119:
+  all_tests_v4.txt:18120: 笨・[39m src/tests/ComplexInteraction.test.js (3 tests) 216ms
+  all_tests_v4.txt:18121:stdout | src/tests/SheepHuntingFix.test.js > Sheep Hunting Logic & Manager Update Fix > should regenerate sheep when population is low
+  all_tests_v4.txt:18122:[Game] Init SphereGeometry
+  all_tests_v4.txt:18123:[Game] Minimal/Override Init Start
+  all_tests_v4.txt:18124:[Game] Minimal: Init Clock
+  all_tests_v4.txt:18125:[Game FORCE CONST 2] Creating mock terrain
+  all_tests_v4.txt:18126:[Game] Minimal: Init Managers
+  all_tests_v4.txt:18127:[Game] Minimal: Init GoblinManager
+  all_tests_v4.txt:18128:[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+  all_tests_v4.txt:18129:[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+  all_tests_v4.txt:18130:[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.692542, 0.304727) -> Grid(110, 48) rngState=undefined
+  all_tests_v4.txt:18131:[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.257834, 0.282147) -> Grid(41, 45) rngState=undefined
+  all_tests_v4.txt:18132:[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.689310, 0.796266) -> Grid(110, 127) rngState=undefined
+  all_tests_v4.txt:18133:[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+  all_tests_v4.txt:18134:[Game] Minimal: Init EnemyAI
+  all_tests_v4.txt:18135:[Game] Minimal: Done. Returning.
+  all_tests_v4.txt:18136:Resetting SheepManager...
+  all_tests_v4.txt:18137:[Entity 20] CONSTRUCTOR START: type=sheep at 39,75
+  all_tests_v4.txt:18138:[Entity 20] Calling registerEntity...
+  all_tests_v4.txt:18139:[Entity 20] registerEntity returned.
+  all_tests_v4.txt:18140:[Entity 20] Calling updatePosition...
+  all_tests_v4.txt:18141:[Entity 20] updatePosition returned.
+  all_tests_v4.txt:18142:[DIAG] Actor Created ID: 20
+  all_tests_v4.txt:18143:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:18144:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:18145:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:18146:      console.error(`[Actor $
+  all_tests_v4.txt:18147:[Entity 21] CONSTRUCTOR START: type=sheep at 75,105
+  all_tests_v4.txt:18148:[Entity 21] Calling registerEntity...
+  all_tests_v4.txt:18149:[Entity 21] registerEntity returned.
+  all_tests_v4.txt:18150:[Entity 21] Calling updatePosition...
+  all_tests_v4.txt:18151:[Entity 21] updatePosition returned.
+  all_tests_v4.txt:18152:[DIAG] Actor Created ID: 21
+  all_tests_v4.txt:18153:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:18154:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:18155:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:18156:      console.error(`[Actor $
+  all_tests_v4.txt:18157:[Entity 22] CONSTRUCTOR START: type=sheep at 130,158
+  all_tests_v4.txt:18158:[Entity 22] Calling registerEntity...
+  all_tests_v4.txt:18159:[Entity 22] registerEntity returned.
+  all_tests_v4.txt:18160:[Entity 22] Calling updatePosition...
+  all_tests_v4.txt:18619:      rockHeight: 10,
+  all_tests_v4.txt:18620:      moistureBase: 0.6,
+  all_tests_v4.txt:18621:      treeDensity: 1,
+  all_tests_v4.txt:18622:      landRatio: 0.4
+  all_tests_v4.txt:18623:    }
+  all_tests_v4.txt:18624:  }
+  all_tests_v4.txt:18625:]
+  all_tests_v4.txt:18626:[Game] Init CloudManager
+  all_tests_v4.txt:18627:[Game] Init BirdManager
+  all_tests_v4.txt:18628:[Game] Init SheepManager
+  all_tests_v4.txt:18629:[Game] Init GoblinManager
+  all_tests_v4.txt:18630:[Game] Init FishManager
+  all_tests_v4.txt:18631:[Game] Init Minimap
+  all_tests_v4.txt:18632:[Game] Init Compass
+  all_tests_v4.txt:18633:[Game] Init WeatherManager
+  all_tests_v4.txt:18634:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:18635:[Game] Init UnitRenderer
+  all_tests_v4.txt:18636:[Game] Init BuildingRenderer
+  all_tests_v4.txt:18637:[Game] Init GoblinRenderer
+  all_tests_v4.txt:18638:[Game] Init TreeRenderer
+> all_tests_v4.txt:18639:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:18640:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:18641:[Game] Preview Ready.
+  all_tests_v4.txt:18642:
+  all_tests_v4.txt:18643:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign a manual request to an Idle worker
+  all_tests_v4.txt:18644:[Entity 0] CONSTRUCTOR START: type=unit at 0,0
+  all_tests_v4.txt:18645:[Entity 0] Calling updatePosition...
+  all_tests_v4.txt:18646:[Entity 0] updatePosition returned.
+  all_tests_v4.txt:18647:[DIAG] Actor Created ID: 0
+  all_tests_v4.txt:18648:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:18649:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:18650:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:18651:      console.error(`[Actor $
+  all_tests_v4.txt:18652:[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0 Special:false
+  all_tests_v4.txt:18653:[Unit 0] State Change: None -> Wander
+  all_tests_v4.txt:18654:[UnitCore.js] Unit Created ID:0 Role:worker Pos:0,0
+  all_tests_v4.txt:18655:[UnitCore.js] Unit Construction Finished ID:0
+  all_tests_v4.txt:18656:[Game] Request Added: build at (10,10) ID:req_0
+  all_tests_v4.txt:18657:[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+  all_tests_v4.txt:18658:[Actor 1] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:18659:
+  all_tests_v4.txt:18660:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign a manual request to an Idle worker
+  all_tests_v4.txt:18661:[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 10,10
+  all_tests_v4.txt:18662:[Entity 1] startMove -> isMoving:true. Target:10,10 StartTime:0.0000
+  all_tests_v4.txt:18663:
+  all_tests_v4.txt:18664:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should NOT assign to a Busy worker (already working)
+  all_tests_v4.txt:18665:Disposing detached game instance
+  all_tests_v4.txt:18666:[Game] Dispose called for Game Instance.
+  all_tests_v4.txt:18667:
+  all_tests_v4.txt:18668:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should NOT assign to a Busy worker (already working)
+  all_tests_v4.txt:18669:[Game] Init SphereGeometry
+  all_tests_v4.txt:18670:[Game] Initializing Full Three.js components...
+  all_tests_v4.txt:18671:[Game] Debug Levels: [
+  all_tests_v4.txt:18672:  {
+  all_tests_v4.txt:18673:    levelId: 1,
+  all_tests_v4.txt:18674:    title: 'The Beginning',
+  all_tests_v4.txt:18675:    mapWidth: 120,
+  all_tests_v4.txt:18676:    mapDepth: 120,
+  all_tests_v4.txt:18677:    initialState: {
+  all_tests_v4.txt:18678:      unitCount: 1,
+  all_tests_v4.txt:18679:      hasEnemyBase: false,
+  all_tests_v4.txt:18680:      hasEnemyGuard: false,
+  all_tests_v4.txt:18681:      goblinCaves: 1
+  all_tests_v4.txt:18682:    },
+  all_tests_v4.txt:18683:    generation: {
+  all_tests_v4.txt:18684:      rockHeight: 9,
+  all_tests_v4.txt:18685:      moistureBase: 0.55,
+  all_tests_v4.txt:18686:      treeDensity: 0.2,
+  all_tests_v4.txt:18687:      landRatio: 0.6
+  all_tests_v4.txt:18688:    }
+  all_tests_v4.txt:18689:  },
+  all_tests_v4.txt:18720:      rockHeight: 10,
+  all_tests_v4.txt:18721:      moistureBase: 0.6,
+  all_tests_v4.txt:18722:      treeDensity: 1,
+  all_tests_v4.txt:18723:      landRatio: 0.4
+  all_tests_v4.txt:18724:    }
+  all_tests_v4.txt:18725:  }
+  all_tests_v4.txt:18726:]
+  all_tests_v4.txt:18727:[Game] Init CloudManager
+  all_tests_v4.txt:18728:[Game] Init BirdManager
+  all_tests_v4.txt:18729:[Game] Init SheepManager
+  all_tests_v4.txt:18730:[Game] Init GoblinManager
+  all_tests_v4.txt:18731:[Game] Init FishManager
+  all_tests_v4.txt:18732:[Game] Init Minimap
+  all_tests_v4.txt:18733:[Game] Init Compass
+  all_tests_v4.txt:18734:[Game] Init WeatherManager
+  all_tests_v4.txt:18735:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:18736:[Game] Init UnitRenderer
+  all_tests_v4.txt:18737:[Game] Init BuildingRenderer
+  all_tests_v4.txt:18738:[Game] Init GoblinRenderer
+  all_tests_v4.txt:18739:[Game] Init TreeRenderer
+> all_tests_v4.txt:18740:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:18741:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:18742:[Game] Preview Ready.
+  all_tests_v4.txt:18743:
+  all_tests_v4.txt:18744:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should NOT assign to a Busy worker (already working)
+  all_tests_v4.txt:18745:[Entity 1] CONSTRUCTOR START: type=unit at 0,0
+  all_tests_v4.txt:18746:[Entity 1] Calling updatePosition...
+  all_tests_v4.txt:18747:[Entity 1] updatePosition returned.
+  all_tests_v4.txt:18748:[DIAG] Actor Created ID: 1
+  all_tests_v4.txt:18749:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:18750:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:18751:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:18752:      console.error(`[Actor $
+  all_tests_v4.txt:18753:[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0 Special:false
+  all_tests_v4.txt:18754:[UnitCore.js] Unit Created ID:1 Role:worker Pos:0,0
+  all_tests_v4.txt:18755:[UnitCore.js] Unit Construction Finished ID:1
+  all_tests_v4.txt:18756:[Game] Request Added: build at (10,10) ID:req_0
+  all_tests_v4.txt:18757:[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+  all_tests_v4.txt:18758:
+  all_tests_v4.txt:18759:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Wandering worker (Low Priority)
+  all_tests_v4.txt:18760:Disposing detached game instance
+  all_tests_v4.txt:18761:[Game] Dispose called for Game Instance.
+  all_tests_v4.txt:18762:
+  all_tests_v4.txt:18763:stdout | src/tests/CombatLogic.test.js
+  all_tests_v4.txt:18764:[DEBUG] Actor.ts loaded
+  all_tests_v4.txt:18765:
+  all_tests_v4.txt:18766:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Wandering worker (Low Priority)
+  all_tests_v4.txt:18767:[Game] Init SphereGeometry
+  all_tests_v4.txt:18768:[Game] Initializing Full Three.js components...
+  all_tests_v4.txt:18769:[Game] Debug Levels: [
+  all_tests_v4.txt:18770:  {
+  all_tests_v4.txt:18771:    levelId: 1,
+  all_tests_v4.txt:18772:    title: 'The Beginning',
+  all_tests_v4.txt:18773:    mapWidth: 120,
+  all_tests_v4.txt:18774:    mapDepth: 120,
+  all_tests_v4.txt:18775:    initialState: {
+  all_tests_v4.txt:18776:      unitCount: 1,
+  all_tests_v4.txt:18777:      hasEnemyBase: false,
+  all_tests_v4.txt:18778:      hasEnemyGuard: false,
+  all_tests_v4.txt:18779:      goblinCaves: 1
+  all_tests_v4.txt:18780:    },
+  all_tests_v4.txt:18781:    generation: {
+  all_tests_v4.txt:18782:      rockHeight: 9,
+  all_tests_v4.txt:18783:      moistureBase: 0.55,
+  all_tests_v4.txt:18784:      treeDensity: 0.2,
+  all_tests_v4.txt:18785:      landRatio: 0.6
+  all_tests_v4.txt:18786:    }
+  all_tests_v4.txt:18787:  },
+  all_tests_v4.txt:18788:  {
+  all_tests_v4.txt:18789:    levelId: 2,
+  all_tests_v4.txt:18790:    title: 'Expansion',
+  all_tests_v4.txt:18818:      rockHeight: 10,
+  all_tests_v4.txt:18819:      moistureBase: 0.6,
+  all_tests_v4.txt:18820:      treeDensity: 1,
+  all_tests_v4.txt:18821:      landRatio: 0.4
+  all_tests_v4.txt:18822:    }
+  all_tests_v4.txt:18823:  }
+  all_tests_v4.txt:18824:]
+  all_tests_v4.txt:18825:[Game] Init CloudManager
+  all_tests_v4.txt:18826:[Game] Init BirdManager
+  all_tests_v4.txt:18827:[Game] Init SheepManager
+  all_tests_v4.txt:18828:[Game] Init GoblinManager
+  all_tests_v4.txt:18829:[Game] Init FishManager
+  all_tests_v4.txt:18830:[Game] Init Minimap
+  all_tests_v4.txt:18831:[Game] Init Compass
+  all_tests_v4.txt:18832:[Game] Init WeatherManager
+  all_tests_v4.txt:18833:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:18834:[Game] Init UnitRenderer
+  all_tests_v4.txt:18835:[Game] Init BuildingRenderer
+  all_tests_v4.txt:18836:[Game] Init GoblinRenderer
+  all_tests_v4.txt:18837:[Game] Init TreeRenderer
+> all_tests_v4.txt:18838:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:18839:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:18840:[Game] Preview Ready.
+  all_tests_v4.txt:18841:
+  all_tests_v4.txt:18842:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Wandering worker (Low Priority)
+  all_tests_v4.txt:18843:[Entity 2] CONSTRUCTOR START: type=unit at 0,0
+  all_tests_v4.txt:18844:[Entity 2] Calling updatePosition...
+  all_tests_v4.txt:18845:[Entity 2] updatePosition returned.
+  all_tests_v4.txt:18846:[DIAG] Actor Created ID: 2
+  all_tests_v4.txt:18847:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:18848:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:18849:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:18850:      console.error(`[Actor $
+  all_tests_v4.txt:18851:[UnitCore.js] Unit Created ID:2 Role:worker Pos:0,0 Special:false
+  all_tests_v4.txt:18852:[UnitCore.js] Unit Created ID:2 Role:worker Pos:0,0
+  all_tests_v4.txt:18853:[UnitCore.js] Unit Construction Finished ID:2
+  all_tests_v4.txt:18854:[Game] Request Added: build at (10,10) ID:req_0
+  all_tests_v4.txt:18855:[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+  all_tests_v4.txt:18856:[Actor 1] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:18857:
+  all_tests_v4.txt:18858:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Wandering worker (Low Priority)
+  all_tests_v4.txt:18859:[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 10,10
+  all_tests_v4.txt:18860:[Entity 1] startMove -> isMoving:true. Target:10,10 StartTime:0.0000
+  all_tests_v4.txt:18861:
+  all_tests_v4.txt:18862:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Moving worker (Low Priority)
+  all_tests_v4.txt:18863:Disposing detached game instance
+  all_tests_v4.txt:18864:[Game] Dispose called for Game Instance.
+  all_tests_v4.txt:18865:
+  all_tests_v4.txt:18866:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Moving worker (Low Priority)
+  all_tests_v4.txt:18867:[Game] Init SphereGeometry
+  all_tests_v4.txt:18868:[Game] Initializing Full Three.js components...
+  all_tests_v4.txt:18869:[Game] Debug Levels: [
+  all_tests_v4.txt:18870:  {
+  all_tests_v4.txt:18871:    levelId: 1,
+  all_tests_v4.txt:18872:    title: 'The Beginning',
+  all_tests_v4.txt:18873:    mapWidth: 120,
+  all_tests_v4.txt:18874:    mapDepth: 120,
+  all_tests_v4.txt:18875:    initialState: {
+  all_tests_v4.txt:18876:      unitCount: 1,
+  all_tests_v4.txt:18877:      hasEnemyBase: false,
+  all_tests_v4.txt:18878:      hasEnemyGuard: false,
+  all_tests_v4.txt:18879:      goblinCaves: 1
+  all_tests_v4.txt:18880:    },
+  all_tests_v4.txt:18881:    generation: {
+  all_tests_v4.txt:18882:      rockHeight: 9,
+  all_tests_v4.txt:18883:      moistureBase: 0.55,
+  all_tests_v4.txt:18884:      treeDensity: 0.2,
+  all_tests_v4.txt:18885:      landRatio: 0.6
+  all_tests_v4.txt:18886:    }
+  all_tests_v4.txt:18887:  },
+  all_tests_v4.txt:18888:  {
+  all_tests_v4.txt:18918:      rockHeight: 10,
+  all_tests_v4.txt:18919:      moistureBase: 0.6,
+  all_tests_v4.txt:18920:      treeDensity: 1,
+  all_tests_v4.txt:18921:      landRatio: 0.4
+  all_tests_v4.txt:18922:    }
+  all_tests_v4.txt:18923:  }
+  all_tests_v4.txt:18924:]
+  all_tests_v4.txt:18925:[Game] Init CloudManager
+  all_tests_v4.txt:18926:[Game] Init BirdManager
+  all_tests_v4.txt:18927:[Game] Init SheepManager
+  all_tests_v4.txt:18928:[Game] Init GoblinManager
+  all_tests_v4.txt:18929:[Game] Init FishManager
+  all_tests_v4.txt:18930:[Game] Init Minimap
+  all_tests_v4.txt:18931:[Game] Init Compass
+  all_tests_v4.txt:18932:[Game] Init WeatherManager
+  all_tests_v4.txt:18933:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:18934:[Game] Init UnitRenderer
+  all_tests_v4.txt:18935:[Game] Init BuildingRenderer
+  all_tests_v4.txt:18936:[Game] Init GoblinRenderer
+  all_tests_v4.txt:18937:[Game] Init TreeRenderer
+> all_tests_v4.txt:18938:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:18939:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:18940:[Game] Preview Ready.
+  all_tests_v4.txt:18941:
+  all_tests_v4.txt:18942:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Moving worker (Low Priority)
+  all_tests_v4.txt:18943:[Entity 3] CONSTRUCTOR START: type=unit at 0,0
+  all_tests_v4.txt:18944:[Entity 3] Calling updatePosition...
+  all_tests_v4.txt:18945:[Entity 3] updatePosition returned.
+  all_tests_v4.txt:18946:[DIAG] Actor Created ID: 3
+  all_tests_v4.txt:18947:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:18948:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:18949:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:18950:      console.error(`[Actor $
+  all_tests_v4.txt:18951:[UnitCore.js] Unit Created ID:3 Role:worker Pos:0,0 Special:false
+  all_tests_v4.txt:18952:[UnitCore.js] Unit Created ID:3 Role:worker Pos:0,0
+  all_tests_v4.txt:18953:[UnitCore.js] Unit Construction Finished ID:3
+  all_tests_v4.txt:18954:[Game] Request Added: build at (10,10) ID:req_0
+  all_tests_v4.txt:18955:[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+  all_tests_v4.txt:18956:[Actor 1] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:18957:
+  all_tests_v4.txt:18958:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should assign to a Moving worker (Low Priority)
+  all_tests_v4.txt:18959:[Actor 1] Pathfinding SUCCESS: Got 1 nodes to 10,10
+  all_tests_v4.txt:18960:[Entity 1] startMove -> isMoving:true. Target:10,10 StartTime:0.0000
+  all_tests_v4.txt:18961:
+  all_tests_v4.txt:18962:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should re-assign a unit that is "Moving" to a job (Not yet Working)
+  all_tests_v4.txt:18963:Disposing detached game instance
+  all_tests_v4.txt:18964:[Game] Dispose called for Game Instance.
+  all_tests_v4.txt:18965:
+  all_tests_v4.txt:18966:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should re-assign a unit that is "Moving" to a job (Not yet Working)
+  all_tests_v4.txt:18967:[Game] Init SphereGeometry
+  all_tests_v4.txt:18968:[Game] Initializing Full Three.js components...
+  all_tests_v4.txt:18969:[Game] Debug Levels: [
+  all_tests_v4.txt:18970:  {
+  all_tests_v4.txt:18971:    levelId: 1,
+  all_tests_v4.txt:18972:    title: 'The Beginning',
+  all_tests_v4.txt:18973:    mapWidth: 120,
+  all_tests_v4.txt:18974:    mapDepth: 120,
+  all_tests_v4.txt:18975:    initialState: {
+  all_tests_v4.txt:18976:      unitCount: 1,
+  all_tests_v4.txt:18977:      hasEnemyBase: false,
+  all_tests_v4.txt:18978:      hasEnemyGuard: false,
+  all_tests_v4.txt:18979:      goblinCaves: 1
+  all_tests_v4.txt:18980:    },
+  all_tests_v4.txt:18981:    generation: {
+  all_tests_v4.txt:18982:      rockHeight: 9,
+  all_tests_v4.txt:18983:      moistureBase: 0.55,
+  all_tests_v4.txt:18984:      treeDensity: 0.2,
+  all_tests_v4.txt:18985:      landRatio: 0.6
+  all_tests_v4.txt:18986:    }
+  all_tests_v4.txt:18987:  },
+  all_tests_v4.txt:18988:  {
+  all_tests_v4.txt:19018:      rockHeight: 10,
+  all_tests_v4.txt:19019:      moistureBase: 0.6,
+  all_tests_v4.txt:19020:      treeDensity: 1,
+  all_tests_v4.txt:19021:      landRatio: 0.4
+  all_tests_v4.txt:19022:    }
+  all_tests_v4.txt:19023:  }
+  all_tests_v4.txt:19024:]
+  all_tests_v4.txt:19025:[Game] Init CloudManager
+  all_tests_v4.txt:19026:[Game] Init BirdManager
+  all_tests_v4.txt:19027:[Game] Init SheepManager
+  all_tests_v4.txt:19028:[Game] Init GoblinManager
+  all_tests_v4.txt:19029:[Game] Init FishManager
+  all_tests_v4.txt:19030:[Game] Init Minimap
+  all_tests_v4.txt:19031:[Game] Init Compass
+  all_tests_v4.txt:19032:[Game] Init WeatherManager
+  all_tests_v4.txt:19033:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:19034:[Game] Init UnitRenderer
+  all_tests_v4.txt:19035:[Game] Init BuildingRenderer
+  all_tests_v4.txt:19036:[Game] Init GoblinRenderer
+  all_tests_v4.txt:19037:[Game] Init TreeRenderer
+> all_tests_v4.txt:19038:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:19039:[Game] Generating Preview Terrain...
+  all_tests_v4.txt:19040:[Game] Preview Ready.
+  all_tests_v4.txt:19041:
+  all_tests_v4.txt:19042:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should re-assign a unit that is "Moving" to a job (Not yet Working)
+  all_tests_v4.txt:19043:[Entity 4] CONSTRUCTOR START: type=unit at 0,0
+  all_tests_v4.txt:19044:[Entity 4] Calling updatePosition...
+  all_tests_v4.txt:19045:[Entity 4] updatePosition returned.
+  all_tests_v4.txt:19046:[DIAG] Actor Created ID: 4
+  all_tests_v4.txt:19047:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:19048:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:19049:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:19050:      console.error(`[Actor $
+  all_tests_v4.txt:19051:[UnitCore.js] Unit Created ID:4 Role:worker Pos:0,0 Special:false
+  all_tests_v4.txt:19052:[UnitCore.js] Unit Created ID:4 Role:worker Pos:0,0
+  all_tests_v4.txt:19053:[UnitCore.js] Unit Construction Finished ID:4
+  all_tests_v4.txt:19054:[Game] No worker in radius 80 for Manual Req req_new. Trying Global Scan...
+  all_tests_v4.txt:19055:[Actor 10] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:19056:
+  all_tests_v4.txt:19057:stdout | src/tests/ManualAssignment.test.js > Manual Assignment Debugging > should re-assign a unit that is "Moving" to a job (Not yet Working)
+  all_tests_v4.txt:19058:[Actor 10] Pathfinding SUCCESS: Got 1 nodes to 10,10
+  all_tests_v4.txt:19059:[Entity 10] startMove -> isMoving:true. Target:10,10 StartTime:0.0000
+  all_tests_v4.txt:19060:
+  all_tests_v4.txt:19061:stdout | src/tests/CombatLogic.test.js
+  all_tests_v4.txt:19062:[DEBUG] Goblin.ts loaded
+  all_tests_v4.txt:19063:
+  all_tests_v4.txt:19064: 笨・[39m src/tests/ManualAssignment.test.js (5 tests) 78ms
+  all_tests_v4.txt:19065:stdout | src/tests/ComplexAI.test.js
+  all_tests_v4.txt:19066:[DEBUG] Game.ts top-level load
+  all_tests_v4.txt:19067:
+  all_tests_v4.txt:19068:stdout | src/tests/CombatLogic.test.js
+  all_tests_v4.txt:19069:[DEBUG] Building.ts loaded
+  all_tests_v4.txt:19070:
+  all_tests_v4.txt:19071:stdout | src/tests/VerifyUnitUpdate.test.js
+  all_tests_v4.txt:19072:[DEBUG] Actor.ts loaded
+  all_tests_v4.txt:19073:
+  all_tests_v4.txt:19074:stdout | src/tests/ComplexAI.test.js > Complex AI Scenarios > should drop job gracefully if target building is destroyed
+  all_tests_v4.txt:19075:[Game] Init SphereGeometry
+  all_tests_v4.txt:19076:[Game] Minimal/Override Init Start
+  all_tests_v4.txt:19077:[Game] Minimal: Init Clock
+  all_tests_v4.txt:19078:[Game FORCE CONST 1] Creating mock terrain
+  all_tests_v4.txt:19079:[Game] Minimal: Init Managers
+  all_tests_v4.txt:19080:[Game] Minimal: Init GoblinManager
+  all_tests_v4.txt:19081:[GoblinManager] 5蛟九・豢樒ｪ溘ｒ逕滓・荳ｭ...
+  all_tests_v4.txt:19082:[GoblinManager] DETERMINISM: generateCaves start. rngState=undefined
+  all_tests_v4.txt:19083:[GoblinManager] DETERMINISM: Attempt 1: Rnd(0.257614, 0.964449) -> Grid(41, 154) rngState=undefined
+  all_tests_v4.txt:19084:[GoblinManager] DETERMINISM: Attempt 2: Rnd(0.541503, 0.203240) -> Grid(86, 32) rngState=undefined
+  all_tests_v4.txt:19085:[GoblinManager] DETERMINISM: Attempt 3: Rnd(0.410900, 0.457991) -> Grid(65, 73) rngState=undefined
+  all_tests_v4.txt:19086:[GoblinManager] 豢樒ｪ溽函謌仙ｮ御ｺ・ 0/5 (隧ｦ陦悟屓謨ｰ: 5000)
+  all_tests_v4.txt:19087:[Game] Minimal: Init EnemyAI
+  all_tests_v4.txt:19088:[Game] Minimal: Done. Returning.
+  all_tests_v4.txt:21450:      rockHeight: 10,
+  all_tests_v4.txt:21451:      moistureBase: 0.6,
+  all_tests_v4.txt:21452:      treeDensity: 1,
+  all_tests_v4.txt:21453:      landRatio: 0.4
+  all_tests_v4.txt:21454:    }
+  all_tests_v4.txt:21455:  }
+  all_tests_v4.txt:21456:]
+  all_tests_v4.txt:21457:[Game] Init CloudManager
+  all_tests_v4.txt:21458:[Game] Init BirdManager
+  all_tests_v4.txt:21459:[Game] Init SheepManager
+  all_tests_v4.txt:21460:[Game] Init GoblinManager
+  all_tests_v4.txt:21461:[Game] Init FishManager
+  all_tests_v4.txt:21462:[Game] Init Minimap
+  all_tests_v4.txt:21463:[Game] Init Compass
+  all_tests_v4.txt:21464:[Game] Init WeatherManager
+  all_tests_v4.txt:21465:[Game] Init SeaDecorationRenderer
+  all_tests_v4.txt:21466:[Game] Init UnitRenderer
+  all_tests_v4.txt:21467:[Game] Init BuildingRenderer
+  all_tests_v4.txt:21468:[Game] Init GoblinRenderer
+  all_tests_v4.txt:21469:[Game] Init TreeRenderer
+> all_tests_v4.txt:21470:[Game] Init PerformanceMonitor
+  all_tests_v4.txt:21471:[Game] Initializing Start Screen Listeners...
+  all_tests_v4.txt:21472:
+  all_tests_v4.txt:21473:stdout | src/tests/StuckAndMarker.test.js > Stuck and Marker Debugging > should move IMMEDIATELY when assigned a job (no 3s delay)
+  all_tests_v4.txt:21474:[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+  all_tests_v4.txt:21475:[Entity 0] Calling updatePosition...
+  all_tests_v4.txt:21476:[Entity 0] updatePosition returned.
+  all_tests_v4.txt:21477:[DIAG] Actor Created ID: 0
+  all_tests_v4.txt:21478:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:21479:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:21480:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:21481:      console.error(`[Actor $
+  all_tests_v4.txt:21482:[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+  all_tests_v4.txt:21483:[Unit 0] State Change: None -> Wander
+  all_tests_v4.txt:21484:[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+  all_tests_v4.txt:21485:[UnitCore.js] Unit Construction Finished ID:0
+  all_tests_v4.txt:21486:[Actor 0] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:21487:[Game] Request Added: move at (50,50) ID:req_0
+  all_tests_v4.txt:21488:[Game] No worker in radius 80 for Manual Req req_0. Trying Global Scan...
+  all_tests_v4.txt:21489:[Unit 0] State Change: Wander -> Job
+  all_tests_v4.txt:21490:[Actor 0] Resetting Unreachable (Target changed or initializing)
+  all_tests_v4.txt:21491:
+  all_tests_v4.txt:21492:stdout | src/tests/StuckAndMarker.test.js > Stuck and Marker Debugging > should move IMMEDIATELY when assigned a job (no 3s delay)
+  all_tests_v4.txt:21493:[Actor 0] Pathfinding SUCCESS: Got 2 nodes to 50,50
+  all_tests_v4.txt:21494:[Entity 0] startMove -> isMoving:true. Target:11,11 StartTime:0.0000
+  all_tests_v4.txt:21495:
+  all_tests_v4.txt:21496: 笨・[39m src/tests/StuckAndMarker.test.js (1 test) 69ms
+  all_tests_v4.txt:21497:stdout | src/tests/Regression_WorkerLogic.test.js
+  all_tests_v4.txt:21498:[DEBUG] Actor.ts loaded
+  all_tests_v4.txt:21499:
+  all_tests_v4.txt:21500:stdout | src/tests/InterruptResume.test.js
+  all_tests_v4.txt:21501:[DEBUG] Building.ts loaded
+  all_tests_v4.txt:21502:
+  all_tests_v4.txt:21503:stdout | src/tests/InterruptResume.test.js
+  all_tests_v4.txt:21504:[DEBUG] Terrain.ts top-level load
+  all_tests_v4.txt:21505:
+  all_tests_v4.txt:21506:stdout | src/tests/InterruptResume.test.js > Unit Interrupt and Resume > should return to previous movement target after finishing a job
+  all_tests_v4.txt:21507:[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+  all_tests_v4.txt:21508:[Entity 0] Calling registerEntity...
+  all_tests_v4.txt:21509:[Entity 0] registerEntity returned.
+  all_tests_v4.txt:21510:[Entity 0] Calling updatePosition...
+  all_tests_v4.txt:21511:[Entity 0] updatePosition returned.
+  all_tests_v4.txt:21512:[DIAG] Actor Created ID: 0
+  all_tests_v4.txt:21513:[DIAG] Actor smartMove type: function
+  all_tests_v4.txt:21514:[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+  all_tests_v4.txt:21515:    if (isNaN(tx) || isNaN(tz)) {
+  all_tests_v4.txt:21516:      console.error(`[Actor $
+  all_tests_v4.txt:21517:[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10 Special:false
+  all_tests_v4.txt:21518:[Unit 0] State Change: None -> Wander
+  all_tests_v4.txt:21519:[UnitCore.js] Unit Created ID:0 Role:worker Pos:10,10
+  all_tests_v4.txt:21520:[UnitCore.js] Unit Construction Finished ID:0
+

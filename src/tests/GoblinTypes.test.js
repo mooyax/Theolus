@@ -5,39 +5,8 @@ import { Goblin } from '../Goblin.js';
 import { GoblinManager } from '../GoblinManager.js';
 import { MockGame, MockTerrain } from './TestHelper.js';
 
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        InstancedMesh: class {
-            constructor() {
-                this.isObject3D = true; // Required for Scene.add
-                this.instanceMatrix = { setUsage: vi.fn() };
-                this.updateMatrix = vi.fn();
-                this.setMatrixAt = vi.fn();
-                this.setColorAt = vi.fn();
-                this.count = 0;
-                this.castShadow = false;
-                this.receiveShadow = false;
-                this.frustumCulled = false;
-                this.dispose = vi.fn();
-                this.removeFromParent = vi.fn(); // Required for Object3D.add
-                this.dispatchEvent = vi.fn(); // Required for EventDispatcher
-                this.addEventListener = vi.fn();
-                this.removeEventListener = vi.fn();
-            }
-        },
-        Scene: vi.fn(() => ({
-            add: vi.fn(),
-            remove: vi.fn(),
-            getObjectByName: vi.fn(), // Critical Fix
-            clear: vi.fn()
-        })),
-    };
-});
-
 global.THREE = THREE;
-if (!global.window) global.window = {};
+if (!global.window) global.window = { game: null };
 
 describe('Goblin Types & Stats', () => {
     let mockGame;

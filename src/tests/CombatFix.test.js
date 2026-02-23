@@ -22,8 +22,8 @@ describe('Unit Combat Fixes', () => {
         unit.attackGoblin = vi.fn();
         unit.attackBuilding = vi.fn();
         unit.attackUnit = vi.fn();
-    });
 
+    });
     it('should dispatch to attackGoblin when target is a Goblin', () => {
         const goblin = {
             constructor: { name: 'GoblinWarrior' }, // Mock constructor name check
@@ -35,8 +35,8 @@ describe('Unit Combat Fixes', () => {
         expect(unit.attackGoblin).toHaveBeenCalledWith(goblin);
         expect(unit.attackBuilding).not.toHaveBeenCalled();
         expect(unit.attackUnit).not.toHaveBeenCalled();
-    });
 
+    });
     it('should dispatch to attackBuilding when target is a Building', () => {
         const building = {
             type: 'building',
@@ -48,8 +48,8 @@ describe('Unit Combat Fixes', () => {
         unit.attack(building, 100);
         expect(unit.attackBuilding).toHaveBeenCalledWith(building);
         expect(unit.attackGoblin).not.toHaveBeenCalled();
-    });
 
+    });
     it('should dispatch to attackUnit when target is a Unit/Sheep', () => {
         const sheep = {
             constructor: { name: 'Sheep' },
@@ -60,12 +60,13 @@ describe('Unit Combat Fixes', () => {
 
         unit.attack(sheep, 100);
         expect(unit.attackUnit).toHaveBeenCalledWith(sheep);
-    });
 
+    });
     it('should handle missing target gracefully', () => {
         unit.attack(null, 100);
         expect(unit.attackGoblin).not.toHaveBeenCalled();
         expect(unit.attackBuilding).not.toHaveBeenCalled();
         expect(unit.attackUnit).not.toHaveBeenCalled();
-    });
+
+});
 });

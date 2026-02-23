@@ -1,4 +1,4 @@
-﻿import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit';
 import { Wander } from '../ai/states/UnitStates';
 import { MockGame, MockTerrain } from './TestHelper';
@@ -25,8 +25,8 @@ describe('Stabilization Verified', () => {
         unit = new Unit(game.scene, terrain, 5, 5, 'worker');
         unit.game = game; // Link game
         unit.id = 0;
-    });
 
+    });
     it('should NOT overwrite Action: Moving with Idle during Wander state self-transition', () => {
         // Setup: Unit is wandering and starts moving
         const state = new Wander(unit);
@@ -42,8 +42,8 @@ describe('Stabilization Verified', () => {
         // Assertion: Action should remain 'Moving' because we added the guard
         expect(unit.action).toBe('Moving');
         expect(unit.isMoving).toBe(true);
-    });
 
+    });
     it('should NOT build on slope (Strict Check)', () => {
         // Setup: Make 5,5 flat (10), but 5,6 slope (12)
         terrain.grid[5][5].height = 10;
@@ -57,8 +57,8 @@ describe('Stabilization Verified', () => {
         const built = unit.tryBuildStructure(100);
 
         expect(built).toBe(false); // Should fail due to slope
-    });
 
+    });
     it('should build on flat ground', () => {
         // Setup: All flat
 
@@ -72,8 +72,8 @@ describe('Stabilization Verified', () => {
         // Verify House added
         const cell = terrain.grid[5][5];
         expect(terrain.buildings.length).toBeGreaterThan(0);
-    });
 
+    });
     it('should NOT build infinite houses (Population Cap Logic)', () => {
         // Setup: 5 Units, 1 House (Capacity 5)
         // Rule: CurrentPop (5) >= Capacity (5) - 2 (3) -> True? 
@@ -100,6 +100,7 @@ describe('Stabilization Verified', () => {
         const built = unit.tryBuildStructure(100);
 
         expect(built).toBe(false); // Population satisfaction met
-    });
-});
 
+
+});
+});

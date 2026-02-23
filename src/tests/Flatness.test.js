@@ -36,34 +36,35 @@ describe('Terrain Flatness Check', () => {
             }
             return true;
         };
-    });
 
+    });
     it('should PASS perfectly flat terrain', () => {
         expect(terrain.checkFlatArea(0, 0, 2, 0.1)).toBe(true);
-    });
 
+    });
     it('should PASS minor noise (within 0.1)', () => {
         terrain.grid[0][1].height = 10.05;
         terrain.grid[1][0].height = 9.95;
         expect(terrain.checkFlatArea(0, 0, 2, 0.1)).toBe(true);
-    });
 
+    });
     it('should FAIL excessive noise (> 0.1)', () => {
         terrain.grid[0][1].height = 10.11;
         expect(terrain.checkFlatArea(0, 0, 2, 0.1)).toBe(false);
-    });
 
+    });
     it('should FAIL slope', () => {
         terrain.grid[0][0].height = 10;
         terrain.grid[0][1].height = 10.2;
         terrain.grid[1][0].height = 10.5;
         terrain.grid[1][1].height = 10.8;
         expect(terrain.checkFlatArea(0, 0, 2, 0.1)).toBe(false);
-    });
 
+    });
     it('should FAIL water (height 0)', () => {
         terrain.grid[0][0].height = 0;
         expect(terrain.checkFlatArea(0, 0, 2, 0.1)).toBe(false);
-    });
-});
 
+
+});
+});

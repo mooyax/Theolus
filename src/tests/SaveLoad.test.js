@@ -21,8 +21,8 @@ describe('Save/Load System', () => {
         game.terrain.updateMesh = vi.fn();
         game.terrain.generate = vi.fn();
         window.game = game; // Fix: Ensure global game access for Units
-    });
 
+    });
     it('should save game data correctly', () => {
         game.resources = { grain: 100, fish: 50, meat: 25 };
         game.gameTime = 12.0;
@@ -56,8 +56,8 @@ describe('Save/Load System', () => {
         const json = JSON.parse(decompressed);
 
         expect(json.data.resources.grain).toBe(100);
-    });
 
+    });
     it('should load game data correctly', async () => {
         const savedData = {
             timestamp: Date.now(),
@@ -84,8 +84,8 @@ describe('Save/Load System', () => {
         expect(game.resources.grain).toBe(999);
         expect(game.terrain.deserialize).toHaveBeenCalled();
         expect(game.isLoaded).toBe(true);
-    });
 
+    });
     it('should restore request markers with correct renderOrder', async () => {
         // Mock Marker Material explicitly to ensure clone works in test env
         game.markerMaterial = {
@@ -137,5 +137,6 @@ describe('Save/Load System', () => {
         // Since clone returns the SAME mock object (simplified), we can check calls to setHex?
         // But the mock returns a NEW object? No, mockReturnValue returns the SAME object reference usually unless mockReturnValueOnce.
         // Let's rely on renderOrder for now as correct restoration proof.
-    });
+
+});
 });

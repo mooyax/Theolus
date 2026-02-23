@@ -31,12 +31,12 @@ describe('Job Pathfinding Failure Handling', () => {
 
         mockGame.units = [unit];
         window.game = mockGame;
-    });
 
+    });
     afterEach(() => {
         vi.restoreAllMocks();
-    });
 
+    });
     it('should abandon job if smartMove fails repeatedly', async () => {
         // Mock Unit prototype canMoveTo to FORCE FAIL (simulate blockage)
         // Mock smartMove to FAIL
@@ -67,5 +67,6 @@ describe('Job Pathfinding Failure Handling', () => {
 
         // EXPECTATION: Should detect failure and release job
         expect(unit.targetRequest).toBeNull();
-    });
+
+});
 });

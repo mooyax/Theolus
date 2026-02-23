@@ -37,8 +37,8 @@ describe('Terrain Detection Logic', () => {
             if (x < 0 || x >= 20 || z < 0 || z >= 20) return -1;
             return terrain.grid[x][z].regionId;
         };
-    });
 
+    });
     it('should detect target in same region', () => {
         const cx = 5, cz = 5; // Region 1
         const target = { gridX: 6, gridZ: 6, type: 'goblin', id: 1 }; // Region 1
@@ -47,8 +47,8 @@ describe('Terrain Detection Logic', () => {
         const best = terrain.findBestTarget('goblin', cx, cz, 10, (e, dist) => dist, list);
 
         expect(best).toBe(target);
-    });
 
+    });
     it('should NOT detect target in different region (Cross Mountain)', () => {
         const cx = 5, cz = 5; // Region 1
         const target = { gridX: 15, gridZ: 5, type: 'goblin', id: 2 }; // Region 2
@@ -58,8 +58,8 @@ describe('Terrain Detection Logic', () => {
         const best = terrain.findBestTarget('goblin', cx, cz, 20, (e, dist) => dist, list);
 
         expect(best).toBeNull();
-    });
 
+    });
     it('should rely on Grid search and respect regions', () => {
         // Populate Entity Grid
         terrain.entityGrid = [];
@@ -84,8 +84,8 @@ describe('Terrain Detection Logic', () => {
         const best = terrain.findBestTarget('goblin', cx, cz, 20, (e, dist) => dist, null);
 
         expect(best).toBe(targetSame); // Should pick the one in same region, ignoring the other
-    });
 
+    });
     it('should detect target in different region IF CLOSE (Melee Exemption)', () => {
         const cx = 5, cz = 5; // Region 1
         const targetDiffClose = { gridX: 6, gridZ: 6, type: 'goblin', id: 3 }; // Region 2 (d2 = 2 < 9)
@@ -103,5 +103,6 @@ describe('Terrain Detection Logic', () => {
         const best = terrain.findBestTarget('goblin', cx, cz, 20, (e, dist) => dist, list);
 
         expect(best).toBe(targetDiffClose); // Should pick the close one despite region mismatch
-    });
+
+});
 });

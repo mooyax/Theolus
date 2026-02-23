@@ -1,3 +1,4 @@
+
 import { vi, describe, it, expect } from 'vitest';
 
 // --- MINIMAL STUBS (No imports from ../ to avoid mock loops) ---
@@ -40,9 +41,7 @@ describe('Squad-Based Memory (Decoupled)', () => {
     it('should link manually spawned units to nearby barracks', () => {
         const game = new MockGame();
         const barracks = { type: 'barracks', gridX: 10, gridZ: 10, userData: { type: 'barracks' } };
-
         const unit = game.spawnUnit(12, 12, 'knight', barracks);
-
         expect(unit).toBeDefined();
         expect(unit.homeBase).toBe(barracks);
     });

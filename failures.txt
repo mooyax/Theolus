@@ -1,0 +1,42 @@
+ [31m笶ｯ[39m src/tests/TreeSway.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 26[2mms[22m[39m
+ [31m笶ｯ[39m src/tests/WeatherSway.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 1434[2mms[22m[39m
+[90mstdout[2m | src/tests/RequestProactiveManagement.test.js[2m > [22m[2mRequestProactiveManagement[2m > [22m[2mshould remove request immediately if execution fails (e.g. build collision)
+[90mstdout[2m | src/tests/RequestProactiveManagement.test.js[2m > [22m[2mRequestProactiveManagement[2m > [22m[2mshould remove request immediately if execution fails (e.g. build collision)
+[90mstdout[2m | src/tests/RequestProactiveManagement.test.js[2m > [22m[2mRequestProactiveManagement[2m > [22m[2mshould remove request immediately if execution fails (e.g. build collision)
+[Game] Request Execution Failed (build_house). Removing from queue.
+ [31m笶ｯ[39m src/tests/SaveLoadRestoration.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 2653[2mms[22m[39m
+     [33m[2m笨・[22m[39m should remove request immediately if execution fails (e.g. build collision) [33m 375[2mms[22m[39m
+[90mstdout[2m | src/tests/ManualRequestIntegration.test.js[2m > [22m[2mManual Request Integration[2m > [22m[2mshould fail to find path if blocked by water
+[90mstdout[2m | src/tests/ManualRequestIntegration.test.js[2m > [22m[2mManual Request Integration[2m > [22m[2mshould fail to find path if blocked by water
+[Combat] Move Failed (Unreachable/NoPath). Abandoning Combat. Unit:1
+[90mstdout[2m | src/tests/CombatStuck.test.js[2m > [22m[2mCombat Stuck Investigation[2m > [22m[2mshould NOT get stuck in Combat state if smartMove fails (No Path) even if isUnreachable is false
+[90mstdout[2m | src/tests/CombatStuck.test.js[2m > [22m[2mCombat Stuck Investigation[2m > [22m[2mshould NOT get stuck in Combat state if smartMove fails (No Path) even if isUnreachable is false
+[90mstdout[2m | src/tests/CombatStuck.test.js[2m > [22m[2mCombat Stuck Investigation[2m > [22m[2mshould NOT get stuck in Combat state if smartMove fails (No Path) even if isUnreachable is false
+[Combat] Move Failed (Unreachable/NoPath). Abandoning Combat. Unit:1
+[Combat] Move Failed (Unreachable/NoPath). Abandoning Combat. Unit:1
+[Combat] Move Failed (Unreachable/NoPath). Abandoning Combat. Unit:1
+[90mstdout[2m | src/tests/CombatRetaliation.test.js[2m > [22m[2mCombat Retaliation System[2m > [22m[2mshould switch strictly for self-defense scan failure in Job (Non-worker)
+[90mstdout[2m | src/tests/CombatRetaliation.test.js[2m > [22m[2mCombat Retaliation System[2m > [22m[2mshould switch strictly for self-defense scan failure in Job (Non-worker)
+[90mstdout[2m | src/tests/CombatRetaliation.test.js[2m > [22m[2mCombat Retaliation System[2m > [22m[2mshould switch strictly for self-defense scan failure in Job (Non-worker)
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould prioritize Farm and ABORT house if farm fails during famine
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mBuild Priority (Famine)[2m > [22m[2mshould prioritize Farm and ABORT house if farm fails during famine
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould FAIL buildFarm and IMPROVE LAND if moisture is poor
+[90mstdout[2m | src/tests/Unit.test.js[2m > [22m[2mUnit Logic[2m > [22m[2mAdvanced Mechanics - Unit[2m > [22m[2mshould FAIL buildFarm and IMPROVE LAND if moisture is poor
+[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT build a house immediately if pathfinding fails temporarily
+[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT build a house immediately if pathfinding fails temporarily
+[90mstdout[2m | src/tests/WorkerDistraction.test.js[2m > [22m[2mWorker Distraction Investigation[2m > [22m[2mshould NOT build a house immediately if pathfinding fails temporarily
+[90mstdout[2m | src/tests/JobPathFailure.test.js
+[90mstdout[2m | src/tests/JobPathFailure.test.js
+[90mstdout[2m | src/tests/JobPathFailure.test.js
+[90mstdout[2m | src/tests/JobPathFailure.test.js[2m > [22m[2mJob Pathfinding Failure Handling[2m > [22m[2mshould abandon job if smartMove fails repeatedly
+[90mstdout[2m | src/tests/JobPathFailure.test.js[2m > [22m[2mJob Pathfinding Failure Handling[2m > [22m[2mshould abandon job if smartMove fails repeatedly
+ [32m笨・[39m src/tests/JobPathFailure.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 27[2mms[22m[39m
+[90mstdout[2m | src/tests/UnitMigration.test.js[2m > [22m[2mUnit Migration Logic[2m > [22m[2mshould increment stagnation on failed build
+[90mstdout[2m | src/tests/UnitMigration.test.js[2m > [22m[2mUnit Migration Logic[2m > [22m[2mshould increment stagnation on failed build
+[90mstdout[2m | src/tests/MarkerDistraction.test.js[2m > [22m[2mMarker Distraction and Pathfinding Persistence[2m > [22m[2mshould be more persistent for manual jobs on hard failure
+[90mstdout[2m | src/tests/MarkerDistraction.test.js[2m > [22m[2mMarker Distraction and Pathfinding Persistence[2m > [22m[2mshould be more persistent for manual jobs on hard failure
+[90mstdout[2m | src/tests/ManualBuild.test.js[2m > [22m[2mManual Build Job Logic[2m > [22m[2mshould NOT freeze if arrived but building fails
+[90mstdout[2m | src/tests/ManualBuild.test.js[2m > [22m[2mManual Build Job Logic[2m > [22m[2mshould NOT freeze if arrived but building fails
+[90mstdout[2m | src/tests/ManualBuild.test.js[2m > [22m[2mManual Build Job Logic[2m > [22m[2mshould NOT freeze if arrived but building fails
+[2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m184 passed[39m[22m[90m (187)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m526 passed[39m[22m[90m (533)[39m

@@ -9,12 +9,7 @@ describe('Terrain Force Build Logic', () => {
 
     beforeEach(() => {
         // Mock Browser Globals
-        global.window = {
-            location: { search: '' },
-            game: {
-                units: []
-            }
-        };
+        
         // Also set on global for direct access if code uses `game` (though usually it's window.game)
         global.game = global.window.game;
 
@@ -29,8 +24,8 @@ describe('Terrain Force Build Logic', () => {
                 }
             }
         }
-    });
 
+    });
     it('should clear existing buildings when placing a new one', () => {
         // 1. Place a House at (10, 10)
         terrain.addBuilding('house', 10, 10);
@@ -58,8 +53,8 @@ describe('Terrain Force Build Logic', () => {
         cell = terrain.grid[10][10];
         expect(cell.hasBuilding).toBe(true);
         expect(cell.building.type).toBe('barracks');
-    });
 
+    });
     it('should clear buildings partially in the way', () => {
         // 1. Place House at (10, 10)
         terrain.addBuilding('house', 10, 10);
@@ -77,5 +72,6 @@ describe('Terrain Force Build Logic', () => {
         expect(hasHouse).toBe(false);
         expect(terrain.buildings.length).toBe(1);
         expect(terrain.buildings[0].type).toBe('barracks');
-    });
+
+});
 });

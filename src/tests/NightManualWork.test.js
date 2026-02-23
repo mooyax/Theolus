@@ -4,17 +4,6 @@ import { Unit } from '../Unit.js';
 import { Job, Wander, Sleep } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 
-// Mock THREE
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        Group: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); } },
-        Mesh: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); } },
-        Scene: class { constructor() { this.add = vi.fn(); this.remove = vi.fn(); } },
-    };
-});
-
 describe('Night Manual Work Priority', () => {
     let terrain, unit, game;
 
@@ -54,8 +43,8 @@ describe('Night Manual Work Priority', () => {
         unit.simTime = 100;
         unit.game = game;
         game.units.push(unit);
-    });
 
+    });
     it('should go toward shelter (Going Home) if only AUTO jobs available at night', () => {
         // Add a shelter so transition to Sleep/Going Home is possible
         const shelter = { gridX: 50, gridZ: 50, type: 'house', id: 'h1', userData: { hp: 100, faction: 'player' } };
@@ -75,8 +64,8 @@ describe('Night Manual Work Priority', () => {
         expect(unit.state).toBeInstanceOf(Sleep);
         // And because we are far from shelter (10,10 vs 50,50), action should stay/become Going Home
         expect(unit.action).toBe('Going Home');
-    });
 
+    });
     it('should continue MANUAL job when night falls', () => {
         const manReq = { id: 10, type: 'raise', x: 20, z: 20, isManual: true, assignedTo: unit.id, status: 'assigned' };
         unit.targetRequest = manReq;
@@ -89,8 +78,8 @@ describe('Night Manual Work Priority', () => {
         expect(unit.state).toBeInstanceOf(Job);
         expect(unit.targetRequest).toBe(manReq);
         expect(game.releaseRequest).not.toHaveBeenCalled();
-    });
 
+    });
     it('should NOT release AUTO job when night falls if already active', () => {
         const autoReq = { id: 11, type: 'raise', x: 20, z: 20, isManual: false, assignedTo: unit.id, status: 'assigned' };
         unit.targetRequest = autoReq;
@@ -103,8 +92,8 @@ describe('Night Manual Work Priority', () => {
         // Should STILL be in Job (don't interrupt started work)
         expect(unit.state).toBeInstanceOf(Job);
         expect(game.releaseRequest).not.toHaveBeenCalled();
-    });
 
+    });
     it('should prefer MANUAL job over sleep in Wander at night', () => {
         unit.changeState(new Wander(unit));
         expect(unit.state).toBeInstanceOf(Wander);
@@ -117,5 +106,6 @@ describe('Night Manual Work Priority', () => {
 
         expect(unit.state).toBeInstanceOf(Job);
         expect(unit.targetRequest).toBe(manReq);
-    });
+
+});
 });

@@ -2,26 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
 import { Job, Wander } from '../ai/states/UnitStates.js';
 
-// Mock THREE
-vi.mock('three', () => {
-    return {
-        Vector3: class {
-            constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
-            clone() { return new this.constructor(this.x, this.y, this.z); }
-            add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
-            sub(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
-            multiplyScalar(s) { this.x *= s; this.y *= s; this.z *= s; return this; }
-            distanceTo(v) { return Math.sqrt((this.x - v.x) ** 2 + (this.z - v.z) ** 2); }
-            copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
-            set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; }
-        },
-        Group: class { constructor() { this.position = { x: 0, y: 0, z: 0 }; this.add = vi.fn(); this.remove = vi.fn(); this.children = []; } },
-        Mesh: class { constructor() { this.position = { x: 0, y: 0, z: 0 }; this.scale = { set: vi.fn() }; this.rotation = { y: 0 }; } },
-        MeshLambertMaterial: class { },
-        BoxGeometry: class { },
-    };
-});
-
 // Mock Global Window/Game
 const mockGame = {
     gameTime: 100,
@@ -79,8 +59,8 @@ describe('Building Distraction Bug', () => {
         // Create Worker Unit
         unit = new Unit(mockScene, mockTerrain, 10, 10, 'worker');
         mockGame.units.push(unit);
-    });
 
+    });
     it('should NOT build a house while in Job moving to target', () => {
         // 1. Assign Job (Move to 20,20)
         // Correctly use ID for assignedTo
@@ -117,8 +97,8 @@ describe('Building Distraction Bug', () => {
         } else {
             console.log('[Test] PASSED: Worker stayed focused.');
         }
-    });
 
+    });
     it('should NOT build immediately after job abort (cooldown check)', () => {
         // 1. Simulate Job Abort
         unit.lastJobAbortTime = 5.0; // Aborted at 5.0s
@@ -151,5 +131,6 @@ describe('Building Distraction Bug', () => {
              console.log('[Test] Build attempted after cooldown.');
         }
         */
-    });
+
+});
 });

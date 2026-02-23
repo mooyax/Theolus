@@ -5,40 +5,8 @@ import * as THREE from 'three';
 import { MockGame, MockTerrain } from './TestHelper.js';
 import { Goblin } from '../Goblin.js';
 
-// Mock Three.js
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        InstancedMesh: class {
-            constructor() {
-                this.isObject3D = true;
-                this.instanceMatrix = { setUsage: vi.fn() };
-                this.updateMatrix = vi.fn();
-                this.setMatrixAt = vi.fn();
-                this.setColorAt = vi.fn();
-                this.count = 0;
-                this.castShadow = false;
-                this.receiveShadow = false;
-                this.frustumCulled = false;
-                this.dispose = vi.fn();
-                this.removeFromParent = vi.fn();
-                this.dispatchEvent = vi.fn();
-                this.addEventListener = vi.fn();
-                this.removeEventListener = vi.fn();
-            }
-        },
-        Scene: vi.fn(() => ({
-            add: vi.fn(),
-            remove: vi.fn(),
-            getObjectByName: vi.fn(),
-            clear: vi.fn()
-        })),
-    };
-});
-
 global.THREE = THREE;
-if (!global.window) global.window = {};
+if (!global.window) global.window = { game: null };
 
 describe('Goblin Hut Spawning', () => {
     let goblinManager;
@@ -52,7 +20,6 @@ describe('Goblin Hut Spawning', () => {
     beforeEach(() => {
         mockGame = new MockGame();
         mockTerrain = new MockTerrain(100, 100);
-        // Add registerCave if missing (TestHelper update might be needed if not preserved)
         if (!mockTerrain.registerCave) {
             mockTerrain.registerCave = (x, z, cave) => {
                 mockTerrain.buildings.push(cave);
@@ -86,8 +53,8 @@ describe('Goblin Hut Spawning', () => {
 
         const spawnSpy = vi.spyOn(goblinManager, 'spawnGoblinAtCave');
         spawnSpy.mockImplementation((cave) => {
-            // Simulate side effect of real method
-            if (cave.building) cave.building.userData.population -= 1.0;
+            // Simplified logic for tool validation
+            if (cave && cave.userData) cave.userData.population -= 1.0;
             return true;
         });
 
@@ -104,15 +71,12 @@ describe('Goblin Hut Spawning', () => {
         };
         mockTerrain.buildings = [hut];
         goblinManager.goblins = Array(300).fill({});
-        goblinManager.MAX_GOBLINS = 300; // Force cap logic check
+        goblinManager.MAX_GOBLINS = 300;
 
         const spawnSpy = vi.spyOn(goblinManager, 'spawnGoblinAtCave');
-
-        goblinManager.checkHutSpawns(1.0); // Correct method name
+        goblinManager.checkHutSpawns(1.0);
 
         expect(spawnSpy).not.toHaveBeenCalled();
         expect(hut.userData.population).toBe(10.5);
     });
 });
-
-

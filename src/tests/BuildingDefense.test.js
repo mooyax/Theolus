@@ -2,18 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Goblin } from '../Goblin.js';
 import { Unit } from '../Unit.js';
 
-// Mock THREE and Terrain
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        WebGLRenderer: vi.fn().mockImplementation(() => ({
-            setSize: vi.fn(),
-            render: vi.fn(),
-        })),
-    };
-});
-
 describe('Building Defense Logic', () => {
     let mockScene, mockTerrain, mockBuilding;
 
@@ -131,16 +119,6 @@ describe('Building Defense Logic', () => {
         mockBuilding.userData.type = 'tower'; // Defense 10.0
 
         shaman.attackBuilding(mockBuilding);
-
-        // PopDamage = 2 * 0.5 = 1 pop lost (Damage 2?)
-        // Wait, Shaman damage is 35 (Config). But test might not use Config if mock?
-        // Goblin constructor usually defaults damage based on type if loading from config...
-        // But here we construct Goblin with 'shaman'.
-        // Let's explicitly set damage to be sure, or trust default.
-        // If damage=35, PopDamage = 3. Remaining Pop = 2.
-        // Retaliation = 2 * 10 = 20.
-        // Shaman HP 100 -> 80.
-
         expect(shaman.hp).toBeLessThan(100);
     });
 
@@ -158,7 +136,6 @@ describe('Building Defense Logic', () => {
         });
 
         goblin.findTarget(units, buildings);
-
         expect(goblin.targetBuilding).toBe(mockBuilding);
     });
 
@@ -172,4 +149,5 @@ describe('Building Defense Logic', () => {
         expect(cave.userData.hp).toBe(150);
         expect(mockTerrain.removeBuilding).not.toHaveBeenCalled();
     });
+
 });

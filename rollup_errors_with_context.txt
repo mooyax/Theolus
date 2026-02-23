@@ -1,0 +1,54 @@
+ [32m笨・[39m src/tests/Minimal.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Suites 12 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/BuildingDefense.test.js [ src/tests/BuildingDefense.test.js ]
+RollupError: Parse failure: Expected ';', '}' or <eof>
+ 笶ｯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:23347:64
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/38]竡ｯ
+
+ FAIL  src/tests/ComplexAI.test.js [ src/tests/ComplexAI.test.js ]
+RollupError: Parse failure: Expected ';', '}' or <eof>
+ 笶ｯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:23316:26
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[3/38]竡ｯ
+
+ FAIL  src/tests/EcoSpawnFix.test.js [ src/tests/EcoSpawnFix.test.js ]
+RollupError: Parse failure: Expected ';', '}' or <eof>
+ 笶ｯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:23347:64
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[4/38]竡ｯ
+
+ FAIL  src/tests/ForceAssignment.test.js [ src/tests/ForceAssignment.test.js ]
+RollupError: Parse failure: Expression expected
+ 笶ｯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:23347:64
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[5/38]竡ｯ
+
+ FAIL  src/tests/GoblinActivity.test.js [ src/tests/GoblinActivity.test.js ]
+RollupError: Parse failure: Expression expected
+ 笶ｯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:23347:64
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[6/38]竡ｯ
+
+ FAIL  src/tests/GoblinSpawn.test.js [ src/tests/GoblinSpawn.test.js ]
+RollupError: Parse failure: Expression expected
+ 笶ｯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:23347:64
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[7/38]竡ｯ
+
+ FAIL  src/tests/HelpShowroom.test.js [ src/tests/HelpShowroom.test.js ]
+RollupError: Parse failure: Expression expected
+ 笶ｯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:23347:64
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[8/38]竡ｯ
+
+ FAIL  src/tests/JitterInvestigation.test.js [ src/tests/JitterInvestigation.test.js ]
+RollupError: Parse failure: Expression expected
+ 笶ｯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:23347:64
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[9/38]竡ｯ
+
+ FAIL  src/tests/MultiJob.test.js [ src/tests/MultiJob.test.js ]
+RollupError: Parse failure: Expression expected

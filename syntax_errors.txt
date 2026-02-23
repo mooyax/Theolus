@@ -1,0 +1,72 @@
+Syntax Error in ActionLabelStability.test.js: Unexpected end of input
+Syntax Error in BuildingDefense.test.js: Unexpected end of input
+Syntax Error in CavePersistence.test.js: Unexpected end of input
+Syntax Error in CombatFixes.test.js: Unexpected end of input
+Syntax Error in CombatRetaliation.test.js: Unexpected end of input
+Syntax Error in CombatStuck.test.js: Unexpected end of input
+Syntax Error in CounterBalance.test.js: Unexpected end of input
+Syntax Error in DefeatCondition.test.js: missing ) after argument list
+Syntax Error in EncounterCombat.test.js: Unexpected end of input
+Syntax Error in FactionWar.test.js: Unexpected end of input
+Syntax Error in FarmWaves.test.js: Unexpected end of input
+Syntax Error in ForceAssignment.test.js: Unexpected end of input
+Syntax Error in GameLighting.test.js: Unexpected end of input
+Syntax Error in GameLoopVerify.test.js: Unexpected end of input
+Syntax Error in GoblinActivity.test.js: Unexpected end of input
+Syntax Error in GoblinAggression.test.js: Unexpected end of input
+Syntax Error in GoblinEncounter.test.js: Unexpected end of input
+Syntax Error in GoblinFixes.test.js: Unexpected end of input
+Syntax Error in GoblinHutDestruction.test.js: Unexpected end of input
+Syntax Error in GoblinSpawn.test.js: Unexpected end of input
+Syntax Error in GoblinStats.test.js: Unexpected end of input
+Syntax Error in GoblinStuckness.test.js: Unexpected end of input
+Syntax Error in GoblinTypes.test.js: Unexpected end of input
+Syntax Error in GroupCombat.test.js: missing ) after argument list
+Syntax Error in Hysteresis.test.js: Unexpected end of input
+Syntax Error in IdleRegression.test.js: Unexpected end of input
+Syntax Error in JobAssignment.test.js: await is only valid in async functions and the top level bodies of modules
+Syntax Error in JobIdempotency.test.js: Unexpected end of input
+Syntax Error in JobReassignment.test.js: Unexpected end of input
+Syntax Error in LevelResourceReset.test.js: Unexpected end of input
+Syntax Error in Lighting.test.js: missing ) after argument list
+Syntax Error in LoadJitabata.test.js: Unexpected end of input
+Syntax Error in ManualJobFlicker.test.js: Unexpected end of input
+Syntax Error in ManualRequestIntegration.test.js: Unexpected token 'return'
+Syntax Error in MarkerDistraction.test.js: Unexpected end of input
+Syntax Error in MigrationImprovement.test.js: Illegal return statement
+Syntax Error in Movement.test.js: Unexpected end of input
+Syntax Error in NightLoadJob.test.js: Unexpected token '}'
+Syntax Error in NightLogic.test.js: Unexpected end of input
+Syntax Error in PathfindingTimeout.test.js: Unexpected identifier 'vi'
+Syntax Error in PerformanceMonitor.test.js: Unexpected identifier 'vi'
+Syntax Error in PopulationSpawningFix.test.js: Unexpected token 'const'
+Syntax Error in RealGrowth.test.js: Unexpected end of input
+Syntax Error in RealTerrainRestoration.test.js: Unexpected end of input
+Syntax Error in RequestLifecycle.test.js: Unexpected end of input
+Syntax Error in ResourceGathering.test.js: Unexpected identifier 'describe'
+Syntax Error in RubberBanding.test.js: Unexpected end of input
+Syntax Error in SaveLoadIntegration.test.js: Unexpected end of input
+Syntax Error in SheepHuntingFix.test.js: Unexpected end of input
+Syntax Error in ShorelineLoop.test.js: Unexpected end of input
+Syntax Error in SlopeSpeed.test.js: Unexpected end of input
+Syntax Error in SquadAi.test.js: Unexpected token 'return'
+Syntax Error in SquadMemory.test.js: Unexpected token '}'
+Syntax Error in StartupCrash.test.js: Unexpected end of input
+Syntax Error in StressTest.test.js: Unexpected string
+Syntax Error in StuckAndMarker.test.js: Unexpected token ','
+Syntax Error in TargetingPriority.test.js: Unexpected end of input
+Syntax Error in Terrain.test.js: Unexpected identifier 'terrain'
+Syntax Error in TerrainJobReach.test.js: Unexpected identifier 'describe'
+Syntax Error in TerrainSpeed.test.js: Unexpected token ')'
+Syntax Error in Unit.test.js: Unexpected end of input
+Syntax Error in UnitAISearch.test.js: Unexpected end of input
+Syntax Error in UnitLifecycle.test.js: Unexpected end of input
+Syntax Error in UnitStress.test.js: missing ) after argument list
+Syntax Error in UnitVisibility.test.js: missing ) after argument list
+Syntax Error in UnitWrapping.test.js: Unexpected end of input
+Syntax Error in VerifyBuildingGrowth.test.js: Unexpected end of input
+Syntax Error in WaterEntry.test.js: Unexpected end of input
+Syntax Error in WinLossDelay.test.js: Unexpected end of input
+Syntax Error in WorkerDistraction.test.js: await is only valid in async functions and the top level bodies of modules
+Syntax Error in WorkerLogic.test.js: Unexpected end of input
+71 files have syntax errors.

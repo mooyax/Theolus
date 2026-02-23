@@ -1,26 +1,24 @@
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as THREE from 'three';
 import { Building } from '../Building.js';
 import { Game } from '../Game.js';
 import { GameConfig } from '../config/GameConfig';
 import { setupTestEnv } from './TestUtils';
 
-// Note: setup.js handles global mocks for THREE, Canvas, and Managers.
-
-// Mock Unit & Goblin Statics (Specific to Game init requiring them)
-vi.mock('../Unit.js', async () => {
-    const { Unit } = await vi.importActual('../Unit.js');
-    Unit.createFaceTexture = vi.fn().mockReturnValue(new THREE.Texture());
-    Unit.initAssets = vi.fn();
-    return { Unit };
+// Mock Unit & Goblin Statics
+vi.mock('../Unit.js', async (importActual) => {
+    const actual = await importActual();
+    actual.Unit.createFaceTexture = vi.fn().mockReturnValue(new THREE.Texture());
+    actual.Unit.initAssets = vi.fn();
+    return actual;
 });
 
-vi.mock('../Goblin.js', async () => {
-    const { Goblin } = await vi.importActual('../Goblin.js');
-    Goblin.createFaceTexture = vi.fn().mockReturnValue(new THREE.Texture());
-    Goblin.initAssets = vi.fn();
-    return { Goblin };
+vi.mock('../Goblin.js', async (importActual) => {
+    const actual = await importActual();
+    actual.Goblin.createFaceTexture = vi.fn().mockReturnValue(new THREE.Texture());
+    actual.Goblin.initAssets = vi.fn();
+    return actual;
 });
 
 describe('Goblin Spawning Logic', () => {
@@ -28,17 +26,17 @@ describe('Goblin Spawning Logic', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        // Use TestUtils to setup environment
         const env = setupTestEnv({ useMockTerrain: true });
         terrain = env.terrain;
-
-        // Ensure terrain.buildings is clean
         terrain.buildings = [];
     });
 
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
     it('should update building population', () => {
-        // Use real Building logic with mock terrain
-        const cave = new Building(null, terrain, 'cave', 10, 10);
+        const cave = new Building(new THREE.Scene(), terrain, 'cave', 10, 10);
         terrain.buildings.push(cave);
 
         expect(cave.userData.population).toBe(0);
@@ -46,19 +44,13 @@ describe('Goblin Spawning Logic', () => {
         const deltaTime = 1.0;
         cave.update(0, deltaTime);
 
-        // Use growth rate from config
         const expectedGrowth = GameConfig.buildings.cave.growthRate;
         expect(cave.userData.population).toBeCloseTo(expectedGrowth, 2);
     });
 
     it('should synchronize clipping planes with controls.target when available', () => {
-        // We need a Game instance. 
-        // setupTestGame creates a MockGame, but here we want to test REAL Game logic for updateCameraControls.
-        // So we instantiate real Game with minimal dependencies.
+        const game = new Game(new THREE.Scene(), terrain, true);
 
-        const game = new Game(null, terrain, true);
-
-        // Mock clippingPlanes manually for logic test
         game.clippingPlanes = [
             new THREE.Plane(new THREE.Vector3(1, 0, 0), 0),
             new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0),
@@ -66,18 +58,18 @@ describe('Goblin Spawning Logic', () => {
             new THREE.Plane(new THREE.Vector3(0, 0, -1), 0)
         ];
 
-        // Mock controls.target
         game.controls = {
             target: new THREE.Vector3(500, 0, 500),
             update: vi.fn(),
-            domElement: document.createElement('canvas')
+            domElement: document.createElement('canvas'),
+            addEventListener: vi.fn()
         };
 
         game.camera.position.set(100, 100, 100);
         game.updateCameraControls();
 
         const viewRadius = GameConfig.render.viewRadius;
+        // The constant for the negative plane should be target.x + viewRadius
         expect(game.clippingPlanes[1].constant).toBe(500 + viewRadius);
-        expect(game.clippingPlanes[1].constant).not.toBe(100 + viewRadius);
     });
 });

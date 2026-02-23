@@ -42,12 +42,12 @@ describe('Unit Migration Logic', () => {
         unit.checkStuck = vi.fn(); // Stub checkStuck to prevent crash
 
         vi.spyOn(Math, 'random').mockReturnValue(0.5); // Predictable random
-    });
 
+    });
     afterEach(() => {
         vi.restoreAllMocks();
-    });
 
+    });
     it('should return true on successful build', () => {
         unit.stagnationTimer = 4;
 
@@ -62,8 +62,8 @@ describe('Unit Migration Logic', () => {
 
         expect(addBuildingSpy).toHaveBeenCalled();
         expect(result).toBe(true);
-    });
 
+    });
     it('should increment stagnation on failed build', () => {
         // Migration logic now resides in Wander for workers
         unit.role = 'worker';
@@ -78,8 +78,8 @@ describe('Unit Migration Logic', () => {
 
         unit.updateLogic(1000, 1.0);
         expect(unit.stagnationTimer).toBeGreaterThan(0);
-    });
 
+    });
     it('should migrate after 20 seconds of stagnation', () => {
         unit.role = 'worker';
         unit.stagnationTimer = 20.1;
@@ -92,5 +92,6 @@ describe('Unit Migration Logic', () => {
         unit.updateLogic(5000, 1.0);
 
         expect(unit.migrate).toHaveBeenCalled();
-    });
+
+});
 });

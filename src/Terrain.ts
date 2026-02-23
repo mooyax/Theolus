@@ -68,6 +68,8 @@ export class Terrain {
     public grid: any[][] = [];
     public entityGrid: any[][][]; // x, z -> array of entities
     public trees: { gridX: number, gridZ: number, rotationY: number, scale: number, gridY?: number }[] = [];
+    public readyPromise: Promise<void>;
+    private resolveReady!: () => void;
 
     constructor(scene: THREE.Scene, clippingPlanes?: THREE.Plane[], width?: number, depth?: number) {
         this.scene = scene;
@@ -84,6 +86,9 @@ export class Terrain {
         // Pathfinding Cache
         this.pathCache = [];
         this.pathfindingCalls = 0; // Budget per frame
+        this.readyPromise = new Promise(resolve => {
+            this.resolveReady = resolve;
+        });
 
         // Initialize Web Worker
         if (typeof Worker !== 'undefined') {
@@ -317,23 +322,35 @@ export class Terrain {
                 const e = candidateList[i];
                 if (e.isDead || e.isFinished) continue;
 
+                // Extract Position (Building vs Unit/Goblin)
+                const targetX = e.gridX !== undefined ? e.gridX : (e.userData ? e.userData.gridX : undefined);
+                const targetZ = e.gridZ !== undefined ? e.gridZ : (e.userData ? e.userData.gridZ : undefined);
+                if (targetX === undefined || targetZ === undefined) continue;
+
                 // Region Filter
                 if (type !== 'building' && sourceRegion > 0) {
-                    if (!this.grid[e.gridX]) continue; // Safety
-                    const tCell = this.grid[e.gridX][e.gridZ];
+                    if (!this.grid[targetX]) continue; // Safety
+                    const tCell = this.grid[targetX][targetZ];
                     if (!tCell || tCell.regionId !== sourceRegion) continue;
                 }
 
                 // Verify Type (if mixed list)
-                // Linear scan assumes list is pre-filtered or we check broadly.
-                // We don't strict check 'unit' vs 'worker' here usually, but if needed:
-                if (type === 'building' && (!e.userData || !['house', 'farm', 'barracks', 'tower', 'mansion', 'goblin_hut', 'cave'].includes(e.userData.type))) {
-                    // building check
+                if (type === 'building') {
+                    // Filter valid building types
+                    if (!e.userData || !['house', 'farm', 'barracks', 'tower', 'mansion', 'goblin_hut', 'cave'].includes(e.userData.type)) {
+                        continue;
+                    }
+                    // Omit destroyed buildings
+                    if (e.userData.hp !== undefined && e.userData.hp <= 0) continue;
+                } else if (type === 'goblin') {
+                    if (e.type !== 'goblin') continue;
+                } else if (type === 'unit') {
+                    if (e.role === undefined && !e.type) continue; // Basic unit check
                 }
 
                 // Distance Check
-                let dx = Math.abs(e.gridX - centerX);
-                let dz = Math.abs(e.gridZ - centerZ);
+                let dx = Math.abs(targetX - centerX);
+                let dz = Math.abs(targetZ - centerZ);
                 if (dx > W / 2) dx = W - dx;
                 if (dz > H / 2) dz = H - dz;
 
@@ -539,6 +556,7 @@ export class Terrain {
                 }
 
                 height = Math.round(height); // Snap to step for logic and flat surfaces
+                if (!this.grid[x]) return; // Interrupted by dispose()
                 this.grid[x][z].height = height;
 
                 // Moisture Map (Different seed)
@@ -566,6 +584,7 @@ export class Terrain {
         await this.generateTrees(isPreview, genParams);
 
         this.syncToWorker(); // Send initial data to worker
+        this.resolveReady();
     }
 
     // Force set height (for spawn safety)
@@ -583,6 +602,7 @@ export class Terrain {
         // Reset Regions
         for (let x = 0; x < W; x++) {
             for (let z = 0; z < D; z++) {
+                if (!this.grid[x]) return; // Interrupted
                 this.grid[x][z].regionId = 0; // 0 = Water / Unprocessed
             }
         }
@@ -1125,7 +1145,7 @@ export class Terrain {
 
 
     // SHARED HELPER for Main View & Minimap
-    isReachable(sx, sz, tx, tz) {
+    isReachable(sx: number, sz: number, tx: number, tz: number): boolean {
         const startCell = this.grid[sx % this.logicalWidth][sz % this.logicalDepth];
         const targetCell = this.grid[tx % this.logicalWidth][tz % this.logicalDepth];
         if (!startCell || !targetCell) return false;
@@ -1133,17 +1153,21 @@ export class Terrain {
         // If target is water (height <= 0), it doesn't have a regionId (0).
         // We check if it's adjacent to the starter's region.
         if (targetCell.height <= 0) {
+            const regionId = startCell.regionId;
+            if (regionId === 0 || regionId === undefined) return false;
+
             const directions = [
                 { x: 1, z: 0 }, { x: -1, z: 0 },
                 { x: 0, z: 1 }, { x: 0, z: -1 },
                 { x: 1, z: 1 }, { x: 1, z: -1 },
                 { x: -1, z: 1 }, { x: -1, z: -1 }
             ];
+
             for (const dir of directions) {
-                let nx = (tx + dir.x + this.logicalWidth) % this.logicalWidth;
-                let nz = (tz + dir.z + this.logicalDepth) % this.logicalDepth;
+                const nx = (tx + dir.x + this.logicalWidth) % this.logicalWidth;
+                const nz = (tz + dir.z + this.logicalDepth) % this.logicalDepth;
                 const neighbor = this.grid[nx][nz];
-                if (neighbor && neighbor.regionId === startCell.regionId) {
+                if (neighbor && neighbor.regionId === regionId) {
                     return true;
                 }
             }
@@ -1151,6 +1175,27 @@ export class Terrain {
         }
 
         return startCell.regionId === targetCell.regionId;
+    }
+
+    isAdjacentToRegion(tx: number, tz: number, regionId: number): boolean {
+        if (regionId === 0 || regionId === undefined) return false;
+
+        const directions = [
+            { x: 1, z: 0 }, { x: -1, z: 0 },
+            { x: 0, z: 1 }, { x: 0, z: -1 },
+            { x: 1, z: 1 }, { x: 1, z: -1 },
+            { x: -1, z: 1 }, { x: -1, z: -1 }
+        ];
+
+        for (const dir of directions) {
+            const nx = (tx + dir.x + this.logicalWidth) % this.logicalWidth;
+            const nz = (tz + dir.z + this.logicalDepth) % this.logicalDepth;
+            const neighbor = this.grid[nx][nz];
+            if (neighbor && neighbor.regionId === regionId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     updateColors(isNight = false) {
@@ -1183,7 +1228,9 @@ export class Terrain {
             lz = ((lz % depth) + depth) % depth;
 
             // Get Neighbors for Curvature
-            const cell = this.grid[lx][lz];
+            const g = (this as any).grid;
+            if (!g || !g[lx]) continue;
+            const cell = g[lx][lz];
 
             // Safety check
             if (cell) {
@@ -1675,8 +1722,8 @@ export class Terrain {
         const visualX = rawX + offsets.x;
         const visualZ = rawZ - offsets.y;
 
-        // Get Height
-        const h = this.getTileHeight(gridX, gridZ);
+        // Get Accurate Height via Interpolation (Ensure trees don't float on slopes)
+        const h = this.getInterpolatedHeight(gridX, gridZ);
 
         return { x: visualX, y: h, z: visualZ };
     }
@@ -1956,8 +2003,30 @@ export class Terrain {
             return null;
         }
 
-        // Create Building
+        const size = this.getBuildingSize(type);
+
+        // 1. Flatten and Clear Area FIRST
+        this.clearArea(gridX, gridZ, size);
+        this.flattenArea(gridX, gridZ, size);
+
+        // 2. Validate Height (No building on water)
+        if (!force && type !== 'cave') {
+            const h = this.grid[gridX][gridZ].height;
+            if (h <= 0) return null; // Water check
+            if (h > 12) {
+                if (type === 'house' || type === 'farm' || type === 'barracks') {
+                    return null;
+                }
+            }
+        }
+
+        if (!force && type !== 'cave' && !this.checkFlatArea(gridX, gridZ, size)) {
+            return null;
+        }
+
+        // 3. Create Building (Now it picks up the flattened height correctly)
         const building = new Building(this.scene, this, type, gridX, gridZ);
+        (building as any).y = this.grid[gridX][gridZ].height; // Explicitly set height & bypass TS error
         building.rotationY = Math.random() * Math.PI * 2;
 
         if (type === 'barracks' || type === 'tower') {
@@ -1968,7 +2037,7 @@ export class Terrain {
 
         // Faction Assignment Logic
         let assignedFaction = faction;
-        if (faction === 'player') { // Only override if it's the default value
+        if (faction === 'player') {
             if (type === 'cave' || type === 'goblin_hut') {
                 assignedFaction = 'enemy';
             } else if (type === 'ancient_ruin') {
@@ -1976,24 +2045,8 @@ export class Terrain {
             }
         }
         building.userData.faction = assignedFaction;
-        const size = this.getBuildingSize(type);
 
-        if (!force && type !== 'cave') {
-            const h = this.grid[gridX][gridZ].height;
-            if (h > 12) {
-                if (type === 'house' || type === 'farm' || type === 'barracks') {
-                    return null;
-                }
-            }
-        }
-
-        this.clearArea(gridX, gridZ, size);
-        this.flattenArea(gridX, gridZ, size);
-
-        if (!force && type !== 'cave' && !this.checkFlatArea(gridX, gridZ, size)) {
-            return null;
-        }
-
+        // 4. Register Building
         this.buildings.push(building);
         const W = this.logicalWidth;
         const D = this.logicalDepth;
@@ -2130,6 +2183,8 @@ export class Terrain {
         if (type === 'barracks') return 3;
         if (type === 'farm') return 2;
         if (type === 'house') return 2;
+        if (type === 'mansion') return 3;
+        if (type === 'castle') return 4;
         // goblin_hut = 1, cave = 1, default = 1
         return 1;
     }
@@ -2184,6 +2239,28 @@ export class Terrain {
         return true;
     }
 
+    isVertexProtected(nx, nz) {
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+        // A vertex (nx, nz) is shared by up to 4 cells:
+        // (nx, nz), (nx-1, nz), (nx, nz-1), (nx-1, nz-1)
+        const cellOffsets = [
+            { x: 0, z: 0 },
+            { x: -1, z: 0 },
+            { x: 0, z: -1 },
+            { x: -1, z: -1 }
+        ];
+
+        for (const off of cellOffsets) {
+            const cx = (nx + off.x + W) % W;
+            const cz = (nz + off.z + D) % D;
+            if (this.grid[cx] && this.grid[cx][cz] && this.grid[cx][cz].hasBuilding) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     checkFlatArea(x, z, size, tolerance = 0.1) {
         const W = this.logicalWidth;
         const D = this.logicalDepth;
@@ -2199,23 +2276,37 @@ export class Terrain {
         // Or just check Cell heights?
         // Let's assume Cell Height Uniformity for now.
 
+        for (let i = 0; i <= size; i++) {
+            for (let j = 0; j <= size; j++) {
+                const nx = (x + i) % W;
+                const nz = (z + j) % D;
+                const cell = this.grid[nx][nz];
+                const vHeight = cell.height;
+
+                // 1. Basic height match
+                if (Math.abs(vHeight - h0) > tolerance) {
+                    // If not matching, check if vertex is protected
+                    if (this.isVertexProtected(nx, nz)) return false;
+                }
+
+                // 2. Water check
+                if (vHeight <= 0) return false;
+            }
+        }
+
+        // Also check if any cell in the actual footprint has a building
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
                 const nx = (x + i) % W;
                 const nz = (z + j) % D;
-                const cell = this.grid[nx][nz];
-
-                // Strict: Must be within tolerance of h0, not water
-                if (Math.abs(cell.height - h0) > tolerance) return false;
-                if (cell.height <= 0) return false;
-
-                if (cell.hasBuilding) return false;
+                if (this.grid[nx][nz].hasBuilding) return false;
             }
         }
         return true;
     }
 
-    // New: Flatten Area for construction
+    // size 1 means 1x1 cells -> 2x2 vertices
+    // size 2 means 2x2 cells -> 3x3 vertices
     flattenArea(x, z, size) {
         const h0 = this.grid[x][z].height;
         const W = this.logicalWidth;
@@ -2229,15 +2320,13 @@ export class Terrain {
                 const cell = this.grid[nx][nz];
 
                 if (cell.height !== h0) {
+                    // Foundation Lock: Do not flatten vertices that belong to other buildings
+                    if (this.isVertexProtected(nx, nz)) continue;
+
                     cell.height = h0;
                     changed = true;
                     this.updateWorkerCell(nx, nz, h0, cell.moisture || 0.5); // SYNC
-                    // Integrity Check: If building exists here, check if it survives
-                    if (cell.hasBuilding && cell.building) {
-                        this.checkBuildingIntegrity(cell.building);
-                    }
                 }
-                // Also remove trees/rocks (noise)?
             }
         }
 
@@ -2383,11 +2472,9 @@ export class Terrain {
 
         const g2 = (globalThis as any).game || (window as any).game;
         const isMinimal = g2 && g2.minimal;
-        const staggerCount = isMinimal ? 1 : 20;
+        const isTest = typeof process !== 'undefined' && process.env && process.env.VITEST;
+        const staggerCount = (isMinimal || isTest) ? 1 : 20;
         const currentFrame = this.frameCount % staggerCount;
-
-        // DEBUG UNCONDITIONAL
-        if (this.frameCount < 50) console.log(`[Terrain DIAG FRAME] Frame:${this.frameCount} Stagger:${staggerCount} Units:${activeUnits}`);
 
         this.buildings.forEach((building, index) => {
             try {
@@ -3334,34 +3421,6 @@ export class Terrain {
     }
 
     // Efficiently find a valid point in a specific region
-    isAdjacentToRegion(cx, cz, targetRegionId) {
-        if (!this.grid) return false;
-
-        const neighbors = [
-            { x: cx + 1, z: cz },
-            { x: cx - 1, z: cz },
-            { x: cx, z: cz + 1 },
-            { x: cx, z: cz - 1 },
-            { x: cx + 1, z: cz + 1 },
-            { x: cx + 1, z: cz - 1 },
-            { x: cx - 1, z: cz + 1 },
-            { x: cx - 1, z: cz - 1 }
-        ];
-
-        const W = this.logicalWidth || 160;
-        const D = this.logicalDepth || 160;
-
-        for (const n of neighbors) {
-            let nx = ((n.x % W) + W) % W;
-            let nz = ((n.z % D) + D) % D;
-
-            const cell = this.grid[nx] ? this.grid[nx][nz] : null;
-            if (cell && cell.regionId === targetRegionId) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     getRandomPointInRegion(regionId, centerX, centerZ, radius) {
         // Try N times to find a valid spot

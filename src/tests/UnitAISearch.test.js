@@ -62,8 +62,8 @@ describe('Unit AI Search Optimization', () => {
 
         // Suppress console
         vi.spyOn(console, 'log').mockImplementation(() => { });
-    });
 
+    });
     it('should use Spatial Search to find goblin', () => {
         // Setup mock return
         const goblin = { id: 101, gridX: 5, gridZ: 5, isDead: false, type: 'goblin' };
@@ -79,8 +79,8 @@ describe('Unit AI Search Optimization', () => {
 
         // Expectation 2: Unit sets target
         expect(unit.targetGoblin).toBe(goblin);
-    });
 
+    });
     it('should find Base using Spatial Search', () => {
         // Setup mock return for building
         const hut = {
@@ -94,12 +94,13 @@ describe('Unit AI Search Optimization', () => {
             if (type === 'goblin') return null;
             if (type === 'building') return hut;
             return null;
-        });
 
         unit.checkSelfDefense(null, true);
 
         // Expectation: Calls findBestTarget for building
         // Building range for non-knight units in checkSelfDefense is 10
         expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('building', 0, 0, 10, expect.any(Function), expect.any(Array));
-    });
+
+});
+});
 });

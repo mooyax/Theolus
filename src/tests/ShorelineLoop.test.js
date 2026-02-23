@@ -28,7 +28,7 @@ class MockTerrain {
         }
         this.registerEntity = vi.fn();
         this.unregisterEntity = vi.fn();
-        this.findBestTarget = vi.fn(() => null); // Added findBestTarget as a mock function
+        this.findBestTarget = vi.fn(() => null);
         this.getTileHeight = (x, z) => this.grid[x][z].height;
         this.getRegionId = (x, z) => this.grid[x][z].regionId;
     }
@@ -54,45 +54,36 @@ describe('Shoreline Loop Reproduction', () => {
     });
 
     it('should NOT target unrelated region goblin via checkSelfDefense', () => {
-        // Mock Goblins list
         const goblins = [goblin];
 
-        // Mock findBestTarget to emulate the filtering logic
         terrain.findBestTarget = vi.fn((type, x, z, r, filter, candidates) => {
             if (candidates) {
                 for (const g of candidates) {
-                    if (filter(g, 10) !== Infinity) return g;
+                    if (filter(g, 10) !== Infinity) return { obj: g };
                 }
             }
             return null;
         });
 
-        // Call the suspect function
         unit.checkSelfDefense(goblins, true);
-
-        // Expectation: Unit should IGNORE the goblin because it is in a different region
         expect(unit.targetGoblin).toBeNull();
     });
 
     it('should NOT target land goblin when unit is in water (Region 0)', () => {
-        // Move unit to water
         unit.gridX = 10;
         unit.gridZ = 5;
 
-        // Mock findBestTarget
         terrain.findBestTarget = vi.fn((type, x, z, r, filter, candidates) => {
             if (candidates) {
                 for (const g of candidates) {
-                    if (filter(g, 10) !== Infinity) return g;
+                    if (filter(g, 10) !== Infinity) return { obj: g };
                 }
             }
             return null;
         });
 
-        const goblins = [goblin]; // Goblin at 15,5 (Region 2)
-
+        const goblins = [goblin];
         unit.checkSelfDefense(goblins, true);
-
         expect(unit.targetGoblin).toBeNull();
     });
 });

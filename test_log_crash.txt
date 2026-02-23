@@ -1,0 +1,54 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/mooya/develop/test[39m
+
+[90mstdout[2m | src/tests/StartupCrash.test.js
+[22m[39m[DEBUG] Actor.ts loaded
+
+[90mstdout[2m | src/tests/StartupCrash.test.js
+[22m[39m[DEBUG] Building.ts loaded
+
+[90mstdout[2m | src/tests/StartupCrash.test.js
+[22m[39m[DEBUG] Terrain.ts top-level load
+
+[90mstdout[2m | src/tests/StartupCrash.test.js[2m > [22m[2mStartup Crash Verification[2m > [22m[2mUnitRenderer update should not crash with active units
+[22m[39m[Entity 0] CONSTRUCTOR START: type=unit at 10,10
+[Entity 0] Calling updatePosition...
+[Entity 0] updatePosition returned.
+[DIAG] Actor Created ID: 0
+[DIAG] Actor smartMove type: function
+[DIAG] Actor smartMove body snapshot: smartMove(tx, tz, time, depth = 0) {
+    if (isNaN(tx) || isNaN(tz)) {
+      console.error(`[Actor $
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10 Special:false
+[Unit 0] State Change: None -> Wander
+[UnitCore.js] Unit Created ID:0 Role:knight Pos:10,10
+[UnitCore.js] Unit Construction Finished ID:0
+
+ [31m笶ｯ[39m src/tests/StartupCrash.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 28[2mms[22m[39m
+[31m     [31mﾃ・[31m UnitRenderer should initialize without null materials[39m[32m 17[2mms[22m[39m
+     [32m笨・[39m UnitRenderer update should not crash with active units[32m 5[2mms[22m[39m
+     [32m笨・[39m FaceMesh should be present if split logic is active[32m 1[2mms[22m[39m
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ Failed Tests 1 竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ
+
+ FAIL  src/tests/StartupCrash.test.js > Startup Crash Verification > UnitRenderer should initialize without null materials
+TypeError: m.instanceMatrix.setUsage is not a function
+ 笶ｯ UnitRenderer.createMesh src/BaseEntityRenderer.js:26:26
+     24|         const m = new THREE.InstancedMesh(geo, mat, count || this.MAX_窶ｦ
+     25|         m.count = 0; // Start hidden
+     26|         m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+       |                          ^
+     27|         m.frustumCulled = false; // Manually culled in update
+     28|         m.castShadow = true;
+ 笶ｯ UnitRenderer.initInstancedMeshes src/UnitRenderer.js:67:31
+ 笶ｯ UnitRenderer.init src/UnitRenderer.js:59:14
+ 笶ｯ src/tests/StartupCrash.test.js:60:9
+
+竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ竡ｯ[1/1]竡ｯ
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 13:11:07
+[2m   Duration [22m 1.26s[2m (transform 396ms, setup 114ms, import 404ms, tests 28ms, environment 500ms)[22m
+

@@ -1,0 +1,5 @@
+C:/Users/mooya/develop/test/src/tests/CombatRetaliation.test.js
+C:/Users/mooya/develop/test/src/tests/ForceAssignment.test.js
+C:/Users/mooya/develop/test/src/tests/GameLighting.test.js
+C:/Users/mooya/develop/test/src/tests/JobReassignment.test.js
+C:/Users/mooya/develop/test/src/tests/NightLoadJob.test.js

@@ -44,6 +44,9 @@ export class Sheep extends Actor {
 
         // Initial Position Sync
         this.updatePosition();
+        if (this.mesh && this.position) {
+            this.mesh.position.copy(this.position);
+        }
 
         // Init State
         this.changeState(new SheepWander(this));
@@ -109,7 +112,7 @@ export class Sheep extends Actor {
         // Assuming 60fps, 20s = 1200 frames.
         // Probability per frame: 1/1200 ~ 0.0008.
         if (Math.random() < 0.0008) {
-            if (this.game && this.game.soundManager) {
+            if (this.game && this.game.soundManager && this.game.soundManager.playSheepSound) {
                 this.game.soundManager.playSheepSound(this.position);
             }
         }
@@ -143,29 +146,39 @@ export class Sheep extends Actor {
     }
 
     fleeFrom(predator, time) {
-        // Run away
-        const dx = this.gridX - predator.gridX;
-        const dz = this.gridZ - predator.gridZ;
+        if (!predator) return;
 
-        // Normalize roughly
+        // 1. Wrap-Aware Vector Calculation
+        const w = this.terrain.logicalWidth || 80;
+        const d = this.terrain.logicalDepth || 80;
+
+        let dx = this.gridX - predator.gridX;
+        let dz = this.gridZ - predator.gridZ;
+
+        // Account for world wrapping: find shortest vector AWAY
+        if (Math.abs(dx) > w / 2) {
+            dx = (dx > 0) ? dx - w : dx + w;
+        }
+        if (Math.abs(dz) > d / 2) {
+            dz = (dz > 0) ? dz - d : dz + d;
+        }
+
         const len = Math.sqrt(dx * dx + dz * dz);
         if (len < 0.1) {
-            this.moveRandomly(time); // Panic
+            this.moveRandomly(time); // Panic if on top of each other
             return;
         }
 
-        // Panic Bleat (Higher frequency if fleeing, but standard sound is fine for now)
-        if (Math.random() < 0.1 && this.game && this.game.soundManager) {
-            this.game.soundManager.playSheepSound(this.position);
-        }
+        // Standardize fleeing distance
+        const runDist = 6.0;
+        let tx = this.gridX + (dx / len) * runDist;
+        let tz = this.gridZ + (dz / len) * runDist;
 
-        const runDist = 5.0;
-        const tx = this.gridX + (dx / len) * runDist;
-        const tz = this.gridZ + (dz / len) * runDist;
+        // Wrap target coordinate before passing to smartMove/pathfinding
+        tx = (tx + w) % w;
+        tz = (tz + d) % d;
 
         this.smartMove(tx, tz, time);
-        // Note: smartMove handles wrapping and blocking (mostly).
-        // If blocking, it might fail.
     }
 
     // Override moveRandomly to use Logic instead of direct

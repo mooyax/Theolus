@@ -6,20 +6,7 @@ import { Terrain } from '../Terrain.js';
 import * as THREE from 'three';
 
 // Use Partial Mock
-vi.mock('three', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual,
-        WebGLRenderer: class {
-            constructor() { this.domElement = document.createElement('div'); }
-            setSize() { }
-            render() { }
-            setPixelRatio() { }
-            dispose() { }
-        },
-        TextureLoader: class { load(url, cb) { if (cb) cb({}); return {}; } }
-    };
-});
+
 vi.mock('../Minimap.js', () => ({ Minimap: class { update() { } serialize() { return {}; } } }));
 vi.mock('../Compass.js', () => ({ Compass: class { update() { } } }));
 vi.mock('three/examples/jsm/controls/OrbitControls.js', () => ({ OrbitControls: class { constructor() { this.target = new THREE.Vector3(); } update() { } } }));
@@ -47,8 +34,8 @@ describe('Stuck/Throttled Job Reassignment', () => {
         }
         game.terrain.initEntityGrid();
         game.terrain.findBestTarget = vi.fn(() => null);
-    });
 
+    });
     afterEach(() => {
         if (game) {
             game.dispose();
@@ -56,8 +43,8 @@ describe('Stuck/Throttled Job Reassignment', () => {
         }
         window.game = null;
         vi.restoreAllMocks();
-    });
 
+    });
     it('should release job if throttled and not moving for 45s', () => {
         // Fix: Spawn unit1 OFFICIALLY closer (70,70 for target 80,80) so it wins assignment over unit2 (10,10)
         const unit1 = game.spawnUnit(70, 70, 'worker');
@@ -101,5 +88,6 @@ describe('Stuck/Throttled Job Reassignment', () => {
         expect(req.assignedTo).toBeNull();
         expect(unit1.targetRequest).toBeNull();
         expect(unit1.state.name).toBe('Wander');
-    });
+
+});
 });

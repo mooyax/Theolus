@@ -45,7 +45,7 @@ export class BuildingRenderer {
         }
 
         const houseChimney = new THREE.BoxGeometry(0.3, 0.8, 0.3);
-        houseChimney.translate(0.5, 0.8, 0.5);
+        houseChimney.translate(0.6, 0.8, 0.6); // Moved out from 0.5 to 0.6
 
         // UV for Chimney: Side faces map to windows-less stone, Top face to hole shadow
         const chimneyUv = houseChimney.getAttribute('uv');
@@ -273,52 +273,66 @@ export class BuildingRenderer {
         const barracksWallMain = new THREE.BoxGeometry(2.4, 1.2, 2.4);
         barracksWallMain.translate(0, 0.6, 0);
 
-        const barracksChimney = new THREE.BoxGeometry(0.4, 1.0, 0.4);
-        barracksChimney.translate(0.8, 1.2, 0.8);
+        // UV for Wall: Map V to [0.5, 1.0] (Upper half with windows)
+        const barracksWallUv = barracksWallMain.getAttribute('uv');
+        for (let i = 0; i < barracksWallUv.count; i++) {
+            barracksWallUv.setY(i, barracksWallUv.getY(i) * 0.5 + 0.5);
+        }
 
-        // UV Adjustment for Barracks Chimney Hole
+        const barracksChimney = new THREE.BoxGeometry(0.4, 1.2, 0.4); // Taller (1.0 -> 1.2)
+        barracksChimney.translate(0.97, 1.3, 0.97); // Moved slightly inward from 1.0 to avoid Z-fighting (Wall is at 1.2)
+
+        // UV Adjustment for Barracks Chimney
         const buvAttr = barracksChimney.getAttribute('uv');
-        for (let i = 8; i <= 11; i++) {
-            buvAttr.setXY(i, 0.96, 0.05); // Fixed V
+        for (let i = 0; i < buvAttr.count; i++) {
+            if (i >= 8 && i <= 11) {
+                // i=8..11 are top face: Map to Hole Shadow Area (Now at Bottom Right of 128x128)
+                buvAttr.setXY(i, 0.98, 0.02);
+            } else {
+                // Side faces: Map to Plain Stone Area (Lower half: V 0.1 to 0.4)
+                buvAttr.setY(i, buvAttr.getY(i) * 0.3 + 0.1);
+            }
         }
 
         this.assets.barracksGeo = BufferGeometryUtils.mergeGeometries([barracksWallMain, barracksChimney]);
 
-        // Barracks Texture (Medieval Stone - Wider)
+        // Barracks Texture (Medieval Stone - Wider & Taller for UV separation)
         const canvasM = document.createElement('canvas');
-        canvasM.width = 128; canvasM.height = 64;
+        canvasM.width = 128; canvasM.height = 128; // Increased from 64 to 128
         const ctxM = canvasM.getContext('2d');
 
         const canvasME = document.createElement('canvas');
-        canvasME.width = 128; canvasME.height = 64;
+        canvasME.width = 128; canvasME.height = 128;
         const ctxME = canvasME.getContext('2d');
 
         // M1. Base
-        ctxM.fillStyle = '#654321'; ctxM.fillRect(0, 0, 128, 64);
-        ctxME.fillStyle = '#000000'; ctxME.fillRect(0, 0, 128, 64);
+        ctxM.fillStyle = '#654321'; ctxM.fillRect(0, 0, 128, 128);
+        ctxME.fillStyle = '#000000'; ctxME.fillRect(0, 0, 128, 128);
 
-        // M2. Stone Bricks (Same pattern as House)
+        // M2. Stone Bricks Pattern (Upper half for Wall, lower half for plain Stone)
         ctxM.fillStyle = '#5A3A1A';
-        for (let y = 0; y < 64; y += 16) {
+        for (let y = 0; y < 128; y += 16) {
             for (let x = 0; x < 128; x += 16) {
                 if (((x + y) / 16) % 2 === 0) ctxM.fillRect(x + 1, y + 1, 14, 14);
             }
         }
 
-        // M2.5 Special Shadow for Chimney Hole
+        // M2.5 Special Shadow for Chimney Hole (Bottom Right)
         ctxM.fillStyle = '#0a0a0a';
-        ctxM.fillRect(120, 56, 8, 8);
+        ctxM.fillRect(124, 124, 4, 4);
 
-        // M3. Windows (3 Windows for wider facade)
+        // M3. Windows (3 Windows in Upper Half: cy between 64 and 128 in Canvas space?)
+        // UV [0.5, 1.0] maps to Y [0, 64] in 128px canvas (with inverted V)
+        // Let's use House logic: Draw in top 64px
         const drawMansionWindow = (cx, cy) => {
             ctxM.fillStyle = '#111';
             ctxM.fillRect(cx - 6, cy - 8, 12, 16);
             ctxME.fillStyle = '#FFFFEE'; // Warm light
             ctxME.fillRect(cx - 4, cy - 6, 8, 12);
         };
-        drawMansionWindow(22, 32);
-        drawMansionWindow(64, 32);
-        drawMansionWindow(106, 32);
+        drawMansionWindow(22, 24);
+        drawMansionWindow(64, 24);
+        drawMansionWindow(106, 24);
 
         // Barracks Roof (Dark Red/Brown Medieval)
         // Change Shape: 8-sided (Octagonal) to differ from House (Pyramid)
@@ -526,17 +540,10 @@ export class BuildingRenderer {
                     const dz = Math.abs(posZ - viewCenter.z);
                     if (dx > viewRadius + 10.0 || dz > viewRadius + 10.0) continue;
 
-                    // Center Offsets by Type
-                    let finalX = posX;
-                    let finalZ = posZ;
-
-                    if (b.type === 'farm' || b.type === 'house' || b.type === 'goblin_hut') {
-                        finalX += 0.5;
-                        finalZ += 0.5;
-                    } else if (b.type === 'barracks' || b.type === 'tower') {
-                        finalX += 1.0;
-                        finalZ += 1.0;
-                    }
+                    // Center Offsets by Dynamic Formula based on Size
+                    const size = this.terrain.getBuildingSize(b.type);
+                    const finalX = posX + (size - 1) * 0.5;
+                    const finalZ = posZ + (size - 1) * 0.5;
 
                     dummy.position.set(finalX, y, finalZ);
                     dummy.scale.set(1, 1, 1);

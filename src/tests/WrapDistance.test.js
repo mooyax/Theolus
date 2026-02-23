@@ -3,11 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as THREE from 'three';
 
 // Mock Globals
-global.window = {
-    game: {
-        gameTotalTime: 0
-    }
-};
+
 
 global.THREE = THREE;
 
@@ -33,8 +29,8 @@ describe('Unit Distance Wrap Logic', () => {
         Unit.initAssets = vi.fn();
 
         unit = new Unit(mockScene, mockTerrain, 0, 0); // At 0,0
-    });
 
+    });
     it('should calculate short distance across wrap (0,0 -> 79,0)', () => {
         // Distance should be 1, not 79
         unit.gridX = 0;
@@ -54,13 +50,14 @@ describe('Unit Distance Wrap Logic', () => {
 
         // We expect it to be 1 for correct logic.
         expect(dist).toBe(1);
-    });
 
+    });
     it('should calculate diagonal wrap correctly (0,0 -> 79,79)', () => {
         unit.gridX = 0;
         unit.gridZ = 0;
         const dist = unit.getDistance(79, 79);
         // sqrt(1*1 + 1*1) = 1.414
         expect(dist).toBeCloseTo(1.414, 2);
-    });
+
+});
 });

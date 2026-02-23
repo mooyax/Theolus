@@ -18,8 +18,8 @@ describe('Path Churn / Refetching', () => {
         window.game = mockGame;
 
         vi.spyOn(unit, 'smartMove');
-    });
 
+    });
     it('should use stored pathTarget in onMoveFinished to preserve path', () => {
         // SETUP: Manually create a valid path state
         const targetX = 10.6;
@@ -47,8 +47,8 @@ describe('Path Churn / Refetching', () => {
         // At 0,0 vs 1,1 -> OK.
 
         expect(unit.path).not.toBeNull();
-    });
 
+    });
     it('should fallback to lastNode if pathTarget is undefined', () => {
         // SETUP
         unit.path = [{ x: 5, z: 5 }];
@@ -61,5 +61,6 @@ describe('Path Churn / Refetching', () => {
 
         // ASSERT: Fallback to integer node
         expect(unit.smartMove).toHaveBeenCalledWith(5, 5, expect.anything());
-    });
+
+});
 });

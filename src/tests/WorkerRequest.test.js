@@ -5,13 +5,6 @@ import { Job, Wander } from '../ai/states/UnitStates.js';
 import * as THREE from 'three';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 
-// Mock dependencies for Unit.js
-vi.mock('three', async () => {
-    const originalModule = await vi.importActual('three');
-    return {
-        ...originalModule,
-    };
-});
 
 describe('Worker Job Logic (Unit.js + States)', () => {
     let mockGame;
@@ -97,8 +90,8 @@ describe('Worker Job Logic (Unit.js + States)', () => {
 
         // GLOBAL MOUNT
         window.game = mockGame;
-    });
 
+    });
     test('Unit finds and claims request when idle', () => {
         const req = mockGame.addRequest('raise', 5, 5);
 
@@ -109,8 +102,8 @@ describe('Worker Job Logic (Unit.js + States)', () => {
         expect(req.status).toBe('assigned');
         expect(req.assignedTo).toBe(unit.id);
         expect(unit.state).toBeInstanceOf(Job);
-    });
 
+    });
     test('Unit moves to target request', () => {
         const req = mockGame.addRequest('raise', 10, 10);
 
@@ -130,8 +123,8 @@ describe('Worker Job Logic (Unit.js + States)', () => {
         // In Job, action is set to 'Approaching Job' when moving
         expect(unit.action).toBe('Approaching Job');
         expect(unit.smartMove).toHaveBeenCalled();
-    });
 
+    });
     test('Unit completes request upon arrival', () => {
         const req = mockGame.addRequest('raise', 10, 10);
         unit.targetRequest = req;
@@ -154,5 +147,6 @@ describe('Worker Job Logic (Unit.js + States)', () => {
         // UnitWanderState starts as Idle
         expect(unit.action).toBe('Idle');
         expect(mockTerrain.raise).toHaveBeenCalledWith(10, 10);
-    });
+
+});
 });

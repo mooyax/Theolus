@@ -35,12 +35,14 @@ describe('VisualDebug UnitRenderer', () => {
                 limb: new THREE.BoxGeometry(),
                 sword: new THREE.BoxGeometry(),
                 staff: new THREE.BoxGeometry(),
-                wizardHat: new THREE.ConeGeometry(),
-                wizardHatBrim: new THREE.CylinderGeometry(),
-                jobIndicatorTop: new THREE.CylinderGeometry(),
-                jobIndicatorDot: new THREE.SphereGeometry()
+                wizardHat: new THREE.BoxGeometry(),
+                wizardHatBrim: new THREE.BoxGeometry(),
+                jobIndicatorTop: new THREE.BoxGeometry(),
+                jobIndicatorDot: new THREE.BoxGeometry()
             },
             materials: {
+                skin: new THREE.MeshBasicMaterial(),
+                heads: [new THREE.MeshBasicMaterial()],
                 face: new THREE.MeshBasicMaterial(),
                 metal: new THREE.MeshBasicMaterial(),
                 wood: new THREE.MeshBasicMaterial(),
@@ -70,7 +72,6 @@ describe('VisualDebug UnitRenderer', () => {
         const viewCenter = new THREE.Vector3(10, 0, 10);
         renderer.update(units, null, viewCenter);
 
-        // Check Torso Mesh matrix
         const mesh = renderer.torsoMesh;
         expect(mesh.count).toBe(1);
 
@@ -79,10 +80,8 @@ describe('VisualDebug UnitRenderer', () => {
         const scale = new THREE.Vector3();
         scale.setFromMatrixScale(matrix);
 
-        console.log("Unit Scale:", scale);
         expect(scale.x).toBeGreaterThan(0.1);
         expect(scale.y).toBeGreaterThan(0.1);
         expect(scale.z).toBeGreaterThan(0.1);
     });
 });
-

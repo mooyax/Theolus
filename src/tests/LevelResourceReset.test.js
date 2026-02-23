@@ -1,29 +1,28 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { Game } from '../Game.ts';
+import { Game } from '../Game.js';
 import * as THREE from 'three';
-
-// Mock THREE
-vi.mock('three', async () => {
-    const actual = await vi.importActual('three');
-    return {
-        ...actual,
-        Group: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); this.remove = vi.fn(); } },
-        Mesh: class { constructor() { this.position = new actual.Vector3(); this.add = vi.fn(); } },
-        Scene: class { constructor() { this.add = vi.fn(); this.remove = vi.fn(); } },
-        TextureLoader: class { load() { return {}; } }
-    };
-});
 
 // Mock Terrain
 vi.mock('../Terrain', () => {
     return {
         Terrain: class {
-            constructor() { this.seed = 12345; }
+            constructor() {
+                this.seed = 12345;
+                this.grid = Array(10).fill(null).map(() => Array(10).fill(null).map(() => ({
+                    height: 10, regionId: 1, hasBuilding: false, building: null
+                })));
+            }
             generate() { return Promise.resolve(); }
             generateRandomTerrain() { return Promise.resolve(); }
             updateMesh() { }
             updateColors() { }
+            calculateRegions() { return Promise.resolve(); }
+            syncToWorker() { }
+            getWidth() { return 10; }
+            getDepth() { return 10; }
+            initMeshes() { }
+            dispose() { }
         }
     };
 });
@@ -35,7 +34,12 @@ vi.mock('../config/GameConfig', () => {
             { levelId: 1, title: 'L1', mapWidth: 10, mapDepth: 10, initialState: { goblinCaves: 5 } },
             { levelId: 2, title: 'L2', mapWidth: 20, mapDepth: 20, initialState: { goblinCaves: 10 } }
         ],
-        GameConfig: {}
+        GameConfig: {
+            economy: {
+                startingResources: { grain: 50, fish: 50, meat: 0 },
+                startingMana: 100
+            }
+        }
     };
 });
 
@@ -50,14 +54,17 @@ describe('Level Resource Reset', () => {
 
         // Stub methods to avoid full terrain generation
         game.clearEntities = vi.fn();
-        game.inputManager = {};
-        game.unitRenderer = {};
-        game.buildingRenderer = {};
-        game.goblinRenderer = {};
-        game.treeRenderer = {};
-        game.goblinManager = { reset: vi.fn(), generateCaves: vi.fn() };
-        game.fishManager = { reset: vi.fn(), init: vi.fn() };
-        game.sheepManager = { reset: vi.fn(), initSheeps: vi.fn() };
+        game.inputManager = { reset: vi.fn(), update: vi.fn() };
+        game.unitRenderer = { reset: vi.fn(), update: vi.fn() };
+        game.buildingRenderer = { reset: vi.fn(), update: vi.fn() };
+        game.goblinRenderer = { reset: vi.fn(), update: vi.fn() };
+        game.treeRenderer = { reset: vi.fn(), update: vi.fn() };
+        game.goblinManager = { reset: vi.fn(), generateCaves: vi.fn(), update: vi.fn() };
+        game.fishManager = { reset: vi.fn(), init: vi.fn(), update: vi.fn() };
+        game.sheepManager = { reset: vi.fn(), initSheeps: vi.fn(), update: vi.fn() };
+
+        // Mock animate to prevent loops
+        vi.spyOn(game, 'animate').mockImplementation(() => { });
     });
 
     afterEach(() => {
@@ -70,10 +77,10 @@ describe('Level Resource Reset', () => {
         game.mana = 500;
         game.totalPopulation = 100;
 
-        // 2. Transition to Level 2
+        // 2. Transition to Level 2 (index 1)
         await game.startLevel(1);
 
-        // 3. Verify Reset
+        // 3. Verify Reset (Based on mock data)
         expect(game.resources).toEqual({ grain: 50, fish: 50, meat: 0 });
         expect(game.mana).toBe(100);
         expect(game.totalPopulation).toBe(0);
