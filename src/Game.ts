@@ -2397,9 +2397,9 @@ export class Game {
             }
 
             // Unit Updates (Time-Sliced)
-            // Scale budget to ~30% of units (min 200, max 1000)
+            // Scale budget to ~30% of units (min 300, max 2000)
             // Increased to prevent "starvation" of high-ID units in dense populations.
-            this.unitScanBudget = Math.min(1000, Math.max(200, Math.floor(this.units.length * 0.3)));
+            this.unitScanBudget = Math.min(2000, Math.max(300, Math.floor(this.units.length * 0.4)));
 
             try {
                 const camX = this.camera ? this.camera.position.x : 0;
@@ -2447,11 +2447,10 @@ export class Game {
                         // --- BUDGET CHECK ---
                         let canUpdate = true;
                         if (!isUrgent && distSq > 400) { // > 20m
-                            if (this.unitScanBudget > 0) {
-                                this.unitScanBudget--;
-                            } else {
-                                canUpdate = false;
-                            }
+                            // REMOVED: Pre-logic budget consumption
+                            // Let the internal state logic (e.g. checkSelfDefense) manage its own budget.
+                            // This frame, they are ALLOWED to run their logic.
+                            canUpdate = true;
                         }
 
                         // ALWAYS Update Age & Timers (Critical for Life Cycle)

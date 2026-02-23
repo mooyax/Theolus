@@ -812,14 +812,19 @@ export class Unit extends Actor {
 
         // GLOBAL BUDGET CHECK
         if (!forceScan && (window as any).game && (window as any).game.unitScanBudget !== undefined) {
-            if ((window as any).game.unitScanBudget > 0) {
-                (window as any).game.unitScanBudget--;
-            } else {
-                // Budget Exhausted: Skip this frame
-                // We don't reset scanTimer so it will try again next cycle or next allowed frame.
-                // To avoid "starvation" of high IDs, we could randomize? 
-                // But simple skipping is usually enough as IDs wrap/mod varies.
-                return false;
+            // PRIORITY: Units in Combat or very close (e.g. dist < 10) skip budget
+            const isCombat = this.state && (this.state.constructor.name === 'Combat');
+            const distSq = (this.position && (window as any).game.camera) ?
+                ((this.position.x - (window as any).game.camera.position.x) ** 2 + (this.position.z - (window as any).game.camera.position.z) ** 2) : 9999;
+
+            const isPriority = isCombat || distSq < 100; // < 10m
+
+            if (!isPriority) {
+                if ((window as any).game.unitScanBudget > 0) {
+                    (window as any).game.unitScanBudget--;
+                } else {
+                    return false;
+                }
             }
         }
 

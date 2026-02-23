@@ -7,9 +7,12 @@ export class Combat extends State {
         this.stagnationTimer = 0;
     }
     enter(prev?: any) {
-        if (prev && prev.constructor.name === 'Combat') return;
+        // FIX: Continuous follow when switching from Raid or another Combat
+        const isContinuous = prev && (prev.constructor.name === 'Raid' || prev.constructor.name === 'Combat');
+        if (!isContinuous) {
+            this.actor.isMoving = false;
+        }
         this.actor.action = "Fighting";
-        this.actor.isMoving = false;
         this.stagnationTimer = 0;
     }
     update(...args: any[]) {
@@ -53,7 +56,7 @@ export class Combat extends State {
 
         // Stagnation Detection
         this.stagnationTimer += deltaTime;
-        if (this.stagnationTimer > 15.0) {
+        if (this.stagnationTimer > 30.0) { // Increased from 15.0 to allow longer chases
             // STABILIZATION: Blacklist target to prevent immediate re-engagement (Flip-Flop)
             const now = (window as any).game ? (window as any).game.simTotalTimeSec : 0;
             if (this.actor.targetUnit) {
@@ -366,13 +369,21 @@ export class Wander extends WanderBase {
             // SCAN BUDGET CHECK
             let canScan = true;
             if ((window as any).game && (window as any).game.goblinManager && (window as any).game.goblinManager.scanBudget !== undefined) {
-                if ((window as any).game.goblinManager.scanBudget > 0) {
-                    (window as any).game.goblinManager.scanBudget--;
-                } else {
-                    canScan = false;
-                    // Keep timer high, retry next frame (with randomness?)
-                    // Add small random delay to prevent retry-stampede
-                    this.scanTimer -= Math.random() * 0.2;
+                // PRIORITY: Units in Combat/Raid or close to camera skip budget
+                const isUrgent = this.actor.action === 'Fighting' || this.actor.action === 'Sieging' || this.constructor.name === 'Combat' || this.constructor.name === 'Raid';
+                const cam = (window as any).game.camera;
+                const distSq = (this.actor.position && cam) ? ((this.actor.position.x - cam.position.x) ** 2 + (this.actor.position.z - cam.position.z) ** 2) : 9999;
+
+                const isPriority = isUrgent || distSq < 400; // < 20m
+
+                if (!isPriority) {
+                    if ((window as any).game.goblinManager.scanBudget > 0) {
+                        (window as any).game.goblinManager.scanBudget--;
+                    } else {
+                        canScan = false;
+                        // Keep timer high, retry next frame (with randomness?)
+                        this.scanTimer -= Math.random() * 0.2;
+                    }
                 }
             }
 

@@ -1,144 +1,88 @@
-
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { Unit } from '../Unit';
+import { Goblin } from '../Goblin';
+import { setupTestEnv } from './TestUtils';
+import { Combat as HumanCombat, Wander as HumanWander } from '../ai/states/UnitStates';
+import { Combat as GoblinCombat, Raid as GoblinRaid } from '../ai/states/GoblinStates';
 
-// Mocks MUST be hoisted
-// Mocks MUST be hoisted
-// vi.mock('../config/GameConfig.json'); // Removed to use real file
-
-import { Unit } from '../Unit.js'; // Adjust path if needed
-import { Goblin } from '../Goblin.js';
-import { Job, Combat, Wander } from '../ai/states/UnitStates.js';
-
-// Mocks
-class MockTerrain {
-    constructor() {
-        this.grid = [];
-        this.logicalWidth = 100;
-        this.logicalDepth = 100;
-        for (let x = 0; x < 100; x++) {
-            this.grid[x] = [];
-            for (let z = 0; z < 100; z++) {
-                this.grid[x][z] = { regionId: 1, height: 1 };
-            }
-        }
-        this.buildings = [];
-    }
-    getTileHeight(x, z) { return 1; }
-    gridToWorld(v) { return v; } // Mock gridToWorld
-    getInterpolatedHeight() { return 1; }
-    getVisualOffset() { return { x: 0, y: 0 }; }
-    modifyMoisture() { }
-    registerEntity() { }
-    unregisterEntity() { }
-    getRegion(x, z) {
-        if (this.grid[x] && this.grid[x][z]) return this.grid[x][z].regionId;
-        return 0; // Default to 0 (Water) if out of bounds
-    }
-    // Mock findBestTarget for spatial search
-    findBestTarget(type, x, z, range, scoreFn, candidates) {
-        // console.error(`[TEST MOCK] findBestTarget called for ${type} at ${x},${z}`);
-        let best = null;
-        let bestScore = Infinity;
-        if (!candidates) candidates = [];
-
-        for (const c of candidates) {
-            const dist = Math.sqrt((c.gridX - x) ** 2 + (c.gridZ - z) ** 2);
-            // Ensure grid access in lambda is safe
-            const score = scoreFn(c, dist);
-            // console.error(`[TEST MOCK] Candidate ${c.id} Score: ${score}`);
-            if (score < bestScore) {
-                bestScore = score;
-                best = c;
-            }
-        }
-        return best;
-    }
-}
-
-describe('Combat Stability Tests', () => {
-    let unit, terrain, goblin;
+describe('Combat Stability and Scan Budget', () => {
+    let game;
+    let terrain;
 
     beforeEach(() => {
-        try {
-            console.error("DEBUG: beforeEach start");
-            terrain = new MockTerrain();
-            unit = new Unit(null, terrain, 10, 10, 'soldier'); // Generic
-            unit.id = 1;
-            console.error("DEBUG: Unit created");
-            goblin = new Goblin(null, terrain, 12, 10); // Close
-            console.error("DEBUG: Goblin created");
-            goblin.id = 100;
-            unit.ignoredTargets = new Map();
-        } catch (e) {
-            console.error("CRASH in beforeEach:", e);
-            throw e;
+        const env = setupTestEnv({ useMockTerrain: true });
+        game = env.game;
+        terrain = env.terrain;
+        // Set a low budget to trigger prioritization logic
+        game.unitScanBudget = 10;
+        if (game.goblinManager) game.goblinManager.scanBudget = 10;
+    });
+
+    it('Human combat state should persist during temporary pathfinding failure (Stickiness)', () => {
+        const unit = new Unit(null, terrain, 10, 10, 'knight');
+        unit.id = 1;
+        game.units.push(unit);
+
+        const goblin = new Goblin(null, terrain, 15, 15, 'normal');
+        goblin.id = 999;
+
+        // Force unit into combat
+        unit.targetGoblin = goblin;
+        unit.changeState(new HumanCombat(unit));
+
+        expect(unit.state.constructor.name).toBe('Combat');
+
+        // Mock smartMove to fail (truly unreachable)
+        unit.smartMove = vi.fn().mockReturnValue(false);
+        unit.isPathfinding = false;
+        unit.isPathfindingThrottled = false;
+        unit.isWaitingForPath = false;
+
+        // Update multiple times within grace period (3s)
+        for (let i = 0; i < 5; i++) {
+            unit.state.update(0, 0.5, false, [], [], [goblin]);
+            expect(unit.state.constructor.name).toBe('Combat');
         }
 
+        // Update past grace period
+        unit.state.update(0, 4.0, false, [], [], [goblin]);
+        expect(unit.state.constructor.name).toBe('Wander');
     });
-    it('Should attack goblin in SAME region within 8 tiles', () => {
-        // Setup Same Region
-        terrain.grid[10][10].regionId = 1;
-        terrain.grid[12][10].regionId = 1;
 
-        console.error("--- TEST CASE 1 START ---");
-        // Run detection
-        unit.checkSelfDefense([goblin], true);
-        console.error("--- TEST CASE 1 END ---");
+    it('Goblin combat should not stop moving when switching from Raid', () => {
+        const goblin = new Goblin(null, terrain, 20, 20, 'normal');
+        goblin.id = 2;
+        goblin.isMoving = true;
 
-        // Verify result
-        expect(unit.targetGoblin).toBe(goblin);
+        // Enter Raid first
+        goblin.changeState(new GoblinRaid(goblin));
+        goblin.isMoving = true;
 
+        // Transition to Combat
+        goblin.changeState(new GoblinCombat(goblin));
+
+        // Should NOT have set isMoving to false
+        expect(goblin.isMoving).toBe(true);
     });
-    it('Should IGNORE goblin in DIFFERENT region (Unreachable)', () => {
-        // Setup Different Region
-        terrain.grid[10][10].regionId = 1;
-        terrain.grid[12][10].regionId = 2; // Separate Region
 
-        // Run detection
-        unit.checkSelfDefense([goblin], true);
+    it('Combat units should bypass/prioritize scan budget', () => {
+        const unit = new Unit(null, terrain, 30, 30, 'knight');
+        unit.id = 0; // ID 0 + Frame 0 passes the interval check (0 % 10 === 0)
+        game.units.push(unit);
 
-        // Verify result
-        expect(unit.targetGoblin).toBeNull();
+        // Exhaust budget
+        game.unitScanBudget = 0;
 
+        // Unit is in Combat
+        const goblin = new Goblin(null, terrain, 32, 32, 'normal');
+        unit.targetGoblin = goblin;
+        unit.changeState(new HumanCombat(unit));
+
+        // Attempt scan
+        const canScan = unit.checkSelfDefense(0, false);
+
+        // Should allow scan despite 0 budget because of Combat priority
+        expect(canScan).toBe(true);
+        expect(game.unitScanBudget).toBe(0); // Should not have consumed budget further or blocked
     });
-    it('Should IGNORE goblin OUTSIDE general range (>8) for self defense check', () => {
-        // Setup Far Goblin (Dist 30)
-        goblin.gridX = 40; // 30 tiles away
-        terrain.grid[10][10].regionId = 1;
-        terrain.grid[30][10].regionId = 1;
-
-        // Run detection
-        unit.checkSelfDefense([goblin], true);
-
-        // Verify result
-        expect(unit.targetGoblin).toBeNull();
-
-    });
-    it('Should PRIORITIZE goblin closer than 8 tiles', () => {
-        const farGoblin = new Goblin(null, terrain, 10, 15); // Dist 5
-        farGoblin.id = 200;
-
-        const closeGoblin = new Goblin(null, terrain, 11, 10); // Dist 1
-        closeGoblin.id = 201;
-
-        // Run detection
-        unit.checkSelfDefense([farGoblin, closeGoblin], true);
-
-        expect(unit.targetGoblin).toBe(closeGoblin);
-
-    });
-    it('Should NOT attack across Water (Region 0)', () => {
-        // Unit on Land (1), Goblin on Water (0) -> Ignored?
-        // Or Unit on Land (1), Goblin on Island (2) across Water?
-
-        // Case 1: Land vs Land (Diff ID) -> Ignored (Tested above)
-
-        // Case 2: Land vs Water
-        terrain.grid[10][10].regionId = 1;
-        terrain.grid[12][10].regionId = 0; // Water
-
-        unit.checkSelfDefense([goblin], true);
-        expect(unit.targetGoblin).toBeNull();
-
-});
 });

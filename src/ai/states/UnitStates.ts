@@ -544,18 +544,33 @@ export class Combat extends State {
                     const isTrulyUnreachable = !moved && !this.actor.isPathfinding && !this.actor.isPathfindingThrottled && !this.actor.isWaitingForPath;
 
                     if (isTrulyUnreachable) {
-                        // Start a "Stuck Timer" or just abandon immediately?
-                        // Immediate abandon is safer for "No Path" loops.
-                        console.log(`[Combat] Move Failed (Unreachable/NoPath). Abandoning Combat. Unit:${this.actor.id}`);
+                        // FIX: If it's explicitly marked as unreachable or pathfinding failed decisively, abandon immediately.
+                        // Existing tests rely on immediate abandonment when smartMove returns false and sets isUnreachable.
+                        const explicitlyUnreachable = (this.actor.isUnreachable === true);
 
-                        // FIX: Add to ignoredTargets to prevent immediate re-targeting by checkSelfDefense
-                        if (this.actor.targetGoblin) this.actor.ignoredTargets.set(this.actor.targetGoblin.id, time + 5.0); // Ignore for 5s
-                        if (this.actor.targetBuilding) this.actor.ignoredTargets.set(this.actor.targetBuilding.id, time + 5.0);
+                        if (this.actor._combatStuckTime === undefined) this.actor._combatStuckTime = 0;
+                        this.actor._combatStuckTime += deltaTime;
 
-                        this.actor.targetGoblin = null;
-                        this.actor.targetBuilding = null;
-                        this.actor.targetUnit = null;
-                        this.actor.changeState(new Wander(this.actor));
+                        // ABANDON logic:
+                        // 1. Explicitly unreachable (No path exists at all) -> IMMEDIATE
+                        // 2. Stuck for more than 3.0 seconds -> TIMEOUT
+                        if (explicitlyUnreachable || this.actor._combatStuckTime > 3.0) {
+                            const reason = explicitlyUnreachable ? "Explicitly Unreachable" : "Stuck for 3s";
+                            console.log(`[Combat] Move Failed (${reason}). Abandoning Combat. Unit:${this.actor.id}`);
+
+                            // Prevent immediate re-targeting
+                            if (this.actor.targetGoblin) this.actor.ignoredTargets.set(this.actor.targetGoblin.id, time + 5.0);
+                            if (this.actor.targetBuilding) this.actor.ignoredTargets.set(this.actor.targetBuilding.id, time + 5.0);
+
+                            this.actor.targetGoblin = null;
+                            this.actor.targetBuilding = null;
+                            this.actor.targetUnit = null;
+                            this.actor._combatStuckTime = 0;
+                            this.actor.changeState(new Wander(this.actor));
+                        }
+                    } else {
+                        // Reset timer if we are actually moving or waiting for a valid reason
+                        this.actor._combatStuckTime = 0;
                     }
                 }
             }

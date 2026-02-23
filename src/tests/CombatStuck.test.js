@@ -30,7 +30,8 @@ describe('Combat Stuck Investigation', () => {
             getRegion: vi.fn().mockReturnValue(1),
             registerEntity: vi.fn(),
             scene: new THREE.Scene(),
-            gridToWorld: (g) => g
+            gridToWorld: (g) => g,
+            getRandomPointInRegion: vi.fn().mockReturnValue({ x: 10, z: 10 })
         };
 
         unit = new Unit(new THREE.Scene(), terrainMock, 10, 10, 'worker');
@@ -73,7 +74,10 @@ describe('Combat Stuck Investigation', () => {
         unit.targetGoblin = goblin;
         unit.changeState(new Combat(unit));
 
-        unit.smartMove.mockReturnValue(false);
+        unit.smartMove.mockImplementation(() => {
+            unit.isUnreachable = true;
+            return false;
+        });
         unit.updateLogic(102, 0.1, false, [], [], [goblin]);
         expect(unit.state).not.toBeInstanceOf(Combat);
     });
@@ -83,7 +87,10 @@ describe('Combat Stuck Investigation', () => {
         unit.targetGoblin = goblin;
         unit.changeState(new Combat(unit));
 
-        unit.smartMove.mockReturnValue(false);
+        unit.smartMove.mockImplementation(() => {
+            unit.isUnreachable = true;
+            return false;
+        });
         unit.updateLogic(103, 0.1, false, [], [], [goblin]);
 
         expect(unit.state).not.toBeInstanceOf(Combat);

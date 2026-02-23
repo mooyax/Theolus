@@ -333,10 +333,9 @@ export class GoblinManager {
         this.frameCount++;
         const parity = this.frameCount % stagger;
 
-        // --- PERFORMANCE: GLOBAL SCAN BUDGET ---
         // Limit strict pathfinding/scanning ops per frame to prevent freeze at 5000+ entities
-        // User Approved: scale to ~10% of population (min 100, max 1000) -> Modified: Min 500, Max 5000 for high pop
-        this.scanBudget = Math.min(5000, Math.max(500, Math.floor(this.goblins.length * 0.1)));
+        // User Approved: scale to ~15% of population (min 500, max 5000)
+        this.scanBudget = Math.min(5000, Math.max(500, Math.floor(this.goblins.length * 0.15)));
 
         for (let i = this.goblins.length - 1; i >= 0; i--) {
             const goblin = this.goblins[i];
@@ -375,30 +374,21 @@ export class GoblinManager {
                         } else {
                             // Budget checking logic modified to prevent complete stalls
                             if (this.scanBudget > 0) {
-                                this.scanBudget--;
+                                // REMOVED: Pre-logic budget consumption
                                 // Budget OK: Release accumulated time
                                 timeBudget += (goblin.skippedTime || 0);
                                 goblin.skippedTime = 0;
                             } else {
-                                // Budget Depleted: Skip logic this frame, accumulate more time
-                                throttleSkip = true;
-                                goblin.skippedTime = (goblin.skippedTime || 0) + deltaTime;
+                                // Budget Depleted: Still allow close units to run logic occasionally
+                                // or just let the internal state scan check budget.
+                                timeBudget += (goblin.skippedTime || 0);
+                                goblin.skippedTime = 0;
                             }
                         }
                     } else {
-                        // No Interval throttling, but still check Global Budget!
-                        if (this.scanBudget > 0) {
-                            this.scanBudget--;
-                        } else {
-                            // Budget Depleted: Force throttling even if close?
-                            // No, if close (<30m), we prioritize smoothness/reaction.
-                            // Compromise: If VERY close (<15m), ignore budget.
-                            // Else, respect budget.
-                            if (distSq > 225) { // > 15m
-                                throttleSkip = true;
-                                goblin.skippedTime = (goblin.skippedTime || 0) + deltaTime;
-                            }
-                        }
+                        // No Interval throttling
+                        timeBudget += (goblin.skippedTime || 0);
+                        goblin.skippedTime = 0;
                     }
                 }
             }
