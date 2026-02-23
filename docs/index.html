@@ -362,9 +362,9 @@
       background: white;
       padding: 30px;
       border-radius: 15px;
-      width: 800px;
-      max-width: 90%;
-      max-height: 80vh;
+      width: 950px;
+      max-width: 95%;
+      max-height: 85vh;
       overflow-y: auto;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
@@ -433,53 +433,50 @@
 
     /* Tab Styles */
     .help-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 0px;
+      display: block !important;
+      margin-bottom: 20px !important;
+      border-bottom: 2px solid #ddd !important;
+      line-height: normal !important;
+      height: auto !important;
+      width: 100% !important;
     }
 
     .tab-btn {
-      padding: 10px 15px;
-      cursor: pointer;
-      background: #f0f0f0;
-      border: 1px solid #ddd;
-      border-bottom: none;
-      border-radius: 8px 8px 0 0;
-      font-weight: bold;
-      font-size: 13px;
-      /* Smaller font */
-      color: #555;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      /* Center content */
-      gap: 6px;
-      transition: all 0.2s;
-      flex: 1 1 auto;
-      /* Allow shrink and grow */
-      white-space: normal;
-      /* Allow wrap */
-      text-align: center;
-      line-height: 1.2;
-      min-width: 80px;
-      /* Minimum width */
+      display: inline-block !important;
+      vertical-align: bottom !important;
+      padding: 10px 15px !important;
+      margin: 0 5px 5px 0 !important;
+      cursor: pointer !important;
+      background: #f0f0f0 !important;
+      border: 1px solid #ddd !important;
+      border-bottom: none !important;
+      border-radius: 8px 8px 0 0 !important;
+      font-weight: bold !important;
+      color: #666 !important;
+      font-size: 14px !important;
+      white-space: nowrap !important;
+      min-width: max-content !important;
+      width: auto !important;
+      line-height: 1.4 !important;
+      box-sizing: border-box !important;
     }
 
     .tab-btn .material-symbols-outlined {
-      font-size: 18px;
+      font-size: 18px !important;
     }
 
     .tab-btn.active {
-      background: #fff;
-      color: #333;
-      border-color: #ddd;
-      border-bottom: 3px solid #fff;
-      /* Blend with content bg */
-      margin-bottom: -2px;
-      /* Overlap border */
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+      background: #fff !important;
+      color: #4CAF50 !important;
+      border: 1px solid #ddd !important;
+      border-bottom: 2px solid #fff !important;
+      border-top: 3px solid #4CAF50 !important;
+      /* Visual accent */
+      margin-top: -3px !important;
+      /* Adjust for thicker top border */
+      margin-bottom: -1px !important;
+      /* Overlap border-bottom of help-tabs */
+      z-index: 5 !important;
     }
 
     .tab-btn:hover {
@@ -835,8 +832,11 @@
       </div>
 
       <!-- Tabs -->
-      <div class="help-tabs" style="flex-wrap: wrap;">
-        <button class="tab-btn active" onclick="openTab('controls')">
+      <div class="help-tabs">
+        <button class="tab-btn active" onclick="openTab('overview')">
+          <span class="material-symbols-outlined">info</span> 概要 (Overview)
+        </button>
+        <button class="tab-btn" onclick="openTab('controls')">
           <span class="material-symbols-outlined">gamepad</span> 操作 (Controls)
         </button>
         <button class="tab-btn" onclick="openTab('stats')">
@@ -862,8 +862,42 @@
         </button>
       </div>
 
+      <!-- Overview Tab -->
+      <div id="tab-overview" class="help-tab-content" style="display: block;">
+        <div class="help-section">
+          <h3>ゲームの進め方</h3>
+          <p>Theolusは、自律的に動く人間たちを神の視点で見守り、導くゲームです。</p>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">diversity_3</span></div>
+            <div>
+              <strong>自律的な発展</strong><br>
+              ユニット（労働者）は自ら考え、自動で家を建てて人口を増やし、畑を耕して食料を確保します。
+              <strong>プレイヤーが直接家や畑を建てることはできません。</strong>
+            </div>
+          </div>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">keyboard_double_arrow_up</span></div>
+            <div>
+              <strong>神の力（マナ）</strong><br>
+              プレイヤーの役割は、マナを消費して「土地を高く（または低く）する指示」を出し、彼らが建築しやすい平地作りを導くことです。<br>
+              また、マナを使って兵舎や塔などの指示マーカーを設置し、住民に建設を促すことで村の守りを固めます。
+            </div>
+          </div>
+        </div>
+        <div class="help-section">
+          <h3>勝利条件</h3>
+          <div class="help-item">
+            <div class="help-icon"><span class="material-symbols-outlined">military_tech</span></div>
+            <div>
+              世界に点在する<strong>ゴブリンの巣 (Cave)</strong> や、敵対する<strong>他勢力の拠点</strong>をすべて破壊し、
+              脅威を完全に取り除くことで勝利（VICTORY）となります。
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Controls Tab -->
-      <div id="tab-controls" class="help-tab-content" style="display: block;">
+      <div id="tab-controls" class="help-tab-content" style="display: none;">
         <div class="help-section">
           <h3>操作メニュー (Controls)</h3>
           <div class="help-item">
@@ -872,27 +906,27 @@
           </div>
           <div class="help-item">
             <div class="help-icon"><span class="material-symbols-outlined">stat_3</span></div>
-            <div><strong>土地を上げる (Raise)</strong><br>地面を高くします（平地に家が建ちます）。</div>
+            <div><strong>土地を上げる (Raise)</strong><br>地面を高くする指示マーカーを設置します。</div>
           </div>
           <div class="help-item">
             <div class="help-icon"><span class="material-symbols-outlined">stat_minus_3</span></div>
-            <div><strong>土地を下げる (Lower)</strong><br>地面を低くします。</div>
+            <div><strong>土地を下げる (Lower)</strong><br>地面を低くする指示マーカーを設置します。</div>
           </div>
           <div class="help-item">
             <div class="help-icon"><span class="material-symbols-outlined">person_add</span></div>
-            <div><strong>ユニット作成 (Spawn)</strong><br>労働者を作成します。</div>
+            <div><strong>ユニット作成 (Spawn)</strong><br>住民を呼ぶための指示マーカーを設置します。</div>
           </div>
           <div class="help-item">
             <div class="help-icon"><span class="material-symbols-outlined">shield</span></div>
-            <div><strong>兵舎建設 (Barracks)</strong><br>騎士 (Knight) を生産する兵舎を建てます。</div>
+            <div><strong>兵舎建設 (Barracks)</strong><br>兵舎を建てるための指示マーカーを設置します。</div>
           </div>
           <div class="help-item">
             <div class="help-icon"><span class="material-symbols-outlined">fort</span></div>
-            <div><strong>塔建設 (Tower)</strong><br>魔法使い (Wizard) を生産する塔を建てます。</div>
+            <div><strong>塔建設 (Tower)</strong><br>塔を建てるための指示マーカーを設置します。</div>
           </div>
           <div class="help-item">
             <div class="help-icon"><span class="material-symbols-outlined">cancel</span></div>
-            <div><strong>キャンセル (Cancel)</strong><br>建設予定などをキャンセルします。</div>
+            <div><strong>キャンセル (Cancel)</strong><br>指示マーカーを取り消します。</div>
           </div>
         </div>
       </div>
@@ -1452,14 +1486,15 @@
         const btns = document.querySelectorAll('.tab-btn');
         // Indices: 0=Controls, 1=Stats, 2=Units, 3=Buildings, 4=Goblins
         const btnMap = {
-          'controls': 0,
-          'stats': 1,
-          'time': 2,
-          'terrain': 3,
-          'units': 4,
-          'buildings': 5,
-          'goblins': 6,
-          'others': 7
+          'overview': 0,
+          'controls': 1,
+          'stats': 2,
+          'time': 3,
+          'terrain': 4,
+          'units': 5,
+          'buildings': 6,
+          'goblins': 7,
+          'others': 8
         };
 
         if (btnMap[tabName] !== undefined && btns[btnMap[tabName]]) {
@@ -1487,7 +1522,7 @@
       if (helpBtn && helpModal) {
         helpBtn.addEventListener('click', () => {
           helpModal.style.display = 'flex';
-          openTab('controls');
+          openTab('overview');
         });
 
         closeHelpBtn.addEventListener('click', () => {
