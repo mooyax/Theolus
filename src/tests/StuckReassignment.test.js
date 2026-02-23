@@ -16,7 +16,7 @@ describe('Stuck/Throttled Job Reassignment', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        localStorage.clear();
+        localStorage.removeItem('god_game_save_1');
         Unit.nextId = 0; // Reset IDs for deterministic results
         vi.spyOn(document.body, 'appendChild').mockImplementation(() => { });
         game = new Game(null, null, true); // Use minimal init
@@ -89,5 +89,5 @@ describe('Stuck/Throttled Job Reassignment', () => {
         expect(unit1.targetRequest).toBeNull();
         expect(unit1.state.name).toBe('Wander');
 
-});
+    });
 });

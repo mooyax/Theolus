@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 
 export class CloudManager {
-    constructor(scene, terrainWidth, terrainDepth) {
+    constructor(scene, terrainWidth, terrainDepth, clippingPlanes = []) {
         this.scene = scene;
         this.clouds = [];
         this.cloudCount = 30;
         this.spreadRadius = 80;
+        this.clippingPlanes = clippingPlanes;
 
         const width = 512;
         const height = 512;
@@ -77,7 +78,6 @@ export class CloudManager {
             color: 0xFFFFFF,
             depthWrite: false,
             blending: THREE.NormalBlending,
-            clippingPlanes: [], // Explicitly disable clipping
             fog: false          // Ignore fog
         });
 

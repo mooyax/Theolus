@@ -36,7 +36,9 @@ describe('Comprehensive Save/Load Integration', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        localStorage.clear();
+        localStorage.removeItem('god_game_save_1');
+        localStorage.removeItem('god_game_save_2');
+        localStorage.removeItem('god_game_save_3');
         Unit.nextId = 0;
 
         game = new Game(null, null, true);

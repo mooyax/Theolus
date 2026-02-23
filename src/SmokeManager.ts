@@ -15,10 +15,12 @@ export class SmokeManager {
     private lifeTimes: Float32Array;
     private nextIndex: number = 0;
     private texture: THREE.Texture | null = null;
+    private clippingPlanes: THREE.Plane[];
 
-    constructor(scene: THREE.Scene, maxParticles: number = 2000) {
+    constructor(scene: THREE.Scene, maxParticles: number = 2000, clippingPlanes: THREE.Plane[] = []) {
         this.scene = scene;
         this.maxParticles = maxParticles;
+        this.clippingPlanes = clippingPlanes;
 
         this.positions = new Float32Array(maxParticles * 3);
         this.velocities = new Float32Array(maxParticles * 3);
@@ -38,7 +40,8 @@ export class SmokeManager {
             opacity: 0.4, // 少し下げて重なりを自然に
             depthWrite: false,
             depthTest: true,
-            blending: THREE.NormalBlending
+            blending: THREE.NormalBlending,
+            clippingPlanes: this.clippingPlanes
         });
 
         this.particles = new THREE.Points(this.geometry, material);

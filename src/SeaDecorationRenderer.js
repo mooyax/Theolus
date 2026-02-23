@@ -249,7 +249,8 @@ export class SeaDecorationRenderer {
             transparent: true,
             opacity: 0.4,
             blending: THREE.AdditiveBlending,
-            depthWrite: false
+            depthWrite: false,
+            clippingPlanes: this.clippingPlanes
         });
 
         this.marineSnow = new THREE.Points(geo, mat);

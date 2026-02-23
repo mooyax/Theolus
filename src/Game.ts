@@ -420,7 +420,7 @@ export class Game {
             console.log('[Game] Minimal: Init EnemyAI');
             this.enemyAI = new EnemyAI(this); // Init Enemy AI
 
-            this.smokeManager = new SmokeManager(this.scene, 500); // Small pool for minimal mode
+            this.smokeManager = new SmokeManager(this.scene, 500, this.clippingPlanes); // Small pool for minimal mode
 
             this.isLoading = false;
             console.log('[Game] Minimal: Done. Returning.');
@@ -520,7 +520,7 @@ export class Game {
         }
 
         console.log('[Game] Init BirdManager');
-        this.birdManager = new BirdManager(this.scene, this.terrain.width, this.terrain.depth, this.clippingPlanes);
+        this.birdManager = new BirdManager(this.scene, this.terrain.width, this.terrain.depth);
         this.sheepManager = new SheepManager(this.scene, this.terrain, this.clippingPlanes);
         this.goblinManager = goblinManagerOverride || new GoblinManager(this.scene, this.terrain, this, this.clippingPlanes);
         this.fishManager = new FishManager(this.scene, this.terrain, this.clippingPlanes);
@@ -531,7 +531,7 @@ export class Game {
         this.compass = new Compass(this);
         console.log('[Game] Init WeatherManager');
         this.weatherManager = new WeatherManager(this.scene, this.clippingPlanes);
-        if (!this.smokeManager) this.smokeManager = new SmokeManager(this.scene, 2000);
+        if (!this.smokeManager) this.smokeManager = new SmokeManager(this.scene, 2000, this.clippingPlanes);
         console.log('[Game] Init SeaDecorationRenderer');
         this.seaDecorationRenderer = new SeaDecorationRenderer(this.scene, this.terrain, this.clippingPlanes);
 
@@ -2949,8 +2949,6 @@ export class Game {
     }
 
     clearEntities() {
-        console.log("[Game] Clearing Entities...");
-
         // 1. Clear Units / Goblins
         if (this.units) {
             this.units.forEach(u => {
@@ -3262,6 +3260,15 @@ export class Game {
                 } catch (e) { console.error("CRITICAL Unit restore failed:", e); throw e; }
             }
             console.log(`[Game] Successfully restored ${this.units.length} units.`);
+
+            // Ensure Unit.nextId is advanced to prevent ID collisions
+            if (this.units.length > 0) {
+                const maxId = Math.max(...this.units.map(u => u.id));
+                if (maxId >= Unit.nextId) {
+                    Unit.nextId = maxId + 1;
+                    console.log(`[Game] Advanced Unit.nextId to ${Unit.nextId}`);
+                }
+            }
 
             // Restore Goblin Manager
             if (this.goblinManager) {

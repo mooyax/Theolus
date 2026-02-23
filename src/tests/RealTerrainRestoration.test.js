@@ -44,7 +44,7 @@ describe('Real Terrain Restoration Logic', () => {
 
     beforeEach(async () => {
         vi.clearAllMocks();
-        localStorage.clear();
+        localStorage.removeItem('god_game_save_1');
         vi.spyOn(Game.prototype, 'animate').mockImplementation(() => { });
         Unit.nextId = 0;
 

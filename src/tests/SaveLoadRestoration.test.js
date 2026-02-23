@@ -14,24 +14,31 @@ vi.mock('../WeatherManager.js', () => ({
 }));
 
 describe('Save/Load Job Restoration', () => {
-    let game;
-
     beforeEach(() => {
         vi.clearAllMocks();
         vi.spyOn(Game.prototype, 'animate').mockImplementation(() => { });
         Unit.nextId = 0;
-        game = new Game();
-        game.terrain.updateColors = vi.fn();
-        game.terrain.updateMesh = vi.fn();
-        game.terrain.calculateRegions = vi.fn();
-        game.terrain.deserialize = vi.fn().mockResolvedValue(true);
     });
 
     afterEach(() => {
+        if (window.game) {
+            window.game.dispose();
+            window.game = null;
+        }
+        localStorage.removeItem('god_game_save_999');
+        localStorage.removeItem('god_game_save_1000');
         vi.restoreAllMocks();
     });
 
     it('should restore unit ID and re-link to Job correctly', async () => {
+        const game = new Game();
+        await game.readyPromise;
+        window.game = game;
+        game.terrain.updateColors = vi.fn();
+        game.terrain.updateMesh = vi.fn();
+        game.terrain.calculateRegions = vi.fn();
+        game.terrain.deserialize = vi.fn().mockResolvedValue(true);
+
         const unit = new Unit(game.scene, game.terrain, 10, 10, 'worker');
         unit.id = 55;
         game.units.push(unit);
@@ -45,22 +52,24 @@ describe('Save/Load Job Restoration', () => {
         expect(unit.id).toBe(55);
         expect(req.assignedTo).toBe(55);
 
-        const saveData = game.saveGame(1);
+        const saveData = game.saveGame(999);
         expect(saveData).toBe(true);
 
-        const val = localStorage.getItem('god_game_save_1');
+        const val = localStorage.getItem('god_game_save_999');
         const decompressed = LZString.decompressFromUTF16(val);
         const json = JSON.parse(decompressed);
 
         const savedUnit = json.data.units[0];
         expect(savedUnit.id).toBe(55);
 
-        game.units = [];
-        game.requestQueue = [];
+        game.units.length = 0;
+        game.requestQueue.length = 0;
         Unit.nextId = 0;
-        const success = await game.loadGame(1);
-        expect(success).toBe(true);
 
+        const success = await game.loadGame(999);
+
+
+        expect(success).toBe(true);
         expect(game.units.length).toBe(1);
         const restoredUnit = game.units[0];
         expect(restoredUnit.id).toBe(55);
@@ -74,9 +83,19 @@ describe('Save/Load Job Restoration', () => {
         expect(restoredUnit.targetRequest).toBe(restoredReq);
         expect(restoredUnit.state.constructor.name).toBe('Job');
         expect(restoredUnit.action).toBe('Approaching Job');
+
+        window.game = null;
     });
 
     it('should reset ghost-assigned requests during load', async () => {
+        const game = new Game();
+        await game.readyPromise;
+        window.game = game;
+        game.terrain.updateColors = vi.fn();
+        game.terrain.updateMesh = vi.fn();
+        game.terrain.calculateRegions = vi.fn();
+        game.terrain.deserialize = vi.fn().mockResolvedValue(true);
+
         const savedData = {
             timestamp: Date.now(),
             data: {
@@ -95,13 +114,16 @@ describe('Save/Load Job Restoration', () => {
             }
         };
         const compressed = LZString.compressToUTF16(JSON.stringify(savedData));
-        localStorage.setItem('god_game_save_1', compressed);
+        localStorage.setItem('god_game_save_1000', compressed);
 
-        await game.loadGame(1);
+        await game.loadGame(1000);
+
 
         expect(game.requestQueue.length).toBe(1);
         const req = game.requestQueue[0];
         expect(req.status).toBe('pending');
         expect(req.assignedTo).toBeNull();
+
+        window.game = null;
     });
 });

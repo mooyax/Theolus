@@ -17,7 +17,7 @@ describe('Complex AI Scenarios', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        localStorage.clear();
+        localStorage.removeItem('god_game_save_1');
         Actor.nextId = 0;
         Unit.nextId = 0;
         vi.spyOn(Game.prototype, 'animate').mockImplementation(() => { });

@@ -43,7 +43,7 @@ describe('Moving Flicker Check', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        localStorage.clear();
+        localStorage.removeItem('god_game_save_1');
         const scene = new THREE.Scene();
         game = new Game(scene, null, true); // Use minimal init
         window.game = game;
@@ -270,5 +270,5 @@ describe('Moving Flicker Check', () => {
         expect(unit.action).toBe('Approaching Job');
         expect(unit.targetRequest).toBe(req);
 
-});
+    });
 });

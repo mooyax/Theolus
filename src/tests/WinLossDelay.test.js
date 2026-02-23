@@ -101,7 +101,7 @@ describe('WinLossDelay (TDD)', () => {
     });
 
     afterEach(() => {
-        localStorage.clear();
+        localStorage.removeItem('god_game_save_1');
         vi.restoreAllMocks();
     });
 

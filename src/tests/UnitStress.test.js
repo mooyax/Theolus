@@ -10,7 +10,7 @@ describe('Unit AI Stress Testing', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        localStorage.clear();
+        // localStorage.clear(); // Removed global clear to allow concurrent tests
         vi.spyOn(Game.prototype, 'animate').mockImplementation(() => { });
         vi.spyOn(Game.prototype, 'startNewGame').mockImplementation(() => { });
         document.body.innerHTML = '<div id="ui"></div><canvas id="minimap"></canvas><div id="mana-bar"></div><div id="loading-screen"></div><div id="loading-bar"></div><div id="loading-text"></div>';

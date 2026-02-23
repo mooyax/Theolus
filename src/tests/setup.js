@@ -513,6 +513,9 @@ beforeEach(async () => {
 
     // resetStaticCounters();
 
+    // REMOVED global clear/dispose to avoid race conditions during async yields.
+    // Each test should manage its own state.
+    /*
     if (globalThis.window) {
         window.localStorage?.clear();
         if (window.game) {
@@ -521,4 +524,5 @@ beforeEach(async () => {
             window.game = null;
         }
     }
+    */
 });

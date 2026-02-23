@@ -54,11 +54,13 @@ export class BirdManager {
         console.log("[BirdManager] Initializing Assets...");
         await BirdManager.initAssets();
 
-        // Apply Clipping
+        // Apply Clipping - Disabled for atmospheric birds to avoid sharp cuts
+        /*
         const mats = BirdManager.assets.materials;
         Object.values(mats).forEach(mat => {
             if (mat) mat.clippingPlanes = this.clippingPlanes;
         });
+        */
 
         this.initBirds();
         this.initialized = true;
