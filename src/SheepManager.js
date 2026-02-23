@@ -8,9 +8,12 @@ export class SheepManager {
         this.clippingPlanes = clippingPlanes || [];
         this.sheeps = [];
         this.sheepCount = 10;
+        this.initialized = false;
+    }
 
-        // Init Assets via Class
-        Sheep.initAssets();
+    async init() {
+        console.log("[SheepManager] Initializing Assets...");
+        await Sheep.initAssets();
         // Apply Clipping
         if (Sheep.assets && Sheep.assets.materials) {
             const mats = Sheep.assets.materials;
@@ -20,6 +23,7 @@ export class SheepManager {
         }
 
         this.initSheeps();
+        this.initialized = true;
     }
 
     reset() {

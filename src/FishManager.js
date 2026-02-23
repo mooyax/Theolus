@@ -7,15 +7,27 @@ export class FishManager {
         this.terrain = terrain;
         this.clippingPlanes = clippingPlanes || [];
         this.fishes = [];
+        this.initialized = false;
+    }
 
-        // Apply Clipping via Class
-        Fish.initAssets();
+    async init() {
+        console.log("[FishManager] Initializing Assets...");
+        await Fish.initAssets();
         if (Fish.assets.materials.fish) {
             Fish.assets.materials.fish.clippingPlanes = this.clippingPlanes;
         }
 
-        this.init();
-        console.log("FishManager Refactored: Initialized with Entity-based Fish.");
+        this.reset();
+
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        this.fishes = [];
+        for (let i = 0; i < 75; i++) {
+            this.spawnRandomFish(logicalW, logicalD);
+        }
+        this.initialized = true;
+        console.log(`[FishManager] Spawned initial fish.`);
     }
 
     reset() {
@@ -26,18 +38,6 @@ export class FishManager {
         this.fishes = [];
     }
 
-    init() {
-        this.reset();
-
-        const logicalW = this.terrain.logicalWidth || 80;
-        const logicalD = this.terrain.logicalDepth || 80;
-
-        this.fishes = [];
-        for (let i = 0; i < 75; i++) {
-            this.spawnRandomFish(logicalW, logicalD);
-        }
-        console.log(`Spawned initial fish.`);
-    }
 
     spawnRandomFish(logicalW, logicalD) {
         if (this.fishes.length >= 75) return;

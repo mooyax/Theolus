@@ -134,20 +134,35 @@ export class HelpShowroom {
     }
 
     async initRenderers() {
-        console.log('[HelpShowroom] Initializing renderers...');
-        // Dummy yield function for immediate execution
+        console.log('[HelpShowroom] Initializing renderers and assets...');
         const yieldFn = async () => Promise.resolve();
         const statusFn = (msg) => console.log(`[HelpShowroom] ${msg}`);
 
         try {
+            console.log('[HelpShowroom] Awaiting Unit initialization...');
             await this.unitRenderer.init(yieldFn, statusFn);
+
+            console.log('[HelpShowroom] Awaiting Goblin initialization...');
             await this.goblinRenderer.init();
+
+            console.log('[HelpShowroom] Awaiting Building initialization...');
             await this.buildingRenderer.init();
+
+            console.log('[HelpShowroom] Awaiting Animal initialization (Bird, Sheep, Fish)...');
+            await Promise.all([
+                BirdManager.initAssets(),
+                Sheep.initAssets(),
+                Fish.initAssets()
+            ]);
+
             this.initialized = true;
-            console.log('[HelpShowroom] Renderers initialized.');
-            if (this.currentType) this.render(); // Re-render if pending
+            console.log('[HelpShowroom] All renderers and assets initialized.');
+            if (this.currentType) {
+                console.log(`[HelpShowroom] Rendering pending type: ${this.currentType}`);
+                this.render();
+            }
         } catch (e) {
-            console.error('[HelpShowroom] Failed to initialize renderers:', e);
+            console.error('[HelpShowroom] Fatal error during initialization:', e);
         }
     }
 

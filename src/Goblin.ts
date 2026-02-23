@@ -15,6 +15,7 @@ export class Goblin extends Actor {
         textures: {},
         initialized: false
     };
+    static initPromise: Promise<void> | null = null;
 
     public type: string;
     public clanId: number;
@@ -54,73 +55,79 @@ export class Goblin extends Actor {
     public lastHitTime: number = 0;
 
     static async initAssets(checkYield?: any) {
-        if (Goblin.assets.initialized) return;
+        if (Goblin.assets.initialized) return Promise.resolve();
+        if (Goblin.initPromise) return Goblin.initPromise;
 
-        const yieldOp = async () => { if (checkYield) await checkYield(); };
+        Goblin.initPromise = (async () => {
 
-        // Geometries
-        // Normal Torso
-        Goblin.assets.geometries.torsoNormal = new THREE.BoxGeometry(0.25, 0.3, 0.2);
-        // Hobgoblin Torso
-        Goblin.assets.geometries.torsoHob = new THREE.BoxGeometry(0.35, 0.3, 0.2);
+            const yieldOp = async () => { if (checkYield) await checkYield(); };
 
-        // Shared
-        Goblin.assets.geometries.head = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-        Goblin.assets.geometries.ear = new THREE.ConeGeometry(0.05, 0.15, 4);
+            // Geometries
+            // Normal Torso
+            Goblin.assets.geometries.torsoNormal = new THREE.BoxGeometry(0.25, 0.3, 0.2);
+            // Hobgoblin Torso
+            Goblin.assets.geometries.torsoHob = new THREE.BoxGeometry(0.35, 0.3, 0.2);
 
-        const armGeo = new THREE.BoxGeometry(0.08, 0.25, 0.08);
-        armGeo.translate(0, -0.1, 0); // Pivot at Top (Shoulder)
-        Goblin.assets.geometries.arm = armGeo;
+            // Shared
+            Goblin.assets.geometries.head = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+            Goblin.assets.geometries.ear = new THREE.ConeGeometry(0.05, 0.15, 4);
 
-        const legGeo = new THREE.BoxGeometry(0.1, 0.25, 0.1);
-        legGeo.translate(0, -0.1, 0); // Pivot at Top (Hip)
-        Goblin.assets.geometries.leg = legGeo;
+            const armGeo = new THREE.BoxGeometry(0.08, 0.25, 0.08);
+            armGeo.translate(0, -0.1, 0); // Pivot at Top (Shoulder)
+            Goblin.assets.geometries.arm = armGeo;
 
-        await yieldOp();
+            const legGeo = new THREE.BoxGeometry(0.1, 0.25, 0.1);
+            legGeo.translate(0, -0.1, 0); // Pivot at Top (Hip)
+            Goblin.assets.geometries.leg = legGeo;
 
-        Goblin.assets.geometries.club = new THREE.CylinderGeometry(0.03, 0.05, 0.4, 6);
-        // New: Staff for Shaman
-        Goblin.assets.geometries.staff = new THREE.BoxGeometry(0.04, 0.8, 0.04);
+            await yieldOp();
 
-        // Cross (If needed by ParticleManager? ParticleManager uses its own) 
-        // We can keep these just in case.
-        Goblin.assets.geometries.crossV = new THREE.BoxGeometry(0.2, 0.8, 0.2);
-        Goblin.assets.geometries.crossH = new THREE.BoxGeometry(0.6, 0.2, 0.2);
+            Goblin.assets.geometries.club = new THREE.CylinderGeometry(0.03, 0.05, 0.4, 6);
+            // New: Staff for Shaman
+            Goblin.assets.geometries.staff = new THREE.BoxGeometry(0.04, 0.8, 0.04);
 
-        // Materials
-        Goblin.assets.materials.skinNormal = new THREE.MeshLambertMaterial({ color: 0x55AA55 });
-        Goblin.assets.materials.clothesNormal = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
-        Goblin.assets.materials.skinHob = new THREE.MeshLambertMaterial({ color: 0x336633 });
-        Goblin.assets.materials.clothesHob = new THREE.MeshLambertMaterial({ color: 0x222222 });
-        Goblin.assets.materials.club = new THREE.MeshLambertMaterial({ color: 0x654321 }); // Wood
-        Goblin.assets.materials.staff = new THREE.MeshLambertMaterial({ color: 0x8B4513 }); // Wood
+            // Cross (If needed by ParticleManager? ParticleManager uses its own) 
+            // We can keep these just in case.
+            Goblin.assets.geometries.crossV = new THREE.BoxGeometry(0.2, 0.8, 0.2);
+            Goblin.assets.geometries.crossH = new THREE.BoxGeometry(0.6, 0.2, 0.2);
 
-        await yieldOp();
+            // Materials
+            Goblin.assets.materials.skinNormal = new THREE.MeshLambertMaterial({ color: 0x55AA55 });
+            Goblin.assets.materials.clothesNormal = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+            Goblin.assets.materials.skinHob = new THREE.MeshLambertMaterial({ color: 0x336633 });
+            Goblin.assets.materials.clothesHob = new THREE.MeshLambertMaterial({ color: 0x222222 });
+            Goblin.assets.materials.club = new THREE.MeshLambertMaterial({ color: 0x654321 }); // Wood
+            Goblin.assets.materials.staff = new THREE.MeshLambertMaterial({ color: 0x8B4513 }); // Wood
 
-        // New Types
-        Goblin.assets.materials.skinShaman = new THREE.MeshLambertMaterial({ color: 0x008888 }); // Blue-Green
-        Goblin.assets.materials.clothesShaman = new THREE.MeshLambertMaterial({ color: 0x330066 }); // Dark Purple/Blue Robe
-        Goblin.assets.materials.skinKing = new THREE.MeshLambertMaterial({ color: 0x880000 }); // Red Skin
-        Goblin.assets.materials.clothesKing = new THREE.MeshLambertMaterial({ color: 0xFFD700 }); // Gold Armor
+            await yieldOp();
 
-        // Cross Material
-        Goblin.assets.materials.cross = new THREE.MeshLambertMaterial({
-            color: 0x55AA55,
-            transparent: true,
-            opacity: 1.0
-        });
+            // New Types
+            Goblin.assets.materials.skinShaman = new THREE.MeshLambertMaterial({ color: 0x008888 }); // Blue-Green
+            Goblin.assets.materials.clothesShaman = new THREE.MeshLambertMaterial({ color: 0x330066 }); // Dark Purple/Blue Robe
+            Goblin.assets.materials.skinKing = new THREE.MeshLambertMaterial({ color: 0x880000 }); // Red Skin
+            Goblin.assets.materials.clothesKing = new THREE.MeshLambertMaterial({ color: 0xFFD700 }); // Gold Armor
 
-        // Faces
-        Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0.15, 0.15);
-        Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // Just in front of head (0.2 depth / 2 + bias)
+            // Cross Material
+            Goblin.assets.materials.cross = new THREE.MeshLambertMaterial({
+                color: 0x55AA55,
+                transparent: true,
+                opacity: 1.0
+            });
 
-        Goblin.assets.textures.face = Goblin.createFaceTexture();
-        Goblin.assets.materials.face = new THREE.MeshStandardMaterial({
-            map: Goblin.assets.textures.face,
-            transparent: true
-        });
+            // Faces
+            Goblin.assets.geometries.facePlane = new THREE.PlaneGeometry(0.15, 0.15);
+            Goblin.assets.geometries.facePlane.translate(0, 0, 0.102); // Just in front of head (0.2 depth / 2 + bias)
 
-        Goblin.assets.initialized = true;
+            Goblin.assets.textures.face = Goblin.createFaceTexture();
+            Goblin.assets.materials.face = new THREE.MeshStandardMaterial({
+                map: Goblin.assets.textures.face,
+                transparent: true
+            });
+
+            Goblin.assets.initialized = true;
+        })();
+
+        return Goblin.initPromise;
     }
 
     static createFaceTexture() {

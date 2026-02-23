@@ -6,42 +6,53 @@ export class BirdManager {
         materials: {},
         initialized: false
     };
+    static initPromise = null;
 
-    static initAssets() {
-        if (BirdManager.assets.initialized) return;
+    static async initAssets() {
+        if (BirdManager.assets.initialized) return Promise.resolve();
+        if (BirdManager.initPromise) return BirdManager.initPromise;
 
-        // Body
-        const bodyGeo = new THREE.ConeGeometry(0.05, 0.2, 4);
-        bodyGeo.rotateX(Math.PI / 2); // Point forward
-        BirdManager.assets.geometries.body = bodyGeo;
+        BirdManager.initPromise = (async () => {
 
-        // Wings
-        const wingGeo = new THREE.BufferGeometry();
-        const wingVertices = new Float32Array([
-            0, 0, 0,       // Root
-            0.3, 0, 0.1,   // Tip
-            0, 0, 0.15     // Back
-        ]);
-        wingGeo.setAttribute('position', new THREE.BufferAttribute(wingVertices, 3));
-        wingGeo.computeVertexNormals();
-        BirdManager.assets.geometries.wing = wingGeo;
+            // Body
+            const bodyGeo = new THREE.ConeGeometry(0.05, 0.2, 4);
+            bodyGeo.rotateX(Math.PI / 2); // Point forward
+            BirdManager.assets.geometries.body = bodyGeo;
 
-        // Materials
-        BirdManager.assets.materials.body = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
-        BirdManager.assets.materials.wing = new THREE.MeshBasicMaterial({ color: 0xEEEEEE, side: THREE.DoubleSide });
+            // Wings
+            const wingGeo = new THREE.BufferGeometry();
+            const wingVertices = new Float32Array([
+                0, 0, 0,       // Root
+                0.3, 0, 0.1,   // Tip
+                0, 0, 0.15     // Back
+            ]);
+            wingGeo.setAttribute('position', new THREE.BufferAttribute(wingVertices, 3));
+            wingGeo.computeVertexNormals();
+            BirdManager.assets.geometries.wing = wingGeo;
 
-        BirdManager.assets.initialized = true;
+            // Materials
+            BirdManager.assets.materials.body = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+            BirdManager.assets.materials.wing = new THREE.MeshBasicMaterial({ color: 0xEEEEEE, side: THREE.DoubleSide });
+
+            BirdManager.assets.initialized = true;
+        })();
+
+        return BirdManager.initPromise;
     }
 
     constructor(scene, terrainWidth, terrainDepth, clippingPlanes) {
-        BirdManager.initAssets();
-
         this.scene = scene;
         this.terrainWidth = terrainWidth;
         this.terrainDepth = terrainDepth;
         this.clippingPlanes = clippingPlanes || [];
         this.birds = [];
         this.birdCount = 20;
+        this.initialized = false;
+    }
+
+    async init() {
+        console.log("[BirdManager] Initializing Assets...");
+        await BirdManager.initAssets();
 
         // Apply Clipping
         const mats = BirdManager.assets.materials;
@@ -50,6 +61,7 @@ export class BirdManager {
         });
 
         this.initBirds();
+        this.initialized = true;
     }
 
     initBirds() {

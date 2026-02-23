@@ -8,37 +8,41 @@ export class Fish extends Actor {
         materials: {},
         initialized: false
     };
+    static initPromise = null;
 
-    static initAssets() {
-        if (Fish.assets.initialized) return;
+    static async initAssets() {
+        if (Fish.assets.initialized) return Promise.resolve();
+        if (Fish.initPromise) return Fish.initPromise;
 
-        // Body: Sphere scaled to ellipsoid
-        const bodyGeo = new THREE.SphereGeometry(0.12, 8, 8);
-        bodyGeo.scale(0.4, 0.6, 1.5);
-        Fish.assets.geometries.body = bodyGeo;
+        Fish.initPromise = (async () => {
 
-        // Tail: Cone rotated
-        const tailGeo = new THREE.ConeGeometry(0.1, 0.3, 4);
-        tailGeo.rotateX(-Math.PI / 2); // Point back
-        Fish.assets.geometries.tail = tailGeo;
+            // Body: Sphere scaled to ellipsoid
+            const bodyGeo = new THREE.SphereGeometry(0.12, 8, 8);
+            bodyGeo.scale(0.4, 0.6, 1.5);
+            Fish.assets.geometries.body = bodyGeo;
 
-        // Material
-        Fish.assets.materials.fish = new THREE.MeshLambertMaterial({ color: 0x44AAFF });
-        Fish.assets.materials.fish.onBeforeCompile = (shader) => {
-            shader.vertexShader = shader.vertexShader.replace('#include <common>', `
+            // Tail: Cone rotated
+            const tailGeo = new THREE.ConeGeometry(0.1, 0.3, 4);
+            tailGeo.rotateX(-Math.PI / 2); // Point back
+            Fish.assets.geometries.tail = tailGeo;
+
+            // Material
+            Fish.assets.materials.fish = new THREE.MeshLambertMaterial({ color: 0x44AAFF });
+            Fish.assets.materials.fish.onBeforeCompile = (shader) => {
+                shader.vertexShader = shader.vertexShader.replace('#include <common>', `
                 #include <common>
                 varying vec3 vWorldPos;
             `);
-            shader.vertexShader = shader.vertexShader.replace('#include <worldpos_vertex>', `
+                shader.vertexShader = shader.vertexShader.replace('#include <worldpos_vertex>', `
                 #include <worldpos_vertex>
                 vWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;
             `);
 
-            shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `
+                shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `
                 #include <common>
                 varying vec3 vWorldPos;
             `);
-            shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `
+                shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `
                 #include <color_fragment>
                 float depth = max(0.0, 0.25 - vWorldPos.y);
                 vec3 waterColor = vec3(0.0, 0.1, 0.2);
@@ -48,9 +52,12 @@ export class Fish extends Actor {
                 float fog = smoothstep(20.0, 60.0, dist);
                 diffuseColor.rgb = mix(diffuseColor.rgb, waterColor, fog * 0.8);
             `);
-        };
+            };
 
-        Fish.assets.initialized = true;
+            Fish.assets.initialized = true;
+        })();
+
+        return Fish.initPromise;
     }
 
     constructor(scene, terrain, x, z) {

@@ -521,11 +521,8 @@ export class Game {
 
         console.log('[Game] Init BirdManager');
         this.birdManager = new BirdManager(this.scene, this.terrain.width, this.terrain.depth, this.clippingPlanes);
-        console.log('[Game] Init SheepManager');
         this.sheepManager = new SheepManager(this.scene, this.terrain, this.clippingPlanes);
-        console.log('[Game] Init GoblinManager');
         this.goblinManager = goblinManagerOverride || new GoblinManager(this.scene, this.terrain, this, this.clippingPlanes);
-        console.log('[Game] Init FishManager');
         this.fishManager = new FishManager(this.scene, this.terrain, this.clippingPlanes);
 
         console.log('[Game] Init Minimap');
@@ -663,6 +660,14 @@ export class Game {
             // Simplified: Use the newly async regenerateWorld to setup the initial preview
             console.log("[Game] Generating Initial Preview World...");
             await this.regenerateWorld();
+
+            // Initialize Managers properly
+            console.log("[Game] Initializing Managers (Bird, Sheep, Fish)...");
+            await Promise.all([
+                this.birdManager.init(),
+                this.sheepManager.init(),
+                this.fishManager.init()
+            ]);
 
             // Initial Camera Position for Preview (Center & Orbit)
             const w = this.terrain.logicalWidth || 80;

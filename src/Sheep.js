@@ -8,21 +8,28 @@ export class Sheep extends Actor {
         materials: {},
         initialized: false
     };
+    static initPromise = null;
 
-    static initAssets() {
-        if (Sheep.assets.initialized) return;
+    static async initAssets() {
+        if (Sheep.assets.initialized) return Promise.resolve();
+        if (Sheep.initPromise) return Sheep.initPromise;
 
-        // Geometries
-        Sheep.assets.geometries.body = new THREE.BoxGeometry(0.4, 0.3, 0.6);
-        Sheep.assets.geometries.head = new THREE.BoxGeometry(0.25, 0.25, 0.3);
-        Sheep.assets.geometries.leg = new THREE.BoxGeometry(0.1, 0.3, 0.1);
+        Sheep.initPromise = (async () => {
 
-        // Materials
-        Sheep.assets.materials.body = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-        Sheep.assets.materials.head = new THREE.MeshLambertMaterial({ color: 0x111111 });
-        Sheep.assets.materials.leg = new THREE.MeshLambertMaterial({ color: 0x111111 });
+            // Geometries
+            Sheep.assets.geometries.body = new THREE.BoxGeometry(0.4, 0.3, 0.6);
+            Sheep.assets.geometries.head = new THREE.BoxGeometry(0.25, 0.25, 0.3);
+            Sheep.assets.geometries.leg = new THREE.BoxGeometry(0.1, 0.3, 0.1);
 
-        Sheep.assets.initialized = true;
+            // Materials
+            Sheep.assets.materials.body = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+            Sheep.assets.materials.head = new THREE.MeshLambertMaterial({ color: 0x111111 });
+            Sheep.assets.materials.leg = new THREE.MeshLambertMaterial({ color: 0x111111 });
+
+            Sheep.assets.initialized = true;
+        })();
+
+        return Sheep.initPromise;
     }
 
     constructor(scene, terrain, x, z) {

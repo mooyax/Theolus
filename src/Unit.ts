@@ -11,9 +11,9 @@ export class Unit extends Actor {
         geometries: {},
         materials: {},
         textures: {},
-        initialized: false,
-        initializing: false
+        initialized: false
     };
+    static initPromise: Promise<void> | null = null;
     static nextId = 0;
 
     // Properties
@@ -73,154 +73,152 @@ export class Unit extends Actor {
     public deathTimer: number = 0;
 
     static async initAssets(checkYield: any, updateStatus: any) {
-        if (Unit.assets.initialized) {
-            return;
-        }
-        if (Unit.assets.initializing) {
-            // Wait for existing initialization if needed, or just return
-            return;
-        }
-        Unit.assets.initializing = true;
+        if (Unit.assets.initialized) return Promise.resolve();
+        if (Unit.initPromise) return Unit.initPromise;
 
-        console.log("[Unit] Starting initAssets...");
+        Unit.initPromise = (async () => {
+            console.log("[Unit] Starting initAssets...");
 
-        // Yield Helper (Force Yield if supported)
-        const yieldOp = async (label) => {
-            console.log(`[Unit] Yielding: ${label || ''}`);
-            if (checkYield) await checkYield(true);
-            console.log(`[Unit] Resumed: ${label || ''}`);
-        };
+            // Yield Helper (Force Yield if supported)
+            const yieldOp = async (label) => {
+                console.log(`[Unit] Yielding: ${label || ''}`);
+                if (checkYield) await checkYield(true);
+                console.log(`[Unit] Resumed: ${label || ''}`);
+            };
 
-        if (updateStatus) updateStatus("Initializing Units (Geometries)...");
+            if (updateStatus) updateStatus("Initializing Units (Geometries)...");
 
-        // Geometries
-        try {
-            console.log("[Unit] Creating Geometries...");
-            const bodyGeo = new THREE.BoxGeometry(0.3, 0.35, 0.2);
-            bodyGeo.translate(0, 0.3, 0); // Center height ~0.3
-            Unit.assets.geometries.body = bodyGeo;
+            // Geometries
+            try {
+                console.log("[Unit] Creating Geometries...");
+                const bodyGeo = new THREE.BoxGeometry(0.3, 0.35, 0.2);
+                bodyGeo.translate(0, 0.3, 0); // Center height ~0.3
+                Unit.assets.geometries.body = bodyGeo;
 
-            const headGeo = new THREE.BoxGeometry(0.25, 0.25, 0.25);
-            headGeo.translate(0, 0.6, 0);
-            Unit.assets.geometries.head = headGeo;
+                const headGeo = new THREE.BoxGeometry(0.25, 0.25, 0.25);
+                headGeo.translate(0, 0.6, 0);
+                Unit.assets.geometries.head = headGeo;
 
-            // Face Plane (Separate mesh to allow independent tinting of Hair/Helmet vs Face)
-            const faceGeo = new THREE.PlaneGeometry(0.2, 0.2);
-            faceGeo.translate(0, 0.6, 0.126); // Slightly in front of Head Box (Z=0.125)
-            Unit.assets.geometries.facePlane = faceGeo;
+                // Face Plane (Separate mesh to allow independent tinting of Hair/Helmet vs Face)
+                const faceGeo = new THREE.PlaneGeometry(0.2, 0.2);
+                faceGeo.translate(0, 0.6, 0.126); // Slightly in front of Head Box (Z=0.125)
+                Unit.assets.geometries.facePlane = faceGeo;
 
-            const limbGeo = new THREE.BoxGeometry(0.1, 0.25, 0.1);
-            limbGeo.translate(0, -0.1, 0); // Pivot at top
-            Unit.assets.geometries.limb = limbGeo;
+                const limbGeo = new THREE.BoxGeometry(0.1, 0.25, 0.1);
+                limbGeo.translate(0, -0.1, 0); // Pivot at top
+                Unit.assets.geometries.limb = limbGeo;
 
-            // Sword (Blade + Hilt joined? No, simple box for chibi)
-            // Blade: 0.05 x 0.4 x 0.05
-            const swordGeo = new THREE.BoxGeometry(0.05, 0.5, 0.05);
-            swordGeo.translate(0, 0.25, 0); // Handle at bottom
-            Unit.assets.geometries.sword = swordGeo;
+                // Sword (Blade + Hilt joined? No, simple box for chibi)
+                // Blade: 0.05 x 0.4 x 0.05
+                const swordGeo = new THREE.BoxGeometry(0.05, 0.5, 0.05);
+                swordGeo.translate(0, 0.25, 0); // Handle at bottom
+                Unit.assets.geometries.sword = swordGeo;
 
-            // Staff (Long pole)
-            const staffGeo = new THREE.BoxGeometry(0.05, 0.8, 0.05);
-            staffGeo.translate(0, 0, 0); // Center held
-            Unit.assets.geometries.staff = staffGeo;
-        } catch (e) {
-            console.error("[Unit] Error creating geometries:", e);
-        }
+                // Staff (Long pole)
+                const staffGeo = new THREE.BoxGeometry(0.05, 0.8, 0.05);
+                staffGeo.translate(0, 0, 0); // Center held
+                Unit.assets.geometries.staff = staffGeo;
+            } catch (e) {
+                console.error("[Unit] Error creating geometries:", e);
+            }
 
-        await yieldOp("After Geometries");
-        if (updateStatus) updateStatus("Initializing Units (Hats)...");
+            await yieldOp("After Geometries");
+            if (updateStatus) updateStatus("Initializing Units (Hats)...");
 
-        try {
-            console.log("[Unit] Creating Hats...");
-            // Wizard Hat (Cone + Brim)
-            // Brim: Cylinder thin
-            const brimGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.02, 16);
-            brimGeo.translate(0, 0, 0);
-            // Cone
-            const coneGeo = new THREE.ConeGeometry(0.15, 0.4, 16);
-            coneGeo.translate(0, 0.2, 0);
+            try {
+                console.log("[Unit] Creating Hats...");
+                // Wizard Hat (Cone + Brim)
+                // Brim: Cylinder thin
+                const brimGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.02, 16);
+                brimGeo.translate(0, 0, 0);
+                // Cone
+                const coneGeo = new THREE.ConeGeometry(0.15, 0.4, 16);
+                coneGeo.translate(0, 0.2, 0);
 
-            const hatGeo = new THREE.ConeGeometry(0.2, 0.5, 16);
-            hatGeo.translate(0, 0.25, 0);
-            Unit.assets.geometries.wizardHat = hatGeo;
+                const hatGeo = new THREE.ConeGeometry(0.2, 0.5, 16);
+                hatGeo.translate(0, 0.25, 0);
+                Unit.assets.geometries.wizardHat = hatGeo;
 
-            const hatBrimGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.02, 16);
-            Unit.assets.geometries.wizardHatBrim = hatBrimGeo;
+                const hatBrimGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.02, 16);
+                Unit.assets.geometries.wizardHatBrim = hatBrimGeo;
 
-            // Job Indicator (!) - Top Cylinder and Bottom Dot
-            const indicatorTopGeo = new THREE.CylinderGeometry(0.04, 0.02, 0.25, 8);
-            indicatorTopGeo.translate(0, 0.15, 0);
-            Unit.assets.geometries.jobIndicatorTop = indicatorTopGeo;
+                // Job Indicator (!) - Top Cylinder and Bottom Dot
+                const indicatorTopGeo = new THREE.CylinderGeometry(0.04, 0.02, 0.25, 8);
+                indicatorTopGeo.translate(0, 0.15, 0);
+                Unit.assets.geometries.jobIndicatorTop = indicatorTopGeo;
 
-            const indicatorDotGeo = new THREE.SphereGeometry(0.04, 8, 8);
-            indicatorDotGeo.translate(0, -0.05, 0);
-            Unit.assets.geometries.jobIndicatorDot = indicatorDotGeo;
-        } catch (e) { console.error("[Unit] Error creating hats:", e); }
+                const indicatorDotGeo = new THREE.SphereGeometry(0.04, 8, 8);
+                indicatorDotGeo.translate(0, -0.05, 0);
+                Unit.assets.geometries.jobIndicatorDot = indicatorDotGeo;
+            } catch (e) { console.error("[Unit] Error creating hats:", e); }
 
-        await yieldOp("After Hats");
-        if (updateStatus) updateStatus("Initializing Units (Materials)...");
+            await yieldOp("After Hats");
+            if (updateStatus) updateStatus("Initializing Units (Materials)...");
 
-        // Materials
-        try {
-            console.log("[Unit] Creating Materials...");
-            Unit.assets.materials.skin = new THREE.MeshStandardMaterial({ color: 0xffccaa, roughness: 0.8 });
-            Unit.assets.materials.clothes = new THREE.MeshStandardMaterial({ color: 0x885533, roughness: 1.0 });
-            Unit.assets.materials.tool = new THREE.MeshStandardMaterial({ color: 0x555555, metalness: 0.5 });
-            Unit.assets.materials.hat = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 1.0 });
-            // Wood Material (for Staff/Tools)
-            Unit.assets.materials.wood = new THREE.MeshStandardMaterial({ color: 0x5D4037, roughness: 1.0 }); // Dark Brown
+            // Materials
+            try {
+                console.log("[Unit] Creating Materials...");
+                Unit.assets.materials.skin = new THREE.MeshStandardMaterial({ color: 0xffccaa, roughness: 0.8 });
+                Unit.assets.materials.clothes = new THREE.MeshStandardMaterial({ color: 0x885533, roughness: 1.0 });
+                Unit.assets.materials.tool = new THREE.MeshStandardMaterial({ color: 0x555555, metalness: 0.5 });
+                Unit.assets.materials.hat = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 1.0 });
+                // Wood Material (for Staff/Tools)
+                Unit.assets.materials.wood = new THREE.MeshStandardMaterial({ color: 0x5D4037, roughness: 1.0 }); // Dark Brown
 
-            // Knight Materials
-            Unit.assets.materials.armor = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.8, roughness: 0.2 });
-            Unit.assets.materials.helmet = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.9, roughness: 0.1 });
+                // Knight Materials
+                Unit.assets.materials.armor = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.8, roughness: 0.2 });
+                Unit.assets.materials.helmet = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.9, roughness: 0.1 });
 
-            // Wizard Materials
-            Unit.assets.materials.robe = new THREE.MeshStandardMaterial({ color: 0x444499, roughness: 1.0 });
-            Unit.assets.materials.wizardHat = new THREE.MeshStandardMaterial({ color: 0x333388, roughness: 1.0 });
+                // Wizard Materials
+                Unit.assets.materials.robe = new THREE.MeshStandardMaterial({ color: 0x444499, roughness: 1.0 });
+                Unit.assets.materials.wizardHat = new THREE.MeshStandardMaterial({ color: 0x333388, roughness: 1.0 });
 
-            // New Item Materials
-            Unit.assets.materials.highLevelRobe = new THREE.MeshStandardMaterial({ color: 0x880000, roughness: 1.0 });
+                // New Item Materials
+                Unit.assets.materials.highLevelRobe = new THREE.MeshStandardMaterial({ color: 0x880000, roughness: 1.0 });
 
-            // Enemy Faction Materials (Darker / Black-ish)
-            Unit.assets.materials.enemySkin = new THREE.MeshStandardMaterial({ color: 0xaa8866, roughness: 0.9 }); // Slightly paler/greyer?
-            Unit.assets.materials.enemyClothes = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 1.0 }); // Dark Grey
-            Unit.assets.materials.enemyArmor = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.9, roughness: 0.3 }); // Black Metal
-            Unit.assets.materials.enemyHelmet = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 1.0, roughness: 0.2 }); // Obsidian
-            Unit.assets.materials.enemyRobe = new THREE.MeshStandardMaterial({ color: 0x220022, roughness: 1.0 }); // Dark Purple
-            Unit.assets.materials.enemyHat = new THREE.MeshStandardMaterial({ color: 0x110011, roughness: 1.0 }); // Dark
-        } catch (e) { console.error("[Unit] Error creating materials:", e); }
+                // Enemy Faction Materials (Darker / Black-ish)
+                Unit.assets.materials.enemySkin = new THREE.MeshStandardMaterial({ color: 0xaa8866, roughness: 0.9 }); // Slightly paler/greyer?
+                Unit.assets.materials.enemyClothes = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 1.0 }); // Dark Grey
+                Unit.assets.materials.enemyArmor = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.9, roughness: 0.3 }); // Black Metal
+                Unit.assets.materials.enemyHelmet = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 1.0, roughness: 0.2 }); // Obsidian
+                Unit.assets.materials.enemyRobe = new THREE.MeshStandardMaterial({ color: 0x220022, roughness: 1.0 }); // Dark Purple
+                Unit.assets.materials.enemyHat = new THREE.MeshStandardMaterial({ color: 0x110011, roughness: 1.0 }); // Dark
+            } catch (e) { console.error("[Unit] Error creating materials:", e); }
 
-        await yieldOp("After Materials");
+            await yieldOp("After Materials");
 
-        // Red indicator for (!)
-        Unit.assets.materials.redIndicator = new THREE.MeshStandardMaterial({
-            color: 0xFF0000,
-            emissive: 0xFF0000,
-            emissiveIntensity: 1.0,
-            roughness: 0.05,
-            metalness: 0.5
-        });
+            // Red indicator for (!)
+            Unit.assets.materials.redIndicator = new THREE.MeshStandardMaterial({
+                color: 0xFF0000,
+                emissive: 0xFF0000,
+                emissiveIntensity: 1.0,
+                roughness: 0.05,
+                metalness: 0.5
+            });
 
-        // Faces & Textures
-        if (updateStatus) updateStatus("Initializing Units (Textures)...");
-        try {
-            console.log("[Unit] Creating Face Texture...");
-            Unit.assets.textures.face = Unit.createFaceTexture();
-            Unit.assets.materials.face = new THREE.MeshStandardMaterial({ map: Unit.assets.textures.face, transparent: true });
+            // Faces & Textures
+            if (updateStatus) updateStatus("Initializing Units (Textures)...");
+            try {
+                console.log("[Unit] Creating Face Texture...");
+                Unit.assets.textures.face = Unit.createFaceTexture();
+                Unit.assets.materials.face = new THREE.MeshStandardMaterial({ map: Unit.assets.textures.face, transparent: true });
 
-            await yieldOp("After Face Texture");
+                await yieldOp("After Face Texture");
 
-            if (updateStatus) updateStatus("Initializing Units (Hair)...");
-            console.log("[Unit] Creating Hair Texture...");
-            Unit.assets.textures.hair = Unit.createHairTexture();
-            // Use Lambert to match body lighting and prevent 'Standard' material darkening
-            Unit.assets.materials.hair = new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair, transparent: true });
-        } catch (e) { console.error("[Unit] Error creating textures:", e); }
+                if (updateStatus) updateStatus("Initializing Units (Hair)...");
+                console.log("[Unit] Creating Hair Texture...");
+                Unit.assets.textures.hair = Unit.createHairTexture();
+                // Use Lambert to match body lighting and prevent 'Standard' material darkening
+                Unit.assets.materials.hair = new THREE.MeshLambertMaterial({ map: Unit.assets.textures.hair, transparent: true });
+            } catch (e) { console.error("[Unit] Error creating textures:", e); }
 
-        Unit.assets.materials.heads = null; // Deprecated (Split meshes)
+            Unit.assets.materials.heads = null; // Deprecated (Split meshes)
 
-        Unit.assets.initialized = true;
-        console.log("[Unit] initAssets Complete.");
+            Unit.assets.initialized = true;
+            console.log("[Unit] initAssets Complete.");
+        })();
+
+        return Unit.initPromise;
     }
 
     static createFaceTexture() {
