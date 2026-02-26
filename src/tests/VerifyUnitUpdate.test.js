@@ -10,6 +10,7 @@ const mockTerrain = {
     registerEntity: vi.fn(),
     gridToWorld: vi.fn((x) => x),
     getRegion: vi.fn(() => 1),
+    getRandomPointInRegion: vi.fn().mockReturnValue({ x: 10, z: 10 }), // Critical missing mock
     // Added grid mock as some logic might access it
     grid: Array(100).fill(0).map(() => Array(100).fill({ height: 5 })),
     unregisterEntity: vi.fn(),
@@ -61,5 +62,5 @@ describe('Unit Update Verification', () => {
         unit.update(100, 1.0);
         expect(spy).toHaveBeenCalled();
 
-});
+    });
 });

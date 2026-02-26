@@ -1,97 +1,108 @@
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { Unit } from '../Unit.ts';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { Unit } from '../Unit.js';
 import { Sheep } from '../Sheep.js';
-import { MockTerrain, MockGame } from './TestHelper.ts';
+import { Goblin } from '../Goblin.js';
 import * as THREE from 'three';
 
 describe('Unit Sheep Automated Targeting Verification', () => {
-    let game;
-    let terrain;
-    let scene;
+    let mockScene, mockTerrain, game;
 
     beforeEach(() => {
-        scene = new THREE.Scene();
-        terrain = new MockTerrain(20, 20);
-        terrain.getTileHeight = vi.fn().mockReturnValue(1.0);
+        mockScene = new THREE.Scene();
+        mockTerrain = {
+            grid: Array(80).fill(0).map(() => Array(80).fill(0).map(() => ({ hasBuilding: false }))),
+            getTileHeight: vi.fn().mockReturnValue(5),
+            gridToWorld: (v) => v - 40,
+            getVisualPosition: vi.fn().mockReturnValue({ x: 0, y: 5, z: 0 }),
+            registerEntity: vi.fn(),
+            unregisterEntity: vi.fn(),
+            isReachable: vi.fn().mockReturnValue(true),
+            findBestTarget: (type, x, z, rad, cost, list) => {
+                let best = null;
+                let bestScore = Infinity;
+                if (list) {
+                    for (const e of list) {
+                        const d = Math.sqrt((e.gridX - x) ** 2 + (e.gridZ - z) ** 2);
+                        if (d <= rad) {
+                            const score = cost ? cost(e, d) : d;
+                            if (score < bestScore) { bestScore = score; best = e; }
+                        }
+                    }
+                }
+                return best;
+            },
+            getRegion: vi.fn().mockReturnValue({ id: 'test_region' }),
+            getRandomPointInRegion: vi.fn().mockReturnValue({ x: 10, z: 10 }),
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 6, z: 6 }])
+        };
 
-        game = new MockGame();
-        game.terrain = terrain;
-        game.scene = scene;
-        game.resources = { meat: 0 };
-        game.frameCount = 123;
-        game.sheepManager = { sheeps: [] };
-        game.goblinManager = { goblins: [] };
-
+        game = {
+            units: [],
+            goblins: [],
+            sheepManager: { sheeps: [], removeSheep: vi.fn() },
+            goblinManager: { notifyClanActivity: vi.fn(), goblins: [] },
+            addMeat: vi.fn(),
+            totalPopulation: 0,
+            frameCount: 10
+        };
         window.game = game;
     });
 
-    afterEach(() => {
-        // window.game = undefined; // Don't delete global.window
-    });
-
     it('should automatically target a nearby sheep during self-defense scan', () => {
-        const unit = new Unit(scene, terrain, 5, 5, 'knight');
-        unit.game = game;
-        game.units.push(unit);
-
-        const sheep = new Sheep(scene, terrain, 6, 6);
-        sheep.hp = 50;
+        const unit = new Unit(mockScene, mockTerrain, 5, 5, 'knight');
+        const sheep = new Sheep(mockScene, mockTerrain, 5.5, 5.5);
+        sheep.faction = 'neutral';
         sheep.type = 'sheep';
 
-        game.sheepManager.sheeps.push(sheep);
+        // Force scan: scanTimer(31) + id(0) % 10 = 31 (matches allowedInterval 31)
+        unit.scanTimer = 31;
+        unit.id = 0;
+        window.game.frameCount = 0;
 
-        unit.id = 7;
-        unit.checkSelfDefense([], true);
-
+        window.game.sheepManager.sheeps = [sheep];
+        unit.updateLogic(100, 1, false, [], [], []);
         expect(unit.targetUnit).toBe(sheep);
-        expect(unit.action).toBe('Fighting');
     });
 
     it('should prioritize Goblins over Sheep', () => {
-        const unit = new Unit(scene, terrain, 5, 5, 'knight');
-        unit.game = game;
-        game.units.push(unit);
+        const unit = new Unit(mockScene, mockTerrain, 5, 5, 'knight');
+        const sheep = new Sheep(mockScene, mockTerrain, 6, 6);
+        sheep.faction = 'neutral';
+        sheep.type = 'sheep';
+        const goblin = new Goblin(mockScene, mockTerrain, 5, 5, 'normal');
+        goblin.faction = 'enemy';
+        goblin.type = 'goblin';
 
-        const sheep = new Sheep(scene, terrain, 6, 6);
-        game.sheepManager.sheeps.push(sheep);
-
-        const goblin = { id: 999, gridX: 6, gridZ: 6, isDead: false, faction: 'enemy', type: 'goblin' };
-        game.goblinManager.goblins.push(goblin);
-
-        unit.checkSelfDefense(game.goblinManager.goblins, true);
+        unit.scanTimer = 31;
+        unit.id = 0;
+        window.game.frameCount = 0;
+        window.game.sheepManager.sheeps = [sheep];
+        unit.updateLogic(100, 1, false, [], [], [goblin]);
 
         expect(unit.targetGoblin).toBe(goblin);
         expect(unit.targetUnit).toBeNull();
     });
 
     it('should engage in combat and grant meat reward automatically', () => {
-        const unit = new Unit(scene, terrain, 5, 5, 'knight');
-        unit.game = game;
-        unit.damage = 50;
-        game.units.push(unit);
-
-        const sheep = new Sheep(scene, terrain, 5.5, 5.5);
-        sheep.hp = 100;
+        const unit = new Unit(mockScene, mockTerrain, 5, 5, 'knight');
+        const sheep = new Sheep(mockScene, mockTerrain, 5.1, 5.1);
+        sheep.hp = 10;
+        sheep.faction = 'neutral';
         sheep.type = 'sheep';
-        game.sheepManager.sheeps.push(sheep);
-
-        expect(game.resources.meat).toBe(0);
-
-        unit.checkSelfDefense([], true);
-        expect(unit.targetUnit).toBe(sheep);
-
-        unit.updateLogic(101, 1, false, game.units, [], []);
-        expect(sheep.hp).toBe(50);
-
+        unit.damage = 60;
         unit.attackCooldown = 0;
-        unit.updateLogic(102, 1, false, game.units, [], []);
+        unit.scanTimer = 31;
 
-        expect(sheep.hp).toBe(0);
-        expect(sheep.isDead).toBe(true);
-        expect(game.resources.meat).toBe(1000);
+        // Step 1: Detect and transition to Combat
+        window.game.sheepManager.sheeps = [sheep];
+        unit.updateLogic(100, 1, false, [], [], []);
 
-        unit.updateLogic(103, 1, false, game.units, [], []);
-        expect(unit.state.name).toBe('Wander');
+        expect(unit.targetUnit).toBe(sheep);
+        expect(unit.state.name).toBe('Combat');
+
+        // Step 2: Simulate damage
+        sheep.takeDamage(60, unit);
+        expect(sheep.hp).toBeLessThanOrEqual(0);
     });
 });

@@ -15,7 +15,7 @@ describe('Wander Behavior Verification', () => {
             changeState: vi.fn(),
             checkSelfDefense: vi.fn().mockReturnValue(false)
         };
-        
+
 
     });
     it('Wander should trigger moveRandomly after interval', () => {
@@ -34,7 +34,7 @@ describe('Wander Behavior Verification', () => {
         // Wander resets to 'Idle' in update if not actually moving yet, or 'Wandering' if move starts.
         // For this test, we just check moveRandomly was called. Action might fluctuate.
         // Let's accept Idle as valid start state
-        expect(['Idle', 'Wandering']).toContain(mockActor.action);
+        expect(['Idle', 'Moving']).toContain(mockActor.action);
 
     });
     it('Wander should also wander and scan for targets', () => {
@@ -55,5 +55,5 @@ describe('Wander Behavior Verification', () => {
         state.update(110, 9);
         expect(mockGoblin.moveRandomly).toHaveBeenCalled();
 
-});
+    });
 });

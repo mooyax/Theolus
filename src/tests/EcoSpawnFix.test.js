@@ -50,6 +50,11 @@ describe('Economy and Spawning Fix Verification', () => {
         game.camera = { position: new THREE.Vector3() };
     });
 
+    afterEach(() => {
+        if (game) game.stopped = true;
+        vi.restoreAllMocks();
+    });
+
     it('should produce grain from farms', async () => {
         // 1. Setup a farm
         game.terrain.addBuilding('farm', 10, 10, false, false, 'player');

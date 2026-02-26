@@ -30,22 +30,24 @@ describe('Combat Logic Verification', () => {
     it('Scenario A: Worker destroys Cave', () => {
         const worker = new Unit(scene, terrain, 10, 10, 'worker');
         worker.id = 1;
-
         const cave = {
             id: 'cave_1',
             gridX: 12,
             gridZ: 10,
+            side: 'goblin',
+            faction: 'enemy',
             userData: {
                 id: 'cave_1',
                 type: 'cave',
+                side: 'goblin',
+                faction: 'enemy',
                 hp: 200,
                 gridX: 12,
                 gridZ: 10
-            },
-            gridX: 12,
-            gridZ: 10
+            }
         };
         terrain.buildings.push(cave);
+        game.buildings.push(cave); // IMPORTANT: Scan logic looks at game.buildings
         terrain.grid[12][10].hasBuilding = true;
         terrain.grid[12][10].building = cave;
 
@@ -87,5 +89,5 @@ describe('Combat Logic Verification', () => {
         expect(cave.userData.hp).toBeLessThan(hpBefore);
         */
 
-});
+    });
 });

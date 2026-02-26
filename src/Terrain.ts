@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-console.log('[DEBUG] Terrain.ts top-level load');
 import { Building } from './Building';
 import { GameConfig } from './config/GameConfig';
 
@@ -306,7 +305,7 @@ export class Terrain {
             return null;
         }
 
-        const sourceCell = this.grid[ix][iz];
+        const sourceCell = (this.grid[ix] && this.grid[ix][iz]) ? this.grid[ix][iz] : null;
         const sourceRegion = sourceCell ? sourceCell.regionId : 0;
 
         // Optimization: Linear Scan vs Grid Search
@@ -323,39 +322,42 @@ export class Terrain {
                 if (e.isDead || e.isFinished) continue;
 
                 // Extract Position (Building vs Unit/Goblin)
-                const targetX = e.gridX !== undefined ? e.gridX : (e.userData ? e.userData.gridX : undefined);
-                const targetZ = e.gridZ !== undefined ? e.gridZ : (e.userData ? e.userData.gridZ : undefined);
+                const targetX = e.gridX !== undefined ? e.gridX : (e.userData && e.userData.gridX !== undefined ? e.userData.gridX : (e._spatial && e._spatial.x !== undefined ? e._spatial.x : undefined));
+                const targetZ = e.gridZ !== undefined ? e.gridZ : (e.userData && e.userData.gridZ !== undefined ? e.userData.gridZ : (e._spatial && e._spatial.z !== undefined ? e._spatial.z : undefined));
                 if (targetX === undefined || targetZ === undefined) continue;
 
-                // Region Filter
-                if (type !== 'building' && sourceRegion > 0) {
-                    if (!this.grid[targetX]) continue; // Safety
-                    const tCell = this.grid[targetX][targetZ];
-                    if (!tCell || tCell.regionId !== sourceRegion) continue;
+                // Verify Type (if mixed list) or Region Mapping
+                if (candidateList === null) {
+                    // Verification for the whole-world search
+                    if (type === 'goblin' && e.type !== 'goblin') continue;
+                    if (type === 'unit' && (e.role === undefined && !e.type)) continue;
+                    if (type === 'building' && (!e.userData || !['house', 'farm', 'barracks', 'tower', 'mansion', 'goblin_hut', 'cave'].includes(e.userData.type))) continue;
                 }
 
-                // Verify Type (if mixed list)
-                if (type === 'building') {
-                    // Filter valid building types
-                    if (!e.userData || !['house', 'farm', 'barracks', 'tower', 'mansion', 'goblin_hut', 'cave'].includes(e.userData.type)) {
-                        continue;
-                    }
-                    // Omit destroyed buildings
-                    if (e.userData.hp !== undefined && e.userData.hp <= 0) continue;
-                } else if (type === 'goblin') {
-                    if (e.type !== 'goblin') continue;
-                } else if (type === 'unit') {
-                    if (e.role === undefined && !e.type) continue; // Basic unit check
-                }
+                // Still skip dead buildings/targets
+                if (type === 'building' && (e.userData && e.userData.hp !== undefined && e.userData.hp <= 0)) continue;
 
-                // Distance Check
+                // Distance Check (Wrapped)
                 let dx = Math.abs(targetX - centerX);
                 let dz = Math.abs(targetZ - centerZ);
                 if (dx > W / 2) dx = W - dx;
                 if (dz > H / 2) dz = H - dz;
-
                 const dist = Math.sqrt(dx * dx + dz * dz);
+
                 if (dist > maxRadius) continue;
+
+                // Region Filter (Conditional)
+                if (type !== 'building' && sourceRegion > 0) {
+                    const tx = Math.floor(targetX);
+                    const tz = Math.floor(targetZ);
+                    if (this.grid[tx]) {
+                        const tCell = this.grid[tx][tz];
+                        if (tCell && tCell.regionId > 0 && tCell.regionId !== sourceRegion) {
+                            // Special Melee exemption: If very close, ignore region (e.g. over a low wall)
+                            if (dist > 1.5) continue;
+                        }
+                    }
+                }
 
                 const score = costFn(e, dist);
                 if (score < bestScore) {
@@ -416,9 +418,9 @@ export class Terrain {
                     // Wildcard: 'unit' matches all human units
                     if (!isMatch && type === 'unit') {
                         // EXPLICIT FILTER: Check against known non-human types
-                        const sType = e._spatial.type;
+                        const uRole = e.role || (e._spatial && e._spatial.type) || e.type;
                         // Removed 'sheep' from exclusion list so hunters/units can target them as neutral units
-                        if (sType === 'building' || sType === 'cave' || sType === 'goblin' || sType === 'fish' || sType === 'bird') {
+                        if (uRole === 'building' || uRole === 'cave' || uRole === 'goblin' || uRole === 'fish' || uRole === 'bird') {
                             isMatch = false;
                         } else {
                             // Valid human unit (worker, soldier, knight, etc.) or neutral sheep
@@ -1656,11 +1658,16 @@ export class Terrain {
 
     // Helper for Visual Alignment
     getVisualOffset(localX, localY) {
+        // Safety: If width/depth not yet initialized, skip distortion
+        const W = this.logicalWidth || 0;
+        const D = this.logicalDepth || 0;
+
+        if (W <= 0 || D <= 0 || isNaN(localX) || isNaN(localY)) {
+            return { x: 0, y: 0 };
+        }
+
         // Suppress visual distortion under buildings
         if (this.grid) {
-            const W = this.logicalWidth || 160;
-            const D = this.logicalDepth || 160;
-
             // Map Plane Coords to Grid
             const gx = Math.round(localX + W / 2);
             const gz = Math.round(-localY + D / 2);
@@ -1673,32 +1680,29 @@ export class Terrain {
             }
         }
 
-        // Periodic Distortion (Seamless)
-        // W = 160 (logicalWidth) * 3 typically? No, logicalWidth is 160.
-        // Plane is 3x width? No, logicalWidth is used for wrapping.
-        // We want period = logicalWidth.
-        const W = this.logicalWidth || 80;
-        const D = this.logicalDepth || 80;
-
         const freqX = (Math.PI * 2) / W;
         const freqZ = (Math.PI * 2) / D;
-
-        // Use higher harmonic to match original "0.4" approx density
-        // 0.4 approx 8 * 2PI/160 (0.31). Let's use integer Multiplier.
-        // x * freqX * 10 -> 10 waves per map.
 
         const phaseX = localX * freqX * 10;
         const phaseY = localY * freqZ * 10;
 
-        // Original: (sin(y*0.5) + cos(x*0.4)) * 0.2
         const offsetX = (Math.sin(phaseY) + Math.cos(phaseX)) * 0.2;
         const offsetY = (Math.cos(phaseY) + Math.sin(phaseX)) * 0.2;
+
+        if (!isFinite(offsetX) || !isFinite(offsetY)) {
+            return { x: 0, y: 0 };
+        }
 
         return { x: offsetX, y: offsetY };
     }
 
     getVisualPosition(gridX, gridZ, isCentered = true) {
         // Convert Grid Coord -> Physical World Coord (including distortion)
+        // NaN Guard
+        if (isNaN(gridX) || isNaN(gridZ)) {
+            return { x: 0, y: 0, z: 0 };
+        }
+
         const logicalW = this.logicalWidth || 80;
         const logicalD = this.logicalDepth || 80;
 
@@ -1730,6 +1734,9 @@ export class Terrain {
 
     getInterpolatedHeight(x, z) {
         // Wrap coordinates to positive range first
+        // NaN Guard
+        if (isNaN(x) || isNaN(z)) return 0;
+
         let wx = (x % this.logicalWidth + this.logicalWidth) % this.logicalWidth;
         let wz = (z % this.logicalDepth + this.logicalDepth) % this.logicalDepth;
 

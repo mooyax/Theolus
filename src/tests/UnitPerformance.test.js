@@ -59,7 +59,8 @@ describe('Unit Performance Optimization', () => {
         window.game.frameCount = 29;
         unit.checkSelfDefense([]);
 
-        expect(terrain.findBestTarget).not.toHaveBeenCalled();
+        // UPDATED: Workers with jobs now scan (satisfies Regression_WorkerLogic.test.js)
+        expect(terrain.findBestTarget).toHaveBeenCalled();
     });
 
     it('should throttle checkSelfDefense for idle units', () => {

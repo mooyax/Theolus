@@ -110,6 +110,7 @@ export const GameConfig = {
             "hpMultiplier": 3,
             "damage": 240,
             "attackRate": 1.0,
+            "attackRange": 8.0,
             "lifespanBase": 80,
             "lifespanVariance": 20,
             "spawnCost": 100

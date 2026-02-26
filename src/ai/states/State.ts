@@ -111,3 +111,123 @@ export class WanderBase extends State {
         }
     }
 }
+
+/**
+ * Common Base for Combat States (Human Units & Goblins)
+ */
+export class CombatStateBase extends State {
+    public target: any = null;
+    public stuckTimer: number = 0;
+
+    constructor(actor: any) {
+        super(actor);
+    }
+
+    enter(prev?: State) {
+        this.stuckTimer = 0;
+        this.actor.isMoving = false;
+        this.actor.action = "Fighting";
+
+        // Clear non-combat high-level targets
+        if (this.actor.migrationTarget) this.actor.migrationTarget = null;
+        if (this.actor.patrolTarget) this.actor.patrolTarget = null;
+        // Preserve targetRaidPoint to allow getBehaviorMode() to work
+    }
+
+    update(...args: any[]) {
+        const [time, deltaTime] = args;
+
+        // 1. Validate Target
+        this.target = this.actor.targetUnit || this.actor.targetGoblin || this.actor.targetBuilding;
+        if (!this.target || this.isTargetInvalid(this.target)) {
+            this.actor.targetUnit = null;
+            this.actor.targetGoblin = null;
+            this.actor.targetBuilding = null;
+            this.handleTargetLost();
+            return;
+        }
+
+        // 2. Range Check
+        const dist = this.getDistanceToTarget(this.target);
+        const range = this.actor.attackRange || 1.5;
+
+        if (dist <= range) {
+            // IN RANGE -> Attack
+            this.actor.isMoving = false;
+            this.actor.action = "Fighting";
+            this.executeAttack(this.target, time, deltaTime);
+            this.stuckTimer = 0;
+            return; // Exit after attacking
+        } else {
+            // OUT OF RANGE -> Chase
+            this.actor.action = "Chasing";
+            const moved = this.actor.smartMove ? this.actor.smartMove(this.target.gridX, this.target.gridZ, time) : false;
+
+            // 3. Stuck/Unreachable Detection
+            const isPathfindingActive = this.actor.isPathfinding || this.actor.isPathfindingThrottled || this.actor.isWaitingForPath;
+            const isTrulyStuck = !moved && !isPathfindingActive;
+
+            if (isTrulyStuck) {
+                this.stuckTimer += deltaTime;
+                if (this.stuckTimer > 3.0 || this.actor.isUnreachable) {
+                    this.handleStuck(this.target, time);
+                }
+            } else {
+                this.stuckTimer = 0;
+            }
+        }
+    }
+
+    // --- Helpers (Overrideable) ---
+
+    protected isTargetInvalid(target: any): boolean {
+        if (target.isDead || target.isFinished) return true;
+        if (target.isDestroyed && target.isDestroyed()) return true;
+        if (target.hp !== undefined && target.hp <= 0) return true;
+        return false;
+    }
+
+    protected getDistanceToTarget(target: any): number {
+        // IMPROVED: Robust Actor vs Building detection
+        const isActor = !!(target.role ||
+            target.type === 'goblin' ||
+            target.type === 'normal' ||
+            target.type === 'shaman' ||
+            target.type === 'hobgoblin' ||
+            target.type === 'king' ||
+            target.type === 'goblin_king' ||
+            (target.gridX !== undefined && !target.isBuilding && (!target.userData || !target.userData.isBuilding)));
+
+        // Building if explicitly marked, or has structural context without actor markers
+        const isBuilding = !!(target.isBuilding || (target.userData && target.userData.isBuilding) ||
+            (!isActor && (target.type === 'goblin_hut' || target.type === 'cave' || target.faction === 'enemy_building' || (target.hp !== undefined && !target.role))));
+
+        if (isBuilding && this.actor.getDistanceToBuilding) {
+            return this.actor.getDistanceToBuilding(target);
+        }
+        return this.actor.getDistance(target.gridX, target.gridZ);
+    }
+
+    protected handleTargetLost() {
+        // Default behavior: return to Wander
+        // Subclasses can override this (e.g. search for new target)
+    }
+
+    protected handleStuck(target: any, time: number) {
+        console.log(`[Combat] Actor ${this.actor.id} stuck. Abandoning target.`);
+        if (this.actor.ignoredTargets) {
+            this.actor.ignoredTargets.set(target.id, time + 10.0);
+        }
+        this.actor.targetUnit = null;
+        this.actor.targetGoblin = null;
+        this.actor.targetBuilding = null;
+        this.handleTargetLost();
+    }
+
+    /**
+     * Virtual method to be implemented by Unit Combat or Goblin Combat
+     */
+    protected executeAttack(target: any, time: number, deltaTime: number) {
+        // Implement in subclass: this.actor.attackUnit(target) etc.
+    }
+}

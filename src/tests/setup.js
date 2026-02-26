@@ -1,4 +1,7 @@
-import { vi, beforeEach } from 'vitest';
+import { vi, beforeEach, afterEach } from 'vitest';
+
+// Global Game instance registry for final cleanup
+globalThis.__game_instances = new Set();
 
 // 0. WeatherManager Mock (Fix path to match import)
 vi.mock('../WeatherManager', () => {
@@ -508,21 +511,14 @@ function resetStaticCounters() {
     });
 }
 
-beforeEach(async () => {
-    vi.clearAllMocks();
-
-    // resetStaticCounters();
-
-    // REMOVED global clear/dispose to avoid race conditions during async yields.
-    // Each test should manage its own state.
-    /*
-    if (globalThis.window) {
-        window.localStorage?.clear();
-        if (window.game) {
-            console.log("Disposing detached game instance");
-            if (window.game.dispose) window.game.dispose();
-            window.game = null;
-        }
+afterEach(() => {
+    if (globalThis.__game_instances) {
+        globalThis.__game_instances.forEach(game => {
+            if (game && typeof game.dispose === 'function') {
+                try { game.dispose(); } catch (e) { }
+            }
+        });
+        globalThis.__game_instances.clear();
     }
-    */
+    vi.clearAllTimers();
 });

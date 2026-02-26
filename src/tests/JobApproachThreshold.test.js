@@ -30,10 +30,19 @@ describe('Job Approach Threshold', () => {
             role: 'worker',
             action: 'Approaching Job',
             isMoving: true,
-            getDistance: vi.fn(),
-            changeState: vi.fn(),
+            getDistance: vi.fn((x, z) => {
+                const dx = x - mockActor.gridX;
+                const dz = z - mockActor.gridZ;
+                return Math.sqrt(dx * dx + dz * dz);
+            }),
+            changeState: vi.fn((newState) => {
+                if (newState && newState.name === 'Wander') {
+                    mockActor.targetRequest = null;
+                }
+            }),
             smartMove: vi.fn(),
             triggerMove: vi.fn(),
+            clearPath: vi.fn(),
             simTime: 100,
             targetRequest: { id: 'req1', x: 12, z: 10, status: 'assigned', type: 'test', assignedTo: 1 },
             game: mockGame
@@ -43,41 +52,24 @@ describe('Job Approach Threshold', () => {
         jobState.targetRequest = mockActor.targetRequest;
     });
 
-    it('should complete job if distance is 1.4 (within 1.5 threshold)', () => {
-        // Distance 1.4: set target coordinates to be exactly 1.4 units away (within 1.5 threshold)
-        // Actor is at (10, 10), set target at (11.4, 10) for distance 1.4
-        mockActor.targetRequest.x = 11.4;
+    it('should complete job if distance is 2.0 (within 2.1 threshold)', () => {
+        mockActor.targetRequest.x = 12.0;
         mockActor.targetRequest.z = 10;
         jobState.targetRequest = mockActor.targetRequest;
 
-        const req = mockActor.targetRequest;
+        jobState.update(100, 0.1, false, []);
+
+        expect(mockActor.action).toBe('Working');
+    });
+
+    it('should NOT complete job if distance is 2.2 (outside 2.1 threshold)', () => {
+        mockActor.targetRequest.x = 12.2;
+        mockActor.targetRequest.z = 10;
+        jobState.targetRequest = mockActor.targetRequest;
 
         jobState.update(100, 0.1, false, []);
 
-        // jobState.actor and mockActor are the same reference
-        expect(jobState.actor.action).toBe('Working');
-        // Note: production code calls workOnRequest, not completeRequest directly
-        // completeRequest would only be called when req.status === 'completed'
-
+        expect(mockActor.action).toBe('Approaching Job');
+        expect(mockGame.completeRequest).not.toHaveBeenCalled();
     });
-        it('should NOT complete job if distance is 1.6 (outside 1.5 threshold)', () => {
-            // Distance 1.6: set target coordinates to be exactly 1.6 units away (outside 1.5 threshold)
-            // Actor is at (10, 10), set target at (11.6, 10) for distance 1.6
-            mockActor.targetRequest.x = 11.6;
-            mockActor.targetRequest.z = 10;
-        });
-
-        it('should NOT complete job if distance is 1.6 (outside 1.5 threshold)', () => {
-            // Distance 1.6: set target coordinates to be exactly 1.6 units away (outside 1.5 threshold)
-            // Actor is at (10, 10), set target at (11.6, 10) for distance 1.6
-            mockActor.targetRequest.x = 11.6;
-            mockActor.targetRequest.z = 10;
-            jobState.targetRequest = mockActor.targetRequest;
-
-            jobState.update(100, 0.1, false, []);
-
-            // When distance is too far, action should remain 'Approaching Job'
-            expect(jobState.actor.action).toBe('Approaching Job');
-            expect(mockGame.completeRequest).not.toHaveBeenCalled();
-        });
-    });
+});

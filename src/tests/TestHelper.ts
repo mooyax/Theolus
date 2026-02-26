@@ -14,8 +14,10 @@ export class MockGame {
     public terrain: any;
     public scene: any;
     public goblinManager: any;
+    public goblins: any[];
     public battleHotspots?: any[];
     public unitMap: Map<number, any>;
+    public buildings: any[];
     public handleBuildingSpawn: any;
     public minimal: boolean;
 
@@ -31,6 +33,8 @@ export class MockGame {
         this.frameCount = 0;
         this.unitScanBudget = 1000;
         this.unitMap = new Map();
+        this.buildings = [];
+        this.goblins = [];
         this.terrain = null;
         this.scene = {
             add: vi.fn(),
@@ -245,9 +249,9 @@ export class MockTerrain {
                 }
                 if (c.userData.hp !== undefined && c.userData.hp <= 0) continue;
             } else if (type === 'goblin') {
-                if (c.type !== 'goblin') continue;
+                if (c.spatialType !== 'goblin' && c.type !== 'goblin') continue;
             } else if (type === 'unit') {
-                if (c.role === undefined && !c.type) continue;
+                if (c.spatialType !== 'unit' && c.role === undefined && !c.type) continue;
             }
 
             // Priority: Direct property (Unit/Goblin) then userData (Building/Entity)

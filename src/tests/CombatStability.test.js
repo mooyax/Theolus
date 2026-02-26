@@ -79,7 +79,9 @@ describe('Combat Stability and Scan Budget', () => {
         unit.changeState(new HumanCombat(unit));
 
         // Attempt scan
-        const canScan = unit.checkSelfDefense(0, false);
+        expect(unit.targetGoblin).toBeTruthy();
+        const canScan = unit.checkSelfDefense(null, false);
+        console.log(`[TEST] canScan=${canScan}`);
 
         // Should allow scan despite 0 budget because of Combat priority
         expect(canScan).toBe(true);

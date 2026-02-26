@@ -16,7 +16,10 @@ describe('Goblin Combat and Stagnation', () => {
             findBestTarget: vi.fn(),
             logicalWidth: 160,
             logicalDepth: 160,
-            findPath: vi.fn()
+            findPath: vi.fn(),
+            findPathAsync: vi.fn().mockResolvedValue([{ x: 11, z: 11 }]),
+            getRegion: vi.fn().mockReturnValue({ id: 'test' }),
+            getRandomPointInRegion: vi.fn().mockReturnValue({ x: 10, z: 10 })
         };
         scene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
 
@@ -27,7 +30,8 @@ describe('Goblin Combat and Stagnation', () => {
             goblinManager: {
                 getClanRaidTarget: vi.fn().mockReturnValue(null),
                 clans: { 0: { active: true } },
-                goblins: []
+                goblins: [],
+                notifyClanActivity: vi.fn() // Critical missing mock
             }
         };
 
@@ -54,7 +58,7 @@ describe('Goblin Combat and Stagnation', () => {
         goblin.updateLogic(101, 1);
 
         expect(goblin.ignoredTargets.has('victim1')).toBe(true);
-        expect(goblin.ignoredTargets.get('victim1')).toBeCloseTo(111, 1);
+        expect(goblin.ignoredTargets.get('victim1')).toBeCloseTo(111, 1); // 101 + 10.0
         expect(goblin.targetUnit).toBeNull();
         expect(goblin.state instanceof Raid).toBe(true);
     });

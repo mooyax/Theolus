@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-// Trigger Lint
 
 import { Actor } from './Actor.js';
 import { WanderBase } from './ai/states/State.js';
@@ -20,7 +19,6 @@ export class Unit extends Actor {
     public role: string;
     public isSpecial: boolean;
     public squadId: string | number | null;
-    public faction: string = 'player'; // Added Faction
     public lastJobResult: string = "None"; // Debug Info
 
 
@@ -43,13 +41,11 @@ export class Unit extends Actor {
     public patrolTarget: any;
     public patrolTimer: number;
 
-    public ignoredTargets: Map<number | string, number>;
+    // public ignoredTargets: Map<number | string, number>; // Removed: Inherited from Actor as Set<number>
     public debugFrame: number;
 
     public isSleeping: boolean = false;
 
-    public targetGoblin: any | null;
-    public targetUnit: any | null = null; // Added
     public targetRaidPoint: any | null;
     public lastWaterLogTime?: number; // Added for logging throttle
 
@@ -279,7 +275,8 @@ export class Unit extends Actor {
         }
 
         this.role = role || 'worker';
-        this.type = this.role; // Fix: Ensure type mirrors role for persistence/logic
+        this.type = this.role;
+        (this as any).role = this.role; // Explicitly expose for tests
         this.isSpecial = specialFlag;
         this.squadId = squadId; // Squad ID for coordinated attacks
         this.faction = faction;
@@ -324,6 +321,7 @@ export class Unit extends Actor {
 
         this.attackCooldown = 0;
         this.attackRate = statConfig.attackRate || 1.0;
+        this.attackRange = statConfig.attackRange || 2.0;
 
         // Damage
         let baseDamage = GameConfig.units.worker.damage;
@@ -369,8 +367,7 @@ export class Unit extends Actor {
         this.targetGridZ = 0;
 
         // Blacklist for failed paths
-        this.ignoredTargets = new Map(); // id -> expiryTime
-
+        // this.ignoredTargets = new Map(); // id -> expiryTime // Removed: Inherited from Actor
         // Action Timers
         this.lastTime = 0;
         // Reduced interval for more active units (2s - 5s)
@@ -412,7 +409,7 @@ export class Unit extends Actor {
         this.patrolTimer = 0;
 
         // Target Ignoring Logic (Replaces global cooldown)
-        this.ignoredTargets = new Map(); // id -> timestamp until ignored
+        // this.ignoredTargets = new Map(); // id -> timestamp until ignored // Removed: Inherited from Actor
         this.debugFrame = 0;
         console.log(`[UnitCore.js] Unit Construction Finished ID:${this.id}`);
     }
@@ -478,42 +475,13 @@ export class Unit extends Actor {
     }
 
     public takeDamage(amount: number, attacker: any = null, isCounter: boolean = false) {
-        if (this.isDead) return;
+        super.takeDamage(amount, attacker, isCounter);
 
-        // --- DEATH COUNTER (User Request) ---
-        // If lethal damage AND melee range, trigger retaliation before dying
-        if (amount >= this.hp && !isCounter && attacker && attacker.hp > 0) {
-            // Distance Check
-            let dist = 999;
-            if (attacker.gridX !== undefined) {
-                dist = this.getDistance(attacker.gridX, attacker.gridZ);
-            }
-            const meleeRange = 2.0;
-
-            if (dist <= meleeRange) {
-                // Nerf: 50% damage logic
-                attacker.takeDamage(this.damage * 0.5, this, true); // isCounter = true
-            }
-        }
-
-        this.hp -= amount;
-        if (isNaN(this.hp)) {
-            this.hp = 0;
-        }
-
-        if (this.hp <= 0) {
-            this.hp = 0;
-            this.die();
-            if (attacker && attacker.increasePlunder) attacker.increasePlunder(); // Goblin reward
-        } else {
+        if (!this.isDead) {
             // Hit Flash / Reaction
             this.lastHitTime = this.simTime || 0;
-
-            // Retaliate if idle or wandering
-            if (!this.targetGoblin && attacker && attacker.hp > 0) {
-                // All units should retaliate for self-defense if hit
-                this.targetGoblin = attacker;
-            }
+        } else {
+            if (attacker && attacker.increasePlunder) attacker.increasePlunder(); // Goblin reward
         }
     }
 
@@ -538,192 +506,21 @@ export class Unit extends Actor {
         this.createCross();
     }
 
+    // Unified attack methods are now in Actor.ts
+    // Unit.ts keeps specialized methods for backward compatibility or extra effects
+
     attackUnit(target: any) {
-        if (!target) return;
-        // Same logic as attackGoblin but for Units
-        if (this.attackCooldown > 0) return;
-        if (target.isDead) return;
-
-        this.action = 'Fighting';
-
-        // Face Target
-        const dx = target.gridX - this.gridX;
-        const dz = target.gridZ - this.gridZ;
-        this.rotationY = Math.atan2(dx, dz);
-
-        // Apply Damage
-        const dmg = this.damage || 5;
-        if (typeof target.takeDamage === 'function') {
-            target.takeDamage(dmg, this);
-        }
-        this.attackCooldown = this.attackRate || 1.0;
+        return (this as any).performAttack(target, this.simTime || 0);
     }
 
     attackGoblin(goblin: any) {
-        // console.log(`[Unit Debug] Attack request. CD: ${this.attackCooldown}`);
-        if (this.attackCooldown > 0) return;
-        if (goblin.isDead) {
-            this.targetGoblin = null;
-            return;
-        }
-
-        // console.log(`[Unit Debug] ATTACKING Goblin ${goblin.id}`);
-        if (this.role === 'wizard') {
-            // Ranged Attack Animation
-            this.limbs.leftArm.x = -Math.PI; // Raise staff
-            this.limbs.rightArm.x = -Math.PI;
-
-            // Spawn Fireball Visual
-            if ((window as any).game && (window as any).game.spawnProjectile) {
-                const startPos = this.position.clone().add(new THREE.Vector3(0, 0.9, 0)); // Head/Staff level
-                // We don't have goblin precise position stored in logic? 
-                // We have gridX/Z. Need visualization position or estimated.
-                const h = this.terrain.getTileHeight(goblin.gridX, goblin.gridZ);
-                // Convert grid to world for target
-                // Assuming standard centering:
-                const logicalW = this.terrain.logicalWidth || 80;
-                const logicalD = this.terrain.logicalDepth || 80;
-
-                // Note: Goblin position might not be perfectly synced if it's moving, 
-                // but grid center is close enough for a fireball target.
-                const targetPos = new THREE.Vector3(
-                    (goblin.gridX - logicalW / 2),
-                    h + 1.0, // Chest height
-                    (goblin.gridZ - logicalD / 2)
-                );
-
-                (window as any).game.spawnProjectile(startPos, targetPos);
-            }
-
-            setTimeout(() => {
-                if (!this.isDead) {
-                    this.limbs.leftArm.x = 0;
-                    this.limbs.rightArm.x = 0;
-                }
-            }, 500);
-        } else {
-            // Melee (Soldier/Worker)
-            this.limbs.rightArm.x = -Math.PI / 2;
-            setTimeout(() => {
-                if (!this.isDead) this.limbs.rightArm.x = 0;
-            }, 200);
-        }
-
-        // DAMAGE LOGIC
-        // Ensure we pass 'this' so Goblin knows who hit it (Retaliation)
-        goblin.takeDamage(this.damage, this);
-
-        // Report Combat to Squad/Global Memory (Every hit matches "In Combat" status)
-        if (this.role === 'knight' || this.role === 'wizard') {
-            this.reportEnemy(goblin);
-        }
-
-        if (goblin.hp <= 0) {
-            goblin.isDead = true;
-            this.targetGoblin = null;
-            // AI Memory: Record this kill location
-            if ((window as any).game && (this.role === 'knight' || this.role === 'wizard')) {
-                this.searchForHut(goblin.gridX, goblin.gridZ);
-            }
-        }
-
-        this.attackCooldown = this.attackRate;
+        return (this as any).performAttack(goblin, this.simTime || 0);
     }
 
     attackBuilding(building: any, damageOverride?: number) {
-        if (!building || !building.userData) return;
-
-        // GHOST ATTACK FIX: Check liveness
-        const isDead = building.isDestroyed ? building.isDestroyed() : (building.userData && building.userData.hp <= 0);
-        if (isDead) {
-            this.targetBuilding = null;
-            return;
-        }
-
-        if (this.attackCooldown > 0) return;
-
-        const damage = (damageOverride !== undefined) ? damageOverride : (this.damage || 10);
-        const bType = building.userData.type;
-
-        // --- NEW: Class-based Logic ---
-        if (building.takeDamage) {
-            const retaliation = building.takeDamage(damage, this); // Pass attacker
-            if (retaliation > 0) {
-                // console.log(`[Combat] ${building.userData ? building.userData.type : 'Building'} retaliates! Deals ${retaliation} dmg to Unit ${this.id}`);
-                this.takeDamage(retaliation, null);
-            }
-
-            // Retaliation? Unit.js currently doesn't handle retaliation from Buildings as well as Goblin.js
-            // But Building.js's takeDamage returns retaliation damage.
-
-            // Check Destruction
-            const isDestroyed = building.isDestroyed ? building.isDestroyed() : (building.userData && building.userData.hp <= 0);
-
-            if (isDestroyed) {
-                this.terrain.removeBuilding(building);
-                this.targetBuilding = null;
-                this.findNextEnemy();
-            }
-            this.attackCooldown = this.attackRate;
-            return;
-        }
-
-        // --- VISUALS ---
-        if (!this.isRanged) {
-            this.limbs.rightArm.x = -Math.PI / 2;
-            setTimeout(() => { if (!this.isDead) this.limbs.rightArm.x = 0; }, 200);
-        }
-
-        // --- ENHANCED DAMAGE LOGIC (Legacy Fallback) ---
-        // HP reduction
-        if (building.userData.hp === undefined) building.userData.hp = (bType === 'farm' ? 5 : 100);
-        building.userData.hp -= damage;
-        if (building.hp !== undefined) building.hp = building.userData.hp;
-
-        // Population reduction
-        if (building.userData.population > 0) {
-            const popReduction = (bType === 'farm') ? damage : Math.ceil(damage / 2);
-            building.userData.population = Math.max(0, building.userData.population - popReduction);
-            if (building.population !== undefined) building.population = building.userData.population;
-        }
-
-        // console.log(`Unit ${this.id} attacked ${bType}. HP: ${building.userData.hp}, Pop: ${building.userData.population}`);
-
-        // DESTRUCTION CHECK
-        const isDestroyed = (building.userData.hp <= 0) && (bType === 'farm' || building.userData.population < 1.0);
-
-        if (isDestroyed) {
-            // console.log(`${bType} Destroyed at ${building.gridX},${building.gridZ}!`);
-            this.terrain.removeBuilding(building);
-            this.targetBuilding = null;
-            this.findNextEnemy();
-        } else {
-            this.attackCooldown = this.attackRate;
-            // 2. COUNTER ATTACK (Retaliation)
-            // Only if survivors exists
-            let retaliationFactor = 0.5; // Default (House/Worker)
-
-            if (bType === 'tower') retaliationFactor = 2.0; // Wizards (Strong)
-            if (bType === 'barracks') retaliationFactor = 1.5; // Knights (Medium-Strong)
-            if (bType === 'castle') retaliationFactor = 2.0; // Elite
-
-            // Damage based on CURRENT population (Strength in numbers)
-            // Cap effective output to avoid 1-shotting the attacker instantly if pop is huge (100 pop * 2 = 200 dmg!)
-            // Cap at 30? Or allow swarms to be deadly?
-            // Populous: Angry mobs ARE deadly. 
-            // Let's dampen slightly: damage = sqrt(pop) * factor?
-            // Or linear but small per person.
-
-            // Let's try Linear: Each person deals 0.5 damage?
-            const currentPop = building.userData.population || 0;
-            const retaliationDamage = Math.floor(currentPop * retaliationFactor * 0.5);
-
-            if (retaliationDamage > 0) {
-                // console.log(`[Combat] ${bType} (Pop ${currentPop}) retaliates! Deals ${retaliationDamage} dmg to Unit ${this.id}`);
-                this.takeDamage(retaliationDamage);
-            }
-        }
+        return (this as any).performAttack(building, this.simTime || 0);
     }
+
 
     debugGetAge() {
         return "DEBUG_AGE_" + this.age;
@@ -758,393 +555,59 @@ export class Unit extends Actor {
 
 
 
-    checkSelfDefense(passedGoblins?: any[] | null, force: boolean = false) {
-        // --- TARGET SCANNING (From Legacy Logic) ---
 
-        // Priority: Calculate Best Target (Goblin vs Building)
-        let bestTarget: { type: string, obj: any } | null = null;
-        let bestScore = Infinity; // Lower is better
 
-        // COMMITMENT LOGIC:
-        const hasValidGoblin = this.targetGoblin && !this.targetGoblin.isDead;
-        const hasValidBuilding = this.targetBuilding && this.targetBuilding.userData && this.targetBuilding.userData.hp > 0;
+    checkSelfDefense(passedGoblins: any[] | null = null, forceScan: boolean = false, passedUnits: any[] | null = null, passedBuildings: any[] | null = null) {
+        if (this.isDead || this.isFinished) return false;
 
-        let isBusy = (this.action === 'Chasing' || this.action === 'Fighting' || this.action === 'Sieging' || this.action === 'Unstuck' || this.action === 'Reinforcing');
+        // 1. Scan (calls Actor base)
+        super.checkSelfDefense(passedGoblins, forceScan, passedUnits, passedBuildings);
 
-        // WORKER PACIFISM
-        if (this.role === 'worker' && this.targetRequest) isBusy = true;
-
-        this.scanTimer = (this.scanTimer || 0) + 1;
-
-        // Adaptive Scan Rate
-        let scanInterval = 30;
-        if (hasValidGoblin || hasValidBuilding) {
-            scanInterval = 300; // 5 seconds commitment
+        // 2. State Transition
+        const hasEnemy = !!(this.targetGoblin || this.targetBuilding || this.targetUnit);
+        if (hasEnemy && !(this.state instanceof Combat)) {
+            this.changeState(new Combat(this));
         }
 
-        const forceScan = force || (this.scanTimer > scanInterval);
-
-        // Logic: Scan if Idle OR Invalid Target OR Force Scan... UNLESS Worker is Working
-        let shouldScan = (!isBusy || (!hasValidGoblin && !hasValidBuilding) || forceScan);
-
-        // WORKER PACIFISM: Only scan if forced (periodic) or if specific override
-        if (this.role === 'worker' && this.targetRequest && !forceScan) shouldScan = false;
-
-        // Jitabata Fix: Prevent jitter during Reinforcing/Migration unless forced
-        if ((this.action === 'Reinforcing' || this.action === 'Migrating' || this.migrationTarget) && !forceScan) return false;
-
-        // OPTIMIZATION: Time Slicing (Load Balancing) & GLOBAL BUDGET
-        // Spread checks across frames based on ID to prevent spikes
-        const frame = ((window as any).game && (window as any).game.frameCount) ? (window as any).game.frameCount : 0;
-
-        let allowedInterval = 20;
-        // Knights need faster reaction?
-        if (this.role === 'knight' || this.role === 'wizard') allowedInterval = 10;
-        // Worker Pacifism: Check even less often (User Request)
-        if (this.role === 'worker') allowedInterval = 30; // Matches test expectation
-
-        // Worker Pacifism: Reduce Scan Range for selfDefense too
-        // (Handled inside searchSurroundings mostly, but checkSelfDefense uses findBestTarget too)
-
-        if (!forceScan && (frame + this.id) % allowedInterval !== 0) {
-            return false;
-        }
-
-        // GLOBAL BUDGET CHECK
-        if (!forceScan && (window as any).game && (window as any).game.unitScanBudget !== undefined) {
-            // PRIORITY: Units in Combat or very close (e.g. dist < 10) skip budget
-            const isCombat = this.state && (this.state.constructor.name === 'Combat');
-            const distSq = (this.position && (window as any).game.camera) ?
-                ((this.position.x - (window as any).game.camera.position.x) ** 2 + (this.position.z - (window as any).game.camera.position.z) ** 2) : 9999;
-
-            const isPriority = isCombat || distSq < 100; // < 10m
-
-            if (!isPriority) {
-                if ((window as any).game.unitScanBudget > 0) {
-                    (window as any).game.unitScanBudget--;
-                } else {
-                    return false;
-                }
-            }
-        }
-
-        // Force scan if target is manually cleared (null) but we are in Combat? 
-        // No, relies on loop.
-
-        if (shouldScan) {
-            if (forceScan) this.scanTimer = 0;
-
-            // Current Target Data for Hysteresis
-            const currentTargetId = this.targetGoblin ? this.targetGoblin.id :
-                (this.targetBuilding ? this.targetBuilding.id : null);
-
-            // Fetch Goblins from Global Manager if available
-            const goblins = passedGoblins || ((window as any).game && (window as any).game.goblinManager ? (window as any).game.goblinManager.goblins : []);
-
-            // 1. Scan Goblins (Optimized with Spatial Partitioning)
-            // Reduced ranges per User Request (Knight 50->30, Worker 15->10) -- RE-EVALUATED for soldiers
-            const maxDist = (this.role === 'knight' || this.role === 'wizard') ? 50 : 20;
-            const bRange = (this.role === 'knight' || this.role === 'wizard') ? 300 : 10; // Soldiers see buildings further away, Workers only 10
-
-            // Use findBestTarget to avoid O(N) loop over all goblins
-            const foundGoblin = this.terrain.findBestTarget('goblin', this.gridX, this.gridZ, maxDist, (g, dist) => {
-                if (g.isDead) return Infinity;
-                if (this.ignoredTargets.has(g.id)) return Infinity;
-
-                // User Rule: Strict Reachability Check (Regions MUST match)
-                // FIX: Use Math.floor for grid indexing
-                const gx = Math.floor(this.gridX);
-                const gz = Math.floor(this.gridZ);
-                const tGx = Math.floor(g.gridX);
-                const tGz = Math.floor(g.gridZ);
-
-                const myCell = (this.terrain.grid[gx] && this.terrain.grid[gx][gz]);
-                const gCell = (this.terrain.grid[tGx] && this.terrain.grid[tGx][tGz]);
-
-                if (this.id === 1) console.log(`[DEBUG Unit 1] i=${frame} id=${g.id} gx=${gx} gz=${gz} tGx=${tGx} tGz=${tGz} myCell=${!!myCell} gCell=${!!gCell}`);
-
-                if (myCell && gCell) {
-                    const myRegion = myCell.regionId;
-                    const gRegion = gCell.regionId;
-                    // console.error(`[RegionCheck] my=${myRegion} g=${gRegion}`); // Removed debug log
-                    if (myRegion !== gRegion) return Infinity;
-                }
-
-                // Relaxed Range for Current Target (Stickiness)
-                let limit = maxDist;
-                if (g.id === currentTargetId) limit = maxDist * 2.0;
-
-                if (dist > limit) return Infinity;
-
-                // HEIGHT CHECK
-                const myH = this.terrain.getTileHeight(this.gridX, this.gridZ);
-                const targetH = this.terrain.getTileHeight(g.gridX, g.gridZ);
-                if (Math.abs(myH - targetH) > 10.0) return Infinity;
-
-                let score = dist + 0; // Goblins are Priority 1
-
-                // Height Penalty (Attacking uphill)
-                if (targetH > 8) score += 20;
-
-                // Sticky Bonus
-                if (g.id === currentTargetId) score -= 30;
-
-                return score;
-            }, goblins);
-
-            if (foundGoblin) {
-                // Recalculate score for the found goblin to set as baseline
-                const d = this.getDistance(foundGoblin.gridX, foundGoblin.gridZ);
-                let score = d + 0;
-                const h = this.terrain.getTileHeight(foundGoblin.gridX, foundGoblin.gridZ);
-                if (h > 8) score += 20;
-                if (foundGoblin.id === currentTargetId) score -= 30;
-
-                bestScore = score;
-                bestTarget = { type: 'goblin', obj: foundGoblin };
-            }
-
-            // 1.5 Scan Enemy Units (Faction War)
-            // 1.5 Scan Enemy Units (Faction War)
-            const game = (window as any).game;
-            const units = (game && game.units) ? game.units : [];
-            const sheeps = (game && game.sheepManager && game.sheepManager.sheeps) ? game.sheepManager.sheeps : [];
-            const candidates = [...units, ...sheeps];
-
-            const foundEnemyUnit = this.terrain.findBestTarget('unit', this.gridX, this.gridZ, maxDist, (u, dist) => {
-                if (u === this) return Infinity;
-                if (u.isDead) return Infinity;
-                if (u.faction === this.faction) return Infinity; // Friendly
-
-                // Neutral Check (Birds, etc. if 'unit' includes them? No, unit is 'unit')
-
-                // Reachability
-                const gx = Math.floor(this.gridX);
-                const gz = Math.floor(this.gridZ);
-                const ux = Math.floor(u.gridX);
-                const uz = Math.floor(u.gridZ);
-
-                const myCell = (this.terrain.grid[gx] && this.terrain.grid[gx][gz]);
-                const uCell = (this.terrain.grid[ux] && this.terrain.grid[ux][uz]);
-                if (myCell && uCell) {
-                    const myRegion = myCell.regionId;
-                    const uRegion = uCell.regionId;
-                    if (myRegion !== uRegion) return Infinity;
-                }
-
-                // Limit/Stickiness
-                let limit = maxDist;
-                // if (u.id === currentTargetId) limit = maxDist * 2.0; // Needs unified ID?
-                if (dist > limit) return Infinity;
-
-                let score = dist + 10; // Enemy humans are Priority 2
-                if (u.type === 'sheep') score = dist + 50; // Sheep are Priority 4 (lowest unit)
-
-                // Stickiness
-                if (u.id === currentTargetId) score -= 30;
-
-                return score;
-            }, candidates);
-
-            if (foundEnemyUnit) {
-                // Calculate score to compare with bestTarget (Goblin)
-                const d = this.getDistance(foundEnemyUnit.gridX, foundEnemyUnit.gridZ);
-                let score = d + 10; // Matches logic above
-                if (foundEnemyUnit.type === 'sheep') score = d + 50;
-                if (foundEnemyUnit.id === currentTargetId) score -= 30;
-
-                if (score < bestScore) {
-                    bestScore = score;
-                    bestTarget = { type: 'unit', obj: foundEnemyUnit };
-                }
-            }
-
-            // 2. Scan Buildings (Optimized)
-            // Only scan if we care about buildings (Worker or Knight/Wizard)
-            // Pass specific check logic
-            const range = bRange; // Use the expanded range calculated above
-
-            const foundBuilding = this.terrain.findBestTarget('building', this.gridX, this.gridZ, range, (b, dist) => {
-                if (!b.userData) return Infinity;
-                if (b.userData.hp <= 0) return Infinity;
-                if (this.ignoredTargets.has(b.id)) return Infinity;
-
-                const bType = b.userData.type;
-                const bFaction = b.userData.faction;
-
-                const isGoblinType = (bType === 'goblin_hut' || bType === 'cave');
-                const isEnemyFaction = (bFaction && bFaction !== 'neutral' && bFaction !== this.faction);
-
-
-                // Target if it's a Goblin structure OR an explicit enemy faction structure
-                if (!isGoblinType && !isEnemyFaction) return Infinity;
-
-                // Distance Check
-                if (dist > range) return Infinity;
-
-                // Region Check for Buildings
-                const gx = Math.floor(this.gridX);
-                const gz = Math.floor(this.gridZ);
-                const bx = Math.floor(b.gridX);
-                const bz = Math.floor(b.gridZ);
-
-                const myCell = (this.terrain.grid[gx] && this.terrain.grid[gx][gz]);
-                const bCell = (this.terrain.grid[bx] && this.terrain.grid[bx][bz]);
-                if (myCell && bCell) {
-                    if (myCell.regionId > 0 && bCell.regionId > 0 && myCell.regionId !== bCell.regionId) {
-                        return Infinity;
-                    }
-                }
-
-                let score = dist + 100; // Buildings are Priority 5 (Lowest default)
-                if (b.id === currentTargetId) score -= 30;
-
-                // Priority for soldiers to siege nearby buildings
-                if (dist < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 150.0;
-
-                // Worker Priority for Close Buildings (Self-Defense/Clearance)
-                if (dist < 5.0 && this.role === 'worker') {
-                    score -= 150.0;
-                }
-
-                return score;
-            }, this.terrain.buildings);
-
-            if (foundBuilding) {
-                // Recalculate score to compare with Goblin
-                const dist = this.getDistance(foundBuilding.gridX, foundBuilding.gridZ);
-                let score = dist + 100;
-                if (foundBuilding.id === currentTargetId) score -= 30;
-                if (dist < 8.0 && (this.role === 'knight' || this.role === 'wizard')) score -= 150.0;
-                if (dist < 4.0 && this.role === 'worker') score -= 150.0;
-
-                if (score < bestScore) {
-                    bestScore = score;
-                    bestTarget = { type: 'building', obj: foundBuilding };
-                }
-            }
-
-            // Apply Target & State Transition logic
-            if (bestTarget) {
-                const isGoblin = (bestTarget.type === 'goblin');
-                const isUnit = (bestTarget.type === 'unit');
-
-                const prevTarget = this.targetGoblin || this.targetUnit || this.targetBuilding;
-                const isNewTarget = (prevTarget !== bestTarget.obj);
-
-                if (isGoblin) {
-                    this.targetGoblin = bestTarget.obj;
-                    this.targetUnit = null;
-                    this.targetBuilding = null;
-                } else if (isUnit) {
-                    this.targetUnit = bestTarget.obj;
-                    this.targetGoblin = null;
-                    this.targetBuilding = null;
-                } else {
-                    this.targetBuilding = bestTarget.obj;
-                    this.targetGoblin = null;
-                    this.targetUnit = null;
-                }
-
-                // Only transition to Combat if it's new engagement
-                if (!(this.state instanceof Combat) || isNewTarget) {
-                    this.changeState(new Combat(this));
-                }
-
-                return true;
-            } else {
-                // NO TARGET FOUND in current scan.
-                if (this.targetGoblin && this.targetGoblin.isDead) this.targetGoblin = null;
-                if (this.targetUnit && this.targetUnit.isDead) this.targetUnit = null;
-                const b = this.targetBuilding;
-                if (b) {
-                    const hp = (b.hp !== undefined) ? b.hp : (b.userData ? b.userData.hp : 100);
-                    if (hp <= 0) this.targetBuilding = null;
-                }
-            }
-
-            // Priority 3: Raid Point (Squad OR Global)
-            const hasRaidTarget = this.findRaidTarget();
-            if (this.targetGoblin && hasRaidTarget) {
-                const d = this.getDistance(this.targetGoblin.gridX, this.targetGoblin.gridZ);
-                if (d > 5.0) this.targetGoblin = null;
-            }
-        }
-
-        // 2 Scan for Buildings (Caves / Huts) if no goblin target
-        if (!this.targetGoblin && shouldScan) {
-            // FIX: Increase range for Soldiers to map-wide (300) to find distant huts
-            const scanRange = (this.role === 'worker') ? 10 : 300;
-            this.findTargetBuilding(scanRange);
-        }
-
-        return (!!this.targetGoblin || !!this.targetBuilding || !!this.targetUnit);
+        return hasEnemy;
     }
 
-    // New Helper for Aggressive Chain
     findNextEnemy() {
-        // Force a self-defense check immediately, bypassing time slicing
         return this.checkSelfDefense(null, true);
     }
 
     findTargetGoblin(goblins: any[]) {
-        // Deprecated: Kept for tests. Use checkSelfDefense instead.
         return this.checkSelfDefense(goblins, true);
     }
 
     updateCombatLogic(time: number, deltaTime: number) {
-        // Deprecated: Kept for tests.
         return;
     }
 
     searchForHut(x: number, z: number) {
-        // Wrapper for finding nearby buildings. 
-        // Logic already exists in findTargetBuilding, which searches near 'this' unit.
-        // Since Unit is at (x,z) (melee range), this works.
-        this.findTargetBuilding(40); // Scan within 40 tiles
+        this.findTargetBuilding(40);
     }
 
     findTargetBuilding(range?: number) {
-        // Search for 'goblin_hut' or 'cave' nearby
-        if (!this.terrain.buildings) return;
-        const buildings = this.terrain.buildings;
-        let nearest = null;
-        let minDist = Infinity; // Global Search (Soldiers travel far)
-        let foundType = null;
+        if (!this.terrain || !this.terrain.buildings) return;
+        const role = this.role || (this as any).type;
+        let scanRange = (range !== undefined) ? range : 20;
+        // Migration tests expect worker scan range to be 10 for buildings
+        if (role === 'worker' && range === undefined) scanRange = 10;
 
-        const limitRange = (range !== undefined) ? range : Infinity;
+        const found = this.terrain.findBestTarget('building', this.gridX, this.gridZ, scanRange, (b, dist) => {
+            if (!b.userData || b.userData.hp <= 0) return Infinity;
+            if (b.userData.faction === this.faction) return Infinity;
 
-        for (const b of buildings) {
-            const bType = b.type || (b.userData ? b.userData.type : null);
-            // Workers ONLY target huts, not Caves (Caves require explosives/Knights?)
-            // Actually user just said "Goblin Huts". Let's restrict workers to huts.
-            if (this.role === 'worker' && bType !== 'goblin_hut' && bType !== 'cave') continue;
+            const bType = b.userData.type;
+            if (role === 'worker' && bType !== 'goblin_hut' && bType !== 'cave') return Infinity;
 
-            if (bType === 'goblin_hut' || bType === 'cave') {
-                const bx = b.gridX !== undefined ? b.gridX : (b.userData ? b.userData.gridX : 0);
-                const bz = b.gridZ !== undefined ? b.gridZ : (b.userData ? b.userData.gridZ : 0);
-                const dist = this.getDistance(bx, bz);
+            return dist;
+        }, this.terrain.buildings);
 
-                if (dist > limitRange) continue;
-
-                // Prefer closer, but take any
-                if (dist < minDist) {
-                    minDist = dist;
-                    nearest = b;
-                    foundType = bType;
-                }
-            }
-        }
-
-        // Debug log (Throttle)
-        // if (this.role === 'knight' && Math.random() < 0.001) { // Removed debug log
-        //     console.log(`[Unit Debug] Targeted: ${this.targetGoblin ? 'Goblin' : (this.targetBuilding ? this.targetBuilding.type : 'None')}`); // Removed debug log
-        // }
-
-        if (nearest && foundType) {
-            // console.log(`Unit ${this.id} targets enemy base: ${nearest.type} at ${nearest.gridX},${nearest.gridZ}`);
-            this.targetBuilding = nearest;
-            this.reportEnemy(nearest); // Report Sighting!
+        if (found) {
+            this.targetBuilding = found;
+            this.reportEnemy(found);
         }
     }
 
@@ -1311,8 +774,8 @@ export class Unit extends Actor {
             // Legacy check was < 8.0, but if we use Proxy, we might be AT proxy.
             if (dist < 4.0) return;
 
-            // Check ignore list by coord
-            if (this.ignoredTargets && this.ignoredTargets.has(`${p.x},${p.z}`)) return;
+            // Check ignore list by coord (Removed: incompatible with Set<number>)
+            // if (this.ignoredTargets && this.ignoredTargets.has(`${p.x},${p.z}`)) return;
 
             // REGION CHECK (Added by User Request)
             // Ensure the raid point is reachable from current position
@@ -1399,8 +862,7 @@ export class Unit extends Actor {
             // For now, allow all shelters.
 
             // Check ignore
-            if (this.ignoredTargets && this.ignoredTargets.has(b.id)) continue;
-            if (this.ignoredTargets && this.ignoredTargets.has(`${b.gridX},${b.gridZ}`)) continue;
+            if (this.ignoredTargets && (this.ignoredTargets.get(b.id) || 0) > this.simTime) continue;
 
             // Faction Check (Strict)
             if (b.userData.faction && b.userData.faction !== this.faction) {
@@ -1732,21 +1194,18 @@ export class Unit extends Actor {
         this.path = null;
 
         // Ignore current targets
-        const ignoreDuration = time + 5000;
-        if (this.targetGoblin) {
-            this.ignoredTargets.set(this.targetGoblin.id, ignoreDuration);
-            this.ignoredTargets.set(`${this.targetGoblin.gridX},${this.targetGoblin.gridZ}`, ignoreDuration);
-            this.targetGoblin = null;
+        // The Actor base class's ignoredTargets is a Set<number>, so we only add IDs.
+        if (this.targetUnit) {
+            this.ignoredTargets.set(this.targetUnit.id, time + 15.0);
+            this.targetUnit = null;
         }
         if (this.targetBuilding) {
-            this.ignoredTargets.set(this.targetBuilding.id, ignoreDuration);
-            this.ignoredTargets.set(`${this.targetBuilding.gridX},${this.targetBuilding.gridZ}`, ignoreDuration);
+            this.ignoredTargets.set(this.targetBuilding.id, time + 15.0);
             this.targetBuilding = null;
         }
-        if (this.targetRaidPoint) {
-            this.ignoredTargets.set(`${this.targetRaidPoint.x},${this.targetRaidPoint.z}`, ignoreDuration);
-            this.targetRaidPoint = null;
-        }
+        // targetRaidPoint does not have an ID, so it cannot be added to ignoredTargets (Set<number>)
+        this.targetRaidPoint = null;
+
 
         this.stuckCount = 0;
         this.action = "Idle";
@@ -1827,49 +1286,24 @@ export class Unit extends Actor {
     updateLogic(time: number, deltaTime: number, isNight: boolean = false, units: any[] = [], buildings: any[] = [], goblins: any[] = []) {
         if (this.isFinished) return;
 
-        // 1. Always update death animation (Fix: Sticky Cross)
+        // 1. Death handling
         if (this.isDead) {
             if (this.updateDeathAnimation) this.updateDeathAnimation(deltaTime);
             return;
         }
 
         this.simTime = time;
-        this.updateAge(deltaTime);
 
         try {
-            // DEBUG: Watch Unit 0 or specific stuck units
-            // if (this.id === 0 && Math.random() < 0.01) { // Removed debug log
-            //     console.log(`[Unit DEBUG] ID:0 State:${this.state ? this.state.constructor.name : 'None'} Age:${this.age.toFixed(1)}`); // Removed debug log
-            // }
+            // 2. Call Actor base logic (Cooldowns, Aging, Drowning, and Combat Scanning)
+            super.updateLogic(time, deltaTime, isNight, units, buildings, goblins);
 
-
-            // 2. Cooldowns, Regen, Aging, Drowning -> Moved to updateAge()
-
-            // 5. Movement Update (Removed: Handled by update() or Game.ts loop)
-            // if (this.updateMovement) this.updateMovement(time);
-
-            // 6. State Machine Update
-            if (this.state) {
-                if (this.state.update) {
-                    this.state.update(time, deltaTime, isNight, units, buildings, goblins);
-                } else {
-                    console.warn(`Unit ${this.id} state ${this.state.constructor.name} has no update method!`);
-                }
-            } else {
-                this.patrol(time);
-            }
-
-            // 7. Passive Actions (Resource Gathering)
+            // 3. Passive Actions (Resource Gathering)
             if (this.role === 'fisher' || this.role === 'hunter') {
                 this.gatherResources(time);
             }
 
-            // 8. Legacy / Fallback Tests
-            if (!this.state && this.checkSelfDefense) {
-                this.checkSelfDefense(goblins);
-            }
-
-            // 9. Visibility Sync
+            // 4. Visibility Sync
             if (this.mesh && !this.isDead) {
                 const visible = !this.isSleeping;
                 if (this.mesh.visible !== visible) this.mesh.visible = visible;
@@ -1958,14 +1392,14 @@ export class Unit extends Actor {
     }
 
     // cleanIgnoredTargets removed (Deprecated)
-    cleanIgnoredTargets(time) {
-        // No-op
-    }
+
 
 
 
     // updatePosition inherited from Entity
     // getPositionForGrid inherited from Entity
+
+
 
     forceUnstuck() {
         const logicalW = this.terrain.logicalWidth || 80;
@@ -2045,8 +1479,8 @@ export class Unit extends Actor {
         if (this.isDead) return "Dead";
 
         // If we have a state object, use its name primarily
-        if (this.state && this.state.constructor) {
-            const stateName = this.state.constructor.name;
+        if (this.state) {
+            const stateName = (this.state as any).name || this.state.constructor.name;
 
             // Map State Class Names to User-Friendly Display Strings
             if (stateName === "Wander") {
@@ -2094,19 +1528,7 @@ export class Unit extends Actor {
 
 
 
-    // --- COMBAT METHODS ---
-    attack(target: any, time: number) {
-        if (!target) return;
 
-        // Dispatch based on target type
-        if (target.constructor.name.includes('Goblin')) {
-            this.attackGoblin(target);
-        } else if (target.type === 'building' || target.userData) {
-            this.attackBuilding(target);
-        } else {
-            this.attackUnit(target);
-        }
-    }
 
     tryBuildStructure(time) {
         // Restriction: Workers, Hunters, and Fishers can build
@@ -2477,10 +1899,7 @@ export class Unit extends Actor {
             gridZ: this.gridZ,
             age: this.age,
             // Raid Goal Persistence
-            raidTargetX: this.raidGoal ? (this.raidGoal as any).x : null,
-            raidTargetY: this.raidGoal ? ((this.raidGoal as any).y || (this.raidGoal as any).z) : null,
-            raidTargetZ: this.raidGoal ? (this.raidGoal as any).z : null,
-            raidTargetTS: this.raidGoal ? (this.raidGoal as any).timestamp : null,
+            raidGoal: this.raidGoal ? { x: (this.raidGoal as any).x, z: (this.raidGoal as any).z, timestamp: (this.raidGoal as any).timestamp } : null,
             lifespan: this.lifespan,
             isDead: this.isDead,
             isFinished: this.isFinished,
@@ -2689,6 +2108,22 @@ export class Unit extends Actor {
             unit.ignoredTargets = new Map(data.ignoredTargets);
         }
 
+        // Restore raidGoal (Raid Goal Persistence)
+        if (data.raidGoal) {
+            unit.raidGoal = {
+                x: data.raidGoal.x,
+                z: data.raidGoal.z,
+                timestamp: data.raidGoal.timestamp
+            };
+        } else if (data.raidTargetX !== undefined && data.raidTargetZ !== undefined) {
+            // Legacy Support
+            unit.raidGoal = {
+                x: data.raidTargetX,
+                z: data.raidTargetZ,
+                timestamp: data.raidTargetTS || 0
+            };
+        }
+
         return unit;
     }
 
@@ -2729,41 +2164,14 @@ export class Unit extends Actor {
 
     // --- CRITICAL LIFECYCLE UPDATE ---
     // Called every frame (or budgeted interval) regardless of AI logic budget
+    getAgeRate() {
+        return (this.role === 'knight' || this.role === 'wizard') ? 0.02 : 0.2;
+    }
+
     updateAge(deltaTime: number) {
         if (this.isDead || this.isFinished) return;
 
-        // 1. Cooldowns
-        if (this.attackCooldown > 0) {
-            this.attackCooldown -= deltaTime;
-        }
-
-        // 2. Natural HP Recovery: 1 HP per Minute
-        if (this.hp < this.maxHp && !this.isDead) {
-            this.hp = Math.min(this.maxHp, this.hp + deltaTime / 60.0);
-        }
-
-        // 3. Aging
-        // Knights/Wizards age slower (0.02 vs 0.2)
-        const ageRate = (this.role === 'knight' || this.role === 'wizard') ? 0.02 : 0.2;
-        this.age += deltaTime * ageRate;
-
-        if (this.age >= this.lifespan) {
-            this.die("Old Age");
-            return;
-        }
-
-        // 4. Physical / Environmental Checks (Drowning)
-        // Optimization: Only check if moved? Or every update?
-        // Since this might be throttled, checking every updateAge call is safe.
-        if (this.terrain && this.terrain.getTileHeight) {
-            // Skip environmental death in minimal mode (common in tests/low-spec)
-            const isMinimal = (this.game && this.game.minimal) || (window as any).game?.minimal;
-
-            const currentH = this.terrain.getTileHeight(this.gridX, this.gridZ);
-            if (currentH <= 0 && !isMinimal) {
-                this.die("Drowning");
-                return;
-            }
-        }
+        // Use base lifecycle logic (Cooldowns, HP Recovery, Aging, Drowning)
+        this.updateLifecycle(deltaTime);
     }
 } // End of Unit Class

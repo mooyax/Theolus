@@ -1,137 +1,35 @@
-import { State, WanderBase } from './State';
+import { State, WanderBase, CombatStateBase } from './State.js';
 
-export class Combat extends State {
-    public stagnationTimer: number;
+export class Combat extends CombatStateBase {
+    public name: string = 'Combat';
+
     constructor(actor: any) {
         super(actor);
-        this.stagnationTimer = 0;
     }
-    enter(prev?: any) {
+
+    enter(prev?: State) {
+        super.enter(prev);
         // FIX: Continuous follow when switching from Raid or another Combat
         const isContinuous = prev && (prev.constructor.name === 'Raid' || prev.constructor.name === 'Combat');
-        if (!isContinuous) {
-            this.actor.isMoving = false;
+        if (isContinuous) {
+            this.actor.isMoving = true;
         }
-        this.actor.action = "Fighting";
-        this.stagnationTimer = 0;
+
+        // Special: Notify Clan activity on combat start (Rallying)
+        if ((window as any).game && (window as any).game.goblinManager) {
+            const currentTarget = this.actor.targetUnit || this.actor.targetBuilding;
+            (window as any).game.goblinManager.notifyClanActivity(this.actor.clanId, currentTarget);
+        }
     }
-    update(...args: any[]) {
-        // Enforce Activity Name (overridden by 'Moving' in Goblin.ts if moving)
-        this.actor.action = "Fighting";
 
-        const [time, deltaTime, isNight, units = [], buildings = []] = args;
-        // Target Validation
-        const target = this.actor.targetUnit || this.actor.targetBuilding;
-        if (!target) {
-            this.actor.changeState(new Raid(this.actor));
-            return;
-        }
+    protected executeAttack(target: any, time: number, deltaTime: number) {
+        // Attack attempt
+        this.actor.attack(target, time);
+    }
 
-        // --- BUILDING PERSISTENCE CHECK ---
-        if (this.actor.targetBuilding) {
-            const b = this.actor.targetBuilding;
-            // FIX: Ensure farms can be destroyed. A Farm without pop dies on HP.
-            const isFarm = (b.type === 'farm' || (b.userData && b.userData.type === 'farm'));
-            const isDead = (b.isDestroyed && b.isDestroyed()) || (b.userData && b.userData.hp <= 0 && (isFarm || (b.userData.population || 0) < 1.0));
-
-            if (isDead) {
-                console.log(`[GoblinCombat ${this.actor.id}] Target Dead/Destroyed. Switching to Raid.`);
-                this.actor.targetBuilding = null;
-                this.actor.changeState(new Raid(this.actor));
-                return;
-            }
-        }
-
-        // --- UNIT DEATH CHECK ---
-        if (this.actor.targetUnit && (this.actor.targetUnit.isDead || this.actor.targetUnit.isFinished)) {
-            console.log(`[GoblinCombat ${this.actor.id}] Target Unit Dead. Switching to Raid.`);
-            if (this.actor.hp < this.actor.maxHp * 0.2) {
-                this.actor.changeState(new Retreat(this.actor));
-                return;
-            }
-            this.actor.targetUnit = null;
-            this.actor.changeState(new Raid(this.actor));
-            return;
-        }
-
-        // Stagnation Detection
-        this.stagnationTimer += deltaTime;
-        if (this.stagnationTimer > 30.0) { // Increased from 15.0 to allow longer chases
-            // STABILIZATION: Blacklist target to prevent immediate re-engagement (Flip-Flop)
-            const now = (window as any).game ? (window as any).game.simTotalTimeSec : 0;
-            if (this.actor.targetUnit) {
-                if (!this.actor.ignoredTargets) this.actor.ignoredTargets = new Map();
-                this.actor.ignoredTargets.set(this.actor.targetUnit.id, now + 10.0);
-            }
-            if (this.actor.targetBuilding) {
-                if (!this.actor.ignoredTargets) this.actor.ignoredTargets = new Map();
-                const id = this.actor.targetBuilding.id || (this.actor.targetBuilding.userData ? this.actor.targetBuilding.userData.id : null);
-                if (id !== null) {
-                    this.actor.ignoredTargets.set(id, now + 15.0);
-                    console.log(`[GoblinCombat ${this.actor.id}] Stagnation (15s). Blacklisting Building ${id}. Switching to Raid.`);
-                }
-            }
-
-            // Adjust fallback approach to match range
-            const approachRange = this.actor.attackRange ? this.actor.attackRange + 1.0 : 2.5;
-            if (this.approachTarget(target.gridX, target.gridZ, approachRange, time)) {
-                this.actor.isRaiding = false;
-                this.actor.changeState(new Wander(this.actor));
-                return;
-            }
-
-            this.actor.targetUnit = null;
-            this.actor.targetBuilding = null;
-            this.actor.changeState(new Raid(this.actor));
-            return;
-        }
-
-        // Use logic from Goblin.js
-        if (this.actor.executeCombatLogic) {
-            // ENCOUNTER COMBAT START
-            const primaryTarget = this.actor.targetUnit || this.actor.targetBuilding;
-
-            if (primaryTarget) {
-                const dist = this.actor.targetUnit ?
-                    this.actor.getDistance(this.actor.targetUnit.gridX, this.actor.targetUnit.gridZ) :
-                    (this.actor.getDistanceToBuilding ? this.actor.getDistanceToBuilding(this.actor.targetBuilding) : 999);
-
-                const dynamicRange = this.actor.attackRange ? this.actor.attackRange : 1.8;
-                if (dist <= dynamicRange + 1.5) {
-                    this.stagnationTimer = 0; // Close enough, not stagnating
-                } else if (dist > 8.0) {
-                    // Far away, look for better targets.
-                    const range = 5.0;
-                    const scanUnits: any[] = (units && units.length > 0) ? units : (((window as any).game && (window as any).game.units) ? (window as any).game.units : []);
-                    let bestUnit: any = null;
-                    let bestDist = range;
-
-                    for (const u of scanUnits) {
-                        if (u.isDead) continue;
-                        if (Math.abs(u.gridX - this.actor.gridX) > range || Math.abs(u.gridZ - this.actor.gridZ) > range) continue;
-
-                        const d = this.actor.getDistance(u.gridX, u.gridZ);
-                        if (d < bestDist) {
-                            bestDist = d;
-                            bestUnit = u;
-                        }
-                    }
-
-                    if (bestUnit && (!this.actor.targetUnit || bestUnit.id !== this.actor.targetUnit.id)) {
-                        console.log(`[GoblinState ${this.actor.id}] Encounter! Switching to Nearby Unit ${bestUnit.id}`);
-                        this.actor.targetUnit = bestUnit;
-                    }
-                }
-            }
-            // ENCOUNTER COMBAT END
-
-            this.actor.executeCombatLogic(time, deltaTime);
-        }
-
-        // If after update logic, we lost targets (killed/destroyed), switch back
-        if (!this.actor.targetUnit && !this.actor.targetBuilding) {
-            this.actor.changeState(new Raid(this.actor));
-        }
+    protected handleTargetLost() {
+        // Goblins default back to Raid when target is lost
+        this.actor.changeState(new Raid(this.actor));
     }
 }
 
@@ -165,6 +63,7 @@ export class Build extends State {
         }
 
         // Arrived. Build!
+        this.actor.action = "Building";
         this.timer += deltaTime;
         if (this.timer > 5.0) { // Take 5 seconds to "build"
             const terrain = this.actor.terrain;

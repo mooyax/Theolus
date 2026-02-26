@@ -73,16 +73,18 @@ describe('Unit Movement & Throttling Fix', () => {
     it('should continue moving along path even if throttled', () => {
         // Simulate already moving along a path
         unit.path = [{ x: 11, z: 10 }, { x: 12, z: 10 }];
+        unit.pathTargetX = 12; // Original target
+        unit.pathTargetZ = 10;
         unit.isMoving = true;
         unit.lastPathTime = 1.0;
 
         // Target CHANGED -> Would normally re-path, but throttled
+        // We go to (15, 10), which is > 1.0 distance from previous target (12, 10)
         const res = unit.smartMove(15, 10, 1.1);
 
         // Should return true because isMoving is already true (keep moving along old path)
         expect(res).toBe(true);
         expect(unit.isPathfindingThrottled).toBe(true);
         expect(unit.isMoving).toBe(true);
-
-});
+    });
 });

@@ -246,6 +246,11 @@ export class Game {
         this.instanceId = ++Game.INSTANCE_COUNT;
         this.minimal = minimal;
 
+        // Register for automatic cleanup in tests
+        if ((globalThis as any).__game_instances) {
+            (globalThis as any).__game_instances.add(this);
+        }
+
         this._tmpVec = new THREE.Vector3();
 
         this.mana = 100;
@@ -358,6 +363,7 @@ export class Game {
             if (terrainOverride) {
                 console.log(`[Game FORCE CONST ${this.instanceId}] Assigning terrainOverride to this.terrain`);
                 this.terrain = terrainOverride;
+                this.buildings = this.terrain.buildings || []; // Link buildings!
             } else {
                 console.log(`[Game FORCE CONST ${this.instanceId}] Creating mock terrain`);
                 this.terrain = {
@@ -663,11 +669,14 @@ export class Game {
 
             // Initialize Managers properly
             console.log("[Game] Initializing Managers (Bird, Sheep, Fish)...");
-            await Promise.all([
-                this.birdManager.init(),
-                this.sheepManager.init(),
-                this.fishManager.init()
-            ]);
+            const initPromises: Promise<any>[] = [];
+            if (this.birdManager && typeof this.birdManager.init === 'function') initPromises.push(this.birdManager.init());
+            if (this.sheepManager && typeof this.sheepManager.init === 'function') initPromises.push(this.sheepManager.init());
+            if (this.fishManager && typeof this.fishManager.init === 'function') initPromises.push(this.fishManager.init());
+
+            if (initPromises.length > 0) {
+                await Promise.all(initPromises);
+            }
 
             // Initial Camera Position for Preview (Center & Orbit)
             const w = this.terrain.logicalWidth || 80;
@@ -685,7 +694,12 @@ export class Game {
 
             // Should hide loading screen AFTER terrain is ready
             this.isLoading = false;
-            this.animate();
+
+            // PREVENT AUTO-START IN TESTS to avoid hanging background loops
+            const isTest = typeof window !== 'undefined' && (window as any).__vitest_environment__;
+            if (!this.minimal && !isTest) {
+                this.animate();
+            }
 
             // Initialize Start Screen UI
             this.initStartScreen();
@@ -1413,8 +1427,9 @@ export class Game {
                             const isFightingOrSleeping = unit.state && (unit.state.constructor.name === 'CombatState' || unit.state.constructor.name === 'SleepState');
                             if (isFightingOrSleeping) scorePenalty += 50;
 
-                            // NEW: Reachability Guard
-                            if (unit.isReachable && !unit.isReachable(req.x, req.z)) {
+                            // NEW: Reachability Guard (Passing isManual for correct threshold)
+                            if (unit.isReachable && !unit.isReachable(req.x, req.z, req.isManual)) {
+
                                 continue;
                             }
 
@@ -1449,7 +1464,8 @@ export class Game {
                     const isFightingOrSleeping = unit.state && (unit.state.constructor.name === 'CombatState' || unit.state.constructor.name === 'SleepState');
                     if (isFightingOrSleeping) scorePenalty += 50;
 
-                    if (unit.isReachable && !unit.isReachable(req.x, req.z)) {
+                    if (unit.isReachable && !unit.isReachable(req.x, req.z, req.isManual)) {
+
                         continue;
                     }
 
@@ -1508,7 +1524,7 @@ export class Game {
                 // Zombie Case 2: Unit forgot about request (or ID mismatch)
                 // Use ID comparison because object references might differ after load
                 if (!u.targetRequest || String(u.targetRequest.id) !== String(req.id)) {
-                    console.log(`[Game] Detected ZOMBIE Request req_${req.id} (Assigned to ${u.id}, but unit has ${u.targetRequest ? u.targetRequest.id : 'null'}). Resetting.`);
+                    console.log(`[Game] Detected ZOMBIE Request ${req.id} (Assigned to ${u.id}, but unit has ${u.targetRequest ? u.targetRequest.id : 'null'}). Resetting.`);
                     req.status = 'pending';
                     req.assignedTo = null;
                     if (req.mesh) req.mesh.material = this.markerMaterial;
@@ -1527,7 +1543,12 @@ export class Game {
         const rFaction = (req.faction) ? req.faction : 'player';
         if (uFaction !== rFaction) return false;
 
-        if (req.status === 'assigned' && String(req.assignedTo) === String(unit.id)) return true; // Already assigned
+        if (req.status === 'assigned' && String(req.assignedTo) === String(unit.id)) {
+            // Even if already assigned, ensure the unit is actually in Job state
+            const isAlreadyInJob = unit.state && (unit.state.name === 'Job' || unit.state.constructor.name === 'Job');
+            if (isAlreadyInJob) return true;
+        }
+
 
         // Global Cooldown Check (Double check for race conditions)
         if (req.excludedUntil && req.excludedUntil > this.simTotalTimeSec) {
@@ -1776,7 +1797,7 @@ export class Game {
                         isBroken = true; reason = "Unit has different request";
                     } else if (!unit.targetRequest) {
                         isBroken = true; reason = "Unit abandoned request";
-                    } else if (unit.ignoredTargets && unit.ignoredTargets.has(req.id)) {
+                    } else if (unit.ignoredTargets && unit.ignoredTargets.has(Number(req.id))) {
                         isBroken = true; reason = "Unit ignored request (Unreachable)";
                     } else if (unit.action === 'Idle' && unit.state && unit.state.constructor.name === 'Wander') {
                         // Anti-flap guard: If assigned but unit literally went back to wandering
@@ -2010,9 +2031,6 @@ export class Game {
     updateCameraControls() {
         if (this.controls) {
             this.controls.update();
-            if (this.frameCounter % 120 === 0) {
-                console.log(`[Camera] Controls enabled: ${this.controls.enabled}, Pos: ${this.camera.position.x.toFixed(1)},${this.camera.position.y.toFixed(1)},${this.camera.position.z.toFixed(1)}`);
-            }
         }
 
         // Safety check for camera (essential for tests)
@@ -2208,7 +2226,7 @@ export class Game {
         if (this.stopped) return;
 
         // CRITICAL FIX: Reset pathfinding budget every frame to prevent infinite "Calculating..."
-        if (this.terrain) {
+        if (this.terrain && typeof this.terrain.resetPathfindingBudget === 'function') {
             this.terrain.resetPathfindingBudget();
         }
 
@@ -2556,21 +2574,21 @@ export class Game {
 
     animate() {
         if (this.stopped) {
-            console.log("[Game] Animation loop STOPPED.");
+            if (this.animationFrameId !== null) {
+                cancelAnimationFrame(this.animationFrameId);
+                this.animationFrameId = null;
+            }
             return;
         }
+
+        this.animationFrameId = requestAnimationFrame(this.animate.bind(this));
 
         try {
             this.frameCounter = (this.frameCounter || 0) + 1;
 
-            if (this.frameCounter % 60 === 0) {
-                console.log(`[Game Heartbeat] Active:${this.gameActive} Loading:${this.isLoading} Units:${this.units.length} ` +
-                    `Goblins:${this.goblinManager ? this.goblinManager.goblins.length : '?'} ` +
-                    `Time:${(this.simTotalTimeSec || 0).toFixed(1)}`);
-            }
-
             const time = performance.now();
             let deltaTime = (time - (this.lastTime || time)) / 1000;
+            if (isNaN(deltaTime) || deltaTime < 0) deltaTime = 0;
             if (deltaTime > 0.5) deltaTime = 0.5;
             this.lastTime = time;
 
@@ -2588,7 +2606,7 @@ export class Game {
 
             if (!this.isLoading) {
                 let frustum = new THREE.Frustum();
-                if (this.camera) {
+                if (this.camera && typeof this.camera.updateMatrixWorld === 'function' && this.camera.projectionMatrix) {
                     this.camera.updateMatrixWorld();
                     frustum.setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse));
                 }
@@ -2598,24 +2616,39 @@ export class Game {
                     if (this.sheepManager) this.sheepManager.update(this.simTotalTimeSec || 0, deltaTime);
                     if (this.fishManager) this.fishManager.update(this.simTotalTimeSec || 0, deltaTime, frustum);
 
-                    this.terrain.updateMeshPosition(this.camera);
+                    if (typeof this.terrain.updateMeshPosition === 'function') {
+                        this.terrain.updateMeshPosition(this.camera);
+                    }
 
                     if (this.gameActive) {
-                        this.terrain.updateLights(this.gameTime);
-                        if (this.buildingRenderer) this.buildingRenderer.updateLighting(this.isNight);
+                        if (typeof this.terrain.updateLights === 'function') {
+                            this.terrain.updateLights(this.gameTime);
+                        }
+                        if (this.buildingRenderer && typeof this.buildingRenderer.updateLighting === 'function') {
+                            this.buildingRenderer.updateLighting(this.isNight);
+                        }
                     }
 
-                    if (this.unitRenderer) {
+                    if (this.unitRenderer && typeof this.unitRenderer.update === 'function') {
                         this.unitRenderer.update(this.units, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()));
                     }
-                    if (this.buildingRenderer) {
-                        this.buildingRenderer.update(this.terrain.buildings, frustum, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
+                    if (this.buildingRenderer && this.terrain && typeof this.buildingRenderer.update === 'function') {
+                        this.buildingRenderer.update(this.terrain.buildings || [], frustum, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
                     }
-                    if (this.goblinRenderer && this.goblinManager) {
+                    if (this.goblinRenderer && this.goblinManager && typeof this.goblinRenderer.update === 'function') {
                         this.goblinRenderer.update(this.goblinManager.goblins, (this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()));
                     }
-                    if (this.treeRenderer) {
+                    if (this.seaDecorationRenderer && typeof this.seaDecorationRenderer.update === 'function') {
+                        this.seaDecorationRenderer.update(this.simTotalTimeSec || 0);
+                    }
+                    if (this.treeRenderer && typeof this.treeRenderer.update === 'function') {
                         this.treeRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
+                    }
+                    if (this.cloudManager && typeof this.cloudManager.update === 'function') {
+                        this.cloudManager.update(deltaTime, this.simTotalTimeSec || 0);
+                    }
+                    if (this.smokeManager && typeof this.smokeManager.update === 'function') {
+                        this.smokeManager.update(deltaTime);
                     }
 
                     if (this.performanceMonitor) this.performanceMonitor.startRender();
@@ -2711,34 +2744,59 @@ export class Game {
         } catch (fatalError) {
             this.logErrorThrottle("FATAL_GAME_LOOP", fatalError);
         }
-        requestAnimationFrame(this.animate.bind(this));
     }
 
     saveGame(slotId: string) {
         if (!this.saveManager) return false;
         try {
+            console.log('[Game] Serializing Resources...');
+            const resources = this.resources;
+
+            console.log('[Game] Serializing Terrain...');
+            const terrainData = this.terrain.serialize();
+            console.log(`[Game] Terrain data size: ${JSON.stringify(terrainData).length}`);
+
+            console.log('[Game] Serializing Units...');
+            const unitData = this.units.map((u, i) => {
+                try {
+                    const s = u.serialize();
+                    // Optional: check individual unit size if needed
+                    return s;
+                } catch (err) {
+                    console.error(`[Game] Failed to serialize unit at index ${i}`, err);
+                    throw err;
+                }
+            });
+            console.log(`[Game] Unit data size: ${JSON.stringify(unitData).length}`);
+
+            console.log('[Game] Serializing Requests...');
+            const requestData = this.requestQueue.map(req => ({
+                id: req.id,
+                type: req.type,
+                x: req.x,
+                z: req.z,
+                status: req.status,
+                assignedTo: req.assignedTo,
+                assignedAt: req.assignedAt,
+                createdAt: req.createdAt,
+                isManual: req.isManual,
+            }));
+
+            console.log('[Game] Serializing GoblinManager...');
+            const goblinData = this.goblinManager ? this.goblinManager.serialize() : null;
+
             const saveData = {
                 slotId: slotId,
                 timestamp: Date.now(),
-                resources: this.resources,
+                resources: resources,
                 gameTime: this.gameTime,
                 gameTotalTime: this.gameTotalTime,
                 currentSeasonIndex: this.currentSeasonIndex,
                 daysPassed: this.daysPassed,
-                terrain: this.terrain.serialize(),
-                units: this.units.map(u => u.serialize()),
-                requests: this.requestQueue.map(req => ({
-                    id: req.id,
-                    type: req.type,
-                    x: req.x,
-                    z: req.z,
-                    status: req.status,
-                    assignedTo: req.assignedTo,
-                    assignedAt: req.assignedAt,
-                    createdAt: req.createdAt,
-                    isManual: req.isManual,
-                })),
-                goblinManager: this.goblinManager ? this.goblinManager.serialize() : null,
+                terrain: terrainData,
+                units: unitData,
+                requests: requestData,
+                goblinManager: goblinData,
                 camera: {
                     position: { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z },
                     zoom: this.camera.zoom,
@@ -2749,7 +2807,7 @@ export class Game {
                 currentLevelIndex: this.currentLevelIndex,
                 currentSeed: this.currentSeed || (this.terrain ? this.terrain.seed : null)
             };
-            console.log(`[Game] Saving Game: Level=${this.currentLevelIndex}, Seed=${saveData.currentSeed}`);
+            console.log(`[Game] Saving Game: Slot=${slotId}`);
             const result = this.saveManager.save(slotId, saveData);
             return result;
         } catch (e) {
@@ -3734,6 +3792,11 @@ export class Game {
 
         if ((window as any).game === this) {
             (window as any).game = undefined as any;
+        }
+
+        // Register for automatic cleanup in tests
+        if ((globalThis as any).__game_instances) {
+            (globalThis as any).__game_instances.add(this);
         }
     }
 

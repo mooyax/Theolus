@@ -87,6 +87,8 @@ export class SmokeManager {
      * Emit a single puff of smoke from a specific world position
      */
     emit(x: number, y: number, z: number) {
+        if (isNaN(x) || isNaN(y) || isNaN(z)) return; // NaN Guard
+
         const i = this.nextIndex;
 
         // Set Position (Top of chimney/building approx)
@@ -106,6 +108,8 @@ export class SmokeManager {
     }
 
     update(deltaTime: number) {
+        if (isNaN(deltaTime)) deltaTime = 0; // Guard against NaN deltaTime
+
         const posAttr = this.geometry.getAttribute('position') as THREE.BufferAttribute;
 
         for (let i = 0; i < this.maxParticles; i++) {
@@ -128,7 +132,7 @@ export class SmokeManager {
         }
 
         posAttr.needsUpdate = true;
-        this.geometry.computeBoundingSphere(); // バウンディング領域を更新してカリングを防止
+        this.geometry.computeBoundingSphere();
     }
 
     dispose() {

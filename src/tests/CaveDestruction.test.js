@@ -18,7 +18,6 @@ if (typeof window !== 'undefined') {
 // Minimal Mocks
 const mockScene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
 const mockTerrain = {
-    findBestTarget: vi.fn(() => null),
     getTileHeight: () => 10,
     gridToWorld: (x, z) => ({ x, y: 10, z }),
     getVisualOffset: () => ({ x: 0, y: 0 }),
@@ -54,7 +53,6 @@ describe('Cave Destruction Bug', () => {
         if (window.game) window.game.buildings = mockTerrain.buildings;
 
         // Create Unit
-        console.log('[Test] Creating Unit');
         unit = new Unit(mockScene, mockTerrain, 10, 10, 'knight', false, null);
 
         // Create Cave
@@ -62,6 +60,11 @@ describe('Cave Destruction Bug', () => {
             id: 'cave_target',
             gridX: 11, // Adjacent to 10,10
             gridZ: 10,
+            hp: 200,
+            takeDamage: function (dmg) {
+                this.userData.hp -= dmg;
+                this.hp = this.userData.hp;
+            },
             userData: {
                 id: 'cave_target',
                 type: 'cave',
@@ -75,10 +78,8 @@ describe('Cave Destruction Bug', () => {
 
         // Set Unit Target
         unit.targetBuilding = cave;
-
-    // Simplified to Direct Unit Test for Robustness
-
     });
+
     it('should damage cave when attacking directly', () => {
         // Setup
         const hpStart = cave.userData.hp; // 200
@@ -92,9 +93,9 @@ describe('Cave Destruction Bug', () => {
 
         // Verify multiple attacks destroy it (logical check)
         cave.userData.hp = 10;
+        unit.hp = 10;
         unit.attackCooldown = 0; // RESET COOLDOWN
         unit.attackBuilding(cave);
         expect(cave.userData.hp).toBeLessThan(10);
-
-});
+    });
 });

@@ -82,12 +82,15 @@ describe('Counter Damage Nerf Verification', () => {
         const cave = {
             id: 999,
             type: 'cave',
+            gridX: 10,
+            gridZ: 10,
             hp: 200,
             population: 10,
             userData: { type: 'cave', hp: 200, population: 10, gridX: 10, gridZ: 10 },
             takeDamage: vi.fn().mockImplementation((amt) => {
                 knight.takeDamage(20, cave);
             }),
+            isDead: false,
             isDestroyed: () => false,
         };
 

@@ -151,9 +151,6 @@ export class Entity {
         const sx = (ox !== null) ? ox : this.gridX;
         const sz = (oz !== null) ? oz : this.gridZ;
 
-        if (ox !== null && Math.abs(sx - tx) < 0.001 && Math.abs(sz - tz) < 0.001) {
-            // console.log("Short circuit 0");
-        }
         const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
         const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
 

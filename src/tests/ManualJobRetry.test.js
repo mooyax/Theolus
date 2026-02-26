@@ -22,7 +22,7 @@ describe('Manual Job Retry and Water Reachability Logic Test', () => {
             const result = Terrain.prototype.isReachable.call(mockTerrain, 0, 0, 1, 1);
             expect(result).toBe(true);
 
-    });
+        });
         it('should return false for water NOT adjacent to same region land', () => {
             const mockTerrain = {
                 logicalWidth: 10,
@@ -46,120 +46,122 @@ describe('Manual Job Retry and Water Reachability Logic Test', () => {
             const result = Terrain.prototype.isReachable.call(mockTerrain, 0, 0, 6, 6);
             expect(result).toBe(false);
 
-    });
-    describe('Game.findBestRequest Logic', () => {
-        it('should pick a manual job even if on water (due to improved isReachable)', () => {
-            const mockGame = {
-                simTotalTimeSec: 100,
-                requestQueue: [],
-                terrain: {
-                    logicalWidth: 10,
-                    logicalDepth: 10,
-                    isReachable: vi.fn(() => true)
-                },
-                units: []
-            };
-
-            const mockUnit = {
-                id: 'unit_1',
-                role: 'worker',
-                gridX: 0,
-                gridZ: 0,
-                ignoredTargets: new Map(),
-                isReachable: vi.fn((tx, tz) => mockGame.terrain.isReachable(0, 0, tx, tz))
-            };
-
-            const req = {
-                id: 'req_water',
-                type: 'raise',
-                x: 1,
-                z: 1,
-                status: 'pending',
-                isManual: true
-            };
-            mockGame.requestQueue = [req];
-
-            const result = Game.prototype.findBestRequest.call(mockGame, mockUnit);
-            expect(result).toBe(req);
-            expect(mockUnit.isReachable).toHaveBeenCalledWith(1, 1);
-
-    });
-    describe('Job Deferral Logic', () => {
-        it('should use 3s deferTime for manual requests', () => {
-            const mockActor = {
-                id: 1,
-                game: {
+        });
+        describe('Game.findBestRequest Logic', () => {
+            it('should pick a manual job even if on water (due to improved isReachable)', () => {
+                const mockGame = {
                     simTotalTimeSec: 100,
-                    deferRequest: vi.fn(),
-                },
-                ignoredTargets: new Map(),
-                changeState: vi.fn(),
-                triggerMove: vi.fn(() => false),
-                getDistance: vi.fn(() => 5.0),
-                isUnreachable: true,
-                isMoving: true,
-                gridX: 0,
-                gridZ: 0
-            };
+                    requestQueue: [],
+                    terrain: {
+                        logicalWidth: 10,
+                        logicalDepth: 10,
+                        isReachable: vi.fn(() => true)
+                    },
+                    units: []
+                };
 
-            const mockRequest = {
-                id: 'req_manual',
-                isManual: true,
-                status: 'assigned',
-                assignedTo: 1,
-                x: 10,
-                z: 10
-            };
+                const mockUnit = {
+                    id: 'unit_1',
+                    role: 'worker',
+                    gridX: 0,
+                    gridZ: 0,
+                    ignoredTargets: new Map(),
+                    isReachable: vi.fn((tx, tz) => mockGame.terrain.isReachable(0, 0, tx, tz))
+                };
 
-            const state = new Job(mockActor);
-            mockActor.targetRequest = mockRequest;
-            state.getResumeState = vi.fn();
+                const req = {
+                    id: 'req_water',
+                    type: 'raise',
+                    x: 1,
+                    z: 1,
+                    status: 'pending',
+                    isManual: true
+                };
+                mockGame.requestQueue = [req];
 
-            // Correct order: update(time, deltaTime)
-            state.update(100, 0.1);
+                const result = Game.prototype.findBestRequest.call(mockGame, mockUnit);
+                expect(result).toBe(req);
+                expect(mockUnit.isReachable).toHaveBeenCalledWith(1, 1);
 
-            expect(mockActor.game.deferRequest).toHaveBeenCalledWith(mockRequest, 3.0);
-            expect(mockActor.ignoredTargets.get('req_manual')).toBe(103.0);
+            });
+            describe('Job Deferral Logic', () => {
+                it('should use 3s deferTime for manual requests', () => {
+                    const mockActor = {
+                        id: 1,
+                        game: {
+                            simTotalTimeSec: 100,
+                            deferRequest: vi.fn(),
+                        },
+                        ignoredTargets: new Map(),
+                        changeState: vi.fn(),
+                        triggerMove: vi.fn(() => false),
+                        clearPath: vi.fn(),
+                        getDistance: vi.fn(() => 5.0),
+                        isUnreachable: true,
+                        isMoving: true,
+                        gridX: 0,
+                        gridZ: 0
+                    };
 
+                    const mockRequest = {
+                        id: 'req_manual',
+                        isManual: true,
+                        status: 'assigned',
+                        assignedTo: 1,
+                        x: 10,
+                        z: 10
+                    };
+
+                    const state = new Job(mockActor);
+                    mockActor.targetRequest = mockRequest;
+                    state.getResumeState = vi.fn();
+
+                    // Correct order: update(time, deltaTime)
+                    state.update(100, 0.1);
+
+                    expect(mockActor.game.deferRequest).toHaveBeenCalledWith(mockRequest, 3.0);
+                    expect(mockActor.ignoredTargets.get('req_manual')).toBe(103.0);
+
+                });
+                it('should use 15s deferTime for automatic requests', () => {
+                    const mockActor = {
+                        id: 1,
+                        game: {
+                            simTotalTimeSec: 100,
+                            deferRequest: vi.fn(),
+                        },
+                        ignoredTargets: new Map(),
+                        changeState: vi.fn(),
+                        triggerMove: vi.fn(() => false),
+                        clearPath: vi.fn(),
+                        getDistance: vi.fn(() => 5.0),
+                        isUnreachable: true,
+                        isMoving: true,
+                        gridX: 0,
+                        gridZ: 0
+                    };
+
+                    const mockRequest = {
+                        id: 'req_auto',
+                        isManual: false,
+                        status: 'assigned',
+                        assignedTo: 1,
+                        x: 10,
+                        z: 10
+                    };
+
+                    const state = new Job(mockActor);
+                    mockActor.targetRequest = mockRequest;
+                    state.getResumeState = vi.fn();
+
+                    // Correct order: update(time, deltaTime)
+                    state.update(100, 0.1);
+
+                    expect(mockActor.game.deferRequest).toHaveBeenCalledWith(mockRequest, 15.0);
+                    expect(mockActor.ignoredTargets.get('req_auto')).toBe(115.0);
+
+                });
+            });
+        });
     });
-        it('should use 15s deferTime for automatic requests', () => {
-            const mockActor = {
-                id: 1,
-                game: {
-                    simTotalTimeSec: 100,
-                    deferRequest: vi.fn(),
-                },
-                ignoredTargets: new Map(),
-                changeState: vi.fn(),
-                triggerMove: vi.fn(() => false),
-                getDistance: vi.fn(() => 5.0),
-                isUnreachable: true,
-                isMoving: true,
-                gridX: 0,
-                gridZ: 0
-            };
-
-            const mockRequest = {
-                id: 'req_auto',
-                isManual: false,
-                status: 'assigned',
-                assignedTo: 1,
-                x: 10,
-                z: 10
-            };
-
-            const state = new Job(mockActor);
-            mockActor.targetRequest = mockRequest;
-            state.getResumeState = vi.fn();
-
-            // Correct order: update(time, deltaTime)
-            state.update(100, 0.1);
-
-            expect(mockActor.game.deferRequest).toHaveBeenCalledWith(mockRequest, 15.0);
-            expect(mockActor.ignoredTargets.get('req_auto')).toBe(115.0);
-
-});
-});
-});
-});
 });

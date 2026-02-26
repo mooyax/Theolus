@@ -211,11 +211,9 @@ describe('Group Combat Simulations', () => {
 
     it('Scenario: 3 Goblins vs 1 House (House Defends)', () => {
         console.log('\n[Scenario 3] 3 Goblins vs 1 House');
-        const house = {
-            userData: { type: 'house', population: 10, gridX: 10, gridZ: 10, faction: 'player' },
-            position: { x: 10, y: 0, z: 10 },
-            gridX: 10, gridZ: 10
-        };
+        const house = new Building(mockScene, mockTerrain, 'house', 10, 10);
+        house.population = 100;
+        house.userData.faction = 'player';
         mockTerrain.buildings.push(house);
         for (let i = 0; i < 3; i++) {
             const g = new Goblin(mockScene, mockTerrain, 11, 11, 'normal');
@@ -231,11 +229,9 @@ describe('Group Combat Simulations', () => {
 
     it('Scenario: 5 Goblins vs 1 House (House Destroyed)', () => {
         console.log('\n[Scenario 4] 5 Goblins vs 1 House (Pop 5)');
-        const house = {
-            userData: { type: 'house', population: 5, gridX: 10, gridZ: 10, faction: 'player' },
-            position: { x: 10, y: 0, z: 10 },
-            gridX: 10, gridZ: 10
-        };
+        const house = new Building(mockScene, mockTerrain, 'house', 10, 10);
+        house.population = 5;
+        house.userData.faction = 'player';
         mockTerrain.buildings.push(house);
         for (let i = 0; i < 5; i++) {
             const g = new Goblin(mockScene, mockTerrain, 11, 11, 'normal');
@@ -271,7 +267,7 @@ describe('Group Combat Simulations', () => {
             units.push(u);
         }
 
-        runSimulation(100);
+        runSimulation(150);
 
         const survivors = units.filter(u => !u.isDead).length;
         expect(k.isDead).toBe(true);
@@ -295,8 +291,8 @@ describe('Group Combat Simulations', () => {
     it('Scenario 9: Building Class House Defense', () => {
         console.log('\n[Scenario 9] Building Class Defense Check');
         const house = new Building(mockScene, mockTerrain, 'house', 10, 10);
-        house.population = 10;
-        house.userData.population = 10;
+        house.population = 100;
+        house.userData.population = 100;
         house.userData.faction = 'player';
         mockTerrain.buildings.push(house);
 

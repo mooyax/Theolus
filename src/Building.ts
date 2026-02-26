@@ -1,6 +1,5 @@
 
 import { Entity } from './Entity';
-console.log('[DEBUG] Building.ts loaded');
 import * as THREE from 'three';
 import { GameConfig } from './config/GameConfig';
 
@@ -8,17 +7,13 @@ export class Building extends Entity {
     private _population: number = 0;
     get population(): number { return this._population; }
     set population(val: number) {
-        if (isNaN(val)) val = 0; // Guard
+        if (typeof val !== 'number' || isNaN(val)) val = 0;
         const diff = val - this._population;
         this._population = val;
-        this.userData.population = val; // Ensure direct sync
+        if (this.userData) this.userData.population = val;
+
         const game = (window as any).game;
-
-        // ONLY update global human population for human residential buildings (house, mansion, castle)
-        // Farms use population for growth, but they are NOT people.
-        // Caves/Huts use population for Goblins, which are handled by GoblinManager.
         const isHumanResidential = this.type === 'house' || this.type === 'mansion' || this.type === 'castle' || this.type === 'barracks' || this.type === 'tower';
-
         if (game && diff !== 0 && isHumanResidential) {
             game.totalPopulation = (game.totalPopulation || 0) + diff;
         }
@@ -26,22 +21,19 @@ export class Building extends Entity {
     private _hp: number = 100;
     get hp(): number { return this._hp; }
     set hp(val: number) {
-        if (isNaN(val)) val = 0;
+        if (typeof val !== 'number' || isNaN(val)) val = 0;
         this._hp = val;
         if (this.userData) this.userData.hp = val;
     }
-    // Added for compatibility with Unit combat checks
     get isDead(): boolean {
-        // Destroyed if HP <= 0 OR if custom destruction logic (isDestroyed) says so
         if (this.hp <= 0) return true;
-        if (this._isDead) return true; // Respect flag from Entity.die()
-        if ((this as any).isDestroyed && typeof (this as any).isDestroyed === 'function') {
-            return (this as any).isDestroyed();
-        }
+        if (this._isDead) return true;
+        if (this.userData && this.userData.isDead) return true;
         return false;
     }
     set isDead(val: boolean) {
         this._isDead = val;
+        if (this.userData) this.userData.isDead = val;
     }
 
     private _maxHp: number = 100;
@@ -53,70 +45,39 @@ export class Building extends Entity {
     }
     public level: number = 1;
     public rotationY: number = 0;
-    // userData is inherited from Entity as 'any'
 
     constructor(scene: THREE.Scene, terrain: any, type: string, x: number, z: number) {
-        // Pass 'building' as spatialType to Entity
         super(scene, terrain, x, z, 'building');
-
         this.type = type;
-        this.userData.faction = 'player'; // Default
-
-        // Stats Configuration
+        this.userData.faction = 'player';
         let hp = 100;
-        let maxHp = 100;
-        let capacity = 0;
-        let defense = 0;
-
         const config = (GameConfig.buildings as any)[type] || { hp: 100, capacity: 0 };
-
         hp = config.hp;
-        maxHp = config.hp;
-        capacity = config.capacity || 0;
-        defense = (config.defense !== undefined) ? config.defense : 2.0; // Fix falsy zero check
-        // growthRate is used in update, not here
 
-        // Backward Compatibility Data Structure
-        // Many systems access building.userData directly.
-        Object.assign(this.userData, {
-            type: type,
-            gridX: x,
-            gridZ: z,
-            population: 0,
-            hp: hp,
-            maxHp: maxHp,
-            capacity: capacity,
-            defense: defense,
-            id: this.id // Link internal ID
-        });
-
-        // Align Internal Loop Properties with userData
+        // Initialize values
         this._population = 0;
         this._hp = hp;
-        this._maxHp = maxHp;
+        this._maxHp = hp;
+
+        // Initialize userData correctly
+        this.userData.type = type;
+        this.userData.gridX = x;
+        this.userData.gridZ = z;
+        this.userData.population = 0;
+        this.userData.hp = hp;
+        this.userData.maxHp = hp;
+        this.userData.capacity = config.capacity || 0;
+        this.userData.defense = (config.defense !== undefined) ? config.defense : 2.0;
+        this.userData.id = this.id;
+        this.userData.isBuilding = true; // Clear indicator for State detection
     }
 
-    // --- LOGIC ---
     override update(time: number, deltaTime: number) {
-        // Centralized growth: If terrain exists, it will call handleGrowth via updatePopulation
-        // BUT for standalone Unit Tests (where terrain is mock), we must handle it here to avoid breaking them.
         if (!this.terrain || (this.terrain && !this.terrain.updatePopulation)) {
             this.handleGrowth(deltaTime);
         }
-
-        // NOTE: population, hp, and maxHp setters now handle userData sync automatically.
-        // We only keep these checks if some legacy code somehow bypasses the setters.
-        if (this.userData) {
-            this.userData.population = this.population;
-            this.userData.hp = this.hp;
-            this.userData.maxHp = this.maxHp;
-        }
-
-        // Auto-Repair remains here as it's a building-specific behavior
-        // FIX: Farms use population for crop growth, but it shouldn't be used as repairmen.
         const canRepair = this.population > 0 && this.type !== 'farm';
         if (canRepair && this.hp < this.maxHp) {
-            // 1 HP per 5 seconds?
             if (Math.random() < deltaTime * 0.2) {
                 this.hp = Math.min(this.maxHp, this.hp + 1);
             }
@@ -124,82 +85,75 @@ export class Building extends Entity {
     }
 
     handleGrowth(deltaTime: number) {
-        if (!this.userData) return;
         const config = GameConfig.buildings[this.type];
         if (!config || config.growthRate === undefined) return;
-
         const rate = config.growthRate;
-        const cap = config.capacity || 10;
-
+        const cap = (config.capacity !== undefined) ? config.capacity : 10;
         if (this.population < cap) {
             this.population = Math.min(cap, this.population + rate * deltaTime);
         }
     }
 
     takeDamage(amount: number, attacker: any = null, isCounter: boolean = false): number {
-        console.log(`[Building ${this.id}] takeDamage ENTER: amount=${amount}, hp=${this.hp}`);
-        // 1. Calculate Damage reduction?
-        // Armor?
+        if (this.isDead) return 0; // Already dead
 
-        // 2. Reduce HP
-        const prevHp = this.hp;
-        this.hp -= amount;
-        this.userData.hp = this.hp;
 
-        // 3. Population Loss Logic (Moved from Goblin.js to here)
-        // If populated, population takes a hit.
-        // Rule: Damage * 0.1 (Capped at 1.0 minimum if damage > 0 and pop > 0)
         let retaliation = 0;
+        const currentPop = this.population || 0;
 
-        if (this._population > 0) {
-            const popDamage = Math.max(1, Math.floor(amount * 0.1));
-            this.population = Math.max(0, this._population - popDamage);
+        // 1. Calculate retaliation based on current population BEFORE damage
+        const factor = (this.userData.defense !== undefined) ? this.userData.defense : 2.0;
+        if (factor > 0 && currentPop > 0) {
+            retaliation = Math.floor(currentPop * factor);
+        }
 
-            // 4. Retaliation Calculation
-            // Use defense factor from Config (userData). Fallback to 2.0 if missing.
-            const factor = (this.userData.defense !== undefined) ? this.userData.defense : 2.0;
-            // Retaliation based on CURRENT population (survivors fight back)
-            // Fix: Only retaliate if factor > 0
-            if (factor > 0) {
-                retaliation = Math.floor(this.population * factor);
+        // 2. Damage logic: First reduce population (1 damage = 1 pop), remaining to HP
+        const popLossLimit = amount; // 1:1 scaling
+        const actualPopLoss = Math.min(currentPop, popLossLimit);
+        const damageAccountedFor = actualPopLoss; // 1:1
+        const remainingDamage = amount - damageAccountedFor;
+
+        if (actualPopLoss > 0) {
+            this.population = Math.max(0, currentPop - actualPopLoss);
+        }
+
+        if (remainingDamage > 0) {
+            this.hp -= remainingDamage;
+        }
+
+        if (this.hp <= 0) {
+            this.hp = 0;
+            if (this.terrain && this.terrain.removeBuilding) {
+                this.terrain.removeBuilding(this);
             }
+        }
 
-            // 5. Goblin Defense Logic (User Request)
-            if (this.type === 'cave' || this.type === 'goblin_hut') {
-                if ((window as any).game && (window as any).game.goblinManager && (window as any).game.goblinManager.notifyClanActivity) {
-                    // Notify manager of attack
-                    // attacker is passed from Unit.js now
-                    if (attacker) {
-                        (window as any).game.goblinManager.notifyClanActivity({
-                            type: 'UNDER_ATTACK',
-                            target: this, // The building being attacked
-                            attacker: attacker,
-                            x: this.userData.gridX,
-                            z: this.userData.gridZ
-                        });
-                    }
+        if (this.type === 'cave' || this.type === 'goblin_hut') {
+            if ((window as any).game && (window as any).game.goblinManager && (window as any).game.goblinManager.notifyClanActivity) {
+                if (attacker) {
+                    (window as any).game.goblinManager.notifyClanActivity({
+                        type: 'UNDER_ATTACK',
+                        target: this,
+                        attacker: attacker,
+                        x: this.userData.gridX,
+                        z: this.userData.gridZ
+                    });
                 }
             }
         }
 
-        console.log(`[Building] ${this.type}(${this.id}) took ${amount} dmg. Pop: ${this.population}. Retaliation: ${retaliation}`);
+        if (retaliation > 0 && attacker && typeof attacker.takeDamage === 'function') {
+            attacker.takeDamage(retaliation, this, true);
+        }
+
 
         return retaliation;
     }
 
     isDestroyed(): boolean {
-        // --- IMPROVED DESTRUCTION CHECK ---
-        const hpDestroyed = this.hp <= 0;
-
-        // LOGGING for test debugging
-        if (hpDestroyed) {
-            console.log(`[Building ${this.id}] isDestroyed TRUE (HP: ${this.hp})`);
-        }
-
-        return hpDestroyed;
+        return this.hp <= 0;
     }
 
-    // --- SERIALIZATION ---
     serialize() {
         return {
             type: this.type,
@@ -219,8 +173,6 @@ export class Building extends Entity {
         const idVal = data.id || this.id;
         if (idVal) this.id = idVal;
         if (data.rotationY !== undefined) this.rotationY = data.rotationY;
-
-        // Sync userData
         this.userData.population = this.population;
         this.userData.hp = this.hp;
     }

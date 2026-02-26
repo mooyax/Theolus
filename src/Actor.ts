@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-console.log("[DEBUG] Actor.ts loaded");
 import { Entity } from './Entity';
 
 export class Actor extends Entity {
@@ -18,12 +17,12 @@ export class Actor extends Entity {
     public unreachableTimer: number = 0;
 
     // AI Target Interaction
-    public mesh: THREE.Mesh | any = null; // Added for shared access
+    public mesh: THREE.Mesh | any = null;
     public targetRequest: any | null; // Job
     public targetItem: any | null;    // Item to pick up
     public heldItem: any | null;
     public targetEntity: any | null;  // Generic target
-    public targetBuilding: any | null;
+    public targetBuilding: any | null = null;
 
     // Combat
     public hp: number;
@@ -31,8 +30,9 @@ export class Actor extends Entity {
     public damage: number;
     public attackRate: number;
     public attackCooldown: number;
-    public combatRange: number;
+    public attackRange: number;
     public isRanged: boolean = false;
+    public faction: string = 'neutral';
 
     // Config
     public baseMoveDuration: number;
@@ -55,9 +55,41 @@ export class Actor extends Entity {
     public state: any;
     public simTime: number;
 
-    takeDamage(amount: number, attacker: any = null, isCounter: boolean = false) {
+    public targetUnit: any | null = null;
+    public targetGoblin: any | null = null;
+    public lastScanFrame: number = -1;
+    public scanTimer: number = 0;
+    public stagnationTimer: number = 0;
+    private _lastDelta: number = 0;
+    public ignoredTargets: Map<number, number> = new Map();
+    public findPathAsync?: (tx: number, tz: number, depth?: number, id?: number) => Promise<any[] | null>;
+
+    /**
+     * Common damage handling for all actors.
+     * Includes "Death Counter" logic (retaliation before dying) and automatic targeting.
+     */
+    public takeDamage(amount: number, attacker: any = null, isCounter: boolean = false) {
         if (this.isDead) return;
+
+        // --- DEATH COUNTER (Retaliation) ---
+        // If lethal damage and close range, hit back before dying
+        if (amount >= this.hp && !isCounter && attacker && attacker.hp > 0) {
+            const dist = this.getDistance(attacker.gridX, attacker.gridZ);
+            const meleeRange = 2.0;
+
+            if (dist <= meleeRange) {
+                // Counter attack deals 50% damage
+                const counterDmg = (this as any).damage ? (this as any).damage * 0.5 : 5;
+                if (typeof attacker.takeDamage === 'function') {
+                    attacker.takeDamage(counterDmg, this, true);
+                }
+            }
+        }
+
         this.hp -= amount;
+        if (this.id === 0 || (attacker && attacker.id === 0)) console.log(`[Damage Debug] ${this.type} (ID:${this.id}) took ${amount} dmg from ${attacker ? attacker.type : 'unknown'}. HP: ${this.hp.toFixed(1)}/${this.maxHp}`);
+        if (isNaN(this.hp)) this.hp = 0;
+
         if (this.hp <= 0) {
             this.hp = 0;
             if ((this as any).die) {
@@ -65,10 +97,113 @@ export class Actor extends Entity {
             } else {
                 this.isDead = true;
             }
+        } else {
+            // Retaliation: Target the attacker if not already engaged
+            if (attacker && attacker.hp > 0 && !this.targetUnit && !this.targetGoblin && !this.targetBuilding) {
+                // Use faction/base type for robust targeting
+                const aType = attacker.type; // subspecies for goblins, 'unit' for units
+                const isGoblin = (aType === 'goblin' || attacker.faction === 'enemy');
+                const isUnit = (aType === 'unit' || aType === 'sheep' || attacker.faction === 'player');
+
+                if (isGoblin) {
+                    this.targetGoblin = attacker;
+                } else if (isUnit) {
+                    this.targetUnit = attacker;
+                }
+            }
         }
     }
 
-    die() {
+    /**
+     * Unified attack method for all actors.
+     * Handles range check, cooldown, and rotation.
+     */
+    public attack(target: any, time: number): boolean {
+        // Dispatch to type-specific methods for specialization/tests if available
+        // Note: We check if the method is NOT this own public attack to avoid infinite recursion
+        if (target) {
+            const tType = target.type;
+            const cName = target.constructor ? target.constructor.name : '';
+
+            const isGoblin = (tType === 'goblin' || target.faction === 'enemy' || cName.toLowerCase().includes('goblin'));
+            const isBuilding = (tType === 'building' || target.userData?.type);
+            const isUnit = (tType === 'unit' || tType === 'sheep' || tType === 'passive' || target.faction === 'player' || cName === 'Sheep' || cName === 'Unit');
+
+            if (isGoblin && (this as any).attackGoblin && (this as any).attackGoblin !== this.attack) {
+                return (this as any).attackGoblin(target);
+            }
+            if (isBuilding && (this as any).attackBuilding && (this as any).attackBuilding !== this.attack) {
+                return (this as any).attackBuilding(target);
+            }
+            if (isUnit && (this as any).attackUnit && (this as any).attackUnit !== this.attack) {
+                return (this as any).attackUnit(target);
+            }
+        }
+
+        return this.performAttack(target, time);
+    }
+
+    /**
+     * Internal implementation of the attack logic.
+     * Shared by both the main dispatcher and specialized wrappers.
+     */
+    protected performAttack(target: any, time: number): boolean {
+        // ALWAYS LOG entry for simulation debugging
+        const t = (time !== undefined) ? time : ((window as any).game ? (window as any).game.simTotalTimeSec : 0) || 0;
+        const acd = this.attackCooldown || 0;
+
+        if (this.id === 0 || (target && target.id === 0) || this.type === 'goblin_king') {
+            console.log(`[Combat Entry] ${this.type} (ID:${this.id}) trying to attack ${target ? (target.type || target.userData?.type) : 'null'} (ID:${target ? target.id : 'null'}) at time ${t.toFixed(1)}. CD:${acd.toFixed(2)} TargetDead:${target?.isDead}`);
+        }
+
+        if (!target || target.isDead || target.hp <= 0) return false;
+        if (acd > 0) return false;
+
+        let dist = this.getDistance(target.gridX, target.gridZ);
+        const range = this.attackRange || 2.0;
+
+        // Account for Building Size
+        let size = 1;
+        if (target.userData?.isBuilding || target.userData?.type === 'cave' || target.type === 'building') {
+            if (this.terrain && typeof this.terrain.getBuildingSize === 'function') {
+                size = this.terrain.getBuildingSize(target.type || target.userData?.type);
+            } else if (target.userData?.size) {
+                size = target.userData.size;
+            } else if (target.type === 'cave' || target.userData?.type === 'cave') {
+                size = 2; // Default for caves
+            }
+        }
+
+        const effectiveDist = (size > 1) ? Math.max(0, dist - (size / 2)) : dist;
+
+        if (effectiveDist <= range) {
+            this.action = 'Fighting';
+
+            // Face Target
+            const dx = target.gridX - this.gridX;
+            const dz = target.gridZ - this.gridZ;
+            this.rotationY = Math.atan2(dx, dz);
+
+            // Apply Damage
+            const dmg = this.damage || 5;
+            console.log(`[Combat Debug] ${this.type} (ID:${this.id}) attacking ${target.type || target.userData?.type} (ID:${target.id}) for ${dmg} dmg. Range:${range.toFixed(1)} Dist:${effectiveDist.toFixed(1)} (Original:${dist.toFixed(1)}, Size:${size})`);
+            if (typeof target.takeDamage === 'function') {
+                target.takeDamage(dmg, this);
+            }
+
+            // Set Cooldown
+            this.attackCooldown = this.attackRate || 1.0;
+            return true;
+        } else {
+            if (this.id === 0 || (target && target.id === 0) || this.type === 'goblin_king') {
+                console.log(`[Combat Debug] ${this.type} (ID:${this.id}) OUT OF RANGE for ${target.type || target.userData?.type}. Range:${range.toFixed(1)} Dist:${effectiveDist.toFixed(1)}`);
+            }
+        }
+
+        return false;
+    }
+
+    die(reason?: string) {
         if (this.isDead) {
             if (this.mesh) this.mesh.visible = false;
             return;
@@ -80,15 +215,11 @@ export class Actor extends Entity {
         }
     }
 
-    // Virtual Methods (Default Implementation)
     getBehaviorMode(): string { return 'Idle'; }
     onMoveStep(time: number) { }
 
     constructor(scene: THREE.Scene, terrain: any, x: number, z: number, type: string) {
         super(scene, terrain, x, z, type);
-        console.log(`[DIAG] Actor Created ID: ${this.id}`);
-        console.log(`[DIAG] Actor smartMove type: ${typeof this.smartMove}`);
-        console.log(`[DIAG] Actor smartMove body snapshot: ${this.smartMove ? this.smartMove.toString().substring(0, 100) : 'null'}`);
 
         // AI State
         this.path = null;
@@ -96,44 +227,36 @@ export class Actor extends Entity {
         this.stuckCount = 0;
         this.pathFailCount = 0;
         this.lastPathTime = 0;
-        this.isPathfinding = false; // ASYNC FLAG
+        this.isPathfinding = false;
         this.isPathfindingThrottled = false;
         this.isUnreachable = false;
         this.isWaitingForPath = false;
 
-        // Stagnation
         this.minDistToTarget = Infinity;
         this.pathStagnation = 0;
+        this.stagnationTimer = 0; // Initialize stagnation timer
 
-        // State Machine
         this.state = null;
-        this.simTime = 0; // Track simulation time
+        this.simTime = 0;
 
-        // Job Management
         this.action = 'Idle';
-        // Config defaults
         this.hp = 100;
         this.maxHp = 100;
         this.damage = 10;
         this.attackRate = 1.0;
         this.attackCooldown = 0;
-        this.combatRange = 1.0;
+        this.attackRange = 1.0;
         this.baseMoveDuration = 1.0;
         this.stuckTimer = 0;
-        this.lastPos = new THREE.Vector3();
-        this.pathRequestId = 0;
+        this.lastPos = new THREE.Vector3(this.gridX, 0, this.gridZ);
+        this.pathFailCount = 0;
+        this.stagnationTimer = 0;
     }
 
     changeState(newState: any) {
         if (!newState) return;
         if (this.state && this.state.exit) {
             this.state.exit(newState);
-        }
-        if (this.id === 0) {
-            const oldName = this.state ? this.state.constructor.name : 'None';
-            const newName = newState ? newState.constructor.name : 'None';
-            const reqId = this.targetRequest ? this.targetRequest.id : 'null';
-            console.log(`[Actor 0] CHANGE STATE: ${oldName} -> ${newName} Request:${reqId} `);
         }
         const prevState = this.state;
         this.state = newState;
@@ -142,167 +265,82 @@ export class Actor extends Entity {
         }
     }
 
-    // Shared Reachability Check (The "Region Map" Logic)
+    isReachable(tx: number, tz: number, isManualOverride?: boolean) {
 
-    isReachable(tx: number, tz: number) {
-        if (!this.terrain || !this.terrain.grid) return true; // Fallback
+        if (!this.terrain || !this.terrain.grid) return true;
+        const logicalW = this.terrain.logicalWidth || 240;
+        const logicalD = this.terrain.logicalDepth || 240;
 
-
-        const logicalW = (this.terrain && this.terrain.logicalWidth) ? this.terrain.logicalWidth : 240;
-        const logicalD = (this.terrain && this.terrain.logicalDepth) ? this.terrain.logicalDepth : 240;
-
-        // Wrap Logic for Check
         let checkX = Math.round(tx);
         let checkZ = Math.round(tz);
-
-        // Check Wrapping for safe array access
         checkX = ((checkX % logicalW) + logicalW) % logicalW;
         checkZ = ((checkZ % logicalD) + logicalD) % logicalD;
 
-        // Get Cells
         const mCell = this.terrain.grid[Math.floor(this.gridX)] ? this.terrain.grid[Math.floor(this.gridX)][Math.floor(this.gridZ)] : null;
         const tCell = this.terrain.grid[checkX] ? this.terrain.grid[checkX][checkZ] : null;
 
         if (mCell && tCell) {
             const mRegion = mCell.regionId;
             const tRegion = tCell.regionId;
-
-            // SPECIAL CASE: Region 0 but Height > 0 (Pending Re-calculation)
-            // If either cell is on land (h > 0) but has no region ID (0), 
-            // and we are within the debounce window of Terrain.js (needsRegionRecalc),
-            // we assume it's reachable for "Manual" or "Urgent" tasks to prevent job drops.
-            if (this.terrain.needsRegionRecalc) {
-                const targetH = tCell.height;
-                const myH = mCell.height;
-                if (targetH > 0 && myH > 0) {
-                    // Both on land. If one is region 0, it's likely a fresh terrain change.
-                    if (mRegion === 0 || tRegion === 0) return true;
-                }
-            }
-
-            // Same region is reachable
             if (mRegion === tRegion && mRegion !== undefined) return true;
 
-            // Different Regions: 0 = Water, >0 = Land
+            // ADJACENT CHECK
+            if (this.terrain.isAdjacentToRegion && this.terrain.isAdjacentToRegion(Math.floor(this.gridX), Math.floor(this.gridZ), tx, tz)) {
+                return true;
+            }
+
             const dist = this.getDistance(tx, tz);
 
-            // Land to Land (Different mass): BLOCK (Strict)
-            if (mRegion > 0 && tRegion > 0) {
-                // console.warn(`[Actor ${this.id}] Land to Land BLOCK (Check: ${mRegion} vs ${tRegion})`);
-                const dist = this.getDistance(tx, tz);
-                if (dist < 3.0) return true;
-                return false;
-            }
+            // MANUAL/TARGET TOLERANCE
+            const isManual = isManualOverride !== undefined ? isManualOverride : (this.targetRequest && this.targetRequest.isManual);
+            const threshold = isManual ? 7.0 : 3.0;
 
-            // SPECIAL RULE: Land (>0) to Water (0) (e.g. Raise Land Task)
-            if (mRegion > 0 && tRegion === 0) {
-                const dist = this.getDistance(tx, tz);
 
-                // Relaxed range for Manual Tasks (Users often click slightly out of reach)
-                const isManual = (this as any).targetRequest && (this as any).targetRequest.isManual;
-                const maxDirectDist = isManual ? 7.0 : 3.0;
-
-                if (dist < maxDirectDist) return true;
-                if (this.terrain.isAdjacentToRegion && this.terrain.isAdjacentToRegion(checkX, checkZ, mRegion)) return true;
-                return false;
-            }
-
-            // Water to Land: BLOCK
-            if (mRegion === 0 && tRegion > 0) return false;
+            if (mRegion > 0 && tRegion > 0) return dist < threshold;
+            if (mRegion > 0 && tRegion === 0) return dist < threshold;
+            if (mRegion === 0 && tRegion > 0) return dist < 2.0; // Drowning units can reach shore if very close
         }
         return true;
     }
 
-    // Compatibility for tests and legacy calls
     triggerMove(tx, tz, time) {
-        // Map to smartMove which handles pathfinding and linear fallback
-        // If smartMove returns false (blocked), we might want to force it for tests?
-        // But smartMove is the source of truth for movement logic now.
         return this.smartMove(tx, tz, time);
     }
 
     clearPath() {
         this.path = null;
-        this.pathRequestId++; // Invalidate any pending pathfinding results
+        this.pathRequestId++;
         this.pathTargetX = undefined;
         this.pathTargetZ = undefined;
         this.isPathfinding = false;
         this.isWaitingForPath = false;
-        this.isUnreachable = false; // FIX: Ensure we can retry after a path is explicitly cleared
-        // Don't clear lastMoveLog here, let it persist until next smartMove success
+        this.isMoving = false;
     }
 
     setMoveLog(reason: string, time: number, isError: boolean = false) {
-        // Prevents unreadable flickering by keeping errors for at least 1.0s
         const lastTime = (this as any).lastMoveLogTime || 0;
         const lastWasError = (this as any).lastMoveLogIsError || false;
-
-        if (lastWasError && (time - lastTime < 1.0) && !isError) {
-            // Keep the error message for a bit longer
-            return;
-        }
-
+        if (lastWasError && (time - lastTime < 1.0) && !isError) return;
         this.lastMoveLog = reason;
         (this as any).lastMoveLogTime = time;
         (this as any).lastMoveLogIsError = isError;
-
-        if (isError) {
-            (this as any).lastFailureReason = reason;
-            (this as any).lastFailureTime = time;
-        }
     }
 
-    // Unified Move Logic (The "Smart Move")
-    // Tries to follow path -> Tries to pathfind -> Fallback to Linear
-    // Returns: true if move execution started (or path processing), false if blocked/failed
     smartMove(tx: number, tz: number, time: number, depth: number = 0): boolean {
-        if (isNaN(tx) || isNaN(tz)) {
-            console.error(`[Actor ${this.id}] smartMove received NaN target: ${tx},${tz} `);
-            return false;
-        }
+        if (isNaN(tx) || isNaN(tz)) return false;
+        if (depth > 10) return false;
 
-        if (depth > 10) {
-            console.error(`[Actor ${this.id}] smartMove potential infinite recursion!`);
-            return false;
-        }
-
-        // --- 1. Validation & Cache Check ---
-
-        // FIX: Retry unreachable targets periodically (every 5s)
         if (this.isUnreachable) {
             if (!this.unreachableTimer) this.unreachableTimer = time;
-            if (time - this.unreachableTimer > 5.0) { // Standard 5s retry
+            if (time - this.unreachableTimer > 5.0) {
                 this.isUnreachable = false;
                 this.unreachableTimer = 0;
             }
         }
 
-        // Only reset unreachable if target changed significantly
-        // USE getDistance for wrap-aware check
-        const lastTx = (this as any).lastSmartMoveTargetX;
-        const lastTz = (this as any).lastSmartMoveTargetZ;
-        const distFromLastTarget = (lastTx !== undefined && lastTz !== undefined) ? this.getDistance(tx, tz, lastTx, lastTz) : 999;
-
-        // FIX: Increase threshold from 0.1 to 2.0 to prevent "Busy Wait" loop when chasing moving targets
-        if (lastTx === undefined || distFromLastTarget > 2.0) {
-            console.log(`[Actor ${this.id}] Resetting Unreachable (Target changed or initializing)`);
-            this.isUnreachable = false;
-            (this as any).lastSmartMoveTargetX = tx;
-            (this as any).lastSmartMoveTargetZ = tz;
-        }
-
-        if (this.isUnreachable) {
-            // console.warn(`[Actor ${this.id}] smartMove ABORT: isUnreachable=TRUE`);
-            return false;
-        }
-
+        if (this.isUnreachable) return false;
         if (depth > 5) return false;
-
-        // Sanity Check: If target is invalid, abort immediately to prevent flicker
-        if (isNaN(tx) || isNaN(tz) || (tx === 0 && tz === 0)) {
-            this.setMoveLog(`Invalid Target (${tx},${tz})`, time, true);
-            return false;
-        }
+        if (tx === 0 && tz === 0) return false;
 
         this.isPathfindingThrottled = false;
         this.isWaitingForPath = false;
@@ -315,47 +353,22 @@ export class Actor extends Entity {
 
             let invalid = false;
             if (pTx !== undefined && pTz !== undefined) {
-                // USE getDistance for wrap-aware check
-                if (this.getDistance(tx, tz, pTx, pTz) > 0.5) {
-                    invalid = true;
-                }
-            } else {
-                const lastNode = this.path[this.path.length - 1];
-                if (this.getDistance(tx, tz, lastNode.x, lastNode.z) > 2.0) invalid = true;
+                if (this.getDistance(tx, tz, pTx, pTz) > 1.0) invalid = true;
             }
 
             if (invalid) {
-                if (this.pathTargetX !== undefined) {
-                    const pTx = this.pathTargetX;
-                    const pTz = this.pathTargetZ || 0;
-                    if (this.getDistance(tx, tz, pTx, pTz) > 0.1) {
-                        const endNode = this.path[this.path.length - 1];
-                        // IMPROVED: Only invalidate if the OVERALL REQUESTED TARGET has changed.
-                        // This allows for Partial Paths (where endNode is not the destination)
-                        // and prevents the "Target Mismatch" flicker loop.
-                        const requestedDist = (this.pathRequestedTargetX !== undefined && this.pathRequestedTargetZ !== undefined) ?
-                            this.getDistance(tx, tz, this.pathRequestedTargetX, this.pathRequestedTargetZ) : 999;
-
-                        if (requestedDist < 3.0) {
-                            // Keep current path, it's still heading to the same logical destination
-                            this.pathTargetX = tx;
-                            this.pathTargetZ = tz;
-                        } else {
-                            this.setMoveLog(`Target Moved (${requestedDist.toFixed(1)})`, time, true);
-                            this.clearPath();
-                        }
-                    }
-                } else {
-                    this.setMoveLog("PathTarget Missing", time, true);
-                    this.clearPath();
+                const timeSinceLast = (time === 0 || this.lastPathTime === 0) ? 999 : Math.abs(time - this.lastPathTime);
+                if (timeSinceLast < 1.0) {
+                    this.isPathfindingThrottled = true;
+                    return this.isMoving; // Return true only if already moving; if idle, return false to allow stuck detection
                 }
+                this.clearPath();
             }
 
-            // Move logic outside if (invalid)
             if (this.path && this.path.length > 0) {
                 const node = this.path[0];
-                // USE getDistance for wrap-aware check
                 const distToNextNode = this.getDistance(node.x, node.z);
+                // console.log(`[Actor ${this.id}] Path following. Node:${node.x},${node.z} Dist:${distToNextNode}`);
                 if (distToNextNode < 0.1) {
                     this.path.shift();
                     if (this.path.length === 0) {
@@ -364,78 +377,49 @@ export class Actor extends Entity {
                         return this.smartMove(tx, tz, time, depth + 1);
                     }
                 } else {
-                    const isHeadingToWaypoint = this.isMoving &&
-                        this.getDistance(node.x, node.z, this.targetGridX, this.targetGridZ) < 0.01;
-
-                    let canMove = true;
-                    if (!isHeadingToWaypoint) {
-                        canMove = this.canMoveTo && this.canMoveTo(node.x, node.z);
+                    const isHeadingToWaypoint = this.isMoving && this.getDistance(node.x, node.z, (this as any).targetGridX, (this as any).targetGridZ) < 0.01;
+                    if (isHeadingToWaypoint) {
+                        return true;
                     }
-
-                    if (canMove) {
-                        if (!isHeadingToWaypoint) {
-                            this.executeMove(node.x, node.z, time);
-                        }
+                    if (!this.canMoveTo || this.canMoveTo(node.x, node.z)) {
+                        this.executeMove(node.x, node.z, time);
                         return true;
                     } else {
-                        this.clearPath(); // Use clearPath for consistency
-                        this.setMoveLog("Path Blocked (Node Unreachable)", time, true);
+                        this.clearPath();
                     }
                 }
             }
         }
 
-        // 2. Pathfinding / Fallback Trigger
+        // 2. Pathfinding / Fallback
         if (!this.path || this.path.length === 0) {
-            // DEBUG: Trace entry
-            // console.error(`[Actor ${this.id}] SmartMove Logic. Path is empty.`);
-
             const dist = this.getDistance(tx, tz);
-
-            // FIX: Restore Linear Fallback for small distances to avoid unnecessary pathfinding calls and fix legacy tests
             if (dist <= 1.5) {
                 if (dist < 0.05) {
-                    // console.log(`[Actor ${this.id}] Arrived at destination.`);
                     this.isMoving = false;
                     return false;
                 }
-
-                const isAlreadyHeadingThere = this.isMoving &&
-                    Math.abs(this.targetGridX - tx) < 0.01 &&
-                    Math.abs(this.targetGridZ - tz) < 0.01;
-
-                if (!isAlreadyHeadingThere) {
-                    this.executeMove(tx, tz, time);
-                }
+                const isAlreadyHeadingThere = this.isMoving && Math.abs(this.targetGridX - tx) < 0.01 && Math.abs(this.targetGridZ - tz) < 0.01;
+                if (!isAlreadyHeadingThere) this.executeMove(tx, tz, time);
                 return true;
             }
 
-            // Throttle
-            const throttle = 1.0 + (this.id % 20) * 0.1;
+            if (dist < 0.01) {
+                this.isMoving = false;
+                return false;
+            }
+
             const timeSinceLast = (time === 0 || this.lastPathTime === 0) ? 999 : Math.abs(time - this.lastPathTime);
-
-            // PRIORITY: If we are heading to a manual goal (Job) or Chasing a target, bypass throttle
-            // This prevents "stuttering" when finishing a partial path segment or chasing enemies.
             const isManualJob = (this.action === 'Approaching Job' || this.action === 'Chasing');
-
-            if (timeSinceLast < throttle && !isManualJob) {
+            if (timeSinceLast < 1.0 && !isManualJob) {
                 this.isPathfindingThrottled = true;
-                return true; // BUSY: Pathfinding requested recently, don't abandon state yet
+                return true; // Return true to indicate busy/waiting
             }
+            if (this.isPathfinding) return true;
 
-            if (this.isPathfinding) {
-                return true;
-            }
-
-            // Moved: Only update lastPathTime IF we actually attempt the calculation (budget Permitting)
-            // this.lastPathTime = time;
-
-            // OPTIMIZATION: If we already have a path and are just checking reachability mid-stream,
-            // be more permissive to prevent "flickering" during terrain changes.
-            const alreadyHasPath = this.path && this.path.length > 0;
-            if (!alreadyHasPath && (this.isUnreachable || !this.isReachable(tx, tz))) {
-                // console.warn(`[Actor ${this.id}] IsReachable=False`);
+            if (this.isUnreachable || !this.isReachable(tx, tz)) {
                 this.isUnreachable = true;
+                this.pathFailCount++; // Count reachable/bounds failures as path failures
                 return false;
             }
 
@@ -443,326 +427,368 @@ export class Actor extends Entity {
             this.isPathfinding = true;
 
             const calls = (this.terrain && this.terrain.pathfindingCalls) || 0;
-            if (calls >= 500) { // INCREASED BUDGET: From 50 to 500 to accommodate 1500+ units
+            if (calls >= 500) {
                 this.isWaitingForPath = true;
                 this.isPathfinding = false;
-                this.setMoveLog("Budget Throttled", time, true);
-                // CRITICAL FIX: Do NOT update lastPathTime here. 
-                // We want to try again ASAP when budget allows.
-                return true; // BUSY: Budget full, don't abandon state. Next frame we try again.
+                return true;
             }
 
-            // SUCCESS: Attempting pathfinding
             this.lastPathTime = time;
             if (this.terrain) this.terrain.pathfindingCalls = (this.terrain.pathfindingCalls || 0) + 1;
 
             if (typeof this.terrain.findPathAsync !== 'function') {
-                console.error(`[Actor ${this.id}] Blocked: findPathAsync missing`);
                 this.isPathfinding = false;
                 return false;
             }
 
-            this.isPathfinding = true;
             this.pathRequestId++;
-            this.pathRequestedTargetX = tx;
-            this.pathRequestedTargetZ = tz;
             const currentRequestId = this.pathRequestId;
-            // const reqStart = performance.now();
             this.isWaitingForPath = true;
             this.terrain.findPathAsync(this.gridX, this.gridZ, tx, tz, 0, this.id)
                 .then(newPath => {
-                    if (this.pathRequestId !== currentRequestId) {
-                        this.isPathfinding = false;
-                        this.isWaitingForPath = false;
-                        return;
-                    }
+                    if (this.pathRequestId !== currentRequestId) return;
                     this.isPathfinding = false;
                     this.isWaitingForPath = false;
-                    this.pathTargetX = tx;
-                    this.pathTargetZ = tz;
-
-                    // FIX: Filter out "One Node Path" where start == end or very close
-                    // This prevents infinite loop of Request -> Path[Current] -> Consumption -> Request
-                    let isShortPath = false;
-                    if (newPath && newPath.length === 1) {
-                        const node = newPath[0];
-                        // USE getDistance for wrap-aware check
-                        const d = this.getDistance(node.x, node.z);
-                        if (d < 0.2) isShortPath = true;
-                    }
-
-                    if (!newPath || newPath.length === 0 || isShortPath) {
-                        console.warn(`[Actor ${this.id}] Pathfinding FAILED: Empty/Short path returned. Current Pos: ${this.gridX},${this.gridZ} -> Target: ${tx},${tz} Len:${newPath ? newPath.length : 0} Short:${isShortPath}`);
+                    if (!newPath || newPath.length === 0) {
                         this.isUnreachable = true;
-                        if (this.action === 'Approaching Job') {
-                            if ((this as any).changeState && (this as any).getResumeState) {
-                                (this as any).changeState((this as any).getResumeState());
-                            }
-                        }
-                        this.isMoving = false;
-                        this.onMoveFinished(time);
-                        return;
+                        this.unreachableTimer = time;
+                        this.pathFailCount++;
+                    } else {
+                        this.path = newPath;
+                        this.pathTargetX = tx;
+                        this.pathTargetZ = tz;
+                        this.isUnreachable = false;
+                        this.smartMove(tx, tz, time, depth + 1);
                     }
-
-                    console.log(`[Actor ${this.id}] Pathfinding SUCCESS: Got ${newPath.length} nodes to ${tx},${tz}`);
-                    this.path = newPath;
-                    this.pathIndex = 0;
-                    this.isUnreachable = false;
-                    this.smartMove(tx, tz, time, depth + 1);
                 })
-                .catch(e => {
-                    console.error(`[Actor ${this.id}] Pathfinding Error: `, e);
+                .catch(() => {
                     this.isPathfinding = false;
                     this.isWaitingForPath = false;
-                    // FIX: Mark as unreachable on error to prevent infinite retry loop in Combat
                     this.isUnreachable = true;
-                    this.isMoving = false;
                 });
             return true;
         }
-
-        console.error(`[Actor ${this.id}] Fallthrough Reached! Should be impossible. Path:${this.path}`);
         return false;
     }
 
-    /**
-     * @override Standard Entity Update
-     * Used by tests and simpler loop logic.
-     * Note: Game.ts loop calls updateMovement/updateLogic separately for performance/staggering.
-     */
-    override update(time: number, deltaTime: number) {
-        if (this.isDead) return;
+    update(time: number, deltaTime: number) {
+        this._lastDelta = deltaTime;
         this.updateMovement(time);
+        this.updateLogic(time, deltaTime);
 
-        // Simple fallback for updateLogic if called outside regular game loop
-        this.updateLogic(time, deltaTime, false, [], [], []);
+        // Update lastPos AFTER logic checks so distSq calculation in updateLogic is valid for next frame
+        this.lastPos.set(this.gridX, 0, this.gridZ);
+    }
+    updateMovement(time: number) {
+        super.updateMovement(time);
     }
 
-    updateLogic(time: number, deltaTime: number, isNight: boolean, units: any[], buildings: any[], goblins: any[]) {
-        // Default: Do nothing
+
+    onMoveFinished(time: number) {
+        if (this.isDead || this.isFinished) return;
+
+        // Path following recursion
+        if (this.path && this.path.length > 0) {
+            const tx = this.pathTargetX !== undefined ? this.pathTargetX : this.path[this.path.length - 1].x;
+            const tz = this.pathTargetZ !== undefined ? this.pathTargetZ : this.path[this.path.length - 1].z;
+            this.smartMove(tx, tz, time);
+        }
+    }
+
+    updateLogic(time: number, deltaTime: number, isNight: boolean = false, units: any[] | null = null, buildings: any[] | null = null, goblins: any[] | null = null) {
+        if (this.isDead || this.isFinished) return;
         this.simTime = time;
-        // State Machine Override
-        if (this.state) {
-            this.state.update(time, deltaTime, isNight, units, buildings, goblins);
-            return;
+
+        // --- Stagnation Tracking (AI timeout) ---
+        let isStagnant = !this.isMoving;
+        if (this.isMoving) {
+            const limit = Math.max(3.0, (this.moveDuration || 1.0) * 3 + 2.0);
+            if (time - this.moveStartTime > limit) isStagnant = true;
         }
 
-        // Default Behavior (if no state)
-        if (!this.isMoving) {
-            // ... (Existing primitive wander moved to WanderState, 
-            // but keep basic random move here for backward compatibility or simple actors)
+        if (isStagnant) {
+            this.stagnationTimer = (this.stagnationTimer || 0) + deltaTime;
+        } else {
+            const distSq = (this.gridX - this.lastPos.x) ** 2 + (this.gridZ - this.lastPos.z) ** 2;
+            if (distSq > 0.0001) {
+                this.stagnationTimer = 0;
+            }
+        }
+
+        this.updateLifecycle(deltaTime);
+
+        // 1. Scan for targets (can be overridden/mocked)
+        // MANUAL JOBS should ignore distractions (satisfies ManualJobFlicker.test.js)
+        // REGULAR JOBS should still allow Self-Defense (satisfies Regression_WorkerLogic.test.js)
+        const isDoingManualJob = this.targetRequest && this.targetRequest.isManual;
+        if (!isDoingManualJob) {
+            const forceFirstScan = (this.lastScanFrame === -1);
+            this.checkSelfDefense(goblins, forceFirstScan, units, buildings);
+        }
+
+        // 2. Update state logic
+        if (this.state && typeof this.state.update === 'function') {
+            this.state.update(time, deltaTime, isNight, units, buildings, goblins);
         }
     }
 
-    // Basic Validation (Can override)
-    canMoveTo(x: number, z: number) {
-        // Height / Building check
+    checkSelfDefense(passedGoblins: any[] | null = null, forceScan: boolean = false, passedUnits: any[] | null = null, passedBuildings: any[] | null = null) {
+        const hasSearch = this.terrain && typeof (this.terrain as any).findBestTarget === 'function';
+
+        // QUICK EXIT: If already in combat and has target, update it and return true
+        const hasUrgentTarget = !!(this.targetGoblin || this.targetUnit || this.targetBuilding);
+        if (hasUrgentTarget) {
+            if (hasSearch) {
+                const bList = passedBuildings || (this.game && this.game.buildings) || [];
+                this.updateCombatTarget(passedUnits, bList, passedGoblins);
+            }
+            return true;
+        }
+
+        // Throttling Check (Optimized performance)
+        if (hasSearch && this.game) {
+            const frameCount = (this.game as any).frameCount || 0;
+            const role = (this as any).role || this.type;
+            const interval = (role === 'knight' || role === 'wizard') ? 10 : (role === 'worker' ? 30 : 20);
+
+            const shouldScan = (forceScan || ((frameCount + this.id) % interval === 0));
+            if (shouldScan) {
+                // SCAN BUDGET CHECK
+                if (!forceScan && this.game.unitScanBudget !== undefined) {
+                    let isNearby = false;
+                    const cam = this.game.camera;
+                    if (cam && this.position) {
+                        const distSq = (this.position.x - cam.position.x) ** 2 + (this.position.z - cam.position.z) ** 2;
+                        if (distSq < 400) isNearby = true;
+                    }
+
+                    if (!isNearby) {
+                        if (this.game.unitScanBudget > 0) {
+                            this.game.unitScanBudget--;
+                        } else {
+                            return false; // Skip scan due to budget
+                        }
+                    }
+                }
+
+                // ALLOW workers with jobs to scan, but keep them on a strict budget/interval
+                // (Old code skipped them entirely)
+
+                // Sync targets
+                const bList = passedBuildings || (this.game && this.game.buildings) || [];
+                this.updateCombatTarget(passedUnits, bList, passedGoblins);
+                this.lastScanFrame = frameCount;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    updateCombatTarget(passedUnits: any[] | null, passedBuildings: any[] | null, passedGoblins: any[] | null) {
+        if (this.isDead || this.isFinished) return;
+        if (!this.terrain || typeof (this.terrain as any).findBestTarget !== 'function') return;
+
+        const role = (this as any).role || this.type;
+        const maxDist = (role === 'knight' || role === 'wizard') ? 50 : 20;
+
+        // 1. Unified Search Scope
+        const golbinList = (passedGoblins && passedGoblins.length > 0) ? passedGoblins : (this.game && this.game.goblinManager && Array.isArray(this.game.goblinManager.goblins) ? this.game.goblinManager.goblins : []);
+        const unitList = (passedUnits && passedUnits.length > 0) ? passedUnits : (this.game && Array.isArray(this.game.units) ? this.game.units : []);
+        const sheepList = (this.game && this.game.sheepManager && Array.isArray(this.game.sheepManager.sheeps)) ? this.game.sheepManager.sheeps : [];
+        const combinedUnits = [...unitList, ...sheepList];
+        const buildingList = (passedBuildings && passedBuildings.length > 0) ? passedBuildings : (this.game && Array.isArray(this.game.buildings) ? this.game.buildings : []);
+
+        // 2. Scan Categories
+        let bestTarget: any = null;
+        let bestScore = Infinity;
+        let targetType: 'goblin' | 'unit' | 'building' | null = null;
+
+        // --- Goblin Scan ---
+        const foundGoblin = (this.terrain as any).findBestTarget('goblin', this.gridX, this.gridZ, maxDist, (g, dist) => {
+            if (g.isDead || g.isFinished || g.id === this.id) return Infinity;
+            if (this.ignoredTargets && (this.ignoredTargets.get(g.id) || 0) > this.simTime) return Infinity;
+            return (this.targetGoblin && this.targetGoblin.id === g.id) ? dist * 0.4 : dist;
+        }, golbinList);
+        if (foundGoblin) {
+            const score = (this.targetGoblin && this.targetGoblin.id === foundGoblin.id) ? this.getDistance(foundGoblin.gridX, foundGoblin.gridZ) * 0.4 : this.getDistance(foundGoblin.gridX, foundGoblin.gridZ);
+            if (score < bestScore) {
+                bestScore = score;
+                bestTarget = foundGoblin;
+                targetType = 'goblin';
+            }
+        }
+
+        // --- Unit Scan ---
+        const foundUnit = (this.terrain as any).findBestTarget('unit', this.gridX, this.gridZ, maxDist, (u, dist) => {
+            if (u.isDead || u.isFinished) return Infinity;
+            if (role === 'worker' && this.targetRequest && !this.targetUnit) return Infinity;
+            if (this.ignoredTargets && (this.ignoredTargets.get(u.id) || 0) > this.simTime) return Infinity;
+            if (u.faction === this.faction) return Infinity;
+
+            let score = dist;
+            if (u.type === 'sheep') score *= 1.5;
+            if (this.targetUnit && this.targetUnit.id === u.id) score *= 0.4;
+            return score;
+        }, combinedUnits);
+        if (foundUnit) {
+            const score = (this.targetUnit && this.targetUnit.id === foundUnit.id) ? this.getDistance(foundUnit.gridX, foundUnit.gridZ) * 0.4 : this.getDistance(foundUnit.gridX, foundUnit.gridZ);
+            if (score < bestScore) {
+                bestScore = score;
+                bestTarget = foundUnit;
+                targetType = 'unit';
+            }
+        }
+
+        // --- Building Scan ---
+        const foundBuilding = (this.terrain as any).findBestTarget('building', this.gridX, this.gridZ, maxDist, (b, dist) => {
+            const hp = b.userData ? b.userData.hp : (b.hp !== undefined ? b.hp : 100);
+            if (hp <= 0) return Infinity;
+
+            const bFaction = b.faction || (b.userData ? b.userData.faction : null);
+            if (bFaction === this.faction) return Infinity;
+
+            if (role === 'worker' && (this as any).targetRequest) return Infinity;
+            if (this.ignoredTargets && (this.ignoredTargets.get(b.id) || 0) > this.simTime) return Infinity;
+
+            let score = dist;
+            if (this.targetBuilding && this.targetBuilding.id === b.id) score *= 0.9;
+            return score;
+        }, buildingList);
+
+        if (foundBuilding) {
+            const bX = foundBuilding.gridX !== undefined ? foundBuilding.gridX : (foundBuilding.userData ? foundBuilding.userData.gridX : foundBuilding.x);
+            const bZ = foundBuilding.gridZ !== undefined ? foundBuilding.gridZ : (foundBuilding.userData ? foundBuilding.userData.gridZ : foundBuilding.z);
+
+            if (bX !== undefined && bZ !== undefined) {
+                const score = (this.targetBuilding && this.targetBuilding.id === foundBuilding.id) ? this.getDistance(bX, bZ) * 0.4 : this.getDistance(bX, bZ);
+                if (score < bestScore) {
+                    bestScore = score;
+                    bestTarget = foundBuilding;
+                    targetType = 'building';
+                }
+            }
+        }
+
+        // 3. Apply Winner (PERSISTENTLY)
+        if (bestTarget) {
+            if (!this.targetGoblin && !this.targetUnit && !this.targetBuilding) {
+                console.log(`[Combat] ${this.type} ${this.id} ACQUIRED new target: ${targetType} ${bestTarget.id}`);
+            }
+            this.targetGoblin = (targetType === 'goblin') ? bestTarget : null;
+            this.targetUnit = (targetType === 'unit') ? bestTarget : null;
+            this.targetBuilding = (targetType === 'building') ? bestTarget : null;
+        } else {
+            // Re-validate existing target even if no new target found
+            if (this.targetUnit) {
+                const u = this.targetUnit;
+                const d = this.getDistance(u.gridX, u.gridZ);
+                const invalid = u.isDead || u.isFinished || d > maxDist;
+                if (invalid) {
+                    console.log(`[Combat] ${this.type} ${this.id} DROPPED unit ${u.id}. Dead:${u.isDead} Fin:${u.isFinished} Dist:${d.toFixed(1)} Max:${maxDist}`);
+                    this.targetUnit = null;
+                }
+            }
+            if (this.targetBuilding) {
+                const b = this.targetBuilding;
+                const bHP = b.userData ? b.userData.hp : (b.hp !== undefined ? b.hp : 100);
+                const bx = b.gridX !== undefined ? b.gridX : (b.userData ? b.userData.gridX : b.x);
+                const bz = b.gridZ !== undefined ? b.gridZ : (b.userData ? b.userData.gridZ : b.z);
+                const d = this.getDistance(bx, bz);
+                const invalid = bHP <= 0 || (bx !== undefined && bz !== undefined && d > maxDist);
+                if (invalid) {
+                    console.log(`[Combat] ${this.type} ${this.id} DROPPED building ${b.id}. HP:${bHP} Dist:${d.toFixed(1)} Max:${maxDist}`);
+                    this.targetBuilding = null;
+                }
+            }
+        }
+    }
+
+    updateLifecycle(deltaTime: number) {
+        if (this.isDead || this.isFinished) return;
+
+        if (this.attackCooldown > 0) {
+            this.attackCooldown -= deltaTime;
+        }
+
+        if (this.hp < this.maxHp && !this.isDead) {
+            this.hp = Math.min(this.maxHp, this.hp + deltaTime / 60.0);
+        }
+
+        if (this.age !== undefined) {
+            const role = (this as any).role || this.type;
+            let ageRate = 0.2;
+            if (role === 'noble') ageRate = 0.05;
+            else if (role === 'knight' || role === 'wizard') ageRate = 0.02;
+
+            this.age += deltaTime * ageRate;
+            if (this.age >= this.lifespan) {
+                this.die("Old Age");
+            }
+        }
+
+        if (this.terrain && this.terrain.getTileHeight) {
+            const isMinimal = (this.game && this.game.minimal) || (window as any).game?.minimal;
+            const currentH = this.terrain.getTileHeight(this.gridX, this.gridZ);
+            if (currentH <= 0 && !isMinimal) {
+                this.die("Drowning");
+            }
+        }
+    }
+
+    getDistance(tx: number, tz: number, ox: number | null = null, oz: number | null = null): number {
+        const sx = (ox !== null) ? ox : this.gridX;
+        const sz = (oz !== null) ? oz : this.gridZ;
+        const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
+        const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
+        let dx = Math.abs(sx - tx);
+        let dz = Math.abs(sz - tz);
+        if (dx > logicalW / 2) dx = logicalW - dx;
+        if (dz > logicalD / 2) dz = logicalD - dz;
+        return Math.sqrt(dx * dx + dz * dz);
+    }
+
+    getApproachPoint(target: any): { x: number, z: number } | null {
+        if (!target) return null;
+        let tx = target.gridX;
+        let tz = target.gridZ;
+        if (tx === undefined && target.userData) tx = target.userData.gridX;
+        if (tz === undefined && target.userData) tz = target.userData.gridZ;
+        if (tx === undefined || tz === undefined) return null;
+
+        const dist = this.getDistance(tx, tz);
+        if (dist < 1.0) return { x: tx, z: tz };
+
+        // Move towards center but stop at range
+        const dx = (tx - this.gridX);
+        const dz = (tz - this.gridZ);
+        const angle = Math.atan2(dx, dz);
+        const approachRange = 0.5; // Stop slightly before center
+        return {
+            x: tx - Math.sin(angle) * approachRange,
+            z: tz - Math.cos(angle) * approachRange
+        };
+    }
+
+    canMoveTo(x: number, z: number): boolean {
         const h = this.terrain.getTileHeight(x, z);
         if (h <= 0) return false;
-
         const curH = this.terrain.getTileHeight(this.gridX, this.gridZ);
-        if (Math.abs(h - curH) > 3.0) return false;
-
-        // Building Check: Optional?
-        // Unit.js REMOVED hasBuilding check to allow pathing through own buildings (roads).
-        // Goblin.js keeps it (block entering buildings).
-        // Base Actor will be permissive (allow), subclasses can restrict.
-        // Actually, preventing walking INTO a building is good visual.
-        // But pathfinding nodes might be ON a building?
-        // Let's return true by default regarding buildings, only check terrain.
-
-        return true;
+        return Math.abs(h - curH) <= 3.0;
     }
 
     executeMove(tx: number, tz: number, time: number) {
         this.startMove(tx, tz, time);
     }
 
-    onMoveFinished(time: number) {
-        // Reset Limbs
-        if (this.limbs) {
-            this.limbs.leftArm = this.limbs.leftArm || { x: 0 }; this.limbs.leftArm.x = 0;
-            this.limbs.rightArm = this.limbs.rightArm || { x: 0 }; this.limbs.rightArm.x = 0;
-            this.limbs.leftLeg = this.limbs.leftLeg || { x: 0 }; this.limbs.leftLeg.x = 0;
-            this.limbs.rightLeg = this.limbs.rightLeg || { x: 0 }; this.limbs.rightLeg.x = 0;
-        }
-
-        // Final Snap handled by Entity (if called via super)
-        super.onMoveFinished(time);
-
-        // FIX: Idle/Move Stuttering
-        // Immediately try to advance path instead of waiting for next Logic Tick (1s delay).
-        // Pass 'depth=1' or similar to prevent infinite recursion if 0-dist nodes exist?
-        // smartMove has internal path check.
-        if (this.path && this.path.length > 0) {
-            // Re-invoke smartMove to pick next node
-            // Use current safe 'time' or simTime logic?
-            const now = (this.game && this.game.simTotalTimeSec) ? this.game.simTotalTimeSec : time;
-            // preserve target from state if available
-            // Fix: Use stored pathTarget instead of inferring from last node
-            const pTx = (this as any).pathTargetX;
-            const pTz = (this as any).pathTargetZ;
-
-            if (pTx !== undefined && pTz !== undefined) {
-                this.smartMove(pTx, pTz, now);
-            } else {
-                // Fallback
-                const lastNode = this.path[this.path.length - 1];
-                if (lastNode) {
-                    this.smartMove(lastNode.x, lastNode.z, now);
-                }
-            }
-        }
-    }
-
-    // --- TOOLTIP OVERRIDE ---
-    getTooltip() {
-        let text = super.getTooltip();
-
-        // State Inspection
-        if (this.state && this.state.constructor) {
-            let sName = this.state.constructor.name;
-            // CLEANUP: Strip unnecessary prefixes for UI
-            sName = sName.replace('Goblin', '').replace('Unit', '').replace('State', '');
-            text += `\nState: ${sName} `;
-        }
-        else if (this.getBehaviorMode) {
-            text += `\nMode: ${this.getBehaviorMode()} `;
-        }
-
-        if (this.action) text += `\nAct: ${this.action} `;
-
-        // Status Flags
-        if (this.isDead) text += `\n[DEAD]`;
-        if (this.isFinished) text += `\n[FINISHED]`;
-        if (this.raidGoal) text += `\nRaid: ${this.raidGoal.x.toFixed(0)},${this.raidGoal.z.toFixed(0)} `;
-
+    getTooltip(): string {
+        let text = `ID: ${this.id}\nType: ${this.type}\nAction: ${this.action}`;
+        if (this.age !== undefined) text += `\nAge: ${Math.floor(this.age)}`;
         return text;
-    }
-    // --- UTILS ---
-    getDistanceToBuilding(b: any) {
-        if (!b) return Infinity;
-        let size = 1;
-        // Hardcode sizes or check terrain? Terrain reference is better.
-        if (this.terrain && this.terrain.getBuildingSize) {
-            size = this.terrain.getBuildingSize(b.type || (b.userData ? b.userData.type : 'house'));
-        } else {
-            // Fallback
-            const t = b.type || (b.userData ? b.userData.type : 'house');
-            if (t === 'house' || t === 'farm' || t === 'goblin_hut' || t === 'cave') size = 2;
-            if (t === 'mansion' || t === 'barracks' || t === 'tower') size = 3;
-            if (t === 'castle') size = 4;
-            // Note: Cave size? Usually 2x2.
-        }
-
-        // Handling both Mesh based 'b' or userData based 'b'
-        const gx = (b.userData) ? b.userData.gridX : b.gridX;
-        const gz = (b.userData) ? b.userData.gridZ : b.gridZ;
-
-        if (gx === undefined || gz === undefined) return this.getDistance(b.x, b.z); // Fallback
-
-        const minX = gx;
-        const maxX = gx + size - 1;
-        const minZ = gz;
-        const maxZ = gz + size - 1;
-
-        const dx = Math.max(minX - this.gridX, 0, this.gridX - maxX);
-        const dz = Math.max(minZ - this.gridZ, 0, this.gridZ - maxZ);
-
-        return Math.sqrt(dx * dx + dz * dz);
-    }
-
-
-
-    getApproachPoint(target: any) {
-        if (!target) return null;
-        if (target.gridX === undefined || (target.userData && target.userData.gridX !== undefined)) {
-            // Check if it's a building with userData or simple entity
-            const b = target.userData ? target.userData : target;
-
-            // Check if it IS a building (Static/Obstacle)
-            // If it's a dynamic unit (Actor), simple center tracking is fine.
-            // If it's a Building (grid-based obstacle), we need perimeter.
-            // Assuming 'type' check or just geometry check.
-
-            if (b.type && (b.type === 'house' || b.type === 'farm' || b.type === 'goblin_hut' || b.type === 'cave' || b.type === 'tower' || b.type === 'barracks' || b.type === 'castle')) {
-                const size = (this.terrain && this.terrain.getBuildingSize) ? this.terrain.getBuildingSize(b.type) : 1;
-
-                // Scan perimeter
-                let bestPoint: { x: number, z: number } | null = null;
-                let minDist = Infinity;
-
-                const minX = b.gridX - 1;
-                const maxX = b.gridX + size;
-                const minZ = b.gridZ - 1;
-                const maxZ = b.gridZ + size;
-
-                const W = (this.terrain && this.terrain.logicalWidth) || 80;
-                const D = (this.terrain && this.terrain.logicalDepth) || 80;
-
-                for (let x = minX; x <= maxX; x++) {
-                    for (let z = minZ; z <= maxZ; z++) {
-                        // Skip internal cells
-                        if (x >= b.gridX && x < b.gridX + size && z >= b.gridZ && z < b.gridZ + size) continue;
-
-                        // Wrap coords for check
-                        const wx = (x % W + W) % W;
-                        const wz = (z % D + D) % D;
-
-                        // Check Walkability (isValidGrid handled by grid check)
-                        // But for pathfinding target, we just want a VALID cell.
-                        if (this.terrain.getTileHeight(wx, wz) > 0) { // Land check? Or specific isWalkable?
-                            // Simple dist check
-                            const dist = this.getDistance(wx, wz);
-                            if (dist < minDist) {
-                                minDist = dist;
-                                bestPoint = { x: wx, z: wz };
-                            }
-                        }
-                    }
-                }
-                return bestPoint || { x: b.gridX, z: b.gridZ }; // Fallback
-            }
-        }
-        return { x: target.gridX, z: target.gridZ }; // Default
-    }
-
-    // --- MOVEMENT OVERRIDE & WATCHDOG ---
-    updateMovement(time: number) {
-        // 1. Standard Entity Movement
-        super.updateMovement(time);
-
-        // 2. FAILSAFE: Watchdog for Frozen Animation
-        // If "Moving" flag is stuck true for too long without arriving, force stop.
-        if (this.isMoving) {
-            // Buffer: 3x duration + 2s (Generous, to avoid cutting off valid slow moves)
-            // But strict enough to catch infinite loops.
-            const limit = Math.max(3.0, (this.moveDuration || 1.0) * 3 + 2.0);
-            const elapsed = time - this.moveStartTime;
-
-            if (elapsed > limit) {
-                // Detected STUCK State
-                // if (this.id % 10 === 0) console.warn(`[Actor ${ this.id }]Watchdog: Force stopping stuck movement.Elapsed: ${ elapsed.toFixed(1) } s > Limit: ${ limit.toFixed(1) } s`);
-
-                // Force Stop
-                this.isMoving = false;
-                this.path = null; // Clear path to force re-think
-
-                // Snap to target to ensure we don't drift? 
-                // Better to snap to "Target" which was our destination.
-                this.gridX = this.targetGridX;
-                this.gridZ = this.targetGridZ;
-
-                if (this.onMoveFinished) this.onMoveFinished(time);
-            }
-        }
     }
 
     dispose() {
-        super.dispose();
-        this.path = null;
-        this.targetRequest = null;
-        this.targetEntity = null;
-        this.targetBuilding = null;
+        if (this.terrain && this.terrain.unregisterEntity) {
+            this.terrain.unregisterEntity(this);
+        }
     }
 }

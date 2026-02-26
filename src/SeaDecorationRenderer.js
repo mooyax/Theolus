@@ -88,7 +88,11 @@ export class SeaDecorationRenderer {
             map: seaweedTex,
             shininess: 10
         });
-        this.assets.seaweedMat.userData.uTime = { value: 0 };
+
+        if (this.assets.seaweedMat) {
+            if (!this.assets.seaweedMat.userData) this.assets.seaweedMat.userData = {};
+            this.assets.seaweedMat.userData.uTime = { value: 0 };
+        }
 
         const applyUnderwaterEffects = (mat) => {
             mat.onBeforeCompile = (shader) => {
@@ -267,9 +271,10 @@ export class SeaDecorationRenderer {
 
         // Marine Snow Update
         if (this.marineSnow) {
+            const dt = isNaN(deltaTime) ? 0 : deltaTime;
             const pos = this.marineSnow.geometry.attributes.position.array;
             for (let i = 0; i < pos.length; i += 3) {
-                pos[i + 1] -= deltaTime * 0.05; // Fall slowly
+                pos[i + 1] -= dt * 0.05; // Fall slowly
                 pos[i] += Math.sin(time * 0.5 + i) * 0.002; // Drifting
                 if (pos[i + 1] < -5.0) pos[i + 1] = 0; // Wrap top
             }

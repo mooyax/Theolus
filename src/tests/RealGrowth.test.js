@@ -40,6 +40,7 @@ describe('Real Growth Stagnation Diagnostic', () => {
     });
 
     afterEach(() => {
+        if (game) game.stopped = true;
         vi.restoreAllMocks();
     });
 

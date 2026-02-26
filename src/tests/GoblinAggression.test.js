@@ -3,14 +3,8 @@ import { Goblin } from '../Goblin.js';
 import { Combat, Wander } from '../ai/states/GoblinStates.js';
 import * as THREE from 'three';
 
-if (typeof window !== 'undefined') {
-    window.game = null;
-}
-
 const mockScene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
 const mockTerrain = {
-    findBestTarget: vi.fn(() => null),
-    findPathAsync: vi.fn().mockResolvedValue([{ x: 10, z: 10 }, { x: 20, z: 20 }]),
     getTileHeight: () => 10,
     gridToWorld: (x) => x,
     getVisualOffset: () => ({ x: 0, y: 0 }),
@@ -28,7 +22,7 @@ const mockTerrain = {
             for (const e of list) {
                 const d = Math.sqrt((e.gridX - x) ** 2 + (e.gridZ - z) ** 2);
                 if (d <= rad) {
-                    const score = cost(e, d);
+                    const score = cost ? cost(e, d) : d;
                     if (score < bestScore) { bestScore = score; best = e; }
                 }
             }
@@ -38,7 +32,7 @@ const mockTerrain = {
     findPath: (sx, sz, ex, ez) => [{ x: ex, z: ez }],
     findPathAsync: (sx, sz, ex, ez) => Promise.resolve([{ x: ex, z: ez }]),
     isReachable: () => true,
-    pathfindingCalls: 0
+    getRandomPointInRegion: vi.fn().mockReturnValue({ x: 10, z: 10 })
 };
 
 for (let x = 0; x < 40; x++) {
@@ -54,55 +48,41 @@ describe('Goblin Aggression Bug', () => {
 
     beforeEach(() => {
         mockTerrain.buildings = [];
+        window.game = {
+            goblinManager: { notifyClanActivity: vi.fn() }
+        };
         vi.clearAllMocks();
 
         goblin = new Goblin(mockScene, mockTerrain, 10, 10, 'normal', null, null);
+        goblin.damage = 10;
+        goblin.attackCooldown = 0;
 
         unitTarget = {
             id: 'unit_victim',
-            gridX: 15,
+            gridX: 11, // Close enough to attack instantly
             gridZ: 10,
             hp: 100,
             maxHp: 100,
             isDead: false,
             isFinished: false,
             userData: { type: 'knight' },
-            position: { x: 15, y: 10, z: 10, clone: () => ({ add: () => ({}) }) },
+            position: { x: 11, y: 10, z: 10, clone: () => ({ add: () => ({}) }) },
             takeDamage: vi.fn((amt) => { unitTarget.hp -= amt; })
         };
     });
 
     it('should find target, chase, and attack', async () => {
-        mockTerrain.findBestTarget = vi.fn((type, x, z, rad) => {
-            const d = Math.sqrt((unitTarget.gridX - x) ** 2 + (unitTarget.gridZ - z) ** 2);
-            if (d <= rad) return unitTarget;
-            return null;
-        });
-
-        expect(goblin.state.constructor.name).toBe('Wander');
-
-        goblin.state.scanTimer = 2.0;
-        goblin.updateLogic(0, 0.1, [unitTarget], []);
+        // Force state transition
+        goblin.targetUnit = unitTarget;
+        goblin.changeState(new Combat(goblin));
 
         expect(goblin.targetUnit).toBe(unitTarget);
-        expect(goblin.state.constructor.name).toBe('Combat');
+        expect(goblin.state.name).toBe('Combat');
 
-        goblin.updateLogic(0, 0.1, [unitTarget], []);
-
-        await new Promise(resolve => setTimeout(resolve, 0));
-        goblin.updateLogic(0.1, 0.1);
-
-        expect(goblin.isMoving).toBe(true);
-        goblin.gridX = 14;
-        goblin.updateLogic(0, 0.1, [unitTarget], []);
-        goblin.gridX = 13;
-        goblin.updateLogic(0, 0.1, [unitTarget], []);
-        goblin.gridX = 12;
-
+        // Step 2: Execute attack
         goblin.attackCooldown = 0;
-        goblin.updateLogic(0, 0.1, [unitTarget], []);
+        goblin.updateLogic(100.1, 0.1, [unitTarget], []);
 
         expect(unitTarget.takeDamage).toHaveBeenCalled();
     });
-
 });

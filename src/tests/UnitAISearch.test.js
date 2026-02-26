@@ -1,7 +1,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit';
-import { Terrain } from '../Terrain'; // Will mock class
 import * as THREE from 'three';
 
 // Mock THREE
@@ -27,10 +26,10 @@ describe('Unit AI Search Optimization', () => {
             grid: [],
             // Methods needed for search
             entityGrid: [],
-            findBestTarget: vi.fn(), // New method
+            findBestTarget: vi.fn(),
             getTileHeight: () => 0,
-            getInterpolatedHeight: () => 0, // Used by updatePosition
-            getVisualPosition: () => ({ x: 0, y: 0, z: 0 }), // Used by updatePosition
+            getInterpolatedHeight: () => 0,
+            getVisualPosition: () => ({ x: 0, y: 0, z: 0 }),
             getVisualOffset: () => ({ x: 0, y: 0, z: 0 }),
             isValidGrid: () => true,
             registerEntity: vi.fn(),
@@ -43,7 +42,7 @@ describe('Unit AI Search Optimization', () => {
             for (let z = 0; z < 100; z++) mockTerrain.entityGrid[x][z] = [];
         }
 
-        // Mock Goblin Manager (Old Way - kept for structure but unused by new logic)
+        // Mock Goblin Manager
         mockGoblins = [];
         mockGoblinManager = {
             goblins: mockGoblins
@@ -52,7 +51,8 @@ describe('Unit AI Search Optimization', () => {
         // Mock Game
         mockGame = {
             goblinManager: mockGoblinManager,
-            gameTotalTime: 1000
+            gameTotalTime: 1000,
+            frameCount: 0
         };
 
         // Create Unit
@@ -64,23 +64,20 @@ describe('Unit AI Search Optimization', () => {
         vi.spyOn(console, 'log').mockImplementation(() => { });
 
     });
+
     it('should use Spatial Search to find goblin', () => {
         // Setup mock return
         const goblin = { id: 101, gridX: 5, gridZ: 5, isDead: false, type: 'goblin' };
-        // We simulate findBestTarget returning this goblin
         mockTerrain.findBestTarget.mockReturnValue(goblin);
 
-        // Run Search (Using checkSelfDefense now)
-        unit.checkSelfDefense(null, true);
+        // Run Search (Using updateCombatTarget directly for testing logic)
+        unit.updateCombatTarget([], [], []);
 
-        // Expectation 1: Unit calls findBestTarget
-        // Default range for non-knight units in checkSelfDefense is 20
+        // Expectation: Unit calls findBestTarget with correct parameters (Range 20 for non-knights)
         expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('goblin', 0, 0, 20, expect.any(Function), expect.any(Array));
-
-        // Expectation 2: Unit sets target
         expect(unit.targetGoblin).toBe(goblin);
-
     });
+
     it('should find Base using Spatial Search', () => {
         // Setup mock return for building
         const hut = {
@@ -90,17 +87,17 @@ describe('Unit AI Search Optimization', () => {
         };
 
         // Make sure goblin search returns null so it proceeds to buildings
-        mockTerrain.findBestTarget.mockImplementation((type, x, z, r, cb) => {
+        mockTerrain.findBestTarget.mockImplementation((type, x, z, r, cb, candidateList) => {
             if (type === 'goblin') return null;
             if (type === 'building') return hut;
             return null;
+        });
 
-        unit.checkSelfDefense(null, true);
+        unit.updateCombatTarget([], [], []);
 
-        // Expectation: Calls findBestTarget for building
-        // Building range for non-knight units in checkSelfDefense is 10
-        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('building', 0, 0, 10, expect.any(Function), expect.any(Array));
-
-});
-});
+        // Expectation: Unit calls findBestTarget for building
+        // NOTE: In unified logic, all non-knight targets use range 20
+        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('building', 0, 0, 20, expect.any(Function), expect.any(Array));
+        expect(unit.targetBuilding).toBe(hut);
+    });
 });
