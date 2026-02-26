@@ -213,6 +213,7 @@ export class Goblin extends Actor {
         // Fallback or explicit check for Shaman
         if (this.type === 'shaman') {
             this.isRanged = true;
+            this.projectileColor = 0x00FFFF; // Shaman projectile color
             if (!this.attackRange) this.attackRange = 8.0;
         }
 
@@ -680,37 +681,6 @@ export class Goblin extends Actor {
         this.attack(target, time);
     }
 
-    attackUnit(unit: any) {
-        if (!unit || unit.isDead) return;
-
-        // 1. Visuals / Projectiles (Specific to Goblins)
-        if (this.isRanged && (window as any).game && (window as any).game.spawnProjectile) {
-            const startPos = this.position.clone().add(new THREE.Vector3(0, 0.8 * this.scale, 0));
-            const targetPos = unit.position.clone().add(new THREE.Vector3(0, 0.5, 0));
-            (window as any).game.spawnProjectile(startPos, targetPos, 0x00FFFF);
-        }
-
-        // 2. Perform Unified Combat Logic (Damage, Range, Cooldown)
-        return (this as any).performAttack(unit, (window as any).game ? (window as any).game.simTotalTimeSec : 0);
-    }
-
-    attackBuilding(building: any) {
-        if (!building) return;
-
-        // 1. Visuals / Projectiles
-        if (this.isRanged && (window as any).game && (window as any).game.spawnProjectile) {
-            const startPos = this.position.clone().add(new THREE.Vector3(0, 0.8 * this.scale, 0));
-            const targetPos = new THREE.Vector3(
-                this.terrain.gridToWorld(building.userData?.gridX || building.gridX),
-                (building.y || building.userData?.y || 0) + 1,
-                this.terrain.gridToWorld(building.userData?.gridZ || building.gridZ)
-            );
-            (window as any).game.spawnProjectile(startPos, targetPos, 0x00FFFF);
-        }
-
-        // 2. Perform Unified Combat Logic
-        return (this as any).performAttack(building, (window as any).game ? (window as any).game.simTotalTimeSec : 0);
-    }
 
 
 

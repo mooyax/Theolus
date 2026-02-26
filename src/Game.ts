@@ -1239,7 +1239,7 @@ export class Game {
         return Math.sqrt(dx * dx + dz * dz);
     }
 
-    findBestRequest(unit, allowSnatch = false) {
+    findBestRequest(unit: Unit, allowAuto = true, manualOnly = false, allowSnatch = true) {
         if (!unit) return null;
         // Priority: Calculate Best Target (Goblin vs Building)
         let bestTarget: { type: string, obj: any } | null = null;
@@ -1247,13 +1247,15 @@ export class Game {
         let minDistSq = Infinity;
 
         const logicalW = this.terrain.logicalWidth || 160;
-        const logicalD = this.terrain.logicalDepth || 160; // Added logicalD
+        const logicalD = this.terrain.logicalDepth || 160;
         const now = this.simTotalTimeSec;
         const ux = (unit.getVisualX) ? unit.getVisualX(now) : unit.gridX;
         const uz = (unit.getVisualZ) ? unit.getVisualZ(now) : unit.gridZ;
 
         for (const req of this.requestQueue) {
             if (req.status === 'completed') continue;
+            if (manualOnly && !req.isManual) continue;
+            if (!allowAuto && !req.isManual) continue;
 
             // FACTION CHECK: Only process requests for own faction
             const reqFaction = req.faction || 'player';
@@ -1278,8 +1280,12 @@ export class Game {
                     // Sticky Manual Job: Allow re-picking our own manual job
                     if (!req.isManual) continue;
                 } else {
-                    // NEVER snatch a Manual job from its owner
-                    if (req.isManual) continue;
+                    // NEVER snatch a Manual job from its owner UNLESS they are distracted by combat
+                    if (req.isManual) {
+                        const owner = this.units.find(u => String(u.id) === String(req.assignedTo));
+                        const isOwnerFighting = owner && owner.state && (owner.state.name === 'Combat' || owner.state.constructor.name === 'Combat');
+                        if (!isOwnerFighting) continue;
+                    }
                 }
             }
 
@@ -1292,18 +1298,17 @@ export class Game {
 
             const distSq = dx * dx + dz * dz;
 
-            if (unit.ignoredTargets && unit.ignoredTargets.has(req.id)) {
-                const expiry = unit.ignoredTargets.get(req.id);
-                // Fix: findBestRequest should probably take 'time' or use a logic-consistent time
-                // For now, let's use the unit's lastTime or game's sim time
-                // Use internal sim time
+            if (unit.ignoredTargets && unit.ignoredTargets.has(Number(req.id))) {
+                const expiry = unit.ignoredTargets.get(Number(req.id));
                 const currentTime = this.simTotalTimeSec;
-                if (expiry > 0 && currentTime <= expiry) {
+                if (expiry !== undefined && expiry > 0 && currentTime <= expiry) {
                     console.error(`[Game] Skipping ignored request ${req.id} for Unit ${unit.id}. Exp: ${expiry} Now: ${currentTime}`);
                     continue;
                 } else {
-                    console.error(`[Game] Ignored request ${req.id} EXPIRED for Unit ${unit.id}. Exp: ${expiry} Now: ${currentTime} - Re-allowing.`);
-                    unit.ignoredTargets.delete(req.id);
+                    if (expiry !== undefined) {
+                        console.error(`[Game] Ignored request ${req.id} EXPIRED for Unit ${unit.id}. Exp: ${expiry} Now: ${currentTime} - Re-allowing.`);
+                        unit.ignoredTargets.delete(Number(req.id));
+                    }
                 }
             }
             // SNATCH RULE: Only snatch if DISTANCE is significantly smaller
@@ -1314,8 +1319,13 @@ export class Game {
                     if (currentOwner.action === 'Working' || currentOwner.action === 'Building') continue;
 
                     let dOwner = this.getDistance ? this.getDistance(currentOwner.gridX, currentOwner.gridZ, req.x, req.z) : Math.abs(currentOwner.gridX - req.x) + Math.abs(currentOwner.gridZ - req.z);
-                    // Only snatch if we are at least 50% closer (Tighter than 30%)
-                    if (distSq < (dOwner * dOwner) * 0.5) {
+
+                    // NEW: If current owner is distracted by Combat, relax snatching rules
+                    const isOwnerFighting = currentOwner.state && (currentOwner.state.name === 'Combat' || currentOwner.state.constructor.name === 'Combat');
+                    const snatchThreshold = isOwnerFighting ? 4.0 : 0.5; // If fighting, allow snatching even if 2x further away than owner (distSq < dOwnerSq * 4.0)
+
+                    // Only snatch if we are significantly closer (or owner is fighting)
+                    if (distSq < (dOwner * dOwner) * snatchThreshold) {
                         // Snatched
                     } else {
                         continue;
@@ -1329,7 +1339,7 @@ export class Game {
             if (distSq < minDistSq || (r.isManual && !b?.isManual)) {
                 // REGIONAL REACHABILITY CHECK
                 if (unit.isReachable) {
-                    if (!unit.isReachable(req.x, req.z)) {
+                    if (!unit.isReachable(req.x, req.z, req.isManual)) {
                         continue;
                     }
                 }
@@ -1497,44 +1507,6 @@ export class Game {
         this.assignRequestSync(req);
     }
 
-    detectZombieRequests() {
-        // Runs occasionally to fix sync errors
-        if (!this.units || !this.requestQueue) return;
-
-        for (const req of this.requestQueue) {
-            if (req.status === 'assigned' && req.assignedTo !== null) {
-                // Find unit
-                const u = this.units.find(unit => String(unit.id) === String(req.assignedTo));
-
-                // Zombie Case 1: Unit invalid/dead
-                if (!u || u.isDead) {
-                    console.log(`[Game] Detected ZOMBIE Request req_${req.id} (Assigned to Dead/Missing ${req.assignedTo}). Resetting.`);
-                    req.status = 'pending';
-                    req.assignedTo = null;
-                    if (req.mesh) req.mesh.material = this.markerMaterial;
-                    continue;
-                }
-
-                if (!u.targetRequest) {
-                    console.log(`[Game] DIAG: req_${req.id} assignedTo ${u.id}, but unit has NO targetRequest. Resetting.`);
-                } else if (String(u.targetRequest.id) !== String(req.id)) {
-                    console.log(`[Game] DIAG: req_${req.id} assignedTo ${u.id}, but unit has ${u.targetRequest.id}. Resetting.`);
-                }
-
-                // Zombie Case 2: Unit forgot about request (or ID mismatch)
-                // Use ID comparison because object references might differ after load
-                if (!u.targetRequest || String(u.targetRequest.id) !== String(req.id)) {
-                    console.log(`[Game] Detected ZOMBIE Request ${req.id} (Assigned to ${u.id}, but unit has ${u.targetRequest ? u.targetRequest.id : 'null'}). Resetting.`);
-                    req.status = 'pending';
-                    req.assignedTo = null;
-                    if (req.mesh) req.mesh.material = this.markerMaterial;
-                }
-            }
-        }
-    }
-
-
-
     claimRequest(unit, req) {
         if (!unit || !req) return false;
 
@@ -1642,7 +1614,10 @@ export class Game {
                 const u = this.units.find(unit => unit.id === actualReq.assignedTo);
                 if (u && u.targetRequest && u.targetRequest.id === actualReq.id) {
                     u.targetRequest = null;
-                    if (u.changeState) u.changeState(u.getDefaultState ? u.getDefaultState() : "Wander");
+                    if (u.changeState) {
+                        const defaultState = (u as any).getDefaultState ? (u as any).getDefaultState() : null;
+                        u.changeState(defaultState || new Wander(u));
+                    }
                 }
             }
 
@@ -1743,16 +1718,22 @@ export class Game {
 
     // Cancel Request at specific location (Proximity Search)
 
-    checkExpiredRequests(currentTime) {
+    /**
+     * Watchdog: Scan for expired or broken requests.
+     * This is the entry point called by the main loop/tests.
+     */
+    checkExpiredRequests(currentTime: number) {
+        // Sync simulation time (useful for tests advancing time manually)
+        this.simTotalTimeSec = currentTime;
+
         // Timeout: 300s (5 Minutes)
         const TIMEOUT = 300;
 
-        // 1. REMOVE COMPLETED/TIMED-OUT REQUESTS (Reverse loop to handle splice safely)
+        // 1. CLEANUP: Remove completed or extremely old pending requests
         for (let i = this.requestQueue.length - 1; i >= 0; i--) {
             const req = this.requestQueue[i];
             if (!req) continue;
 
-            // Handle Completion
             if (req.status === 'completed') {
                 if (!req.completedAt) req.completedAt = currentTime;
                 if (currentTime - (req.completedAt || 0) > 0.2) {
@@ -1761,7 +1742,6 @@ export class Game {
                 }
             }
 
-            // Handle Timeout (Only for pending)
             if (req.status === 'pending' && (currentTime - (req.createdAt || 0) > TIMEOUT)) {
                 console.log(`[Game] Request Timed Out: ${req.type} ID:${req.id}`);
                 this.removeRequest(req);
@@ -1769,27 +1749,38 @@ export class Game {
             }
         }
 
-        // 2. BUDGETED ZOMBIE/RETRY CHECK (Proactive Marker-Led Management)
-        const BUDGET = 50;
+        // 2. WATCHDOG: Detect and fix stuck assignments
+        this.detectZombieRequests(50);
+
+        // 3. SCHEDULER: Process pending requests
+        this.processAssignments(50);
+    }
+
+    /**
+     * Internal watchdog logic to scan assignments.
+     */
+    detectZombieRequests(BUDGET = 50) {
+        if (!this.requestQueue) return;
         const total = this.requestQueue.length;
         if (total === 0) return;
 
         if (this.requestCheckIndex === undefined) this.requestCheckIndex = 0;
         const startIdx = this.requestCheckIndex % total;
+        const currentTime = this.simTotalTimeSec;
 
         for (let i = 0; i < Math.min(total, BUDGET); i++) {
             const idx = (startIdx + i) % total;
             const req = this.requestQueue[idx];
             if (!req) continue;
 
-            // --- SELF-HEALING (WATCHDOG) ---
             if (req.status === 'assigned') {
                 const assigneeId = req.assignedTo;
                 if (assigneeId !== null) {
-                    let isBroken = false;
-                    let reason = "";
                     const unit = this.unitMap ? this.unitMap.get(Number(assigneeId)) : this.units.find(u => String(u.id) === String(assigneeId));
                     const assignedAt = req.assignedAt || req.createdAt || 0;
+
+                    let isBroken = false;
+                    let reason = "";
 
                     if (!unit || unit.isDead) {
                         isBroken = true; reason = "Unit Dead/Missing";
@@ -1799,14 +1790,17 @@ export class Game {
                         isBroken = true; reason = "Unit abandoned request";
                     } else if (unit.ignoredTargets && unit.ignoredTargets.has(Number(req.id))) {
                         isBroken = true; reason = "Unit ignored request (Unreachable)";
-                    } else if (unit.action === 'Idle' && unit.state && unit.state.constructor.name === 'Wander') {
-                        // Anti-flap guard: If assigned but unit literally went back to wandering
+                    } else if (unit.action === 'Idle' && unit.state && unit.state.constructor.name === 'Wander' && (currentTime - assignedAt > 1.0)) {
                         isBroken = true; reason = "Unit state decoupled";
                     } else {
-                        // Timeout Fallback
-                        const maxStuck = req.isManual ? 120.0 : 300.0;
-                        if (currentTime - assignedAt > maxStuck) {
-                            isBroken = true; reason = "Assignment Timed Out";
+                        const isFighting = unit.state && (unit.state.name === 'Combat' || unit.state.constructor.name === 'Combat');
+                        if (isFighting && (currentTime - assignedAt > 10.0)) {
+                            isBroken = true; reason = "Unit fighting too long (Distracted)";
+                        } else {
+                            const maxStuck = req.isManual ? 120.0 : 300.0;
+                            if (currentTime - assignedAt > maxStuck) {
+                                isBroken = true; reason = "Assignment Timed Out";
+                            }
                         }
                     }
 
@@ -1814,17 +1808,16 @@ export class Game {
                         console.warn(`[Game] Watchdog: Detected ZOMBIE Request ${req.id} (Assigned to ${assigneeId}). Reason: ${reason}. Resetting.`);
                         req.status = 'pending';
                         req.assignedTo = null;
-                        if (req.mesh && this.markerMaterial) Object.assign(req.mesh.material, this.markerMaterial);
-                        this.assignRequestSync(req);
+                        if (req.mesh) {
+                            if (this.markerMaterial) Object.assign(req.mesh.material, this.markerMaterial);
+                            else (req.mesh as any).material.color?.set(0xffffff);
+                        }
                     }
                 } else {
-                    // Status assigned but no one assigned
                     req.status = 'pending';
-                    this.assignRequestSync(req);
                 }
             }
 
-            // PERIODIC RETRY (For Pending Requests)
             if (req.status === 'pending') {
                 if (!req.lastAttempt) req.lastAttempt = req.createdAt || currentTime;
                 if (currentTime - (req.lastAttempt || 0) > 1.0) {
@@ -1834,9 +1827,6 @@ export class Game {
             }
         }
         this.requestCheckIndex = (startIdx + BUDGET) % total;
-
-        // BATCH ASSIGNMENT: Process pending requests
-        this.processAssignments(50);
     }
 
     private removeRequestAt(idx: number) {

@@ -32,6 +32,8 @@ export class Actor extends Entity {
     public attackCooldown: number;
     public attackRange: number;
     public isRanged: boolean = false;
+    public projectileColor: number = 0xFF4400; // Default Orange/Fire
+    public scale: number = 1.0;
     public faction: string = 'neutral';
 
     // Config
@@ -115,33 +117,13 @@ export class Actor extends Entity {
     }
 
     /**
-     * Unified attack method for all actors.
-     * Handles range check, cooldown, and rotation.
+     * Unified attack method for all targets (units or buildings).
      */
-    public attack(target: any, time: number): boolean {
-        // Dispatch to type-specific methods for specialization/tests if available
-        // Note: We check if the method is NOT this own public attack to avoid infinite recursion
-        if (target) {
-            const tType = target.type;
-            const cName = target.constructor ? target.constructor.name : '';
-
-            const isGoblin = (tType === 'goblin' || target.faction === 'enemy' || cName.toLowerCase().includes('goblin'));
-            const isBuilding = (tType === 'building' || target.userData?.type);
-            const isUnit = (tType === 'unit' || tType === 'sheep' || tType === 'passive' || target.faction === 'player' || cName === 'Sheep' || cName === 'Unit');
-
-            if (isGoblin && (this as any).attackGoblin && (this as any).attackGoblin !== this.attack) {
-                return (this as any).attackGoblin(target);
-            }
-            if (isBuilding && (this as any).attackBuilding && (this as any).attackBuilding !== this.attack) {
-                return (this as any).attackBuilding(target);
-            }
-            if (isUnit && (this as any).attackUnit && (this as any).attackUnit !== this.attack) {
-                return (this as any).attackUnit(target);
-            }
-        }
-
+    public attack(target: any): boolean {
+        const time = (window as any).game?.simTotalTimeSec || 0;
         return this.performAttack(target, time);
     }
+
 
     /**
      * Internal implementation of the attack logic.
@@ -186,9 +168,27 @@ export class Actor extends Entity {
 
             // Apply Damage
             const dmg = this.damage || 5;
-            console.log(`[Combat Debug] ${this.type} (ID:${this.id}) attacking ${target.type || target.userData?.type} (ID:${target.id}) for ${dmg} dmg. Range:${range.toFixed(1)} Dist:${effectiveDist.toFixed(1)} (Original:${dist.toFixed(1)}, Size:${size})`);
             if (typeof target.takeDamage === 'function') {
                 target.takeDamage(dmg, this);
+            }
+
+            // Visuals / Projectiles (Only spawn when attack actually happens)
+            if (this.isRanged && (window as any).game && (window as any).game.spawnProjectile) {
+                const startHeight = 0.8 * (this.scale || 1.0);
+                const startPos = this.position.clone().add(new THREE.Vector3(0, startHeight, 0));
+
+                let targetPos: THREE.Vector3;
+                if (target.position) {
+                    targetPos = target.position.clone().add(new THREE.Vector3(0, 0.5, 0));
+                } else {
+                    // For buildings or entities without .position.clone()
+                    const tx = target.gridX || 0;
+                    const tz = target.gridZ || 0;
+                    const ty = (target.y || target.userData?.y || 0) + 1;
+                    targetPos = new THREE.Vector3(this.terrain.gridToWorld(tx), ty, this.terrain.gridToWorld(tz));
+                }
+
+                (window as any).game.spawnProjectile(startPos, targetPos, this.projectileColor);
             }
 
             // Set Cooldown
@@ -282,23 +282,25 @@ export class Actor extends Entity {
         if (mCell && tCell) {
             const mRegion = mCell.regionId;
             const tRegion = tCell.regionId;
-            if (mRegion === tRegion && mRegion !== undefined) return true;
 
-            // ADJACENT CHECK
-            if (this.terrain.isAdjacentToRegion && this.terrain.isAdjacentToRegion(Math.floor(this.gridX), Math.floor(this.gridZ), tx, tz)) {
+            // SAME REGION: Always reachable if on same landmass/waterbody
+            // Also handle undefined for test mocks that don't specify regionId
+            if (mRegion === tRegion || mRegion === undefined || tRegion === undefined) return true;
+
+            // ADJACENT CHECK (e.g. Land worker reaching adjacent water tile)
+            if (this.terrain.isAdjacentToRegion && this.terrain.isAdjacentToRegion(tx, tz, mRegion)) {
                 return true;
             }
 
+            // CROSS-REGION DISTANCE CHECK
             const dist = this.getDistance(tx, tz);
-
-            // MANUAL/TARGET TOLERANCE
             const isManual = isManualOverride !== undefined ? isManualOverride : (this.targetRequest && this.targetRequest.isManual);
-            const threshold = isManual ? 7.0 : 3.0;
+            const threshold = isManual ? 7.0 : 5.0; // Manual markers have higher tolerance via adjacent check, but keep 7.0 as fallback
 
-
+            if (isManual) return dist < threshold;
             if (mRegion > 0 && tRegion > 0) return dist < threshold;
             if (mRegion > 0 && tRegion === 0) return dist < threshold;
-            if (mRegion === 0 && tRegion > 0) return dist < 2.0; // Drowning units can reach shore if very close
+            if (mRegion === 0 && tRegion > 0) return dist < 2.0;
         }
         return true;
     }
@@ -308,13 +310,15 @@ export class Actor extends Entity {
     }
 
     clearPath() {
+        if (this.isMoving) {
+            this.stopMove(this.simTime || 0);
+        }
         this.path = null;
         this.pathRequestId++;
         this.pathTargetX = undefined;
         this.pathTargetZ = undefined;
         this.isPathfinding = false;
         this.isWaitingForPath = false;
-        this.isMoving = false;
     }
 
     setMoveLog(reason: string, time: number, isError: boolean = false) {

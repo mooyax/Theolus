@@ -825,7 +825,16 @@
   <div id="help-modal">
     <div class="help-content">
       <div class="help-header">
-        <h2>初心者ガイド (Guide)</h2>
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <h2 id="guide-header-text">初心者ガイド (Guide)</h2>
+          <div id="i18n-switcher" style="display: flex; gap: 5px;">
+            <select id="lang-select" onchange="changeLanguage(this.value)"
+              style="padding: 2px 5px; font-size: 13px; border-radius: 5px; border: 1px solid #ddd; background: #f9f9f9; color: #333; cursor: pointer;">
+              <option value="ja">日本語</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </div>
         <button id="close-help-btn" style="width: 30px; height: 30px; font-size: 16px; background: #eee;">✕</button>
       </div>
 
@@ -849,11 +858,11 @@
         <button class="tab-btn" onclick="openTab('units')">
           <span class="material-symbols-outlined">groups</span> 人間 (Humans)
         </button>
-        <button class="tab-btn" onclick="openTab('buildings')">
-          <span class="material-symbols-outlined">castle</span> 建物 (Buildings)
-        </button>
         <button class="tab-btn" onclick="openTab('goblins')">
           <span class="material-symbols-outlined">bug_report</span> ゴブリン (Goblins)
+        </button>
+        <button class="tab-btn" onclick="openTab('buildings')">
+          <span class="material-symbols-outlined">castle</span> 建物 (Buildings)
         </button>
         <button class="tab-btn" onclick="openTab('others')">
           <span class="material-symbols-outlined">pets</span> その他 (Others)
@@ -993,7 +1002,7 @@
       <!-- Terrain Tab -->
       <div id="tab-terrain" class="help-tab-content" style="display: none;">
         <div class="help-section">
-          <h3>地形 (Terrain)</h3>
+          <h3>地形</h3>
           <p>土地の色や高さによって、様々な特徴があります。</p>
 
           <div class="help-item">
@@ -1065,8 +1074,41 @@
               <canvas id="showroom-canvas"></canvas>
             </div>
             <div class="unit-description-overlay">
-              <h3 id="showroom-title">労働者 (Worker)</h3>
+              <h3 id="showroom-title">労働者</h3>
               <p id="showroom-desc">基本的なユニット。建築、修理、資源（木・魚）の収集を行います。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Goblins Tab (Showroom) -->
+      <div id="tab-goblins" class="help-tab-content" style="display: none;">
+        <div class="showroom-container">
+          <div class="unit-list">
+            <div class="unit-list-item active" data-type="goblin" onclick="selectShowroomUnit('goblin', this)">
+              <span class="material-symbols-outlined">skull</span>
+              <div><strong>ゴブリン</strong><br><small>Normal</small></div>
+            </div>
+            <div class="unit-list-item" data-type="hob" onclick="selectShowroomUnit('hob', this)">
+              <span class="material-symbols-outlined">fitness_center</span>
+              <div><strong>ホブゴブリン</strong><br><small>Hobgoblin</small></div>
+            </div>
+            <div class="unit-list-item" data-type="shaman" onclick="selectShowroomUnit('shaman', this)">
+              <span class="material-symbols-outlined">auto_fix_high</span>
+              <div><strong>シャーマン</strong><br><small>Shaman</small></div>
+            </div>
+            <div class="unit-list-item" data-type="king" onclick="selectShowroomUnit('king', this)">
+              <span class="material-symbols-outlined">chess_king</span>
+              <div><strong>キング</strong><br><small>Goblin King</small></div>
+            </div>
+          </div>
+          <div class="unit-preview-area">
+            <div class="preview-canvas-container">
+              <canvas id="showroom-canvas-g"></canvas>
+            </div>
+            <div class="unit-description-overlay">
+              <h3 id="showroom-title-g">ゴブリン</h3>
+              <p id="showroom-desc-g">弱いが数で攻めてくる敵。こん棒で攻撃します。</p>
             </div>
           </div>
         </div>
@@ -1106,41 +1148,8 @@
               <canvas id="showroom-canvas-b"></canvas>
             </div>
             <div class="unit-description-overlay">
-              <h3 id="showroom-title-b">家 (House)</h3>
+              <h3 id="showroom-title-b">家</h3>
               <p id="showroom-desc-b">労働者が住む場所。人口を増やします。</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Goblins Tab (Showroom) -->
-      <div id="tab-goblins" class="help-tab-content" style="display: none;">
-        <div class="showroom-container">
-          <div class="unit-list">
-            <div class="unit-list-item active" data-type="goblin" onclick="selectShowroomUnit('goblin', this)">
-              <span class="material-symbols-outlined">skull</span>
-              <div><strong>ゴブリン</strong><br><small>Normal</small></div>
-            </div>
-            <div class="unit-list-item" data-type="hob" onclick="selectShowroomUnit('hob', this)">
-              <span class="material-symbols-outlined">fitness_center</span>
-              <div><strong>ホブゴブリン</strong><br><small>Hobgoblin</small></div>
-            </div>
-            <div class="unit-list-item" data-type="shaman" onclick="selectShowroomUnit('shaman', this)">
-              <span class="material-symbols-outlined">auto_fix_high</span>
-              <div><strong>シャーマン</strong><br><small>Shaman</small></div>
-            </div>
-            <div class="unit-list-item" data-type="king" onclick="selectShowroomUnit('king', this)">
-              <span class="material-symbols-outlined">chess_king</span>
-              <div><strong>キング</strong><br><small>Goblin King</small></div>
-            </div>
-          </div>
-          <div class="unit-preview-area">
-            <div class="preview-canvas-container">
-              <canvas id="showroom-canvas-g"></canvas>
-            </div>
-            <div class="unit-description-overlay">
-              <h3 id="showroom-title-g">ゴブリン (Goblin)</h3>
-              <p id="showroom-desc-g">弱いが数で攻めてくる敵。こん棒で攻撃します。</p>
             </div>
           </div>
         </div>
@@ -1168,7 +1177,7 @@
               <canvas id="showroom-canvas-o"></canvas>
             </div>
             <div class="unit-description-overlay">
-              <h3 id="showroom-title-o">鳥 (Bird)</h3>
+              <h3 id="showroom-title-o">鳥</h3>
               <p id="showroom-desc-o">空を飛び回る白い鳥。環境を彩ります。</p>
             </div>
           </div>
@@ -1186,8 +1195,165 @@
 
   <script type="module">
     import { HelpShowroom } from './src/ui/HelpShowroom.js';
+    import { I18n } from './src/ui/I18n.js';
 
     console.log("[UI Module] Script started");
+
+    // --- i18n Integration ---
+    window.I18n = I18n; // Make globally accessible for inline onclicks if needed, though module imports are better
+
+    function updateGuideContent() {
+      const lang = I18n.getLanguage();
+      console.log("[i18n] Updating Guide Content to:", lang);
+
+      // Update Header
+      document.getElementById('guide-header-text').innerText = I18n.t('header');
+
+      // Update Tabs
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabKeys = ['overview', 'controls', 'stats', 'time', 'terrain', 'units', 'goblins', 'buildings', 'others'];
+      tabBtns.forEach((btn, idx) => {
+        const key = tabKeys[idx];
+        const span = btn.querySelector('span');
+        btn.innerHTML = '';
+        if (span) btn.appendChild(span);
+        btn.appendChild(document.createTextNode(' ' + I18n.t(`tabs.${key}`)));
+      });
+
+      // Update Content - Overview
+      const overview = document.getElementById('tab-overview');
+      if (overview) {
+        overview.querySelector('h3').innerText = I18n.t('sections.overview.title');
+        overview.querySelector('p').innerText = I18n.t('sections.overview.description');
+
+        const items = overview.querySelectorAll('.help-item');
+        const dataItems = I18n.t('sections.overview.items');
+        items.forEach((item, idx) => {
+          if (dataItems[idx]) {
+            const div = item.querySelector('div:not(.help-icon)');
+            div.innerHTML = `<strong>${dataItems[idx].title}</strong><br>${dataItems[idx].text}`;
+          }
+        });
+
+        const victorySection = overview.querySelectorAll('.help-section')[1];
+        if (victorySection) {
+          victorySection.querySelector('h3').innerText = I18n.t('sections.overview.victory_title');
+          victorySection.querySelector('div div').innerText = I18n.t('sections.overview.victory_text');
+        }
+      }
+
+      // Update Content - Controls
+      const controls = document.getElementById('tab-controls');
+      if (controls) {
+        controls.querySelector('h3').innerText = I18n.t('sections.controls.title');
+        const items = controls.querySelectorAll('.help-item');
+        const dataItems = I18n.t('sections.controls.items');
+        items.forEach((item, idx) => {
+          if (dataItems[idx]) {
+            const div = item.querySelector('div:not(.help-icon)');
+            div.innerHTML = `<strong>${dataItems[idx].title}</strong><br>${dataItems[idx].text}`;
+          }
+        });
+      }
+
+      // Update Content - Stats
+      const stats = document.getElementById('tab-stats');
+      if (stats) {
+        stats.querySelector('h3').innerText = I18n.t('sections.stats.title');
+        stats.querySelector('p').innerText = I18n.t('sections.stats.description');
+        const items = stats.querySelectorAll('.help-item');
+        const dataItems = I18n.t('sections.stats.items');
+        items.forEach((item, idx) => {
+          if (dataItems[idx]) {
+            const div = item.querySelector('div:not(.help-icon)');
+            div.innerHTML = `<strong>${dataItems[idx].title}</strong>: ${dataItems[idx].text}`;
+          }
+        });
+      }
+
+      // Update Content - Time
+      const timeTab = document.getElementById('tab-time');
+      if (timeTab) {
+        const sections = timeTab.querySelectorAll('.help-section');
+        // Section 0: Day/Night
+        sections[0].querySelector('h3').innerText = I18n.t('sections.time.title');
+        sections[0].querySelector('p').innerText = I18n.t('sections.time.description');
+        const dayItem = sections[0].querySelectorAll('.help-item')[0];
+        dayItem.querySelector('div').innerHTML = `<strong>${I18n.t('sections.time.day_title')}</strong><br>${I18n.t('sections.time.day_text')}`;
+        const nightItem = sections[0].querySelectorAll('.help-item')[1];
+        nightItem.querySelector('div').innerHTML = `<strong>${I18n.t('sections.time.night_title')}</strong><br>${I18n.t('sections.time.night_text')}`;
+
+        // Section 1: Seasons
+        sections[1].querySelector('h3').innerText = I18n.t('sections.time.seasons_title');
+        sections[1].querySelector('p').innerText = I18n.t('sections.time.seasons_description');
+        const seasons = sections[1].querySelectorAll('.help-item');
+        const seasonData = I18n.t('sections.time.seasons');
+        seasons.forEach((item, idx) => {
+          if (seasonData[idx]) {
+            item.querySelector('div').innerHTML = `<strong>${seasonData[idx].title}</strong><br>${seasonData[idx].text}`;
+          }
+        });
+      }
+
+      // Update Content - Terrain
+      const terrainTab = document.getElementById('tab-terrain');
+      if (terrainTab) {
+        terrainTab.querySelector('h3').innerText = I18n.t('sections.terrain.title');
+        terrainTab.querySelector('p').innerText = I18n.t('sections.terrain.description');
+        const items = terrainTab.querySelectorAll('.help-item');
+        const dataItems = I18n.t('sections.terrain.types');
+        items.forEach((item, idx) => {
+          if (dataItems[idx]) {
+            const div = item.querySelector('div:not([style*="width"])');
+            div.innerHTML = `<strong>${dataItems[idx].title}</strong><br>${dataItems[idx].text}`;
+          }
+        });
+      }
+
+      // Update Switcher UI
+      const select = document.getElementById('lang-select');
+      if (select) select.value = lang;
+
+      // Update Showroom sidebar titles
+      document.querySelectorAll('.unit-list-item').forEach(item => {
+        const type = item.getAttribute('data-type');
+        const data = I18n.getShowroomData(type);
+        if (data) {
+          const textDiv = item.querySelector('div');
+          if (textDiv) {
+            textDiv.innerHTML = `<strong>${data.title}</strong>`;
+          }
+        }
+      });
+
+      // Reset Showroom Data Map reference (dynamic update)
+      // Note: descMap is defined below in the script, so we might need a way to refresh it or make it look up I18n.ts directly
+    }
+
+    window.changeLanguage = (lang) => {
+      I18n.setLanguage(lang);
+      updateGuideContent();
+      // Force refresh current showroom view if active
+      const activeTab = document.querySelector('.tab-btn.active');
+      if (activeTab) {
+        const match = activeTab.getAttribute('onclick').match(/'([^']+)'/);
+        if (match) {
+          const tabName = match[1];
+          openTab(tabName);
+
+          // Also refresh the specific selected unit text in that tab
+          const activeItem = document.querySelector(`.help-tab-content[style*="display: block"] .unit-list-item.active`);
+          if (activeItem) {
+            const type = activeItem.getAttribute('data-type');
+            selectShowroomUnit(type, activeItem);
+          }
+        }
+      }
+    };
+
+    // Initial injection
+    setTimeout(updateGuideContent, 100);
+
 
     // Showroom instances (module-scoped)
     let showroomUnit = null;
@@ -1399,25 +1565,6 @@
     window.showroomBuilding = showroomBuilding;
     window.showroomOthers = showroomOthers;
 
-    // Data Map for descriptions
-    const descMap = {
-      'worker': { title: '労働者 (Worker)', desc: '基本的なユニット。建築、修理、資源（木・魚）の収集を行います。' },
-      'knight': { title: '騎士 (Knight)', desc: '高い体力と防御力を持つ戦士。ゴブリンの攻撃から街を守ります。' },
-      'wizard': { title: '魔法使い (Wizard)', desc: '強力なファイアボール魔法を使い、遠距離から範囲攻撃を行います。' },
-      'goblin': { title: 'ゴブリン (Goblin)', desc: '最も一般的な敵。棍棒で武装しており、数で押し寄せてきます。' },
-      'hob': { title: 'ホブゴブリン (Hobgoblin)', desc: '大型で筋肉質なゴブリン。高い耐久力と攻撃力を持ちます。' },
-      'shaman': { title: 'シャーマン (Shaman)', desc: '魔法を使うゴブリン。遠距離から怪しげな弾を放ってきます。' },
-      'king': { title: 'ゴブリンキング (King)', desc: 'ゴブリン族の王。黄金の鎧を身にまとい、非常に強力です。' },
-      'house': { title: '家 (House)', desc: '労働者の住処。建てると人口が増えます。平地にのみ建設可能。' },
-      'farm': { title: '畑 (Farm)', desc: '食料（穀物）を生産します。人口増加に必要です。' },
-      'barracks': { title: '兵舎 (Barracks)', desc: '騎士を訓練する施設です。頑丈な石造りの建物です。' },
-      'tower': { title: '塔 (Tower)', desc: '魔法使いを召喚する高い塔です。遠くを見渡すことができます。' },
-      'goblin_hut': { title: 'ゴブリンの小屋 (Goblin Hut)', desc: 'ゴブリンが湧き出る不気味な小屋。破壊するとゴブリンの出現が止まります。' },
-      'cave': { title: 'ゴブリンの洞窟 (Goblin Cave)', desc: '地下深くにつながる闇の穴。ここから強力なゴブリンの群れが現れます。' },
-      'bird': { title: '鳥 (Bird)', desc: '空を自由に飛び回る白い鳥。環境に生命を与えます。' },
-      'sheep': { title: '羊 (Sheep)', desc: '草原を歩き回る動物。時々鳴き声をあげます。' },
-      'fish': { title: '魚 (Fish)', desc: '海を泳ぐ魚。漁師によって捕獲され、食料になります。' }
-    };
 
     window.selectShowroomUnit = function (type, el) {
       const isGoblin = ['goblin', 'hob', 'shaman', 'king'].includes(type);
@@ -1445,7 +1592,7 @@
       if (showroom) showroom.show(type);
 
       // Update Text
-      const data = descMap[type];
+      const data = I18n.getShowroomData(type);
       if (data) {
         const tEl = document.getElementById(titleId);
         const dEl = document.getElementById(descId);
@@ -1479,8 +1626,8 @@
         'time': 3,
         'terrain': 4,
         'units': 5,
-        'buildings': 6,
-        'goblins': 7,
+        'goblins': 6,
+        'buildings': 7,
         'others': 8
       };
 

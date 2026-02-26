@@ -59,7 +59,7 @@ describe('Goblin Real Building Destruction', () => {
     });
 
     it('should damage building population', () => {
-        goblin.attackBuilding(building);
+        goblin.attack(building);
         // Population Priority: pop 10 -> 0. HP remains 100.
         expect(building.population).toBe(0);
         expect(building.userData.population).toBe(0);
@@ -72,7 +72,7 @@ describe('Goblin Real Building Destruction', () => {
         building.userData.population = 0;
         building.userData.hp = 5.0;
 
-        goblin.attackBuilding(building);
+        goblin.attack(building);
 
         expect(mockTerrain.removeBuilding).toHaveBeenCalled();
         expect(building.hp).toBeLessThanOrEqual(0);
@@ -83,7 +83,7 @@ describe('Goblin Real Building Destruction', () => {
         farm.hp = 80;
         farm.population = 0; // Farms usually don't have human population inside for defense
 
-        goblin.attackBuilding(farm);
+        goblin.attack(farm);
 
         expect(farm.hp).toBe(70);
         expect(farm.userData.hp).toBe(70);

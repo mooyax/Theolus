@@ -96,7 +96,7 @@ describe('Counter Damage Nerf Verification', () => {
 
         knight.targetBuilding = cave;
         knight.attackCooldown = 0;
-        knight.attackBuilding(cave);
+        knight.attack(cave);
 
         expect(cave.takeDamage).toHaveBeenCalled();
         expect(knight.hp).toBe(knight.maxHp - 20);

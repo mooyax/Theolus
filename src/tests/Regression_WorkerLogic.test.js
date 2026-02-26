@@ -196,7 +196,7 @@ describe('Regression: Worker Logic & Stability', () => {
         let enteredCombat = false;
 
         // Mock attackGoblin to avoid mock/prototype issues and just verify call
-        unit.attackGoblin = () => { };
+        unit.attack = () => { };
 
         for (let i = 0; i < 40; i++) {
             game.simTotalTimeSec += 0.016;

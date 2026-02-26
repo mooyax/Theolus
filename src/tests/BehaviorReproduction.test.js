@@ -23,14 +23,14 @@ describe('Behavior Reproduction Tests', () => {
 
             const sheep = new MockSheep();
             const unit = {
-                attackUnit: (target) => {
+                attack: (target) => {
                     if (typeof target.takeDamage === 'function') {
                         target.takeDamage(10);
                     }
                 }
             };
 
-            unit.attackUnit(sheep);
+            unit.attack(sheep);
             expect(sheep.hp).toBe(90);
         });
     });

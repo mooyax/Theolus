@@ -16,7 +16,7 @@ class MockUnit {
         this.homeBase = homeBase;
         this.attackedGoblin = null;
     }
-    attackGoblin(goblin) {
+    attack(goblin) {
         this.attackedGoblin = goblin;
         goblin.takeDamage(10);
         if (this.homeBase && this.homeBase.userData && this.homeBase.userData.memory) {
@@ -61,7 +61,7 @@ describe('Squad-Based Memory (Decoupled)', () => {
         const knight = game.spawnUnit(10, 10, 'knight', barracks);
         const goblin = { id: 'g1', gridX: 15, gridZ: 15, hp: 100, takeDamage(d) { this.hp -= d; } };
 
-        knight.attackGoblin(goblin);
+        knight.attack(goblin);
 
         expect(goblin.hp).toBe(90);
         expect(memory.reportRaid).toHaveBeenCalled();

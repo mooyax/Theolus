@@ -42,7 +42,7 @@ describe('Destruction under Growth Simulation', () => {
             house.update(time, 1.0);
 
             goblin.attackCooldown = 0;
-            goblin.attackBuilding(house);
+            goblin.attack(house);
 
             if (goblin.isDead) break;
             if (house.isDead || house.hp <= 0) {
@@ -62,7 +62,7 @@ describe('Destruction under Growth Simulation', () => {
         const goblin = new Goblin(mockScene, mockTerrain, 30.5, 30.5, 'normal');
         goblin.hp = 50;
 
-        goblin.attackBuilding(tower);
+        goblin.attack(tower);
 
         expect(goblin.isDead).toBe(true);
         expect(tower.hp).toBe(500);
@@ -94,7 +94,7 @@ describe('Destruction under Growth Simulation', () => {
 
             goblins.forEach(g => {
                 g.attackCooldown = 0;
-                g.attackBuilding(mansion);
+                g.attack(mansion);
             });
 
             if (mansion.isDead || mansion.hp <= 0) {

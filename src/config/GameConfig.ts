@@ -22,62 +22,60 @@ export interface LevelConfig {
     };
 }
 
-export const Levels: LevelConfig[] = [
-    {
-        levelId: 1,
-        title: "The Beginning",
-        mapWidth: 120,
-        mapDepth: 120,
-        initialState: {
-            unitCount: 1,
-            hasEnemyBase: false, // No organized enemy yet
-            hasEnemyGuard: false,
-            goblinCaves: 1 // Just one cave to start
-        },
-        generation: {
-            rockHeight: 9, // High threshold -> Almost no rocks
-            moistureBase: 0.55, // Dry/Plains
-            treeDensity: 0.2,
-            landRatio: 0.6 // Mostly land
-        }
-    },
-    {
-        levelId: 2,
-        title: "Expansion",
-        mapWidth: 120,
-        mapDepth: 120,
-        initialState: {
-            unitCount: 5,
-            hasEnemyBase: true, // Enemy appears
-            hasEnemyGuard: false,
-            goblinCaves: 3
-        },
-        generation: {
-            rockHeight: 12, // Normal rocks
-            moistureBase: 0.4, // Normal moisture
-            treeDensity: 0.8,
-            landRatio: 0.6 // Some water/islands
-        }
-    },
-    {
-        levelId: 3,
-        title: "Warfare",
-        mapWidth: 160,
-        mapDepth: 160,
-        initialState: {
-            unitCount: 8,
-            hasEnemyBase: true,
-            hasEnemyGuard: true, // Guards active
-            goblinCaves: 5
-        },
-        generation: {
-            rockHeight: 10, // More rocks
-            moistureBase: 0.6, // Wet/Forest
-            treeDensity: 1.0,
-            landRatio: 0.4 // Islands/Swamps
-        }
+function generateLevelConfig(levelId: number): LevelConfig {
+    // Phase 1: Manual Tutorial Levels (1-3)
+    if (levelId === 1) {
+        return {
+            levelId: 1, title: "The Beginning", mapWidth: 120, mapDepth: 120,
+            initialState: { unitCount: 1, hasEnemyBase: false, hasEnemyGuard: false, goblinCaves: 1 },
+            generation: { rockHeight: 9, moistureBase: 0.55, treeDensity: 0.2, landRatio: 0.6 }
+        };
     }
-];
+    if (levelId === 2) {
+        return {
+            levelId: 2, title: "Expansion", mapWidth: 120, mapDepth: 120,
+            initialState: { unitCount: 5, hasEnemyBase: true, hasEnemyGuard: false, goblinCaves: 3 },
+            generation: { rockHeight: 12, moistureBase: 0.4, treeDensity: 0.8, landRatio: 0.6 }
+        };
+    }
+    if (levelId === 3) {
+        return {
+            levelId: 3, title: "Warfare", mapWidth: 160, mapDepth: 160,
+            initialState: { unitCount: 8, hasEnemyBase: true, hasEnemyGuard: true, goblinCaves: 5 },
+            generation: { rockHeight: 10, moistureBase: 0.6, treeDensity: 1.0, landRatio: 0.4 }
+        };
+    }
+
+    // Phase 2: Procedural Levels (4-100)
+    // Map size scales slowly up to 240 (safe) or 280 (limit)
+    const mapSize = Math.min(240, 160 + Math.floor((levelId - 3) / 5) * 10);
+
+    // Vary terrain characteristics based on level for visual variety
+    const moisture = 0.4 + 0.2 * Math.sin(levelId * 0.3);
+    const density = 0.4 + 0.4 * Math.abs(Math.cos(levelId * 0.21));
+    const rocks = 10 + Math.sin(levelId * 0.17) * 3;
+
+    return {
+        levelId,
+        title: `Level ${levelId}`,
+        mapWidth: mapSize,
+        mapDepth: mapSize,
+        initialState: {
+            unitCount: Math.min(60, 5 + Math.floor(levelId / 2)),
+            hasEnemyBase: true,
+            hasEnemyGuard: true,
+            goblinCaves: Math.min(30, 3 + Math.floor(levelId / 4))
+        },
+        generation: {
+            rockHeight: rocks,
+            moistureBase: moisture,
+            treeDensity: density,
+            landRatio: 0.5 + 0.15 * Math.sin(levelId * 0.11)
+        }
+    };
+}
+
+export const Levels: LevelConfig[] = Array.from({ length: 100 }, (_, i) => generateLevelConfig(i + 1));
 
 export const GameConfig = {
     "render": {
@@ -113,7 +111,8 @@ export const GameConfig = {
             "attackRange": 8.0,
             "lifespanBase": 80,
             "lifespanVariance": 20,
-            "spawnCost": 100
+            "spawnCost": 100,
+            "isRanged": true
         }
     },
     "goblins": {

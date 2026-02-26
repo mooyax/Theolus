@@ -87,7 +87,7 @@ describe('Cave Destruction Bug', () => {
         // Attack
         unit.attackCooldown = 0; // Force ready
         unit.damage = 10; // Force damage
-        unit.attackBuilding(cave);
+        unit.attack(cave);
 
         expect(cave.userData.hp).toBeLessThan(hpStart);
 
@@ -95,7 +95,7 @@ describe('Cave Destruction Bug', () => {
         cave.userData.hp = 10;
         unit.hp = 10;
         unit.attackCooldown = 0; // RESET COOLDOWN
-        unit.attackBuilding(cave);
+        unit.attack(cave);
         expect(cave.userData.hp).toBeLessThan(10);
     });
 });

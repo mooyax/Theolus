@@ -640,7 +640,7 @@
       box-shadow: 0 0 20px white;
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-C4tLxvW0.js"></script>
+  <script type="module" crossorigin src="./assets/index-B46wmUr0.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-BwhFW2Gb.css">
 </head>
 
@@ -827,7 +827,16 @@
   <div id="help-modal">
     <div class="help-content">
       <div class="help-header">
-        <h2>初心者ガイド (Guide)</h2>
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <h2 id="guide-header-text">初心者ガイド (Guide)</h2>
+          <div id="i18n-switcher" style="display: flex; gap: 5px;">
+            <select id="lang-select" onchange="changeLanguage(this.value)"
+              style="padding: 2px 5px; font-size: 13px; border-radius: 5px; border: 1px solid #ddd; background: #f9f9f9; color: #333; cursor: pointer;">
+              <option value="ja">日本語</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </div>
         <button id="close-help-btn" style="width: 30px; height: 30px; font-size: 16px; background: #eee;">✕</button>
       </div>
 
@@ -851,11 +860,11 @@
         <button class="tab-btn" onclick="openTab('units')">
           <span class="material-symbols-outlined">groups</span> 人間 (Humans)
         </button>
-        <button class="tab-btn" onclick="openTab('buildings')">
-          <span class="material-symbols-outlined">castle</span> 建物 (Buildings)
-        </button>
         <button class="tab-btn" onclick="openTab('goblins')">
           <span class="material-symbols-outlined">bug_report</span> ゴブリン (Goblins)
+        </button>
+        <button class="tab-btn" onclick="openTab('buildings')">
+          <span class="material-symbols-outlined">castle</span> 建物 (Buildings)
         </button>
         <button class="tab-btn" onclick="openTab('others')">
           <span class="material-symbols-outlined">pets</span> その他 (Others)
@@ -995,7 +1004,7 @@
       <!-- Terrain Tab -->
       <div id="tab-terrain" class="help-tab-content" style="display: none;">
         <div class="help-section">
-          <h3>地形 (Terrain)</h3>
+          <h3>地形</h3>
           <p>土地の色や高さによって、様々な特徴があります。</p>
 
           <div class="help-item">
@@ -1067,8 +1076,41 @@
               <canvas id="showroom-canvas"></canvas>
             </div>
             <div class="unit-description-overlay">
-              <h3 id="showroom-title">労働者 (Worker)</h3>
+              <h3 id="showroom-title">労働者</h3>
               <p id="showroom-desc">基本的なユニット。建築、修理、資源（木・魚）の収集を行います。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Goblins Tab (Showroom) -->
+      <div id="tab-goblins" class="help-tab-content" style="display: none;">
+        <div class="showroom-container">
+          <div class="unit-list">
+            <div class="unit-list-item active" data-type="goblin" onclick="selectShowroomUnit('goblin', this)">
+              <span class="material-symbols-outlined">skull</span>
+              <div><strong>ゴブリン</strong><br><small>Normal</small></div>
+            </div>
+            <div class="unit-list-item" data-type="hob" onclick="selectShowroomUnit('hob', this)">
+              <span class="material-symbols-outlined">fitness_center</span>
+              <div><strong>ホブゴブリン</strong><br><small>Hobgoblin</small></div>
+            </div>
+            <div class="unit-list-item" data-type="shaman" onclick="selectShowroomUnit('shaman', this)">
+              <span class="material-symbols-outlined">auto_fix_high</span>
+              <div><strong>シャーマン</strong><br><small>Shaman</small></div>
+            </div>
+            <div class="unit-list-item" data-type="king" onclick="selectShowroomUnit('king', this)">
+              <span class="material-symbols-outlined">chess_king</span>
+              <div><strong>キング</strong><br><small>Goblin King</small></div>
+            </div>
+          </div>
+          <div class="unit-preview-area">
+            <div class="preview-canvas-container">
+              <canvas id="showroom-canvas-g"></canvas>
+            </div>
+            <div class="unit-description-overlay">
+              <h3 id="showroom-title-g">ゴブリン</h3>
+              <p id="showroom-desc-g">弱いが数で攻めてくる敵。こん棒で攻撃します。</p>
             </div>
           </div>
         </div>
@@ -1108,41 +1150,8 @@
               <canvas id="showroom-canvas-b"></canvas>
             </div>
             <div class="unit-description-overlay">
-              <h3 id="showroom-title-b">家 (House)</h3>
+              <h3 id="showroom-title-b">家</h3>
               <p id="showroom-desc-b">労働者が住む場所。人口を増やします。</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Goblins Tab (Showroom) -->
-      <div id="tab-goblins" class="help-tab-content" style="display: none;">
-        <div class="showroom-container">
-          <div class="unit-list">
-            <div class="unit-list-item active" data-type="goblin" onclick="selectShowroomUnit('goblin', this)">
-              <span class="material-symbols-outlined">skull</span>
-              <div><strong>ゴブリン</strong><br><small>Normal</small></div>
-            </div>
-            <div class="unit-list-item" data-type="hob" onclick="selectShowroomUnit('hob', this)">
-              <span class="material-symbols-outlined">fitness_center</span>
-              <div><strong>ホブゴブリン</strong><br><small>Hobgoblin</small></div>
-            </div>
-            <div class="unit-list-item" data-type="shaman" onclick="selectShowroomUnit('shaman', this)">
-              <span class="material-symbols-outlined">auto_fix_high</span>
-              <div><strong>シャーマン</strong><br><small>Shaman</small></div>
-            </div>
-            <div class="unit-list-item" data-type="king" onclick="selectShowroomUnit('king', this)">
-              <span class="material-symbols-outlined">chess_king</span>
-              <div><strong>キング</strong><br><small>Goblin King</small></div>
-            </div>
-          </div>
-          <div class="unit-preview-area">
-            <div class="preview-canvas-container">
-              <canvas id="showroom-canvas-g"></canvas>
-            </div>
-            <div class="unit-description-overlay">
-              <h3 id="showroom-title-g">ゴブリン (Goblin)</h3>
-              <p id="showroom-desc-g">弱いが数で攻めてくる敵。こん棒で攻撃します。</p>
             </div>
           </div>
         </div>
@@ -1170,7 +1179,7 @@
               <canvas id="showroom-canvas-o"></canvas>
             </div>
             <div class="unit-description-overlay">
-              <h3 id="showroom-title-o">鳥 (Bird)</h3>
+              <h3 id="showroom-title-o">鳥</h3>
               <p id="showroom-desc-o">空を飛び回る白い鳥。環境を彩ります。</p>
             </div>
           </div>

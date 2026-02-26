@@ -35,7 +35,7 @@ describe('Sheep Harvest Reward Verification', () => {
 
         expect(game.resources.meat).toBe(0);
 
-        unit.attackUnit(sheep);
+        unit.attack(sheep);
 
         expect(sheep.isDead).toBe(true);
         expect(game.resources.meat).toBe(1000);

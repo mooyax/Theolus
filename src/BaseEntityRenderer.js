@@ -60,8 +60,9 @@ export class BaseEntityRenderer {
         if (!this.initialized || !entities || !viewCenter) return;
 
         const viewRadius = GameConfig.render?.viewRadius || 120;
-        const logicalW = this.terrain.logicalWidth || 240;
-        const logicalD = this.terrain.logicalDepth || 240;
+        const logicalW = this.terrain.logicalWidth;
+        const logicalD = this.terrain.logicalDepth;
+        if (!logicalW || !logicalD) return;
 
         this.resetCounts();
 

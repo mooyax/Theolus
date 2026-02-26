@@ -107,12 +107,16 @@ export class Entity {
 
     // OPTIMIZED: Use target vector to avoid garbage collection
     getPositionForGrid(x: number, z: number, target: THREE.Vector3 | null = null): THREE.Vector3 {
-        const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
-        const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
+        const logicalW = (this.terrain && this.terrain.logicalWidth) || 160;
+        const logicalD = (this.terrain && this.terrain.logicalDepth) || 160;
 
         // Center check
-        const rawX = x - logicalW / 2 + 0.5;
-        const rawZ = z - logicalD / 2 + 0.5;
+        // MOD: Normalize input coordinates to handle wrapping correctly and prevent jumps
+        const normX = ((x % logicalW) + logicalW) % logicalW;
+        const normZ = ((z % logicalD) + logicalD) % logicalD;
+
+        const rawX = normX - logicalW / 2 + 0.5;
+        const rawZ = normZ - logicalD / 2 + 0.5;
 
         // Apply Terrain Distortion (Visual)
         // Plane Coordinates: x = rawX, y = -rawZ (Match Terrain Logic: Plane Y is World -Z)
@@ -167,11 +171,13 @@ export class Entity {
 
     getVisualX(time: number): number {
         if (!this.isMoving) return this.gridX;
+        const logicalW = (this.terrain && this.terrain.logicalWidth);
+        if (!logicalW) return this.gridX;
+
         const progress = Math.max(0, Math.min(1, (time - this.moveStartTime) / this.moveDuration));
         // Simple Lerp (Wrap aware)
         let sx = this.startGridX;
         let tx = this.targetGridX;
-        const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
         if (tx - sx > logicalW / 2) sx += logicalW;
         if (sx - tx > logicalW / 2) sx -= logicalW;
         let x = sx + (tx - sx) * progress;
@@ -180,15 +186,45 @@ export class Entity {
 
     getVisualZ(time: number): number {
         if (!this.isMoving) return this.gridZ;
+        const logicalD = (this.terrain && this.terrain.logicalDepth);
+        if (!logicalD) return this.gridZ;
+
         const progress = Math.max(0, Math.min(1, (time - this.moveStartTime) / this.moveDuration));
         // Simple Lerp (Wrap aware)
         let sz = this.startGridZ;
         let tz = this.targetGridZ;
-        const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
         if (tz - sz > logicalD / 2) sz += logicalD;
         if (sz - tz > logicalD / 2) sz -= logicalD;
         let z = sz + (tz - sz) * progress;
         return ((z % logicalD) + logicalD) % logicalD;
+    }
+
+    /**
+     * Safely stops movement and commits current interpolated position to gridX/Z.
+     * Prevents "teleport back" jitter when interrupting a move (e.g. state change).
+     */
+    stopMove(time: number) {
+        if (!this.isMoving) return;
+
+        const vx = this.getVisualX(time);
+        const vz = this.getVisualZ(time);
+
+        const oldX = this.gridX;
+        const oldZ = this.gridZ;
+
+        this.gridX = vx;
+        this.gridZ = vz;
+        this.isMoving = false;
+
+        // Commit to spatial grid immediately
+        if (this.terrain && this.terrain.moveEntity) {
+            this.terrain.moveEntity(this, oldX, oldZ, this.gridX, this.gridZ, this.spatialType);
+        }
+
+        // Sync visual mesh position immediately
+        this.updatePosition();
+
+        console.log(`[Entity ${this.id}] stopMove at ${vx.toFixed(2)},${vz.toFixed(2)} (Committing interpolation)`);
     }
 
     startMove(tx: number, tz: number, time: number) {
@@ -207,19 +243,11 @@ export class Entity {
             let oldTz = this.targetGridZ;
 
             // Wrap adjustment (matches updateMovement)
-            const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
-            const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
-            if (oldTx - sx > logicalW / 2) sx += logicalW;
-            if (sx - oldTx > logicalW / 2) sx -= logicalW;
-            if (oldTz - sz > logicalD / 2) sz += logicalD;
-            if (sz - oldTz > logicalD / 2) sz -= logicalD;
-
             this.startGridX = sx + (oldTx - sx) * clampedProg;
             this.startGridZ = sz + (oldTz - sz) * clampedProg;
 
-            // Re-normalize if we wrapped out of bounds (keep coords sane)
-            this.startGridX = ((this.startGridX % logicalW) + logicalW) % logicalW;
-            this.startGridZ = ((this.startGridZ % logicalD) + logicalD) % logicalD;
+            // REMOVED: Re-normalization here caused Jumps when combined with LERP logic.
+            // getPositionForGrid now handles normalization internally.
 
         } else {
             this.startGridX = this.gridX;
@@ -237,8 +265,9 @@ export class Entity {
         if (this.onMoveStep) this.onMoveStep(0);
 
         // Rotation
-        const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
-        const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
+        const logicalW = (this.terrain && this.terrain.logicalWidth);
+        const logicalD = (this.terrain && this.terrain.logicalDepth);
+        if (!logicalW || !logicalD) return;
 
         let dx = tx - this.gridX;
         let dz = tz - this.gridZ;
@@ -271,6 +300,11 @@ export class Entity {
             this.gridZ = this.targetGridZ;
 
             // Final Snap (Visual)
+            // Conditional snap: only snap if very close to a whole number to prevent visible jumps
+            const dx = Math.abs(this.gridX - Math.round(this.gridX));
+            const dz = Math.abs(this.gridZ - Math.round(this.gridZ));
+            if (dx < 0.1) this.gridX = Math.round(this.gridX);
+            if (dz < 0.1) this.gridZ = Math.round(this.gridZ);
             this.updatePosition();
 
             // Subclass hook
@@ -279,8 +313,9 @@ export class Entity {
             }
         } else {
             // LERP
-            const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
-            const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
+            const logicalW = (this.terrain && this.terrain.logicalWidth);
+            const logicalD = (this.terrain && this.terrain.logicalDepth);
+            if (!logicalW || !logicalD) return;
 
             let sx = this.startGridX;
             let sz = this.startGridZ;

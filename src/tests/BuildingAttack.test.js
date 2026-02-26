@@ -44,7 +44,7 @@ describe('Building Attack Investigation', () => {
         goblin.attackCooldown = 0;
         window.game.frameCount = 0;
 
-        goblin.attackBuilding(mansion);
+        goblin.attack(mansion);
         expect(mansion.hp).toBeLessThan(300);
     });
 
@@ -66,7 +66,7 @@ describe('Building Attack Investigation', () => {
         window.game.units = [knight];
         window.game.frameCount = 0;
 
-        goblin.attackBuilding(mansion);
+        goblin.attack(mansion);
         // Retaliation should occur: 100 -> something less than 100
         expect(goblin.hp).toBeLessThan(100);
 

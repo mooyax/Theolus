@@ -51,7 +51,7 @@ describe('Building Destruction Logic', () => {
 
         expect(terrain.buildings).toContain(building);
 
-        goblin.attackBuilding(building);
+        goblin.attack(building);
         // Should have taken damage
         expect(building.hp).toBeLessThan(30);
 
@@ -61,7 +61,7 @@ describe('Building Destruction Logic', () => {
         building.userData.hp = 0.1;
         goblin.attackCooldown = 0;
 
-        goblin.attackBuilding(building);
+        goblin.attack(building);
 
         // If identity mismatch happened, it might be removed via coords
         const stillInList = terrain.buildings.some(b => b === building || (b.gridX === 10 && b.gridZ === 10));
@@ -91,7 +91,7 @@ describe('Building Destruction Logic', () => {
         building.userData.hp = 100;
         building.population = 10;
 
-        goblin.attackBuilding(building);
+        goblin.attack(building);
 
         // Current Logic: Pop > 0 means Pop damage, HP unchanged.
         expect(building.population).toBeLessThan(10);

@@ -506,20 +506,7 @@ export class Unit extends Actor {
         this.createCross();
     }
 
-    // Unified attack methods are now in Actor.ts
-    // Unit.ts keeps specialized methods for backward compatibility or extra effects
 
-    attackUnit(target: any) {
-        return (this as any).performAttack(target, this.simTime || 0);
-    }
-
-    attackGoblin(goblin: any) {
-        return (this as any).performAttack(goblin, this.simTime || 0);
-    }
-
-    attackBuilding(building: any, damageOverride?: number) {
-        return (this as any).performAttack(building, this.simTime || 0);
-    }
 
 
     debugGetAge() {
@@ -536,21 +523,6 @@ export class Unit extends Actor {
         return new Wander(this);
     }
 
-    changeState(newState: any) {
-        if (this.state && this.state.exit) {
-            this.state.exit(newState);
-        }
-
-        const oldState = this.state;
-        const oldStateName = oldState ? (oldState.name || oldState.constructor.name) : 'None';
-        const newStateName = newState ? (newState.name || newState.constructor.name) : 'None';
-        if (this.id === 0) console.log(`[Unit ${this.id}] State Change: ${oldStateName} -> ${newStateName}`);
-
-        this.state = newState;
-        if (this.state && this.state.enter) {
-            this.state.enter(oldState);
-        }
-    }
 
 
 
@@ -584,9 +556,6 @@ export class Unit extends Actor {
         return;
     }
 
-    searchForHut(x: number, z: number) {
-        this.findTargetBuilding(40);
-    }
 
     findTargetBuilding(range?: number) {
         if (!this.terrain || !this.terrain.buildings) return;

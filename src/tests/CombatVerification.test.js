@@ -84,7 +84,7 @@ describe('Combat Logic Verification', () => {
 
         /*
         if (cave.userData.hp === hpBefore) {
-             worker.attackBuilding(cave);
+             worker.attack(cave);
         }
         expect(cave.userData.hp).toBeLessThan(hpBefore);
         */

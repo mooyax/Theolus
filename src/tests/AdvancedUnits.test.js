@@ -70,7 +70,7 @@ describe('Advanced Units', () => {
         wizard.targetGoblin = goblin;
         wizard.getDistance = () => 4.0;
         wizard.changeState(new Combat(wizard));
-        wizard.attackGoblin(goblin);
+        wizard.attack(goblin);
 
         expect(wizard.attackCooldown).toBeGreaterThan(0);
         expect(goblin.takeDamage).toHaveBeenCalled();

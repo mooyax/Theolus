@@ -121,12 +121,23 @@ export class Wander extends WanderBase {
                 }
             }
 
-            // NEW SEARCH
-            if (!this.actor.targetRequest) {
-                const req = game.findBestRequest(this.actor, !isNight);
+            // NEW SEARCH: 
+            // - If no targetRequest, always search.
+            // - If HAS targetRequest but it's AUTOMATIC, search ONLY for MANUAL jobs to allow priority switching.
+            const currentIsManual = this.actor.targetRequest && this.actor.targetRequest.isManual;
+            if (!this.actor.targetRequest || !currentIsManual) {
+                const searchManualOnly = !!this.actor.targetRequest; // If we have one, only look for manual upgrades
+                const req = game.findBestRequest(this.actor, !isNight, searchManualOnly);
+
                 if (req) {
                     const excludedUntil = this.actor.ignoredTargets ? this.actor.ignoredTargets.get(req.id) : 0;
                     if (!(excludedUntil > time) && !(isNight && !req.isManual)) {
+                        // If we are switching, we need to release the old one
+                        if (this.actor.targetRequest && this.actor.targetRequest.id !== req.id) {
+                            console.log(`[Wander] Unit ${this.actor.id} switching from AUTO ${this.actor.targetRequest.id} to MANUAL ${req.id}`);
+                            game.releaseRequest(this.actor, this.actor.targetRequest);
+                        }
+
                         if (game.claimRequest(this.actor, req)) {
                             this.actor.targetRequest = req;
                             this.actor.changeState(new Job(this.actor));

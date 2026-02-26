@@ -91,7 +91,7 @@ describe('Building Defense Logic', () => {
         const cave = new Building(mockScene, mockTerrain, 'cave', 21, 21);
         cave.hp = 200;
         cave.population = 0;
-        unit.attackBuilding(cave);
+        unit.attack(cave);
         expect(cave.hp).toBe(150);
     });
 });

@@ -228,6 +228,6 @@ export class CombatStateBase extends State {
      * Virtual method to be implemented by Unit Combat or Goblin Combat
      */
     protected executeAttack(target: any, time: number, deltaTime: number) {
-        // Implement in subclass: this.actor.attackUnit(target) etc.
+        // Implement in subclass: this.actor.attack(target) etc.
     }
 }

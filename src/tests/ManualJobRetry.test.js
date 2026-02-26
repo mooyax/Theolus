@@ -81,7 +81,7 @@ describe('Manual Job Retry and Water Reachability Logic Test', () => {
 
                 const result = Game.prototype.findBestRequest.call(mockGame, mockUnit);
                 expect(result).toBe(req);
-                expect(mockUnit.isReachable).toHaveBeenCalledWith(1, 1);
+                expect(mockUnit.isReachable).toHaveBeenCalledWith(1, 1, expect.anything());
 
             });
             describe('Job Deferral Logic', () => {
