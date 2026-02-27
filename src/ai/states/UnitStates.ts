@@ -99,6 +99,9 @@ export class Wander extends WanderBase {
                 if (req.status !== 'finished' && req.status !== 'cancelled' && req.status !== 'completed') {
                     this.actor.changeState(new Job(this.actor));
                     return;
+                } else {
+                    // FIX: Clear obsolete request to remove "!" indicator from unit headers
+                    this.actor.targetRequest = null;
                 }
             }
 

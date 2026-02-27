@@ -1357,7 +1357,10 @@ export class Unit extends Actor {
         const target = this.terrain.getRandomPointInRegion(currentRegion, this.gridX, this.gridZ, radius);
 
         if (target) {
-            this.smartMove(target.x, target.z, time);
+            const h = this.terrain.getTileHeight(target.x, target.z);
+            if (h > 0) {
+                this.smartMove(target.x, target.z, time);
+            }
         } else {
             // Fallback: Just stand still or try small random step if stuck
             // this.checkStuck(); // Method not implemented

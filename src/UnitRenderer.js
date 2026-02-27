@@ -287,7 +287,11 @@ export class UnitRenderer extends BaseEntityRenderer {
         }
 
         // Job Indicator
-        if (unit.targetRequest && this.indicatorTopMesh && this.countIndicator < 1000) {
+        const isActuallyAssigned = unit.targetRequest &&
+            unit.targetRequest.status === 'assigned' &&
+            String(unit.targetRequest.assignedTo) === String(unit.id);
+
+        if (isActuallyAssigned && this.indicatorTopMesh && this.countIndicator < 1000) {
             const floatY = Math.sin(Date.now() * 0.005) * 0.1;
             dummy.position.set(posX, posY + 1.2 + floatY, posZ);
             dummy.rotation.set(0, rotY, 0);
