@@ -311,15 +311,18 @@ export class SeaDecorationRenderer {
     }
 
     dispose() {
+        console.log("[SeaDecorationRenderer] Disposing...");
         for (const key in this.meshes) {
             this.scene.remove(this.meshes[key]);
-            this.meshes[key].geometry.dispose();
-            this.meshes[key].material.dispose();
+            if (this.meshes[key].geometry) this.meshes[key].geometry.dispose();
+            if (this.meshes[key].material) this.meshes[key].material.dispose();
         }
         if (this.marineSnow) {
             this.scene.remove(this.marineSnow);
-            this.marineSnow.geometry.dispose();
-            this.marineSnow.material.dispose();
+            if (this.marineSnow.geometry) this.marineSnow.geometry.dispose();
+            if (this.marineSnow.material) this.marineSnow.material.dispose();
         }
+        this.meshes = {};
+        this.initialized = false;
     }
 }

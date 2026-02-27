@@ -29,6 +29,11 @@ describe('Sleep State Behavior', () => {
             targetGoblin: null,
             targetBuilding: null,
             checkSelfDefense: vi.fn(),
+            getDistance: vi.fn().mockImplementation((x, z) => {
+                const dx = x - 10;
+                const dz = z - 10;
+                return Math.sqrt(dx * dx + dz * dz);
+            }),
         };
 
         // Initial state setup
@@ -59,5 +64,5 @@ describe('Sleep State Behavior', () => {
         expect(mockUnit.state).toBeInstanceOf(Wander);
         expect(mockUnit.isSleeping).toBe(false);
 
-});
+    });
 });

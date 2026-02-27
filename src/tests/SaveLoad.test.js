@@ -16,7 +16,9 @@ describe('Save/Load System', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        game = new Game();
+        // Use minimal=true to avoid background async initialization (regenerateWorld) 
+        // which might race with loadGame stats.
+        game = new Game(undefined, undefined, true);
         game.terrain.updateColors = vi.fn();
         game.terrain.updateMesh = vi.fn();
         game.terrain.generate = vi.fn();
@@ -138,5 +140,5 @@ describe('Save/Load System', () => {
         // But the mock returns a NEW object? No, mockReturnValue returns the SAME object reference usually unless mockReturnValueOnce.
         // Let's rely on renderOrder for now as correct restoration proof.
 
-});
+    });
 });

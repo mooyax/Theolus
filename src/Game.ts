@@ -214,7 +214,7 @@ export class Game {
     public unitMap: Map<number, Unit> = new Map();
     public requestCheckIndex: number = 0;
 
-    public enemyAI: EnemyAI;
+    public enemyAI!: EnemyAI;
     private _tmpVec: THREE.Vector3;
     public totalPopulation: number;
     public markerTime: number;
@@ -243,8 +243,11 @@ export class Game {
             minimal = sceneOverride;
             sceneOverride = undefined;
         }
+        this.clippingPlanes = []; // Default empty array for all modes
+
         this.instanceId = ++Game.INSTANCE_COUNT;
         this.minimal = minimal;
+        console.log(`[Game ${this.instanceId}] Constructor. minimal=${this.minimal}`);
 
         // Register for automatic cleanup in tests
         if ((globalThis as any).__game_instances) {
@@ -312,9 +315,7 @@ export class Game {
         console.log('[Game] Init SphereGeometry');
         // --- 3. Shared Assets (Visual-only) ---
         this.projectileGeo = new THREE.SphereGeometry(0.2, 8, 8); // Satisfy TS definite assignment
-        if (!this.minimal) {
-            // this.initMarkerMaterial();
-        }
+        this.initMarkerMaterial();
 
         // --- 4. Branched Initialization (Minimal/Override vs Full) ---
         if (sceneOverride || this.minimal) {
@@ -351,6 +352,27 @@ export class Game {
                 mouseButtons: {}
             } as any;
 
+            this.markerMaterial = {
+                clone: function () {
+                    const cloned = {
+                        uniforms: {
+                            uColor: { value: new THREE.Color() },
+                            uTime: { value: 0 },
+                            uIsNight: { value: 0 },
+                            uClippingPlanes: { value: [] }
+                        },
+                        dispose: () => { }
+                    };
+                    return cloned;
+                },
+                uniforms: {
+                    uColor: { value: new THREE.Color() },
+                    uTime: { value: 0 },
+                    uIsNight: { value: 0 }
+                },
+                dispose: () => { }
+            } as any;
+
             if (this.minimal) {
                 console.log('[Game] Minimal: Init Clock');
                 this.clock = new THREE.Clock();
@@ -365,15 +387,18 @@ export class Game {
                 this.terrain = terrainOverride;
                 this.buildings = this.terrain.buildings || []; // Link buildings!
             } else {
-                console.log(`[Game FORCE CONST ${this.instanceId}] Creating mock terrain`);
+                console.log(`[DEBUG] Game ${this.instanceId} creating mock terrain`);
                 this.terrain = {
                     width: 160, depth: 160,
                     logicalWidth: 160, logicalDepth: 160,
                     buildings: [], entityGrid: [],
+                    pathfindingCalls: 0,
                     initEntityGrid: function () {
                         this.entityGrid = Array(160).fill(0).map(() => Array(160).fill(0).map(() => []));
                     },
-                    getTileHeight: () => 0, isWalkable: () => true, isReachable: () => true,
+                    getTileHeight: () => 10,
+                    isWalkable: () => true,
+                    isReachable: () => true,
                     update: function (dt, spawnCb, night, units, active, resources) {
                         // Enhanced mock to track population for tests
                         this.buildings.forEach(b => {
@@ -391,6 +416,7 @@ export class Game {
                     checkYield: () => Promise.resolve(), checkFlatArea: () => true,
                     generateRandomTerrain: async () => { }, setHeight: () => { }, updateColors: () => { }, // Mock methods
                     gridToWorld: (v: any) => v, worldToGrid: (v: any) => v, setSeason: () => { },
+                    getVisualPosition: (x: number, z: number) => ({ x: x - 80, y: 10, z: z - 80 }),
                     addBuilding: function (type: string, x: number, z: number) {
                         const b = { userData: { type, gridX: x, gridZ: z }, gridX: x, gridZ: z, population: 0 };
                         (this.buildings as any[]).push(b);
@@ -429,8 +455,7 @@ export class Game {
             this.smokeManager = new SmokeManager(this.scene, 500, this.clippingPlanes); // Small pool for minimal mode
 
             this.isLoading = false;
-            console.log('[Game] Minimal: Done. Returning.');
-            return; // STOP HERE for minimal mode
+            console.log('[Game] Minimal: Done.');
         }
 
 
@@ -499,158 +524,168 @@ export class Game {
             this.terrain = terrainOverride || new Terrain(this.scene, this.clippingPlanes, initialLevel?.mapWidth || 100, initialLevel?.mapDepth || 100);
         }
 
-        // --- 5. Full Mode Managers & Listeners ---
-        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.7); // Increased from 0.5
-        this.directionalLight = new THREE.DirectionalLight(0xffffff, 1.0); // Increased from 0.8
-        this.directionalLight.position.set(20, 40, 20); // Higher and further for better shadows
+        if (!this.minimal) {
+            // --- 5. Full Mode Managers & Listeners ---
+            this.ambientLight = new THREE.AmbientLight(0xffffff, 0.7); // Increased from 0.5
+            this.directionalLight = new THREE.DirectionalLight(0xffffff, 1.0); // Increased from 0.8
+            this.directionalLight.position.set(20, 40, 20); // Higher and further for better shadows
 
-        // Shadow Settings
-        if (this.directionalLight.shadow) {
-            this.directionalLight.castShadow = true;
-            this.directionalLight.shadow.mapSize.width = 2048;
-            this.directionalLight.shadow.mapSize.height = 2048;
-            this.directionalLight.shadow.camera.left = -100;
-            this.directionalLight.shadow.camera.right = 100;
-            this.directionalLight.shadow.camera.top = 100;
-            this.directionalLight.shadow.camera.bottom = -100;
-            this.directionalLight.shadow.camera.near = 0.5;
-            this.directionalLight.shadow.camera.far = 200;
-            this.directionalLight.shadow.bias = -0.0001; // Fine-tuned for terrain self-shadow
-        }
+            // Shadow Settings
+            if (this.directionalLight.shadow) {
+                this.directionalLight.castShadow = true;
+                this.directionalLight.shadow.mapSize.width = 2048;
+                this.directionalLight.shadow.mapSize.height = 2048;
+                this.directionalLight.shadow.camera.left = -100;
+                this.directionalLight.shadow.camera.right = 100;
+                this.directionalLight.shadow.camera.top = 100;
+                this.directionalLight.shadow.camera.bottom = -100;
+                this.directionalLight.shadow.camera.near = 0.5;
+                this.directionalLight.shadow.camera.far = 200;
+                this.directionalLight.shadow.bias = -0.0001; // Fine-tuned for terrain self-shadow
+            }
 
-        this.scene.add(this.ambientLight);
-        this.scene.add(this.directionalLight);
-        if (this.terrain) {
-            console.log('[Game] Init CloudManager');
-            this.cloudManager = new CloudManager(this.scene, this.terrain.width, this.terrain.depth);
-        }
+            this.scene.add(this.ambientLight);
+            this.scene.add(this.directionalLight);
+            if (this.terrain) {
+                console.log('[Game] Init CloudManager');
+                this.cloudManager = new CloudManager(this.scene, this.terrain.width, this.terrain.depth);
+            }
 
-        console.log('[Game] Init BirdManager');
-        this.birdManager = new BirdManager(this.scene, this.terrain.width, this.terrain.depth);
-        this.sheepManager = new SheepManager(this.scene, this.terrain, this.clippingPlanes);
-        this.goblinManager = goblinManagerOverride || new GoblinManager(this.scene, this.terrain, this, this.clippingPlanes);
-        this.fishManager = new FishManager(this.scene, this.terrain, this.clippingPlanes);
+            console.log('[Game] Init BirdManager');
+            this.birdManager = new BirdManager(this.scene, this.terrain.width, this.terrain.depth);
+            this.sheepManager = new SheepManager(this.scene, this.terrain, this.clippingPlanes);
+            this.goblinManager = goblinManagerOverride || new GoblinManager(this.scene, this.terrain, this, this.clippingPlanes);
+            this.fishManager = new FishManager(this.scene, this.terrain, this.clippingPlanes);
 
-        console.log('[Game] Init Minimap');
-        this.minimap = new Minimap(this);
-        console.log('[Game] Init Compass');
-        this.compass = new Compass(this);
-        console.log('[Game] Init WeatherManager');
-        this.weatherManager = new WeatherManager(this.scene, this.clippingPlanes);
-        if (!this.smokeManager) this.smokeManager = new SmokeManager(this.scene, 2000, this.clippingPlanes);
-        console.log('[Game] Init SeaDecorationRenderer');
-        this.seaDecorationRenderer = new SeaDecorationRenderer(this.scene, this.terrain, this.clippingPlanes);
+            console.log('[Game] Init Minimap');
+            this.minimap = new Minimap(this);
+            console.log('[Game] Init Compass');
+            this.compass = new Compass(this);
+            console.log('[Game] Init WeatherManager');
+            this.weatherManager = new WeatherManager(this.scene, this.clippingPlanes);
+            if (!this.smokeManager) this.smokeManager = new SmokeManager(this.scene, 2000, this.clippingPlanes);
+            console.log('[Game] Init SeaDecorationRenderer');
+            this.seaDecorationRenderer = new SeaDecorationRenderer(this.scene, this.terrain, this.clippingPlanes);
 
-        console.log('[Game] Init UnitRenderer');
-        this.unitRenderer = new UnitRenderer(this.scene, this.terrain, this.clippingPlanes, 12000);
-        this.unitRenderer.init();
-        console.log('[Game] Init BuildingRenderer');
-        this.buildingRenderer = new BuildingRenderer(this.scene, this.terrain, this.clippingPlanes, 5000);
-        this.buildingRenderer.init();
-        console.log('[Game] Init GoblinRenderer');
-        this.goblinRenderer = new GoblinRenderer(this.scene, this.terrain, this.clippingPlanes, 50000);
-        this.goblinRenderer.init();
-        console.log('[Game] Init TreeRenderer');
-        this.treeRenderer = new TreeRenderer(this.scene, this.terrain, this.clippingPlanes, 120000);
-        this.treeRenderer.init();
+            console.log('[Game] Init UnitRenderer');
+            this.unitRenderer = new UnitRenderer(this.scene, this.terrain, this.clippingPlanes, 12000);
+            this.unitRenderer.init();
+            console.log('[Game] Init BuildingRenderer');
+            this.buildingRenderer = new BuildingRenderer(this.scene, this.terrain, this.clippingPlanes, 5000);
+            this.buildingRenderer.init();
+            console.log('[Game] Init GoblinRenderer');
+            this.goblinRenderer = new GoblinRenderer(this.scene, this.terrain, this.clippingPlanes, 50000);
+            this.goblinRenderer.init();
+            console.log('[Game] Init TreeRenderer');
+            this.treeRenderer = new TreeRenderer(this.scene, this.terrain, this.clippingPlanes, 120000);
+            this.treeRenderer.init();
 
-        console.log('[Game] Init PerformanceMonitor');
-        this.performanceMonitor = new PerformanceMonitor();
-        if (typeof window !== 'undefined' && window.location?.search?.includes('performance=true')) {
-            this.performanceMonitor.enable();
-        }
+            console.log('[Game] Init PerformanceMonitor');
+            this.performanceMonitor = new PerformanceMonitor();
+            if (typeof window !== 'undefined' && window.location?.search?.includes('performance=true')) {
+                this.performanceMonitor.enable();
+            }
 
-        this.inputManager = new InputManager(this.scene, this.camera, this.terrain, this.spawnUnit.bind(this), this.units, this.unitRenderer, this);
-        this.enemyAI = new EnemyAI(this); // Init Enemy AI
+            this.inputManager = new InputManager(this.scene, this.camera, this.terrain, this.spawnUnit.bind(this), this.units, this.unitRenderer, this);
+            this.enemyAI = new EnemyAI(this); // Init Enemy AI
 
-        if (typeof document !== 'undefined') {
-            this.statsDisplay = document.getElementById('stats-container');
-            window.addEventListener('resize', this.onWindowResize.bind(this));
+            if (typeof document !== 'undefined') {
+                this.statsDisplay = document.getElementById('stats-container');
+                window.addEventListener('resize', this.onWindowResize.bind(this));
 
-            window.addEventListener('keydown', (e) => {
-                if (e.key === 'f' || e.key === 'F') {
-                    if (this.performanceMonitor) this.performanceMonitor.toggle();
-                } else if (e.key === 's' || e.key === 'S') {
-                    const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
-                    this.currentSeasonIndex = ((this.currentSeasonIndex || 0) + 1) % 4;
-                    const newSeason = SEASONS[this.currentSeasonIndex];
-                    this.season = newSeason;
-                    this.daysPassed = (this.daysPassed || 0) + 1;
-                    if (this.terrain) this.terrain.setSeason(newSeason);
-                    const seasonVal = document.getElementById('season-val');
-                    if (seasonVal) seasonVal.textContent = newSeason;
+                window.addEventListener('keydown', (e) => {
+                    if (e.key === 'f' || e.key === 'F') {
+                        if (this.performanceMonitor) this.performanceMonitor.toggle();
+                    } else if (e.key === 's' || e.key === 'S') {
+                        const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
+                        this.currentSeasonIndex = ((this.currentSeasonIndex || 0) + 1) % 4;
+                        const newSeason = SEASONS[this.currentSeasonIndex];
+                        this.season = newSeason;
+                        this.daysPassed = (this.daysPassed || 0) + 1;
+                        if (this.terrain) this.terrain.setSeason(newSeason);
+                        const seasonVal = document.getElementById('season-val');
+                        if (seasonVal) seasonVal.textContent = newSeason;
 
-                    // Auto-Weather on Season change
-                    if (this.weatherManager) {
-                        if (newSeason === 'Winter') this.weatherManager.setWeather('Snow');
-                        else this.weatherManager.setWeather('Rain');
-                    }
-                } else if (e.key === 'w' || e.key === 'W') {
-                    // Manual Weather Cycle
-                    if (this.weatherManager) {
-                        const types: WeatherType[] = ['Clear', 'Rain', 'HeavyRain', 'Snow', 'HeavySnow', 'Fog'];
-                        const curIndex = types.indexOf(this.weatherManager.currentWeather || 'Clear');
-                        const nextType = types[(curIndex + 1) % types.length];
-                        this.weatherManager.setWeather(nextType);
-                    }
-                } else if (e.key === 'g' || e.key === 'G') {
-                    if (this.terrain) {
-                        this.terrain.toggleGrid();
-                    }
-                }
-            });
-
-            // Debug Speed Toggle
-            (window as any).toggleDebugSpeed = () => {
-                const btn = document.getElementById('debug-speed-btn');
-                if (this.timeScale === 1.0) {
-                    this.timeScale = 10.0;
-                    console.log("Debug Speed: 10x");
-                    if (btn) btn.classList.add('active');
-                } else {
-                    this.timeScale = 1.0;
-                    console.log("Debug Speed: 1x");
-                    if (btn) btn.classList.remove('active');
-                }
-            };
-
-            // UI Listeners (New Game, Regenerate, etc.)
-            document.getElementById('start-new-btn')?.addEventListener('click', () => {
-                document.getElementById('start-screen')!.style.display = 'none';
-                this.startNewGame();
-            });
-
-            document.getElementById('regenerate-btn')?.addEventListener('click', () => {
-                this.regenerateWorld();
-            });
-
-            document.getElementById('start-load-btn')?.addEventListener('click', () => {
-                document.getElementById('start-screen')!.style.display = 'none';
-                this.loadGame(1).then(success => {
-                    if (!success) {
-                        alert("No Access to Slot 1 or Load Failed");
-                        document.getElementById('start-screen')!.style.display = 'flex';
+                        // Auto-Weather on Season change
+                        if (this.weatherManager) {
+                            if (newSeason === 'Winter') this.weatherManager.setWeather('Snow');
+                            else this.weatherManager.setWeather('Rain');
+                        }
+                    } else if (e.key === 'w' || e.key === 'W') {
+                        // Manual Weather Cycle
+                        if (this.weatherManager) {
+                            const types: WeatherType[] = ['Clear', 'Rain', 'HeavyRain', 'Snow', 'HeavySnow', 'Fog'];
+                            const curIndex = types.indexOf(this.weatherManager.currentWeather || 'Clear');
+                            const nextType = types[(curIndex + 1) % types.length];
+                            this.weatherManager.setWeather(nextType);
+                        }
+                    } else if (e.key === 'g' || e.key === 'G') {
+                        if (this.terrain) {
+                            this.terrain.toggleGrid();
+                        }
                     }
                 });
-            });
 
-            document.getElementById('save-load-btn')?.addEventListener('click', () => {
-                const modal = document.getElementById('save-modal');
-                if (modal) modal.style.display = 'flex';
-                this.saveManager.refreshSlotList(this.saveGame.bind(this), this.loadGame.bind(this));
-            });
+                // Debug Speed Toggle
+                (window as any).toggleDebugSpeed = () => {
+                    const btn = document.getElementById('debug-speed-btn');
+                    if (this.timeScale === 1.0) {
+                        this.timeScale = 10.0;
+                        console.log("Debug Speed: 10x");
+                        if (btn) btn.classList.add('active');
+                    } else {
+                        this.timeScale = 1.0;
+                        console.log("Debug Speed: 1x");
+                        if (btn) btn.classList.remove('active');
+                    }
+                };
 
-            document.getElementById('close-modal')?.addEventListener('click', () => {
-                document.getElementById('save-modal')!.style.display = 'none';
-            });
+                // UI Listeners (New Game, Regenerate, etc.)
+                document.getElementById('start-new-btn')?.addEventListener('click', () => {
+                    document.getElementById('start-screen')!.style.display = 'none';
+                    this.startNewGame();
+                });
 
-            document.getElementById('help-btn')?.addEventListener('click', () => {
-                document.getElementById('help-modal')!.style.display = 'flex';
-            });
+                document.getElementById('regenerate-btn')?.addEventListener('click', () => {
+                    this.regenerateWorld();
+                });
 
-            document.getElementById('close-help-btn')?.addEventListener('click', () => {
-                document.getElementById('help-modal')!.style.display = 'none';
-            });
+                document.getElementById('start-load-btn')?.addEventListener('click', () => {
+                    const modal = document.getElementById('save-modal');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        this.saveManager.refreshSlotList(
+                            this.saveGame.bind(this),
+                            async (slotId: number) => {
+                                const success = await this.loadGame(slotId);
+                                if (success) {
+                                    document.getElementById('start-screen')!.style.display = 'none';
+                                    document.getElementById('save-modal')!.style.display = 'none';
+                                }
+                                return success;
+                            }
+                        );
+                    }
+                });
+
+                document.getElementById('save-load-btn')?.addEventListener('click', () => {
+                    const modal = document.getElementById('save-modal');
+                    if (modal) modal.style.display = 'flex';
+                    this.saveManager.refreshSlotList(this.saveGame.bind(this), this.loadGame.bind(this));
+                });
+
+                document.getElementById('close-modal')?.addEventListener('click', () => {
+                    document.getElementById('save-modal')!.style.display = 'none';
+                });
+
+                document.getElementById('help-btn')?.addEventListener('click', () => {
+                    document.getElementById('help-modal')!.style.display = 'flex';
+                });
+
+                document.getElementById('close-help-btn')?.addEventListener('click', () => {
+                    document.getElementById('help-modal')!.style.display = 'none';
+                });
+            }
         }
 
         this.frustum = new THREE.Frustum();
@@ -660,60 +695,68 @@ export class Game {
 
         // Async Initialization Block (Preview)
         (async () => {
-            // Fix: Initialize isNight for preview
-            this.isNight = false;
-
-            // Simplified: Use the newly async regenerateWorld to setup the initial preview
-            console.log("[Game] Generating Initial Preview World...");
-            await this.regenerateWorld();
-
-            // Initialize Managers properly
-            console.log("[Game] Initializing Managers (Bird, Sheep, Fish)...");
-            const initPromises: Promise<any>[] = [];
-            if (this.birdManager && typeof this.birdManager.init === 'function') initPromises.push(this.birdManager.init());
-            if (this.sheepManager && typeof this.sheepManager.init === 'function') initPromises.push(this.sheepManager.init());
-            if (this.fishManager && typeof this.fishManager.init === 'function') initPromises.push(this.fishManager.init());
-
-            if (initPromises.length > 0) {
-                await Promise.all(initPromises);
+            if (minimal) {
+                this.resolveReady();
+                return;
             }
+            try {
+                // Fix: Initialize isNight for preview
+                this.isNight = false;
 
-            // Initial Camera Position for Preview (Center & Orbit)
-            const w = this.terrain.logicalWidth || 80;
-            const d = this.terrain.logicalDepth || 80;
-            const cx = Math.floor(w / 2);
-            const cz = Math.floor(d / 2);
-            let h = 0;
-            if (this.terrain.getTileHeight) h = this.terrain.getTileHeight(cx, cz);
+                // Simplified: Use the newly async regenerateWorld to setup the initial preview
+                console.log("[Game] Generating Initial Preview World...");
+                await this.regenerateWorld();
 
-            if (this.controls) {
-                this.controls.target.set(0, h, 0);
-                this.camera.position.set(40, h + 40, 40);
-                this.controls.update();
+                // Initialize Managers properly
+                console.log("[Game] Initializing Managers (Bird, Sheep, Fish)...");
+                const initPromises: Promise<any>[] = [];
+                if (this.birdManager && typeof this.birdManager.init === 'function') initPromises.push(this.birdManager.init());
+                if (this.sheepManager && typeof this.sheepManager.init === 'function') initPromises.push(this.sheepManager.init());
+                if (this.fishManager && typeof this.fishManager.init === 'function') initPromises.push(this.fishManager.init());
+
+                if (initPromises.length > 0) {
+                    await Promise.all(initPromises);
+                }
+
+                // Initial Camera Position for Preview (Center & Orbit)
+                const w = this.terrain.logicalWidth || 80;
+                const d = this.terrain.logicalDepth || 80;
+                const cx = Math.floor(w / 2);
+                const cz = Math.floor(d / 2);
+                let h = 0;
+                if (this.terrain.getTileHeight) h = this.terrain.getTileHeight(cx, cz);
+
+                if (this.controls) {
+                    this.controls.target.set(0, h, 0);
+                    this.camera.position.set(40, h + 40, 40);
+                    this.controls.update();
+                }
+
+                // Should hide loading screen AFTER terrain is ready
+                this.isLoading = false;
+
+                // PREVENT AUTO-START IN TESTS to avoid hanging background loops
+                const isTest = typeof window !== 'undefined' && (window as any).__vitest_environment__;
+                if (!minimal && !isTest) {
+                    this.animate();
+                }
+
+                // Initialize Start Screen UI
+                if (!minimal) {
+                    this.initStartScreen();
+                }
+
+                this.resolveReady();
+
+            } catch (err: any) {
+                console.error("FATAL INIT ERROR:", err);
+                this.resolveReady(); // Resolve anyway to avoid hanging tests
+                const ui = document.getElementById('ui');
+                if (ui) {
+                    ui.innerHTML += `<div style="position:absolute;top:0;left:0;color:red;background:black;z-index:9999;padding:20px;">FATAL ERROR: ${err.message}<br><pre>${err.stack}</pre></div>`;
+                }
             }
-
-            // Should hide loading screen AFTER terrain is ready
-            this.isLoading = false;
-
-            // PREVENT AUTO-START IN TESTS to avoid hanging background loops
-            const isTest = typeof window !== 'undefined' && (window as any).__vitest_environment__;
-            if (!this.minimal && !isTest) {
-                this.animate();
-            }
-
-            // Initialize Start Screen UI
-            this.initStartScreen();
-
-            this.resolveReady();
-
-        })().catch(err => {
-            console.error("FATAL INIT ERROR:", err);
-            this.resolveReady(); // Resolve anyway to avoid hanging tests
-            const ui = document.getElementById('ui');
-            if (ui) {
-                ui.innerHTML += `<div style="position:absolute;top:0;left:0;color:red;background:black;z-index:9999;padding:20px;">FATAL ERROR: ${err.message}<br><pre>${err.stack}</pre></div>`;
-            }
-        });
+        })();
     }
 
     initStartScreen() {
@@ -1055,6 +1098,8 @@ export class Game {
 
     // --- Request System ---
     initMarkerMaterial() {
+        if (this.minimal) return;
+        console.log('[Game] initMarkerMaterial Start');
         // Shader for Rising Light Particles
         const vertexShader = `
             #include <clipping_planes_pars_vertex>
@@ -1131,6 +1176,7 @@ export class Game {
             clipping: true // FIX: Support clipping planes
         });
         this.markerMaterial.clippingPlanes = this.clippingPlanes;
+        console.log('[Game] initMarkerMaterial Done');
     }
 
     // --- Request System ---
@@ -1322,12 +1368,12 @@ export class Game {
 
                     // NEW: If current owner is distracted by Combat, relax snatching rules
                     const isOwnerFighting = currentOwner.state && (currentOwner.state.name === 'Combat' || currentOwner.state.constructor.name === 'Combat');
-                    const snatchThreshold = isOwnerFighting ? 4.0 : 0.5; // If fighting, allow snatching even if 2x further away than owner (distSq < dOwnerSq * 4.0)
 
-                    // Only snatch if we are significantly closer (or owner is fighting)
-                    if (distSq < (dOwner * dOwner) * snatchThreshold) {
-                        // Snatched
-                    } else {
+                    // Only snatch if we are significantly closer (OR if owner is fighting, allow any free worker to take over)
+                    const snatchThreshold = 0.5;
+                    const shouldSnatch = isOwnerFighting || (distSq < (dOwner * dOwner) * snatchThreshold);
+
+                    if (!shouldSnatch) {
                         continue;
                     }
                 }
@@ -1434,7 +1480,7 @@ export class Game {
 
                             const dist = (unit.gridX - req.x) ** 2 + (unit.gridZ - req.z) ** 2;
                             let scorePenalty = 0;
-                            const isFightingOrSleeping = unit.state && (unit.state.constructor.name === 'CombatState' || unit.state.constructor.name === 'SleepState');
+                            const isFightingOrSleeping = unit.state && (unit.state.constructor.name === 'Combat' || unit.state.constructor.name === 'Sleep');
                             if (isFightingOrSleeping) scorePenalty += 50;
 
                             // NEW: Reachability Guard (Passing isManual for correct threshold)
@@ -1471,7 +1517,7 @@ export class Game {
 
                     const dist = (unit.gridX - req.x) ** 2 + (unit.gridZ - req.z) ** 2;
                     let scorePenalty = 0;
-                    const isFightingOrSleeping = unit.state && (unit.state.constructor.name === 'CombatState' || unit.state.constructor.name === 'SleepState');
+                    const isFightingOrSleeping = unit.state && (unit.state.constructor.name === 'Combat' || unit.state.constructor.name === 'Sleep');
                     if (isFightingOrSleeping) scorePenalty += 50;
 
                     if (unit.isReachable && !unit.isReachable(req.x, req.z, req.isManual)) {
@@ -1595,6 +1641,13 @@ export class Game {
             req.assignedTo = null;
             if (req.status === 'assigned') {
                 req.status = 'pending';
+            }
+        }
+        // FIX: Ensure unit side reference is also cleared to avoid ghost indicators (!)
+        if (unit && unit.targetRequest && unit.targetRequest.id === req.id) {
+            unit.targetRequest = null;
+            if (unit.changeState && unit.getDefaultState) {
+                unit.changeState(unit.getDefaultState());
             }
         }
     }
@@ -2211,12 +2264,17 @@ export class Game {
             if (this.errorCounts[key] === 10) console.warn(`[${key}] Suppressing further errors.`);
         }
     }
-
     update(deltaTime: number) {
+        if (this.minimal && (this.frameCount % 60 === 0 || this.frameCount < 5)) {
+            console.log(`[DEBUG] Game ${this.instanceId} update. Frame=${this.frameCount}, minimal=${this.minimal}, terrainType=${typeof this.terrain}, isMock=${!!(this.terrain as any).resetPathfindingBudget}`);
+        }
         if (this.stopped) return;
 
         // CRITICAL FIX: Reset pathfinding budget every frame to prevent infinite "Calculating..."
         if (this.terrain && typeof this.terrain.resetPathfindingBudget === 'function') {
+            if (this.minimal && this.frameCount % 60 === 0) {
+                console.log(`[DEBUG] Calling resetPathfindingBudget on terrain. constructor: ${this.terrain.constructor?.name}, hasPathfindingCalls: ${'pathfindingCalls' in this.terrain}`);
+            }
             this.terrain.resetPathfindingBudget();
         }
 
@@ -2640,99 +2698,115 @@ export class Game {
                     if (this.smokeManager && typeof this.smokeManager.update === 'function') {
                         this.smokeManager.update(deltaTime);
                     }
-
-                    if (this.performanceMonitor) this.performanceMonitor.startRender();
-
-                    // DEBUG PANEL UPDATE
-                    const u = (window as any).debugSelectedUnit;
-                    const panel = document.getElementById('unit-debug-panel');
-                    if (panel && u) {
-                        const isGoblin = u.type === 'goblin';
-                        const isUnit = u.type === 'unit';
-                        const typeLabel = isGoblin ? 'Goblin' : (isUnit ? 'Human' : (u.constructor ? u.constructor.name : 'Entity'));
-
-                        const hpVal = Math.floor(u.hp || 0);
-                        const hpMaxVal = Math.floor(u.maxHp || 100);
-                        const hpInfo = `HP: ${hpVal} / ${hpMaxVal}`;
-                        const posInfo = `Pos: ${typeof u.gridX === 'number' ? u.gridX.toFixed(1) : '?'}, ${typeof u.gridZ === 'number' ? u.gridZ.toFixed(1) : '?'}`;
-                        const stateName = u.state ? u.state.constructor.name : (u.action || 'Idle');
-
-                        const now = this.simTotalTimeSec || 0;
-                        const elapsedMove = u.isMoving ? (now - (u.moveStartTime || 0)).toFixed(2) : "0.00";
-                        const dur = (u.moveDuration !== undefined) ? u.moveDuration.toFixed(2) : "Undef";
-
-                        let reqInfo = "No Request";
-                        if (u.targetRequest) {
-                            const rx = typeof u.targetRequest.x === 'number' ? u.targetRequest.x.toFixed(1) : '?';
-                            const rz = typeof u.targetRequest.z === 'number' ? u.targetRequest.z.toFixed(1) : '?';
-                            reqInfo = `Req:${u.targetRequest.id || '?'} (${u.targetRequest.status || '?'}) \nAt:${rx},${rz} `;
-                        }
-
-                        const pathInfo = (u.path && u.path.length > 0) ? `Path:${u.path.length} nodes` :
-                            ((u.isWaitingForPath || u.isPathfinding) ? "Calculating..." :
-                                (u.isPathfindingThrottled ? "Throttled (Wait)" : "No Path"));
-                        const moveInfo = `Moving:${u.isMoving} (T:${elapsedMove} / D:${dur}) `;
-
-                        let targetInfo = "No TargetObj";
-                        let targetDist = "";
-                        if (u.targetGoblin) {
-                            const t = u.targetGoblin;
-                            targetInfo = `En:Goblin(${t.id}) @${t.gridX.toFixed(1)},${t.gridZ.toFixed(1)}`;
-                            targetDist = `Dst:${u.getDistance(t.gridX, t.gridZ).toFixed(1)}`;
-                        } else if (u.targetUnit) {
-                            const t = u.targetUnit;
-                            targetInfo = `En:Unit(${t.id}) @${t.gridX.toFixed(1)},${t.gridZ.toFixed(1)}`;
-                            targetDist = `Dst:${u.getDistance(t.gridX, t.gridZ).toFixed(1)}`;
-                        } else if (u.targetBuilding) {
-                            const t = u.targetBuilding;
-                            const tx = t.gridX !== undefined ? t.gridX : (t.userData ? t.userData.gridX : 0);
-                            const tz = t.gridZ !== undefined ? t.gridZ : (t.userData ? t.userData.gridZ : 0);
-                            targetInfo = `Build:${t.id || 'Obj'} @${tx.toFixed(1)},${tz.toFixed(1)}`;
-                            targetDist = `Dst:${u.getDistance(tx, tz).toFixed(1)}`;
-                        }
-
-                        const throttleInfo = `Throttled:${u.isPathfindingThrottled ? "YES (Wait)" : "NO"}`;
-                        const lastPathInfo = `LastP:${(u.lastPathTime || 0).toFixed(1)} `;
-                        const failsafeInfo = `Unreachable:${u.isUnreachable || false} Dead:${u.isDead} Stuck:${u.stuckCount || 0}`;
-
-                        let failInfo = "No Recent Fail";
-                        if (u.lastFailureReason && (now - (u.lastFailureTime || 0) < 5.0)) {
-                            failInfo = `FAIL: ${u.lastFailureReason} (${(now - u.lastFailureTime).toFixed(1)}s ago)`;
-                        }
-
-                        let isStillActive = false;
-                        if (isUnit) isStillActive = this.units.includes(u);
-                        else if (isGoblin && this.goblinManager) isStillActive = this.goblinManager.goblins.includes(u);
-                        else isStillActive = !u.isDead;
-
-                        if (u.isDead || !isStillActive) {
-                            panel.innerText = `[${typeLabel} ${u.id}] Disposed / Dead`;
-                        } else {
-                            let txt = `[${typeLabel} ${u.id}] ${u.role || u.type || ''} \n`;
-                            txt += `${hpInfo} | ${posInfo}\n`;
-                            txt += `State: ${stateName} \n`;
-                            if (u.lastJobResult) txt += `LastJob: ${u.lastJobResult} / Log: ${u.lastMoveLog || ''}\n`;
-                            txt += `${reqInfo}\n${pathInfo}\n${moveInfo}\n`;
-                            txt += `${targetInfo} | ${targetDist} | ${throttleInfo}\n`;
-                            txt += `${failsafeInfo} | ${lastPathInfo}\n`;
-                            txt += `--------------------\n`;
-                            txt += `${failInfo}`;
-                            panel.innerText = txt;
-                        }
-                        panel.style.display = 'block';
+                } catch (e) {
+                    console.error("[Game] Render-update loop error:", e);
+                }
+            } else {
+                // LIMITED UPDATE DURING LOADING (For Previews)
+                try {
+                    if (this.seaDecorationRenderer && typeof this.seaDecorationRenderer.update === 'function') {
+                        this.seaDecorationRenderer.update(this.simTotalTimeSec || 0);
+                    }
+                    if (this.treeRenderer && typeof this.treeRenderer.update === 'function') {
+                        this.treeRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
                     }
                 } catch (e) {
-                    this.logErrorThrottle("RenderError", e);
-                }
-
-                this.renderer.render(this.scene, this.camera);
-                if (this.performanceMonitor) {
-                    this.performanceMonitor.endRender();
-                    this.performanceMonitor.update(this);
+                    console.error("[Game] Loading-render-update error:", e);
                 }
             }
+
+            if (this.performanceMonitor) this.performanceMonitor.startRender();
+
+            // DEBUG PANEL UPDATE
+            const u = (window as any).debugSelectedUnit;
+            const panel = document.getElementById('unit-debug-panel');
+            if (panel && u) {
+                try {
+                    const isGoblin = u.type === 'goblin';
+                    const isUnit = u.type === 'unit';
+                    const typeLabel = isGoblin ? 'Goblin' : (isUnit ? 'Human' : (u.constructor ? u.constructor.name : 'Entity'));
+
+                    const hpVal = Math.floor(u.hp || 0);
+                    const hpMaxVal = Math.floor(u.maxHp || 100);
+                    const hpInfo = `HP: ${hpVal} / ${hpMaxVal}`;
+                    const posInfo = `Pos: ${typeof u.gridX === 'number' ? u.gridX.toFixed(1) : '?'}, ${typeof u.gridZ === 'number' ? u.gridZ.toFixed(1) : '?'}`;
+                    const stateName = u.state ? u.state.constructor.name : (u.action || 'Idle');
+
+                    const now = this.simTotalTimeSec || 0;
+                    const elapsedMove = u.isMoving ? (now - (u.moveStartTime || 0)).toFixed(2) : "0.00";
+                    const dur = (u.moveDuration !== undefined) ? u.moveDuration.toFixed(2) : "Undef";
+
+                    let reqInfo = "No Request";
+                    if (u.targetRequest) {
+                        const rx = typeof u.targetRequest.x === 'number' ? u.targetRequest.x.toFixed(1) : '?';
+                        const rz = typeof u.targetRequest.z === 'number' ? u.targetRequest.z.toFixed(1) : '?';
+                        reqInfo = `Req:${u.targetRequest.id || '?'} (${u.targetRequest.status || '?'}) \nAt:${rx},${rz} `;
+                    }
+
+                    const pathInfo = (u.path && u.path.length > 0) ? `Path:${u.path.length} nodes` :
+                        ((u.isWaitingForPath || u.isPathfinding) ? "Calculating..." :
+                            (u.isPathfindingThrottled ? "Throttled (Wait)" : "No Path"));
+                    const moveInfo = `Moving:${u.isMoving} (T:${elapsedMove} / D:${dur}) `;
+
+                    let targetInfo = "No TargetObj";
+                    let targetDist = "";
+                    if (u.targetGoblin) {
+                        const t = u.targetGoblin;
+                        targetInfo = `En:Goblin(${t.id}) @${t.gridX.toFixed(1)},${t.gridZ.toFixed(1)}`;
+                        targetDist = `Dst:${u.getDistance(t.gridX, t.gridZ).toFixed(1)}`;
+                    } else if (u.targetUnit) {
+                        const t = u.targetUnit;
+                        targetInfo = `En:Unit(${t.id}) @${t.gridX.toFixed(1)},${t.gridZ.toFixed(1)}`;
+                        targetDist = `Dst:${u.getDistance(t.gridX, t.gridZ).toFixed(1)}`;
+                    } else if (u.targetBuilding) {
+                        const t = u.targetBuilding;
+                        const tx = t.gridX !== undefined ? t.gridX : (t.userData ? t.userData.gridX : 0);
+                        const tz = t.gridZ !== undefined ? t.gridZ : (t.userData ? t.userData.gridZ : 0);
+                        targetInfo = `Build:${t.id || 'Obj'} @${tx.toFixed(1)},${tz.toFixed(1)}`;
+                        targetDist = `Dst:${u.getDistance(tx, tz).toFixed(1)}`;
+                    }
+
+                    const throttleInfo = `Throttled:${u.isPathfindingThrottled ? "YES (Wait)" : "NO"}`;
+                    const lastPathInfo = `LastP:${(u.lastPathTime || 0).toFixed(1)} `;
+                    const failsafeInfo = `Unreachable:${u.isUnreachable || false} Dead:${u.isDead} Stuck:${u.stuckCount || 0}`;
+
+                    let failInfo = "No Recent Fail";
+                    if (u.lastFailureReason && (now - (u.lastFailureTime || 0) < 5.0)) {
+                        failInfo = `FAIL: ${u.lastFailureReason} (${(now - u.lastFailureTime).toFixed(1)}s ago)`;
+                    }
+
+                    let isStillActive = false;
+                    if (isUnit) isStillActive = this.units.includes(u);
+                    else if (isGoblin && this.goblinManager) isStillActive = this.goblinManager.goblins.includes(u);
+                    else isStillActive = !u.isDead;
+
+                    if (u.isDead || !isStillActive) {
+                        panel.innerText = `[${typeLabel} ${u.id}] Disposed / Dead`;
+                    } else {
+                        let txt = `[${typeLabel} ${u.id}] ${u.role || u.type || ''} \n`;
+                        txt += `${hpInfo} | ${posInfo}\n`;
+                        txt += `State: ${stateName} \n`;
+                        if (u.lastJobResult) txt += `LastJob: ${u.lastJobResult} / Log: ${u.lastMoveLog || ''}\n`;
+                        txt += `${reqInfo}\n${pathInfo}\n${moveInfo}\n`;
+                        txt += `${targetInfo} | ${targetDist} | ${throttleInfo}\n`;
+                        txt += `${failsafeInfo} | ${lastPathInfo}\n`;
+                        txt += `--------------------\n`;
+                        txt += `${failInfo}`;
+                        panel.innerText = txt;
+                    }
+                    panel.style.display = 'block';
+                } catch (e) {
+                    console.error("[Game] Debug panel update error:", e);
+                }
+            }
+
+            this.renderer.render(this.scene, this.camera);
+            if (this.performanceMonitor) {
+                this.performanceMonitor.endRender();
+                this.performanceMonitor.update(this);
+            }
         } catch (fatalError) {
-            this.logErrorThrottle("FATAL_GAME_LOOP", fatalError);
+            console.error("[Game] FATAL_GAME_LOOP", fatalError);
         }
     }
 
@@ -2814,16 +2888,12 @@ export class Game {
         this.isLoading = true; // LOCK
         console.log(`[Game] Starting Level ${this.currentLevelIndex + 1} with Seed ${this.terrain?.seed}`);
 
-        // Reset Resources for New Campaign/Level Start
-        this.resources = { grain: 50, fish: 50, meat: 0 };
-        this.mana = 100;
-        this.totalPopulation = 0;
-
-        // Use the seed that was generated during preview
-        await this.startLevel(this.currentLevelIndex, this.terrain?.seed || null);
+        // [USER_REQUEST] リセット処理を削除し、プレビュー時の状態を維持
+        // Use the seed that was generated during preview, and DO NOT reset stats
+        await this.startLevel(this.currentLevelIndex, this.terrain?.seed || null, false);
     }
 
-    async startLevel(levelIndex: number, specificSeed: number | null = null) {
+    async startLevel(levelIndex: number, specificSeed: number | null = null, resetStats: boolean = true) {
         if (!Levels[levelIndex]) {
             console.error(`[Game] Level ${levelIndex} not found!`);
             return;
@@ -2831,12 +2901,22 @@ export class Game {
 
         const config = Levels[levelIndex];
         this.currentLevelIndex = levelIndex;
-        console.log(`[Game] Starting Level ${config.levelId}: ${config.title}, W=${config.mapWidth}`);
+        console.log(`[Game] Starting Level ${config.levelId}: ${config.title}, W=${config.mapWidth} (ResetStats=${resetStats})`);
 
-        // Reset Resources for New Level
-        this.resources = { grain: 50, fish: 50, meat: 0 };
-        this.mana = 100;
-        this.totalPopulation = 0;
+        if (resetStats) {
+            // Reset Resources for New Level Preview
+            this.resources = { grain: 50, fish: 50, meat: 0 };
+            this.mana = 100;
+            this.totalPopulation = 0;
+
+            // Reset Time to 8:00 AM for New Level Preview
+            this.gameTime = 8.0;
+            this.gameTotalTime = 0;
+            this.simTotalTimeSec = 0;
+            this.daysPassed = 0;
+            this.isNight = false;
+            this.prevTimeOfDay = 8.0;
+        }
 
         let preservedSeed: number | null = specificSeed;
 
@@ -2866,8 +2946,12 @@ export class Game {
         }
 
         // 2. Create New Terrain
-        console.log(`[Game] Creating New Terrain (${config.mapWidth}x${config.mapDepth})...`);
-        this.terrain = new Terrain(this.scene, this.clippingPlanes, config.mapWidth, config.mapDepth);
+        if (!this.minimal) {
+            console.log(`[Game] Creating New Terrain (${config.mapWidth}x${config.mapDepth})...`);
+            this.terrain = new Terrain(this.scene, this.clippingPlanes, config.mapWidth, config.mapDepth);
+        } else {
+            console.log("[Game] Minimal Mode: Skipping real Terrain creation in startLevel, using existing mock.");
+        }
 
         // 3. Update Manager References (CRITICAL)
         if (this.inputManager) this.inputManager.terrain = this.terrain;
@@ -2882,16 +2966,18 @@ export class Game {
 
 
         // 4. Generate Terrain Data (Async)
-        console.log("[Game] Generating Level Terrain Data...");
-        try {
-            await this.terrain.generateRandomTerrain(false, config.generation, preservedSeed);
-            console.log(`[Game] Terrain Generated. Seed: ${this.terrain.seed}`);
-        } catch (e) {
-            console.error("[Game] Level Terrain Generation Failed:", e);
-        }
+        if (!this.minimal) {
+            console.log("[Game] Generating Level Terrain Data...");
+            try {
+                await this.terrain.generateRandomTerrain(false, config.generation, preservedSeed);
+                console.log(`[Game] Terrain Generated. Seed: ${this.terrain.seed}`);
+            } catch (e) {
+                console.error("[Game] Level Terrain Generation Failed:", e);
+            }
 
-        this.terrain.updateMesh();
-        this.terrain.updateColors(this.isNight);
+            this.terrain.updateMesh();
+            this.terrain.updateColors(this.isNight);
+        }
 
         // Reset Managers
         if (this.goblinManager) {
@@ -3023,6 +3109,18 @@ export class Game {
             this.goblinManager.reset();
         }
 
+        if (this.sheepManager) {
+            this.sheepManager.reset();
+        }
+
+        if (this.fishManager) {
+            this.fishManager.reset();
+        }
+
+        if (this.seaDecorationRenderer) {
+            this.seaDecorationRenderer.dispose();
+        }
+
         // 2. Clear Requests
         if (this.requestQueue) {
             this.requestQueue.forEach(req => {
@@ -3047,6 +3145,11 @@ export class Game {
         if (this.seaDecorationRenderer) {
             this.seaDecorationRenderer.dispose();
         }
+
+        // 4. Force Tree Re-init
+        if (this.treeRenderer) {
+            this.treeRenderer.forceUpdate = true;
+        }
     }
 
     async regenerateWorld() {
@@ -3062,6 +3165,14 @@ export class Game {
 
         // Await terrain generation to ensure heights are ready before placing objects
         await this.terrain.generateRandomTerrain(false, previewConfig);
+
+        // [USER_REQUEST] 再生成プレビュー時にもリセット
+        this.resources = { grain: 50, fish: 50, meat: 0 };
+        this.mana = 100;
+        this.gameTime = 8.0;
+        this.simTotalTimeSec = 0;
+        this.prevTimeOfDay = 8.0;
+        this.isNight = false;
 
         // Force visual update
         this.terrain.updateMesh();
@@ -3471,9 +3582,19 @@ export class Game {
                     if (req.status === 'assigned') {
                         const owner = this.units.find(u => String(u.id) === String(req.assignedTo));
                         if (!owner || !owner.targetRequest || String(owner.targetRequest.id) !== String(req.id)) {
-                            console.log(`[Game] Ghost Assignment Cleaned: Request ${req.id} (assigned to ${req.assignedTo}) reset to pending.`);
-                            req.status = 'pending';
+                            // The 'now' variable is not defined in this scope. Assuming it should be this.simTotalTimeSec
+                            const now = this.simTotalTimeSec || 0;
+                            if (owner && owner.targetRequest && owner.targetRequest.id === req.id) {
+                                owner.targetRequest = null;
+                                if (owner.changeState && owner.getDefaultState) {
+                                    owner.changeState(owner.getDefaultState());
+                                }
+                            }
+                            console.warn(`[Game] Request ${req.id} reset due to Unit ${req.assignedTo} stagnation (${owner ? owner.action : 'unknown'}).`);
                             req.assignedTo = null;
+                            req.status = 'pending';
+                            req.excludedUntil = now + 5.0; // 5s cooldown
+                            req.lastAttempt = now;
                         }
                     }
                 });

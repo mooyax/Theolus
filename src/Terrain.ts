@@ -102,8 +102,6 @@ export class Terrain {
                 if (type === 'PATH_RESULT') {
                     const req = this.workerRequests!.get(id);
                     if (req) {
-                        const count = payload ? payload.length : 0;
-                        // console.log(`[Terrain] Path Response ID:${id} Length:${count}`);
                         req.resolve(payload);
                         this.workerRequests!.delete(id);
                     }
@@ -115,10 +113,11 @@ export class Terrain {
                         this.workerRequests!.delete(id);
                     }
                 } else if (type === 'DEBUG_GET_HEIGHT') {
-                    // Handled by console.log inside worker, but if we wanted to pass back...
+                    console.log(`[Terrain] Worker Debug Height:`, payload);
                 }
             };
         }
+
         this.width = this.logicalWidth * 3; // Visual size (3x3 grid)
         this.depth = this.logicalDepth * 3;
 
@@ -144,8 +143,6 @@ export class Terrain {
         this.entityGrid = [];
         this.initEntityGrid();
     }
-
-
 
 
     // --- LCG PRNG for Deterministic Entity Placement ---
@@ -456,6 +453,7 @@ export class Terrain {
                 };
             }
         }
+        this.trees = []; // Clear trees when initializing grid
     }
 
     initMeshes() {
@@ -518,6 +516,7 @@ export class Terrain {
 
         // Reset Grid (Clear previous buildings, flags, etc.)
         this.initGrid();
+        this.trees = []; // Safety: Explicitly clear trees before generation
 
         // Populate Logical Grid
         for (let x = 0; x < this.logicalWidth; x++) {
@@ -3392,6 +3391,7 @@ export class Terrain {
         const D = this.logicalDepth;
         let count = 0;
         for (let x = 0; x < W; x++) {
+            if (!this.entityGrid[x]) continue;
             for (let z = 0; z < D; z++) {
                 const cell = this.entityGrid[x][z];
                 if (!cell || cell.length === 0) continue;

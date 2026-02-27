@@ -322,6 +322,10 @@ export class Unit extends Actor {
         this.attackCooldown = 0;
         this.attackRate = statConfig.attackRate || 1.0;
         this.attackRange = statConfig.attackRange || 2.0;
+        this.isRanged = !!statConfig.isRanged;
+        if (statConfig.projectileColor) {
+            this.projectileColor = statConfig.projectileColor;
+        }
 
         // Damage
         let baseDamage = GameConfig.units.worker.damage;
@@ -386,7 +390,7 @@ export class Unit extends Actor {
 
         // Initialize State Machine
         // Default to WanderState (which handles Idle/Wander/Sleep/Combat transitions)
-        if (typeof Wander !== 'undefined') {
+        if (typeof Wander !== 'undefined' && Wander !== null) {
             this.changeState(new Wander(this));
         } else {
             console.warn(`[Unit ${this.id}] Wander is undefined!`);
@@ -2075,6 +2079,8 @@ export class Unit extends Actor {
         // Restore Ignored Targets (Job Stability)
         if (data.ignoredTargets && Array.isArray(data.ignoredTargets)) {
             unit.ignoredTargets = new Map(data.ignoredTargets);
+        } else {
+            unit.ignoredTargets = new Map();
         }
 
         // Restore raidGoal (Raid Goal Persistence)

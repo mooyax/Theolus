@@ -998,6 +998,7 @@ export class GoblinManager {
             // Restore Clans
             this.clans = {};
             if (data.clans) {
+                console.log(`[GoblinLoadDebug] Restoring ${data.clans.length} clans...`);
                 data.clans.forEach(cd => {
                     this.clans[cd.id] = {
                         id: cd.id,
@@ -1011,6 +1012,7 @@ export class GoblinManager {
             }
 
             // Restore Caves
+            console.log(`[GoblinLoadDebug] Restoring caves...`);
             this.caves = [];
             if (data.caves) {
                 data.caves.forEach(cd => {
@@ -1030,6 +1032,7 @@ export class GoblinManager {
             }
 
             // Restore Goblins
+            console.log(`[GoblinLoadDebug] Restoring goblins...`);
             // CRITICAL FIX: Explicitly remove ALL existing goblins from Terrain (including Orphans/Ghosts)
             if (this.terrain && this.terrain.unregisterAll) {
                 this.terrain.unregisterAll('goblin');
@@ -1045,11 +1048,18 @@ export class GoblinManager {
             this.goblins = [];
 
             if (data.goblins && Array.isArray(data.goblins)) {
+                console.log(`[GoblinLoadDebug] Found ${data.goblins.length} goblins in data.`);
                 data.goblins.forEach(gd => {
                     try {
                         // Restore Stats
                         const x = gd.x !== undefined ? gd.x : gd.gridX;
                         const z = gd.z !== undefined ? gd.z : gd.gridZ;
+                        // Add guard for undefined x or z
+                        if (x === undefined || z === undefined) {
+                            console.warn(`GoblinManager: Skipping goblin restoration due to undefined coordinates: x=${x}, z=${z}`, gd);
+                            return;
+                        }
+
                         const type = gd.t || gd.type || 'normal';
                         const clanId = gd.c || gd.clanId || `clan_${x}_${z}`; // Infer clanId if missing
 

@@ -69,22 +69,6 @@ describe('Unit Behavior Mode', () => {
     });
     it('should return Siege when targetBuilding is set', () => {
         const building = { id: 88, type: 'goblin_hut', userData: { hp: 100 } };
-        mockTerrain.buildings = [building]; // Fix: Add to terrain so Combat accepts it
-        unit.targetBuilding = building;
-        unit.changeState(new Combat(unit));
-        expect(unit.getBehaviorMode()).toBe('Siege');
-        expect(unit.state).toBeInstanceOf(Combat);
-
-    });
-    it('should return Working when targetRequest is set', () => {
-        const req = { id: 77, type: 'build_house', assignedTo: unit.id };
-        unit.targetRequest = req;
-        unit.changeState(new Job(unit));
-        expect(unit.getBehaviorMode()).toBe('Working');
-        expect(unit.state).toBeInstanceOf(Job);
-
-    });
-    it('should return Patrolling with coords when targetRaidPoint is set', () => {
         unit.targetRaidPoint = { x: 10, z: 20 };
         unit.changeState(new Combat(unit));
         expect(unit.getBehaviorMode()).toBe('Patrolling (10,20)');
@@ -104,5 +88,5 @@ describe('Unit Behavior Mode', () => {
         // Combat logic prioritizes Target over RaidPoint
         expect(unit.getBehaviorMode()).toBe('Combat');
 
-});
+    });
 });

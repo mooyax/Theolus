@@ -551,61 +551,68 @@ export class BuildingRenderer {
                     dummy.updateMatrix();
 
                     if (b.type === 'house' && hIdx < this.MAX_INSTANCES) {
-                        this.meshes.houseWalls.setMatrixAt(hIdx, dummy.matrix);
-                        this.meshes.houseRoofs.setMatrixAt(hIdx, dummy.matrix);
-
-                        // Faction Color
-                        if (b.userData && b.userData.faction === 'enemy') {
-                            this.meshes.houseRoofs.setColorAt(hIdx, colorRoofEnemy);
-                        } else {
-                            this.meshes.houseRoofs.setColorAt(hIdx, colorRoof);
+                        if (this.meshes.houseWalls) this.meshes.houseWalls.setMatrixAt(hIdx, dummy.matrix);
+                        if (this.meshes.houseRoofs) {
+                            this.meshes.houseRoofs.setMatrixAt(hIdx, dummy.matrix);
+                            // Faction Color
+                            if (b.userData && b.userData.faction === 'enemy') {
+                                this.meshes.houseRoofs.setColorAt(hIdx, colorRoofEnemy);
+                            } else {
+                                this.meshes.houseRoofs.setColorAt(hIdx, colorRoof);
+                            }
                         }
                         hIdx++;
                     } else if (b.type === 'farm' && fIdx < this.MAX_INSTANCES) {
-                        this.meshes.farms.setMatrixAt(fIdx, dummy.matrix);
-
-                        // Faction Color for Farms
-                        if (b.userData && b.userData.faction === 'enemy') {
-                            this.meshes.farms.setColorAt(fIdx, new THREE.Color(0x3E2723)); // Dark Muddy Brown
-                        } else {
-                            this.meshes.farms.setColorAt(fIdx, new THREE.Color(0xA8E4A0)); // Soft Green (Mixed with yellow texture = healthy field)
+                        if (this.meshes.farms) {
+                            this.meshes.farms.setMatrixAt(fIdx, dummy.matrix);
+                            // Faction Color for Farms
+                            if (b.userData && b.userData.faction === 'enemy') {
+                                this.meshes.farms.setColorAt(fIdx, new THREE.Color(0x3E2723)); // Dark Muddy Brown
+                            } else {
+                                this.meshes.farms.setColorAt(fIdx, new THREE.Color(0xA8E4A0)); // Soft Green
+                            }
                         }
-
                         fIdx++;
                     } else if (b.type === 'barracks' && mIdx < this.MAX_INSTANCES) {
-                        this.meshes.barracksWalls.setMatrixAt(mIdx, dummy.matrix);
-                        this.meshes.barracksRoofs.setMatrixAt(mIdx, dummy.matrix);
-
-                        // Faction Color
-                        if (b.userData && b.userData.faction === 'enemy') {
-                            this.meshes.barracksRoofs.setColorAt(mIdx, colorRoofEnemy);
-                        } else {
-                            this.meshes.barracksRoofs.setColorAt(mIdx, colorBarracksRoof);
+                        if (this.meshes.barracksWalls) this.meshes.barracksWalls.setMatrixAt(mIdx, dummy.matrix);
+                        if (this.meshes.barracksRoofs) {
+                            this.meshes.barracksRoofs.setMatrixAt(mIdx, dummy.matrix);
+                            // Faction Color
+                            if (b.userData && b.userData.faction === 'enemy') {
+                                this.meshes.barracksRoofs.setColorAt(mIdx, colorRoofEnemy);
+                            } else {
+                                this.meshes.barracksRoofs.setColorAt(mIdx, colorBarracksRoof);
+                            }
                         }
-
                         mIdx++;
                     } else if (b.type === 'goblin_hut' && gIdx < this.MAX_INSTANCES) {
-                        this.meshes.goblinHuts.setMatrixAt(gIdx, dummy.matrix);
-                        this.meshes.goblinHuts.setColorAt(gIdx, colorGoblinHut);
+                        if (this.meshes.goblinHuts) {
+                            this.meshes.goblinHuts.setMatrixAt(gIdx, dummy.matrix);
+                            this.meshes.goblinHuts.setColorAt(gIdx, colorGoblinHut);
+                        }
                         gIdx++;
                     } else if (b.type === 'tower' && tIdx < this.MAX_INSTANCES) {
-                        this.meshes.towers.setMatrixAt(tIdx, dummy.matrix);
-                        // Faction Color (Tower Body)
-                        if (b.userData && b.userData.faction === 'enemy') {
-                            this.meshes.towers.setColorAt(tIdx, colorRoofEnemy); // Dark Brown
-                        } else {
-                            this.meshes.towers.setColorAt(tIdx, colorTowerPlayer);
+                        if (this.meshes.towers) {
+                            this.meshes.towers.setMatrixAt(tIdx, dummy.matrix);
+                            // Faction Color (Tower Body)
+                            if (b.userData && b.userData.faction === 'enemy') {
+                                this.meshes.towers.setColorAt(tIdx, colorRoofEnemy); // Dark Brown
+                            } else {
+                                this.meshes.towers.setColorAt(tIdx, colorTowerPlayer);
+                            }
                         }
 
-                        this.meshes.towerRims.setMatrixAt(tIdx, dummy.matrix);
-                        if (b.userData && b.userData.faction === 'enemy') {
-                            this.meshes.towerRims.setColorAt(tIdx, colorTowerEnemy); // Darker Brown
-                        } else {
-                            this.meshes.towerRims.setColorAt(tIdx, colorTowerPlayer);
+                        if (this.meshes.towerRims) {
+                            this.meshes.towerRims.setMatrixAt(tIdx, dummy.matrix);
+                            if (b.userData && b.userData.faction === 'enemy') {
+                                this.meshes.towerRims.setColorAt(tIdx, colorTowerEnemy); // Darker Brown
+                            } else {
+                                this.meshes.towerRims.setColorAt(tIdx, colorTowerPlayer);
+                            }
                         }
                         tIdx++;
                     } else if (b.type === 'cave' && cIdx < this.MAX_INSTANCES) {
-                        this.meshes.caves.setMatrixAt(cIdx, dummy.matrix);
+                        if (this.meshes.caves) this.meshes.caves.setMatrixAt(cIdx, dummy.matrix);
                         cIdx++;
                     }
                 }
@@ -616,39 +623,51 @@ export class BuildingRenderer {
             // console.log(`[BuildingRenderer] Updated Buffers. House:${hIdx}, Farm:${fIdx} (BaseGrid: ${baseGridX},${baseGridZ})`);
         }
 
-        this.meshes.houseWalls.count = hIdx;
+        if (this.meshes.houseWalls) this.meshes.houseWalls.count = hIdx;
+        if (this.meshes.houseRoofs) this.meshes.houseRoofs.count = hIdx;
+        if (this.meshes.farms) this.meshes.farms.count = fIdx;
+        if (this.meshes.goblinHuts) this.meshes.goblinHuts.count = gIdx;
+        if (this.meshes.barracksWalls) this.meshes.barracksWalls.count = mIdx;
+        if (this.meshes.barracksRoofs) this.meshes.barracksRoofs.count = mIdx;
+        if (this.meshes.towers) this.meshes.towers.count = tIdx;
+        if (this.meshes.towerRims) this.meshes.towerRims.count = tIdx;
+        if (this.meshes.caves) this.meshes.caves.count = cIdx;
 
-        this.meshes.houseRoofs.count = hIdx;
-        this.meshes.farms.count = fIdx;
-        this.meshes.goblinHuts.count = gIdx;
-        this.meshes.barracksWalls.count = mIdx;
-        // this.meshes.barracksWalls.count = mIdx; // Duplicate line removed
-        this.meshes.barracksRoofs.count = mIdx;
-        this.meshes.towers.count = tIdx;
-        this.meshes.towerRims.count = tIdx;
+        if (this.meshes.houseWalls) this.meshes.houseWalls.instanceMatrix.needsUpdate = true;
+        if (this.meshes.houseRoofs) {
+            this.meshes.houseRoofs.instanceMatrix.needsUpdate = true;
+            if (this.meshes.houseRoofs.instanceColor) this.meshes.houseRoofs.instanceColor.needsUpdate = true;
+        }
 
-        this.meshes.houseWalls.instanceMatrix.needsUpdate = true;
-        this.meshes.houseRoofs.instanceMatrix.needsUpdate = true;
-        if (this.meshes.houseRoofs.instanceColor) this.meshes.houseRoofs.instanceColor.needsUpdate = true;
+        if (this.meshes.farms) {
+            this.meshes.farms.instanceMatrix.needsUpdate = true;
+            if (this.meshes.farms.instanceColor) this.meshes.farms.instanceColor.needsUpdate = true;
+        }
 
-        this.meshes.farms.instanceMatrix.needsUpdate = true;
-        if (this.meshes.farms.instanceColor) this.meshes.farms.instanceColor.needsUpdate = true;
+        if (this.meshes.goblinHuts) {
+            this.meshes.goblinHuts.instanceMatrix.needsUpdate = true;
+            if (this.meshes.goblinHuts.instanceColor) this.meshes.goblinHuts.instanceColor.needsUpdate = true;
+        }
 
-        this.meshes.goblinHuts.instanceMatrix.needsUpdate = true;
-        if (this.meshes.goblinHuts.instanceColor) this.meshes.goblinHuts.instanceColor.needsUpdate = true;
+        if (this.meshes.barracksWalls) this.meshes.barracksWalls.instanceMatrix.needsUpdate = true;
+        if (this.meshes.barracksRoofs) {
+            this.meshes.barracksRoofs.instanceMatrix.needsUpdate = true;
+            if (this.meshes.barracksRoofs.instanceColor) this.meshes.barracksRoofs.instanceColor.needsUpdate = true;
+        }
 
-        this.meshes.barracksWalls.instanceMatrix.needsUpdate = true;
-        this.meshes.barracksRoofs.instanceMatrix.needsUpdate = true;
-        if (this.meshes.barracksRoofs.instanceColor) this.meshes.barracksRoofs.instanceColor.needsUpdate = true;
+        if (this.meshes.towers) {
+            this.meshes.towers.instanceMatrix.needsUpdate = true;
+            if (this.meshes.towers.instanceColor) this.meshes.towers.instanceColor.needsUpdate = true;
+        }
 
-        this.meshes.towers.instanceMatrix.needsUpdate = true;
-        if (this.meshes.towers.instanceColor) this.meshes.towers.instanceColor.needsUpdate = true;
+        if (this.meshes.towerRims) {
+            this.meshes.towerRims.instanceMatrix.needsUpdate = true;
+            if (this.meshes.towerRims.instanceColor) this.meshes.towerRims.instanceColor.needsUpdate = true;
+        }
 
-        this.meshes.towerRims.instanceMatrix.needsUpdate = true;
-        if (this.meshes.towerRims.instanceColor) this.meshes.towerRims.instanceColor.needsUpdate = true;
-
-        this.meshes.caves.count = cIdx;
-        this.meshes.caves.instanceMatrix.needsUpdate = true;
+        if (this.meshes.caves) {
+            this.meshes.caves.instanceMatrix.needsUpdate = true;
+        }
     }
 
     updateLighting(isNight) {
