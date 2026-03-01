@@ -75,8 +75,8 @@ export class UnitRenderer extends BaseEntityRenderer {
 
         this.swordMesh = this.createMesh(assets.geometries.sword, assets.materials.metal);
         this.staffMesh = this.createMesh(assets.geometries.staff, assets.materials.wood);
-        this.hatMesh = this.createMesh(assets.geometries.wizardHat, assets.materials.wizardHat);
-        this.hatBrimMesh = this.createMesh(assets.geometries.wizardHatBrim, assets.materials.wizardHat);
+        this.hatMesh = this.createMesh(assets.geometries.wizardHat, whiteMat);
+        this.hatBrimMesh = this.createMesh(assets.geometries.wizardHatBrim, whiteMat);
         this.visorMesh = this.createMesh(assets.geometries.head, whiteMat); // Visor uses head geo but scaled
 
         this.indicatorTopMesh = this.createMesh(assets.geometries.jobIndicatorTop, assets.materials.redIndicator, 1000);
@@ -278,6 +278,11 @@ export class UnitRenderer extends BaseEntityRenderer {
             dummy.updateMatrix();
             this.hatMesh.setMatrixAt(this.countBody, dummy.matrix);
             this.hatBrimMesh.setMatrixAt(this.countBody, dummy.matrix);
+
+            // Set Hat Color based on faction
+            const hatColor = (unit.faction === 'enemy') ? new THREE.Color(0x8B4513) : new THREE.Color(0x333388);
+            this.hatMesh.setColorAt(this.countBody, hatColor);
+            this.hatBrimMesh.setColorAt(this.countBody, hatColor);
         } else {
             dummy.scale.set(0, 0, 0);
             dummy.updateMatrix();
@@ -289,7 +294,8 @@ export class UnitRenderer extends BaseEntityRenderer {
         // Job Indicator
         const isActuallyAssigned = unit.targetRequest &&
             unit.targetRequest.status === 'assigned' &&
-            String(unit.targetRequest.assignedTo) === String(unit.id);
+            String(unit.targetRequest.assignedTo) === String(unit.id) &&
+            unit.faction !== 'enemy';
 
         if (isActuallyAssigned && this.indicatorTopMesh && this.countIndicator < 1000) {
             const floatY = Math.sin(Date.now() * 0.005) * 0.1;
