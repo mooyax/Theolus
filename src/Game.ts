@@ -494,7 +494,7 @@ export class Game {
             this.controls.dampingFactor = 0.05;
             this.controls.screenSpacePanning = false;
             this.controls.minZoom = 0.25;
-            this.controls.maxZoom = 4.0;
+            this.controls.maxZoom = 8.0;
             this.controls.maxPolarAngle = Math.PI / 2;
 
             if ((THREE as any).MOUSE) {
