@@ -2732,7 +2732,7 @@ export class Game {
                         this.treeRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
                     }
                     if (this.landDecorationRenderer && typeof this.landDecorationRenderer.update === 'function') {
-                        this.landDecorationRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0);
+                        this.landDecorationRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity || 1.0);
                     }
                     if (this.cloudManager && typeof this.cloudManager.update === 'function') {
                         this.cloudManager.update(deltaTime, this.simTotalTimeSec || 0);
@@ -2753,7 +2753,7 @@ export class Game {
                         this.treeRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
                     }
                     if (this.landDecorationRenderer && typeof this.landDecorationRenderer.update === 'function') {
-                        this.landDecorationRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0);
+                        this.landDecorationRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity || 1.0);
                     }
                 } catch (e) {
                     console.error("[Game] Loading-render-update error:", e);
@@ -3008,6 +3008,7 @@ export class Game {
         if (this.fishManager) this.fishManager.terrain = this.terrain;
         if (this.sheepManager) this.sheepManager.terrain = this.terrain;
         if (this.seaDecorationRenderer) this.seaDecorationRenderer.terrain = this.terrain;
+        if (this.landDecorationRenderer) this.landDecorationRenderer.terrain = this.terrain;
 
 
         // 4. Generate Terrain Data (Async)
@@ -3400,8 +3401,10 @@ export class Game {
 
             await checkYield();
 
-            // Re-link InputManager
+            // Re-link InputManager and Decoration Renderers
             if (this.inputManager) this.inputManager.unitRenderer = this.unitRenderer;
+            if (this.landDecorationRenderer) this.landDecorationRenderer.terrain = this.terrain;
+            if (this.treeRenderer) this.treeRenderer.terrain = this.terrain;
 
             // Terrain Finished (~50%) -> Jump to 60% (Rebuild Mesh overhead)
             if (loadingBar) loadingBar.style.width = '60%';

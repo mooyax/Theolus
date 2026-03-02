@@ -109,12 +109,17 @@ export class LandDecorationRenderer {
         });
 
         // Apply Wind Sway Shader (Similar to TreeRenderer)
-        const applySway = (mat) => {
+        const applySway = (mat, isFlower = true) => {
             mat.onBeforeCompile = (shader) => {
                 shader.uniforms.uTime = { value: 0 };
+                shader.uniforms.uSwayIntensity = { value: 1.0 };
                 shader.vertexShader = `
                     uniform float uTime;
+                    uniform float uSwayIntensity;
                 ` + shader.vertexShader;
+
+                const swaySpeed = isFlower ? "1.5" : "1.2";
+                const swayRange = isFlower ? "0.08" : "0.04";
 
                 shader.vertexShader = shader.vertexShader.replace(
                     '#include <begin_vertex>',
@@ -125,7 +130,10 @@ export class LandDecorationRenderer {
                     #else
                         vec3 wPos = vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2]);
                     #endif
-                    float sway = sin(uTime * 2.0 + wPos.x * 0.5 + wPos.z * 0.3) * 0.05 * position.y;
+                    // Sway more at the top, less at bottom. 
+                    // Lower flowers/mushrooms sway less than trees.
+                    float heightFactor = max(0.0, position.y);
+                    float sway = sin(uTime * ${swaySpeed} + wPos.x * 0.5 + wPos.z * 0.3) * ${swayRange} * heightFactor * uSwayIntensity;
                     transformed.x += sway;
                     transformed.z += sway * 0.5;
                     `
@@ -134,8 +142,8 @@ export class LandDecorationRenderer {
             };
         };
 
-        applySway(this.assets.flowerMat);
-        applySway(this.assets.mushroomMat);
+        applySway(this.assets.flowerMat, true);
+        applySway(this.assets.mushroomMat, false);
     }
 
     initInstancedMeshes() {
@@ -156,12 +164,18 @@ export class LandDecorationRenderer {
         this.meshes.mushroomCaps = make(this.assets.mushroomCapGeo, this.assets.mushroomMat);
     }
 
-    update(viewCenter, time = 0) {
+    update(viewCenter, time = 0, swayIntensity = 1.0) {
         if (!this.initialized || !this.terrain) return;
 
         // Update Uniforms
-        if (this.assets.flowerMat.userData.shader) this.assets.flowerMat.userData.shader.uniforms.uTime.value = time;
-        if (this.assets.mushroomMat.userData.shader) this.assets.mushroomMat.userData.shader.uniforms.uTime.value = time;
+        if (this.assets.flowerMat.userData.shader) {
+            this.assets.flowerMat.userData.shader.uniforms.uTime.value = time;
+            this.assets.flowerMat.userData.shader.uniforms.uSwayIntensity.value = swayIntensity;
+        }
+        if (this.assets.mushroomMat.userData.shader) {
+            this.assets.mushroomMat.userData.shader.uniforms.uTime.value = time;
+            this.assets.mushroomMat.userData.shader.uniforms.uSwayIntensity.value = swayIntensity;
+        }
 
         const terrain = this.terrain;
         const viewRadius = 80; // Reasonable culling radius
@@ -177,8 +191,16 @@ export class LandDecorationRenderer {
             new THREE.Color(0xB388FF)  // Purple
         ];
 
-        if (this.terrain.currentSeason !== 'Winter') {
+        const season = terrain.currentSeason || 'Spring';
+        if (season !== 'Winter') {
             for (const f of terrain.flowers) {
+                // Seasonal Filter for Flowers
+                if (season === 'Autumn') {
+                    // Only show ~40% of flowers in Autumn (using grid position for stable randomness)
+                    const fHash = (Math.sin(f.gridX * 12.9898 + f.gridZ * 78.233) * 43758.5453) % 1;
+                    if (Math.abs(fHash) > 0.4) continue;
+                }
+
                 const worldPos = terrain.getVisualPosition(f.gridX, f.gridZ);
                 const dx = worldPos.x - viewCenter.x;
                 const dz = worldPos.z - viewCenter.z;
@@ -188,7 +210,6 @@ export class LandDecorationRenderer {
                 const exactY = terrain.getVisualHeight(worldPos.x, worldPos.z);
                 dummy.position.set(worldPos.x, exactY - 0.05, worldPos.z);
                 dummy.rotation.set(f.rotationX || 0, f.rotationY, f.rotationZ || 0);
-
 
                 dummy.scale.set(f.scale, f.scale, f.scale);
                 dummy.updateMatrix();
@@ -216,28 +237,36 @@ export class LandDecorationRenderer {
             new THREE.Color(0xFFCA28)  // Orange/Golden
         ];
 
-        for (const m of terrain.mushrooms) {
-            const worldPos = terrain.getVisualPosition(m.gridX, m.gridZ);
-            const dx = worldPos.x - viewCenter.x;
-            const dz = worldPos.z - viewCenter.z;
-            if (dx * dx + dz * dz > viewRadius * viewRadius) continue;
-            if (mIdx >= this.MAX_INSTANCES) break;
+        if (season !== 'Winter') {
+            for (const m of terrain.mushrooms) {
+                // Seasonal Filter for Mushrooms
+                if (season === 'Spring' || season === 'Summer') {
+                    // Only show in high moisture areas (>0.7) during Spring/Summer
+                    const moisture = terrain.getMoisture(m.gridX, m.gridZ);
+                    if (moisture < 0.7) continue;
+                }
 
-            const exactY = terrain.getVisualHeight(worldPos.x, worldPos.z);
-            dummy.position.set(worldPos.x, exactY - 0.05, worldPos.z);
-            dummy.rotation.set(m.rotationX || 0, m.rotationY, m.rotationZ || 0);
+                const worldPos = terrain.getVisualPosition(m.gridX, m.gridZ);
+                const dx = worldPos.x - viewCenter.x;
+                const dz = worldPos.z - viewCenter.z;
+                if (dx * dx + dz * dz > viewRadius * viewRadius) continue;
+                if (mIdx >= this.MAX_INSTANCES) break;
 
+                const exactY = terrain.getVisualHeight(worldPos.x, worldPos.z);
+                dummy.position.set(worldPos.x, exactY - 0.05, worldPos.z);
+                dummy.rotation.set(m.rotationX || 0, m.rotationY, m.rotationZ || 0);
 
-            dummy.scale.set(m.scale, m.scale, m.scale);
-            dummy.updateMatrix();
+                dummy.scale.set(m.scale, m.scale, m.scale);
+                dummy.updateMatrix();
 
-            this.meshes.mushroomStems.setMatrixAt(mIdx, dummy.matrix);
-            this.meshes.mushroomCaps.setMatrixAt(mIdx, dummy.matrix);
+                this.meshes.mushroomStems.setMatrixAt(mIdx, dummy.matrix);
+                this.meshes.mushroomCaps.setMatrixAt(mIdx, dummy.matrix);
 
-            this.meshes.mushroomCaps.setColorAt(mIdx, capCols[m.type % capCols.length]);
-            this.meshes.mushroomStems.setColorAt(mIdx, new THREE.Color(1, 1, 1)); // Keep stem neutral
+                this.meshes.mushroomCaps.setColorAt(mIdx, capCols[m.type % capCols.length]);
+                this.meshes.mushroomStems.setColorAt(mIdx, new THREE.Color(1, 1, 1)); // Keep stem neutral
 
-            mIdx++;
+                mIdx++;
+            }
         }
         this.meshes.mushroomStems.count = mIdx;
         this.meshes.mushroomCaps.count = mIdx;
