@@ -67,6 +67,8 @@ export class Terrain {
     public grid: any[][] = [];
     public entityGrid: any[][][]; // x, z -> array of entities
     public trees: { gridX: number, gridZ: number, rotationY: number, scale: number, gridY?: number }[] = [];
+    public flowers: { gridX: number, gridZ: number, rotationX?: number, rotationY: number, rotationZ?: number, scale: number, type: number }[] = [];
+    public mushrooms: { gridX: number, gridZ: number, rotationX?: number, rotationY: number, rotationZ?: number, scale: number, type: number }[] = [];
     public readyPromise: Promise<void>;
     private resolveReady!: () => void;
 
@@ -456,6 +458,8 @@ export class Terrain {
             }
         }
         this.trees = []; // Clear trees when initializing grid
+        this.flowers = [];
+        this.mushrooms = [];
     }
 
     initMeshes() {
@@ -521,6 +525,8 @@ export class Terrain {
         // Reset Grid (Clear previous buildings, flags, etc.)
         this.initGrid();
         this.trees = []; // Safety: Explicitly clear trees before generation
+        this.flowers = [];
+        this.mushrooms = [];
 
         // Populate Logical Grid
         for (let x = 0; x < this.logicalWidth; x++) {
@@ -594,6 +600,7 @@ export class Terrain {
 
         // Generate Trees
         await this.generateTrees(isPreview, genParams);
+        await this.generateLandDecorations(isPreview, genParams);
 
         this.syncToWorker(); // Send initial data to worker
         this.resolveReady();
@@ -1653,7 +1660,7 @@ export class Terrain {
     generateTreesAt(x: number, z: number, densityFactor: number = 1.0) {
         const cell = this.grid[x][z];
         if (!cell) return;
-        
+
         // RIVER GUARD: Do not spawn trees on or very close to rivers
         if (cell.riverIntensity && cell.riverIntensity > 0.1) return;
 
@@ -1688,6 +1695,97 @@ export class Terrain {
                 scale: 1.5 + sc * 1.0 // 1.5 ~ 2.5
             });
         }
+    }
+
+    async generateLandDecorations(isPreview = false, genParams: any = null) {
+        const densityFactor = (genParams && genParams.decorationDensity !== undefined) ? genParams.decorationDensity : 1.0;
+        for (let x = 0; x < this.logicalWidth; x++) {
+            await this.checkYield();
+            for (let z = 0; z < this.logicalDepth; z++) {
+                this.generateFlowersAt(x, z, densityFactor);
+                this.generateMushroomsAt(x, z, densityFactor);
+            }
+        }
+    }
+
+    generateFlowersAt(x: number, z: number, densityFactor: number = 1.0) {
+        const cell = this.grid[x][z];
+        if (!cell || (cell.riverIntensity && cell.riverIntensity > 0.1) || cell.hasBuilding) return;
+
+        const h = cell.height;
+        const m = cell.moisture !== undefined ? cell.moisture : 0.5;
+
+        // Grasslands: Height 1.2-4, Moisture > 0.3 (Tightened from 1.0 to avoid sea overlap)
+        if (h < 1.2 || h > 4.0 || m < 0.3) return;
+
+        // --- Cluster Logic ---
+        // We use a larger grid size for the cluster check (e.g., 5x5)
+        const clusterSize = 5;
+        const cx = Math.floor(x / clusterSize);
+        const cz = Math.floor(z / clusterSize);
+
+        // Probability of a 5x5 area having a flower cluster (Reduced from 0.15 to 0.08)
+        const clusterRand = this.random(cx, cz, this.seed + 4000);
+        if (clusterRand > 0.08) return;
+
+        // Within the cluster, increased probability of successful placement
+        const dRand = this.random(x, z, this.seed + 2000);
+        if (dRand > 0.4 * densityFactor) return; // 40% chance within valid cluster area
+
+        const count = this.random(x, z, this.seed + 2100) < 0.7 ? 1 : 2;
+        for (let i = 0; i < count; i++) {
+            // Restrict offset to 0.1-0.9 range to stay away from tile edges
+            const ix = 0.1 + this.random(x + i, z, this.seed + 2200) * 0.8;
+            const iz = 0.1 + this.random(x, z + i, this.seed + 2300) * 0.8;
+            const rot = this.random(x + i, z + i, this.seed + 2400);
+            const rotX = (this.random(x + i, z + i, this.seed + 2700) - 0.5) * 0.4;
+            const rotZ = (this.random(x + i, z + i, this.seed + 2800) - 0.5) * 0.4;
+            const type = Math.floor(this.random(cx, cz, this.seed + 2500) * 4); // Same color within a cluster
+
+            this.flowers.push({
+                gridX: x + ix,
+                gridZ: z + iz,
+                rotationX: rotX,
+                rotationY: rot * Math.PI * 2,
+                rotationZ: rotZ,
+                scale: 0.5 + this.random(x, z, this.seed + 2600) * 0.3,
+                type: type
+            });
+
+        }
+    }
+
+    generateMushroomsAt(x: number, z: number, densityFactor: number = 1.0) {
+        const cell = this.grid[x][z];
+        if (!cell || (cell.riverIntensity && cell.riverIntensity > 0.1) || cell.hasBuilding) return;
+
+        const h = cell.height;
+        const m = cell.moisture !== undefined ? cell.moisture : 0.5;
+
+        // Forests: Height 4-9, Moisture > 0.5
+        if (h < 4.0 || h > 9.0 || m < 0.5) return;
+
+        const dRand = this.random(x, z, this.seed + 3000);
+        if (dRand > 0.07 * densityFactor) return; // Reduced from 0.15 to 0.07 base density for mushrooms
+
+        const count = 1; // Mushrooms usually appear single or small clusters, but we do 1 per successful roll
+        const ix = this.random(x, z, this.seed + 3100);
+        const iz = this.random(x, z, this.seed + 3200);
+        const rot = this.random(x, z, this.seed + 3300);
+        const rotX = (this.random(x, z, this.seed + 3600) - 0.5) * 0.4;
+        const rotZ = (this.random(x, z, this.seed + 3700) - 0.5) * 0.4;
+        const type = Math.floor(this.random(x, z, this.seed + 3400) * 3); // 3 types of mushrooms
+
+        this.mushrooms.push({
+            gridX: x + ix,
+            gridZ: z + iz,
+            rotationX: rotX,
+            rotationY: rot * Math.PI * 2,
+            rotationZ: rotZ,
+            scale: 0.4 + this.random(x, z, this.seed + 3500) * 0.3,
+            type: type
+        });
+
     }
 
     getBiomeColor(height: number, moisture: number, noise: number, isNight: boolean, season: string, lx: number, lz: number, forMinimap: boolean = false, targetColor: THREE.Color | null = null) {
@@ -1882,7 +1980,39 @@ export class Terrain {
         }
 
         // Propagate
+        totalChange += this.propagateHeightChange(queue, affectedTiles);
+
+        // Centralized Integrity Check
+        affectedTiles.forEach(key => {
+            const [tx, tz] = key.split(',').map(Number);
+            const cell = this.grid[tx][tz];
+            if (cell.hasBuilding && cell.building) {
+                if (!this.checkBuildingIntegrity(cell.building)) {
+                    this.removeBuilding(cell.building);
+                }
+            }
+        });
+
+        if (!this.isRestoring) {
+            this.updateMesh();
+            this.updateColors();
+            this.calculateRegions();
+        }
+
+        return totalChange;
+    }
+
+    private propagateHeightChange(queue: { x: number; z: number }[], affectedTiles: Set<string>): number {
+        let totalChange = 0;
         let head = 0;
+
+        const getWrapped = (x, z) => {
+            return {
+                x: (x + this.logicalWidth) % this.logicalWidth,
+                z: (z + this.logicalDepth) % this.logicalDepth
+            };
+        };
+
         while (head < queue.length) {
             const current = queue[head++];
             const cx = current.x;
@@ -1924,7 +2054,7 @@ export class Terrain {
                     queue.push(nw);
                     affectedTiles.add(`${nw.x},${nw.z}`);
                 }
-                // If difference < -1, push neighbor DOWN (if we lowered the center)
+                // If difference < -1, push neighbor DOWN
                 else if (diff < -1) {
                     const newH = currentHeight + 1;
                     totalChange += Math.abs(newH - neighborHeight);
@@ -1934,10 +2064,6 @@ export class Terrain {
                     affectedTiles.add(`${nw.x},${nw.z}`);
                 }
             }
-            // Check for building destruction on affected tiles
-            // Affected tiles are those sharing the vertex (cx, cz)
-            // (cx-1, cz-1), (cx, cz-1), (cx-1, cz), (cx, cz)
-            // We need to check if any building on these tiles is still valid (flat)
 
             const checkTiles = [
                 { x: (cx - 1 + this.logicalWidth) % this.logicalWidth, z: (cz - 1 + this.logicalDepth) % this.logicalDepth },
@@ -2647,7 +2773,6 @@ export class Terrain {
 
                 // 1. Basic height match
                 if (Math.abs(vHeight - h0) > tolerance) {
-                    // If not matching, check if vertex is protected
                     if (this.isVertexProtected(nx, nz)) return false;
                 }
 
@@ -2667,6 +2792,7 @@ export class Terrain {
         return true;
     }
 
+
     // size 1 means 1x1 cells -> 2x2 vertices
     // size 2 means 2x2 cells -> 3x3 vertices
     flattenArea(x, z, size) {
@@ -2674,6 +2800,9 @@ export class Terrain {
         const W = this.logicalWidth;
         const D = this.logicalDepth;
         let changed = false;
+
+        const queue: { x: number; z: number }[] = [];
+        const affectedTiles = new Set<string>();
 
         for (let i = 0; i <= size; i++) {
             for (let j = 0; j <= size; j++) {
@@ -2688,18 +2817,30 @@ export class Terrain {
                     cell.height = h0;
                     changed = true;
                     this.updateWorkerCell(nx, nz, h0, cell.moisture || 0.5); // SYNC
+                    queue.push({ x: nx, z: nz });
+                    affectedTiles.add(`${nx},${nz}`);
                 }
             }
         }
 
-        // Trees removed via clearArea which calls removeTreesAt
-        // but flattenArea might be called independently or change vertices,
-        // however addBuilding calls clearArea first then flattenArea.
+        if (changed) {
+            // Apply smoothing propagation
+            this.propagateHeightChange(queue, affectedTiles);
 
-        if (changed && !this.isRestoring) {
-            this.updateMesh();
-            this.updateColors(); // If height changed colors might change
-            this.calculateRegions();
+            // Update trees
+            this.removeTreesByTiles(affectedTiles);
+            const isPreview = !(window as any).game || !(window as any).game.gameActive;
+            const dFactor = isPreview ? 0.1 : 1.0;
+            affectedTiles.forEach(key => {
+                const [tx, tz] = key.split(',').map(Number);
+                this.generateTreesAt(tx, tz, dFactor);
+            });
+
+            if (!this.isRestoring) {
+                this.updateMesh();
+                this.updateColors(); // If height changed colors might change
+                this.calculateRegions();
+            }
         }
         return true;
     }
@@ -3100,6 +3241,8 @@ export class Terrain {
 
         data.seed = this.seed;
         data.trees = this.trees;
+        data.flowers = this.flowers;
+        data.mushrooms = this.mushrooms;
 
         return data;
     }
@@ -3125,6 +3268,8 @@ export class Terrain {
         this.buildings = []; // FIX: Clear the array!
         this.initEntityGrid();
         this.trees = []; // FIX: Clear trees on load to prevent ghost trees or heavy removal logic
+        this.flowers = [];
+        this.mushrooms = [];
 
         const newW = (data.logicalWidth !== undefined) ? data.logicalWidth : data.width;
         const newD = (data.logicalDepth !== undefined) ? data.logicalDepth : data.depth;
@@ -3306,6 +3451,8 @@ export class Terrain {
 
         if (data.seed !== undefined) this.seed = data.seed;
         if (data.trees !== undefined) this.trees = data.trees;
+        if (data.flowers !== undefined) this.flowers = data.flowers;
+        if (data.mushrooms !== undefined) this.mushrooms = data.mushrooms;
 
         this.syncToWorker(); // Init worker with loaded data
     }

@@ -123,8 +123,8 @@ describe('Job Combat Reassignment', () => {
         game.detectZombieRequests();
         expect(req.status).toBe('assigned');
 
-        // Progress time by 11s -> should reset
-        game.simTotalTimeSec = 111;
+        // Progress time by 61s -> should reset (maxFighting = 60s)
+        game.simTotalTimeSec = 161;
         game.detectZombieRequests();
         expect(req.status).toBe('pending');
         expect(req.assignedTo).toBeNull();

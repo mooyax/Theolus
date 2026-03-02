@@ -30,6 +30,7 @@ import { GameConfig, Levels } from './config/GameConfig'; // Direct Import
 import { EnemyAI } from './ai/EnemyAI';
 import { SmokeManager } from './SmokeManager';
 import { SeaDecorationRenderer } from './SeaDecorationRenderer.js';
+import { LandDecorationRenderer } from './LandDecorationRenderer.js';
 
 export interface Squad {
     id: number;
@@ -162,6 +163,7 @@ export class Game {
     public soundManager!: SoundManager;
     public smokeManager!: SmokeManager;
     public seaDecorationRenderer!: SeaDecorationRenderer;
+    public landDecorationRenderer!: LandDecorationRenderer;
     private smokeTimer: number = 0;
 
     // Entity Arrays (Mirroring Terrain for easy access)
@@ -579,6 +581,9 @@ export class Game {
             console.log('[Game] Init TreeRenderer');
             this.treeRenderer = new TreeRenderer(this.scene, this.terrain, this.clippingPlanes, 120000);
             this.treeRenderer.init();
+            console.log('[Game] Init LandDecorationRenderer');
+            this.landDecorationRenderer = new LandDecorationRenderer(this.scene, this.terrain, this.clippingPlanes);
+            this.landDecorationRenderer.init();
 
             console.log('[Game] Init PerformanceMonitor');
             this.performanceMonitor = new PerformanceMonitor();
@@ -1344,8 +1349,8 @@ export class Game {
 
             const distSq = dx * dx + dz * dz;
 
-            if (unit.ignoredTargets && unit.ignoredTargets.has(Number(req.id))) {
-                const expiry = unit.ignoredTargets.get(Number(req.id));
+            if (unit.ignoredTargets && unit.ignoredTargets.has(req.id)) {
+                const expiry = unit.ignoredTargets.get(req.id);
                 const currentTime = this.simTotalTimeSec;
                 if (expiry !== undefined && expiry > 0 && currentTime <= expiry) {
                     console.error(`[Game] Skipping ignored request ${req.id} for Unit ${unit.id}. Exp: ${expiry} Now: ${currentTime}`);
@@ -1353,7 +1358,7 @@ export class Game {
                 } else {
                     if (expiry !== undefined) {
                         console.error(`[Game] Ignored request ${req.id} EXPIRED for Unit ${unit.id}. Exp: ${expiry} Now: ${currentTime} - Re-allowing.`);
-                        unit.ignoredTargets.delete(Number(req.id));
+                        unit.ignoredTargets.delete(req.id);
                     }
                 }
             }
@@ -1474,9 +1479,22 @@ export class Game {
                             if (unit.role !== 'worker') continue;
                             if ((unit.faction || 'player') !== reqFaction) continue;
 
-                            if (unit.action === 'Working' || unit.action === 'Building' || unit.action === 'Harvesting') continue;
-                            if (unit.targetRequest && unit.targetRequest.isManual) continue;
-                            if (unit.targetRequest && !req.isManual) continue;
+                            if (unit.targetRequest && unit.targetRequest.id === req.id) continue; // Already assigned to this one
+
+                            // MANUAL SWITCH RULE:
+                            // If req is manual, allow workers to switch IF they are doing an AUTO job.
+                            // If req is auto, skip busy workers.
+                            if (unit.targetRequest) {
+                                if (req.isManual && !unit.targetRequest.isManual) {
+                                    // Allowed to switch
+                                } else {
+                                    continue;
+                                }
+                            }
+                            // Skip those explicitly in Working/Building to avoid interrupting active progress
+                            if (unit.action === 'Working' || unit.action === 'Building' || unit.action === 'Harvesting') {
+                                continue;
+                            }
 
                             const dist = (unit.gridX - req.x) ** 2 + (unit.gridZ - req.z) ** 2;
                             let scorePenalty = 0;
@@ -1511,9 +1529,18 @@ export class Game {
                     if (unitFaction !== reqFaction) continue;
                     if (unit.role !== 'worker') continue;
 
-                    if (unit.action === 'Working' || unit.action === 'Building' || unit.action === 'Harvesting') continue;
-                    if (unit.targetRequest && unit.targetRequest.isManual) continue;
-                    if (unit.targetRequest && !req.isManual) continue;
+                    if (unit.targetRequest && unit.targetRequest.id === req.id) continue;
+
+                    if (unit.targetRequest) {
+                        if (req.isManual && !unit.targetRequest.isManual) {
+                            // Allowed
+                        } else {
+                            continue;
+                        }
+                    }
+                    if (unit.action === 'Working' || unit.action === 'Building' || unit.action === 'Harvesting') {
+                        continue;
+                    }
 
                     const dist = (unit.gridX - req.x) ** 2 + (unit.gridZ - req.z) ** 2;
                     let scorePenalty = 0;
@@ -1829,35 +1856,47 @@ export class Game {
             if (req.status === 'assigned') {
                 const assigneeId = req.assignedTo;
                 if (assigneeId !== null) {
-                    const unit = this.unitMap ? this.unitMap.get(Number(assigneeId)) : this.units.find(u => String(u.id) === String(assigneeId));
-                    const assignedAt = req.assignedAt || req.createdAt || 0;
+                    const maxStuck = req.isManual ? 60.0 : 30.0;
+                    const maxFighting = 60.0; // Increased from 10.0 to prevent resetting during long battles
+                    const maxDecoupled = 5.0; // Increased from 1.0 to prevent premature reset during loading or lag
 
-                    let isBroken = false;
+                    const now = this.simTotalTimeSec;
+                    const assignedTime = req.assignedAt || 0;
+                    const timeDiff = now - assignedTime;
+
+                    const unit = this.units.find(u => String(u.id) === String(req.assignedTo));
+
+                    let needsReset = false;
                     let reason = "";
 
                     if (!unit || unit.isDead) {
-                        isBroken = true; reason = "Unit Dead/Missing";
+                        needsReset = true;
+                        reason = !unit ? "Unit not found" : "Unit dead";
                     } else if (unit.targetRequest && String(unit.targetRequest.id) !== String(req.id)) {
-                        isBroken = true; reason = "Unit has different request";
-                    } else if (!unit.targetRequest) {
-                        isBroken = true; reason = "Unit abandoned request";
-                    } else if (unit.ignoredTargets && unit.ignoredTargets.has(Number(req.id))) {
-                        isBroken = true; reason = "Unit ignored request (Unreachable)";
-                    } else if (unit.action === 'Idle' && unit.state && unit.state.constructor.name === 'Wander' && (currentTime - assignedAt > 1.0)) {
-                        isBroken = true; reason = "Unit state decoupled";
+                        needsReset = true;
+                        reason = "Unit has different request";
+                    } else if (unit.ignoredTargets && unit.ignoredTargets.has(req.id)) { // FIX: Use req.id directly, not Number(req.id)
+                        needsReset = true;
+                        reason = "Unit ignored request (Unreachable)";
+                    } else if (unit.action === 'Fighting' || (unit.state && unit.state.name === 'Combat')) {
+                        if (timeDiff > maxFighting) {
+                            needsReset = true;
+                            reason = "Distracted/Fighting too long";
+                        }
+                    } else if (unit.action === 'Working' || unit.action === 'Building' || unit.action === 'Approaching Job') {
+                        if (timeDiff > maxStuck) {
+                            needsReset = true;
+                            reason = `Stuck in ${unit.action} for too long (${timeDiff.toFixed(1)}s)`;
+                        }
                     } else {
-                        const isFighting = unit.state && (unit.state.name === 'Combat' || unit.state.constructor.name === 'Combat');
-                        if (isFighting && (currentTime - assignedAt > 10.0)) {
-                            isBroken = true; reason = "Unit fighting too long (Distracted)";
-                        } else {
-                            const maxStuck = req.isManual ? 120.0 : 300.0;
-                            if (currentTime - assignedAt > maxStuck) {
-                                isBroken = true; reason = "Assignment Timed Out";
-                            }
+                        // Unit is Idle, Wander, or other state while assigned a job
+                        if (timeDiff > maxDecoupled) {
+                            needsReset = true;
+                            reason = `State decoupled (${unit.action || 'unknown'})`;
                         }
                     }
 
-                    if (isBroken) {
+                    if (needsReset) {
                         console.warn(`[Game] Watchdog: Detected ZOMBIE Request ${req.id} (Assigned to ${assigneeId}). Reason: ${reason}. Resetting.`);
                         req.status = 'pending';
                         req.assignedTo = null;
@@ -2692,6 +2731,9 @@ export class Game {
                     if (this.treeRenderer && typeof this.treeRenderer.update === 'function') {
                         this.treeRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
                     }
+                    if (this.landDecorationRenderer && typeof this.landDecorationRenderer.update === 'function') {
+                        this.landDecorationRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0);
+                    }
                     if (this.cloudManager && typeof this.cloudManager.update === 'function') {
                         this.cloudManager.update(deltaTime, this.simTotalTimeSec || 0);
                     }
@@ -2709,6 +2751,9 @@ export class Game {
                     }
                     if (this.treeRenderer && typeof this.treeRenderer.update === 'function') {
                         this.treeRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0, this.swayIntensity);
+                    }
+                    if (this.landDecorationRenderer && typeof this.landDecorationRenderer.update === 'function') {
+                        this.landDecorationRenderer.update((this.controls && this.controls.target) ? this.controls.target : (this.camera ? this.camera.position : new THREE.Vector3()), this.simTotalTimeSec || 0);
                     }
                 } catch (e) {
                     console.error("[Game] Loading-render-update error:", e);

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import * as THREE from 'three';
 import { Game } from '../Game';
+import { Entity } from '../Entity';
 import { Unit } from '../Unit';
 import { Job } from '../ai/states/UnitStates';
 
@@ -20,7 +21,7 @@ describe('RequestProactiveManagement', () => {
 
     beforeEach(() => {
         // Reset singleton/static state if any
-        Unit.nextId = 0;
+        Entity.nextId = 0;
 
         // Create a minimal mock for terrain
         terrainMock = {
@@ -57,11 +58,11 @@ describe('RequestProactiveManagement', () => {
         vi.spyOn(Unit, 'initAssets').mockImplementation(() => Promise.resolve());
         vi.spyOn(Unit.prototype, 'createCross').mockImplementation(() => { });
 
-        game = new Game();
-        game.terrain = terrainMock;
+        game = new Game(null, terrainMock, true);
         game.simTotalTimeSec = 100;
 
-        unit = new Unit(game.scene, terrainMock, 10, 10, 'worker');
+        const mockScene = new THREE.Scene();
+        unit = new Unit(mockScene, terrainMock, 10, 10, 'worker');
         unit.id = 1;
         game.units = [unit];
         game.unitMap.set(unit.id, unit);
@@ -147,20 +148,23 @@ describe('RequestProactiveManagement', () => {
         expect(unit.isReachable(15, 15)).toBe(true);
     });
 
-    it('should allow manual tasks to be reachable up to 7 tiles even if water', () => {
+    it('should block cross-region even if manual, but allow for ranged units', () => {
         terrainMock.grid[10][10].regionId = 1;
-        terrainMock.grid[16][16].regionId = 0;
-        terrainMock.grid[16][16].height = -1;
-
-        // Distance from (10,10) to (16,16) is ~8.4 (blocked)
-        unit.targetRequest = { x: 16, z: 16, isManual: true };
+        terrainMock.grid[12][12].regionId = 0; // Different region, very close
         terrainMock.isAdjacentToRegion.mockReturnValue(false);
-        expect(unit.isReachable(16, 16)).toBe(false);
 
-        // Distance from (10,10) to (14,14) is ~5.6 (allowed for manual)
-        unit.targetRequest.x = 14;
-        unit.targetRequest.z = 14;
-        terrainMock.grid[14][14] = { regionId: 0, height: -1 };
-        expect(unit.isReachable(14, 14)).toBe(true);
+        // Case 1: Manual worker -> Still blocked (strictly region-based)
+        unit.isRanged = false;
+        unit.attackRange = 1.0;
+        expect(unit.isReachable(12, 12)).toBe(false);
+
+        // Case 2: Ranged entity -> Allowed if within attackRange
+        unit.isRanged = true;
+        unit.attackRange = 5.0; // Dist to (12,12) is ~2.8
+        expect(unit.isReachable(12, 12)).toBe(true);
+
+        // Case 3: Ranged entity -> Blocked if beyond attackRange
+        unit.attackRange = 1.0;
+        expect(unit.isReachable(12, 12)).toBe(false);
     });
 });

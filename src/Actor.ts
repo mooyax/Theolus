@@ -63,7 +63,7 @@ export class Actor extends Entity {
     public scanTimer: number = 0;
     public stagnationTimer: number = 0;
     private _lastDelta: number = 0;
-    public ignoredTargets: Map<number, number> = new Map();
+    public ignoredTargets: Map<string | number, number> = new Map();
     public findPathAsync?: (tx: number, tz: number, depth?: number, id?: number) => Promise<any[] | null>;
 
     /**
@@ -292,15 +292,14 @@ export class Actor extends Entity {
                 return true;
             }
 
-            // CROSS-REGION DISTANCE CHECK
-            const dist = this.getDistance(tx, tz);
-            const isManual = isManualOverride !== undefined ? isManualOverride : (this.targetRequest && this.targetRequest.isManual);
-            const threshold = isManual ? 7.0 : 5.0; // Manual markers have higher tolerance via adjacent check, but keep 7.0 as fallback
+            // CROSS-REGION CHECK: Strictly unreachable if regions differ
+            // EXCEPTION: Ranged units can target across regions if within attack range
+            if (this.isRanged && this.attackRange) {
+                const dist = this.getDistance(tx, tz);
+                if (dist <= this.attackRange) return true;
+            }
 
-            if (isManual) return dist < threshold;
-            if (mRegion > 0 && tRegion > 0) return dist < threshold;
-            if (mRegion > 0 && tRegion === 0) return dist < threshold;
-            if (mRegion === 0 && tRegion > 0) return dist < 2.0;
+            return false;
         }
         return true;
     }

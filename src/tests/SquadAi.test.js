@@ -131,7 +131,7 @@ describe('Squad AI & Region Logic', () => {
         expect(unit.action).toBe('Idle');
     });
 
-    it('should allow cross-region movement if target is very close (Self Defense)', () => {
+    it('should block cross-region even if close, except for ranged units', () => {
         const unit = new Unit(scene, terrain, 10, 10, 'knight', false, null);
         vi.spyOn(terrain, 'getRegion').mockImplementation((x, z) => {
             if (x === 10 && z === 10) return 1;
@@ -141,7 +141,19 @@ describe('Squad AI & Region Logic', () => {
         terrain.grid[10][10] = { regionId: 1, height: 10 };
         terrain.grid[12] = [];
         terrain.grid[12][12] = { regionId: 2, height: 10 };
-        const reachable = unit.isReachable(12, 12);
-        expect(reachable).toBe(true);
+
+        // Case 1: Melee knight -> Blocked (strictly region-based)
+        unit.isRanged = false;
+        unit.attackRange = 1.0;
+        expect(unit.isReachable(12, 12)).toBe(false);
+
+        // Case 2: Ranged unit -> Allowed if within range
+        unit.isRanged = true;
+        unit.attackRange = 5.0; // Dist to (12,12) is ~2.8
+        expect(unit.isReachable(12, 12)).toBe(true);
+
+        // Case 3: Ranged unit -> Blocked if beyond range
+        unit.attackRange = 1.0;
+        expect(unit.isReachable(12, 12)).toBe(false);
     });
 });

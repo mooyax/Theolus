@@ -41,7 +41,7 @@ export class Unit extends Actor {
     public patrolTarget: any;
     public patrolTimer: number;
 
-    // public ignoredTargets: Map<number | string, number>; // Removed: Inherited from Actor as Set<number>
+    // public ignoredTargets: Map<number | string, number>; // Inherited from Actor as Map<string | number, number>
     public debugFrame: number;
 
     public isSleeping: boolean = false;
@@ -1167,7 +1167,7 @@ export class Unit extends Actor {
         this.path = null;
 
         // Ignore current targets
-        // The Actor base class's ignoredTargets is a Set<number>, so we only add IDs.
+        // The Actor base class's ignoredTargets is a Map<string | number, number>, so we can add IDs.
         if (this.targetUnit) {
             this.ignoredTargets.set(this.targetUnit.id, time + 15.0);
             this.targetUnit = null;
@@ -1176,7 +1176,7 @@ export class Unit extends Actor {
             this.ignoredTargets.set(this.targetBuilding.id, time + 15.0);
             this.targetBuilding = null;
         }
-        // targetRaidPoint does not have an ID, so it cannot be added to ignoredTargets (Set<number>)
+        // targetRaidPoint does not have an ID, so it cannot be added to ignoredTargets.
         this.targetRaidPoint = null;
 
 
