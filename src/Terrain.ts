@@ -449,7 +449,9 @@ export class Terrain {
                     height: 0,
                     type: 'grass',
                     hasBuilding: false,
-                    noise: (Math.random() - 0.5) * 0.05 // Pre-calculate noise
+                    noise: (Math.random() - 0.5) * 0.05, // Pre-calculate noise
+                    riverIntensity: 0,
+                    riverFlow: new THREE.Vector2(0, 0)
                 };
             }
         }
@@ -484,6 +486,8 @@ export class Terrain {
         this.geometry = new THREE.PlaneGeometry(this.width, this.depth, this.width, this.depth);
         const count = this.geometry.attributes.position.count;
         this.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(count * 3), 3));
+        this.geometry.setAttribute('aRiver', new THREE.BufferAttribute(new Float32Array(count), 1));
+        this.geometry.setAttribute('aFlow', new THREE.BufferAttribute(new Float32Array(count * 2), 2));
 
         const posAttr = this.geometry.attributes.position;
         for (let i = 0; i < count; i++) {
@@ -578,14 +582,278 @@ export class Terrain {
             }
         }
 
+        // --- NEW ORDER: Rivers first, THEN sync visuals ---
+        // Generate Rivers (Internal Grid modification)
+        this.generateRivers();
+
+        // Update Mesh and Regions with the FINAL heights including river carvings
         this.updateMesh();
-        await this.calculateRegions(); // Ensure regions are calculated (async if needed, or make async)
+        await this.calculateRegions();
+
+        this.updateColors(this.isNight);
 
         // Generate Trees
         await this.generateTrees(isPreview, genParams);
 
         this.syncToWorker(); // Send initial data to worker
         this.resolveReady();
+    }
+
+    generateRivers() {
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+
+        // 1. Reset river data and prepare for consistent carving
+        const deductions = new Float32Array(W * D).fill(0);
+        for (let x = 0; x < W; x++) {
+            for (let z = 0; z < D; z++) {
+                if (this.grid[x][z]) {
+                    this.grid[x][z].riverIntensity = 0;
+                    if (!this.grid[x][z].riverFlow) this.grid[x][z].riverFlow = new THREE.Vector2(0, 0);
+                    else this.grid[x][z].riverFlow.set(0, 0);
+                }
+            }
+        }
+
+        // 2. Identify mountain peaks as sources (STRICTER: min height 4.0)
+        const sources: { x: number, z: number, h: number }[] = [];
+        for (let x = 0; x < W; x++) {
+            for (let z = 0; z < D; z++) {
+                const cell = this.grid[x][z];
+                const threshold = 2.5; // Relaxed from 4.0 to allow more sources
+                // Moisture relaxed to 0.4 from 0.65
+                if (cell && cell.height > threshold && cell.moisture > 0.4) {
+                    let isPeak = true;
+                    for (let dx = -1; dx <= 1; dx++) {
+                        for (let dz = -1; dz <= 1; dz++) {
+                            if (dx === 0 && dz === 0) continue;
+                            const nx = (x + dx + W) % W;
+                            const nz = (z + dz + D) % D;
+                            if (this.grid[nx][nz].height > cell.height) {
+                                isPeak = false;
+                                break;
+                            }
+                        }
+                        if (!isPeak) break;
+                    }
+                    if (isPeak) {
+                        // SPACING: Ensure sources are not too close to each other
+                        let tooClose = false;
+                        for (const s of sources) {
+                            const dist = Math.sqrt(Math.pow(x - s.x, 2) + Math.pow(z - s.z, 2));
+                            if (dist < 6) { // Reduced from 8 to allow slightly denser networks
+                                tooClose = true;
+                                break;
+                            }
+                        }
+                        if (!tooClose) sources.push({ x, z, h: cell.height });
+                    }
+                }
+            }
+        }
+
+        // --- FALLBACK: If no peaks found, pick top 3 highest points on land ---
+        if (sources.length === 0) {
+            const allLand: { x: number, z: number, h: number }[] = [];
+            for (let x = 0; x < W; x++) {
+                for (let z = 0; z < D; z++) {
+                    if (this.grid[x][z].height > 2.0) { // Relaxed from 3.0
+                        allLand.push({ x, z, h: this.grid[x][z].height });
+                    }
+                }
+            }
+            allLand.sort((a, b) => b.h - a.h);
+            sources.push(...allLand.slice(0, 3));
+        }
+
+        // Limit number of rivers to 5 major ones (reduced from 8)
+        sources.sort((a, b) => b.h - a.h);
+        const activeSources = sources.slice(0, 5); // Reduced from 8 to 5 for less clutter
+
+        // 3. A* Search and Path Reconstruction
+        for (const start of activeSources) {
+            const openSet: { x: number, z: number, g: number, f: number }[] = [];
+            const closedSet = new Uint8Array(W * D);
+            const parentMap = new Int32Array(W * D).fill(-1);
+
+            // Initial f = heuristic (height)
+            openSet.push({ x: start.x, z: start.z, g: 0, f: this.grid[start.x][start.z].height });
+
+            let goalNode: { x: number, z: number, g: number } | null = null;
+            let iterations = 0;
+
+            while (openSet.length > 0 && iterations < 5000) { // Increased iterations to ensure sea arrival
+                iterations++;
+
+                // Optimized: Find node with lowest f without full Array.sort()
+                let minIdx = 0;
+                for (let i = 1; i < openSet.length; i++) {
+                    if (openSet[i].f < openSet[minIdx].f) minIdx = i;
+                }
+                const current = openSet.splice(minIdx, 1)[0];
+
+                const gridIdx = current.x * D + current.z;
+                if (closedSet[gridIdx]) continue;
+                closedSet[gridIdx] = 1;
+
+                // Stop conditions: Sea ( < 0.1 ) OR Existing River (merge)
+                // STICK TO SEA: Reduced threshold from 0.25 to 0.1 to avoid inland "puddles"
+                if (this.grid[current.x][current.z].height < 0.1 || (this.grid[current.x][current.z].riverIntensity > 0.9 && current.g > 10)) {
+                    // MIN LENGTH CHECK: Ensure river isn't just a tiny puddle
+                    if (current.g > 10) {
+                        goalNode = { x: current.x, z: current.z, g: current.g };
+                        break;
+                    }
+                    // If too short and hits sea, it might still stop, but we decide later if we carve
+                }
+
+                for (let dx = -1; dx <= 1; dx++) {
+                    for (let dz = -1; dz <= 1; dz++) {
+                        if (dx === 0 && dz === 0) continue;
+                        const nx = (current.x + dx + W) % W;
+                        const nz = (current.z + dz + D) % D;
+
+                        if (closedSet[nx * D + nz]) continue;
+
+                        // Cost calculation
+                        const neighbor = this.grid[nx][nz];
+                        const stepDist = (Math.abs(dx) + Math.abs(dz) === 2) ? 1.4 : 1.0;
+                        const elevDiff = neighbor.height - this.grid[current.x][current.z].height;
+                        const penalty = elevDiff > 0 ? elevDiff * 60.0 : 0; // Heavy penalty for uphill
+
+                        const g = current.g + stepDist + penalty;
+                        const h = Math.max(0, neighbor.height); // Distance to goal (sea level)
+                        const f = g + h * 6.0; // Weighted greedy towards downhill
+
+                        // Quick O(N) check for openset update is faster than overhead for small N
+                        let exists = false;
+                        for (let i = 0; i < openSet.length; i++) {
+                            if (openSet[i].x === nx && openSet[i].z === nz) {
+                                if (g < openSet[i].g) {
+                                    openSet[i].g = g;
+                                    openSet[i].f = f;
+                                    parentMap[nx * D + nz] = gridIdx;
+                                }
+                                exists = true;
+                                break;
+                            }
+                        }
+
+                        if (!exists) {
+                            parentMap[nx * D + nz] = gridIdx;
+                            openSet.push({ x: nx, z: nz, g, f });
+                        }
+                    }
+                }
+            }
+
+            // Path reconstruction
+            if (goalNode && goalNode.g > 20) {
+                // Dynamic river scale based on length: longer = thicker
+                // 20 tiles = ~0.6-0.9, 120+ tiles = ~1.1-1.4
+                const lengthFactor = Math.min(1.0, goalNode.g / 120.0);
+                const riverScale = 0.5 + (lengthFactor * 0.6) + (Math.random() * 0.3);
+
+                let currIdx = goalNode.x * D + goalNode.z;
+                let limit = 0;
+
+                while (currIdx !== -1 && limit < 600) {
+                    const cx = Math.floor(currIdx / D);
+                    const cz = currIdx % D;
+                    const currentCell = this.grid[cx][cz];
+
+                    // Dynamic width: Thinner at source (high height), thicker at sea (low height)
+                    // Scale intensity between 0.75 and 1.0 based on height relative to source
+                    // Higher base (0.75) ensures source is visible enough
+                    const heightProgress = Math.max(0, 1.0 - (currentCell.height / start.h));
+                    const dynamicWidth = 0.75 + (heightProgress * 0.25);
+                    const finalIntensity = Math.min(1.0, riverScale * dynamicWidth);
+
+                    currentCell.riverIntensity = finalIntensity;
+                    deductions[currIdx] = Math.max(deductions[currIdx], 0.2); // Core path depth
+
+                    const prevIdx = parentMap[currIdx];
+                    if (prevIdx !== -1) {
+                        const px = Math.floor(prevIdx / D);
+                        const pz = prevIdx % D;
+
+                        // Flow downstream (Parent to Child) - Defined early to avoid ReferenceError
+                        const dx = (cx - px + W + W / 2) % W - W / 2;
+                        const dz = (cz - pz + D + D / 2) % D - D / 2;
+
+                        const adx = Math.abs(dx);
+                        const adz = Math.abs(dz);
+
+                        if (adx === 1 && adz === 1) {
+                            // --- DOUBLE-SIDED DIAGONAL BRIDGE ---
+                            // Mark both side cells to ensure polygon triangulation doesn't create gaps
+                            const sides = [
+                                { x: (px + dx + W) % W, z: pz },
+                                { x: px, z: (pz + dz + D) % D }
+                            ];
+
+                            for (const s of sides) {
+                                const idx = s.x * D + s.z;
+                                // Diagonal bridges also scale with the river intensity
+                                this.grid[s.x][s.z].riverIntensity = finalIntensity;
+                                deductions[idx] = Math.max(deductions[idx], 0.2); // Diagonal bridges also deep to prevent disconnection
+                                // Propagate flow
+                                this.grid[s.x][s.z].riverFlow.set(dx, dz).normalize();
+                            }
+                        }
+
+                        this.grid[px][pz].riverFlow.set(dx, dz).normalize();
+
+                        // Also set flow at current node to ensure continuity in interpolation
+                        if (currentCell.riverFlow.length() < 0.1) {
+                            currentCell.riverFlow.set(dx, dz).normalize();
+                        }
+                    }
+
+                    // Halo INTENSITY ONLY (No Carving)
+                    // This creates the visual look of water edges without ruining the land height
+                    for (let hdx = -1; hdx <= 1; hdx++) {
+                        for (let hdz = -1; hdz <= 1; hdz++) {
+                            if (hdx === 0 && hdz === 0) continue;
+                            const hx = (cx + hdx + W) % W;
+                            const hz = (cz + hdz + D) % D;
+                            // Support intensity for continuity
+                            // Halo should be slightly smaller than the core intensity
+                            const haloIntensity = finalIntensity * 0.85;
+                            if (this.grid[hx][hz].riverIntensity < haloIntensity) {
+                                this.grid[hx][hz].riverIntensity = haloIntensity;
+                            }
+                            // deductions[hIdx] = Math.max(deductions[hIdx], 0.1); // REMOVED: No more halo carving
+
+                            // Relative open valley - shave neighbors slightly to ensure visibility
+                            // if (hdx !== 0 || hdz !== 0) {
+                            //     hCell.height = Math.max(0, hCell.height - 0.1);
+                            // }
+                        }
+                    }
+
+                    currIdx = prevIdx;
+                    limit++;
+                }
+
+                // Final start cell adjustment: Only if river was actually formed
+                deductions[start.x * D + start.z] = Math.max(deductions[start.x * D + start.z], 0.15);
+            }
+        }
+
+        // Apply all deductions consistently
+        for (let x = 0; x < W; x++) {
+            for (let z = 0; z < D; z++) {
+                if (deductions[x * D + z] > 0) {
+                    // Safety: Only carve if it's natural terrain (snap to integer)
+                    // If height is already non-integer, it might have been carved already
+                    // This prevents double carving if generateRivers is called twice on same data
+                    const currentH = this.grid[x][z].height;
+                    const baseH = Math.round(currentH);
+                    this.grid[x][z].height = Math.max(0, baseH - deductions[x * D + z]);
+                }
+            }
+        }
     }
 
     // Force set height (for spawn safety)
@@ -817,7 +1085,11 @@ export class Terrain {
 
             shader.vertexShader = shader.vertexShader.replace('#include <common>', `
                 #include <common>
+                attribute float aRiver;
+                attribute vec2 aFlow;
                 varying vec3 vWorldPosition;
+                varying float vRiver;
+                varying vec2 vFlow;
             `);
 
             shader.vertexShader = shader.vertexShader.replace(
@@ -825,6 +1097,8 @@ export class Terrain {
                 `
                 #include <worldpos_vertex>
                 vWorldPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;
+                vRiver = aRiver;
+                vFlow = aFlow;
                 `
             );
 
@@ -832,6 +1106,8 @@ export class Terrain {
                 #include <common>
                 uniform float uTime;
                 varying vec3 vWorldPosition;
+                varying float vRiver;
+                varying vec2 vFlow;
 
                 // Simple hash-based noise
                 float hash(vec2 p) {
@@ -851,7 +1127,23 @@ export class Terrain {
                     return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
                 }
 
-                // Simple Voronoi-like Caustics
+                // NEW: Streak-based flow noise (Replaces Voronoi/Caustics)
+                float getFlowStreaks(vec2 p, float time) {
+                    // Anisotropic scaling: stretch along U (flow direction)
+                    vec2 uv = p * vec2(0.8, 4.0);
+                    
+                    // Domain warping for organic movement
+                    float n1 = getNoise(uv * 1.5 + time * 0.5);
+                    float n2 = getNoise(uv * 2.5 - time * 0.8 + n1 * 0.5);
+                    
+                    // Combine into sharp streaks
+                    float streaks = sin(uv.y * 3.0 + n2 * 4.0) * 0.5 + 0.5;
+                    streaks *= getNoise(uv * 0.5 + time * 0.2); // Large scale mask
+                    
+                    return pow(streaks, 3.0); // Sharpen the streaks
+                }
+
+                // Simple Voronoi-like Caustics (Required for underwater)
                 float getCaustics(vec2 p, float time) {
                     p *= 0.8;
                     vec2 i = floor(p);
@@ -880,6 +1172,56 @@ export class Terrain {
                 float c2 = getNoise(vWorldPosition.xz * 0.08 - vec2(cloudTime * 0.4, cloudTime * 0.8));
                 float cloud = smoothstep(0.3, 0.9, c1 * c2 + c1 * 0.4);
                 diffuseColor.rgb *= mix(1.0, 0.55, cloud); // Stronger contrast (45% darker)
+
+                // --- RIVER FLOW EFFECT ---
+                // Thinner, sharper wire-like line using balanced threshold
+                // Threshold relaxed slightly to 0.7 to prevent disconnection on steep slopes
+                if (vRiver > 0.7) {
+                    float flowTime = uTime * 4.5; 
+                    
+                    // IMPROVED: Prevent stretching on slopes by including World Y 
+                    // This creates a 3D-like texture mapping (Tri-planar style)
+                    vec3 flowPos = vWorldPosition;
+                    // NEW: Oriented UVs for flow
+                    vec2 fdir = normalize(vFlow + 0.0001);
+                    vec2 perp = vec2(-fdir.y, fdir.x);
+                    float u = dot(flowPos.xz, fdir) - flowPos.y;
+                    float vCross = dot(flowPos.xz, perp);
+                    vec2 flowUv = vec2(u, vCross);
+
+                    // --- FLOW STREAK RENDERING ---
+                    float time = uTime * 0.6; // Reduced speed from 1.2
+                    
+                    // Layer 1: Primary deep streaks
+                    vec2 uv1 = flowUv * 2.5 - vec2(uTime * 2.5, 0.0);
+                    float s1 = getFlowStreaks(uv1, time);
+                    
+                    // Layer 2: Faster surface highlights
+                    vec2 uv2 = flowUv * 5.0 - vec2(uTime * 4.0, 0.0);
+                    float s2 = getFlowStreaks(uv2 + s1 * 0.2, time * 1.5);
+                    
+                    float combinedFlow = (s1 * 0.6 + s2 * 0.4) * 1.5;
+                    
+                    // Coloring & Specular
+                    vec3 deepWater = vec3(0.01, 0.15, 0.42);   // Saturated Navy
+                    vec3 shallowWater = vec3(0.1, 0.5, 0.9);   // Slightly deeper cyan
+                    vec3 highlights = vec3(0.5, 0.8, 1.0);     // Reduced white color
+                    
+                    // --- EDGE SMOOTHING (JITTER) ---
+                    // DECAY: Reduce jitter impact towards river center to prevent slits
+                    float jitter = getNoise(vWorldPosition.xz * 12.0 + uTime * 0.1) * 0.1;
+                    // Protect center more aggressively (at vRiver > 0.6)
+                    float jitterMask = clamp(1.0 - (vRiver - 0.4) * 6.0, 0.0, 1.0); 
+                    // Lower/Wider threshold (0.25 to 0.6) to ensure even thin sources are visible
+                    float riverMask = smoothstep(0.25, 0.6, vRiver + jitter * jitterMask);
+                    
+                    float sparkle = pow(combinedFlow, 2.0) * 0.6; // Reduced sparkle multiplier
+                    
+                    vec3 finalRiverColor = mix(deepWater, shallowWater, combinedFlow * 0.7);
+                    finalRiverColor += highlights * sparkle * 1.0;
+                    
+                    diffuseColor.rgb = mix(diffuseColor.rgb, finalRiverColor, riverMask * 0.98);
+                }
 
                 // --- 2. MICRO-NOISE (Texture detail) ---
                 float micro = hash(vWorldPosition.xz * 128.0);
@@ -1274,9 +1616,20 @@ export class Terrain {
                 baseColor.b = THREE.MathUtils.clamp(baseColor.b * totalScale, 0, 1);
 
                 colorAttr.setXYZ(i, baseColor.r, baseColor.g, baseColor.b);
+
+                // River Attributes Sync
+                const riverAttr = this.geometry.attributes.aRiver;
+                const flowAttr = this.geometry.attributes.aFlow;
+                if (riverAttr && flowAttr) {
+                    riverAttr.setX(i, cell.riverIntensity || 0);
+                    const flow = cell.riverFlow || { x: 0, y: 0 };
+                    flowAttr.setXY(i, flow.x, flow.y);
+                }
             }
         }
         colorAttr.needsUpdate = true;
+        if (this.geometry.attributes.aRiver) this.geometry.attributes.aRiver.needsUpdate = true;
+        if (this.geometry.attributes.aFlow) this.geometry.attributes.aFlow.needsUpdate = true;
     }
 
     async generateTrees(isPreview = false, genParams: any = null) {
@@ -1300,6 +1653,9 @@ export class Terrain {
     generateTreesAt(x: number, z: number, densityFactor: number = 1.0) {
         const cell = this.grid[x][z];
         if (!cell) return;
+        
+        // RIVER GUARD: Do not spawn trees on or very close to rivers
+        if (cell.riverIntensity && cell.riverIntensity > 0.1) return;
 
         // STRICT BIOME CHECK
         // Forest is strictly Height 4-9 AND Moisture >= 0.45
