@@ -39,12 +39,22 @@ describe('Manual Request Integration', () => {
                 req.assignedTo = unit.id;
                 req.claimedBy = unit.id;
                 req.status = 'assigned';
+                unit.targetRequest = req;
+                unit.changeState(new Job(unit));
                 return true;
             },
+            assignRequests: function () {
+                const req = this.requests.find(r => !r.assignedTo);
+                if (req && this.units.length > 0) {
+                    this.claimRequest(this.units[0], req);
+                }
+            },
             completeRequest: vi.fn(),
-            releaseRequest: function (req) {
-                req.assignedTo = null;
-                req.status = 'pending';
+            releaseRequest: function (unit, req) {
+                if (req) {
+                    req.assignedTo = null;
+                    req.status = 'pending';
+                }
             },
             update: vi.fn(),
             checkYield: async () => { },
@@ -91,7 +101,8 @@ describe('Manual Request Integration', () => {
         expect(game.requests.length).toBe(1);
         const req = game.requests[0];
 
-        // 2. Run Unit Update (Logic)
+        // 2. Assign requests directly
+        game.assignRequests();
         await unit.updateLogic(0.1);
         await new Promise(r => setTimeout(r, 0));
 
@@ -135,6 +146,7 @@ describe('Manual Request Integration', () => {
         }
 
         game.addRequest('flatten', 10, 5, true);
+        game.assignRequests();
         await unit.updateLogic(0.1);
 
         if (unit.targetRequest) {

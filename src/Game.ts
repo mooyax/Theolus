@@ -1445,6 +1445,9 @@ export class Game {
     assignRequestSync(req) {
         if (!req || req.status !== 'pending') return;
 
+        // NIGHT RULE: Do not assign AUTO requests at night
+        if (this.isNight && !req.isManual) return;
+
         // Synchronous Logic (No Timeout)
         try {
             // Safeguard
@@ -1498,23 +1501,26 @@ export class Game {
 
                             const dist = (unit.gridX - req.x) ** 2 + (unit.gridZ - req.z) ** 2;
                             let scorePenalty = 0;
-                            const isFightingOrSleeping = unit.state && (unit.state.constructor.name === 'Combat' || unit.state.constructor.name === 'Sleep');
-                            if (isFightingOrSleeping) scorePenalty += 50;
-
-                            // NEW: Reachability Guard (Passing isManual for correct threshold)
-                            if (unit.isReachable && !unit.isReachable(req.x, req.z, req.isManual)) {
-
-                                continue;
+                            if (unit.state) {
+                                if (unit.state.constructor.name === 'Combat') continue; // FORBID Combat preemption
+                                if (unit.state.constructor.name === 'Sleep') scorePenalty += 50;
                             }
 
                             // Distance Limit for Automatic Jobs (Prevent extreme long-distance travels)
                             if (!req.isManual && dist > 120 * 120) continue;
 
                             const totalScore = dist + scorePenalty;
-                            if (totalScore < minDistSq) {
-                                minDistSq = totalScore;
-                                bestUnit = unit;
+
+                            // FAST FAIL: If score is already worse than the best we found, skip expensive reachability check
+                            if (totalScore >= minDistSq) continue;
+
+                            // NEW: Reachability Guard (Expensive check, only perform if unit is geometrically the best candidate so far)
+                            if (unit.isReachable && !unit.isReachable(req.x, req.z, req.isManual)) {
+                                continue;
                             }
+
+                            minDistSq = totalScore;
+                            bestUnit = unit;
                         }
                     }
                 }
@@ -1544,22 +1550,26 @@ export class Game {
 
                     const dist = (unit.gridX - req.x) ** 2 + (unit.gridZ - req.z) ** 2;
                     let scorePenalty = 0;
-                    const isFightingOrSleeping = unit.state && (unit.state.constructor.name === 'Combat' || unit.state.constructor.name === 'Sleep');
-                    if (isFightingOrSleeping) scorePenalty += 50;
-
-                    if (unit.isReachable && !unit.isReachable(req.x, req.z, req.isManual)) {
-
-                        continue;
+                    if (unit.state) {
+                        if (unit.state.constructor.name === 'Combat') continue; // FORBID Combat preemption
+                        if (unit.state.constructor.name === 'Sleep') scorePenalty += 50;
                     }
 
                     // Distance Limit for Automatic Jobs (Prevent extreme long-distance travels)
                     if (!req.isManual && dist > 120 * 120) continue;
 
                     const totalScore = dist + scorePenalty;
-                    if (totalScore < minDistSq) {
-                        minDistSq = totalScore;
-                        bestUnit = unit;
+
+                    // FAST FAIL: If score is already worse than the best we found, skip expensive reachability check
+                    if (totalScore >= minDistSq) continue;
+
+                    // NEW: Reachability Guard (Expensive check, only perform if unit is geometrically the best candidate so far)
+                    if (unit.isReachable && !unit.isReachable(req.x, req.z, req.isManual)) {
+                        continue;
                     }
+
+                    minDistSq = totalScore;
+                    bestUnit = unit;
                 }
             }
 

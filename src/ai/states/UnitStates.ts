@@ -104,34 +104,6 @@ export class Wander extends WanderBase {
                     this.actor.targetRequest = null;
                 }
             }
-
-            const currentReq = this.actor.targetRequest;
-            const currentIsManual = currentReq && currentReq.isManual;
-
-            if (!currentReq || !currentIsManual) {
-                const searchManualOnly = (isNight || !!currentReq);
-                const newReq = game.findBestRequest(this.actor, !isNight, searchManualOnly);
-
-                if (newReq) {
-                    // Guard: If it's night, only accept manual jobs
-                    if (isNight && !newReq.isManual) {
-                        // Skip auto jobs at night
-                    } else {
-                        const excludedUntil = this.actor.ignoredTargets ? this.actor.ignoredTargets.get(newReq.id) : 0;
-                        if (!(excludedUntil > time)) {
-                            if (currentReq && currentReq.id !== newReq.id) {
-                                game.releaseRequest(this.actor, currentReq);
-                            }
-
-                            if (game.claimRequest(this.actor, newReq)) {
-                                this.actor.targetRequest = newReq;
-                                this.actor.changeState(new Job(this.actor));
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         // 6. Sleep check (Priority at Night: Go home if it's night and no manual job)
@@ -338,18 +310,6 @@ export class Sleep extends State {
         }
 
         const game = (window as any).game || this.actor.game;
-        if (this.actor.role === 'worker' && game && typeof game.findBestRequest === 'function') {
-            const req = game.findBestRequest(this.actor, false, true);
-            if (req) {
-                if (game.claimRequest(this.actor, req)) {
-                    this.actor.targetRequest = req;
-                    this.actor.isSleeping = false;
-                    if (this.actor.mesh) this.actor.mesh.visible = true;
-                    this.actor.changeState(new Job(this.actor));
-                    return;
-                }
-            }
-        }
 
         if (!isNight) {
             this.actor.isSleeping = false;

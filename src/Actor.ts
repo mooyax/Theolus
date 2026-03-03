@@ -598,7 +598,6 @@ export class Actor extends Entity {
         const golbinList = (passedGoblins && passedGoblins.length > 0) ? passedGoblins : (this.game && this.game.goblinManager && Array.isArray(this.game.goblinManager.goblins) ? this.game.goblinManager.goblins : []);
         const unitList = (passedUnits && passedUnits.length > 0) ? passedUnits : (this.game && Array.isArray(this.game.units) ? this.game.units : []);
         const sheepList = (this.game && this.game.sheepManager && Array.isArray(this.game.sheepManager.sheeps)) ? this.game.sheepManager.sheeps : [];
-        const combinedUnits = [...unitList, ...sheepList];
         const buildingList = (passedBuildings && passedBuildings.length > 0) ? passedBuildings : (this.game && Array.isArray(this.game.buildings) ? this.game.buildings : []);
 
         // 2. Scan Categories
@@ -607,7 +606,7 @@ export class Actor extends Entity {
         let targetType: 'goblin' | 'unit' | 'building' | null = null;
 
         // --- Goblin Scan ---
-        const foundGoblin = (this.terrain as any).findBestTarget('goblin', this.gridX, this.gridZ, maxDist, (g, dist) => {
+        const foundGoblin = (this.terrain as any).findBestTarget('goblin', this.gridX, this.gridZ, maxDist, (g: any, dist: number) => {
             if (g.isDead || g.isFinished || g.id === this.id) return Infinity;
             if (this.ignoredTargets && (this.ignoredTargets.get(g.id) || 0) > this.simTime) return Infinity;
             return (this.targetGoblin && this.targetGoblin.id === g.id) ? dist * 0.4 : dist;
@@ -622,21 +621,38 @@ export class Actor extends Entity {
         }
 
         // --- Unit Scan ---
-        const foundUnit = (this.terrain as any).findBestTarget('unit', this.gridX, this.gridZ, maxDist, (u, dist) => {
-            if (u.isDead || u.isFinished) return Infinity;
-            if (role === 'worker' && this.targetRequest && !this.targetUnit) return Infinity;
-            if (this.ignoredTargets && (this.ignoredTargets.get(u.id) || 0) > this.simTime) return Infinity;
-            if (u.faction === this.faction) return Infinity;
+        let bestFoundUnit: any = null;
+        let bestUnitScore = Infinity;
 
-            let score = dist;
-            if (u.type === 'sheep') score *= 1.5;
-            if (this.targetUnit && this.targetUnit.id === u.id) score *= 0.4;
-            return score;
-        }, combinedUnits);
+        const scanUnitList = (list: any[]) => {
+            const foundU = (this.terrain as any).findBestTarget('unit', this.gridX, this.gridZ, maxDist, (u: any, dist: number) => {
+                if (u.isDead || u.isFinished) return Infinity;
+                if (role === 'worker' && this.targetRequest && !this.targetUnit) return Infinity;
+                if (this.ignoredTargets && (this.ignoredTargets.get(u.id) || 0) > this.simTime) return Infinity;
+                if (u.faction === this.faction) return Infinity;
+
+                let score = dist;
+                if (u.type === 'sheep') score *= 1.5;
+                if (this.targetUnit && this.targetUnit.id === u.id) score *= 0.4;
+                return score;
+            }, list);
+
+            if (foundU) {
+                const score = (this.targetUnit && this.targetUnit.id === foundU.id) ? this.getDistance(foundU.gridX, foundU.gridZ) * 0.4 : this.getDistance(foundU.gridX, foundU.gridZ);
+                if (score < bestUnitScore) {
+                    bestUnitScore = score;
+                    bestFoundUnit = foundU;
+                }
+            }
+        };
+
+        if (unitList && unitList.length > 0) scanUnitList(unitList);
+        if (sheepList && sheepList.length > 0) scanUnitList(sheepList);
+
+        const foundUnit = bestFoundUnit;
         if (foundUnit) {
-            const score = (this.targetUnit && this.targetUnit.id === foundUnit.id) ? this.getDistance(foundUnit.gridX, foundUnit.gridZ) * 0.4 : this.getDistance(foundUnit.gridX, foundUnit.gridZ);
-            if (score < bestScore) {
-                bestScore = score;
+            if (bestUnitScore < bestScore) {
+                bestScore = bestUnitScore;
                 bestTarget = foundUnit;
                 targetType = 'unit';
             }

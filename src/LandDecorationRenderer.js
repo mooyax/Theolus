@@ -37,7 +37,11 @@ export class LandDecorationRenderer {
         const leaf1 = new THREE.BoxGeometry(0.12, 0.02, 0.06);
         leaf1.rotateZ(Math.PI / 6);
         leaf1.translate(0.06, 0.12, 0);
-        const leaf2 = leaf1.clone().rotateY(Math.PI); // Opposite side
+
+        const leaf2 = new THREE.BoxGeometry(0.12, 0.02, 0.06);
+        leaf2.rotateZ(Math.PI / 6);
+        leaf2.translate(0.06, 0.12, 0);
+        leaf2.rotateY(Math.PI); // Opposite side
 
         this.assets.flowerStemGeo = BufferGeometryUtils.mergeGeometries([stemGeo, leaf1, leaf2]);
 
@@ -55,8 +59,15 @@ export class LandDecorationRenderer {
         // Petals & Core (Positioned at top of stem)
         const plane1 = new THREE.PlaneGeometry(0.5, 0.5, 1, 1);
         plane1.translate(0, 0.25, 0);
-        const plane2 = plane1.clone().rotateY(Math.PI / 3);
-        const plane3 = plane1.clone().rotateY(Math.PI * 2 / 3);
+
+        const plane2 = new THREE.PlaneGeometry(0.5, 0.5, 1, 1);
+        plane2.translate(0, 0.25, 0);
+        plane2.rotateY(Math.PI / 3);
+
+        const plane3 = new THREE.PlaneGeometry(0.5, 0.5, 1, 1);
+        plane3.translate(0, 0.25, 0);
+        plane3.rotateY(Math.PI * 2 / 3);
+
         const petalsGeo = BufferGeometryUtils.mergeGeometries([plane1, plane2, plane3]);
 
         const coreGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);

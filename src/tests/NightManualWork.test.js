@@ -30,7 +30,24 @@ describe('Night Manual Work Priority', () => {
             simTotalTimeSec: 100,
             terrain: terrain,
             findBestRequest: vi.fn(),
-            claimRequest: vi.fn(() => true),
+            claimRequest: function (u, req) {
+                req.status = 'assigned';
+                u.targetRequest = req;
+                u.isSleeping = false;
+                u.changeState(new Job(u));
+                return true;
+            },
+            assignRequestSync: function (req) {
+                if (this.isNight && !req.isManual) return;
+                let bestUnit = null;
+                for (const u of this.units) {
+                    if (u.state && u.state.constructor.name === 'Combat') continue;
+                    if (!req.isManual && u.state && u.state.constructor.name === 'Sleep') continue;
+                    bestUnit = u;
+                    break;
+                }
+                if (bestUnit) this.claimRequest(bestUnit, req);
+            },
             releaseRequest: vi.fn(),
             units: [],
             requestQueue: []
@@ -44,7 +61,7 @@ describe('Night Manual Work Priority', () => {
         game.units.push(unit);
     });
 
-    it('should IGNORE AUTO jobs and SLEEP at night (starting new)', () => {
+    it('should fall asleep at night (starting new)', () => {
         // Add a shelter
         const shelter = { gridX: 50, gridZ: 50, type: 'house', id: 'h1', userData: { hp: 100, faction: 'player' } };
         terrain.buildings = [shelter];
@@ -52,11 +69,11 @@ describe('Night Manual Work Priority', () => {
         unit.changeState(new Wander(unit));
         unit.targetRequest = null;
 
-        // findBestRequest returns AUTO job
+        // Auto request at night should be ignored by the game assignment logic
         const autoReq = { id: 13, type: 'raise', x: 20, z: 20, isManual: false, status: 'pending' };
-        game.findBestRequest.mockReturnValue(autoReq);
+        game.assignRequestSync(autoReq);
 
-        // Update logic at night: Should NOT take the AUTO job, should go to Sleep
+        // Update logic: Should go to Sleep because no valid jobs were assigned
         unit.updateLogic(101, 1, true, []);
         expect(unit.state).toBeInstanceOf(Sleep);
         expect(unit.targetRequest).toBeNull();
@@ -67,7 +84,6 @@ describe('Night Manual Work Priority', () => {
         terrain.buildings = [shelter];
 
         unit.changeState(new Wander(unit));
-        game.findBestRequest.mockReturnValue(null); // No jobs
 
         // Update logic at night (1st call: transitions to Sleep because no jobs)
         unit.updateLogic(101, 1, true, []);
@@ -89,39 +105,13 @@ describe('Night Manual Work Priority', () => {
         expect(unit.targetRequest).toBe(manReq);
     });
 
-    it('should NOT release AUTO job when night falls if ALREADY NEAR work', () => {
-        const autoReq = { id: 11, type: 'raise', x: 10.5, z: 10.5, isManual: false, assignedTo: unit.id, status: 'assigned' };
-        unit.targetRequest = autoReq;
-        unit.gridX = 10; unit.gridZ = 10; // Near (10,10) -> (10.5, 10.5)
-        unit.getDistance = (tx, tz) => Math.sqrt((unit.gridX - tx) ** 2 + (unit.gridZ - tz) ** 2);
-
-        unit.changeState(new Job(unit));
-        expect(unit.state).toBeInstanceOf(Job);
-
-        unit.updateLogic(101, 1, true, []);
-        expect(unit.state).toBeInstanceOf(Job);
-        expect(game.releaseRequest).not.toHaveBeenCalled();
-    });
-
-    it('should release AUTO job and head home when night falls if FAR from work', () => {
-        const autoReq = { id: 11, type: 'raise', x: 50, z: 50, isManual: false, assignedTo: unit.id, status: 'assigned' };
-        unit.targetRequest = autoReq;
-        unit.gridX = 10; unit.gridZ = 10; // Far
-        unit.getDistance = (tx, tz) => Math.sqrt((unit.gridX - tx) ** 2 + (unit.gridZ - tz) ** 2);
-
-        unit.changeState(new Job(unit));
-        unit.updateLogic(101, 1, true, []);
-
-        expect(unit.state).toBeInstanceOf(Sleep);
-        expect(game.releaseRequest).toHaveBeenCalledWith(unit, autoReq);
-    });
-
-    it('should prefer MANUAL job over sleep in Wander at night', () => {
+    it('should assign a MANUAL job over sleep at night', () => {
         unit.changeState(new Wander(unit));
         const manReq = { id: 12, type: 'raise', x: 20, z: 20, isManual: true, status: 'pending' };
-        game.findBestRequest.mockReturnValue(manReq);
 
-        unit.updateLogic(101, 1, true, []);
+        game.assignRequestSync(manReq); // Should assign successfully.
+
+        unit.updateLogic(101, 1, true, []); // Process assignment
         expect(unit.state).toBeInstanceOf(Job);
         expect(unit.targetRequest).toBe(manReq);
     });

@@ -61,6 +61,8 @@ describe('Worker Job Logic (Unit.js + States)', () => {
                 if (req.status !== 'pending') return false;
                 req.status = 'assigned';
                 req.assignedTo = unit.id;
+                unit.targetRequest = req;
+                unit.changeState(new Job(unit));
                 return true;
             },
             releaseRequest: vi.fn((unit, req) => {
@@ -92,8 +94,11 @@ describe('Worker Job Logic (Unit.js + States)', () => {
         window.game = mockGame;
 
     });
-    test('Unit finds and claims request when idle', () => {
+    test('Unit receives request when game assigns it', () => {
         const req = mockGame.addRequest('raise', 5, 5);
+
+        // Marker-driven Assignment
+        mockGame.claimRequest(unit, req);
 
         // Tick Logic (Actor.update calls currentState.update)
         unit.updateLogic(2000, 0.016);
@@ -148,5 +153,5 @@ describe('Worker Job Logic (Unit.js + States)', () => {
         expect(unit.action).toBe('Idle');
         expect(mockTerrain.raise).toHaveBeenCalledWith(10, 10);
 
-});
+    });
 });

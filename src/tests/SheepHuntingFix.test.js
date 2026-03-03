@@ -43,6 +43,7 @@ describe('Sheep Hunting Logic & Manager Update Fix', () => {
     });
 
     it('should remove dead sheep during manager update', () => {
+        const noRegenSpy = vi.spyOn(Math, 'random').mockReturnValue(0.99); // Prevent accidental regen
         const sm = game.sheepManager;
 
         sm.initSheeps();
@@ -58,6 +59,7 @@ describe('Sheep Hunting Logic & Manager Update Fix', () => {
 
         expect(sm.sheeps.length).toBe(initialCount - 1);
         expect(sm.sheeps.includes(target)).toBe(false);
+        noRegenSpy.mockRestore();
     });
 
     it('should regenerate sheep when population is low', () => {
