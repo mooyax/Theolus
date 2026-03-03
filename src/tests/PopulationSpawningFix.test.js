@@ -12,6 +12,8 @@ const createMockAttribute = (count) => ({
     getY: vi.fn().mockReturnValue(0),
     setX: vi.fn(),
     setY: vi.fn(),
+    setXY: vi.fn(),
+    setXYZ: vi.fn(),
     needsUpdate: false,
     array: new Float32Array(count * 3)
 });

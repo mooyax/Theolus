@@ -33,7 +33,9 @@ export class Terrain {
     public isRestoring: boolean = false;
     public colorsDirty: boolean = false;
     public needsRegionRecalc: boolean = false;
+    public needsMeshUpdate: boolean = false;
     public regionRecalcTimer: number = 0;
+    public meshUpdateTimer: number = 0;
     public frameCount: number = 0;
     public lastFrameTime: number = 0;
 
@@ -1994,9 +1996,9 @@ export class Terrain {
         });
 
         if (!this.isRestoring) {
-            this.updateMesh();
-            this.updateColors();
-            this.calculateRegions();
+            this.needsMeshUpdate = true;
+            this.colorsDirty = true;
+            this.needsRegionRecalc = true;
         }
 
         return totalChange;
@@ -2097,8 +2099,8 @@ export class Terrain {
             this.generateTreesAt(x, z, dFactor);
         });
 
-        this.updateMesh();
-        this.updateColors();
+        this.needsMeshUpdate = true;
+        this.colorsDirty = true;
         this.needsRegionRecalc = true; // Set flag for deferred recalculation
 
         return totalChange;
@@ -2547,7 +2549,10 @@ export class Terrain {
             }
         }
 
-        if (!skipMeshUpdate && !this.isRestoring) this.updateMesh();
+        if (!skipMeshUpdate && !this.isRestoring) {
+            this.needsMeshUpdate = true;
+            this.colorsDirty = true;
+        }
 
         return building;
     }
@@ -2837,9 +2842,9 @@ export class Terrain {
             });
 
             if (!this.isRestoring) {
-                this.updateMesh();
-                this.updateColors(); // If height changed colors might change
-                this.calculateRegions();
+                this.needsMeshUpdate = true;
+                this.colorsDirty = true;
+                this.needsRegionRecalc = true;
             }
         }
         return true;
@@ -3163,15 +3168,19 @@ export class Terrain {
             if (uni.uSwayIntensity) uni.uSwayIntensity.value = swayIntensity;
         }
 
-        // 2. Deferred Region Recalculation (Performance Optimization)
+        // 2. Deferred Mesh & Region Recalculation (Performance Optimization)
+        if (this.needsMeshUpdate) {
+            this.updateMesh();
+            this.needsMeshUpdate = false;
+        }
+
         if (this.needsRegionRecalc) {
             if (this.regionRecalcTimer === undefined) this.regionRecalcTimer = 0;
             this.regionRecalcTimer += deltaTime;
-            if (this.regionRecalcTimer > 2.0) { // 2.0 second debounce
+            if (this.regionRecalcTimer > 1.0) { // Reduced from 2.0 to 1.0 for better balance
                 this.calculateRegions();
                 this.needsRegionRecalc = false;
                 this.regionRecalcTimer = 0;
-                console.log("[Terrain] Deferred Regions Recalculated");
             }
         }
 
