@@ -18,6 +18,8 @@ if (typeof window !== 'undefined') {
 // Minimal Mocks
 const mockScene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
 const mockTerrain = {
+    logicalWidth: 20,
+    logicalDepth: 20,
     getTileHeight: () => 10,
     gridToWorld: (x, z) => ({ x, y: 10, z }),
     getVisualOffset: () => ({ x: 0, y: 0 }),

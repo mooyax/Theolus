@@ -113,6 +113,16 @@ export const GameConfig = {
             "lifespanVariance": 20,
             "spawnCost": 100,
             "isRanged": true
+        },
+        "warship": {
+            "hp": 10000,
+            "damage": 50,
+            "attackRate": 1.5,
+            "attackRange": 10.0,
+            "lifespanBase": 120,
+            "isRanged": true,
+            "isNaval": true,
+            "spawnCost": 150
         }
     },
     "goblins": {
@@ -181,6 +191,13 @@ export const GameConfig = {
             "capacity": 50,
             "defense": 2.0,
             "growthRate": 0.05
+        },
+        "port": {
+            "hp": 1200,
+            "capacity": 20,
+            "defense": 5.0,
+            "growthRate": 0.02,
+            "type": "coastal"
         },
         "cave": {
             "hp": 200,

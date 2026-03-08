@@ -1,9 +1,10 @@
 import { State, WanderBase, CombatStateBase } from './State.js';
+import { IAiActor } from './IAiActor.js';
 
 export class Combat extends CombatStateBase {
     public name: string = 'Combat';
 
-    constructor(actor: any) {
+    constructor(actor: IAiActor) {
         super(actor);
     }
 
@@ -37,7 +38,7 @@ export class Build extends State {
     public buildX: number;
     public buildZ: number;
     public timer: number;
-    constructor(actor: any, buildX: number, buildZ: number) {
+    constructor(actor: IAiActor, buildX: number, buildZ: number) {
         super(actor);
         this.buildX = buildX;
         this.buildZ = buildZ;
@@ -82,7 +83,7 @@ export class Build extends State {
 
 export class Raid extends State {
     public scanTimer: number;
-    constructor(actor: any) {
+    constructor(actor: IAiActor) {
         super(actor);
         this.scanTimer = 0;
     }
@@ -192,7 +193,7 @@ export class Raid extends State {
 
 export class Retreat extends State {
     public cave: any;
-    constructor(actor: any) {
+    constructor(actor: IAiActor) {
         super(actor);
         this.cave = null;
     }
@@ -233,7 +234,7 @@ export class Retreat extends State {
 export class Wander extends WanderBase {
 
     public scanTimer: number;
-    constructor(actor: any) {
+    constructor(actor: IAiActor) {
         super(actor);
         this.scanTimer = 0;
     }

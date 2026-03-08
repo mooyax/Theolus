@@ -49,13 +49,13 @@ describe('Goblin Encounter Logic', () => {
         terrain.logicalDepth = 100;
         terrain.initEntityGrid();
 
-        terrain.getRegion = vi.fn().mockReturnValue(0);
+        terrain.getRegion = vi.fn().mockReturnValue(1);
         terrain.getTileHeight = vi.fn().mockReturnValue(1);
 
         terrain.grid = Array.from({ length: 100 }, () =>
             Array.from({ length: 100 }, () => ({
                 height: 1,
-                regionId: 0,
+                regionId: 1,
                 hasBuilding: false,
                 type: 'land'
             }))
@@ -97,12 +97,14 @@ describe('Goblin Encounter Logic', () => {
             game.frameCount++;
 
             if (goblin.updateLogic) {
-                goblin.updateLogic(game.simTotalTimeSec, dt, game.units, game.buildings);
+                goblin.updateLogic(game.simTotalTimeSec, dt, false, game.units, game.buildings);
             } else if (goblin.update) {
-                goblin.update(game.simTotalTimeSec, dt, game.units, game.buildings);
+                goblin.update(game.simTotalTimeSec, dt);
             }
 
-            if (worker.update) {
+            if (worker.updateLogic) {
+                worker.updateLogic(game.simTotalTimeSec, dt, false, game.units, game.buildings);
+            } else if (worker.update) {
                 worker.update(game.simTotalTimeSec, dt);
             }
         }
@@ -138,8 +140,8 @@ describe('Goblin Encounter Logic', () => {
 
         for (let i = 0; i < steps; i++) {
             game.simTotalTimeSec += dt;
-            if (goblin.updateLogic) goblin.updateLogic(game.simTotalTimeSec, dt, game.units, game.buildings);
-            if (worker.update) worker.update(game.simTotalTimeSec, dt);
+            if (goblin.updateLogic) goblin.updateLogic(game.simTotalTimeSec, dt, false, game.units, game.buildings);
+            if (worker.updateLogic) worker.updateLogic(game.simTotalTimeSec, dt, false, game.units, game.buildings);
         }
 
         expect(goblin.targetUnit).toBe(worker);
@@ -169,8 +171,8 @@ describe('Goblin Encounter Logic', () => {
         const dt = 0.1;
         for (let i = 0; i < 20; i++) {
             game.simTotalTimeSec += dt;
-            if (goblin.updateLogic) goblin.updateLogic(game.simTotalTimeSec, dt, game.units, game.buildings);
-            else goblin.update(game.simTotalTimeSec, dt, game.units, game.buildings);
+            if (goblin.updateLogic) goblin.updateLogic(game.simTotalTimeSec, dt, false, game.units, game.buildings);
+            else if (goblin.update) goblin.update(game.simTotalTimeSec, dt);
         }
 
         expect(goblin.targetUnit).toBe(worker);

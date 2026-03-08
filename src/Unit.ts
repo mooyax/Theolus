@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 
-import { Actor } from './Actor.js';
-import { WanderBase } from './ai/states/State.js';
+import { Actor } from './Actor';
 import { Wander, Job, Combat, Sleep } from './ai/states/UnitStates.js';
 import { GameConfig } from './config/GameConfig';
+import { IAiActor } from './ai/states/IAiActor';
 
-export class Unit extends Actor {
+export class Unit extends Actor implements IAiActor {
     static assets: any = {
         geometries: {},
         materials: {},
@@ -45,12 +45,14 @@ export class Unit extends Actor {
     public debugFrame: number;
 
     public isSleeping: boolean = false;
+    public isNaval: boolean = false;
 
     public targetRaidPoint: any | null;
     public lastWaterLogTime?: number; // Added for logging throttle
 
     // Scan Timer
     public scanTimer: number = 0;
+    public invasionTimer: number = 0;
 
     // Missing Props
     public homeBase: Unit | any | null = null; // Sometimes refers to a Building (Entity), sometimes Unit?
@@ -261,13 +263,12 @@ export class Unit extends Actor {
         // Tests expect Unit ID 0. If Goblin Created first, Unit might be ID 1.
         // Let's force override ID in Unit to use Unit.nextId for compatibility.
         this.id = Unit.nextId++;
+        this.lastGridX = this.gridX;
+        this.lastGridZ = this.gridZ;
 
         console.log(`[UnitCore.js] Unit Created ID:${this.id} Role:${role} Pos:${x},${z} Special:${isSpecial}`);
-        this.gridX = (x !== undefined) ? x : 20;
-        this.gridZ = (z !== undefined) ? z : 20;
 
         // Legacy compatibility check (if role arg is boolean)
-        // Check if role is boolean (old style: new Unit(..., isSpecial))
         let specialFlag = isSpecial;
         if (typeof role === 'boolean') {
             specialFlag = role;
@@ -281,10 +282,6 @@ export class Unit extends Actor {
         this.squadId = squadId; // Squad ID for coordinated attacks
         this.faction = faction;
 
-        this.lastGridX = this.gridX;
-        this.lastGridZ = this.gridZ;
-        this.lastGridX = this.gridX;
-        this.lastGridZ = this.gridZ;
         this.stagnationTimer = 0;
         this.buildStagnationCount = 0;
         this.lastTime = 0; // Fix: Undefined caused logic failure
@@ -303,6 +300,8 @@ export class Unit extends Actor {
         // Stats from Config
         let statConfig = GameConfig.units[this.role];
         if (!statConfig) statConfig = GameConfig.units.worker;
+
+        this.isNaval = statConfig.isNaval || false;
 
         // Base HP
         let baseHp = GameConfig.units.worker.hp; // Default Base
@@ -343,6 +342,7 @@ export class Unit extends Actor {
 
         this.targetGoblin = null;
         this.targetRaidPoint = null; // Fix: Initialize to null
+        this.invasionTimer = 0;
 
         // Lifespan
         // Lifespan
@@ -355,7 +355,7 @@ export class Unit extends Actor {
         }
         this.lifespan = baseLifespan;
 
-        this.age = 20; // Starts at 20 years old
+        this.age = this.isNaval ? 0 : 20; // Ships start at 0, Humans at 20
         this.isDead = false;
         this.isSleeping = false; // Missing flag init?
 
@@ -365,10 +365,6 @@ export class Unit extends Actor {
         this.moveTimer = 0;
         this.moveDuration = 0.8;
         this.moveStartTime = 0;
-        this.startGridX = 0;
-        this.startGridZ = 0;
-        this.targetGridX = 0;
-        this.targetGridZ = 0;
 
         // Blacklist for failed paths
         // this.ignoredTargets = new Map(); // id -> expiryTime // Removed: Inherited from Actor
@@ -605,7 +601,7 @@ export class Unit extends Actor {
         }
     }
 
-    findRaidTarget() {
+    findRaidTarget(): boolean {
         // PRIORITY 1: Check Squad Orders
         if (this.squadId && (window as any).game) {
             const squad = (window as any).game.getSquad(this.squadId);
@@ -732,7 +728,7 @@ export class Unit extends Actor {
         }
 
         if (!memories || memories.length === 0) {
-            return;
+            return false;
         }
 
         let nearest: { x: number, z: number } | null = null;
@@ -1188,6 +1184,20 @@ export class Unit extends Actor {
         console.warn(`[Unit ${this.id}] Stuck Recovery triggered. Resetting to Idle.`);
     }
 
+    updatePosition() {
+        if (!this.terrain) return;
+        // Use the robust base implementation instead of strict getVisualPosition
+        this.getPositionForGrid(this.gridX, this.gridZ, this.position);
+
+        if (this.isNaval) {
+            this.position.y = 0; // Ships stay at sea level
+        }
+
+        if (this.mesh) {
+            this.mesh.position.copy(this.position);
+        }
+    }
+
     canMoveTo(x, z) {
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
@@ -1205,13 +1215,10 @@ export class Unit extends Actor {
         const currentHeight = this.terrain.getTileHeight(this.gridX, this.gridZ);
         const targetHeight = this.terrain.getTileHeight(checkX, checkZ);
 
-        if (targetHeight <= 0) {
-            const now = (this.game) ? this.game.gameTotalTime : Date.now();
-            // if (now - (this.lastWaterLogTime || 0) > 5000) { // Removed debug log
-            //     console.log(`[Unit ${this.id}] Blocked by Water at ${checkX},${checkZ} H:${targetHeight}`); // Removed debug log
-            //     this.lastWaterLogTime = now; // Removed debug log
-            // } // Removed debug log
-            return false; // Water
+        if (this.isNaval) {
+            if (targetHeight > 0) return false; // Ships cannot move on land
+        } else {
+            if (targetHeight <= 0) return false; // Land units cannot move on water
         }
         if (targetHeight > 8) {
             // console.log(`[Unit ${this.id}] Moving onto Rock at ${checkX},${checkZ} H:${targetHeight} (Speed Penalty)`); // Removed debug log
@@ -1272,7 +1279,7 @@ export class Unit extends Actor {
             super.updateLogic(time, deltaTime, isNight, units, buildings, goblins);
 
             // 3. Passive Actions (Resource Gathering)
-            if (this.role === 'fisher' || this.role === 'hunter') {
+            if (this.role === 'fisher' || this.role === 'hunter' || this.role === 'warship') {
                 this.gatherResources(time);
             }
 
@@ -1326,8 +1333,9 @@ export class Unit extends Actor {
 
         if ((window as any).game && (window as any).game.resources) {
             const economy = (GameConfig.economy && GameConfig.economy.food);
-            if (foundWater && this.role === 'fisher') {
-                const amount = (economy && economy.fisherAmount) || 1.5; // Slightly increased from 1.0
+            if (foundWater && (this.role === 'fisher' || this.role === 'warship')) {
+                let amount = (economy && economy.fisherAmount) || 1.5;
+                if (this.role === 'warship') amount *= 2.0; // User Request: 2x efficiency for warships
                 (window as any).game.resources.fish = ((window as any).game.resources.fish || 0) + amount;
                 // if (this.id === 0 && Math.random() < 0.01) console.log(`[Unit ${this.id}] Fishing... Total:${Math.floor((window as any).game.resources.fish)}`); // Removed debug log
             }
@@ -1350,21 +1358,52 @@ export class Unit extends Actor {
         // 1. Get Current Region
         const currentRegion = this.terrain.getRegion(this.gridX, this.gridZ);
 
-        // 2. Determine Patrol Radius (Larger for Knights)
-        const radius = (this.role === 'knight') ? 30 : 15;
+        // 2. Determine Patrol Radius (Larger for Knights and Warships)
+        const radius = (this.role === 'knight' || this.isNaval) ? 30 : 15;
 
         // 3. Find Valid Point in SAME Region
         const target = this.terrain.getRandomPointInRegion(currentRegion, this.gridX, this.gridZ, radius);
 
         if (target) {
             const h = this.terrain.getTileHeight(target.x, target.z);
-            if (h > 0) {
+            // Height verification: Land units (h > 0), Naval units (h <= 0)
+            const isLandTarget = h > 0;
+            const isNavalTarget = h <= 0;
+            const canWander = this.isNaval ? isNavalTarget : isLandTarget;
+
+            if (canWander) {
                 this.smartMove(target.x, target.z, time);
+                return;
             }
-        } else {
-            // Fallback: Just stand still or try small random step if stuck
-            // this.checkStuck(); // Method not implemented
         }
+
+        // 4. Fallback: If region random point fails (e.g. small peninsula, blocked), try adjacent tile (Sheep logic)
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        const dirs = [{ x: 1, z: 0 }, { x: -1, z: 0 }, { x: 0, z: 1 }, { x: 0, z: -1 }];
+        for (let i = dirs.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [dirs[i], dirs[j]] = [dirs[j], dirs[i]];
+        }
+
+        for (const dir of dirs) {
+            let tx = this.gridX + dir.x;
+            let tz = this.gridZ + dir.z;
+
+            if (tx < 0) tx = logicalW - 1;
+            if (tx >= logicalW) tx = 0;
+            if (tz < 0) tz = logicalD - 1;
+            if (tz >= logicalD) tz = 0;
+
+            if (this.canMoveTo(tx, tz)) {
+                this.executeMove(tx, tz, time);
+                return;
+            }
+        }
+
+        // SAFETY: If all else fails, force idle
+        this.action = 'Idle';
     }
 
     // cleanIgnoredTargets removed (Deprecated)
@@ -1492,6 +1531,7 @@ export class Unit extends Actor {
             this.game.completeRequest(this, req);
         }
     }
+
 
     // --- COMBAT LOGIC (RESTORED) ---
     // Implemented to fix Indestructible Caves and Passive Units

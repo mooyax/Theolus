@@ -11,13 +11,15 @@ export class Wander extends WanderBase {
     enter(prev?: State) {
         // --- AUTONOMOUS PATROL (FOR COMBAT UNITS) ---
         const time = this.actor.simTime || 0;
-        if ((this.actor.role === 'knight' || this.actor.role === 'wizard') && !this.actor.isMoving) {
+        if ((this.actor.role === 'knight' || this.actor.role === 'wizard' || this.actor.role === 'warship') && !this.actor.isMoving) {
             if (typeof this.actor.findRaidTarget === 'function') {
                 if (this.actor.findRaidTarget()) {
                     if (typeof this.actor.patrol === 'function') {
-                        this.actor.patrol(time);
+                        const success = this.actor.patrol(time);
+                        if (success) {
+                            this.actor.action = 'Patrolling';
+                        }
                     }
-                    this.actor.action = 'Patrolling';
                 }
             }
         }
@@ -41,8 +43,12 @@ export class Wander extends WanderBase {
         // 1. Resume Previous Movement
         if (this.resumeContext) {
             const ctx = this.resumeContext;
-            if (this.actor.smartMove(ctx.target.x, ctx.target.z, time)) {
+            const success = this.actor.smartMove(ctx.target.x, ctx.target.z, time);
+            if (success) {
                 if (ctx.action) this.actor.action = ctx.action;
+                this.resumeContext = null;
+            } else if (!success && !this.actor.isPathfinding && !this.actor.isWaitingForPath) {
+                // FAILED: Target might be unreachable now. Abandon resume.
                 this.resumeContext = null;
             }
         }
@@ -58,15 +64,17 @@ export class Wander extends WanderBase {
         }
 
         // --- AUTONOMOUS PATROL (FOR COMBAT UNITS) ---
-        if ((this.actor.role === 'knight' || this.actor.role === 'wizard') && !this.actor.isMoving) {
+        if ((this.actor.role === 'knight' || this.actor.role === 'wizard' || this.actor.role === 'warship') && !this.actor.isMoving) {
             if (typeof this.actor.findRaidTarget === 'function') {
                 const hasTarget = this.actor.findRaidTarget();
                 if (hasTarget) {
                     if (typeof this.actor.patrol === 'function') {
-                        this.actor.patrol(time);
+                        const success = this.actor.patrol(time);
+                        if (success) {
+                            this.actor.action = 'Patrolling';
+                            return;
+                        }
                     }
-                    this.actor.action = 'Patrolling';
-                    return;
                 }
             }
         }
@@ -107,8 +115,9 @@ export class Wander extends WanderBase {
         }
 
         // 6. Sleep check (Priority at Night: Go home if it's night and no manual job)
+        // Naval Units (Ships) do NOT sleep at night.
         const finalIsManual = this.actor.targetRequest && this.actor.targetRequest.isManual;
-        if (isNight && !finalIsManual) {
+        if (isNight && !finalIsManual && !this.actor.isNaval) {
             this.actor.changeState(new Sleep(this.actor));
             return;
         }
@@ -180,7 +189,7 @@ export class Job extends State {
         const dist = this.actor.getDistance(req.x, req.z);
         const isStuck = (this.actor.stuckTimer > 5.0) || this.actor.isUnreachable || (this.actor.stagnationTimer > 10.0);
 
-        if (isNight && !req.isManual) {
+        if (isNight && !req.isManual && !this.actor.isNaval) {
             if (dist > 3.0 || isStuck) {
                 if (this.actor.game && this.actor.game.releaseRequest) {
                     this.actor.game.releaseRequest(this.actor, req);
@@ -207,7 +216,11 @@ export class Job extends State {
             return;
         }
 
-        if (dist <= 2.1) {
+        // Dynamic completion threshold: allow land workers to "reach" water markers from the shore
+        const isWaterTarget = this.actor.terrain.getTileHeight(req.x, req.z) <= 0;
+        const completionThreshold = (isWaterTarget && !this.actor.isNaval) ? 5.5 : 2.1;
+
+        if (dist <= completionThreshold) {
             this.actor.isMoving = false;
             if (this.actor.role === 'worker') {
                 this.actor.action = 'Working';
@@ -229,7 +242,23 @@ export class Job extends State {
 
         if (this.actor.smartMove) {
             if (!this.actor.isMoving || time - this.lastMoveAttempt > 1.0) {
-                const success = this.actor.smartMove(req.x, req.z, time);
+                let tx = req.x;
+                let tz = req.z;
+
+                // Adjust for water-based markers (like Ports)
+                const h = this.actor.terrain.getTileHeight(tx, tz);
+                if (h <= 0 && !this.actor.isNaval) {
+                    const nearestLand = this.actor.terrain.findNearestTileByCondition(
+                        tx, tz, 5,
+                        (cell: any) => cell.height > 0 && this.actor.isReachable(cell.x, cell.z, true)
+                    );
+                    if (nearestLand) {
+                        tx = nearestLand.x;
+                        tz = nearestLand.z;
+                    }
+                }
+
+                const success = this.actor.smartMove(tx, tz, time);
                 this.lastMoveAttempt = time;
                 if (!success && !this.actor.isPathfindingThrottled) {
                     this.actor.pathFailCount = (this.actor.pathFailCount || 0) + 1;
@@ -280,6 +309,14 @@ export class Combat extends CombatStateBase {
     }
     update(...args: any[]) {
         super.update(...args);
+        const [time, deltaTime] = args;
+
+        // Warship Invasion Logic
+        if (this.actor.role === 'warship' && typeof this.actor.updateInvasion === 'function') {
+            const target = this.actor.targetGoblin || this.actor.targetUnit || this.actor.targetBuilding;
+            this.actor.updateInvasion(deltaTime, target);
+        }
+
         if (!this.actor.targetGoblin && !this.actor.targetUnit && !this.actor.targetBuilding) {
             this.actor.clearPath();
             this.actor.changeState(new Wander(this.actor));
@@ -311,7 +348,7 @@ export class Sleep extends State {
 
         const game = (window as any).game || this.actor.game;
 
-        if (!isNight) {
+        if (!isNight || this.actor.isNaval) {
             this.actor.isSleeping = false;
             if (this.actor.mesh) this.actor.mesh.visible = true;
             this.actor.changeState(new Wander(this.actor));

@@ -15,7 +15,7 @@ describe('Unit Movement Wrapping', () => {
     });
 
     beforeEach(() => {
-        const grid = Array(80).fill().map(() => Array(80).fill({ hasBuilding: false }));
+        const grid = Array(80).fill().map(() => Array(80).fill({ hasBuilding: false, regionId: 1 }));
 
         mockTerrain = {
             getTileHeight: (x, z) => 1,
@@ -65,9 +65,11 @@ describe('Unit Movement Wrapping', () => {
         unit.gridX = 10;
         unit.gridZ = 10;
         unit.triggerMove(15, 10, 1000);
-        await new Promise(r => setTimeout(r, 0));
-        unit.triggerMove(15, 10, 1001); // Retry with path
+        // Wait for async pathfinding microtask
+        await new Promise(r => setTimeout(r, 10));
 
+        // Final position check. Actor.smartMove will have called executeMove/startMove.
+        // startMove sets targetGridX/Z.
         expect(unit.targetGridX).toBe(11);
         expect(unit.targetGridZ).toBe(10);
     });
@@ -76,8 +78,7 @@ describe('Unit Movement Wrapping', () => {
         unit.gridX = 10;
         unit.gridZ = 10;
         unit.triggerMove(70, 10, 1000);
-        await new Promise(r => setTimeout(r, 0));
-        unit.triggerMove(70, 10, 1001);
+        await new Promise(r => setTimeout(r, 10));
 
         expect(unit.targetGridX).toBe(70);
         expect(unit.targetGridZ).toBe(10);
@@ -87,8 +88,7 @@ describe('Unit Movement Wrapping', () => {
         unit.gridX = 70;
         unit.gridZ = 10;
         unit.triggerMove(10, 10, 1000);
-        await new Promise(r => setTimeout(r, 0));
-        unit.triggerMove(10, 10, 1001);
+        await new Promise(r => setTimeout(r, 10));
 
         expect(unit.targetGridX).toBe(10);
         expect(unit.targetGridZ).toBe(10);
@@ -98,8 +98,7 @@ describe('Unit Movement Wrapping', () => {
         unit.gridX = 10;
         unit.gridZ = 10;
         unit.triggerMove(10, 70, 1000);
-        await new Promise(r => setTimeout(r, 0));
-        unit.triggerMove(10, 70, 1001);
+        await new Promise(r => setTimeout(r, 10));
 
         expect(unit.targetGridX).toBe(10);
         expect(unit.targetGridZ).toBe(70);

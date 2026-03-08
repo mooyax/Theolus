@@ -3,6 +3,7 @@ console.log('[DEBUG] Game.ts top-level load');
 import { Terrain } from './Terrain';
 import { InputManager } from './InputManager';
 import { Unit } from './Unit';
+import { Warship } from './Warship';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SaveManager } from './SaveManager';
 
@@ -646,50 +647,6 @@ export class Game {
                 };
 
                 // UI Listeners (New Game, Regenerate, etc.)
-                document.getElementById('start-new-btn')?.addEventListener('click', () => {
-                    document.getElementById('start-screen')!.style.display = 'none';
-                    this.startNewGame();
-                });
-
-                document.getElementById('regenerate-btn')?.addEventListener('click', () => {
-                    this.regenerateWorld();
-                });
-
-                document.getElementById('start-load-btn')?.addEventListener('click', () => {
-                    const modal = document.getElementById('save-modal');
-                    if (modal) {
-                        modal.style.display = 'flex';
-                        this.saveManager.refreshSlotList(
-                            this.saveGame.bind(this),
-                            async (slotId: number) => {
-                                const success = await this.loadGame(slotId);
-                                if (success) {
-                                    document.getElementById('start-screen')!.style.display = 'none';
-                                    document.getElementById('save-modal')!.style.display = 'none';
-                                }
-                                return success;
-                            }
-                        );
-                    }
-                });
-
-                document.getElementById('save-load-btn')?.addEventListener('click', () => {
-                    const modal = document.getElementById('save-modal');
-                    if (modal) modal.style.display = 'flex';
-                    this.saveManager.refreshSlotList(this.saveGame.bind(this), this.loadGame.bind(this));
-                });
-
-                document.getElementById('close-modal')?.addEventListener('click', () => {
-                    document.getElementById('save-modal')!.style.display = 'none';
-                });
-
-                document.getElementById('help-btn')?.addEventListener('click', () => {
-                    document.getElementById('help-modal')!.style.display = 'flex';
-                });
-
-                document.getElementById('close-help-btn')?.addEventListener('click', () => {
-                    document.getElementById('help-modal')!.style.display = 'none';
-                });
             }
         }
 
@@ -774,6 +731,18 @@ export class Game {
 
         console.log("[Game] Initializing Start Screen Listeners...");
 
+        // Visibility Check for LOAD button
+        if (btnLoad && this.saveManager) {
+            const slots = this.saveManager.getSlots();
+            const hasSaves = slots.some(s => !s.empty);
+            if (hasSaves) {
+                btnLoad.style.display = 'block';
+                console.log("[Game] Save data detected. Showing LOAD button.");
+            } else {
+                btnLoad.style.display = 'none';
+            }
+        }
+
         if (btnNew) {
             btnNew.onclick = () => {
                 console.log("[Game] NEW GAME Clicked");
@@ -795,16 +764,48 @@ export class Game {
         if (btnLoad) {
             btnLoad.onclick = () => {
                 console.log("[Game] LOAD Clicked");
-                // TODO: Open Save/Load Modal
-                if (this.saveManager) {
-                    // For now, load Slot 1 as quick test, or open modal
-                    // this.loadGame(1);
-                    // Better: Trigger the Load Modal via UI logic
-                    const btnSaveLoad = document.getElementById('save-load-btn');
-                    if (btnSaveLoad) btnSaveLoad.click(); // Trigger existing modal logic
+                const modal = document.getElementById('save-modal');
+                if (modal && this.saveManager) {
+                    modal.style.display = 'flex';
+                    this.saveManager.refreshSlotList(
+                        this.saveGame.bind(this),
+                        async (slotId: number) => {
+                            const success = await this.loadGame(slotId);
+                            if (success) {
+                                if (startScreen) startScreen.style.display = 'none';
+                                modal.style.display = 'none';
+                                if (ui) ui.style.display = 'flex';
+                            }
+                            return success;
+                        }
+                    );
                 }
             };
         }
+
+        // Global UI listeners
+        document.getElementById('save-load-btn')?.addEventListener('click', () => {
+            const modal = document.getElementById('save-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                this.saveManager.refreshSlotList(
+                    this.saveGame.bind(this),
+                    this.loadGame.bind(this)
+                );
+            }
+        });
+
+        document.getElementById('close-modal')?.addEventListener('click', () => {
+            document.getElementById('save-modal')!.style.display = 'none';
+        });
+
+        document.getElementById('help-btn')?.addEventListener('click', () => {
+            document.getElementById('help-modal')!.style.display = 'flex';
+        });
+
+        document.getElementById('close-help-btn')?.addEventListener('click', () => {
+            document.getElementById('help-modal')!.style.display = 'none';
+        });
     }
 
     setupLights() {
@@ -839,6 +840,7 @@ export class Game {
 
             if (bType === 'barracks') role = 'knight';
             else if (bType === 'tower') role = 'wizard';
+            else if (bType === 'port') role = 'warship';
             else {
                 // Houses spawn diversity:
                 const r = Math.random();
@@ -861,11 +863,17 @@ export class Game {
             else role = 'worker';
         }
 
-        const unit = new Unit(this.scene, this.terrain, x, z, role, isSpecial, squadId, faction);
+        const unit: any = (role === 'warship')
+            ? new Warship(this.scene, this.terrain, x, z, faction)
+            : new Unit(this.scene, this.terrain, x, z, role, isSpecial, squadId, faction);
+
         unit.game = this;
         unit.homeBase = homeBase; // Link
 
         this.units.push(unit);
+        if (unit.isNaval || role === 'warship') {
+            // console.log(`[Game] !!! WARSHIP SPAWNED !!! ID:${unit.id} at ${x.toFixed(2)},${z.toFixed(2)} Faction:${faction} isNaval:${unit.isNaval}`);
+        }
         if (this.unitMap) this.unitMap.set(unit.id, unit);
 
         // TRIGGER: Newly spawned unit immediately checks for work!
@@ -889,18 +897,28 @@ export class Game {
             return false;
         } else {
             // Human spawn
-            this.spawnUnit(x, z, null, sourceBuilding, squadId, false, faction); // Propagate faction
+            let spawnX = x;
+            let spawnZ = z;
 
-            // BONUS SPAWN: Barracks & Towers also spawn a Worker to ensure economy recovery
-            if (buildingType === 'barracks' || buildingType === 'tower') {
-                console.log(`[Game] Bonus Worker Spawn check for ${buildingType}`);
-                // Checking max capacity is handled by Terrain/Building before calling this.
-                // If we are here, a spawn was triggered.
-                this.spawnUnit(x, z, 'worker', sourceBuilding, null, false, faction);
+            let role: string | null = null;
+            if (buildingType === 'port') {
+                role = 'warship';
+                // Search for water tile outside the port's 3x3 footprint
+                const waterTile = this.terrain.findNearestTileByCondition(
+                    x + 1, z + 1,
+                    6,
+                    (cell: any) => cell.height <= 0.5 && !cell.hasBuilding
+                );
+                if (waterTile) {
+                    spawnX = waterTile.x;
+                    spawnZ = waterTile.z;
+                }
             }
 
-            return true;
+            this.spawnUnit(spawnX, spawnZ, role, sourceBuilding, squadId, false, faction);
+
         }
+        return true;
     }
 
 
@@ -2058,10 +2076,12 @@ export class Game {
             const tz = Math.round(req.z);
 
             // Validation: Height Check for Buildings
-            if (req.type === 'build_tower' || req.type === 'build_barracks' || req.type === 'build_house') {
+            if (req.type === 'build_tower' || req.type === 'build_barracks' || req.type === 'build_house' || req.type === 'build_port') {
                 const h = this.terrain.getTileHeight(tx, tz);
-                if (h > 12 || h <= 0) {
-                    console.warn(`[Game] Manual build failed: Invalid terrain (Height: ${h}) at ${tx},${tz}`);
+                const isPort = req.type === 'build_port';
+                // Tower/Barracks/House must be on land (h > 0). Port can be in water or on coast.
+                if (h > 12 || (!isPort && h <= 0)) {
+                    console.warn(`[Game] Manual build failed: Invalid terrain (Height: ${h}, type: ${req.type}) at ${tx},${tz}`);
                     this.removeRequest(req);
                     return;
                 }
@@ -2078,18 +2098,27 @@ export class Game {
             } else if (req.type === 'build_tower') {
                 // Auto-flatten for manual build (User Request)
                 this.terrain.flattenArea(tx, tz, 3);
-                const b = this.terrain.addBuilding('tower', tx, tz, req.isManual, false, unit.faction);
+                // FORCE=FALSE: Even if it's a manual request, we must validate the final terrain state
+                const b = this.terrain.addBuilding('tower', tx, tz, false, false, unit.faction);
                 if (!b) success = false;
             } else if (req.type === 'build_barracks') {
                 // Auto-flatten for manual build (User Request)
                 this.terrain.flattenArea(tx, tz, 3);
-                const b = this.terrain.addBuilding('barracks', tx, tz, req.isManual, false, unit.faction);
+                const b = this.terrain.addBuilding('barracks', tx, tz, false, false, unit.faction);
                 if (!b) success = false;
             } else if (req.type === 'build_house') {
                 // Auto-flatten for manual build (User Request)
                 this.terrain.flattenArea(tx, tz, 2);
-                const b = this.terrain.addBuilding('house', tx, tz, req.isManual, false, unit.faction);
+                const b = this.terrain.addBuilding('house', tx, tz, false, false, unit.faction);
                 if (!b) success = false;
+            } else if (req.type === 'build_port') {
+                // Auto-flatten is SKIPPED for ports to preserve the coastline
+                // FORCE=FALSE is CRITICAL here to prevent landlocked ports
+                const b = this.terrain.addBuilding('port', tx, tz, false, false, unit.faction);
+                if (!b) {
+                    console.warn(`[Game] Manual port build failed: Terrain constraints (Coastal/Connectivity) at ${tx},${tz}`);
+                    success = false;
+                }
             }
         } catch (e) {
             console.error(`[Game] Request Execution Failed for ${req.type} at ${req.x},${req.z}:`, e);
@@ -2201,12 +2230,15 @@ export class Game {
         // Active Unit Counts
         const knights = playerUnits.filter(u => u.role === 'knight').length;
         const wizards = playerUnits.filter(u => u.role === 'wizard').length;
+        const warships = playerUnits.filter(u => u.role === 'warship').length;
 
         (document.getElementById('active-val') as HTMLElement).innerText = playerUnits.length.toString();
         const elKnight = document.getElementById('knight-val') as HTMLElement;
         if (elKnight) elKnight.innerText = knights.toString();
         const elWizard = document.getElementById('wizard-val') as HTMLElement;
         if (elWizard) elWizard.innerText = wizards.toString();
+        const elWarship = document.getElementById('warship-val') as HTMLElement;
+        if (elWarship) elWarship.innerText = warships.toString();
 
         const elHouse = document.getElementById('house-val') as HTMLElement;
         // Exclude enemy houses
@@ -2253,7 +2285,23 @@ export class Game {
         }
 
         // 2. Tower Logic (Same as Barracks?)
-        // User: "Barracks, Tower... if restricted". Assuming same logic for now.
+        // 5. Port Cost
+        const portCount = (this.terrain && this.terrain.buildings) ? this.terrain.buildings.filter((b: any) => b.userData.type === 'port').length : 0;
+        const portCost = 150 * (portCount + 1); // Example cost, adjust as needed
+
+        const btnPort = document.getElementById('btn-port') as HTMLButtonElement;
+        if (btnPort) {
+            if (mana < portCost) {
+                btnPort.disabled = true;
+                btnPort.style.opacity = '0.5';
+                btnPort.style.pointerEvents = 'none';
+            } else {
+                btnPort.disabled = false;
+                btnPort.style.opacity = '1.0';
+                btnPort.style.pointerEvents = 'auto';
+            }
+        }
+
         const towerCount = (this.terrain && this.terrain.buildings) ? this.terrain.buildings.filter((b: any) => b.userData.type === 'tower').length : 0;
         const towerCost = 1000 * (towerCount + 1);
 
@@ -3003,6 +3051,7 @@ export class Game {
         // 2. Create New Terrain
         if (!this.minimal) {
             console.log(`[Game] Creating New Terrain (${config.mapWidth}x${config.mapDepth})...`);
+            // Correct arguments: scene, clippingPlanes, width, depth
             this.terrain = new Terrain(this.scene, this.clippingPlanes, config.mapWidth, config.mapDepth);
         } else {
             console.log("[Game] Minimal Mode: Skipping real Terrain creation in startLevel, using existing mock.");
@@ -3640,14 +3689,7 @@ export class Game {
                     if (req.status === 'assigned') {
                         const owner = this.units.find(u => String(u.id) === String(req.assignedTo));
                         if (!owner || !owner.targetRequest || String(owner.targetRequest.id) !== String(req.id)) {
-                            // The 'now' variable is not defined in this scope. Assuming it should be this.simTotalTimeSec
                             const now = this.simTotalTimeSec || 0;
-                            if (owner && owner.targetRequest && owner.targetRequest.id === req.id) {
-                                owner.targetRequest = null;
-                                if (owner.changeState && owner.getDefaultState) {
-                                    owner.changeState(owner.getDefaultState());
-                                }
-                            }
                             console.warn(`[Game] Request ${req.id} reset due to Unit ${req.assignedTo} stagnation (${owner ? owner.action : 'unknown'}).`);
                             req.assignedTo = null;
                             req.status = 'pending';
@@ -3704,7 +3746,6 @@ export class Game {
             // Resume Engine
             this.isLoading = false;
             this.gameActive = true;
-            this.gameActive = true; // FIX: Resume Simulation after Load
             return true;
         } catch (e) {
             console.error("Critical Load Failure:", e);
@@ -4033,10 +4074,17 @@ export class Game {
         }
     }
 
+    private clearDebugSelection() {
+        (window as any).debugSelectedUnit = null;
+        const panel = document.getElementById('unit-debug-panel');
+        if (panel) panel.style.display = 'none';
+    }
+
     showGameOver(won: boolean) {
         console.log(`GAME OVER: ${won ? "VICTORY" : "DEFEAT"}`);
         this.gameActive = false;
         this.isLoading = false; // Ensure inputs aren't locked if checks depend on it
+        this.clearDebugSelection();
 
         const screen = document.getElementById('game-over-screen');
         const title = document.getElementById('game-over-title');
@@ -4082,6 +4130,7 @@ export class Game {
 
     async retryLevel() {
         console.log("Retrying Level...");
+        this.clearDebugSelection();
         await this.startLevel(this.currentLevelIndex, this.currentSeed);
     }
 
@@ -4090,6 +4139,7 @@ export class Game {
         const nextIdx = this.currentLevelIndex + 1;
         if (Levels[nextIdx]) {
             this.currentLevelIndex = nextIdx;
+            this.clearDebugSelection();
 
             // 1. Reset Game State to Preview
             this.gameActive = false;

@@ -75,8 +75,8 @@ describe('Terrain Job Reachability Test', () => {
         expect(worker.targetRequest).toBeNull();
     });
 
-    it('Worker should NOT complete job if distance is > 2.1', () => {
-        const worker = new Unit(scene, terrain, 7, 10, 'worker');
+    it('Worker should NOT complete job if distance is > 5.5 (Water Target threshold)', () => {
+        const worker = new Unit(scene, terrain, 3, 10, 'worker'); // dist = 10 - 3 = 7
         worker.game = game;
         const request = {
             id: 'req_far', type: 'raise', x: 10, z: 10, isManual: true,
@@ -85,7 +85,7 @@ describe('Terrain Job Reachability Test', () => {
         worker.targetRequest = request;
         worker.changeState(new Job(worker));
 
-        expect(worker.getDistance(request.x, request.z)).toBe(3.0);
+        expect(worker.getDistance(request.x, request.z)).toBe(7.0);
         worker.updateLogic(100, 0.1, false, [], [], []);
         expect(game.completeRequest).not.toHaveBeenCalled();
         expect(worker.targetRequest).toBe(request);

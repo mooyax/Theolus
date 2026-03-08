@@ -55,7 +55,9 @@ describe('Game Request Lifecycle', () => {
             calculateRegions: vi.fn().mockResolvedValue(true),
             syncToWorker: vi.fn(),
             initMeshes: vi.fn(),
-            dispose: vi.fn()
+            dispose: vi.fn(),
+            getRegion: () => 1,
+            getRandomPointInRegion: () => ({ x: 10, z: 10 })
         };
         game.updateRequestMarkers = vi.fn();
         game.resources = { mana: 100 };

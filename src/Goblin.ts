@@ -4,9 +4,10 @@ import { Actor } from './Actor.js';
 import { WanderBase } from './ai/states/State.js';
 import { Combat, Raid, Wander, Build, Retreat } from './ai/states/GoblinStates.js';
 import { GameConfig } from './config/GameConfig';
+import { IAiActor } from './ai/states/IAiActor.js';
 
 
-export class Goblin extends Actor {
+export class Goblin extends Actor implements IAiActor {
     // Static Cache (Kept for Renderer to use)
     static assets: any = {
         geometries: {},
@@ -24,11 +25,15 @@ export class Goblin extends Actor {
     public attackTimer: number = 0;
     public lastAttackTime: number = 0;
     public isRemoved: boolean = false; // Flag to remove from game loop safely
+    public role: string;
     public state: any = null; // UnitState (Wander, Chase, Attack)
     public damage: number = 10;
     public attackRate: number = 1.0;
     public isRanged: boolean = false;
-    public raidGoal: any = null;
+    public raidGoal: { x: number, z: number, timestamp?: number } | null = null;
+    public isSleeping: boolean = false;
+    public patrolTarget: any = null;
+    public patrolTimer: number = 0;
 
     public hasStaff: boolean;
     public hasClub: boolean;
@@ -176,6 +181,7 @@ export class Goblin extends Actor {
         super(scene, terrain, x, z, 'goblin');
 
         this.type = type || 'goblin';
+        this.role = this.type;
         this.clanId = clanId || 0;
         this.scale = 1.0;
 
@@ -232,9 +238,11 @@ export class Goblin extends Actor {
         if (raidTarget) {
             this.raidGoal = { ...raidTarget };
             // Add randomness to spread out raids
-            this.raidGoal.x += (Math.random() - 0.5) * 8;
-            this.raidGoal.z += (Math.random() - 0.5) * 8;
-            console.log(`Goblin ${this.id} SPAWNED FOR RAIDING! Target: ${this.raidGoal.x.toFixed(0)},${this.raidGoal.z.toFixed(0)} `);
+            if (this.raidGoal) {
+                this.raidGoal.x += (Math.random() - 0.5) * 8;
+                this.raidGoal.z += (Math.random() - 0.5) * 8;
+                console.log(`Goblin ${this.id} SPAWNED FOR RAIDING! Target: ${this.raidGoal.x.toFixed(0)},${this.raidGoal.z.toFixed(0)} `);
+            }
             this.changeState(new Raid(this));
         } else {
             // Default to WanderState
@@ -432,6 +440,35 @@ export class Goblin extends Actor {
     }
 
     // getDistance inherited from Entity
+
+    findRaidTarget(): boolean {
+        // Goblins check clan memory for goals
+        if (this.raidGoal) return true;
+        if ((window as any).game && (window as any).game.goblinManager) {
+            const target = (window as any).game.goblinManager.getClanRaidTarget(this.clanId);
+            if (target) {
+                this.raidGoal = target;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    patrol(time: number) {
+        if (this.raidGoal) {
+            this.triggerMove(this.raidGoal.x, this.raidGoal.z, time);
+            this.action = 'Raiding';
+        }
+    }
+
+    reportEnemy(target: any) {
+        if ((window as any).game && (window as any).game.reportGlobalBattle) {
+            (window as any).game.reportGlobalBattle(target.gridX, target.gridZ);
+        }
+        if ((window as any).game && (window as any).game.goblinManager) {
+            (window as any).game.goblinManager.notifyClanActivity(this.clanId, target);
+        }
+    }
 
     getDistanceToBuilding(b) {
         if (!b) return Infinity;
@@ -933,7 +970,7 @@ export class Goblin extends Actor {
             state: this.state ? this.state.constructor.name : 'Wander',
             // Raid Goal Persistence
             raidTargetX: this.raidGoal ? this.raidGoal.x : null,
-            raidTargetY: this.raidGoal ? this.raidGoal.y : (this.raidGoal ? (this.raidGoal.z) : null), // Supporting both Y and Z
+            raidTargetY: this.raidGoal ? this.raidGoal.z : null, // Restoration fallback
             raidTargetZ: this.raidGoal ? this.raidGoal.z : null,
             raidTargetTS: this.raidGoal ? this.raidGoal.timestamp : null, // Restoration FIX
             migrationTarget: this.migrationTarget,

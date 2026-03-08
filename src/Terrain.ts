@@ -72,6 +72,7 @@ export class Terrain {
     public flowers: { gridX: number, gridZ: number, rotationX?: number, rotationY: number, rotationZ?: number, scale: number, type: number }[] = [];
     public mushrooms: { gridX: number, gridZ: number, rotationX?: number, rotationY: number, rotationZ?: number, scale: number, type: number }[] = [];
     public readyPromise: Promise<void>;
+    public waterRegionConnectivity: Map<number, Set<number>> = new Map();
     private resolveReady!: () => void;
 
     constructor(scene: THREE.Scene, clippingPlanes?: THREE.Plane[], width?: number, depth?: number) {
@@ -243,7 +244,8 @@ export class Terrain {
 
         if (iOldX === iNewX && iOldZ === iNewZ) {
             // Still in same cell, no need to update grid
-            entity._spatial = { x: iNewX, z: iNewZ, type }; // Update pos in metadata though
+            entity._spatial.x = newX;
+            entity._spatial.z = newZ;
             return;
         }
         this.unregisterEntity(entity);
@@ -453,7 +455,7 @@ export class Terrain {
                     height: 0,
                     type: 'grass',
                     hasBuilding: false,
-                    noise: (Math.random() - 0.5) * 0.05, // Pre-calculate noise
+                    noise: (this.random(x, z, this.seed || 0) - 0.5) * 0.05, // Seeded noise
                     riverIntensity: 0,
                     riverFlow: new THREE.Vector2(0, 0)
                 };
@@ -761,7 +763,7 @@ export class Terrain {
                 // Dynamic river scale based on length: longer = thicker
                 // 20 tiles = ~0.6-0.9, 120+ tiles = ~1.1-1.4
                 const lengthFactor = Math.min(1.0, goalNode.g / 120.0);
-                const riverScale = 0.5 + (lengthFactor * 0.6) + (Math.random() * 0.3);
+                const riverScale = 0.5 + (lengthFactor * 0.6) + (this.random(start.x, start.z, this.seed + 1500) * 0.3);
 
                 let currIdx = goalNode.x * D + goalNode.z;
                 let limit = 0;
@@ -875,18 +877,17 @@ export class Terrain {
     async calculateRegions(useAsync = false) {
         const W = this.logicalWidth;
         const D = this.logicalDepth;
-        let currentRegion = 0;
+        let currentLandRegion = 0;
+        let currentWaterRegion = 0;
 
         // Reset Regions
         for (let x = 0; x < W; x++) {
             for (let z = 0; z < D; z++) {
                 if (!this.grid[x]) return; // Interrupted
-                this.grid[x][z].regionId = 0; // 0 = Water / Unprocessed
+                this.grid[x][z].regionId = 0; // 0 = Unprocessed
             }
         }
 
-        // Flood Fill (Updated to 8-Way to match A* movement)
-        const queue: { x: number, z: number }[] = [];
         const directions = [
             { x: 1, z: 0 }, { x: -1, z: 0 },
             { x: 0, z: 1 }, { x: 0, z: -1 },
@@ -894,54 +895,103 @@ export class Terrain {
             { x: -1, z: 1 }, { x: -1, z: -1 }
         ];
 
-        // Yield interval for heavy calculation
-        // const yieldInterval = 20; // Removed in favor of Time Slicing
+        // 1. Land Regions (Positive)
+        for (let x = 0; x < W; x++) {
+            if (useAsync) await this.checkYield();
+            for (let z = 0; z < D; z++) {
+                const cell = this.grid[x][z];
+                if (cell.height > 0 && cell.regionId === 0) {
+                    currentLandRegion++;
+                    this.floodFillRegion(x, z, currentLandRegion, true);
+                }
+            }
+        }
+
+        // 2. Water Regions (Negative)
+        for (let x = 0; x < W; x++) {
+            if (useAsync) await this.checkYield();
+            for (let z = 0; z < D; z++) {
+                const cell = this.grid[x][z];
+                if (cell.height <= 0 && cell.regionId === 0) {
+                    currentWaterRegion--;
+                    this.floodFillRegion(x, z, currentWaterRegion, false);
+                }
+            }
+        }
+
+        this.updateColors();
+        this.calculateWaterConnectivity();
+    }
+
+    private calculateWaterConnectivity() {
+        this.waterRegionConnectivity.clear();
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+        const directions = [
+            { x: 1, z: 0 }, { x: -1, z: 0 },
+            { x: 0, z: 1 }, { x: 0, z: -1 }
+        ];
 
         for (let x = 0; x < W; x++) {
-            // Yield to main thread to prevent freeze (Only in Async Mode)
-            if (useAsync) await this.checkYield();
-
             for (let z = 0; z < D; z++) {
-                const startCell = this.grid[x][z];
-                // If Land (>0) and not assigned logic region yet
-                if (startCell.height > 0 && startCell.regionId === 0) {
+                const cell = this.grid[x][z];
+                const regionId = cell.regionId;
+                if (regionId < 0) { // Water Region
+                    if (!this.waterRegionConnectivity.has(regionId)) {
+                        this.waterRegionConnectivity.set(regionId, new Set());
+                    }
+                    const connectedSets = this.waterRegionConnectivity.get(regionId)!;
 
-                    currentRegion++;
-                    startCell.regionId = currentRegion;
-                    queue.push({ x, z });
-
-                    while (queue.length > 0) {
-                        const item = queue.pop();
-                        if (!item) break;
-                        const { x: cx, z: cz } = item;
-
-                        for (const dir of directions) {
-                            // Apply Wrapping
-                            let nx = cx + dir.x;
-                            let nz = cz + dir.z;
-
-                            if (nx < 0) nx = W - 1;
-                            if (nx >= W) nx = 0;
-                            if (nz < 0) nz = D - 1;
-                            if (nz >= D) nz = 0;
-
-                            const neighbor = this.grid[nx][nz];
-                            if (neighbor.height > 0 && neighbor.regionId === 0) {
-                                // FIX: Check Slope Connectivity (Must match Pathfinding Limit 3.0)
-                                // If slope is too steep, it's a separate region (unreachable)
-                                const hDiff = Math.abs(neighbor.height - this.grid[cx][cz].height); // Compare with current cell
-                                if (hDiff <= 3.0) {
-                                    neighbor.regionId = currentRegion;
-                                    queue.push({ x: nx, z: nz });
-                                }
-                            }
+                    for (const dir of directions) {
+                        const nx = (x + dir.x + W) % W;
+                        const nz = (z + dir.z + D) % D;
+                        const neighborRegion = this.grid[nx][nz].regionId;
+                        if (neighborRegion > 0) { // Adjacent to Land Region
+                            connectedSets.add(neighborRegion);
                         }
                     }
                 }
             }
         }
-        // console.log(`[Terrain] Regions Calculated: ${currentRegion} islands found.`);
-        this.updateColors(); // Optional debug visual
+    }
+
+    private floodFillRegion(startX: number, startZ: number, regionId: number, isLand: boolean) {
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+        const queue: { x: number, z: number }[] = [{ x: startX, z: startZ }];
+        const directions = [
+            { x: 1, z: 0 }, { x: -1, z: 0 },
+            { x: 0, z: 1 }, { x: 0, z: -1 },
+            { x: 1, z: 1 }, { x: 1, z: -1 },
+            { x: -1, z: 1 }, { x: -1, z: -1 }
+        ];
+
+        this.grid[startX][startZ].regionId = regionId;
+
+        while (queue.length > 0) {
+            const item = queue.pop();
+            if (!item) break;
+            const { x: cx, z: cz } = item;
+
+            for (const dir of directions) {
+                let nx = (cx + dir.x + W) % W;
+                let nz = (cz + dir.z + D) % D;
+
+                const neighbor = this.grid[nx][nz];
+                if (neighbor.regionId === 0) {
+                    if (isLand && neighbor.height > 0) {
+                        const hDiff = Math.abs(neighbor.height - this.grid[cx][cz].height);
+                        if (hDiff <= 3.0) {
+                            neighbor.regionId = regionId;
+                            queue.push({ x: nx, z: nz });
+                        }
+                    } else if (!isLand && neighbor.height <= 0) {
+                        neighbor.regionId = regionId;
+                        queue.push({ x: nx, z: nz });
+                    }
+                }
+            }
+        }
     }
 
     syncToWorker() {
@@ -1502,9 +1552,9 @@ export class Terrain {
         const targetCell = this.grid[tx % this.logicalWidth][tz % this.logicalDepth];
         if (!startCell || !targetCell) return false;
 
-        // If target is water (height <= 0), it doesn't have a regionId (0).
+        // If target is water (height <= 0.5), it doesn't have a regionId necessarily or might be mis-tagged.
         // We check if it's adjacent to the starter's region.
-        if (targetCell.height <= 0) {
+        if (targetCell.height <= 0.5) {
             const regionId = startCell.regionId;
             if (regionId === 0 || regionId === undefined) return false;
 
@@ -1529,22 +1579,53 @@ export class Terrain {
         return startCell.regionId === targetCell.regionId;
     }
 
-    isAdjacentToRegion(tx: number, tz: number, regionId: number): boolean {
+    isAdjacentToRegion(tx: number, tz: number, regionId: number, radius = 1): boolean {
         if (regionId === 0 || regionId === undefined) return false;
 
+        // CRITICAL: Round coordinates to prevent out-of-bounds or undefined access
+        const centerX = Math.round(tx);
+        const centerZ = Math.round(tz);
+
+        // Optimized scan for radius
+        for (let dx = -radius; dx <= radius; dx++) {
+            for (let dz = -radius; dz <= radius; dz++) {
+                if (dx === 0 && dz === 0) continue;
+                const nx = (centerX + dx + this.logicalWidth) % this.logicalWidth;
+                const nz = (centerZ + dz + this.logicalDepth) % this.logicalDepth;
+                const neighbor = this.grid[nx][nz];
+                if (neighbor && neighbor.regionId === regionId) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    isAdjacentToWater(x: number, z: number): boolean {
         const directions = [
             { x: 1, z: 0 }, { x: -1, z: 0 },
-            { x: 0, z: 1 }, { x: 0, z: -1 },
-            { x: 1, z: 1 }, { x: 1, z: -1 },
-            { x: -1, z: 1 }, { x: -1, z: -1 }
+            { x: 0, z: 1 }, { x: 0, z: -1 }
         ];
+        const currentRegion = this.grid[x][z].regionId;
 
         for (const dir of directions) {
-            const nx = (tx + dir.x + this.logicalWidth) % this.logicalWidth;
-            const nz = (tz + dir.z + this.logicalDepth) % this.logicalDepth;
+            const nx = (x + dir.x + this.logicalWidth) % this.logicalWidth;
+            const nz = (z + dir.z + this.logicalDepth) % this.logicalDepth;
             const neighbor = this.grid[nx][nz];
-            if (neighbor && neighbor.regionId === regionId) {
-                return true;
+            if (neighbor.height <= 0) {
+                // If it's a port check, we also want to know if this water is "useful"
+                // (connects to something other than currentRegion)
+                const waterRegion = neighbor.regionId;
+                const connections = this.waterRegionConnectivity.get(waterRegion);
+                if (connections) {
+                    // Useful if it connects to at least one other land region
+                    for (const landId of connections) {
+                        if (landId !== currentRegion) return true;
+                    }
+                } else {
+                    // Fallback for immediate placement before connectivity calc or if small pond
+                    return true;
+                }
             }
         }
         return false;
@@ -1663,8 +1744,9 @@ export class Terrain {
         const cell = this.grid[x][z];
         if (!cell) return;
 
-        // RIVER GUARD: Do not spawn trees on or very close to rivers
+        // RIVER & BUILDING GUARD: Do not spawn trees on or very close to rivers or on buildings
         if (cell.riverIntensity && cell.riverIntensity > 0.1) return;
+        if (cell.hasBuilding) return;
 
         // STRICT BIOME CHECK
         // Forest is strictly Height 4-9 AND Moisture >= 0.45
@@ -2484,6 +2566,157 @@ export class Terrain {
         return sin - Math.floor(sin);
     }
 
+    canFlattenSafely(gridX: number, gridZ: number, size: number): boolean {
+        const h0 = this.grid[gridX][gridZ].height;
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+
+        const queue: { x: number; z: number, h: number }[] = [];
+        const simulatedHeights = new Map<string, number>();
+
+        const getH = (nx: number, nz: number) => simulatedHeights.has(`${nx},${nz}`) ? simulatedHeights.get(`${nx},${nz}`)! : this.grid[nx][nz].height;
+        const setH = (nx: number, nz: number, h: number) => simulatedHeights.set(`${nx},${nz}`, h);
+
+        // Target footprint cells
+        const isFootprintCell = (x: number, z: number) => {
+            // Footprint cells are from gridX to gridX+size-1
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    if (x === (gridX + i) % W && z === (gridZ + j) % D) return true;
+                }
+            }
+            return false;
+        };
+
+        // Initial flatten (all vertices of the footprint)
+        for (let i = 0; i <= size; i++) {
+            for (let j = 0; j <= size; j++) {
+                const nx = (gridX + i) % W;
+                const nz = (gridZ + j) % D;
+                if (getH(nx, nz) !== h0) {
+                    // If flatting this vertex breaks a building NOT in our footprint
+                    // A vertex affects 4 adjacent cells
+                    const cellsToCheck = [
+                        { x: nx, z: nz },
+                        { x: (nx - 1 + W) % W, z: nz },
+                        { x: nx, z: (nz - 1 + D) % D },
+                        { x: (nx - 1 + W) % W, z: (nz - 1 + D) % D }
+                    ];
+                    for (const c of cellsToCheck) {
+                        if (this.grid[c.x][c.z].hasBuilding && !isFootprintCell(c.x, c.z)) {
+                            return false;
+                        }
+                    }
+
+                    setH(nx, nz, h0);
+                    queue.push({ x: nx, z: nz, h: h0 });
+                }
+            }
+        }
+
+        let head = 0;
+        while (head < queue.length) {
+            const current = queue[head++];
+            const cx = current.x;
+            const cz = current.z;
+            const currentHeight = getH(cx, cz);
+
+            const neighbors = [
+                { x: cx + 1, z: cz }, { x: cx - 1, z: cz }, { x: cx, z: cz + 1 }, { x: cx, z: cz - 1 }
+            ];
+
+            for (const n of neighbors) {
+                const nw = { x: (n.x + W) % W, z: (n.z + D) % D };
+                const neighborHeight = getH(nw.x, nw.z);
+                const diff = currentHeight - neighborHeight;
+
+                if (diff > 1 || diff < -1) {
+                    const newH = diff > 1 ? currentHeight - 1 : currentHeight + 1;
+
+                    // Check if propagating to this neighbor vertex affects any protected cell
+                    const cellsToCheck = [
+                        { x: nw.x, z: nw.z },
+                        { x: (nw.x - 1 + W) % W, z: nw.z },
+                        { x: nw.x, z: (nw.z - 1 + D) % D },
+                        { x: (nw.x - 1 + W) % W, z: (nw.z - 1 + D) % D }
+                    ];
+                    for (const c of cellsToCheck) {
+                        if (this.grid[c.x][c.z].hasBuilding && !isFootprintCell(c.x, c.z)) {
+                            return false;
+                        }
+                    }
+
+                    setH(nw.x, nw.z, newH);
+                    queue.push({ x: nw.x, z: nw.z, h: newH });
+                }
+            }
+        }
+        return true;
+    }
+
+    // --- Building Placement Validation ---
+    canAddBuilding(type: string, gridX: number, gridZ: number, force: boolean = false): boolean {
+        if (!this.grid || !this.grid[gridX] || !this.grid[gridX][gridZ]) return false;
+
+        if (force || type === 'cave') return true;
+
+        const size = this.getBuildingSize(type);
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+
+        if (type === 'port') {
+            let hasLandNear = false;
+            let hasWater = false;
+            let hasCliff = false;
+
+            // Core requirement: Center tile (1,1) of the 3x3 port MUST be water
+            const centerX = (gridX + 1) % W;
+            const centerZ = (gridZ + 1) % D;
+            if (this.grid[centerX][centerZ].height > 0) return false;
+
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    const nx = (gridX + i) % W;
+                    const nz = (gridZ + j) % D;
+                    const cell = this.grid[nx][nz];
+                    if (cell.height <= 0) hasWater = true;
+                    // Cliff guard: No tile > 2.0 in the 3x3 area
+                    if (cell.height > 2.0) hasCliff = true;
+                }
+            }
+
+            // Core requirement 2: Land must be within 1 tile of the building (5x5 scan)
+            for (let i = -1; i <= size; i++) {
+                for (let j = -1; j <= size; j++) {
+                    const nx = (gridX + i + W) % W;
+                    const nz = (gridZ + j + D) % D;
+                    if (this.grid[nx][nz].height > 0) {
+                        hasLandNear = true;
+                        break;
+                    }
+                }
+                if (hasLandNear) break;
+            }
+
+            if (!hasLandNear || !hasWater) return false;
+            if (hasCliff) return false;
+        } else {
+            const h = this.grid[gridX][gridZ].height;
+            if (h <= 0) return false; // Basic water check
+            // Mountain check for specific buildings
+            if (h > 12 && (type === 'house' || type === 'farm' || type === 'barracks')) {
+                return false;
+            }
+        }
+
+        // Check if would destroy existing buildings
+        if (!this.canFlattenSafely(gridX, gridZ, size)) {
+            return false;
+        }
+
+        return true;
+    }
+
     addBuilding(type, gridX, gridZ, force = false, skipMeshUpdate = false, faction: string = 'player') {
         this.invalidatePathCache();
 
@@ -2495,29 +2728,60 @@ export class Terrain {
 
         const size = this.getBuildingSize(type);
 
-        // 1. Flatten and Clear Area FIRST
-        this.clearArea(gridX, gridZ, size);
-        this.flattenArea(gridX, gridZ, size);
+        // 1. Validate Target Area Before Flattening
+        if (!this.canAddBuilding(type, gridX, gridZ, force)) {
+            return null;
+        }
 
-        // 2. Validate Height (No building on water)
-        if (!force && type !== 'cave') {
-            const h = this.grid[gridX][gridZ].height;
-            if (h <= 0) return null; // Water check
-            if (h > 12) {
-                if (type === 'house' || type === 'farm' || type === 'barracks') {
-                    return null;
-                }
+        // 2. Flatten and Clear Area
+        this.clearArea(gridX, gridZ, size);
+
+        // Pre-mark grid as having a building to prevent tree regeneration during flattenArea
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                const x = (gridX + i) % W;
+                const z = (gridZ + j) % D;
+                this.grid[x][z].hasBuilding = true;
             }
         }
 
-        if (!force && type !== 'cave' && !this.checkFlatArea(gridX, gridZ, size)) {
-            return null;
+        if (type !== 'port') {
+            this.flattenArea(gridX, gridZ, size);
+        } else {
+            // Ports: Flatten to a consistent shallow water level (0.1) to prevent burial by land
+            const W = this.logicalWidth;
+            const D = this.logicalDepth;
+            let changed = false;
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    const nx = (gridX + i) % W;
+                    const nz = (gridZ + j) % D;
+                    if (this.grid[nx][nz].height !== 0.1) {
+                        this.grid[nx][nz].height = 0.1;
+                        this.updateWorkerCell(nx, nz, 0.1, this.grid[nx][nz].moisture || 0.5);
+                        changed = true;
+                    }
+                }
+            }
+            if (changed) {
+                this.needsMeshUpdate = true;
+                this.needsRegionRecalc = true;
+            }
         }
 
         // 3. Create Building (Now it picks up the flattened height correctly)
         const building = new Building(this.scene, this, type, gridX, gridZ);
-        (building as any).y = this.grid[gridX][gridZ].height; // Explicitly set height & bypass TS error
-        building.rotationY = Math.random() * Math.PI * 2;
+        // Fix Port height (0.8) to sit above sea level (0.3), others use grid height
+        // AND set visualYOverride for Renderer to respect
+        if (type === 'port') {
+            (building as any).y = 0.35;
+            (building as any).visualYOverride = 0.35;
+        } else {
+            (building as any).y = this.grid[gridX][gridZ].height;
+        }
+        building.rotationY = this.random(gridX, gridZ, this.seed + 5000) * Math.PI * 2;
 
         if (type === 'barracks' || type === 'tower') {
             if ((window as any).game && (window as any).game.registerSquad) {
@@ -2538,13 +2802,10 @@ export class Terrain {
 
         // 4. Register Building
         this.buildings.push(building);
-        const W = this.logicalWidth;
-        const D = this.logicalDepth;
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
                 const x = (gridX + i) % W;
                 const z = (gridZ + j) % D;
-                this.grid[x][z].hasBuilding = true;
                 this.grid[x][z].building = building;
             }
         }
@@ -2673,13 +2934,35 @@ export class Terrain {
     // Helper: Centralize Building Size Logic
     getBuildingSize(type) {
         if (type === 'tower') return 3;
-        if (type === 'barracks') return 3;
-        if (type === 'farm') return 2;
-        if (type === 'house') return 2;
-        if (type === 'mansion') return 3;
+        if (type === 'barracks' || type === 'mansion') return 3;
+        if (type === 'farm' || type === 'house' || type === 'goblin_hut' || type === 'cave') return 2;
         if (type === 'castle') return 4;
-        // goblin_hut = 1, cave = 1, default = 1
+        if (type === 'port') return 3;
         return 1;
+    }
+
+    // Helper: Get visual offset for buildings (e.g., Port pier into water)
+    getBuildingOffset(type: string, x: number, z: number) {
+        if (type === 'port') {
+            // Find water adjacency to determine offset direction
+            const W = this.logicalWidth;
+            const D = this.logicalDepth;
+            const dirs = [
+                { x: 1, z: 0 }, { x: -1, z: 0 },
+                { x: 0, z: 1 }, { x: 0, z: -1 }
+            ];
+
+            for (const dir of dirs) {
+                const nx = (x + dir.x + W) % W;
+                const nz = (z + dir.z + D) % D;
+                if (this.grid[nx][nz].height <= 0) {
+                    // Offset towards the first water tile found
+                    // 1.2 tile offset to push the pier into the water
+                    return { x: dir.x * 1.2, z: dir.z * 1.2, y: 0.0 };
+                }
+            }
+        }
+        return { x: 0, z: 0, y: 0 };
     }
 
     checkBuildingIntegrity(b) {
@@ -2816,9 +3099,6 @@ export class Terrain {
                 const cell = this.grid[nx][nz];
 
                 if (cell.height !== h0) {
-                    // Foundation Lock: Do not flatten vertices that belong to other buildings
-                    if (this.isVertexProtected(nx, nz)) continue;
-
                     cell.height = h0;
                     changed = true;
                     this.updateWorkerCell(nx, nz, h0, cell.moisture || 0.5); // SYNC
@@ -2920,10 +3200,17 @@ export class Terrain {
         const currentResources = (resources && typeof resources === 'object') ? resources : ((g && g.resources) || { grain: 0, fish: 0, meat: 0 });
         let hasFood = true;
 
-        if (foodNeed > 0) {
-            let needGrain = foodNeed * 0.40;
-            let needMeat = foodNeed * 0.30;
-            let needFish = foodNeed * 0.30;
+        const totalFood = (currentResources.grain || 0) + (currentResources.fish || 0) + (currentResources.meat || 0);
+
+        if (totalFood > 0) {
+            //在庫比率に応じて消費量を割り振る
+            const gRatio = (currentResources.grain || 0) / totalFood;
+            const fRatio = (currentResources.fish || 0) / totalFood;
+            const mRatio = (currentResources.meat || 0) / totalFood;
+
+            let grainToConsume = foodNeed * gRatio;
+            let fishToConsume = foodNeed * fRatio;
+            let meatToConsume = foodNeed * mRatio;
 
             const consume = (type, amount) => {
                 if (amount <= 0) return 0;
@@ -2937,27 +3224,20 @@ export class Terrain {
                 }
             };
 
-            // Pass 1: Try distributed target
-            let remainGrain = consume('grain', needGrain);
-            let remainMeat = consume('meat', needMeat);
-            let remainFish = consume('fish', needFish);
+            let remain = consume('grain', grainToConsume) + consume('fish', fishToConsume) + consume('meat', meatToConsume);
 
-            // Pass 2: Redistribute Remainders
-            if (remainGrain > 0) remainGrain = consume('meat', remainGrain);
-            if (remainMeat > 0) remainMeat = consume('fish', remainMeat);
-            if (remainGrain > 0) remainGrain = consume('fish', remainGrain);
-
-            let totalRemain = remainGrain + remainMeat + remainFish;
-            if (totalRemain > 0) {
-                totalRemain = consume('grain', totalRemain);
-                totalRemain = consume('meat', totalRemain);
-                totalRemain = consume('fish', totalRemain);
+            //端数や在庫切れの再分配（在庫があるところから順に引く）
+            if (remain > 0.0001) {
+                const types = ['grain', 'fish', 'meat'].sort((a, b) => currentResources[b] - currentResources[a]);
+                for (const type of types) {
+                    remain = consume(type, remain);
+                    if (remain <= 0.0001) break;
+                }
             }
 
-            // If still remainder, we are out of food.
-            if (totalRemain > 0.0001) {
-                hasFood = false;
-            }
+            if (remain > 0.1) hasFood = false; //大幅に不足している場合のみ
+        } else {
+            hasFood = false;
         }
 
         // 2. Growth Logic
@@ -3043,21 +3323,49 @@ export class Terrain {
                 // 2. Action Phase (TYPE SPECIFIC)
                 let currentPop = (building.population !== undefined) ? building.population : building.userData.population;
 
+                // Helper to safely consume food including meat
+                const consumeSpawnFood = (cost: number) => {
+                    let totalFood = (currentResources.grain || 0) + (currentResources.fish || 0) + (currentResources.meat || 0);
+                    if (totalFood <= 0) return;
+
+                    const gRatio = (currentResources.grain || 0) / totalFood;
+                    const fRatio = (currentResources.fish || 0) / totalFood;
+                    const mRatio = (currentResources.meat || 0) / totalFood;
+
+                    let gAmount = cost * gRatio;
+                    let fAmount = cost * fRatio;
+                    let mAmount = cost * mRatio;
+
+                    const consume = (type, amount) => {
+                        if (amount <= 0) return 0;
+                        if (currentResources[type] >= amount) {
+                            currentResources[type] -= amount;
+                            return 0;
+                        } else {
+                            const res = amount - currentResources[type];
+                            currentResources[type] = 0;
+                            return res;
+                        }
+                    };
+
+                    let remain = consume('grain', gAmount) + consume('fish', fAmount) + consume('meat', mAmount);
+                    if (remain > 0.0001) {
+                        const types = ['grain', 'fish', 'meat'].sort((a, b) => currentResources[b] - currentResources[a]);
+                        for (const type of types) {
+                            remain = consume(type, remain);
+                            if (remain <= 0.0001) break;
+                        }
+                    }
+                };
+
+                const totalFoodInfo = (currentResources.grain || 0) + (currentResources.fish || 0) + (currentResources.meat || 0);
+
                 if (type === 'house') {
                     if (currentPop >= cap) {
                         const cost = (GameConfig.units.worker as any).spawnCost || 20;
-                        const totalFood = (currentResources.grain || 0) + (currentResources.fish || 0);
-
-                        if (totalFood >= cost) {
+                        if (totalFoodInfo >= cost) {
                             if (typeof spawnCallback === 'function' && spawnCallback(bx, bz, type, building)) {
-                                // Unified Food Consumption: Prefer Grain, then Fish
-                                if (currentResources.grain >= cost) {
-                                    currentResources.grain -= cost;
-                                } else {
-                                    const remaining = cost - currentResources.grain;
-                                    currentResources.grain = 0;
-                                    currentResources.fish -= remaining;
-                                }
+                                consumeSpawnFood(cost);
                                 if (building.population !== undefined) building.population = 0;
                                 else building.userData.population = 0;
                             } else {
@@ -3072,25 +3380,21 @@ export class Terrain {
                 } else if (type === 'barracks') {
                     if (currentPop >= cap) {
                         const knightCost = (GameConfig.units.knight as any).spawnCost || 50;
-                        const totalCost = knightCost * 4;
-                        const totalFood = (currentResources.grain || 0) + (currentResources.fish || 0);
+                        let maxAffordable = Math.min(4, Math.floor(totalFoodInfo / knightCost));
 
-                        if (totalFood >= totalCost) {
+                        if (maxAffordable > 0) {
                             let spawnedCount = 0;
-                            for (let k = 0; k < 4; k++) {
-                                if (typeof spawnCallback === 'function' && spawnCallback(bx, bz, type, building, building.userData.squadId)) spawnedCount++;
+                            for (let k = 0; k < maxAffordable; k++) {
+                                if (typeof spawnCallback === 'function' && spawnCallback(bx, bz, type, building, building.userData.squadId)) {
+                                    spawnedCount++;
+                                    consumeSpawnFood(knightCost);
+                                }
                             }
                             if (spawnedCount > 0) {
-                                // Consume totalCost from unified storage
-                                if (currentResources.grain >= totalCost) {
-                                    currentResources.grain -= totalCost;
-                                } else {
-                                    const remaining = totalCost - currentResources.grain;
-                                    currentResources.grain = 0;
-                                    currentResources.fish -= remaining;
-                                }
-                                if (building.population !== undefined) building.population = 0;
-                                else building.userData.population = 0;
+                                // Consume population proportionally
+                                const popCost = (cap / 4) * spawnedCount;
+                                if (building.population !== undefined) building.population = Math.max(0, building.population - popCost);
+                                else building.userData.population = Math.max(0, building.userData.population - popCost);
                             } else {
                                 if (building.population !== undefined) building.population = cap;
                                 else building.userData.population = cap;
@@ -3103,14 +3407,36 @@ export class Terrain {
                 } else if (type === 'tower') {
                     if (currentPop >= cap) {
                         const wizardCost = (GameConfig.units.wizard as any).spawnCost || 100;
-                        const totalCost = wizardCost * 4;
-                        if (currentResources.grain >= totalCost) {
+                        let maxAffordable = Math.min(4, Math.floor(totalFoodInfo / wizardCost));
+
+                        if (maxAffordable > 0) {
                             let spawnedCount = 0;
-                            for (let k = 0; k < 4; k++) {
-                                if (typeof spawnCallback === 'function' && spawnCallback(bx, bz, 'tower', building, building.userData.squadId)) spawnedCount++;
+                            for (let k = 0; k < maxAffordable; k++) {
+                                if (typeof spawnCallback === 'function' && spawnCallback(bx, bz, 'tower', building, building.userData.squadId)) {
+                                    spawnedCount++;
+                                    consumeSpawnFood(wizardCost);
+                                }
                             }
                             if (spawnedCount > 0) {
-                                currentResources.grain -= totalCost;
+                                const popCost = (cap / 4) * spawnedCount;
+                                if (building.population !== undefined) building.population = Math.max(0, building.population - popCost);
+                                else building.userData.population = Math.max(0, building.userData.population - popCost);
+                            } else {
+                                if (building.population !== undefined) building.population = cap;
+                                else building.userData.population = cap;
+                            }
+                        } else {
+                            if (building.population !== undefined) building.population = cap;
+                            else building.userData.population = cap;
+                        }
+                    }
+                } else if (type === 'port') {
+                    if (currentPop >= cap) {
+                        const shipCost = (GameConfig.units.warship as any).spawnCost || 150;
+                        if (totalFoodInfo >= shipCost) {
+                            // Trigger spawn
+                            if (typeof spawnCallback === 'function' && spawnCallback(bx, bz, 'port', building)) {
+                                consumeSpawnFood(shipCost);
                                 if (building.population !== undefined) building.population = 0;
                                 else building.userData.population = 0;
                             } else {
@@ -3118,6 +3444,9 @@ export class Terrain {
                                 else building.userData.population = cap;
                             }
                         } else {
+                            if (currentPop >= cap) {
+                                console.warn(`[Terrain] Port spawn skipped: Not enough food (${Math.floor(totalFoodInfo)}/${shipCost})`);
+                            }
                             if (building.population !== undefined) building.population = cap;
                             else building.userData.population = cap;
                         }
@@ -3459,6 +3788,12 @@ export class Terrain {
         await this.calculateRegions(true);
 
         if (data.seed !== undefined) this.seed = data.seed;
+
+        // --- RESTORE RIVERS ---
+        // River intensity and flow are not serialized, so we must regenerate them
+        // based on the restored heights and seed to ensure visual consistency.
+        this.generateRivers();
+
         if (data.trees !== undefined) this.trees = data.trees;
         if (data.flowers !== undefined) this.flowers = data.flowers;
         if (data.mushrooms !== undefined) this.mushrooms = data.mushrooms;
@@ -3587,10 +3922,10 @@ export class Terrain {
         this.pathCache = [];
     }
 
-    findPathAsync(sx, sz, ex, ez, maxSteps = 0, unitId = -1) {
+    findPathAsync(sx, sz, ex, ez, maxSteps = 0, unitId = -1, isNaval = false) {
         if (!this.worker) {
             // Fallback to sync if worker not ready
-            return Promise.resolve(this.findPath(sx, sz, ex, ez, maxSteps));
+            return Promise.resolve(this.findPath(sx, sz, ex, ez, maxSteps, isNaval));
         }
 
         return new Promise((resolve, reject) => {
@@ -3599,7 +3934,7 @@ export class Terrain {
             // FIX: Timeout for pathfinding to prevent "Calculating..." hang
             const timeoutId = setTimeout(() => {
                 if (this.workerRequests!.has(id)) {
-                    console.warn(`[Terrain] Pathfinding Timeout ID:${id} Unit:${unitId}`);
+                    console.warn(`[Terrain] Pathfinding Timeout ID:${id} Unit:${unitId} Naval:${isNaval}`);
                     this.workerRequests!.delete(id);
                     reject(new Error("Pathfinding Timeout"));
                 }
@@ -3613,14 +3948,10 @@ export class Terrain {
 
             this.workerRequests!.set(id, { resolve: wrappedResolve, reject });
 
-            const sh = this.getTileHeight(sx, sz);
-            const eh = this.getTileHeight(ex, ez);
-            // console.log(`[Terrain] findPathAsync calling worker. ID:${id} Unit:${unitId} ${sx},${sz}(H:${sh}) -> ${ex},${ez}(H:${eh})`);
-
             this.worker!.postMessage({
                 type: 'FIND_PATH',
                 id: id,
-                payload: { sx, sz, ex, ez, maxSteps, unitId }
+                payload: { sx, sz, ex, ez, maxSteps, unitId, isNaval }
             });
         });
     }
@@ -3638,44 +3969,26 @@ export class Terrain {
         }
     }
 
-    findPath(sx, sz, ex, ez, maxStepsParam = 0) {
+
+    findPath(sx: number, sz: number, ex: number, ez: number, maxStepsParam: number = 0, isNaval: boolean = false) {
         // Budget Check
         this.pathfindingCalls = (this.pathfindingCalls || 0) + 1;
 
         // --- 1. MIMICRY (Shared Cache Check) ---
-        // If we have a successful path from "Near Start" to "Near End", reuse it.
-        // This allows followers to copy the "Pioneer" without calculation.
-        const CACHE_DIST = 0; // DISABLED FUZZY CACHE (Caused Units to try walking through walls to reach path start)
-
         const cached = this.pathCache.find(entry => {
-            const dStart = (entry.sx === sx && entry.sz === sz); // Strict match
-            const dEnd = (entry.ex === ex && entry.ez === ez);   // Strict match
-            return (dStart && dEnd);
+            const dStart = (entry.sx === sx && entry.sz === sz);
+            const dEnd = (entry.ex === ex && entry.ez === ez);
+            const dNaval = (entry.isNaval === isNaval);
+            return (dStart && dEnd && dNaval);
         });
 
-        if (cached) {
-            // "Mimic" the path:
-            // 1. Walk linearly to the cached start? Or just return the cached path?
-            // To be safe, we return the cached path properties.
-            // But A* returns exact steps. If we are slightly off, we might walk into a wall getting to the path.
-            // For now, simplify: Return the cached path. The unit will "snap" to it.
-            // Improvement: Add a small Segment from Current -> Cache[0] if needed.
-            // Assuming open terrain near start/end.
-            return [...cached.path]; // Return COPY
-        }
+        if (cached) return [...cached.path];
 
-        // FIX: Increased budget from 100 to 1000 to prevent Starvation for 1500+ unit simulations.
-        // Sync pathfinding is a fallback; we want to ensure everyone gets a turn eventually.
-        if (this.pathfindingCalls > 1000) {
-            return null;
-        }
+        if (this.pathfindingCalls > 1000) return null;
 
-        // --- 3. DEEP A* (Pioneer Calculation) ---
-
-        // Validate Start/End
+        // --- 3. DEEP A* ---
         const W = this.logicalWidth;
         const H = this.logicalDepth;
-        if (maxStepsParam) console.log(`[Terrain] findPath with custom limit: ${maxStepsParam} `);
 
         sx = Math.round(sx); sz = Math.round(sz);
         ex = Math.round(ex); ez = Math.round(ez);
@@ -3687,125 +4000,104 @@ export class Terrain {
 
         if (sx < 0 || sx >= W || sz < 0 || sz >= H) return null;
 
-        // FIX: Invalid Start Node Recovery (If unit is slightly on water/grid edge)
-        if (!this.grid[sx] || !this.grid[sx][sz] || this.grid[sx][sz].height <= 0) {
-            // Search radius 1 for valid land
+        // Start Validation
+        let startCell = this.grid[sx][sz];
+        const isStartValid = isNaval ? (startCell.height <= 0.5) : (startCell.height > 0);
+        if (!isStartValid) {
             let found = false;
-            for (let dx = -1; dx <= 1; dx++) {
-                for (let dz = -1; dz <= 1; dz++) {
-                    if (dx === 0 && dz === 0) continue;
-                    let nsx = sx + dx;
-                    let nsz = sz + dz;
-                    // Wrap
-                    if (nsx < 0) nsx += W; if (nsx >= W) nsx -= W;
-                    if (nsz < 0) nsz += H; if (nsz >= H) nsz -= H;
-
-                    if (this.grid[nsx] && this.grid[nsx][nsz] && this.grid[nsx][nsz].height > 0) {
-                        sx = nsx;
-                        sz = nsz;
-                        found = true;
-                        break;
-                    }
-                }
-                if (found) break;
-            }
-            if (!found) return null; // Truly in water
-        }
-
-        if (!this.grid[ex] || !this.grid[ex][ez]) return null;
-
-        // FIX: Start Node already fixed above.
-        // FIX: End Node Recovery (If target is slightly on water)
-        if (this.grid[ex][ez].height <= 0) {
-            let found = false;
-            // Radius 2 search (slightly wider for landing spots)
-            for (let r = 1; r <= 2; r++) {
+            for (let r = 1; r <= 4; r++) {
                 for (let dx = -r; dx <= r; dx++) {
                     for (let dz = -r; dz <= r; dz++) {
-                        if (dx === 0 && dz === 0) continue;
-                        let nex = ex + dx;
-                        let nez = ez + dz;
-                        if (nex < 0) nex += W; if (nex >= W) nex -= W;
-                        if (nez < 0) nez += H; if (nez >= H) nez -= H;
-
-                        if (this.grid[nex] && this.grid[nex][nez] && this.grid[nex][nez].height > 0) {
-                            ex = nex;
-                            ez = nez;
-                            found = true;
-                            break;
+                        let nsx = (sx + dx + W) % W;
+                        let nsz = (sz + dz + H) % H;
+                        if (!this.grid[nsx] || !this.grid[nsx][nsz]) continue;
+                        let nh = this.grid[nsx][nsz].height;
+                        const isNeighborValid = isNaval ? (nh <= 0.5) : (nh > 0);
+                        if (isNeighborValid) {
+                            sx = nsx; sz = nsz; found = true; break;
                         }
                     }
                     if (found) break;
                 }
                 if (found) break;
             }
-            if (!found) return null; // Target is deep water
+            if (!found) return null;
         }
 
-        const startNode: { x: number, z: number, g: number, h: number, f: number, parent: any } = { x: sx, z: sz, g: 0, h: 0, f: 0, parent: null };
-        const openList: any[] = [startNode];
-        const openMap = new Map(); // O(1) Lookup
-        openMap.set(`${sx},${sz} `, startNode);
+        // End Validation
+        let endCell = this.grid[ex][ez];
+        const isEndValid = isNaval ? (endCell.height <= 0.5) : (endCell.height > 0);
+        if (!isEndValid) {
+            let found = false;
+            for (let r = 1; r <= 4; r++) {
+                for (let dx = -r; dx <= r; dx++) {
+                    for (let dz = -r; dz <= r; dz++) {
+                        let nex = (ex + dx + W) % W;
+                        let nez = (ez + dz + H) % H;
+                        if (!this.grid[nex] || !this.grid[nex][nez]) continue;
+                        let nh = this.grid[nex][nez].height;
+                        const isNeighborValid = isNaval ? (nh <= 0.5) : (nh > 0);
+                        if (isNeighborValid) {
+                            ex = nex; ez = nez; found = true; break;
+                        }
+                    }
+                    if (found) break;
+                }
+                if (found) break;
+            }
+            if (!found) return null;
+        }
 
-        const closedSet = new Set(); // Stores "x,z" keys
+        const startNode = { x: sx, z: sz, g: 0, h: 0, f: 0, parent: null as any };
+        const openList: any[] = [startNode];
+        const openMap = new Map();
+        openMap.set(`${sx},${sz}`, startNode);
+        const closedSet = new Set();
 
         let steps = 0;
-        const maxSteps = maxStepsParam > 0 ? maxStepsParam : 40000; // Increased to 40000 to escape deep traps
-
+        const maxSteps = maxStepsParam || (isNaval ? 20000 : 10000);
         let bestNode = startNode;
-        let minH = Infinity;
 
         while (openList.length > 0) {
             steps++;
-            if (steps > maxSteps) {
-                console.log(`[Terrain] findPath MAX STEPS(${maxSteps}) Exceeded.Returning Partial Path to closest node(${bestNode.x}, ${bestNode.z} h: ${bestNode.h.toFixed(1)}).`);
+            if (steps > maxSteps) break;
 
-                // Reconstruct Closest Path
-                const path: { x: number, z: number }[] = [];
-                let curr = bestNode;
-                while (curr) {
-                    path.push({ x: curr.x, z: curr.z });
-                    curr = curr.parent;
+            // Simplified for sync: just pick best
+            let minF = Infinity;
+            let minIdx = -1;
+            for (let i = 0; i < openList.length; i++) {
+                if (openList[i].f < minF) {
+                    minF = openList[i].f;
+                    minIdx = i;
                 }
-                return path.reverse();
             }
-
-            // Population of OpenList (Sorted by F-score descending so shift is O(1))
-            // Current node is always the end of the array (last added/lowest F)
-            const current = openList.pop();
-
-            // Track Best Node (Closest to Target by Heuristic)
-            if (current.h < minH) {
-                minH = current.h;
-                bestNode = current;
-            }
-
-            const key = `${current.x},${current.z} `;
-            openMap.delete(key);
+            const current = openList.splice(minIdx, 1)[0];
+            const key = `${current.x},${current.z}`;
+            if (closedSet.has(key)) continue;
             closedSet.add(key);
+            openMap.delete(key);
+
+            let dx = Math.abs(current.x - ex);
+            let dz = Math.abs(current.z - ez);
+            if (dx > W / 2) dx = W - dx;
+            if (dz > H / 2) dz = H - dz;
+            current.h = dx + dz;
+
+            if (current.h < bestNode.h || bestNode === startNode) bestNode = current;
 
             if (current.x === ex && current.z === ez) {
-                // Reconstruct Path
                 const path: any[] = [];
                 let curr = current;
                 while (curr) {
                     path.push({ x: curr.x, z: curr.z });
                     curr = curr.parent;
                 }
-                const resultPath = path.reverse();
-
-                // --- 4. CACHE RESULT ---
-                if (this.pathCache.length > 50) this.pathCache.shift(); // Increased Cache
-                this.pathCache.push({
-                    sx: sx, sz: sz, ex: ex, ez: ez,
-                    path: resultPath,
-                    timestamp: Date.now()
-                });
-
-                return resultPath;
+                const result = path.reverse();
+                this.pathCache.push({ sx, sz, ex, ez, isNaval, path: result, timestamp: Date.now() });
+                if (this.pathCache.length > 50) this.pathCache.shift();
+                return result;
             }
 
-            // 8-Way Movement (Supports Diagonal Traversal)
             const neighbors = [
                 { x: 1, z: 0, cost: 1 }, { x: -1, z: 0, cost: 1 },
                 { x: 0, z: 1, cost: 1 }, { x: 0, z: -1, cost: 1 },
@@ -3814,88 +4106,58 @@ export class Terrain {
             ];
 
             for (const n of neighbors) {
-                let nx = current.x + n.x;
-                let nz = current.z + n.z;
-
-                if (nx < 0) nx = W - 1;
-                if (nx >= W) nx = 0;
-                if (nz < 0) nz = H - 1;
-                if (nz >= H) nz = 0;
-
-                const nKey = `${nx},${nz} `;
+                let nx = (current.x + n.x + W) % W;
+                let nz = (current.z + n.z + H) % H;
+                const nKey = `${nx},${nz}`;
                 if (closedSet.has(nKey)) continue;
-                if (!this.grid[nx] || !this.grid[nx][nz]) continue; // Guard against undefined grid
 
-                const hStart = this.grid[current.x][current.z].height;
-                const hEnd = this.grid[nx][nz].height;
+                if (!this.grid[nx] || !this.grid[nx][nz]) continue;
+                const nh = this.grid[nx][nz].height;
+                if (isNaval) {
+                    if (nh > 0.5) continue;
+                } else {
+                    if (nh <= 0) continue;
+                }
 
-                if (hEnd <= 0) continue; // Water
-                // DEBUG: Log if blocked by wall
-                // if (hEnd > 8) console.log(`[Terrain] Wall at ${ nx },${ nz } (H: ${ hEnd })`);
+                const slope = Math.abs(nh - this.grid[current.x][current.z].height);
+                if (!isNaval && slope > 3.0) continue;
 
-                const slope = Math.abs(hEnd - hStart);
-                if (slope > 3.0) continue; // Restore steepness limit (3.0 to match Worker/Unit)
-
-                // SYNCHRONIZED COST MODEL (Matches Unit.js/Actor.js speed logic)
-                // We calculate cost in "virtual Seconds" to allow A* to find the fastest time path.
-                // Include Diagonal Distance Logic:
-                const distCost = (n.cost || 1.0);
-                let moveCost = 0.8 * distCost; // Base move time scaled by distance
-
-                if (hEnd > 8) moveCost += 2.0; // High Mountain Penalty (+2.0s)
-                moveCost += slope * 1.0; // Slope Penalty (+1.0s per height unit)
+                let moveCost = 0.8 * n.cost;
+                if (!isNaval) {
+                    if (nh > 8) moveCost += 4.0;
+                    moveCost += slope * 1.0;
+                }
 
                 const gScore = current.g + moveCost;
-
-                // O(1) Check
                 let existing = openMap.get(nKey);
-
                 if (existing && existing.g <= gScore) continue;
 
-                // Heuristic (Scaled by base moveCost 800)
-                let dx = Math.abs(nx - ex);
-                let dz = Math.abs(nz - ez);
-                if (dx > W / 2) dx = W - dx;
-                if (dz > H / 2) dz = H - dz;
-
-                // Use Euclidean or Octile for 8-Way Admissibility
-                // Euclidean is safe and simple for terrain.
-                const hScore = Math.sqrt(dx * dx + dz * dz) * 0.8;
+                let ndx = Math.abs(nx - ex);
+                let ndz = Math.abs(nz - ez);
+                if (ndx > W / 2) ndx = W - ndx;
+                if (ndz > H / 2) ndz = H - ndz;
+                const hScore = (ndx + ndz) * 0.8;
 
                 if (existing) {
-                    // Update existing
                     existing.g = gScore;
                     existing.f = gScore + hScore;
                     existing.parent = current;
-                    // Note: In a true heap we'd update position. 
-                    // In a sorted array, we'd need to re-sort.
-                    // For simplicity and speed, let's just re-sort IF we update.
-                    // Actually, updating an existing node is rare in A* grid with consistent heuristics.
-                    openList.sort((a, b) => b.f - a.f);
                 } else {
-                    const newNode = {
-                        x: nx, z: nz,
-                        g: gScore, h: hScore, f: gScore + hScore,
-                        parent: current
-                    };
-                    // Binary Insert to keep list sorted (Descending so pop() is O(1))
-                    let low = 0;
-                    let high = openList.length;
-                    while (low < high) {
-                        let mid = (low + high) >>> 1;
-                        if (openList[mid].f > newNode.f) low = mid + 1;
-                        else high = mid;
-                    }
-                    openList.splice(low, 0, newNode);
+                    const newNode = { x: nx, z: nz, g: gScore, h: hScore, f: gScore + hScore, parent: current };
+                    openList.push(newNode);
                     openMap.set(nKey, newNode);
                 }
             }
         }
-        return null; // No path found
+
+        const path: any[] = [];
+        let curr = bestNode;
+        while (curr) {
+            path.push({ x: curr.x, z: curr.z });
+            curr = curr.parent;
+        }
+        return path.reverse();
     }
-
-
-
 
     unregisterAll(type) {
         if (!this.entityGrid) return;
@@ -3910,19 +4172,12 @@ export class Terrain {
 
                 for (let i = cell.length - 1; i >= 0; i--) {
                     const e = cell[i];
-                    // Strict type check or sloppy check for goblins
                     let isMatch = (type === 'goblin' && (e.type === 'goblin' || e.constructor.name === 'Goblin'));
-                    if (type !== 'goblin') isMatch = (e.type === type); // Generic
+                    if (type !== 'goblin') isMatch = (e.type === type);
 
                     if (isMatch) {
-                        // Dispose Visuals (Ghost Busting)
-                        if (e.mesh && e.mesh.parent) {
-                            e.mesh.parent.remove(e.mesh);
-                        }
-                        if (e.crossMesh && e.crossMesh.parent) {
-                            e.crossMesh.parent.remove(e.crossMesh);
-                        }
-                        // Remove from grid
+                        if (e.mesh && e.mesh.parent) e.mesh.parent.remove(e.mesh);
+                        if (e.crossMesh && e.crossMesh.parent) e.crossMesh.parent.remove(e.crossMesh);
                         cell.splice(i, 1);
                         count++;
                     }
@@ -3932,45 +4187,63 @@ export class Terrain {
         console.log(`[Terrain] Validated / Cleared ${count} entities of type '${type}'.`);
     }
 
-    // --- REGION HELPERS ---
-
     getRegion(x, z) {
         if (!this.grid[x] || !this.grid[x][z]) return -1;
         return this.grid[x][z].regionId || 0;
     }
 
-    // Efficiently find a valid point in a specific region
-
     getRandomPointInRegion(regionId, centerX, centerZ, radius) {
-        // Try N times to find a valid spot
         const W = this.logicalWidth;
         const D = this.logicalDepth;
-
         const maxAttempts = 20;
 
         for (let i = 0; i < maxAttempts; i++) {
-            // Random offset
-            const angle = Math.random() * Math.PI * 2;
-            const r = Math.random() * radius;
+            const angle = this.random(centerX + i, centerZ, this.seed + 6000) * Math.PI * 2;
+            const r = this.random(centerX, centerZ + i, this.seed + 6100) * radius;
             const tx = Math.floor(centerX + Math.cos(angle) * r);
             const tz = Math.floor(centerZ + Math.sin(angle) * r);
-
-            // Wrap
             let wx = ((tx % W) + W) % W;
             let wz = ((tz % D) + D) % D;
 
-            // Check
             if (this.grid[wx] && this.grid[wx][wz]) {
                 const cell = this.grid[wx][wz];
-                // Checks: Region Match + Not Water (>0) + Not Rock (<=12)
-                if (cell.regionId === regionId && cell.height > 0 && cell.height <= 12) {
-                    return { x: wx, z: wz };
+                // Match Region OR Fallback for beached/init state (region 0)
+                if (cell.regionId === regionId || regionId === 0) {
+                    const h = cell.height;
+                    // For Land Regions (Positive): h > 0 (up to 50)
+                    // For Water Regions (Negative): h <= 0
+                    if (regionId > 0 && h > 0 && h <= 50) return { x: wx, z: wz };
+                    if (regionId <= 0 && h <= 0.5) return { x: wx, z: wz };
                 }
             }
         }
         return null;
     }
 
+    // --- Position Helpers ---
+    findNearestTileByCondition(centerX: number, centerZ: number, radius: number, condition: (cell: any) => boolean): { x: number, z: number } | null {
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+        const cX = Math.round(centerX);
+        const cZ = Math.round(centerZ);
+
+        // Spiral search or simple layers
+        for (let r = 0; r <= radius; r++) {
+            for (let dx = -r; dx <= r; dx++) {
+                for (let dz = -r; dz <= r; dz++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dz)) !== r) continue; // Only check the current shell
+
+                    const nx = ((cX + dx) % W + W) % W;
+                    const nz = ((cZ + dz) % D + D) % D;
+                    const cell = this.grid[nx][nz];
+                    if (condition(cell)) {
+                        return { x: nx, z: nz };
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     dispose() {
         console.log(`[Terrain] Dispose called.`);
@@ -3979,7 +4252,6 @@ export class Terrain {
             this.worker = undefined;
         }
 
-        // Clean up meshes
         this.scene.traverse((object: any) => {
             if (object.geometry) object.geometry.dispose();
             if (object.material) {
@@ -3991,7 +4263,6 @@ export class Terrain {
             }
         });
 
-        // Clear references
         this.grid = [];
         this.pathCache = [];
         this.buildings = [];
@@ -3999,12 +4270,8 @@ export class Terrain {
 
     toggleGrid() {
         const visible = !this.gridLinesMesh?.visible;
-        if (this.gridLinesMesh) {
-            this.gridLinesMesh.visible = visible;
-        }
-        if (this.gridDotsMesh) {
-            this.gridDotsMesh.visible = visible;
-        }
+        if (this.gridLinesMesh) this.gridLinesMesh.visible = visible;
+        if (this.gridDotsMesh) this.gridDotsMesh.visible = visible;
         console.log(`[Terrain] Grid visible: ${visible}`);
     }
 }

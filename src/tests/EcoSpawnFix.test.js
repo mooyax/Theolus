@@ -78,6 +78,9 @@ describe('Economy and Spawning Fix Verification', () => {
     });
 
     it('should allow goblin huts to reach spawn threshold', async () => {
+        // Prevent Game Over from 0 player units
+        game.terrain.addBuilding('house', 10, 10, true, false, 'player');
+
         // 1. Setup a goblin hut
         game.goblinManager.goblins = []; // Clear debug goblins
         game.terrain.addBuilding('goblin_hut', 20, 20, false, false, 'enemy');

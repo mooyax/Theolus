@@ -5,6 +5,8 @@ import { Building } from '../Building.js';
 
 // Mock Dependencies
 const mockTerrain = {
+    logicalWidth: 20,
+    logicalDepth: 20,
     findBestTarget: vi.fn(),
     getTileHeight: () => 1,
     gridToWorld: (v) => v,
@@ -82,6 +84,10 @@ describe('Goblin Real Building Destruction', () => {
         const farm = new Building(mockScene, mockTerrain, 'farm', 12, 12);
         farm.hp = 80;
         farm.population = 0; // Farms usually don't have human population inside for defense
+
+        // Move goblin so it is within 2 tiles of the closest farm cell (12, 12)
+        goblin.gridX = 11;
+        goblin.gridZ = 12;
 
         goblin.attack(farm);
 

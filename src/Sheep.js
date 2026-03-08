@@ -107,6 +107,8 @@ export class Sheep extends Actor {
             this.state.update(time, deltaTime);
         }
 
+        if (this.updateLifecycle) this.updateLifecycle(deltaTime);
+
         // 3. Animation Hook (Idle)
         if (!this.isMoving) {
             if (this.mesh && this.mesh.userData.legs) {
@@ -185,6 +187,25 @@ export class Sheep extends Actor {
         tx = (tx + w) % w;
         tz = (tz + d) % d;
 
+        // Ensure target is on land. If not, don't move or find a better spot.
+        const h = this.terrain.getTileHeight(tx, tz);
+        if (h <= 0) {
+            // Find nearest land neighbor if possible
+            let found = false;
+            for (let r = 1; r <= 3 && !found; r++) {
+                for (let dx = -r; dx <= r && !found; dx++) {
+                    for (let dz = -r; dz <= r && !found; dz++) {
+                        const nx = (tx + dx + w) % w;
+                        const nz = (tz + dz + d) % d;
+                        if (this.terrain.getTileHeight(nx, nz) > 0) {
+                            tx = nx; tz = nz; found = true;
+                        }
+                    }
+                }
+            }
+            if (!found) return; // Stay put if no land found near target
+        }
+
         this.smartMove(tx, tz, time);
     }
 
@@ -233,6 +254,13 @@ export class Sheep extends Actor {
         if (cell && cell.hasBuilding) return false;
 
         return true;
+    }
+
+    startMove(tx, tz, time) {
+        if (super.startMove) super.startMove(tx, tz, time);
+        // Calculate appropriate duration based on actual distance to prevent hyper-speed fleeing
+        const actualDist = Math.sqrt(Math.pow(tx - this.startGridX, 2) + Math.pow(tz - this.startGridZ, 2));
+        this.moveDuration = Math.max(0.4, actualDist * 0.5); // base speed
     }
 
     // Hook for Animation

@@ -84,6 +84,8 @@ export const en = {
         worker: { title: 'Worker', desc: 'Basic unit. Performs construction, repairs, and gathering resources (wood/fish).' },
         knight: { title: 'Knight', desc: 'A warrior with high HP and defense. Protects the town from goblins.' },
         wizard: { title: 'Wizard', desc: 'Uses powerful fireball magic for long-range area attacks.' },
+        hunter: { title: 'Hunter', desc: 'Armed with a bow and arrows, this unit hunts wildlife to provide meat.' },
+        fisher: { title: 'Fisher', desc: 'Gathers fish from near the shore, securing a valuable food source.' },
         goblin: { title: 'Goblin', desc: 'The most common enemy. Armed with clubs, they attack in swarms.' },
         hob: { title: 'Hobgoblin', desc: 'Large, muscular goblin. Has high durability and attack power.' },
         shaman: { title: 'Shaman', desc: 'Magic-using goblin. Fires suspicious projectiles from a distance.' },
@@ -94,6 +96,8 @@ export const en = {
         tower: { title: 'Tower', desc: 'A high tower to summon Wizards. Can see far distances.' },
         goblin_hut: { title: 'Goblin Hut', desc: 'An eerie hut where goblins spawn. Destroying it stops spawns.' },
         cave: { title: 'Goblin Cave', desc: 'A dark hole leading deep underground. Stronger mobs appear here.' },
+        port: { title: 'Port', desc: 'A facility built along the coast. It constructs Warships and gives you the power to cross the sea.' },
+        warship: { title: 'Warship', desc: 'A powerful ship capable of moving across the sea. It can attack enemy islands from the water.' },
         bird: { title: 'Bird', desc: 'A white bird flying freely. Adds life to the environment.' },
         sheep: { title: 'Sheep', desc: 'Animals wandering the grasslands. Occasional bleating.' },
         fish: { title: 'Fish', desc: 'Swimming in the sea. Caught by fishermen for food.' }

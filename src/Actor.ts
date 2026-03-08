@@ -32,6 +32,7 @@ export class Actor extends Entity {
     public attackCooldown: number;
     public attackRange: number;
     public isRanged: boolean = false;
+    public isNaval: boolean = false;
     public projectileColor: number = 0xFF4400; // Default Orange/Fire
     public scale: number = 1.0;
     public faction: string = 'neutral';
@@ -125,6 +126,40 @@ export class Actor extends Entity {
     }
 
 
+    getDistanceToBuilding(target: any): number {
+        if (!target) return Infinity;
+        let size = 1;
+        const bType = target.type || target.userData?.type;
+        if (target.userData?.isBuilding || bType === 'cave' || target.type === 'building' || (!target.role && target.hp !== undefined)) {
+            if (this.terrain && typeof this.terrain.getBuildingSize === 'function' && bType) {
+                size = this.terrain.getBuildingSize(bType);
+            } else if (target.userData?.size) {
+                size = target.userData.size;
+            } else if (bType === 'cave') {
+                size = 2; // Safety fallback
+            }
+        }
+
+        const W = (this.terrain && this.terrain.logicalWidth) || 160;
+        const D = (this.terrain && this.terrain.logicalDepth) || 160;
+
+        if (size <= 1) {
+            return this.getDistance(target.gridX, target.gridZ);
+        }
+
+        let minDist = Infinity;
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                // Correct wrapping for each tile of the multi-tile building
+                const tx = ((target.gridX + i) % W + W) % W;
+                const tz = ((target.gridZ + j) % D + D) % D;
+                const d = this.getDistance(tx, tz);
+                if (d < minDist) minDist = d;
+            }
+        }
+        return minDist;
+    }
+
     /**
      * Internal implementation of the attack logic.
      * Shared by both the main dispatcher and specialized wrappers.
@@ -141,29 +176,28 @@ export class Actor extends Entity {
         if (!target || target.isDead || target.hp <= 0) return false;
         if (acd > 0) return false;
 
-        let dist = this.getDistance(target.gridX, target.gridZ);
         const range = this.attackRange || 2.0;
-
-        // Account for Building Size
-        let size = 1;
-        if (target.userData?.isBuilding || target.userData?.type === 'cave' || target.type === 'building') {
-            if (this.terrain && typeof this.terrain.getBuildingSize === 'function') {
-                size = this.terrain.getBuildingSize(target.type || target.userData?.type);
-            } else if (target.userData?.size) {
-                size = target.userData.size;
-            } else if (target.type === 'cave' || target.userData?.type === 'cave') {
-                size = 2; // Default for caves
-            }
-        }
-
-        const effectiveDist = (size > 1) ? Math.max(0, dist - (size / 2)) : dist;
+        const effectiveDist = this.getDistanceToBuilding(target);
 
         if (effectiveDist <= range) {
             this.action = 'Fighting';
 
-            // Face Target
-            const dx = target.gridX - this.gridX;
-            const dz = target.gridZ - this.gridZ;
+            // Face Target (Center of building)
+            const bType = target.type || target.userData?.type;
+            const size = (this.terrain && typeof this.terrain.getBuildingSize === 'function' && bType) ? this.terrain.getBuildingSize(bType) : 1;
+            const W = (this.terrain && this.terrain.logicalWidth) || 160;
+            const D = (this.terrain && this.terrain.logicalDepth) || 160;
+
+            const targetCenterX = target.gridX + (size - 1) * 0.5;
+            const targetCenterZ = target.gridZ + (size - 1) * 0.5;
+
+            let dx = targetCenterX - this.gridX;
+            let dz = targetCenterZ - this.gridZ;
+
+            // Wrap dx/dz for rotation
+            if (Math.abs(dx) > W / 2) dx -= Math.sign(dx) * W;
+            if (Math.abs(dz) > D / 2) dz -= Math.sign(dz) * D;
+
             this.rotationY = Math.atan2(dx, dz);
 
             // Apply Damage
@@ -181,11 +215,10 @@ export class Actor extends Entity {
                 if (target.position) {
                     targetPos = target.position.clone().add(new THREE.Vector3(0, 0.5, 0));
                 } else {
-                    // For buildings or entities without .position.clone()
-                    const tx = target.gridX || 0;
-                    const tz = target.gridZ || 0;
-                    const ty = (target.y || target.userData?.y || 0) + 1;
-                    targetPos = new THREE.Vector3(this.terrain.gridToWorld(tx), ty, this.terrain.gridToWorld(tz));
+                    // For buildings, target the center visually
+                    const ty = (target.y || target.userData?.y || 0) + 1.5;
+                    const worldCenter = this.terrain.getVisualPosition(targetCenterX, targetCenterZ);
+                    targetPos = new THREE.Vector3(worldCenter.x, ty, worldCenter.z);
                 }
 
                 (window as any).game.spawnProjectile(startPos, targetPos, this.projectileColor);
@@ -284,19 +317,27 @@ export class Actor extends Entity {
             const tRegion = tCell.regionId;
 
             // SAME REGION: Always reachable if on same landmass/waterbody
-            // Also handle undefined for test mocks that don't specify regionId
             if (mRegion === tRegion || mRegion === undefined || tRegion === undefined) return true;
 
             // ADJACENT CHECK (e.g. Land worker reaching adjacent water tile)
-            if (this.terrain.isAdjacentToRegion && this.terrain.isAdjacentToRegion(tx, tz, mRegion)) {
+            // Relax for building requests (radius 5 instead of 1)
+            const radius = isManualOverride ? 5 : 1;
+            if (this.terrain.isAdjacentToRegion && this.terrain.isAdjacentToRegion(tx, tz, mRegion, radius)) {
                 return true;
             }
 
             // CROSS-REGION CHECK: Strictly unreachable if regions differ
-            // EXCEPTION: Ranged units can target across regions if within attack range
-            if (this.isRanged && this.attackRange) {
+            if (this.isNaval) {
+                // Ships in shallow water (0.0-0.5) might be in a land region (Positive ID)
+                // but should be reachable from water (RegionId 0 or Negative)
+                const mH = mCell.height;
+                const tH = tCell.height;
+                if (mH <= 0.5 && tH <= 0.5) return true;
+            }
+
+            if (this.isRanged && (this as any).attackRange) {
                 const dist = this.getDistance(tx, tz);
-                if (dist <= this.attackRange) return true;
+                if (dist <= (this as any).attackRange) return true;
             }
 
             return false;
@@ -413,14 +454,20 @@ export class Actor extends Entity {
             }
 
             const timeSinceLast = (time === 0 || this.lastPathTime === 0) ? 999 : Math.abs(time - this.lastPathTime);
-            const isManualJob = (this.action === 'Approaching Job' || this.action === 'Chasing');
+            const isManualJob = (this.action === 'Approaching Job' || this.action === 'Chasing' || (this as any).targetRequest?.isManual);
             if (timeSinceLast < 1.0 && !isManualJob) {
                 this.isPathfindingThrottled = true;
                 return true; // Return true to indicate busy/waiting
             }
             if (this.isPathfinding) return true;
 
-            if (this.isUnreachable || !this.isReachable(tx, tz)) {
+            const isNewTarget = (tx !== this.pathTargetX || tz !== this.pathTargetZ);
+            if (isNewTarget) {
+                this.isUnreachable = false;
+                this.pathFailCount = 0;
+            }
+
+            if (this.isUnreachable || !this.isReachable(tx, tz, isManualJob)) {
                 this.isUnreachable = true;
                 this.pathFailCount++; // Count reachable/bounds failures as path failures
                 return false;
@@ -447,7 +494,7 @@ export class Actor extends Entity {
             this.pathRequestId++;
             const currentRequestId = this.pathRequestId;
             this.isWaitingForPath = true;
-            this.terrain.findPathAsync(this.gridX, this.gridZ, tx, tz, 0, this.id)
+            this.terrain.findPathAsync(this.gridX, this.gridZ, tx, tz, 0, this.id, this.isNaval)
                 .then(newPath => {
                     if (this.pathRequestId !== currentRequestId) return;
                     this.isPathfinding = false;
@@ -748,7 +795,7 @@ export class Actor extends Entity {
         if (this.terrain && this.terrain.getTileHeight) {
             const isMinimal = (this.game && this.game.minimal) || (window as any).game?.minimal;
             const currentH = this.terrain.getTileHeight(this.gridX, this.gridZ);
-            if (currentH <= 0 && !isMinimal) {
+            if (currentH <= 0 && !isMinimal && !this.isNaval) {
                 this.die("Drowning");
             }
         }
@@ -757,8 +804,8 @@ export class Actor extends Entity {
     getDistance(tx: number, tz: number, ox: number | null = null, oz: number | null = null): number {
         const sx = (ox !== null) ? ox : this.gridX;
         const sz = (oz !== null) ? oz : this.gridZ;
-        const logicalW = (this.terrain && this.terrain.logicalWidth) || 240;
-        const logicalD = (this.terrain && this.terrain.logicalDepth) || 240;
+        const logicalW = (this.terrain && this.terrain.logicalWidth) || 160;
+        const logicalD = (this.terrain && this.terrain.logicalDepth) || 160;
         let dx = Math.abs(sx - tx);
         let dz = Math.abs(sz - tz);
         if (dx > logicalW / 2) dx = logicalW - dx;
@@ -774,17 +821,31 @@ export class Actor extends Entity {
         if (tz === undefined && target.userData) tz = target.userData.gridZ;
         if (tx === undefined || tz === undefined) return null;
 
-        const dist = this.getDistance(tx, tz);
-        if (dist < 1.0) return { x: tx, z: tz };
+        const bType = target.type || target.userData?.type;
+        const size = (this.terrain && typeof this.terrain.getBuildingSize === 'function' && bType) ? this.terrain.getBuildingSize(bType) : 1;
+        const W = (this.terrain && this.terrain.logicalWidth) || 160;
+        const D = (this.terrain && this.terrain.logicalDepth) || 160;
+
+        // Target the center
+        const targetCenterX = tx + (size - 1) * 0.5;
+        const targetCenterZ = tz + (size - 1) * 0.5;
+
+        const dist = this.getDistance(targetCenterX, targetCenterZ);
+        if (dist < 1.0) return { x: targetCenterX, z: targetCenterZ };
 
         // Move towards center but stop at range
-        const dx = (tx - this.gridX);
-        const dz = (tz - this.gridZ);
+        let dx = (targetCenterX - this.gridX);
+        let dz = (targetCenterZ - this.gridZ);
+
+        // Wrap dx/dz for angle calculation
+        if (Math.abs(dx) > W / 2) dx -= Math.sign(dx) * W;
+        if (Math.abs(dz) > D / 2) dz -= Math.sign(dz) * D;
+
         const angle = Math.atan2(dx, dz);
         const approachRange = 0.5; // Stop slightly before center
         return {
-            x: tx - Math.sin(angle) * approachRange,
-            z: tz - Math.cos(angle) * approachRange
+            x: (this.gridX + Math.sin(angle) * (dist - approachRange)) % W,
+            z: (this.gridZ + Math.cos(angle) * (dist - approachRange)) % D
         };
     }
 

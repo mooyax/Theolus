@@ -104,7 +104,10 @@ export class WanderBase extends State {
             this.lastTime = time;
             this.moveInterval = 2.0 + Math.random() * 3.0;
         } else if (!this.actor.isMoving) {
-            this.actor.action = "Idle";
+            // Guard: Do not overwrite specialized actions like 'Patrolling' or 'Migrating'
+            if (this.actor.action !== 'Patrolling' && this.actor.action !== 'Migrating' && this.actor.action !== 'Working') {
+                this.actor.action = "Idle";
+            }
         } else {
             // Ensure action is Moving if isMoving is true
             this.actor.action = "Moving";
@@ -161,7 +164,30 @@ export class CombatStateBase extends State {
         } else {
             // OUT OF RANGE -> Chase
             this.actor.action = "Chasing";
-            const moved = this.actor.smartMove ? this.actor.smartMove(this.target.gridX, this.target.gridZ, time) : false;
+
+            let tgtX = this.target.gridX;
+            let tgtZ = this.target.gridZ;
+
+            // NEW: If target is a building with size > 1, path to closest cell of footprint
+            const isBuilding = !!(this.target.isBuilding || (this.target.userData && this.target.userData.isBuilding) ||
+                (!this.target.role && (this.target.type === 'goblin_hut' || this.target.type === 'cave' || this.target.faction === 'enemy_building' || this.target.hp !== undefined)));
+
+            if (isBuilding && this.actor.terrain && typeof this.actor.terrain.getBuildingSize === 'function') {
+                const bType = this.target.userData?.type || this.target.type;
+                if (bType) {
+                    const bSize = this.actor.terrain.getBuildingSize(bType);
+                    const W = this.actor.terrain.logicalWidth || 160;
+                    const D = this.actor.terrain.logicalDepth || 160;
+
+                    if (bSize > 1) {
+                        // AI Improvement: Target the center of the building footprint
+                        tgtX = (this.target.gridX + (bSize - 1) * 0.5) % W;
+                        tgtZ = (this.target.gridZ + (bSize - 1) * 0.5) % D;
+                    }
+                }
+            }
+
+            const moved = this.actor.smartMove ? this.actor.smartMove(tgtX, tgtZ, time) : false;
 
             // 3. Stuck/Unreachable Detection
             const isPathfindingActive = this.actor.isPathfinding || this.actor.isPathfindingThrottled || this.actor.isWaitingForPath;

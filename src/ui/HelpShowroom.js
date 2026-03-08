@@ -63,6 +63,7 @@ export class HelpShowroom {
                 if (type === 'house') return 2;
                 if (type === 'mansion') return 3;
                 if (type === 'castle') return 4;
+                if (type === 'port') return 3;
                 return 1;
             },
             registerEntity: () => { },
@@ -190,7 +191,7 @@ export class HelpShowroom {
 
         if (type === 'tower') {
             dist = 9; height = 6; targetY = 2.5;
-        } else if (type === 'barracks') {
+        } else if (type === 'barracks' || type === 'port') {
             dist = 7; height = 5; targetY = 1.0;
         } else if (['house', 'farm'].includes(type) || type === 'goblin_hut') {
             dist = 5; height = 3; targetY = 0.5;
@@ -202,6 +203,8 @@ export class HelpShowroom {
             dist = 2.5; height = 1.5; targetY = 0.3;
         } else if (type === 'fish') {
             dist = 1.5; height = 1.0; targetY = 0.0;
+        } else if (type === 'warship') {
+            dist = 6; height = 3; targetY = 0.5;
         } else {
             // Units / Goblins (Standard Humanoid)
             dist = 4; height = 2.5; targetY = 0.7;
@@ -247,10 +250,11 @@ export class HelpShowroom {
         const units = [];
         const type = this.currentType;
 
-        if (['worker', 'knight', 'wizard', 'hunter', 'fisher'].includes(type)) {
+        if (['worker', 'knight', 'wizard', 'hunter', 'fisher', 'warship'].includes(type)) {
             // Setup Unit
             const u = {
                 id: 1, role: type, isDead: false, isSleeping: false,
+                isNaval: (type === 'warship'),
                 position: new THREE.Vector3(0, 0, 0),
                 rotationY: 0,
                 limbs: {
@@ -334,7 +338,7 @@ export class HelpShowroom {
             // Render Goblin
             this.goblinRenderer.update([g], this.camera.position);
 
-        } else if (['house', 'farm', 'barracks', 'tower', 'goblin_hut', 'cave'].includes(type)) {
+        } else if (['house', 'farm', 'barracks', 'tower', 'goblin_hut', 'cave', 'port'].includes(type)) {
             // Setup Building
             const b = {
                 id: 3, type: type,
@@ -346,7 +350,7 @@ export class HelpShowroom {
             if (['house', 'farm', 'goblin_hut'].includes(type)) {
                 b.gridX = -0.5;
                 b.gridZ = -0.5;
-            } else if (['barracks', 'tower'].includes(type)) {
+            } else if (['barracks', 'tower', 'port'].includes(type)) {
                 b.gridX = -1.0;
                 b.gridZ = -1.0;
             } else {

@@ -76,25 +76,21 @@ export class Entity {
         this.moveTimer = 0;
         this.moveDuration = 1.0;
         this.moveStartTime = 0;
-        this.startGridX = 0;
-        this.startGridZ = 0;
-        this.targetGridX = 0;
-        this.targetGridZ = 0;
+        this.startGridX = x;
+        this.startGridZ = z;
+        this.targetGridX = x;
+        this.targetGridZ = z;
 
         // Visual State
         this.walkAnimTimer = 0;
 
         // Register in Spatial Grid
         if (this.terrain && this.terrain.registerEntity) {
-            console.log(`[Entity ${this.id}] Calling registerEntity...`);
             this.terrain.registerEntity(this, this.gridX, this.gridZ, this.spatialType);
-            console.log(`[Entity ${this.id}] registerEntity returned.`);
         }
 
         // Initial visual sync
-        console.log(`[Entity ${this.id}] Calling updatePosition...`);
         this.updatePosition();
-        console.log(`[Entity ${this.id}] updatePosition returned.`);
     }
 
     // --- POSITIONING ---

@@ -412,8 +412,72 @@ export class BuildingRenderer {
             color: 0x808080
         });
 
+        // --- PORT (3x3) ---
+        // Pier/Dock structure. 2.6x2.6 wooden platform.
+        const portBase = new THREE.BoxGeometry(2.6, 0.15, 2.6);
+        portBase.translate(0, 0.075, 0);
+
+        const decorations = [];
+
+        // Pillars/Piles (More extensive)
+        const pOffsets = [-1.2, 0, 1.2];
+        for (const ox of pOffsets) {
+            for (const oz of pOffsets) {
+                // Outer corners and midpoints
+                if (Math.abs(ox) === 1.2 || Math.abs(oz) === 1.2) {
+                    const p = new THREE.BoxGeometry(0.15, 0.45, 0.15);
+                    p.translate(ox, 0.225, oz);
+                    decorations.push(p);
+                }
+            }
+        }
+
+        // Deep Corner Pillars (to stand in the sea)
+        const cornerOffsets = [-1.2, 1.2];
+        for (const ox of cornerOffsets) {
+            for (const oz of cornerOffsets) {
+                // Height: from y=-1.0 up to platform (y=0.15), top at platform.
+                const deepPillar = new THREE.BoxGeometry(0.2, 1.15, 0.2); // Total height 1.15 to go from -1.0 to 0.15
+                deepPillar.translate(ox, -0.425, oz); // Center at (0.15 + -1.0)/2 = -0.425
+                decorations.push(deepPillar);
+            }
+        }
+
+        // (Ramps removed to keep the port structure compact and fitting to its tile size)
+
+        // Add some Wooden Crates/Barrels
+        const createCrate = (x, z, s) => {
+            const c = new THREE.BoxGeometry(s, s, s);
+            c.translate(x, 0.15 + s / 2, z);
+            // Slight random rotation for natural look
+            c.rotateY(Math.random() * Math.PI);
+            return c;
+        };
+        decorations.push(createCrate(0.8, 0.5, 0.4));
+        decorations.push(createCrate(0.5, 0.8, 0.3));
+        decorations.push(createCrate(-0.6, -0.7, 0.45));
+
+        // Add Bollards (Mooring posts)
+        const createBollard = (x, z) => {
+            const b = new THREE.CylinderGeometry(0.08, 0.08, 0.25, 8);
+            b.translate(x, 0.15 + 0.125, z);
+            return b;
+        };
+        decorations.push(createBollard(0.9, 1.0));
+        decorations.push(createBollard(-0.9, 1.0));
+        decorations.push(createBollard(0.9, -1.0));
+        decorations.push(createBollard(-0.9, -1.0));
+
+        this.assets.portGeo = BufferGeometryUtils.mergeGeometries([portBase, ...decorations]);
+
+        this.assets.portMat = new THREE.MeshLambertMaterial({
+            ...matOptions,
+            map: this.assets.farmMat.map, // Reuse wooden texture pattern if possible, or use wood color
+            color: 0x8B4513 // SaddleBrown
+        });
+
         // Needed for updates
-        [this.assets.houseWallMat, this.assets.barracksMat, this.assets.towerMat, this.assets.caveMat].forEach(m => {
+        [this.assets.houseWallMat, this.assets.barracksMat, this.assets.towerMat, this.assets.caveMat, this.assets.portMat].forEach(m => {
             if (m) { m.clippingPlanes = this.clippingPlanes; m.needsUpdate = true; }
         });
     }
@@ -444,6 +508,7 @@ export class BuildingRenderer {
         this.meshes.barracksWalls = make(this.assets.barracksGeo, this.assets.barracksMat);
         this.meshes.barracksRoofs = make(this.assets.barracksRoofGeo, this.assets.barracksRoofMat);
         this.meshes.caves = make(this.assets.caveGeo, this.assets.caveMat);
+        this.meshes.ports = make(this.assets.portGeo, this.assets.portMat);
     }
 
 
@@ -489,7 +554,7 @@ export class BuildingRenderer {
 
         this.forceUpdate = false;
 
-        let hIdx = 0, fIdx = 0, gIdx = 0, mIdx = 0, tIdx = 0, cIdx = 0;
+        let hIdx = 0, fIdx = 0, gIdx = 0, mIdx = 0, tIdx = 0, cIdx = 0, pIdx = 0;
         const dummy = this._dummy;
 
         const offsets = [
@@ -517,7 +582,8 @@ export class BuildingRenderer {
             if (!b.type) continue;
 
             const vPos = this.terrain.getVisualPosition(b.gridX, b.gridZ, true);
-            const y = vPos.y || 0;
+            // Height Override (For Ports at 0.8)
+            const y = (b.visualYOverride !== undefined) ? b.visualYOverride : (vPos.y || 0);
             const rotY = (b.rotationY !== undefined) ? b.rotationY : (b.rotation || 0);
 
             // Dynamic Wrapping Logic
@@ -542,10 +608,13 @@ export class BuildingRenderer {
 
                     // Center Offsets by Dynamic Formula based on Size
                     const size = this.terrain.getBuildingSize(b.type);
-                    const finalX = posX + (size - 1) * 0.5;
-                    const finalZ = posZ + (size - 1) * 0.5;
+                    const bOffset = this.terrain.getBuildingOffset ? this.terrain.getBuildingOffset(b.type, b.gridX, b.gridZ) : { x: 0, z: 0, y: 0 };
 
-                    dummy.position.set(finalX, y, finalZ);
+                    const finalX = posX + (size - 1) * 0.5 + bOffset.x;
+                    const finalZ = posZ + (size - 1) * 0.5 + bOffset.z;
+                    const finalY = y + bOffset.y;
+
+                    dummy.position.set(finalX, finalY, finalZ);
                     dummy.scale.set(1, 1, 1);
                     dummy.rotation.set(0, rotY, 0);
                     dummy.updateMatrix();
@@ -614,6 +683,9 @@ export class BuildingRenderer {
                     } else if (b.type === 'cave' && cIdx < this.MAX_INSTANCES) {
                         if (this.meshes.caves) this.meshes.caves.setMatrixAt(cIdx, dummy.matrix);
                         cIdx++;
+                    } else if (b.type === 'port' && pIdx < this.MAX_INSTANCES) {
+                        if (this.meshes.ports) this.meshes.ports.setMatrixAt(pIdx, dummy.matrix);
+                        pIdx++;
                     }
                 }
             }
@@ -632,6 +704,7 @@ export class BuildingRenderer {
         if (this.meshes.towers) this.meshes.towers.count = tIdx;
         if (this.meshes.towerRims) this.meshes.towerRims.count = tIdx;
         if (this.meshes.caves) this.meshes.caves.count = cIdx;
+        if (this.meshes.ports) this.meshes.ports.count = pIdx;
 
         if (this.meshes.houseWalls) this.meshes.houseWalls.instanceMatrix.needsUpdate = true;
         if (this.meshes.houseRoofs) {
@@ -667,6 +740,10 @@ export class BuildingRenderer {
 
         if (this.meshes.caves) {
             this.meshes.caves.instanceMatrix.needsUpdate = true;
+        }
+
+        if (this.meshes.ports) {
+            this.meshes.ports.instanceMatrix.needsUpdate = true;
         }
     }
 
@@ -727,6 +804,7 @@ export class BuildingRenderer {
         remove(this.meshes.barracksWalls);
         remove(this.meshes.barracksRoofs);
         remove(this.meshes.caves);
+        remove(this.meshes.ports);
 
         // Clear assets
         Object.values(this.assets).forEach(a => {

@@ -9,7 +9,7 @@ describe('Terrain Detection Logic', () => {
     beforeEach(() => {
         // Limited Mock of Terrain
         const mockScene = { add: vi.fn(), remove: vi.fn() };
-        terrain = new Terrain(mockScene, { logicalWidth: 20, logicalDepth: 20 });
+        terrain = new Terrain(mockScene, [], 20, 20);
 
         // Mock Grid with Regions
         terrain.grid = [];
@@ -104,5 +104,5 @@ describe('Terrain Detection Logic', () => {
 
         expect(best).toBe(targetDiffClose); // Should pick the close one despite region mismatch
 
-});
+    });
 });

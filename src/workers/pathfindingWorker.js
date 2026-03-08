@@ -22,7 +22,7 @@ self.onmessage = function (e) {
         case 'FIND_PATH':
             const startT = performance.now();
             console.log(`[Worker] Unit ${payload.unitId} FIND_PATH ReqID:${id} Start`);
-            const path = findPath(payload.sx, payload.sz, payload.ex, payload.ez, payload.maxSteps, payload.unitId);
+            const path = findPath(payload.sx, payload.sz, payload.ex, payload.ez, payload.maxSteps, payload.unitId, payload.isNaval);
             const dur = performance.now() - startT;
             console.log(`[Worker] Unit ${payload.unitId} FIND_PATH ReqID:${id} Done in ${dur.toFixed(2)}ms. Found:${!!path}`);
             self.postMessage({ type: 'PATH_RESULT', id, payload: path });
@@ -77,7 +77,7 @@ function updateChunk({ startX, startZ, w, h, data }) {
     // data is flattened array of new heights
 }
 
-function findPath(sx, sz, ex, ez, maxStepsParam = 0, unitId = -1) {
+function findPath(sx, sz, ex, ez, maxStepsParam = 0, unitId = -1, isNaval = false) {
     if (!heightMap) return null;
 
     // Validate Coords
@@ -96,19 +96,22 @@ function findPath(sx, sz, ex, ez, maxStepsParam = 0, unitId = -1) {
     const getHeight = (x, z) => heightMap[z * W + x];
     const getMoisture = (x, z) => moistureMap ? moistureMap[z * W + x] : 0.5;
 
-    // FIX: Start/End validation (Water Check)
+    // FIX: Start/End validation
     let startH = getHeight(sx, sz);
-    if (startH <= 0) {
+    const isStartValid = isNaval ? (startH <= 0.5) : (startH > 0);
+
+    if (!isStartValid) {
         // Search neighbors
         let found = false;
-        // Expanded search radius for start node as well
-        for (let r = 1; r <= 4; r++) {
+        for (let r = 1; r <= 10; r++) {
             for (let dx = -r; dx <= r; dx++) {
                 for (let dz = -r; dz <= r; dz++) {
                     if (dx === 0 && dz === 0) continue;
                     let nsx = (sx + dx + W) % W;
                     let nsz = (sz + dz + H) % H;
-                    if (getHeight(nsx, nsz) > 0) {
+                    let nh = getHeight(nsx, nsz);
+                    const isNeighborValid = isNaval ? (nh <= 0.5) : (nh > 0);
+                    if (isNeighborValid) {
                         sx = nsx; sz = nsz; found = true; break;
                     }
                 }
@@ -117,25 +120,25 @@ function findPath(sx, sz, ex, ez, maxStepsParam = 0, unitId = -1) {
             if (found) break;
         }
         if (!found) {
-            console.log(`[Worker] Unit ${unitId} No Path: Start ${sx},${sz} is invalid and no valid neighbor found.`);
+            console.log(`[Worker] Unit ${unitId} No Path: Start ${sx},${sz} is invalid (${isNaval ? 'Naval' : 'Land'}) and no valid neighbor found.`);
             return null;
         }
     }
 
     let endH = getHeight(ex, ez);
-    if (endH <= 0) {
-        // console.log(`[Worker] Target ${ex},${ez} is water/invalid (H=${endH}). Searching nearby...`);
+    const isEndValid = isNaval ? (endH <= 0.5) : (endH > 0);
+    if (!isEndValid) {
         let found = false;
-        // Expanded search radius from 2 to 4 to find valid land
-        for (let r = 1; r <= 4; r++) {
+        for (let r = 1; r <= 10; r++) {
             for (let dx = -r; dx <= r; dx++) {
                 for (let dz = -r; dz <= r; dz++) {
                     if (dx === 0 && dz === 0) continue;
                     let nex = (ex + dx + W) % W;
                     let nez = (ez + dz + H) % H;
-                    if (getHeight(nex, nez) > 0) {
+                    let nh = getHeight(nex, nez);
+                    const isNeighborValid = isNaval ? (nh <= 0.5) : (nh > 0);
+                    if (isNeighborValid) {
                         ex = nex; ez = nez; found = true;
-                        // console.log(`[Worker] Found valid neighbor at ${ex},${ez}`);
                         break;
                     }
                 }
@@ -144,14 +147,12 @@ function findPath(sx, sz, ex, ez, maxStepsParam = 0, unitId = -1) {
             if (found) break;
         }
         if (!found) {
-            console.log(`[Worker] Unit ${unitId} No Path: Target ${ex},${ez} is invalid and no valid neighbor found.`);
+            console.log(`[Worker] Unit ${unitId} No Path: Target ${ex},${ez} is invalid (${isNaval ? 'Naval' : 'Land'}) and no valid neighbor found.`);
             return null;
         }
     }
 
     // A* Setup
-    // console.log(`[Worker] Unit ${unitId} FIND_PATH Start: ${sx},${sz}(H:${startH}) -> ${ex},${ez}(H:${endH})`);
-
     const startNode = { x: sx, z: sz, g: 0, h: 0, f: 0, parent: null };
     const openList = [startNode];
     const openMap = new Map();
@@ -167,8 +168,6 @@ function findPath(sx, sz, ex, ez, maxStepsParam = 0, unitId = -1) {
         while (openList.length > 0) {
             steps++;
             if (steps > maxSteps) {
-                // Return partial path to best node
-                console.log(`[Worker] Unit ${unitId} MaxSteps Reached (${steps}).`);
                 const path = [];
                 let curr = bestNode;
                 while (curr) {
@@ -178,7 +177,6 @@ function findPath(sx, sz, ex, ez, maxStepsParam = 0, unitId = -1) {
                 return path.reverse();
             }
 
-            // O(N) min search is faster than O(N log N) sort for pathfinding open lists
             let minF = Infinity;
             let minIdx = -1;
             for (let i = 0; i < openList.length; i++) {
@@ -199,7 +197,6 @@ function findPath(sx, sz, ex, ez, maxStepsParam = 0, unitId = -1) {
             closedSet.add(key);
             openMap.delete(key);
 
-            // Found Goal
             if (current.x === ex && current.z === ez) {
                 const path = [];
                 let curr = current;
@@ -227,32 +224,32 @@ function findPath(sx, sz, ex, ez, maxStepsParam = 0, unitId = -1) {
                 if (closedSet.has(nKey)) continue;
 
                 const hEnd = getHeight(nx, nz);
-                if (hEnd <= 0) continue; // Water
+
+                // --- NAVAL / LAND RESTRICTIONS ---
+                if (isNaval) {
+                    if (hEnd > 0.5) continue; // Warships cannot go on deep land
+                } else {
+                    if (hEnd <= 0) continue; // Land units cannot go in water
+                }
 
                 const slope = Math.abs(hEnd - hStart);
-                if (slope > 3.0) continue; // Slope Limit
+                if (!isNaval && slope > 3.0) continue; // Slope Limit only for land
 
                 // --- COST CALCULATION ---
-                // Base Cost
-                let moveCost = 0.8 * n.cost; // Base walking cost
+                let moveCost = 0.8 * n.cost;
 
-                // 1. Rock Penalty (H > 8)
-                if (hEnd > 8) {
-                    moveCost += 4.0; // Significant penalty (Matches ~6s duration)
-                }
-
-                // 2. Slope Penalty
-                if (slope > 0.1) {
-                    moveCost += 2.0; // Penalty (Matches ~3s duration)
-                }
-
-                // 3. Swamp Penalty (Moisture > 0.6)
-                // Note: Only if NOT rock (Rock overrides swamp usually)
-                if (hEnd <= 8) {
-                    const m = getMoisture(nx, nz);
-                    if (m > 0.6) {
-                        moveCost += 1.2; // Swamp Penalty (Matches ~2s duration)
+                if (!isNaval) {
+                    if (hEnd > 8) moveCost += 4.0;
+                    if (slope > 0.1) moveCost += 2.0;
+                    if (hEnd <= 8) {
+                        const m = getMoisture(nx, nz);
+                        if (m > 0.6) moveCost += 1.2;
                     }
+                } else {
+                    // Naval costs: Keep it simple or add currents later
+                    // Maybe slightly slower near shore?
+                    const nh = getHeight(nx, nz);
+                    if (nh > -2) moveCost += 0.5; // Coastal shallow penalty
                 }
 
                 const gScore = current.g + moveCost;

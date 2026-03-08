@@ -45,7 +45,11 @@ describe('Job Approach Threshold', () => {
             clearPath: vi.fn(),
             simTime: 100,
             targetRequest: { id: 'req1', x: 12, z: 10, status: 'assigned', type: 'test', assignedTo: 1 },
-            game: mockGame
+            game: mockGame,
+            stagnationTimer: 0,
+            stuckTimer: 0,
+            isUnreachable: false,
+            terrain: mockGame.terrain
         };
 
         jobState = new Job(mockActor);
@@ -62,7 +66,9 @@ describe('Job Approach Threshold', () => {
         expect(mockActor.action).toBe('Working');
     });
 
-    it('should NOT complete job if distance is 2.2 (outside 2.1 threshold)', () => {
+    it('should NOT complete job if distance is 2.2 (outside 2.1 threshold for land)', () => {
+        // We ensure terrain says height > 0 (Land)
+        mockActor.terrain.getTileHeight = () => 5;
         mockActor.targetRequest.x = 12.2;
         mockActor.targetRequest.z = 10;
         jobState.targetRequest = mockActor.targetRequest;

@@ -16,7 +16,7 @@ export class BaseEntityRenderer {
         this.initialized = false;
     }
 
-    createMesh(geo, mat, count) {
+    createMesh(geo, mat, count, tintable = true) {
         if (!geo) {
             console.error("[BaseEntityRenderer] Geometry missing for mesh creation!");
             return null;
@@ -24,6 +24,12 @@ export class BaseEntityRenderer {
         const m = new THREE.InstancedMesh(geo, mat, count || this.MAX_INSTANCES);
         m.count = 0; // Start hidden
         m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+
+        if (tintable) {
+            const colors = new Float32Array((count || this.MAX_INSTANCES) * 3);
+            m.instanceColor = new THREE.InstancedBufferAttribute(colors, 3);
+        }
+
         m.frustumCulled = false; // Manually culled in update
         m.castShadow = true;
         m.receiveShadow = true;
@@ -45,11 +51,11 @@ export class BaseEntityRenderer {
         }
     }
 
-    updateMesh(m) {
-        if (!m) return;
-        if (m.instanceMatrix) m.instanceMatrix.needsUpdate = true;
-        if (m.instanceColor) m.instanceColor.needsUpdate = true;
-        m.visible = (m.count > 0);
+    updateMesh(mesh) {
+        if (!mesh) return;
+        if (mesh.instanceMatrix) mesh.instanceMatrix.needsUpdate = true;
+        if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+        mesh.visible = (mesh.count > 0);
     }
 
     /**

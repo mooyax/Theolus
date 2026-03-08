@@ -195,6 +195,7 @@ vi.mock('three', async () => {
             rotateX() { return this; }
             rotateY() { return this; }
             rotateZ() { return this; }
+            clone() { return new this.constructor(); }
         },
         PlaneGeometry: class {
             constructor(w, h, ws, hs) {
@@ -218,6 +219,7 @@ vi.mock('three', async () => {
             rotateX() { return this; }
             rotateY() { return this; }
             rotateZ() { return this; }
+            clone() { return new this.constructor(this.parameters.width, this.parameters.height, this.parameters.widthSegments, this.parameters.heightSegments); }
         },
         InstancedMesh: class extends MockObject {
             constructor(g, m, count) {
@@ -279,6 +281,7 @@ vi.mock('three', async () => {
             rotateY() { return this; }
             rotateZ() { return this; }
             scale() { return this; }
+            clone() { return new this.constructor(this.parameters.width, this.parameters.height, this.parameters.depth); }
         },
         SphereGeometry: class {
             constructor(r) {
@@ -294,6 +297,7 @@ vi.mock('three', async () => {
             rotateZ() { return this; }
             getAttribute(name) { return this.attributes[name]; }
             setAttribute(name, attr) { this.attributes[name] = attr; return this; }
+            clone() { return new this.constructor(this.parameters.radius); }
         },
         CylinderGeometry: class {
             constructor(rt, rb, h) {
@@ -309,6 +313,7 @@ vi.mock('three', async () => {
             rotateZ() { return this; }
             getAttribute(name) { return this.attributes[name]; }
             setAttribute(name, attr) { this.attributes[name] = attr; return this; }
+            clone() { return new this.constructor(this.parameters.radiusTop, this.parameters.radiusBottom, this.parameters.height); }
         },
         ConeGeometry: class {
             constructor(r, h, s) {
@@ -324,6 +329,7 @@ vi.mock('three', async () => {
             rotateZ() { return this; }
             getAttribute(name) { return this.attributes[name]; }
             setAttribute(name, attr) { this.attributes[name] = attr; return this; }
+            clone() { return new this.constructor(this.parameters.radius, this.parameters.height, this.parameters.segments); }
         },
         Clock: class { constructor() { } getDelta() { return 0.016; } getElapsedTime() { return 0; } },
         RepeatWrapping: 1000,

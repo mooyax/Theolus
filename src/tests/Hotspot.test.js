@@ -73,7 +73,7 @@ describe('Global Battle Hotspots Logic', () => {
         };
 
         const unit = new Unit({ add: vi.fn() }, mockTerrain, 20, 20, 'knight');
-        unit.patrol = vi.fn();
+        unit.patrol = vi.fn().mockReturnValue(true);
         unit.findRaidTarget = vi.fn().mockReturnValue(true);
 
         // Ensure unit is in Wander state

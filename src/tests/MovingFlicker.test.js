@@ -91,7 +91,9 @@ describe('Moving Flicker Check', () => {
             moveEntity: () => { },
             initEntityGrid: () => { },
             checkYield: () => Promise.resolve(),
-            isReachable: () => true
+            isReachable: () => true,
+            getRegion: () => 1,
+            getRandomPointInRegion: () => ({ x: 50, z: 50 })
         };
 
     });

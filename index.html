@@ -127,6 +127,23 @@
       margin-bottom: 5px;
     }
 
+    /* UI Groups */
+    .ui-group {
+      display: flex;
+      gap: 5px;
+      margin-right: 15px;
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+      padding-right: 15px;
+    }
+
+    .ui-group-system {
+      display: flex;
+      gap: 5px;
+      margin-left: 15px;
+      border-left: 1px solid rgba(255, 255, 255, 0.3);
+      padding-left: 15px;
+    }
+
     /* Mobile Optimization */
     @media (max-width: 800px) {
       #stats-container {
@@ -136,64 +153,116 @@
         top: 0;
         left: 0;
         padding: 5px;
-        /* Reserve space for Minimap? No, moving it down. */
         padding-right: 5px;
-        gap: 5px;
-        /* Visual separation */
+        gap: 3px;
+        /* Balanced gap */
       }
 
       .stat-row {
-        font-size: 12px;
-        padding: 4px 6px;
-        border-radius: 10px;
+        font-size: 11px;
+        /* Smaller text */
+        padding: 3px 5px;
+        border-radius: 8px;
         margin: 0;
       }
 
       .stat-row span.material-symbols-outlined {
-        font-size: 16px;
-        margin-right: 4px;
+        font-size: 14px;
+        /* Smaller icons */
+        margin-right: 2px;
       }
 
       #time-display {
-        font-size: 14px;
-        padding: 4px 8px;
+        font-size: 11px;
+        padding: 4px 6px;
         margin-bottom: 0;
-        /* More visible */
       }
-
-      /* Hide less critical texts if needed, or just keep them small */
 
       /* Responsive UI Buttons */
       #ui {
-        width: 90%;
+        width: 95%;
         bottom: 10px;
-        gap: 5px;
+        gap: 6px;
         flex-wrap: wrap;
         justify-content: center;
-        padding: 5px;
-        border-radius: 10px;
-        /* Tighter radius */
+        padding: 8px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        /* Refined background */
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
       }
 
       #ui button {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
+        width: 42px;
+        height: 42px;
+        font-size: 18px;
       }
 
       #ui button .material-symbols-outlined {
         font-size: 22px;
-        /* Smaller Icons */
+      }
+
+      .cost-badge {
+        font-size: 8px;
+        padding: 1px 4px;
+        bottom: -3px;
+        right: -3px;
+      }
+
+      .ui-group,
+      .ui-group-system {
+        margin: 0;
+        padding: 0;
+        border: none;
+        gap: 6px;
       }
 
       /* Resize Minimap */
       #minimap {
-        width: 100px !important;
-        height: 100px !important;
-        top: 70px !important;
-        /* Adjusted: 70px seems to be the sweet spot (2 lines) */
+        width: 90px !important;
+        height: 90px !important;
+        top: 60px !important;
+        /* Slightly higher */
         right: 10px !important;
         border-width: 1px !important;
+      }
+
+      /* Start Screen Mobile */
+      #start-screen {
+        padding: 20px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center;
+      }
+
+      #start-screen h1 {
+        font-size: 2.5rem !important;
+        margin-bottom: 3rem !important;
+        /* Push down to avoid level text */
+      }
+
+      #start-level-display {
+        top: 25% !important;
+        /* Move up */
+        font-size: 3rem !important;
+        letter-spacing: 0.1rem !important;
+      }
+
+      .start-btn {
+        padding: 10px 25px !important;
+        font-size: 1.1rem !important;
+      }
+
+      #start-screen>div[style*="display: flex"] {
+        flex-direction: column !important;
+        gap: 15px !important;
+      }
+
+      #regenerate-btn {
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 1.2rem !important;
       }
     }
 
@@ -675,13 +744,14 @@
       <span class="material-symbols-outlined">directions_run</span>
       <span id="active-val">0</span>
     </div>
-    <div class="stat-row" title="Knights">
+    <div class="stat-row" title="Units (Knight / Wizard / Warship)">
       <span class="material-symbols-outlined">shield</span>
-      <span id="knight-val">0</span>
-    </div>
-    <div class="stat-row" title="Wizards">
-      <span class="material-symbols-outlined">auto_awesome</span>
-      <span id="wizard-val">0</span>
+      <span id="knight-val" style="margin-right: 5px;">0</span>
+      <span style="color: #aaa;">/</span>
+      <span id="wizard-val" style="color: #e0e0e0; margin: 0 5px;">0</span>
+      <span style="color: #aaa;">/</span>
+      <span class="material-symbols-outlined" style="font-size: 20px; margin: 0 5px 0 8px;">directions_boat</span>
+      <span id="warship-val" style="color: #87CEEB;">0</span>
     </div>
 
     <!-- Totals & Buildings -->
@@ -723,22 +793,19 @@
 
   <div id="ui" style="display: none;">
     <!-- Navigation Group -->
-    <div class="ui-group"
-      style="display: flex; gap: 5px; margin-right: 15px; border-right: 1px solid rgba(255,255,255,0.3); padding-right: 15px;">
+    <div class="ui-group">
       <button id="btn-view" class="active" title="View / Select (No Action)"><span
           class="material-symbols-outlined">near_me</span></button>
     </div>
 
     <!-- Terrain Group -->
-    <div class="ui-group"
-      style="display: flex; gap: 5px; margin-right: 15px; border-right: 1px solid rgba(255,255,255,0.3); padding-right: 15px;">
+    <div class="ui-group">
       <button id="btn-raise" title="Raise Land"><span class="material-symbols-outlined">stat_3</span></button>
       <button id="btn-lower" title="Lower Land"><span class="material-symbols-outlined">stat_minus_3</span></button>
     </div>
 
     <!-- Units & Buildings Group -->
-    <div class="ui-group"
-      style="display: flex; gap: 5px; margin-right: 15px; border-right: 1px solid rgba(255,255,255,0.3); padding-right: 15px;">
+    <div class="ui-group">
       <button id="btn-spawn" title="Spawn Unit">
         <span class="material-symbols-outlined">person_add</span>
         <span id="cost-spawn" class="cost-badge">100</span>
@@ -755,15 +822,18 @@
         <span class="material-symbols-outlined">fort</span>
         <span id="cost-tower" class="cost-badge">1000</span>
       </button>
+      <button id="btn-port" title="Build Port">
+        <span class="material-symbols-outlined">anchor</span>
+        <span id="cost-port" class="cost-badge">150</span>
+      </button>
       <button id="btn-cancel" title="Cancel Request"><span class="material-symbols-outlined">cancel</span></button>
     </div>
 
     <!-- Tools Group (Empty or reuse) -->
-    <div class="ui-group" style="display: none; gap: 5px;"></div>
+    <div class="ui-group" style="display: none;"></div>
 
     <!-- System Group (Pushed to right or just separate) -->
-    <div class="ui-group"
-      style="display: flex; gap: 5px; margin-left: 15px; border-left: 1px solid rgba(255,255,255,0.3); padding-left: 15px;">
+    <div class="ui-group-system">
       <button id="save-load-btn" title="Save/Load"><span class="material-symbols-outlined">save</span></button>
       <button id="help-btn" title="Help / Guide"><span class="material-symbols-outlined">help</span></button>
       <a href="https://github.com/mooyax/Theolus/discussions" target="_blank" style="text-decoration: none;">
@@ -773,10 +843,6 @@
       <button id="debug-speed-btn" onclick="toggleDebugSpeed()" title="Toggle Speed"><span
           class="material-symbols-outlined">fast_forward</span></button>
     </div>
-
-
-
-
   </div>
 
   <canvas id="minimap" width="160" height="160"
@@ -1066,6 +1132,18 @@
               <span class="material-symbols-outlined">auto_fix</span>
               <div><strong>魔法使い</strong><br><small>Wizard</small></div>
             </div>
+            <div class="unit-list-item" data-type="hunter" onclick="selectShowroomUnit('hunter', this)">
+              <span class="material-symbols-outlined">target</span>
+              <div><strong>狩人</strong><br><small>Hunter</small></div>
+            </div>
+            <div class="unit-list-item" data-type="fisher" onclick="selectShowroomUnit('fisher', this)">
+              <span class="material-symbols-outlined">sailing</span>
+              <div><strong>漁師</strong><br><small>Fisher</small></div>
+            </div>
+            <div class="unit-list-item" data-type="warship" onclick="selectShowroomUnit('warship', this)">
+              <span class="material-symbols-outlined">directions_boat</span>
+              <div><strong>軍艦</strong><br><small>Warship</small></div>
+            </div>
           </div>
 
           <!-- Preview -->
@@ -1141,6 +1219,10 @@
             <div class="unit-list-item" data-type="cave" onclick="selectShowroomUnit('cave', this)">
               <span class="material-symbols-outlined">landscape</span>
               <div><strong>ゴブリンの洞窟</strong><br><small>Goblin Cave</small></div>
+            </div>
+            <div class="unit-list-item" data-type="port" onclick="selectShowroomUnit('port', this)">
+              <span class="material-symbols-outlined">anchor</span>
+              <div><strong>港</strong><br><small>Port</small></div>
             </div>
           </div>
           <div class="unit-preview-area">
@@ -1568,7 +1650,7 @@
 
     window.selectShowroomUnit = function (type, el) {
       const isGoblin = ['goblin', 'hob', 'shaman', 'king'].includes(type);
-      const isBuilding = ['house', 'farm', 'barracks', 'tower', 'goblin_hut', 'cave'].includes(type);
+      const isBuilding = ['house', 'farm', 'barracks', 'tower', 'goblin_hut', 'cave', 'port'].includes(type);
       const isOther = ['bird', 'sheep', 'fish'].includes(type);
 
       let showroom = showroomUnit;

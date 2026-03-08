@@ -16,7 +16,7 @@ describe('Weather Sway Intensity', () => {
     beforeEach(async () => {
         scene = new THREE.Scene();
         // Setup Terrain
-        terrain = new Terrain(scene, 40, 40);
+        terrain = new Terrain(scene, [], 40, 40);
         terrain.createWater();
 
         // Setup BuildingRenderer
@@ -46,5 +46,5 @@ describe('Weather Sway Intensity', () => {
         treeRenderer.update({ x: 0, z: 0 }, 0, 2.8);
         expect(mat.uniforms.uSwayIntensity.value).toBe(2.8);
 
-});
+    });
 });

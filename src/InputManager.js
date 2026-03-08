@@ -68,6 +68,7 @@ export class InputManager {
         const btnSpawn = document.getElementById('btn-spawn');
         const btnBarracks = document.getElementById('btn-barracks');
         const btnTower = document.getElementById('btn-tower');
+        const btnPort = document.getElementById('btn-port');
         const btnHouse = document.getElementById('btn-house');
         const btnCancel = document.getElementById('btn-cancel');
         const btnView = document.getElementById('btn-view'); // New
@@ -79,6 +80,7 @@ export class InputManager {
             if (btnSpawn) btnSpawn.classList.toggle('active', mode === 'spawn');
             if (btnBarracks) btnBarracks.classList.toggle('active', mode === 'barracks');
             if (btnTower) btnTower.classList.toggle('active', mode === 'tower');
+            if (btnPort) btnPort.classList.toggle('active', mode === 'port');
             if (btnHouse) btnHouse.classList.toggle('active', mode === 'house');
             if (btnCancel) btnCancel.classList.toggle('active', mode === 'cancel');
             if (btnView) btnView.classList.toggle('active', mode === 'view'); // New
@@ -110,6 +112,9 @@ export class InputManager {
         }
         if (btnHouse) {
             btnHouse.addEventListener('click', () => updateActive('house'));
+        }
+        if (btnPort) {
+            btnPort.addEventListener('click', () => updateActive('port'));
         }
     }
     isUIInteraction(event) {
@@ -199,12 +204,33 @@ export class InputManager {
             gridX = ((gridX % logicalW) + logicalW) % logicalW;
             gridZ = ((gridZ % logicalD) + logicalD) % logicalD;
 
-            // 1. Check Building (Direct Cell Lookup)
+            // 1. Check Building (Direct Cell Lookup + Neighbor Check for Offsets)
+            let b = null;
             const cell = this.terrain.grid[gridX][gridZ];
             if (cell && cell.hasBuilding && cell.building) {
-                const b = cell.building;
-                const type = b.userData.type || b.type;
+                b = cell.building;
+            } else {
+                // Fallback: Check neighbors (radius 1-2) to find buildings that might be offset into water
+                // This is crucial for Ports whose piers are visually offset from their root gridX/gridZ
+                const searchRadius = 2;
+                let foundB = null;
+                for (let r = 1; r <= searchRadius && !foundB; r++) {
+                    for (let dx = -r; dx <= r && !foundB; dx++) {
+                        for (let dz = -r; dz <= r && !foundB; dz++) {
+                            const nx = (gridX + dx + logicalW) % logicalW;
+                            const nz = (gridZ + dz + logicalD) % logicalD;
+                            const neighborCell = this.terrain.grid[nx][nz];
+                            if (neighborCell && neighborCell.hasBuilding && neighborCell.building) {
+                                foundB = neighborCell.building;
+                            }
+                        }
+                    }
+                }
+                b = foundB;
+            }
 
+            if (b) {
+                const type = b.userData.type || b.type;
                 const cap = b.userData.capacity || 10;
                 if (type === 'house') {
                     const pop = Math.floor(b.userData.population || 0);
@@ -232,6 +258,10 @@ export class InputManager {
                     found = true;
                 } else if (type === 'farm') {
                     text = `Farm HP: ${Math.floor(b.userData.hp)}`;
+                    found = true;
+                } else if (type === 'port') {
+                    const pop = Math.floor(b.userData.population || 0);
+                    text = `Port Pop: ${pop}/${cap}`;
                     found = true;
                 }
             }
@@ -367,6 +397,15 @@ export class InputManager {
             elHouse.innerText = cost;
             elHouse.style.backgroundColor = (this.game.mana < cost) ? '#f44336' : '#2196F3';
         }
+
+        // 5. Port Cost
+        const elPort = document.getElementById('cost-port');
+        if (elPort) {
+            const count = this.game.terrain ? (this.game.terrain.buildings || []).filter(b => b.userData.type === 'port').length : 0;
+            const cost = 150 * (count + 1);
+            elPort.innerText = cost;
+            elPort.style.backgroundColor = (this.game.mana < cost) ? '#f44336' : '#2196F3';
+        }
     }
 
     updateCursor() {
@@ -419,12 +458,17 @@ export class InputManager {
             this.cursor.visible = true;
 
             // Simple Mode-based Color
+            // Simple Mode-based Color
             if (this.mode === 'spawn') {
                 this.cursor.material.color.setHex(0x0000ff); // Blue for spawn
             } else if (this.mode === 'view') {
                 this.cursor.material.color.setHex(0xffffff); // White for view
+            } else if (['house', 'barracks', 'tower', 'port'].includes(this.mode)) {
+                // Real-time Placement Check
+                const canPlace = this.terrain.canAddBuilding(this.mode, gridX, gridZ);
+                this.cursor.material.color.setHex(canPlace ? 0x00ff00 : 0xff0000); // Green if OK, Red if Blocked
             } else {
-                this.cursor.material.color.setHex(0xff0000); // Red for terrain
+                this.cursor.material.color.setHex(0xff0000); // Red for terrain modification
             }
         } else {
             this.cursor.visible = false;
@@ -584,6 +628,20 @@ export class InputManager {
                             this.game.addRequest('build_house', gridX, gridZ, true, worldX, worldZ);
                             this.game.consumeMana(cost);
                             console.log(`[Input] Request Queued: Build House at ${gridX},${gridZ}`);
+                        }
+                    }
+                } else if (this.mode === 'port') {
+                    if (this.game) {
+                        const count = this.game.terrain ? (this.game.terrain.buildings || []).filter(b => b.userData.type === 'port').length : 0;
+                        const cost = 150 * (count + 1);
+                        if (this.game.mana >= cost) {
+                            if (!this.terrain.canAddBuilding('port', gridX, gridZ)) {
+                                console.warn(`[InputManager] Cannot place port at ${gridX},${gridZ}: Invalid coastline/terrain.`);
+                                return;
+                            }
+                            this.game.addRequest('build_port', gridX, gridZ, true, worldX, worldZ);
+                            this.game.consumeMana(cost);
+                            console.log(`[Input] Request Queued: Build Port at ${gridX},${gridZ}`);
                         }
                     }
                 }
