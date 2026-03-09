@@ -1300,9 +1300,11 @@ export class Unit extends Actor implements IAiActor {
 
 
 
-    gatherResources(time) {
-        if (this.lastGatherTime && time - this.lastGatherTime < 5.0) return;
-        this.lastGatherTime = time;
+    gatherResources(time: number) {
+        if (!this.game || !this.terrain) return;
+
+        const cooldown = 5.0; // 5 seconds
+        if (this.lastGatherTime && time - this.lastGatherTime < cooldown) return;
 
         const logicalW = this.terrain.logicalWidth || 80;
         const logicalD = this.terrain.logicalDepth || 80;
@@ -1311,7 +1313,6 @@ export class Unit extends Actor implements IAiActor {
         let foundForest = false;
 
         const sampleOffsets: { x: number, z: number }[] = [];
-        // Scan Radius up to 6 for better finding
         for (let r = 1; r <= 6; r++) {
             sampleOffsets.push({ x: r, z: 0 }, { x: -r, z: 0 }, { x: 0, z: r }, { x: 0, z: -r });
             sampleOffsets.push({ x: r, z: r }, { x: -r, z: r }, { x: r, z: -r }, { x: -r, z: -r });
@@ -1320,7 +1321,6 @@ export class Unit extends Actor implements IAiActor {
         for (const off of sampleOffsets) {
             let nx = Math.floor(this.gridX + off.x);
             let nz = Math.floor(this.gridZ + off.z);
-
             nx = (nx % logicalW + logicalW) % logicalW;
             nz = (nz % logicalD + logicalD) % logicalD;
 
@@ -1333,25 +1333,52 @@ export class Unit extends Actor implements IAiActor {
             if (foundWater && foundForest) break;
         }
 
-        if ((window as any).game && (window as any).game.resources) {
+        if (this.game.resources) {
+            const game = this.game;
             const economy = (GameConfig.economy && GameConfig.economy.food);
+
+            // 1. Interference Check
+            let isInterfered = false;
             if (foundWater && (this.role === 'fisher' || this.role === 'warship')) {
-                let amount = (economy && economy.fisherAmount) || 1.5;
-                if (this.role === 'warship') amount *= 2.0; // User Request: 2x efficiency for warships
-                (window as any).game.resources.fish = ((window as any).game.resources.fish || 0) + amount;
-                // if (this.id === 0 && Math.random() < 0.01) console.log(`[Unit ${this.id}] Fishing... Total:${Math.floor((window as any).game.resources.fish)}`); // Removed debug log
+                const scanRange = 20.0;
+                if (game.units) {
+                    for (const u of game.units) {
+                        if (u.isDead) continue;
+                        if (u.faction !== this.faction && u.role === 'warship') {
+                            const dist = this.getDistance(u.gridX, u.gridZ);
+                            if (dist < scanRange) {
+                                isInterfered = true;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
-            if (foundForest && this.role === 'hunter') {
-                const amount = (economy && economy.hunterAmount) || 4.0; // Slightly increased from 3.0
-                (window as any).game.resources.meat = ((window as any).game.resources.meat || 0) + amount;
-                // if (this.id === 0 && Math.random() < 0.01) console.log(`[Unit ${this.id}] Hunting... Total:${Math.floor((window as any).game.resources.meat)}`); // Removed debug log
+
+            // 2. Resource Addition (Only for Player faction)
+            if (this.faction === 'player') {
+                if (foundWater && (this.role === 'fisher' || this.role === 'warship')) {
+                    if (!isInterfered) {
+                        const amount = (economy && economy.fisherAmount) || 1.0;
+                        const multiplier = (this.role === 'warship') ? 2.0 : 1.0;
+                        game.resources.fish = (game.resources.fish || 0) + (amount * multiplier);
+                        game.resources.food = (game.resources.food || 0) + (amount * multiplier);
+                        this.lastGatherTime = time;
+                    } else {
+                        if (this.id === 0 || Math.random() < 0.05) {
+                            console.log(`[Unit ${this.id}] Fishing interfered by enemy warship!`);
+                        }
+                    }
+                }
+                if (foundForest && this.role === 'hunter') {
+                    const amount = (economy && economy.hunterAmount) || 4.0;
+                    game.resources.meat = (game.resources.meat || 0) + amount;
+                    game.resources.food = (game.resources.food || 0) + amount;
+                    this.lastGatherTime = time;
+                }
             }
         }
     }
-
-
-
-
 
     moveRandomly(time) {
         // Region-based Exploration (Replacing old random walk)

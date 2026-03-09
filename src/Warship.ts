@@ -22,6 +22,7 @@ export class Warship extends Actor implements IAiActor {
     public game: any = null;
     public patrolTarget: { x: number, z: number } | null = null;
     public patrolTimer: number = 0;
+    public lastGatherTime: number = 0;
 
     constructor(scene: THREE.Scene, terrain: any, x: number, z: number, faction: string = 'player') {
         super(scene, terrain, x, z, 'unit'); // 'unit' type for renderer compatibility
@@ -211,7 +212,10 @@ export class Warship extends Actor implements IAiActor {
             this.state.update(time, deltaTime);
         }
 
-        // 3. Self Defense / Auto-aggro (Throttled for performance and stability)
+        // 3. Resource Gathering (Naval specific: Fishing)
+        this.gatherResources(time);
+
+        // 4. Self Defense / Auto-aggro (Throttled for performance and stability)
         const frame = (this.game && this.game.frameCount) || 0;
         const isCombat = this.state && this.state.name === 'Combat';
 
@@ -339,5 +343,73 @@ export class Warship extends Actor implements IAiActor {
 
     dispose() {
         this.terrain.unregisterEntity(this);
+    }
+
+    // --- RESOURCE GATHERING (NAVAL FISHING) ---
+
+    gatherResources(time: number) {
+        if (!this.game || !this.terrain) return;
+
+        // --- FACTION CHECK ---
+        if (this.faction !== 'player') return;
+
+        const cooldown = 5.0; // 5 seconds
+        if (time - this.lastGatherTime < cooldown) return;
+
+        const logicalW = this.terrain.logicalWidth || 80;
+        const logicalD = this.terrain.logicalDepth || 80;
+
+        // Naval units only check for water (already implied by isNaval, but for robustness)
+        let foundWater = false;
+        const scanRadius = 6;
+        for (let dx = -scanRadius; dx <= scanRadius; dx++) {
+            for (let dz = -scanRadius; dz <= scanRadius; dz++) {
+                const nx = ((Math.floor(this.gridX) + dx) % logicalW + logicalW) % logicalW;
+                const nz = ((Math.floor(this.gridZ) + dz) % logicalD + logicalD) % logicalD;
+                const h = this.terrain.getTileHeight(nx, nz);
+                if (h <= 0) {
+                    foundWater = true;
+                    break;
+                }
+            }
+            if (foundWater) break;
+        }
+
+        if (foundWater && this.game.resources) {
+            const game = this.game;
+            const economy = (GameConfig.economy && GameConfig.economy.food);
+
+            // 1. Interference Check
+            let isInterfered = false;
+            const scanRange = 20.0;
+            if (game.units) {
+                for (const u of game.units) {
+                    if (u.isDead) continue;
+                    if (u.faction !== this.faction && u.role === 'warship') {
+                        const dist = this.getDistance(u.gridX, u.gridZ);
+                        if (dist < scanRange) {
+                            isInterfered = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!isInterfered) {
+                // Add fish to player resources
+                const amount = (economy && economy.fisherAmount) || 1.0;
+                const multiplier = 2.0; // Warships are 2x as efficient as regular fishers
+
+                game.resources.fish = (game.resources.fish || 0) + (amount * multiplier);
+                game.resources.food = (game.resources.food || 0) + (amount * multiplier);
+                this.lastGatherTime = time;
+
+                // Optional: console.log(`[Warship ${this.id}] Gathered ${amount * multiplier} fish`);
+            } else {
+                if (this.id === 0 || Math.random() < 0.05) {
+                    console.log(`[Warship ${this.id}] Fishing interfered by enemy warship!`);
+                }
+            }
+        }
     }
 }
