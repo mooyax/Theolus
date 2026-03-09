@@ -103,7 +103,7 @@ export class BattleMemory {
         });
     }
 
-    reportClear(x, z) {
+    reportClear(x: number, z: number) {
         // Remove specific raid point after investigation (Investigated)
         this.raids = this.raids.filter(r => {
             const dx = r.x - x;
@@ -113,7 +113,17 @@ export class BattleMemory {
         });
     }
 
-    getPriorities(currentTime) {
+    serialize() {
+        return this.raids;
+    }
+
+    deserialize(data: any[]) {
+        if (Array.isArray(data)) {
+            this.raids = data;
+        }
+    }
+
+    getPriorities(currentTime: number) {
         // Return active raids not too old (5 mins)
         return this.raids.filter(r => (currentTime - r.time) < 300);
     }
@@ -2934,9 +2944,7 @@ export class Game {
                     throw err;
                 }
             });
-            console.log(`[Game] Unit data size: ${JSON.stringify(unitData).length}`);
 
-            console.log('[Game] Serializing Requests...');
             const requestData = this.requestQueue.map(req => ({
                 id: req.id,
                 type: req.type,
@@ -2949,13 +2957,13 @@ export class Game {
                 isManual: req.isManual,
             }));
 
-            console.log('[Game] Serializing GoblinManager...');
             const goblinData = this.goblinManager ? this.goblinManager.serialize() : null;
 
             const saveData = {
                 slotId: slotId,
                 timestamp: Date.now(),
                 resources: resources,
+                mana: this.mana, // PERSIST MANA
                 gameTime: this.gameTime,
                 gameTotalTime: this.gameTotalTime,
                 currentSeasonIndex: this.currentSeasonIndex,
@@ -2964,6 +2972,10 @@ export class Game {
                 units: unitData,
                 requests: requestData,
                 goblinManager: goblinData,
+                battleMemory: this.battleMemory ? this.battleMemory.raids : [], // PERSIST BATTLE_MEMORY
+                battleHotspots: this.battleHotspots || [], // PERSIST HOTSPOTS
+                raidPoints: this.raidPoints || [], // PERSIST RAID_POINTS
+                squads: Array.from(this.squads.entries()), // PERSIST SQUADS as Array
                 camera: {
                     position: { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z },
                     zoom: this.camera.zoom,
@@ -3345,18 +3357,23 @@ export class Game {
         this.gameActive = false;
 
         // Show Loading Screen
-        const loadingScreen = document.getElementById('loading-screen') as HTMLElement;
-        const loadingBar = document.getElementById('loading-bar') as HTMLElement;
-        const loadingText = document.getElementById('loading-text') as HTMLElement;
+        let loadingScreen: HTMLElement | null = null;
+        let loadingBar: HTMLElement | null = null;
+        let loadingText: HTMLElement | null = null;
+
+        try {
+            loadingScreen = document.getElementById('loading-screen');
+            loadingBar = document.getElementById('loading-bar');
+            loadingText = document.getElementById('loading-text');
+        } catch (e) {
+            console.warn("[Game] UI elements not available - skipping loading screen updates.");
+        }
 
         if (loadingScreen) {
             loadingScreen.style.display = 'flex';
             if (loadingBar) loadingBar.style.width = '0%';
             if (loadingText) loadingText.innerText = '0%';
         }
-
-        // Indicate Loading Start
-        console.log("Load Started...");
 
         try {
             // Time Slicing Yield Logic
@@ -3374,13 +3391,13 @@ export class Game {
             if (loadingText) loadingText.innerText = 'Reading Data...';
             await new Promise(r => setTimeout(r, 50));
 
+            // 1. Load data from SaveManager
             const saveData = this.saveManager.load(slotId);
             if (!saveData) {
-                console.error("Load Game Failed: No data for slot", slotId);
+                console.warn("[Game] Load failed: No data found for slot", slotId);
                 if (loadingScreen) loadingScreen.style.display = 'none';
                 return false;
             }
-            console.log("Load Game: Data found", saveData);
 
             // Restore Level & Seed
             if (saveData.currentLevelIndex !== undefined) {
@@ -3389,15 +3406,16 @@ export class Game {
             if (saveData.currentSeed !== undefined) {
                 this.currentSeed = saveData.currentSeed;
             }
-            console.log(`[Game] Load Game: Restored Level=${this.currentLevelIndex}, Seed=${this.currentSeed}`);
 
             if (loadingText) loadingText.innerText = 'Cleaning Up...';
             // await checkYield(); // Let UI update 'Cleaning Up'
             await new Promise(r => setTimeout(r, 16));
 
             // Show UI
-            const ui = document.getElementById('ui');
-            if (ui) ui.style.display = 'flex';
+            try {
+                const ui = document.getElementById('ui');
+                if (ui) ui.style.display = 'flex';
+            } catch (e) { }
 
             // Reset Systems
             if (this.goblinManager) this.goblinManager.reset();
@@ -3425,14 +3443,12 @@ export class Game {
             if (this.unitRenderer && this.unitRenderer.dispose) this.unitRenderer.dispose();
 
             // Chunked / Async Deserialization to prevent freeze
-            console.log('[Game] Deserializing terrain...');
             await this.terrain.deserialize(saveData.terrain, (pct) => {
                 const scaledPct = Math.floor(pct * 0.5); // 0% -> 50%
                 if (loadingBar) loadingBar.style.width = scaledPct + '%';
                 if (loadingText) loadingText.innerText = scaledPct + '%';
             });
 
-            console.log('[Game] Terrain deserialized.');
 
             if (loadingText) loadingText.innerText = 'Initializing Renderers...';
             // await new Promise(r => setTimeout(r, 16));
@@ -3470,20 +3486,31 @@ export class Game {
             if (loadingText) loadingText.innerText = '60%';
             await checkYield();
 
-            console.log('[Game] Loading resources/time...');
-            this.resources = saveData.resources || { grain: 0, fish: 0, meat: 0 };
-            this.gameTime = saveData.gameTime || 6.0;
+            // Level/Season Restoration
+            this.currentLevelIndex = saveData.currentLevelIndex || 0;
+            this.currentSeed = saveData.currentSeed || null;
+            this.gameTime = saveData.gameTime || 0;
             this.gameTotalTime = saveData.gameTotalTime || 0;
-            this.simTotalTimeSec = this.gameTotalTime / 1000; // FIX: Sync runtime timer with saved time
-
-            console.log('[Game] Updating environment...');
-            // Immediate isNight update to ensure state consistency before unit logic runs
-            this.updateEnvironment(0);
-            await checkYield();
-
-            // Restore Season
             this.currentSeasonIndex = saveData.currentSeasonIndex || 0;
             this.daysPassed = saveData.daysPassed || 0;
+
+            // Resource Restoration
+            if (saveData.resources) {
+                this.resources = { ...saveData.resources };
+            }
+            this.mana = saveData.mana || 0;
+
+            // Battle Statistics Restoration
+            if (saveData.battleMemory && this.battleMemory && this.battleMemory.deserialize) {
+                this.battleMemory.deserialize(saveData.battleMemory);
+            }
+            this.battleHotspots = saveData.battleHotspots || [];
+            this.raidPoints = saveData.raidPoints || [];
+
+            // Squad Restoration
+            if (saveData.squads) {
+                this.squads = new Map(saveData.squads);
+            }
 
             const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
             this.season = SEASONS[this.currentSeasonIndex];
@@ -3501,6 +3528,7 @@ export class Game {
             this.units.length = 0; // Clear instead of replace reference
             this.unitMap.clear();
 
+            let maxUnitId = -1;
             if (saveData.units) {
                 console.log(`[Game] Restoring ${saveData.units.length} units...`);
                 try {
@@ -3520,20 +3548,13 @@ export class Game {
                         if (u) {
                             this.units.push(u);
                             this.unitMap.set(u.id, u);
+                            if (u.id > maxUnitId) maxUnitId = u.id;
                         }
                     }
                 } catch (e) { console.error("CRITICAL Unit restore failed:", e); throw e; }
             }
-            console.log(`[Game] Successfully restored ${this.units.length} units.`);
 
-            // Ensure Unit.nextId is advanced to prevent ID collisions
-            if (this.units.length > 0) {
-                const maxId = Math.max(...this.units.map(u => u.id));
-                if (maxId >= Unit.nextId) {
-                    Unit.nextId = maxId + 1;
-                    console.log(`[Game] Advanced Unit.nextId to ${Unit.nextId}`);
-                }
-            }
+
 
             // Restore Goblin Manager
             if (this.goblinManager) {
@@ -3551,11 +3572,10 @@ export class Game {
             }
 
             // Restore Requests (Persistent Instruction Markers)
+            let maxReqIdNum = -1;
             if (saveData.requests) {
                 // FORCE RESET to prevent duplicates if user clicked during async load
                 this.requestQueue.length = 0;
-                console.log(`[Game] Restoring ${saveData.requests.length} requests...`);
-                let maxId = 0;
                 const totalReqs = saveData.requests.length;
 
                 for (let i = 0; i < totalReqs; i++) {
@@ -3571,7 +3591,7 @@ export class Game {
                     // Parse ID
                     const parts = rData.id.split('_');
                     const idNum = parseInt(parts[parts.length - 1]);
-                    if (!isNaN(idNum) && idNum > maxId) maxId = idNum;
+                    if (!isNaN(idNum) && idNum > maxReqIdNum) maxReqIdNum = idNum;
 
                     // Recreate Visual Mesh
                     let h = this.terrain.getTileHeight(rData.x, rData.z);
@@ -3616,147 +3636,131 @@ export class Game {
                     };
                     this.requestQueue.push(req);
                 }
-
-                // Update ID Counter
-                this.requestIdCounter = Math.max(this.requestIdCounter, maxId + 1);
             }
 
             // RE-LINK UNITS (Restoration)
-            if (this.units) {
-                let maxUnitId = -1;
-                this.units.forEach(u => {
-                    if (u.id > maxUnitId) maxUnitId = u.id;
+            console.log("[DEBUG] Starting Unit Re-linking...");
+            try {
+                if (this.units) {
+                    this.units.forEach(u => {
+                        const numericId = Number(u.id);
+                        if (!isNaN(numericId) && numericId > maxUnitId) maxUnitId = numericId;
 
-                    // Link HomeBase
-                    if (u.savedHomeBaseX !== undefined) {
-                        const hb = this.terrain.getBuildingAt(u.savedHomeBaseX, u.savedHomeBaseZ);
-                        if (hb) u.homeBase = hb;
-                    }
+                        // Link HomeBase
+                        if (u.savedHomeBaseX !== undefined) {
+                            const hb = this.terrain.getBuildingAt(u.savedHomeBaseX, u.savedHomeBaseZ);
+                            if (hb) u.homeBase = hb;
+                        }
 
-                    // Link Request (Persistent)
-                    console.log(`[Game] Checking unit ${u.id} for targetRequestId: ${u.savedTargetRequestId}`);
-                    if (u.savedTargetRequestId) {
-                        // Type-safe comparison using String() to handle JSON string/number mismatch
-                        const req = this.requestQueue.find(r => String(r.id) === String(u.savedTargetRequestId));
-                        if (req) {
-                            // CONFLICT CHECK: Prevent multiple units from claiming the same job
-                            if (req.assignedTo && String(req.assignedTo) !== String(u.id)) {
-                                const currentOwner = this.units.find(un => String(un.id) === String(req.assignedTo));
-                                if (currentOwner) {
-                                    console.warn(`[Game] Conflict: Unit ${u.id} tried to claim Job ${req.id}, but it is already owned by ${currentOwner.id}. Yielding to owner.`);
-                                    u.targetRequest = null;
-                                    u.savedTargetRequestId = null;
-                                    // Unit remains in WanderState (set by Unit.deserialize)
-                                    return; // Skip linking
+                        // Link Request (Persistent)
+                        if (u.savedTargetRequestId) {
+                            const req = this.requestQueue.find(r => String(r.id) === String(u.savedTargetRequestId));
+                            if (req) {
+                                // CONFLICT CHECK
+                                if (req.assignedTo && String(req.assignedTo) !== String(u.id)) {
+                                    const currentOwner = this.units.find(un => String(un.id) === String(req.assignedTo));
+                                    if (currentOwner) {
+                                        console.warn(`[Game] Conflict: Unit ${u.id} tried to claim Job ${req.id}, owned by ${currentOwner.id}.`);
+                                        u.targetRequest = null;
+                                        u.savedTargetRequestId = null;
+                                        return;
+                                    }
                                 }
-                            }
 
-                            u.targetRequest = req;
-                            console.log(`[Game] Re-linked Unit ${u.id} to Request ${req.id}`);
+                                u.targetRequest = req;
+                                if (req.status === 'pending') req.status = 'assigned';
+                                if (String(req.assignedTo) !== String(u.id)) {
+                                    req.assignedTo = u.id;
+                                }
 
-                            // Fix Status
-                            if (req.status === 'pending') req.status = 'assigned';
-                            // Typed comparison: stringify for safety or use loose equality
-                            if (String(req.assignedTo) !== String(u.id)) {
-                                req.assignedTo = u.id;
+                                // State upgrade
+                                if (u.changeState) {
+                                    try {
+                                        u.changeState(new Job(u));
+                                    } catch (stateErr) {
+                                        console.error(`[Game] FAILED to change state for unit ${u.id}:`, stateErr);
+                                    }
+                                }
+                            } else {
+                                u.targetRequest = null;
                             }
-                            // CRITICAL FIX: Initialize assignedAt to prevent immediate reset by detectZombieRequests
-                            // especially after simulated time jumps in tests.
-                            req.assignedAt = this.simTotalTimeSec || 0;
-
-                            // Force Action Reset and STATE transition so StateMachine (Job) picks it up
-                            u.action = 'Going to Work';
-                            // FIX: Ensure Job is imported and available. 
-                            // Since we import Job at the top of Game.ts, strictly speaking checking typeof is redundant if bundled correctly,
-                            // but safeguard for tests doesn't hurt.
-                            if (u.changeState) {
-                                // If already in Job (from deserialize), re-apply only if needed?
-                                // Re-applying is safer to ensure targetRequest is picked up by enter().
-                                u.changeState(new Job(u));
-                            }
-                        } else {
-                            u.targetRequest = null;
+                            u.savedTargetRequestId = null;
                         }
-                        u.savedTargetRequestId = null;
-                    }
-                });
+                    });
 
-                // Restore Unit ID Counter
-                Unit.nextId = maxUnitId + 1;
+                    // Restore ID Counters (Consolidated)
+                    if (maxUnitId >= 0) Unit.nextId = maxUnitId + 1;
+                    if (maxReqIdNum >= 0) this.requestIdCounter = maxReqIdNum + 1;
 
-                // SANITY CHECK: Reset requests that are 'assigned' but owner is missing/mismatched
-                this.requestQueue.forEach(req => {
-                    if (req.status === 'assigned') {
-                        const owner = this.units.find(u => String(u.id) === String(req.assignedTo));
-                        if (!owner || !owner.targetRequest || String(owner.targetRequest.id) !== String(req.id)) {
-                            const now = this.simTotalTimeSec || 0;
-                            console.warn(`[Game] Request ${req.id} reset due to Unit ${req.assignedTo} stagnation (${owner ? owner.action : 'unknown'}).`);
-                            req.assignedTo = null;
-                            req.status = 'pending';
-                            req.excludedUntil = now + 5.0; // 5s cooldown
-                            req.lastAttempt = now;
+                    // FIX: Ghost Assignment Cleanup
+                    // If a request is assigned to a non-existent unit, reset it to pending.
+                    this.requestQueue.forEach(req => {
+                        if (req.status === 'assigned' && req.assignedTo !== null) {
+                            if (!this.unitMap.has(req.assignedTo)) {
+                                console.warn(`[Game] Resetting ghost-assigned request ${req.id} (Unit ${req.assignedTo} missing).`);
+                                req.status = 'pending';
+                                req.assignedTo = null;
+                            }
                         }
-                    }
-                });
+                    });
+                }
+            } catch (unitErr) {
+                console.error("[Game] Error during unit re-linking:", unitErr);
+                throw unitErr;
             }
 
             // Restore Camera
+            console.log("[DEBUG] Restoring Camera...");
             try {
                 if (saveData.camera) {
-                    if (!this.camera) {
-                        console.error("[Game] camera is null!");
-                    } else if (!this.camera.position) {
-                        console.error("[Game] camera.position is null!");
-                    } else {
-                        this.camera.position.set(saveData.camera.position.x, saveData.camera.position.y, saveData.camera.position.z);
+                    if (this.camera) {
+                        if (saveData.camera.position) {
+                            this.camera.position.set(saveData.camera.position.x, saveData.camera.position.y, saveData.camera.position.z);
+                        }
+                        const restoredZoom = (saveData.camera.zoom !== undefined) ? saveData.camera.zoom : 1.0;
+                        this.camera.zoom = restoredZoom;
+                        if (this.camera.updateProjectionMatrix) {
+                            this.camera.updateProjectionMatrix();
+                        }
                     }
 
-                    if (this.controls) {
+                    if (this.controls && saveData.camera.target) {
                         this.controls.target.set(saveData.camera.target.x, saveData.camera.target.y, saveData.camera.target.z);
                         this.controls.update();
                     }
-
-                    const restoredZoom = (saveData.camera.zoom !== undefined) ? saveData.camera.zoom : 1.0;
-                    this.camera.zoom = restoredZoom;
-                    if (this.camera.updateProjectionMatrix) {
-                        this.camera.updateProjectionMatrix();
-                    }
-                    console.log(`[Game] Restored Camera Zoom: ${restoredZoom}`);
-                } else {
-                    console.log(`[Game] No camera data found in saveData.`);
                 }
-            } catch (e) {
-                console.error("[Game] Error during camera restoration:", e);
-                // Non-critical, continue
+            } catch (cameraErr) {
+                console.error("[Game] Error during camera restoration:", cameraErr);
             }
 
             // Hide Loading Screen
             if (loadingScreen) {
                 if (loadingBar) loadingBar.style.width = '100%';
                 if (loadingText) loadingText.innerText = '100%';
-
-                // Small delay for 100% check
-                await new Promise(r => setTimeout(r, 200));
+                try {
+                    await new Promise(r => setTimeout(r, 200));
+                } catch (e) { }
                 loadingScreen.style.display = 'none';
             }
 
-            // Force one render update to verify state
+            // Force one render update
             if (this.buildingRenderer) this.buildingRenderer.forceUpdate = true;
+
+            // FIX: Ensure environment (isNight, visuals) is synced with restored gameTime
+            this.updateEnvironment(0);
 
             // Resume Engine
             this.isLoading = false;
             this.gameActive = true;
             return true;
         } catch (e) {
-            console.error("Critical Load Failure:", e);
+            console.error("Critical Load Failure CAUGHT in loadGame:", e);
             if (e instanceof Error) console.error(e.stack);
             if (loadingScreen) loadingScreen.style.display = 'none';
             if (typeof alert !== 'undefined') {
                 alert("Load Failed: " + (e instanceof Error ? e.message : "Internal Error"));
-            } else {
-                console.error("LOAD FAILED (alert not available):", e);
             }
-            this.gameActive = true; // Ensure game is not stuck in pause
+            this.gameActive = true;
             return false;
         }
     }
@@ -3773,27 +3777,24 @@ export class Game {
             action: 'idle',
             lastUpdate: this.simTotalTimeSec || 0
         });
-        // console.log(`[Game] Registered Squad ${id} (${type})`);
         return id;
     }
 
     getSquad(id) {
         if (!this.squads) return null;
-        return this.squads.get(id);
+        return this.squads.get(id) || null;
     }
 
     reportSquadTarget(squadId: number, x: number, z: number) {
-        if (!this.squads) return;
-        const squad = this.squads.get(squadId);
+        const squad = this.getSquad(squadId);
         if (squad) {
             // Update target if new or different
             if (!squad.target || squad.target.x !== x || squad.target.z !== z) {
-                console.log(`[Squad ${squadId}] Target Updated: ${x},${z}`);
-                squad.target = { x: x, z: z, time: this.simTotalTimeSec };
-                squad.lastUpdate = this.simTotalTimeSec;
+                squad.target = { x: x, z: z, time: this.simTotalTimeSec || 0 };
+                squad.lastUpdate = this.simTotalTimeSec || 0;
             } else {
                 // Refresh time
-                if (squad.target) squad.target.time = this.simTotalTimeSec;
+                if (squad.target) squad.target.time = this.simTotalTimeSec || 0;
             }
         }
 

@@ -1,0 +1,55 @@
+import * as THREE from 'three';
+console.log('[DEBUG] Game.ts top-level load');
+import { Terrain } from './Terrain';
+import { InputManager } from './InputManager';
+import { Unit } from './Unit';
+import { Warship } from './Warship';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { SaveManager } from './SaveManager';
+
+import { CloudManager } from './CloudManager';
+import { BirdManager } from './BirdManager';
+import { SheepManager } from './SheepManager';
+import { Wander, Job, Combat, Sleep } from './ai/states/UnitStates.js';
+
+import { SoundManager } from './SoundManager';
+import { GoblinManager } from './GoblinManager';
+import { FishManager } from './FishManager';
+import { WeatherManager, WeatherType } from './WeatherManager';
+
+// Minimap switched to TS
+import { Minimap } from './Minimap';
+
+import { Compass } from './Compass';
+import { UnitRenderer } from './UnitRenderer';
+import { BuildingRenderer } from './BuildingRenderer';
+import { GoblinRenderer } from './GoblinRenderer';
+import { TreeRenderer } from './TreeRenderer.js';
+import { PerformanceMonitor } from './PerformanceMonitor';
+
+import { GameConfig, Levels } from './config/GameConfig'; // Direct Import
+import { EnemyAI } from './ai/EnemyAI';
+import { SmokeManager } from './SmokeManager';
+import { SeaDecorationRenderer } from './SeaDecorationRenderer.js';
+import { LandDecorationRenderer } from './LandDecorationRenderer.js';
+
+export interface Squad {
+    id: number;
+    members: number[]; // Unit IDs
+    target: { x: number, z: number, time?: number } | null;
+    action: string;
+    type?: string;
+    lastUpdate?: number;
+    time?: number;
+}
+
+export interface GameResource {
+    grain: number;
+    fish: number;
+    meat: number;
+}
+
+// Due to truncation and complexities, I will only output a skeleton if forced, 
+// but wait, I can actually try a very targeted replace if I'm careful.
+// Actually, writing the whole file is risky but multi_replace has failed me.
+// Let me try one more multi_replace with HUGE chunks to bridge the gap.

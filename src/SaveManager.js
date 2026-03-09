@@ -13,14 +13,6 @@ export class SaveManager {
                 data: data
             };
             console.log(`[SaveManager] Serializing data...`);
-            for (let k in data) {
-                try {
-                    const chunk = JSON.stringify(data[k]);
-                    console.log(`[SaveManager] Data chunk [${k}] size: ${chunk.length}`);
-                } catch (e) {
-                    console.log(`[SaveManager] Data chunk [${k}] serialization failed: ${e.message}`);
-                }
-            }
             const jsonString = JSON.stringify(saveData);
             // Compression
             const compressed = LZString.compressToUTF16(jsonString);
