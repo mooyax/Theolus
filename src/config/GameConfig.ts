@@ -87,6 +87,7 @@ export const GameConfig = {
             "hp": 50,
             "damage": 12,
             "attackRate": 1.0,
+            "detectionProbability": 0.3,
             "lifespanBase": 80,
             "lifespanVariance": 20,
             "spawnCost": 20,
@@ -100,6 +101,7 @@ export const GameConfig = {
             "hpMultiplier": 20,
             "damageMultiplier": 25,
             "attackRate": 1.0,
+            "detectionProbability": 1.0,
             "lifespanBase": 80,
             "lifespanVariance": 20,
             "spawnCost": 50
@@ -109,6 +111,7 @@ export const GameConfig = {
             "damage": 240,
             "attackRate": 1.0,
             "attackRange": 8.0,
+            "detectionProbability": 1.0,
             "lifespanBase": 80,
             "lifespanVariance": 20,
             "spawnCost": 100,
@@ -119,6 +122,7 @@ export const GameConfig = {
             "damage": 50,
             "attackRate": 1.5,
             "attackRange": 10.0,
+            "detectionProbability": 1.0,
             "lifespanBase": 120,
             "isRanged": true,
             "isNaval": true,
@@ -131,12 +135,14 @@ export const GameConfig = {
             "hp": 50,
             "damage": 10,
             "attackRate": 1.0,
+            "detectionProbability": 0.2,
             "lifespan": 100
         },
         "hobgoblin": {
             "hp": 150,
             "damage": 30,
             "attackRate": 1.5,
+            "detectionProbability": 1.0,
             "lifespan": 150
         },
         "shaman": {
@@ -145,6 +151,7 @@ export const GameConfig = {
             "attackRate": 2.0,
             "lifespan": 120,
             "attackRange": 8.0,
+            "detectionProbability": 1.0,
             "isRanged": true
         },
         "king": {
@@ -152,6 +159,7 @@ export const GameConfig = {
             "damage": 80,
             "attackRate": 1.2,
             "attackRange": 4.0,
+            "detectionProbability": 1.0,
             "lifespan": 300
         }
     },

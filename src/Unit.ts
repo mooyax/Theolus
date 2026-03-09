@@ -340,6 +340,8 @@ export class Unit extends Actor implements IAiActor {
             this.damage = Math.floor(this.damage * statConfig.specialMultiplier.damage);
         }
 
+        this.detectionProbability = statConfig.detectionProbability !== undefined ? statConfig.detectionProbability : 1.0;
+
         this.targetGoblin = null;
         this.targetRaidPoint = null; // Fix: Initialize to null
         this.invasionTimer = 0;

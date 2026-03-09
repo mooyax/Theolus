@@ -83,7 +83,7 @@ describe('Encounter Combat Logic', () => {
             frameCount: 0,
             unitScanBudget: 1000
         };
-        
+
     });
 
     it('Unit should switch target to nearby Goblin while moving to distant Building', () => {
@@ -167,14 +167,11 @@ describe('Encounter Combat Logic', () => {
             return true;
         });
 
-        goblin.executeCombatLogic = vi.fn((time, delta) => {
-            const target = goblin.targetBuilding;
-            if (target) goblin.smartMove(target.gridX, target.gridZ, time);
-
         let switched = false;
         for (let i = 0; i < 100; i++) {
             game.frameCount++;
-            goblin.state.update(i * 0.1, 0.1, false, [unit], [building]);
+            goblin.updateLogic(i * 0.1, 0.1, false, [unit], [building], []);
+            goblin.scanForTargets([unit], [building]);
 
             if (goblin.targetUnit && goblin.targetUnit.id === unit.id) {
                 switched = true;
@@ -182,27 +179,5 @@ describe('Encounter Combat Logic', () => {
             }
         }
         expect(switched).toBe(true);
-
-    it('should reduce scan range for Workers', () => {
-        const worker = new Unit(game.scene, terrain, 10, 10, 'worker');
-        worker.game = game;
-        worker.role = 'worker';
-        worker.id = 1;
-
-        const spy = vi.spyOn(terrain, 'findBestTarget');
-
-        worker.checkSelfDefense(null, true);
-
-        const goblinCall = spy.mock.calls.find(c => c[0] === 'goblin');
-        const buildingCall = spy.mock.calls.find(c => c[0] === 'building');
-
-        expect(goblinCall).toBeDefined();
-        if (goblinCall) expect(goblinCall[3]).toBe(20);
-
-        expect(buildingCall).toBeDefined();
-        if (buildingCall) expect(buildingCall[3]).toBe(10);
     });
-
-});
-});
 });

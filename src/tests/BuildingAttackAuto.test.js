@@ -25,7 +25,7 @@ describe('Autonomous Building Attack', () => {
             goblinManager: { goblins: [] },
             reportGlobalBattle: vi.fn(),
         };
-        
+
 
         unit = new Unit(null, terrain, 10, 10, 'knight');
         unit.id = 1;

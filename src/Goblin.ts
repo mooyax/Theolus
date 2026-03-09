@@ -250,6 +250,8 @@ export class Goblin extends Actor implements IAiActor {
         }
         if (!this.attackRate) this.attackRate = 1.0;
 
+        this.detectionProbability = statConfig.detectionProbability !== undefined ? statConfig.detectionProbability : 1.0;
+
         // Visual Props
         this.hasStaff = (this.type === 'shaman');
         this.hasClub = (this.type === 'goblin' || this.type === 'hobgoblin');
@@ -306,6 +308,13 @@ export class Goblin extends Actor implements IAiActor {
 
     scanForTargets(units?: any[], buildings?: any[]) {
         const time = (window as any).game ? (window as any).game.simTotalTimeSec : 0;
+
+        // --- PROBABILISTIC DETECTION ---
+        // If we don't have a target, only scan based on probability
+        const hasUrgentTarget = !!(this.targetUnit || this.targetBuilding);
+        if (!hasUrgentTarget && this.detectionProbability < 1.0 && !Actor.ignoreDetectionProbability) {
+            if (Math.random() > this.detectionProbability) return;
+        }
 
         // DEBUG
         // if (this.id % 10 === 0) console.log(`[Goblin ${ this.id }] scanForTargets...`);

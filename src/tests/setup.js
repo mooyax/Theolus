@@ -1,7 +1,12 @@
 import { vi, beforeEach, afterEach } from 'vitest';
+import { Actor } from '../Actor';
 
 // Global Game instance registry for final cleanup
 globalThis.__game_instances = new Set();
+
+beforeEach(() => {
+    Actor.ignoreDetectionProbability = true;
+});
 
 // 0. WeatherManager Mock (Fix path to match import)
 vi.mock('../WeatherManager', () => {

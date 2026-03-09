@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Entity } from './Entity';
 
 export class Actor extends Entity {
+    public static ignoreDetectionProbability: boolean = false; // Added for testing
     public path: any[] | null;
     public pathIndex: number;
     public stuckCount: number;
@@ -65,6 +66,7 @@ export class Actor extends Entity {
     public stagnationTimer: number = 0;
     private _lastDelta: number = 0;
     public ignoredTargets: Map<string | number, number> = new Map();
+    public detectionProbability: number = 1.0;
     public findPathAsync?: (tx: number, tz: number, depth?: number, id?: number) => Promise<any[] | null>;
 
     /**
@@ -636,6 +638,14 @@ export class Actor extends Entity {
 
     updateCombatTarget(passedUnits: any[] | null, passedBuildings: any[] | null, passedGoblins: any[] | null) {
         if (this.isDead || this.isFinished) return;
+
+        // --- PROBABILISTIC DETECTION ---
+        // If we don't have a target, only scan based on probability
+        const hasUrgentTarget = !!(this.targetGoblin || this.targetUnit || this.targetBuilding);
+        if (!hasUrgentTarget && this.detectionProbability < 1.0 && !Actor.ignoreDetectionProbability) {
+            if (Math.random() > this.detectionProbability) return;
+        }
+
         if (!this.terrain || typeof (this.terrain as any).findBestTarget !== 'function') return;
 
         const role = (this as any).role || this.type;
