@@ -127,10 +127,10 @@ export class UnitRenderer extends BaseEntityRenderer {
         sailGeo.translate(0, 0.8, -0.1);
         this.sailMesh = this.createMesh(sailGeo, whiteMat);
 
-        // Oars
+        // Oars - Restore 4 oars at original positions
         const oarBaseGeo = new THREE.BoxGeometry(0.03, 0.03, 0.5);
         oarBaseGeo.rotateY(Math.PI / 2);
-        oarBaseGeo.rotateX(-Math.PI / 4.5); // Steeper angle to reach water
+        oarBaseGeo.rotateX(-Math.PI / 4.5); // Steep angle to reach water
 
         const oarsGeos = [];
         const oarOffsetsZ = [-0.15, 0.15];
@@ -140,7 +140,7 @@ export class UnitRenderer extends BaseEntityRenderer {
             for (const ox of oarOffsetsX) {
                 const oar = oarBaseGeo.clone();
                 if (ox < 0) oar.rotateY(Math.PI);
-                oar.translate(ox, 0.1, oz); // Lowered from 0.25 to 0.1
+                oar.translate(ox, 0.1, oz);
                 oarsGeos.push(oar);
             }
         }
@@ -241,30 +241,39 @@ export class UnitRenderer extends BaseEntityRenderer {
             const hullColor = (unit.faction === 'enemy') ? new THREE.Color(0x333333) : new THREE.Color(0x8B4513);
             this.hullMesh.setColorAt(this.countBody, hullColor);
 
-            // Ship Mast and Sail
-            // Mast and Sail use the same position/rotation as the hull for simplicity, but could be offset
-            dummy.position.set(posX, 0, posZ); // Sea level
+            // DRAW NAVAL ACCESSORIES (Mast, Sail, Banner, Oars)
+            // Use posY instead of hardcoded 0 to align with the hull
+            const accessoryY = posY;
+
+            // Mast
+            dummy.position.set(posX, accessoryY, posZ);
             dummy.rotation.set(0, rotY, 0);
             dummy.scale.set(1, 1, 1);
             dummy.updateMatrix();
             this.mastMesh.setMatrixAt(this.countBody, dummy.matrix);
 
-            // Sail slightly offset or different rotation? For now keep it simple but add color
+            // Sail
+            dummy.position.set(posX, accessoryY, posZ);
+            dummy.rotation.set(0, rotY, 0);
+            dummy.scale.set(1, 1, 1);
+            dummy.updateMatrix();
             this.sailMesh.setMatrixAt(this.countBody, dummy.matrix);
             const sailColor = (unit.faction === 'enemy') ? new THREE.Color(0xCC0000) : new THREE.Color(0xEEEEEE);
             this.sailMesh.setColorAt(this.countBody, sailColor);
 
-            // Banner (Matching sail or faction logic)
+            // Banner
+            dummy.position.set(posX, accessoryY, posZ);
+            dummy.rotation.set(0, rotY, 0);
+            dummy.scale.set(1, 1, 1);
+            dummy.updateMatrix();
             this.bannerMesh.setMatrixAt(this.countBody, dummy.matrix);
             this.bannerMesh.setColorAt(this.countBody, sailColor);
 
-            // Oars - multiple instances? For now just place them using loops relative to unit matrix
-            // This instanced mesh setup means we have 1 matrix per "unit".
-            // Since we want multiple oars per ship, but we use "countBody" for matching parts,
-            // we'd need a separate instanced mesh with MORE instances if we wanted multiple oars.
-            // ALTERNATIVE: Merge oars into a single geometry.
-            // Let's stick to simple implementation: 2-4 oars merged?
-            // Actually, I should have merged oarGeo in init. Let's fix that.
+            // Oars
+            dummy.position.set(posX, accessoryY, posZ);
+            dummy.rotation.set(0, rotY, 0);
+            dummy.scale.set(1, 1, 1);
+            dummy.updateMatrix();
             this.oarMesh.setMatrixAt(this.countBody, dummy.matrix);
 
             // Ship Weapon (Staff as a simple mast/cannon look if wizard role)

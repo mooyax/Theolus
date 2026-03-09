@@ -35,14 +35,14 @@ describe('Final Port Visuals and Warship Spawn Fix Verification', () => {
         terrain.calculateRegions();
     });
 
-    it('Terrain.addBuilding for port should set visualYOverride to 0.35', () => {
+    it('Terrain.addBuilding for port should set visualYOverride to 0.22', () => {
         const result = terrain.addBuilding('port', 39, 20);
         expect(result).not.toBeNull();
 
         const port = terrain.buildings[0];
         expect(port.type).toBe('port');
-        expect(port.y).toBe(0.35);
-        expect(port.visualYOverride).toBe(0.35);
+        expect(port.y).toBe(0.22);
+        expect(port.visualYOverride).toBe(0.22);
     });
 
     it('Terrain.getBuildingOffset for port should return y = 0.0', () => {
@@ -73,10 +73,10 @@ describe('Final Port Visuals and Warship Spawn Fix Verification', () => {
         expect(mockGame.spawnUnit).toHaveBeenCalled();
     });
 
-    it('Warship.getPositionForGrid should return y = 0.35 and isNaval is true', () => {
+    it('Warship.getPositionForGrid should return y = 0.22 and isNaval is true', () => {
         const ship = new Warship(mockScene, terrain, 50, 50, 'player');
         const pos = ship.getPositionForGrid(50, 50);
-        expect(pos.y).toBe(0.35);
+        expect(pos.y).toBe(0.22);
         expect(ship.isNaval).toBe(true);
     });
 });

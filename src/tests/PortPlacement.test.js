@@ -32,7 +32,7 @@ describe('Port Placement Logic', () => {
 
         const port = terrain.addBuilding('port', 10, 10);
         expect(port).not.toBeNull();
-        expect(port.y).toBe(0.35); // Current implementation height (0.35)
+        expect(port.y).toBe(0.22); // Target sea level (0.22)
     });
 
     it('should NOT allow port if center is land', () => {

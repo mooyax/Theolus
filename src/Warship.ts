@@ -264,7 +264,7 @@ export class Warship extends Actor implements IAiActor {
         }
 
         const finalX = rawX + offsets.x;
-        const finalY = 0.35; // Sea Level (Match Port Height)
+        const finalY = 0.22; // Sea Level (Match Port Height)
         const finalZ = rawZ - offsets.y;
 
         if (target) {

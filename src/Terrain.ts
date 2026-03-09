@@ -2776,8 +2776,8 @@ export class Terrain {
         // Fix Port height (0.8) to sit above sea level (0.3), others use grid height
         // AND set visualYOverride for Renderer to respect
         if (type === 'port') {
-            (building as any).y = 0.35;
-            (building as any).visualYOverride = 0.35;
+            (building as any).y = 0.22; // Match warship sea level
+            (building as any).visualYOverride = 0.22;
         } else {
             (building as any).y = this.grid[gridX][gridZ].height;
         }
