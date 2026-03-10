@@ -1,6 +1,8 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import * as THREE from 'three';
 import { Unit } from '../Unit.js';
+import { Actor } from '../Actor.js';
 
 describe('Unit Performance Optimization', () => {
     let unit;
@@ -8,6 +10,8 @@ describe('Unit Performance Optimization', () => {
     let game;
 
     beforeEach(() => {
+        Unit.ignoreDetectionProbability = false;
+        Actor.ignoreDetectionProbability = false;
         terrain = {
             findBestTarget: vi.fn(() => null),
             getTileHeight: () => 1,
@@ -23,10 +27,13 @@ describe('Unit Performance Optimization', () => {
         };
 
         window.game = game;
+        window.isTest = false; // Ensure throttling is active for this test
 
-        unit = new Unit(null, terrain, 10, 10, 'worker');
-        unit.id = 1;
+        unit = new Unit(new THREE.Scene(), terrain, 10, 10, 'worker');
         unit.game = game;
+        unit.id = 1;
+        unit.terrain = terrain;
+        unit.detectionProbability = 1.0; // Ensure deterministic behavior for performance tests
     });
 
     it('should throttle checkSelfDefense based on ID and Frame', () => {

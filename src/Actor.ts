@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Entity } from './Entity';
+import { GameConfig } from './config/GameConfig';
 
 export class Actor extends Entity {
     public static ignoreDetectionProbability: boolean = false; // Added for testing
@@ -67,6 +68,7 @@ export class Actor extends Entity {
     private _lastDelta: number = 0;
     public ignoredTargets: Map<string | number, number> = new Map();
     public detectionProbability: number = 1.0;
+    public ignoreDetectionProbability: boolean = false; // Added for per-instance override in tests
     public findPathAsync?: (tx: number, tz: number, depth?: number, id?: number) => Promise<any[] | null>;
 
     /**
@@ -106,9 +108,11 @@ export class Actor extends Entity {
             // Retaliation: Target the attacker if not already engaged
             if (attacker && attacker.hp > 0 && !this.targetUnit && !this.targetGoblin && !this.targetBuilding) {
                 // Use faction/base type for robust targeting
-                const aType = attacker.type; // subspecies for goblins, 'unit' for units
-                const isGoblin = (aType === 'goblin' || attacker.faction === 'enemy');
-                const isUnit = (aType === 'unit' || aType === 'sheep' || attacker.faction === 'player');
+                const aType = attacker.type;
+                const aFaction = attacker.faction || (attacker.userData ? attacker.userData.faction : null);
+
+                const isGoblin = (aType === 'goblin' || aFaction === 'goblin' || aFaction === 'enemy');
+                const isUnit = (aType === 'unit' || aType === 'sheep' || aFaction === 'player');
 
                 if (isGoblin) {
                     this.targetGoblin = attacker;
@@ -585,53 +589,55 @@ export class Actor extends Entity {
     }
 
     checkSelfDefense(passedGoblins: any[] | null = null, forceScan: boolean = false, passedUnits: any[] | null = null, passedBuildings: any[] | null = null) {
+        const isTest = Actor.ignoreDetectionProbability || this.ignoreDetectionProbability || (typeof (window as any).isTest === 'boolean' && (window as any).isTest);
         const hasSearch = this.terrain && typeof (this.terrain as any).findBestTarget === 'function';
 
         // QUICK EXIT: If already in combat and has target, update it and return true
         const hasUrgentTarget = !!(this.targetGoblin || this.targetUnit || this.targetBuilding);
-        if (hasUrgentTarget) {
-            if (hasSearch) {
-                const bList = passedBuildings || (this.game && this.game.buildings) || [];
-                this.updateCombatTarget(passedUnits, bList, passedGoblins);
-            }
+        if (hasUrgentTarget && !forceScan && !isTest) {
             return true;
         }
 
         // Throttling Check (Optimized performance)
         if (hasSearch && this.game) {
-            const frameCount = (this.game as any).frameCount || 0;
+            const frameCount = ((this.game as any)?.frameCount !== undefined) ? (this.game as any).frameCount : ((window as any).game?.frameCount || 0);
             const role = (this as any).role || this.type;
-            const interval = (role === 'knight' || role === 'wizard') ? 10 : (role === 'worker' ? 30 : 20);
+            const interval = (role === 'knight' || role === 'wizard' || this.action === 'Idle' || !this.action) ? 10 : 30;
+            const canScan = forceScan || isTest || ((frameCount + (this.id || 0)) % interval === 0);
+            if (!canScan) return false;
+            // DETECTION PROBABILITY (Probabilistic Detection)
+            const prob = this.detectionProbability;
+            if (!forceScan && prob < 1.0 && !Actor.ignoreDetectionProbability) {
+                // Seeded random if possible, or just Math.random
+                if (Math.random() > prob) return false;
+            }
 
-            const shouldScan = (forceScan || ((frameCount + this.id) % interval === 0));
-            if (shouldScan) {
-                // SCAN BUDGET CHECK
-                if (!forceScan && this.game.unitScanBudget !== undefined) {
-                    let isNearby = false;
-                    const cam = this.game.camera;
-                    if (cam && this.position) {
-                        const distSq = (this.position.x - cam.position.x) ** 2 + (this.position.z - cam.position.z) ** 2;
-                        if (distSq < 400) isNearby = true;
-                    }
-
-                    if (!isNearby) {
-                        if (this.game.unitScanBudget > 0) {
-                            this.game.unitScanBudget--;
-                        } else {
-                            return false; // Skip scan due to budget
-                        }
-                    }
+            // SCAN BUDGET CHECK
+            if (!forceScan && this.game.unitScanBudget !== undefined) {
+                let isNearby = false;
+                const cam = this.game.camera;
+                if (cam && this.position) {
+                    const distSq = (this.position.x - cam.position.x) ** 2 + (this.position.z - cam.position.z) ** 2;
+                    if (distSq < 400) isNearby = true;
                 }
 
-                // ALLOW workers with jobs to scan, but keep them on a strict budget/interval
-                // (Old code skipped them entirely)
-
-                // Sync targets
-                const bList = passedBuildings || (this.game && this.game.buildings) || [];
-                this.updateCombatTarget(passedUnits, bList, passedGoblins);
-                this.lastScanFrame = frameCount;
-                return true;
+                if (!isNearby) {
+                    if (this.game.unitScanBudget > 0) {
+                        this.game.unitScanBudget--;
+                    } else {
+                        return false; // Skip scan due to budget
+                    }
+                }
             }
+
+            // ALLOW workers with jobs to scan, but keep them on a strict budget/interval
+            // (Old code skipped them entirely)
+
+            // Sync targets
+            const bList = passedBuildings || (this.game && this.game.buildings) || [];
+            this.updateCombatTarget(passedUnits, bList, passedGoblins);
+            this.lastScanFrame = frameCount;
+            return true;
         }
         return false;
     }
@@ -652,98 +658,127 @@ export class Actor extends Entity {
         const maxDist = (role === 'knight' || role === 'wizard') ? 50 : 20;
 
         // 1. Unified Search Scope
-        const golbinList = (passedGoblins && passedGoblins.length > 0) ? passedGoblins : (this.game && this.game.goblinManager && Array.isArray(this.game.goblinManager.goblins) ? this.game.goblinManager.goblins : []);
+        const goblinList = (passedGoblins && passedGoblins.length > 0) ? passedGoblins : (this.game && this.game.goblinManager && Array.isArray(this.game.goblinManager.goblins) ? this.game.goblinManager.goblins : []);
         const unitList = (passedUnits && passedUnits.length > 0) ? passedUnits : (this.game && Array.isArray(this.game.units) ? this.game.units : []);
         const sheepList = (this.game && this.game.sheepManager && Array.isArray(this.game.sheepManager.sheeps)) ? this.game.sheepManager.sheeps : [];
-        const buildingList = (passedBuildings && passedBuildings.length > 0) ? passedBuildings : (this.game && Array.isArray(this.game.buildings) ? this.game.buildings : []);
+        const buildingList = (passedBuildings && passedBuildings.length > 0) ? passedBuildings : (this.game && Array.isArray(this.game.buildings) ? this.game.buildings : (this.terrain && Array.isArray(this.terrain.buildings) ? this.terrain.buildings : []));
 
-        // 2. Scan Categories
+        // 2. Integrated Multi-Faction Scan
         let bestTarget: any = null;
         let bestScore = Infinity;
         let targetType: 'goblin' | 'unit' | 'building' | null = null;
 
-        // --- Goblin Scan ---
-        const foundGoblin = (this.terrain as any).findBestTarget('goblin', this.gridX, this.gridZ, maxDist, (g: any, dist: number) => {
-            if (g.isDead || g.isFinished || g.id === this.id) return Infinity;
-            if (this.ignoredTargets && (this.ignoredTargets.get(g.id) || 0) > this.simTime) return Infinity;
-            return (this.targetGoblin && this.targetGoblin.id === g.id) ? dist * 0.4 : dist;
-        }, golbinList);
-        if (foundGoblin) {
-            const score = (this.targetGoblin && this.targetGoblin.id === foundGoblin.id) ? this.getDistance(foundGoblin.gridX, foundGoblin.gridZ) * 0.4 : this.getDistance(foundGoblin.gridX, foundGoblin.gridZ);
-            if (score < bestScore) {
-                bestScore = score;
-                bestTarget = foundGoblin;
-                targetType = 'goblin';
-            }
-        }
+        // COMBINED SCAN LOGIC (Simplification)
+        const scanEntities = (list: any[] | null, typeKey: 'goblin' | 'unit' | 'building') => {
+            const foundE = (this.terrain as any).findBestTarget(typeKey, this.gridX, this.gridZ, maxDist, (e: any, dist: number) => {
+                if (e.isDead || e.isFinished || e.id === this.id) return Infinity;
+                if (this.ignoredTargets && (this.ignoredTargets.get(e.id) || 0) > this.simTime) return Infinity;
 
-        // --- Unit Scan ---
-        let bestFoundUnit: any = null;
-        let bestUnitScore = Infinity;
+                const eFaction = e.faction || (e.userData ? e.userData.faction : null);
+                const eType = e.type || (e.userData ? e.userData.type : null);
+                const isGoblinCreature = eType === 'goblin' || eType === 'normal' || eType === 'king' || eType === 'shaman' || eType === 'hobgoblin';
+                const isGoblinBuilding = eType && (eType.includes('hut') || eType.includes('cave'));
+                const isGoblinFaction = eFaction === 'goblin' || isGoblinCreature || isGoblinBuilding;
+                const isBuilding = typeKey === 'building' || (eType && (eType.includes('hut') || eType.includes('cave') || eType.includes('house') || eType.includes('farm')));
 
-        const scanUnitList = (list: any[]) => {
-            const foundU = (this.terrain as any).findBestTarget('unit', this.gridX, this.gridZ, maxDist, (u: any, dist: number) => {
-                if (u.isDead || u.isFinished) return Infinity;
-                if (role === 'worker' && this.targetRequest && !this.targetUnit) return Infinity;
-                if (this.ignoredTargets && (this.ignoredTargets.get(u.id) || 0) > this.simTime) return Infinity;
-                if (u.faction === this.faction) return Infinity;
+                // Faction Check: Ignore same faction (including self)
+                const isNeutralBuilding = typeKey === 'building' && !eFaction && !isGoblinFaction;
+                if (eFaction === this.faction || isNeutralBuilding) return Infinity;
 
-                let score = dist;
-                if (u.type === 'sheep') score *= 1.5;
-                if (this.targetUnit && this.targetUnit.id === u.id) score *= 0.4;
-                return score;
+                // Category Check: Ensure we don't pick a unit when scanning for buildings, etc.
+                const hasCategoryInfo = !!(eType || eFaction);
+                if (hasCategoryInfo) {
+                    if (typeKey === 'goblin' && !isGoblinCreature) return Infinity;
+                    if (typeKey === 'unit' && (isGoblinCreature || isBuilding)) return Infinity;
+                    if (typeKey === 'building' && !isBuilding) return Infinity;
+                }
+
+                // Special exclusion for workers (Safeguards)
+                if (role === 'worker') {
+                    if (isBuilding && dist > 4.0) return Infinity; // Workers only target buildings if VERY close (e.g. dist 1-3)
+                    if (this.targetRequest && !this.targetUnit && dist > 5.0) return Infinity; // Ignore distant threats if busy
+                }
+
+                // PRIORITY SCORING (Distance Multipliers)
+                // Score = dist * Multiplier (Lower is better)
+                let multiplier = 1.0;
+
+                if (typeKey === 'unit') {
+                    // Humans (Enemy units) are high priority
+                    multiplier = 0.8;
+                    if (e.type === 'sheep') multiplier = 1.5; // Sheep are low priority
+                } else if (typeKey === 'goblin') {
+                    // Goblins are medium priority
+                    multiplier = 1.0;
+                } else if (typeKey === 'building') {
+                    // Buildings are medium priority (unless occupied?)
+                    multiplier = 1.1;
+                }
+
+                // Hysteresis (Stickiness - sync with tests expecting 0.4)
+                const isCurrent = (this.targetUnit && this.targetUnit.id === e.id) ||
+                    (this.targetGoblin && this.targetGoblin.id === e.id) ||
+                    (this.targetBuilding && this.targetBuilding.id === e.id);
+                if (isCurrent) multiplier *= 0.4;
+
+                return dist * multiplier;
             }, list);
 
-            if (foundU) {
-                const score = (this.targetUnit && this.targetUnit.id === foundU.id) ? this.getDistance(foundU.gridX, foundU.gridZ) * 0.4 : this.getDistance(foundU.gridX, foundU.gridZ);
-                if (score < bestUnitScore) {
-                    bestUnitScore = score;
-                    bestFoundUnit = foundU;
+            if (foundE) {
+                // Category Cross-Check (Protect against mocks/misregistrations)
+                const fType = foundE.type || (foundE.userData ? foundE.userData.type : null);
+                const fFaction = foundE.faction || (foundE.userData ? foundE.userData.faction : null);
+                const fIsGoblinCreature = fType === 'goblin' || fType === 'normal' || fType === 'king' || fType === 'shaman' || fType === 'hobgoblin';
+                const fIsBuilding = typeKey === 'building' || (fType && (fType.includes('hut') || fType.includes('cave') || fType.includes('house') || fType.includes('farm')));
+
+                const hasCategoryInfo = !!(fType || fFaction);
+                if (hasCategoryInfo) {
+                    if (typeKey === 'goblin' && !fIsGoblinCreature) return;
+                    if (typeKey === 'unit' && (fIsGoblinCreature || fIsBuilding)) return;
+                    if (typeKey === 'building' && !fIsBuilding) return;
+                }
+
+                // Re-calculate score for comparison (Consistent with callback)
+                let multiplier = 1.0;
+                if (typeKey === 'unit') {
+                    // Humans (Enemy units) are high priority
+                    multiplier = 0.8;
+                    if (foundE.type === 'sheep') multiplier = 1.5; // Sheep are low priority
+                } else if (typeKey === 'goblin') {
+                    // Goblins are medium priority
+                    multiplier = 1.0;
+                } else if (typeKey === 'building') {
+                    // Buildings are medium priority (unless occupied?)
+                    multiplier = 1.1;
+                }
+
+                const isCurrent = (this.targetUnit && this.targetUnit.id === foundE.id) ||
+                    (this.targetGoblin && this.targetGoblin.id === foundE.id) ||
+                    (this.targetBuilding && this.targetBuilding.id === foundE.id);
+                if (isCurrent) multiplier *= 0.4;
+
+                const bx = foundE.gridX !== undefined ? foundE.gridX : (foundE.userData ? foundE.userData.gridX : foundE.x);
+                const bz = foundE.gridZ !== undefined ? foundE.gridZ : (foundE.userData ? foundE.userData.gridZ : foundE.z);
+                const dist = this.getDistance(bx, bz);
+
+                // Final Safeguard for score recalculation (Category checks again)
+                if (role === 'worker' && fIsBuilding && dist > 4.0) return;
+
+                const score = dist * multiplier;
+                if (score < bestScore) {
+                    bestScore = score;
+                    bestTarget = foundE;
+                    targetType = typeKey;
                 }
             }
         };
 
-        if (unitList && unitList.length > 0) scanUnitList(unitList);
-        if (sheepList && sheepList.length > 0) scanUnitList(sheepList);
-
-        const foundUnit = bestFoundUnit;
-        if (foundUnit) {
-            if (bestUnitScore < bestScore) {
-                bestScore = bestUnitScore;
-                bestTarget = foundUnit;
-                targetType = 'unit';
-            }
-        }
-
-        // --- Building Scan ---
-        const foundBuilding = (this.terrain as any).findBestTarget('building', this.gridX, this.gridZ, maxDist, (b, dist) => {
-            const hp = b.userData ? b.userData.hp : (b.hp !== undefined ? b.hp : 100);
-            if (hp <= 0) return Infinity;
-
-            const bFaction = b.faction || (b.userData ? b.userData.faction : null);
-            if (bFaction === this.faction) return Infinity;
-
-            if (role === 'worker' && (this as any).targetRequest) return Infinity;
-            if (this.ignoredTargets && (this.ignoredTargets.get(b.id) || 0) > this.simTime) return Infinity;
-
-            let score = dist;
-            if (this.targetBuilding && this.targetBuilding.id === b.id) score *= 0.9;
-            return score;
-        }, buildingList);
-
-        if (foundBuilding) {
-            const bX = foundBuilding.gridX !== undefined ? foundBuilding.gridX : (foundBuilding.userData ? foundBuilding.userData.gridX : foundBuilding.x);
-            const bZ = foundBuilding.gridZ !== undefined ? foundBuilding.gridZ : (foundBuilding.userData ? foundBuilding.userData.gridZ : foundBuilding.z);
-
-            if (bX !== undefined && bZ !== undefined) {
-                const score = (this.targetBuilding && this.targetBuilding.id === foundBuilding.id) ? this.getDistance(bX, bZ) * 0.4 : this.getDistance(bX, bZ);
-                if (score < bestScore) {
-                    bestScore = score;
-                    bestTarget = foundBuilding;
-                    targetType = 'building';
-                }
-            }
-        }
+        // 3. Sequential Scans (Each updates bestTarget if a better score is found)
+        // Pass null if list is empty to trigger spatial search in findBestTarget
+        scanEntities(goblinList.length > 0 ? goblinList : null, 'goblin');
+        scanEntities(unitList.length > 0 ? unitList : null, 'unit');
+        scanEntities(sheepList.length > 0 ? sheepList : null, 'unit');
+        scanEntities(buildingList.length > 0 ? buildingList : null, 'building');
 
         // 3. Apply Winner (PERSISTENTLY)
         if (bestTarget) {

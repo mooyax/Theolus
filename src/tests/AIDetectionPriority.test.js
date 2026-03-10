@@ -6,7 +6,9 @@ describe('AIDetectionPriority', () => {
     let sceneMock;
     let gameMock;
 
-    beforeEach(() => {
+    beforeEach(async () => {
+        const { Actor } = await import('../Actor.js');
+        Actor.ignoreDetectionProbability = true;
         sceneMock = { add: vi.fn(), remove: vi.fn() };
         terrainMock = {
             logicalWidth: 160,

@@ -232,7 +232,7 @@ export class Goblin extends Actor implements IAiActor {
         this.targetBuilding = null; // Current target building
         // this.ignoredTargets = new Map(); // Inherited from Actor as Set
         this.ignoredTargets.clear(); // Blacklist
-        this.faction = 'enemy';
+        this.faction = 'goblin';
 
         // Initialize State properly
         if (raidTarget) {
@@ -724,7 +724,7 @@ export class Goblin extends Actor implements IAiActor {
             (window as any).game.goblinManager.notifyClanActivity(this.clanId, target);
         }
 
-        this.attack(target, time);
+        this.attack(target);
     }
 
 
@@ -817,7 +817,7 @@ export class Goblin extends Actor implements IAiActor {
 
     createCross() {
         const group = new THREE.Group();
-        if (!Goblin.assets.geometries.crossV) return;
+        if (!Goblin.assets || !Goblin.assets.geometries || !Goblin.assets.geometries.crossV) return;
 
         const vMesh = new THREE.Mesh(Goblin.assets.geometries.crossV, Goblin.assets.materials.cross);
         vMesh.position.y = 0.4;

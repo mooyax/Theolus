@@ -2793,7 +2793,7 @@ export class Terrain {
         let assignedFaction = faction;
         if (faction === 'player') {
             if (type === 'cave' || type === 'goblin_hut') {
-                assignedFaction = 'enemy';
+                assignedFaction = 'goblin';
             } else if (type === 'ancient_ruin') {
                 assignedFaction = 'neutral';
             }

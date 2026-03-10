@@ -74,7 +74,7 @@ describe('Unit AI Search Optimization', () => {
         unit.updateCombatTarget([], [], []);
 
         // Expectation: Unit calls findBestTarget with correct parameters (Range 20 for non-knights)
-        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('goblin', 0, 0, 20, expect.any(Function), expect.any(Array));
+        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('goblin', 0, 0, 20, expect.any(Function), null);
         expect(unit.targetGoblin).toBe(goblin);
     });
 
@@ -97,7 +97,7 @@ describe('Unit AI Search Optimization', () => {
 
         // Expectation: Unit calls findBestTarget for building
         // NOTE: In unified logic, all non-knight targets use range 20
-        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('building', 0, 0, 20, expect.any(Function), expect.any(Array));
+        expect(mockTerrain.findBestTarget).toHaveBeenCalledWith('building', 0, 0, 20, expect.any(Function), null);
         expect(unit.targetBuilding).toBe(hut);
     });
 });

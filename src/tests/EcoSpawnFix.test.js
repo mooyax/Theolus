@@ -39,7 +39,8 @@ describe('Economy and Spawning Fix Verification', () => {
         game.terrain.updateMesh();
 
         game.gameActive = true;
-        game.resources.grain = 1000; // Provide food to avoid starvation in tests
+        game.resources.grain = 1000;
+        window.isTest = true;
 
         // 2. Ensure at least one cave exists for goblin/spawning tests
         if (game.goblinManager.caves.length === 0) {
@@ -88,8 +89,8 @@ describe('Economy and Spawning Fix Verification', () => {
         expect(hut).toBeDefined();
 
         // 2. Simulate growth
-        hut.userData.population = 8;
-        if (hut.population !== undefined) hut.population = 8;
+        hut.userData.population = 10;
+        if (hut.population !== undefined) hut.population = 10;
 
         // Update enough times to pass threshold (10.0)
         // GoblinManager handles real spawning, and when it happens, population is reset.

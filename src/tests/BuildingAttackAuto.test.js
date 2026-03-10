@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Unit } from '../Unit.js';
+import { Actor } from '../Actor.js';
 import { Wander, Combat } from '../ai/states/UnitStates.js';
 
 describe('Autonomous Building Attack', () => {
@@ -8,6 +9,7 @@ describe('Autonomous Building Attack', () => {
     let game;
 
     beforeEach(() => {
+        Unit.ignoreDetectionProbability = false;
         terrain = {
             getTileHeight: vi.fn().mockReturnValue(10),
             findBestTarget: vi.fn(),
@@ -66,16 +68,18 @@ describe('Autonomous Building Attack', () => {
 
         const hut = {
             id: 'hut1',
+            type: 'goblin_hut',
+            faction: 'enemy',
             gridX: 10,
             gridZ: 15,
-            userData: { type: 'goblin_hut', hp: 100 }
+            userData: { type: 'goblin_hut', faction: 'enemy', hp: 100 }
         };
         terrain.buildings = [hut];
-        terrain.findBestTarget = (type) => hut;
+        terrain.findBestTarget = (type) => (type === 'building' || type === 'goblin') ? hut : null;
 
         if (window.game) window.game.frameCount = 4;
         unit.checkSelfDefense(null, false);
-        unit.targetBuilding = hut;
+        // unit.targetBuilding = hut; // Removed to test automatic acquisition (or lack thereof)
 
         unit.state.update(0.1, 0.1);
 

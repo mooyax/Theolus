@@ -1,6 +1,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
+import { Actor } from '../Actor.js';
 import * as THREE from 'three';
 
 describe('Unit Combat Hysteresis (Stickiness)', () => {
@@ -9,6 +10,8 @@ describe('Unit Combat Hysteresis (Stickiness)', () => {
     let mockTerrain;
 
     beforeEach(() => {
+        Actor.ignoreDetectionProbability = false;
+        Actor.ignoreDetectionProbability = false;
         Unit.assets = { initialized: true };
 
         mockTerrain = {

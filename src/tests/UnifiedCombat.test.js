@@ -9,7 +9,7 @@ import * as THREE from 'three';
 describe('Unified Combat and Detection logic', () => {
     let terrain, scene, mockGame;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         scene = new THREE.Scene();
         terrain = new Terrain(scene);
 
@@ -30,6 +30,9 @@ describe('Unified Combat and Detection logic', () => {
 
         Unit.assets = { initialized: true };
         Goblin.assets = { initialized: true };
+        const { Actor } = await import('../Actor.js');
+        Actor.ignoreDetectionProbability = true;
+        window.isTest = true;
     });
 
     describe('Building Damage Overflow (Population Shield Penetration)', () => {
@@ -77,6 +80,7 @@ describe('Unified Combat and Detection logic', () => {
     describe('Unified Actor Detection', () => {
         it('should detect enemies in Wander state using unified logic', () => {
             const unit = new Unit(scene, terrain, 10, 10, 'knight');
+            unit.ignoreDetectionProbability = true;
             const goblin = new Goblin(scene, terrain, 12, 12, 'normal');
 
             // Mock spatial search returning the goblin

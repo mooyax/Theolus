@@ -3,7 +3,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
 import { Job, Wander, Combat } from '../ai/states/UnitStates.js';
-import { GlobalGame } from '../Game.js'; // Optional, but we likely use MockGame
 
 // --- MOCK CLASSES ---
 
@@ -21,7 +20,6 @@ class MockTerrain {
         }
     }
     getTileHeight(x, z) { return 1; }
-    // Async Pathfinding Mock (Simulates delay)
     findPathAsync(sx, sz, tx, tz) {
         return Promise.resolve([{ x: sx, z: sz }, { x: tx, z: tz }]);
     }
@@ -31,26 +29,23 @@ class MockTerrain {
     getRegion(x, z) { return 1; }
     getRandomPointInRegion(region) { return { x: 50, z: 50 }; }
 
-    // Spatial Search Mock
     findBestTarget(type, px, pz, maxRange, scoreFunc, candidates) {
-        if (!candidates) return null;
+        const list = candidates || this.buildings;
+        if (!list) return null;
         let best = null;
         let bestScore = Infinity;
-        for (const c of candidates) {
+        for (const c of list) {
             const dx = c.gridX - px;
             const dz = c.gridZ - pz;
             const dist = Math.sqrt(dx * dx + dz * dz);
-            // console.log(`[MockTerrain] Candidate ID:${c.id} Dist:${dist}`);
 
             if (dist > maxRange) continue;
             const score = scoreFunc(c, dist);
-            // console.log(`[MockTerrain] Score:${score}`);
             if (score < bestScore) {
                 bestScore = score;
                 best = c;
             }
         }
-        // console.log(`[MockTerrain] Best:`, best);
         return best;
     }
     checkFlatArea(x, z, size, tolerance) { return false; }
@@ -61,12 +56,10 @@ class MockGame {
     constructor() {
         this.simTotalTimeSec = 100;
         this.frameCount = 0;
-        this.unitScanBudget = 1000; // FIX: Add Budget
+        this.unitScanBudget = 1000;
         this.units = [];
         this.requestQueue = [];
-        this.goblinManager = {
-            goblins: []
-        };
+        this.goblinManager = { goblins: [] };
     }
     releaseRequest(unit, req) { }
     findBestRequest(unit, snatch) { return null; }
@@ -75,25 +68,6 @@ class MockGame {
     reportGlobalBattle(x, z) { }
 }
 
-class MockGoblin {
-    constructor(id, x, z) {
-        this.id = id;
-        this.gridX = x;
-        this.gridZ = z;
-        this.position = { x, y: 0, z };
-        this.isDead = false;
-        this.hp = 10;
-        this.type = 'goblin';
-
-        this.takeDamage = (amount) => {
-            this.hp -= amount;
-            if (this.hp <= 0) this.isDead = true;
-        };
-    }
-}
-
-// --- TESTS ---
-
 describe('Regression: Worker Logic & Stability', () => {
     let unit, terrain, game;
 
@@ -101,58 +75,45 @@ describe('Regression: Worker Logic & Stability', () => {
         terrain = new MockTerrain();
         game = new MockGame();
         global.THREE = THREE;
-        
 
         unit = new Unit(new THREE.Scene(), terrain, 10, 10, 'worker');
         unit.game = game;
         unit.id = 1;
         game.units.push(unit);
-
-    // 1. Worker Oscillation Fix (Async Delay)
     });
+
     it('should NOT abort job during long async pathfinding (prevent oscillation)', async () => {
-        // Setup: Unit has a job
         const req = { id: 101, type: 'build', x: 50, z: 50, status: 'assigned', assignedTo: unit.id };
         unit.targetRequest = req;
         unit.changeState(new Job(unit));
 
-        // Override findPathAsync to differ from synchronous checks if needed, 
-        // but here we rely on the MockTerrain delay (100ms).
-
-        // Start Pathfinding
         unit.updateLogic(game.simTotalTimeSec, 0.016);
         expect(unit.isPathfinding).toBe(true);
 
-        // Simulate frames passing while pathfinding is pending
-        // The unit.stuckCount should NOT increase.
         for (let i = 0; i < 5; i++) {
             game.simTotalTimeSec += 0.016;
             unit.updateLogic(game.simTotalTimeSec, 0.016);
-
-            // Should stay in Job
             expect(unit.state.name).toBe('Job');
         }
 
-        // Wait for promise resolution
         await new Promise(r => setTimeout(r, 150));
-
-        // Final check
         expect(unit.state.name).toBe('Job');
-
-    // 2. Passive Worker Fix (Aggression)
     });
+
     it('should attack nearby Goblin Hut when idle (Passive Worker Fix)', () => {
-        // Setup: Nearby Goblin Hut
-        const hut = { id: 'hut1', type: 'goblin_hut', gridX: 12, gridZ: 12, isDead: false, userData: { hp: 100, type: 'goblin_hut' } };
+        // Setup: Nearby Goblin Hut with faction and type
+        const hut = {
+            id: 'hut1',
+            type: 'goblin_hut',
+            faction: 'enemy',
+            gridX: 12,
+            gridZ: 12,
+            isDead: false,
+            userData: { hp: 100, type: 'goblin_hut', faction: 'enemy' }
+        };
         terrain.buildings.push(hut);
 
-        // State: Wander
         unit.changeState(new Wander(unit));
-
-        // Logic Update
-        // Force scan might be needed due to throttling. 
-        // We simulate enough frames to trigger scan or verify force scan behavior.
-        // checkSelfDefense is throttled.
 
         let enteredCombat = false;
         for (let i = 0; i < 40; i++) {
@@ -168,10 +129,9 @@ describe('Regression: Worker Logic & Stability', () => {
 
         expect(enteredCombat).toBe(true);
         expect(unit.targetBuilding).toBe(hut);
-
     });
+
     it('should attack nearby Goblin even if holding a job (Self Defense)', () => {
-        // Setup: Nearby Goblin (POJO Mock to avoid Class issues)
         const goblin = {
             id: 'gob1',
             gridX: 11,
@@ -187,28 +147,17 @@ describe('Regression: Worker Logic & Stability', () => {
         };
         game.goblinManager.goblins.push(goblin);
 
-        // Setup: Job
         const req = { id: 102, type: 'build', x: 80, z: 80, status: 'assigned', assignedTo: unit.id };
         unit.targetRequest = req;
         unit.changeState(new Job(unit));
 
-        // Logic Update
         let enteredCombat = false;
-
-        // Mock attackGoblin to avoid mock/prototype issues and just verify call
         unit.attack = () => { };
 
         for (let i = 0; i < 40; i++) {
             game.simTotalTimeSec += 0.016;
             game.frameCount = i;
             unit.updateLogic(game.simTotalTimeSec, 0.016, false, [], [], game.goblinManager.goblins);
-
-            if (unit.targetGoblin) {
-                console.log('Target set:', unit.targetGoblin);
-                if (typeof unit.targetGoblin.takeDamage !== 'function') {
-                    console.error('Target missing takeDamage!', unit.targetGoblin);
-                }
-            }
 
             if (unit.state.name === 'Combat') {
                 enteredCombat = true;
@@ -218,6 +167,5 @@ describe('Regression: Worker Logic & Stability', () => {
 
         expect(enteredCombat).toBe(true);
         expect(unit.targetGoblin).toBe(goblin);
-
-});
+    });
 });

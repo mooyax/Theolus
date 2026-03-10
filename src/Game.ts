@@ -179,7 +179,7 @@ export class Game {
 
     // Entity Arrays (Mirroring Terrain for easy access)
     public units: Unit[];
-    public buildings: any[]; // Building type not strictly defined yet
+    get buildings(): any[] { return (this.terrain && this.terrain.buildings) ? this.terrain.buildings : []; }
 
     // UI/Renderers
     public minimap!: Minimap;
@@ -285,7 +285,6 @@ export class Game {
         this.fishes = [];
         this.sheeps = [];
         this.units = [];
-        this.buildings = [];
         this.squads = new Map();
         this.unitMap = new Map();
         this.resources = { grain: 0, fish: 0, meat: 0 };
@@ -398,7 +397,6 @@ export class Game {
             if (terrainOverride) {
                 console.log(`[Game FORCE CONST ${this.instanceId}] Assigning terrainOverride to this.terrain`);
                 this.terrain = terrainOverride;
-                this.buildings = this.terrain.buildings || []; // Link buildings!
             } else {
                 console.log(`[DEBUG] Game ${this.instanceId} creating mock terrain`);
                 this.terrain = {
@@ -420,7 +418,11 @@ export class Game {
                             }
                         });
                     },
-                    registerEntity: () => { }, unregisterEntity: () => { }, removeBuilding: () => { },
+                    registerEntity: () => { }, unregisterEntity: () => { },
+                    removeBuilding: function (building: any) {
+                        const idx = this.buildings.indexOf(building);
+                        if (idx !== -1) this.buildings.splice(idx, 1);
+                    },
                     updateMeshPosition: () => { }, updateLights: () => { }, getBuildingAt: () => null, getRegion: () => 1,
                     isValidGrid: () => true, findPath: () => [], findPathAsync: () => Promise.resolve([]),
                     findBestTarget: () => null,
@@ -3964,7 +3966,6 @@ export class Game {
 
         this.units = [];
         this.goblins = [];
-        this.buildings = [];
         this.fishes = [];
         this.sheeps = [];
         this.requestQueue = [];
@@ -4052,7 +4053,8 @@ export class Game {
         });
 
         // Enemy Units (Must be alive)
-        const enemyUnits = this.units.filter(u => u.faction === 'enemy' && !u.isDead);
+        // Check for ANY faction that is NOT 'player' and NOT 'neutral'
+        const enemyUnits = this.units.filter(u => u.faction !== 'player' && u.faction !== 'neutral' && !u.isDead);
 
         if (goblinCount === 0 && caveCount === 0 && enemyBuildings.length === 0 && enemyUnits.length === 0) {
             console.log(`[Game] evaluateWinLoss: Enemy assets zero. Goblins:0 Caves:0 enemyBuildings:0 enemyUnits:0`);
