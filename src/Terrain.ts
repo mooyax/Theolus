@@ -2655,6 +2655,29 @@ export class Terrain {
     }
 
     // --- Building Placement Validation ---
+    canFlattenArea(x: number, z: number, size: number, targetHeight: number): boolean {
+        const W = this.logicalWidth;
+        const D = this.logicalDepth;
+        let totalChange = 0;
+        const maxDrop = 3.0; // Allowed max height difference for a single tile
+        const maxTotalChange = (size + 1) * (size + 1) * 1.5; // Average allowed change per vertex
+
+        for (let i = 0; i <= size; i++) {
+            for (let j = 0; j <= size; j++) {
+                const nx = (x + i) % W;
+                const nz = (z + j) % D;
+                const h = this.grid[nx][nz].height;
+                const MathAbsDiff = Math.abs(h - targetHeight);
+
+                if (MathAbsDiff > maxDrop) return false;
+                totalChange += MathAbsDiff;
+            }
+        }
+
+        if (totalChange > maxTotalChange) return false;
+        return true;
+    }
+
     canAddBuilding(type: string, gridX: number, gridZ: number, force: boolean = false): boolean {
         if (!this.grid || !this.grid[gridX] || !this.grid[gridX][gridZ]) return false;
 
@@ -2705,6 +2728,10 @@ export class Terrain {
             if (h <= 0) return false; // Basic water check
             // Mountain check for specific buildings
             if (h > 12 && (type === 'house' || type === 'farm' || type === 'barracks')) {
+                return false;
+            }
+            // Check flattening constraints
+            if (!this.canFlattenArea(gridX, gridZ, size, h)) {
                 return false;
             }
         }

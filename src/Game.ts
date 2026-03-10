@@ -2108,19 +2108,13 @@ export class Game {
             } else if (req.type === 'clear') {
                 this.terrain.clearArea(tx, tz, 2); // Default size 2
             } else if (req.type === 'build_tower') {
-                // Auto-flatten for manual build (User Request)
-                this.terrain.flattenArea(tx, tz, 3);
                 // FORCE=FALSE: Even if it's a manual request, we must validate the final terrain state
                 const b = this.terrain.addBuilding('tower', tx, tz, false, false, unit.faction);
                 if (!b) success = false;
             } else if (req.type === 'build_barracks') {
-                // Auto-flatten for manual build (User Request)
-                this.terrain.flattenArea(tx, tz, 3);
                 const b = this.terrain.addBuilding('barracks', tx, tz, false, false, unit.faction);
                 if (!b) success = false;
             } else if (req.type === 'build_house') {
-                // Auto-flatten for manual build (User Request)
-                this.terrain.flattenArea(tx, tz, 2);
                 const b = this.terrain.addBuilding('house', tx, tz, false, false, unit.faction);
                 if (!b) success = false;
             } else if (req.type === 'build_port') {
