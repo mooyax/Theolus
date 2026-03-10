@@ -458,17 +458,12 @@ export class InputManager {
             this.cursor.visible = true;
 
             // Simple Mode-based Color
-            // Simple Mode-based Color
-            if (this.mode === 'spawn') {
-                this.cursor.material.color.setHex(0x0000ff); // Blue for spawn
-            } else if (this.mode === 'view') {
+            let canPlace = this.checkActionValidity(this.mode, gridX, gridZ);
+
+            if (this.mode === 'view') {
                 this.cursor.material.color.setHex(0xffffff); // White for view
-            } else if (['house', 'barracks', 'tower', 'port'].includes(this.mode)) {
-                // Real-time Placement Check
-                const canPlace = this.terrain.canAddBuilding(this.mode, gridX, gridZ);
-                this.cursor.material.color.setHex(canPlace ? 0x00ff00 : 0xff0000); // Green if OK, Red if Blocked
             } else {
-                this.cursor.material.color.setHex(0xff0000); // Red for terrain modification
+                this.cursor.material.color.setHex(canPlace ? 0x00ff00 : 0xff0000); // Green if OK, Red if Blocked
             }
         } else {
             this.cursor.visible = false;
@@ -569,7 +564,7 @@ export class InputManager {
                     // Consume click
                     return;
                 } else if (this.mode === 'raise') {
-                    if (this.game) {
+                    if (this.game && this.checkActionValidity('raise', gridX, gridZ)) {
                         // Prevent placing on completely disconnected deep water if we want to restrict it.
                         // For now simply warning if height is very low.
                         this.game.addRequest('raise', gridX, gridZ, true, worldX, worldZ);
@@ -577,7 +572,7 @@ export class InputManager {
                         console.log(`[Input] Request Queued: Raise at ${gridX},${gridZ}`);
                     }
                 } else if (this.mode === 'lower') {
-                    if (this.game) {
+                    if (this.game && this.checkActionValidity('lower', gridX, gridZ)) {
                         this.game.addRequest('lower', gridX, gridZ, true, worldX, worldZ);
                         this.game.consumeMana(10);
                         console.log(`[Input] Request Queued: Lower at ${gridX},${gridZ}`);
@@ -594,20 +589,20 @@ export class InputManager {
                     const baseCost = 100;
                     const cost = Math.floor(baseCost * Math.pow(1.2, manualCount));
 
-                    if (this.game.mana >= cost) {
+                    if (this.checkActionValidity('spawn', gridX, gridZ)) {
                         if (this.spawnCallback) {
                             this.spawnCallback(gridX, gridZ, true, null, null, true);
                             if (this.game) this.game.consumeMana(cost);
                             console.log(`[Input] Manual Spawn: Cost ${cost} (Count: ${manualCount})`);
                         }
                     } else {
-                        console.warn(`[Input] Not enough Mana for manual spawn: ${cost} needed, ${this.game.mana} available.`);
+                        console.warn(`[Input] Cannot spawn here (Unreachable or Not enough mana).`);
                     }
                 } else if (this.mode === 'barracks') {
                     if (this.game) {
                         const count = this.game.terrain ? this.game.terrain.buildings.filter(b => b.userData.type === 'barracks').length : 0;
                         const cost = 1000 * (count + 1);
-                        if (this.game.mana >= cost) {
+                        if (this.checkActionValidity('barracks', gridX, gridZ)) {
                             this.game.addRequest('build_barracks', gridX, gridZ, true, worldX, worldZ);
                             this.game.consumeMana(cost);
                         }
@@ -616,7 +611,7 @@ export class InputManager {
                     if (this.game) {
                         const count = this.game.terrain ? this.game.terrain.buildings.filter(b => b.userData.type === 'tower').length : 0;
                         const cost = 1000 * (count + 1);
-                        if (this.game.mana >= cost) {
+                        if (this.checkActionValidity('tower', gridX, gridZ)) {
                             this.game.addRequest('build_tower', gridX, gridZ, true, worldX, worldZ);
                             this.game.consumeMana(cost);
                         }
@@ -624,7 +619,7 @@ export class InputManager {
                 } else if (this.mode === 'house') {
                     if (this.game) {
                         const cost = 100;
-                        if (this.game.mana >= cost) {
+                        if (this.checkActionValidity('house', gridX, gridZ)) {
                             this.game.addRequest('build_house', gridX, gridZ, true, worldX, worldZ);
                             this.game.consumeMana(cost);
                             console.log(`[Input] Request Queued: Build House at ${gridX},${gridZ}`);
@@ -634,11 +629,7 @@ export class InputManager {
                     if (this.game) {
                         const count = this.game.terrain ? (this.game.terrain.buildings || []).filter(b => b.userData.type === 'port').length : 0;
                         const cost = 150 * (count + 1);
-                        if (this.game.mana >= cost) {
-                            if (!this.terrain.canAddBuilding('port', gridX, gridZ)) {
-                                console.warn(`[InputManager] Cannot place port at ${gridX},${gridZ}: Invalid coastline/terrain.`);
-                                return;
-                            }
+                        if (this.checkActionValidity('port', gridX, gridZ)) {
                             this.game.addRequest('build_port', gridX, gridZ, true, worldX, worldZ);
                             this.game.consumeMana(cost);
                             console.log(`[Input] Request Queued: Build Port at ${gridX},${gridZ}`);
@@ -659,7 +650,7 @@ export class InputManager {
                     return;
                 }
 
-                if (this.game) {
+                if (this.game && this.checkActionValidity('lower', gridX, gridZ)) {
                     const worldX = point.x;
                     const worldZ = point.z;
                     this.game.addRequest('lower', gridX, gridZ, true, worldX, worldZ);
@@ -670,5 +661,69 @@ export class InputManager {
 
         // Update cursor immediately to reflect height change
         this.updateCursor();
+    }
+
+    checkActionValidity(mode, gridX, gridZ) {
+        if (!this.game) return false;
+
+        // 1. Reachability Check (for all modifications/placements)
+        let reachable = true;
+        if (this.terrain && this.terrain.grid) {
+            let hasPlayerEntities = false;
+            let canReach = false;
+            const units = this.game.units || [];
+            for (let i = 0; i < units.length; i++) {
+                const u = units[i];
+                if (u.faction === 'player' && !u.isDead) {
+                    hasPlayerEntities = true;
+                    if (this.terrain.isReachable(Math.round(u.gridX), Math.round(u.gridZ), gridX, gridZ)) {
+                        canReach = true;
+                        break;
+                    }
+                }
+            }
+            if (!canReach && this.terrain.buildings) {
+                const buildings = this.terrain.buildings;
+                for (let i = 0; i < buildings.length; i++) {
+                    const b = buildings[i];
+                    if (b.userData && b.userData.faction === 'player' && b.userData.hp > 0) {
+                        hasPlayerEntities = true;
+                        if (b.gridX !== undefined && b.gridZ !== undefined) {
+                            if (this.terrain.isReachable(Math.round(b.gridX), Math.round(b.gridZ), gridX, gridZ)) {
+                                canReach = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            reachable = !hasPlayerEntities || canReach;
+        }
+
+        if (mode === 'cancel') return true;
+        if (!reachable) return false;
+
+        if (mode === 'spawn') {
+            const manualCount = this.game.manualWorkerSpawns || 0;
+            const cost = Math.floor(100 * Math.pow(1.2, manualCount));
+            return this.game.mana >= cost;
+        } else if (mode === 'raise' || mode === 'lower') {
+            return this.game.mana >= 10;
+        } else if (['house', 'barracks', 'tower', 'port'].includes(mode)) {
+            const terrainOk = this.terrain.canAddBuilding(mode, gridX, gridZ);
+            let cost = 0;
+            if (mode === 'house') {
+                cost = 100;
+            } else if (mode === 'port') {
+                const count = this.game.terrain?.buildings?.filter(b => b.userData.type === 'port').length || 0;
+                cost = 150 * (count + 1);
+            } else { // barracks or tower
+                const count = this.game.terrain?.buildings?.filter(b => b.userData.type === mode).length || 0;
+                cost = 1000 * (count + 1);
+            }
+            return terrainOk && this.game.mana >= cost;
+        }
+
+        return false;
     }
 }
