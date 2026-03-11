@@ -310,11 +310,7 @@ export class Goblin extends Actor implements IAiActor {
         const time = (window as any).game ? (window as any).game.simTotalTimeSec : 0;
 
         // --- PROBABILISTIC DETECTION ---
-        // If we don't have a target, only scan based on probability
-        const hasUrgentTarget = !!(this.targetUnit || this.targetBuilding);
-        if (!hasUrgentTarget && this.detectionProbability < 1.0 && !Actor.ignoreDetectionProbability) {
-            if (Math.random() > this.detectionProbability) return;
-        }
+        // Handled via Actor.updateCombatTarget distance-aware logic
 
         // DEBUG
         // if (this.id % 10 === 0) console.log(`[Goblin ${ this.id }] scanForTargets...`);

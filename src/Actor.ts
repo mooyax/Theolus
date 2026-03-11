@@ -605,11 +605,13 @@ export class Actor extends Entity {
             const interval = (role === 'knight' || role === 'wizard' || this.action === 'Idle' || !this.action) ? 10 : 30;
             const canScan = forceScan || isTest || ((frameCount + (this.id || 0)) % interval === 0);
             if (!canScan) return false;
-            // DETECTION PROBABILITY (Probabilistic Detection)
+            // DETECTION PROBABILITY (Probabilistic Detection with Distance Correction)
+            // Rule: 100% detection at distance <= 1.0, then smooth falloff
             const prob = this.detectionProbability;
             if (!forceScan && prob < 1.0 && !Actor.ignoreDetectionProbability) {
-                // Seeded random if possible, or just Math.random
-                if (Math.random() > prob) return false;
+                // Since checkSelfDefense doesn't have a specific target yet, we use a slightly more generous 
+                // pre-scan check. The precise distance check happens inside updateCombatTarget.
+                if (Math.random() > prob && Math.random() > 0.5) return false; 
             }
 
             // SCAN BUDGET CHECK
@@ -645,11 +647,12 @@ export class Actor extends Entity {
     updateCombatTarget(passedUnits: any[] | null, passedBuildings: any[] | null, passedGoblins: any[] | null) {
         if (this.isDead || this.isFinished) return;
 
-        // --- PROBABILISTIC DETECTION ---
-        // If we don't have a target, only scan based on probability
+        // --- PROBABILISTIC DETECTION (Distance Aware) ---
+        // Basic probability check is now handled per-entity inside scanEntities callback
+        // for better precision, but we keep a loose global check for performance if prob is very low.
         const hasUrgentTarget = !!(this.targetGoblin || this.targetUnit || this.targetBuilding);
-        if (!hasUrgentTarget && this.detectionProbability < 1.0 && !Actor.ignoreDetectionProbability) {
-            if (Math.random() > this.detectionProbability) return;
+        if (!hasUrgentTarget && this.detectionProbability < 0.1 && !Actor.ignoreDetectionProbability) {
+            if (Math.random() > 0.5) return;
         }
 
         if (!this.terrain || typeof (this.terrain as any).findBestTarget !== 'function') return;
@@ -702,6 +705,21 @@ export class Actor extends Entity {
                 // PRIORITY SCORING (Distance Multipliers)
                 // Score = dist * Multiplier (Lower is better)
                 let multiplier = 1.0;
+
+                // --- DISTANCE-BASED PROBABILITY CORRECTION ---
+                // Rule: 100% detection at dist <= 1.0, scaling down to base probability
+                if (!Actor.ignoreDetectionProbability && this.detectionProbability < 1.0) {
+                    const baseProb = this.detectionProbability;
+                    // Detect instantly if very close. 
+                    // Otherwise, provide a distance-based chance bonus.
+                    if (dist > 1.0) {
+                        // Beyond 1 tile, probability drops. 
+                        // At maxDist, it should be near baseProb.
+                        const distanceFactor = Math.max(0, 1.0 - (dist - 1.0) / (maxDist - 1.0));
+                        const adjustedProb = baseProb + (1.0 - baseProb) * (distanceFactor * distanceFactor); // Quadratic falloff for "near" awareness
+                        if (Math.random() > adjustedProb) return Infinity;
+                    }
+                }
 
                 if (typeKey === 'unit') {
                     // Humans (Enemy units) are high priority
