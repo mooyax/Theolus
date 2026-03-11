@@ -449,9 +449,9 @@ export class Unit extends Actor implements IAiActor {
             duration = 6.0; // Very Slow
         }
         // 2. Slope Penalty (Climbing/Descending steep)
-        // FIX: Reduction from 0.5 to 0.1 to catch sub-tile slopes and match Goblins
+        // FIX: Dynamic duration based on height difference (Max 6.0 for extreme slopes)
         else if (heightDiff > 0.1) {
-            duration = 3.0; // Slope
+            duration = Math.min(6.0, 1.2 + heightDiff * 2.5); // Steepness based
         }
         // 3. Swamp Penalty (High Moisture)
         else if (targetM > 0.6) {

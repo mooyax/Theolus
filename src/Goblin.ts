@@ -662,8 +662,9 @@ export class Goblin extends Actor implements IAiActor {
         }
 
         // Height Diff Limit (Climbing)
-        if (Math.abs(targetH - currentH) > 2.0) {
-            // Can't climb steep
+        // FIX: Increased from 2.0 to 6.0 to match pathfinding and system limits
+        if (Math.abs(targetH - currentH) > 6.0) {
+            // Can't climb extreme cliffs
             this.stuckCount = (this.stuckCount || 0) + 1;
             if (this.stuckCount > 5) {
                 this.targetBuilding = null;
@@ -677,7 +678,6 @@ export class Goblin extends Actor implements IAiActor {
         super.startMove(tx, tz, time);
 
         // Speed Logic
-        // Speed Logic
         const heightDiff = Math.abs(targetH - currentH);
 
         // Safety check for terrain grid access
@@ -689,7 +689,8 @@ export class Goblin extends Actor implements IAiActor {
         if (targetH > 8) {
             this.moveDuration = 6.0; // Rock: Very Slow
         } else if (heightDiff > 0.1) {
-            this.moveDuration = 3.0; // Slope: Slow
+            // FIX: Dynamic duration based on steepness (Max 6.0)
+            this.moveDuration = Math.min(6.0, 1.2 + heightDiff * 2.5); 
         } else if (targetM > 0.6) {
             this.moveDuration = 2.0; // Swamp: Slow
         } else {

@@ -233,14 +233,14 @@ function findPath(sx, sz, ex, ez, maxStepsParam = 0, unitId = -1, isNaval = fals
                 }
 
                 const slope = Math.abs(hEnd - hStart);
-                if (!isNaval && slope > 3.0) continue; // Slope Limit only for land
+                if (!isNaval && slope > 6.0) continue; // Slope Limit only for land
 
                 // --- COST CALCULATION ---
                 let moveCost = 0.8 * n.cost;
 
                 if (!isNaval) {
                     if (hEnd > 8) moveCost += 4.0;
-                    if (slope > 0.1) moveCost += 2.0;
+                    if (slope > 0.1) moveCost += 1.0 + slope * 2.0; // Dynamic Slope Cost
                     if (hEnd <= 8) {
                         const m = getMoisture(nx, nz);
                         if (m > 0.6) moveCost += 1.2;

@@ -43,7 +43,7 @@ describe('PathfindingWorker', () => {
         expect(path).toBeNull();
 
     });
-    it('should avoid steep slopes (Height Diff > 3)', () => {
+    it('should avoid steep slopes (Height Diff > 6)', () => {
         // Surround (0,0) with walls
         const neighbors = [
             { x: 1, z: 0 }, { x: 9, z: 0 },
@@ -52,7 +52,7 @@ describe('PathfindingWorker', () => {
         ];
 
         for (const n of neighbors) {
-            updateCell({ x: n.x, z: n.z, h: 10 }); // 5 -> 10 (Diff 5 > 3)
+            updateCell({ x: n.x, z: n.z, h: 20 }); // 5 -> 20 (Diff 15 > 6)
         }
 
         // Try to move
@@ -62,9 +62,9 @@ describe('PathfindingWorker', () => {
         expect(path).toBeNull();
 
     });
-    it('should climb allowed slopes (Height Diff <= 3)', () => {
+    it('should climb allowed slopes (Height Diff <= 6)', () => {
         // Create a single step at z=1 for the path
-        updateCell({ x: 0, z: 1, h: 8 }); // 5 -> 8 (Diff 3 <= 3)
+        updateCell({ x: 0, z: 1, h: 10 }); // 5 -> 10 (Diff 5 <= 6)
         // Ensure path continues
 
         // Try to climb
@@ -79,21 +79,10 @@ describe('PathfindingWorker', () => {
         // (0,0) -> (2,2)
         const path = findPath(0, 0, 2, 2, 100, 5);
         expect(path).not.toBeNull();
-        // Optimal path is 2 steps: (1,1), (2,2)
-        // Or 3 steps if diagonals are expensive, but A* with proper Heuristic should prefer direct.
-        // Given neighbor cost 1.414 vs 2, diagonal is cheaper.
 
-        // NOTE: Path doesn't include start node usually? Implementation dependent.
-        // Our impl: path.push({x: curr.x, z: curr.z}) then reverse. Includes start?
-        // Let's check logic:
-        // while (curr) { path.push... curr = curr.parent }
-        // Start node has parent=null. So Start is included.
-        // Wait, startNode is pushed to path.
-        // Let's verify start inclusion.
         const first = path[0];
         expect(first.x).toBe(0);
         expect(first.z).toBe(0);
 
-
-});
+    });
 });

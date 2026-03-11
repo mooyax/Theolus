@@ -47,7 +47,11 @@ describe('Slope Speed Sensitivity', () => {
         unit.startMove(10.2, 50, 1000);
 
         expect(mockTerrain.getInterpolatedHeight).toHaveBeenCalled();
-        expect(unit.moveDuration).toBe(3.0);
+        // Dynamic duration: Math.min(6.0, 1.2 + heightDiff * 2.5)
+        // heightDiff between 9.8 and 10.2:
+        // H(9.8) = 0.8, H(10.2) = 1.0 -> Diff = 0.2
+        // Duration = 1.2 + 0.2 * 2.5 = 1.2 + 0.5 = 1.7
+        expect(unit.moveDuration).toBeCloseTo(1.7, 1);
     });
 
     it('Goblin detects sub-tile slope', () => {
@@ -57,7 +61,7 @@ describe('Slope Speed Sensitivity', () => {
         goblin.startMove(10.2, 50, 1000);
 
         expect(mockTerrain.getInterpolatedHeight).toHaveBeenCalled();
-        expect(goblin.moveDuration).toBe(3.0);
+        expect(goblin.moveDuration).toBeCloseTo(1.7, 1);
     });
 
     it('Unit on Flat ground stays Fast', () => {

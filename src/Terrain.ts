@@ -981,7 +981,7 @@ export class Terrain {
                 if (neighbor.regionId === 0) {
                     if (isLand && neighbor.height > 0) {
                         const hDiff = Math.abs(neighbor.height - this.grid[cx][cz].height);
-                        if (hDiff <= 3.0) {
+                        if (hDiff <= 10.0) {
                             neighbor.regionId = regionId;
                             queue.push({ x: nx, z: nz });
                         }
