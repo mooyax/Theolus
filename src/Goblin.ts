@@ -961,12 +961,18 @@ export class Goblin extends Actor implements IAiActor {
     tryBuildHut() {
         const x = Math.round(this.gridX);
         const z = Math.round(this.gridZ);
-        if (!this.terrain.grid[x] || !this.terrain.grid[x][z]) return false;
-        
-        if (this.terrain.grid[x][z].hasBuilding) return false;
+        if (!this.terrain.grid[x] || !this.terrain.grid[x][z]) {
+            return false;
+        }
+
+        if (this.terrain.grid[x][z].hasBuilding) {
+            return false;
+        }
         
         const h = this.terrain.getTileHeight(x, z);
-        if (h > 8 || h <= 0) return false;
+        if (h > 8 || h <= 0) {
+            return false;
+        }
 
         // --- POPULATION CHECK ---
         let totalGoblinPop = 0;
@@ -983,22 +989,27 @@ export class Goblin extends Actor implements IAiActor {
                 housingCapacity += 10;
                 hutCount++;
             }
-            else if (b.userData.type === 'cave') housingCapacity += 20;
         }
 
         // 増えすぎによる負荷対策（マップ全体で30個まで）
-        if (hutCount >= 30) return false;
+        if (hutCount >= 30) {
+            return false;
+        }
 
-        // 積極的に拠点を作るように、キャパシティ計算のバッファを緩めに設定
-        const housingBuffer = (totalGoblinPop * 2) + 30;
-        if (housingCapacity >= housingBuffer) return false;
+        // ゴブリンは小屋のキャパシティ（洞窟除く）と現在人口を比較して建てる
+        const housingBuffer = (totalGoblinPop * 3) + 10;
+        if (housingCapacity >= housingBuffer) {
+            return false;
+        }
 
         const minSpacing = 6.0;
         for (const b of allBuildings) {
             if (b.userData && (b.userData.type === 'goblin_hut' || b.userData.type === 'cave')) {
                 const dx = b.userData.gridX - x;
                 const dz = b.userData.gridZ - z;
-                if (dx * dx + dz * dz < minSpacing * minSpacing) return false;
+                if (dx * dx + dz * dz < minSpacing * minSpacing) {
+                    return false;
+                }
             }
         }
         
@@ -1007,6 +1018,8 @@ export class Goblin extends Actor implements IAiActor {
             hut.userData.clanId = this.clanId;
             console.log(`[Goblin] ID:${this.id} built a Hut at ${x},${z}. Pop:${totalGoblinPop} Cap:${housingCapacity}`);
             return true;
+        } else {
+            console.warn(`[Goblin ${this.id}] tryBuildHut failed: Terrain.addBuilding returned null or false`);
         }
         return false;
     }
