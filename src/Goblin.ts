@@ -521,12 +521,16 @@ export class Goblin extends Actor implements IAiActor {
 
 
     moveRandomly(time: number) {
+        // --- POPULATION-BASED HUT BUILDING ---
+        if (Math.random() < 0.05) {
+            if (this.tryBuildHut()) return;
+        }
+
         // Clan Memory Logic: 60% chance to move towards a known raid spot (Was 30%)
         if (this.clanId && Math.random() < 0.6) {
             // Distraction: 5% chance to drop out of raid path (Was 20%)
             if (Math.random() < 0.05) {
                 console.log(`Goblin ${this.id} distracted from raid!`);
-                this.tryBuildHut();
             } else if ((window as any).game && (window as any).game.goblinManager) {
                 const target = (window as any).game.goblinManager.getClanRaidTarget(this.clanId);
                 if (target) {
@@ -958,22 +962,44 @@ export class Goblin extends Actor implements IAiActor {
         const x = Math.round(this.gridX);
         const z = Math.round(this.gridZ);
         if (!this.terrain.grid[x] || !this.terrain.grid[x][z]) return false;
+        
+        // Flat area check (2x2) like human houses
+        if (this.terrain.checkFlatArea && !this.terrain.checkFlatArea(x, z, 2, 0.01)) return false;
         if (this.terrain.grid[x][z].hasBuilding) return false;
+        
         const h = this.terrain.getTileHeight(x, z);
         if (h > 8 || h <= 0) return false;
+
+        // --- POPULATION CHECK ---
+        let totalGoblinPop = 0;
+        if ((window as any).game && (window as any).game.goblinManager) {
+            totalGoblinPop = (window as any).game.goblinManager.goblins.length;
+        }
+
+        let housingCapacity = 0;
         const allBuildings = this.terrain.buildings || [];
+        for (const b of allBuildings) {
+            if (!b.userData) continue;
+            if (b.userData.type === 'goblin_hut') housingCapacity += 10;
+            else if (b.userData.type === 'cave') housingCapacity += 20;
+        }
+
+        const housingBuffer = (totalGoblinPop < 100) ? (totalGoblinPop + 5) : (totalGoblinPop * 1.5);
+        if (housingCapacity >= housingBuffer) return false;
+
         const minSpacing = 6.0;
         for (const b of allBuildings) {
-            if (b.userData.type === 'goblin_hut') {
+            if (b.userData && (b.userData.type === 'goblin_hut' || b.userData.type === 'cave')) {
                 const dx = b.userData.gridX - x;
                 const dz = b.userData.gridZ - z;
                 if (dx * dx + dz * dz < minSpacing * minSpacing) return false;
             }
         }
-        const hut = this.terrain.addBuilding('goblin_hut', x, z);
+        
+        const hut = this.terrain.addBuilding('goblin_hut', x, z, false, false, 'goblin');
         if (hut) {
             hut.userData.clanId = this.clanId;
-            console.log(`[Goblin] ID:${this.id} built a Hut at ${x},${z} `);
+            console.log(`[Goblin] ID:${this.id} built a Hut at ${x},${z}. Pop:${totalGoblinPop} Cap:${housingCapacity}`);
             return true;
         }
         return false;

@@ -3304,7 +3304,11 @@ export class Terrain {
                 if (!(this as any).errorCounts) (this as any).errorCounts = { pop: 0 };
                 const bConfig = GameConfig.buildings[type];
                 const growthVal = (bConfig && bConfig.growthRate !== undefined) ? bConfig.growthRate : 0.05;
-                let rate = growthVal * multiplier;
+                let rate = growthVal;
+                
+                if (type !== 'goblin_hut' && type !== 'cave') {
+                    rate *= multiplier;
+                }
 
                 // DIAG LOG for RealGrowth.test.js
                 if (activeUnits === 0 && (this as any).errorCounts.pop < 10) {
@@ -3313,8 +3317,10 @@ export class Terrain {
                 }
 
                 // 3. Growth rate adjustment
-                let diminishingFactor = 200000 / (200000 + totalPopulation);
-                rate *= diminishingFactor;
+                if (type !== 'goblin_hut' && type !== 'cave') {
+                    let diminishingFactor = 200000 / (200000 + totalPopulation);
+                    rate *= diminishingFactor;
+                }
                 // if (!hasFood && totalPopulation >= 2000) rate *= 0.25; // isNight is no longer a parameter
 
                 // Growth Floor (Bust the stagnation)
