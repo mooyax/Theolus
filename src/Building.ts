@@ -108,17 +108,23 @@ export class Building extends Entity {
         }
 
         // 2. Damage logic: First reduce population (1 damage = 1 pop), remaining to HP
-        const popLossLimit = amount; // 1:1 scaling
-        const actualPopLoss = Math.min(currentPop, popLossLimit);
-        const damageAccountedFor = actualPopLoss; // 1:1
-        const remainingDamage = amount - damageAccountedFor;
+        if (this.type === 'farm') {
+            // Farms don't use population as a buffer; apply all damage to HP and also reduce grain
+            this.hp -= amount;
+            this.population = Math.max(0, currentPop - amount);
+        } else {
+            const popLossLimit = amount; // 1:1 scaling
+            const actualPopLoss = Math.min(currentPop, popLossLimit);
+            const damageAccountedFor = actualPopLoss; // 1:1
+            const remainingDamage = amount - damageAccountedFor;
 
-        if (actualPopLoss > 0) {
-            this.population = Math.max(0, currentPop - actualPopLoss);
-        }
+            if (actualPopLoss > 0) {
+                this.population = Math.max(0, currentPop - actualPopLoss);
+            }
 
-        if (remainingDamage > 0) {
-            this.hp -= remainingDamage;
+            if (remainingDamage > 0) {
+                this.hp -= remainingDamage;
+            }
         }
 
         if (this.hp <= 0) {

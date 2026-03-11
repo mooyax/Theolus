@@ -206,5 +206,22 @@ describe('Faction Combat Simulation', () => {
             enemyUnit.updateCombatTarget([], [cave], []);
             expect(enemyUnit.targetBuilding?.id).toBe(cave.id);
         });
+
+        it('Enemy Unit should NOT target other Enemy units', () => {
+            const enemy1 = new Unit(scene, terrain, 50, 50, 'knight', false, null, 'enemy');
+            const enemy2 = { id: 777, gridX: 51, gridZ: 51, faction: 'enemy', isDead: false, type: 'unit' };
+
+            terrain.findBestTarget.mockImplementation((type, x, z, dist, callback) => {
+                if (type === 'unit') {
+                    const score = callback(enemy2, 1.0);
+                    if (score === Infinity) return null;
+                    return enemy2;
+                }
+                return null;
+            });
+
+            enemy1.updateCombatTarget([enemy2], [], []);
+            expect(enemy1.targetUnit).toBeNull();
+        });
     });
 });
