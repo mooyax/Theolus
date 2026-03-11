@@ -522,9 +522,9 @@ export class Goblin extends Actor implements IAiActor {
 
     moveRandomly(time: number) {
         // --- POPULATION-BASED HUT BUILDING ---
-        if (Math.random() < 0.05) {
-            if (this.tryBuildHut()) return;
-        }
+        // 収容力不足時は、平地など条件を満たせば必ず建築を試みる（確率制限を撤廃）
+        if (this.tryBuildHut()) return;
+
 
         // Clan Memory Logic: 60% chance to move towards a known raid spot (Was 30%)
         if (this.clanId && Math.random() < 0.6) {
@@ -963,8 +963,6 @@ export class Goblin extends Actor implements IAiActor {
         const z = Math.round(this.gridZ);
         if (!this.terrain.grid[x] || !this.terrain.grid[x][z]) return false;
         
-        // Flat area check (2x2) like human houses
-        if (this.terrain.checkFlatArea && !this.terrain.checkFlatArea(x, z, 2, 0.01)) return false;
         if (this.terrain.grid[x][z].hasBuilding) return false;
         
         const h = this.terrain.getTileHeight(x, z);
@@ -977,14 +975,22 @@ export class Goblin extends Actor implements IAiActor {
         }
 
         let housingCapacity = 0;
+        let hutCount = 0;
         const allBuildings = this.terrain.buildings || [];
         for (const b of allBuildings) {
             if (!b.userData) continue;
-            if (b.userData.type === 'goblin_hut') housingCapacity += 10;
+            if (b.userData.type === 'goblin_hut') {
+                housingCapacity += 10;
+                hutCount++;
+            }
             else if (b.userData.type === 'cave') housingCapacity += 20;
         }
 
-        const housingBuffer = (totalGoblinPop < 100) ? (totalGoblinPop + 5) : (totalGoblinPop * 1.5);
+        // 増えすぎによる負荷対策（マップ全体で30個まで）
+        if (hutCount >= 30) return false;
+
+        // 積極的に拠点を作るように、キャパシティ計算のバッファを緩めに設定
+        const housingBuffer = (totalGoblinPop * 2) + 30;
         if (housingCapacity >= housingBuffer) return false;
 
         const minSpacing = 6.0;
