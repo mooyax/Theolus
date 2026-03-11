@@ -22,6 +22,7 @@ export class GoblinManager {
         this.plunderCount = 0; // Track successful raids
         this.MAX_GOBLINS = 20000; // InstancedMesh allows high count!
         this.clanMemory = {}; // { clanId: [ {x,z,weight,timestamp} ] }
+        this.clans = {}; // { clanId: { aggression, active, waveLevel, waveTimer, raidTarget } }
 
         // Initialize Goblin Assets (Renderer handles clipping application now)
         Goblin.initAssets();
@@ -95,8 +96,9 @@ export class GoblinManager {
             spawnCooldown: 0,
             originalHeight: building.y,
             building: building, // Link
-            clanId: `clan_${building.userData.gridX}_${building.userData.gridZ} `
+            clanId: `clan_${building.userData.gridX}_${building.userData.gridZ}`
         };
+        building.userData.clanId = cave.clanId; // Ensure building knows its clan
         // Visuals? 
         // If Terrain renders cave, we don't need to add another mesh.
         // But let's keep logic compatible.
@@ -202,13 +204,14 @@ export class GoblinManager {
 
         this.caveGroup.add(cave);
 
-        const valid = this.terrain.addBuilding('cave', x, z, false, false, 'enemy');
+        const valid = this.terrain.addBuilding('cave', x, z, false, false, 'goblin');
         if (valid) {
             console.log(`GoblinManager: Cave registered at ${x},${z} `);
             // Link mesh to building for very strict checks
             valid.userData.linkedMesh = cave;
 
             const clanId = `clan_cave_${x}_${z}`; // Removed trailing space
+            valid.userData.clanId = clanId; // Ensure building knows its clan
             this.caves.push({
                 mesh: cave,
                 building: valid,
@@ -741,7 +744,11 @@ export class GoblinManager {
             const h = this.terrain.getTileHeight(tx, tz);
             if (h > 0) {
                 // Get Raid Target
-                const raidTarget = this.getClanRaidTarget(cave.clanId);
+                // Get Raid Target (Only if clan is active or this is triggered by a wave)
+                const clan = this.clans ? this.clans[cave.clanId] : null;
+                const isWave = ignoreCost; // Wave spawns ignore cost
+                const raidTarget = (isWave || (clan && clan.active)) ? this.getClanRaidTarget(cave.clanId) : null;
+
                 this.spawnGoblin(tx, tz, cave.clanId, raidTarget, difficultyLevel);
                 return;
             }
@@ -807,6 +814,7 @@ export class GoblinManager {
 
                     // Spawn
                     const clanId = b.userData.clanId || `clan_${b.userData.type}_${b.userData.gridX}_${b.userData.gridZ}`;
+                    b.userData.clanId = clanId; // Persist generated clanId
                     const fakeCave = { gridX: b.userData.gridX, gridZ: b.userData.gridZ, clanId: clanId, building: b };
 
                     // Force spawn ignoreCost=true because we manage the 10.0 deduction here
@@ -983,6 +991,41 @@ export class GoblinManager {
                 clanId: c.clanId
             }))
         };
+    }
+
+    // New: Notify clan activity (e.g., a human unit attacked a goblin)
+    notifyClanActivity(clanId, target) {
+        if (!clanId) return;
+
+        // Get or Create Clan State
+        if (!this.clans[clanId]) {
+            this.clans[clanId] = {
+                id: clanId,
+                aggression: 0,
+                active: false,
+                waveLevel: 1,
+                waveTimer: 30, // First wave fast if provoked
+                raidTarget: null
+            };
+        }
+
+        const clan = this.clans[clanId];
+        if (target) {
+            clan.aggression += 1.0;
+            clan.raidTarget = {
+                x: target.gridX,
+                z: target.gridZ,
+                timestamp: window.game ? window.game.simTotalTimeSec : 0
+            };
+
+            // Trigger Raid State if aggression high enough
+            // User requested: Lower threshold from 15.0 to 10.0 for more activity
+            const threshold = 10.0;
+            if (!clan.active && clan.aggression >= threshold) {
+                clan.active = true;
+                console.log(`[GoblinManager] Clan ${clanId} PROVOKED! Starting Raid State.`);
+            }
+        }
     }
 
     deserialize(data) {

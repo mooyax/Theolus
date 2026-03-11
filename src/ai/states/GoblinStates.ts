@@ -29,6 +29,16 @@ export class Combat extends CombatStateBase {
     }
 
     protected handleTargetLost() {
+        // --- CLAN ACTIVITY CHECK ---
+        const manager = (window as any).game ? (window as any).game.goblinManager : null;
+        if (manager && manager.clans) {
+            const clan = manager.clans[this.actor.clanId];
+            if (clan && !clan.active) {
+                // If clan is inactive, go back to Wander instead of Raid
+                this.actor.changeState(new Wander(this.actor));
+                return;
+            }
+        }
         // Goblins default back to Raid when target is lost
         this.actor.changeState(new Raid(this.actor));
     }
@@ -141,7 +151,9 @@ export class Raid extends State {
                 const clan = manager.clans[this.actor.clanId];
 
                 if (clan && !clan.active) {
-                    this.actor.changeState(new Retreat(this.actor));
+                    // FIX: Go back to Wander instead of Retreating (Despawning)
+                    // if the clan is not in War Mode.
+                    this.actor.changeState(new Wander(this.actor));
                     return;
                 }
             }

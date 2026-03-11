@@ -32,7 +32,7 @@ describe('Win/Loss Condition Logic', () => {
 
         // Setup: Only enemy buildings (caves) exist
         const cave = new Building(scene, game.terrain, 'cave', 10, 10);
-        cave.userData.faction = 'enemy';
+        cave.userData.faction = 'goblin';
         game.terrain.buildings = [cave];
 
         // Action
@@ -51,7 +51,7 @@ describe('Win/Loss Condition Logic', () => {
 
         // Add an enemy to prevent a "win" result
         const cave = new Building(scene, game.terrain, 'cave', 10, 10);
-        cave.userData.faction = 'enemy';
+        cave.userData.faction = 'goblin';
         game.terrain.buildings.push(cave);
 
         const result = game.evaluateWinLoss();
@@ -66,7 +66,7 @@ describe('Win/Loss Condition Logic', () => {
 
         // Add an enemy
         const cave = new Building(scene, game.terrain, 'cave', 10, 10);
-        cave.userData.faction = 'enemy';
+        cave.userData.faction = 'goblin';
         game.terrain.buildings.push(cave);
 
         const result = game.evaluateWinLoss();
@@ -140,9 +140,9 @@ describe('Win/Loss Condition Logic', () => {
         const hut = terrain.buildings.find(b => b.type === 'goblin_hut');
         const house = terrain.buildings.find(b => b.type === 'house');
 
-        expect(cave.userData.faction).toBe('enemy');
-        expect(hut.userData.faction).toBe('enemy');
+        expect(cave.userData.faction).toBe('goblin');
+        expect(hut.userData.faction).toBe('goblin');
         expect(house.userData.faction).toBe('player');
 
-});
+    });
 });

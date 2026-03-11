@@ -21,8 +21,6 @@ describe('Goblin Raid Threshold', () => {
             buildings: [],
             clippingPlanes: []
         };
-        // Mock Goblin internal assets init to avoid THREE errors
-        // (Assuming Goblin.initAssets handles itself or we mock it if needed)
 
         goblinManager = new GoblinManager(mockScene, mockTerrain, {});
         // Clear any auto-generated caves/clans to start fresh
@@ -30,9 +28,10 @@ describe('Goblin Raid Threshold', () => {
         goblinManager.caves = [];
 
     });
+
     it('should NOT activate raid on first aggression (1/3)', () => {
         const clanId = 'clan_test';
-        const target = { x: 50, z: 50 };
+        const target = { gridX: 50, gridZ: 50 };
 
         goblinManager.notifyClanActivity(clanId, target);
 
@@ -42,26 +41,28 @@ describe('Goblin Raid Threshold', () => {
         expect(clan.active).toBe(false);
 
     });
-    it('should activate raid on aggression threshold (15.0)', () => {
-        const clanId = 'clan_test_active';
-        const target = { x: 50, z: 50 };
 
-        // Pump to 14 (Below Threshold)
-        for (let i = 0; i < 14; i++) {
+    it('should activate raid on aggression threshold (10.0)', () => {
+        const clanId = 'clan_test_active';
+        const target = { gridX: 50, gridZ: 50 };
+
+        // Pump to 9 (Below Threshold)
+        for (let i = 0; i < 9; i++) {
             goblinManager.notifyClanActivity(clanId, target);
         }
-        expect(goblinManager.clans[clanId].aggression).toBe(14.0);
+        expect(goblinManager.clans[clanId].aggression).toBe(9.0);
         expect(goblinManager.clans[clanId].active).toBe(false);
 
-        // 15th (Activate)
+        // 10th (Activate)
         goblinManager.notifyClanActivity(clanId, target);
-        expect(goblinManager.clans[clanId].aggression).toBe(15.0);
+        expect(goblinManager.clans[clanId].aggression).toBe(10.0);
         expect(goblinManager.clans[clanId].active).toBe(true);
 
     });
+
     it('should decay aggression over time', () => {
         const clanId = 'clan_decay';
-        const target = { x: 50, z: 50 };
+        const target = { gridX: 50, gridZ: 50 };
 
         // Pump to 2.0
         goblinManager.notifyClanActivity(clanId, target);
@@ -80,9 +81,10 @@ describe('Goblin Raid Threshold', () => {
         expect(clan.active).toBe(false);
 
     });
+
     it('should reset aggression decay if it drops below zero', () => {
         const clanId = 'clan_zero';
-        goblinManager.notifyClanActivity(clanId, { x: 50, z: 50 }); // 1.0
+        goblinManager.notifyClanActivity(clanId, { gridX: 50, gridZ: 50 }); // 1.0
 
         // Wait long time (20s -> -1.0)
         for (let i = 0; i < 20; i++) {
@@ -93,28 +95,28 @@ describe('Goblin Raid Threshold', () => {
         expect(clan.aggression).toBe(0);
 
     });
+
     it('should DEACTIVATE raid state if aggression decays to zero', () => {
         const clanId = 'clan_peace';
-        const target = { x: 50, z: 50 };
+        const target = { gridX: 50, gridZ: 50 };
 
-        // 1. Activate (15 hits)
-        for (let i = 0; i < 15; i++) {
+        // 1. Activate (10 hits)
+        for (let i = 0; i < 10; i++) {
             goblinManager.notifyClanActivity(clanId, target);
         }
         const clan = goblinManager.clans[clanId];
         expect(clan.active).toBe(true);
-        expect(clan.aggression).toBe(15.0);
+        expect(clan.aggression).toBe(10.0);
 
         // 2. Decay logic (War Exhaustion)
-        // Rate: 0.05 per sec. Need 15.0 / 0.05 = 300s
-        // Simulate 310s
-        for (let i = 0; i < 310; i++) {
+        // Rate: 0.05 per sec while active. Need 10.0 / 0.05 = 200s
+        // Simulate 210s
+        for (let i = 0; i < 210; i++) {
             goblinManager.updateClanWaves(1.0); // 1s
         }
 
         // 3. Verify Deactivation
         expect(clan.aggression).toBe(0);
         expect(clan.active).toBe(false); // Should return to peace
-
-});
+    });
 });

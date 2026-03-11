@@ -111,8 +111,8 @@ export class Actor extends Entity {
                 const aType = attacker.type;
                 const aFaction = attacker.faction || (attacker.userData ? attacker.userData.faction : null);
 
-                const isGoblin = (aType === 'goblin' || aFaction === 'goblin' || aFaction === 'enemy');
-                const isUnit = (aType === 'unit' || aType === 'sheep' || aFaction === 'player');
+                const isGoblin = (aType === 'goblin' || aFaction === 'goblin');
+                const isUnit = (aType === 'unit' || aType === 'sheep' || aFaction === 'player' || aFaction === 'enemy');
 
                 if (isGoblin) {
                     this.targetGoblin = attacker;

@@ -562,7 +562,7 @@ export class Terrain {
                     let curvedProgress = Math.pow(landProgress, 1.6); // 1.6 is a good balance for RTS terrain
 
                     const rockHeight = (genParams && genParams.rockHeight !== undefined) ? genParams.rockHeight : 12;
-                    height = curvedProgress * rockHeight;
+                    height = Math.max(1, curvedProgress * rockHeight);
                 } else {
                     // SEA CALCULATION
                     // Map [0.0, seaLevel] to [-5, 0.0] depth range
@@ -3894,7 +3894,7 @@ export class Terrain {
 
     restoreGoblinHut(data) {
         // Use addBuilding to ensure consistency with other buildings
-        const building = this.addBuilding('goblin_hut', data.gridX, data.gridZ, true, false, data.faction || 'enemy');
+        const building = this.addBuilding('goblin_hut', data.gridX, data.gridZ, true, false, data.faction || 'goblin');
         if (building) {
             building.population = data.population || 1;
             building.userData.population = data.population || 1;
@@ -3928,7 +3928,7 @@ export class Terrain {
         // Special: Caves might be auto-flattened or integrated differently.
         // Just use addBuilding to ensure visual creation.
         // HOWEVER, removeBuilding blocks cave removal. Checks?
-        const building = this.addBuilding('cave', data.gridX, data.gridZ, true, false, data.faction || 'enemy');
+        const building = this.addBuilding('cave', data.gridX, data.gridZ, true, false, data.faction || 'goblin');
         // Cave pop?
         if (building) {
             building.population = data.population || 0;

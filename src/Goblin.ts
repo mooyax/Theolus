@@ -18,7 +18,7 @@ export class Goblin extends Actor implements IAiActor {
     static initPromise: Promise<void> | null = null;
 
     public type: string;
-    public clanId: number;
+    public clanId: string | number;
     public scale: number;
     public attackRange: number = 2.0;
     public attackCooldown: number = 0;
@@ -351,9 +351,15 @@ export class Goblin extends Actor implements IAiActor {
 
         // if (this.id % 10 === 0) console.log(`[Goblin ${ this.id }] invoking terrain.findBestTarget(Units)...`);
 
-        const closestUnit = this.terrain.findBestTarget('unit', this.gridX, this.gridZ, searchDistUnits, (entity, dist) => {
+        const closestUnit = this.terrain.findBestTarget('unit', this.gridX, this.gridZ, searchDistUnits, (entity: any, dist: number) => {
+            if (entity.isDead || entity.isFinished || entity.id === this.id) return Infinity;
             if (entity.isSleeping) return Infinity; // Ignore sleeping
             if (entity.isInsideBuilding) return Infinity; // Ignore units inside buildings (Attack the building instead!)
+
+            // Faction Check: Ignore same faction (goblin)
+            const eFaction = entity.faction || (entity.userData ? entity.userData.faction : null);
+            if (eFaction === this.faction) return Infinity;
+
             // Blacklist Check
             const now = (window as any).game ? (window as any).game.simTotalTimeSec : Date.now() / 1000;
             const expiry = this.ignoredTargets.get(entity.id);
@@ -370,17 +376,24 @@ export class Goblin extends Actor implements IAiActor {
         // User Request: Match building range to unit range (Reduced from 20/30)
         const bldDist = searchDistUnits;
         // Optimization: Use Spatial Grid Search
-        const closestBuilding = this.terrain.findBestTarget('building', this.gridX, this.gridZ, bldDist, (entity, dist) => {
+        const closestBuilding = this.terrain.findBestTarget('building', this.gridX, this.gridZ, bldDist, (entity: any, dist: number) => {
+            if (entity.isDestroyed && entity.isDestroyed()) return Infinity;
+
+            // Faction Check: Ignore same faction (goblin buildings)
+            const eFaction = entity.faction || (entity.userData ? entity.userData.faction : null);
+            const eType = entity.type || (entity.userData ? entity.userData.type : null);
+            const isGoblinBuilding = eFaction === 'goblin' || (eType && (eType === 'goblin_hut' || eType === 'cave'));
+            if (isGoblinBuilding) return Infinity;
+
             // Blacklist Check
             const now = (window as any).game ? (window as any).game.simTotalTimeSec : Date.now() / 1000;
             const id = entity.id || (entity.userData ? entity.userData.id : null);
             const expiry = id ? this.ignoredTargets.get(id) : undefined;
             if (expiry && expiry > now) return Infinity;
 
-            if (!entity.userData || entity.userData.type === 'goblin_hut' || entity.userData.type === 'cave') return Infinity;
             // Rule: Only ignore if BOTH population and hp are depleted
-            const pop = entity.userData.population || 0;
-            const hp = (entity.userData.hp === undefined) ? 50 : entity.userData.hp;
+            const pop = entity.userData ? (entity.userData.population || 0) : 0;
+            const hp = (entity.userData && entity.userData.hp !== undefined) ? entity.userData.hp : 50;
             if (pop <= 0 && hp <= 0) return Infinity;
             return dist;
         });
@@ -785,6 +798,11 @@ export class Goblin extends Actor implements IAiActor {
         if (!this.isDead) {
             // Reaction
             this.lastHitTime = (window as any).game ? (window as any).game.simTotalTimeSec : 0;
+
+            // Report to Clan (Trigger Aggression/Raid)
+            if (attacker) {
+                this.reportEnemy(attacker);
+            }
 
             // Retaliate if hit and currently wandering
             if (attacker && !this.targetUnit && Math.random() < 0.5) {

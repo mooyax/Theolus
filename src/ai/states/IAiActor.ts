@@ -40,7 +40,7 @@ export interface IAiActor {
     state: any;
 
     // Optional Goblin-specific fields
-    clanId?: number;
+    clanId?: string | number;
     raidGoal?: { x: number, z: number, timestamp?: number } | null;
 
     // Required AI Methods

@@ -150,39 +150,39 @@ export class Warship extends Actor implements IAiActor {
 
         let target = null;
         let targetType = '';
-        if (this.faction === 'enemy') {
-            target = this.terrain.findBestTarget('human', this.gridX, this.gridZ, 25.0, (u, dist) => {
-                if (u.isInsideBuilding || u.isDead) return Infinity; // Ignore hidden or dead
-                if (this.ignoredTargets.has(u.id)) return Infinity; // Respect ignored list
-                return dist;
-            });
-            if (target) targetType = 'unit';
-            if (!target) {
-                target = this.terrain.findBestTarget('building', this.gridX, this.gridZ, 25.0, (b, dist) => {
-                    if (!b.userData || b.userData.hp <= 0) return Infinity;
-                    if (b.userData.faction === 'enemy') return Infinity;
-                    const bId = b.id || (b.userData && b.userData.id);
-                    if (this.ignoredTargets.has(bId)) return Infinity;
-                    return dist;
-                }, passedBuildings || this.terrain.buildings);
-                if (target) targetType = 'building';
-            }
-        } else {
-            target = this.terrain.findBestTarget('goblin', this.gridX, this.gridZ, 25.0, (g, dist) => {
+        const scanRange = 25.0;
+        // 1. Scan for Units (Humans/Invaders)
+        target = this.terrain.findBestTarget('unit', this.gridX, this.gridZ, scanRange, (u: any, dist: number) => {
+            if (u.isInsideBuilding || u.isDead) return Infinity;
+            if (u.faction === this.faction) return Infinity; // Same faction
+            if (this.ignoredTargets.has(u.id)) return Infinity;
+            return dist;
+        }, passedUnits || (this.game ? this.game.units : []));
+        if (target) targetType = 'unit';
+
+        // 2. Scan for Goblins (if no unit)
+        if (!target) {
+            target = this.terrain.findBestTarget('goblin', this.gridX, this.gridZ, scanRange, (g: any, dist: number) => {
+                if (g.isDead) return Infinity;
+                if (g.faction === this.faction) return Infinity; // Same faction
                 if (this.ignoredTargets.has(g.id)) return Infinity;
                 return dist;
             }, passedGoblins || (this.game && this.game.goblinManager ? this.game.goblinManager.goblins : []));
             if (target) targetType = 'goblin';
-            if (!target) {
-                target = this.terrain.findBestTarget('building', this.gridX, this.gridZ, 25.0, (b, dist) => {
-                    if (!b.userData || b.userData.hp <= 0) return Infinity;
-                    if (b.userData.faction !== 'enemy') return Infinity;
-                    const bId = b.id || (b.userData && b.userData.id);
-                    if (this.ignoredTargets.has(bId)) return Infinity;
-                    return dist;
-                }, passedBuildings || this.terrain.buildings);
-                if (target) targetType = 'building';
-            }
+        }
+
+        // 3. Scan for Buildings (if neither)
+        if (!target) {
+            target = this.terrain.findBestTarget('building', this.gridX, this.gridZ, scanRange, (b: any, dist: number) => {
+                const bUserData = b.userData || {};
+                if (bUserData.hp <= 0) return Infinity;
+                const bFaction = b.faction || bUserData.faction;
+                if (bFaction === this.faction) return Infinity; // Same faction
+                const bId = b.id || bUserData.id;
+                if (this.ignoredTargets.has(bId)) return Infinity;
+                return dist;
+            }, passedBuildings || this.terrain.buildings);
+            if (target) targetType = 'building';
         }
 
         if (target) {
