@@ -1018,8 +1018,6 @@ export class Goblin extends Actor implements IAiActor {
             hut.userData.clanId = this.clanId;
             console.log(`[Goblin] ID:${this.id} built a Hut at ${x},${z}. Pop:${totalGoblinPop} Cap:${housingCapacity}`);
             return true;
-        } else {
-            console.warn(`[Goblin ${this.id}] tryBuildHut failed: Terrain.addBuilding returned null or false`);
         }
         return false;
     }
