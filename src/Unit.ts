@@ -1772,8 +1772,8 @@ export class Unit extends Actor implements IAiActor {
 
         if (Math.abs(change) > Math.abs(diff)) change = diff;
 
-        this.terrain.modifyMoisture(this.gridX, this.gridZ, change);
-        // console.log(`Unit improved land at ${this.gridX},${this.gridZ}. Moisture ${currentM.toFixed(2)} -> ${(currentM + change).toFixed(2)}`); // Removed debug log
+        this.terrain.modifyMoisture(gx, gz, change);
+        // console.log(`Unit improved land at ${gx},${gz}. Moisture ${currentM.toFixed(2)} -> ${(currentM + change).toFixed(2)}`); // Removed debug log
 
         // Task Complete!
         if (this.targetRequest && this.game) {
@@ -1788,11 +1788,14 @@ export class Unit extends Actor implements IAiActor {
     }
 
     buildFarm(time) {
+        const gx = Math.floor(this.gridX);
+        const gz = Math.floor(this.gridZ);
+
         let cell: any = null;
-        if (this.terrain.grid[this.gridX] && this.terrain.grid[this.gridX][this.gridZ]) {
-            cell = this.terrain.grid[this.gridX][this.gridZ];
+        if (this.terrain.grid[gx] && this.terrain.grid[gx][gz]) {
+            cell = this.terrain.grid[gx][gz];
         } else {
-            console.error(`[Unit ${this.id}] buildFarm: Cell not found at ${this.gridX},${this.gridZ}`);
+            console.error(`[Unit ${this.id}] buildFarm: Cell not found at ${gx},${gz}`);
         }
 
         if (cell) {
@@ -1818,7 +1821,7 @@ export class Unit extends Actor implements IAiActor {
             }
         }
 
-        this.terrain.addBuilding('farm', this.gridX, this.gridZ, false, false, this.faction);
+        this.terrain.addBuilding('farm', gx, gz, false, false, this.faction);
 
         this.moveRandomly(time);
         return true;

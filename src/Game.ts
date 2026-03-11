@@ -2592,7 +2592,9 @@ export class Game {
                     // Priority Check: Combat or Mission units update more regularly
                     // constructor.name check matches AI Unification names (Combat, Job)
                     // ADDED: isDead should also be urgent to ensure quick cleanup
+                    // ADDED: targetRequest indicates a unit is about to transition to Job state, so it shouldn't be throttled
                     const isUrgent = (unit.state && (unit.state.constructor.name === 'Combat' || unit.state.constructor.name === 'Job')) ||
+                        !!unit.targetRequest ||
                         unit.isDead || unit.isFinished;
 
                     if (!isUrgent) {
