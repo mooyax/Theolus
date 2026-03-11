@@ -52,7 +52,7 @@ const getMoisture = (x, z) => {
 function initGrid({ w, h, data, moistureData }) {
     width = w;
     height = h;
-    heightMap = new Int16Array(data);
+    heightMap = new Float32Array(data);
     if (moistureData) {
         moistureMap = new Float32Array(moistureData);
     } else {

@@ -4,7 +4,7 @@ import { findPath, initGrid, updateCell } from '../workers/pathfindingWorker.js'
 describe('Pathfinding Worker Logic', () => {
 
     const setupGrid = (w, h, obstacles = []) => {
-        const data = new Int16Array(w * h).fill(10);
+        const data = new Float32Array(w * h).fill(10);
         obstacles.forEach(({ x, z }) => {
             if (x >= 0 && x < w && z >= 0 && z < h) {
                 data[z * w + x] = -10;
@@ -47,7 +47,7 @@ describe('Pathfinding Worker Logic', () => {
 
     it('should NOT crash or loop infinitely on complex mazes', () => {
         const w = 20, h = 20;
-        const data = new Int16Array(w * h);
+        const data = new Float32Array(w * h);
         for (let i = 0; i < w * h; i++) {
             data[i] = (Math.random() > 0.7) ? -5 : 10;
         }

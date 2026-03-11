@@ -570,7 +570,7 @@ export class Terrain {
                     height = (seaProgress - 1.0) * 5.0; // Max depth 5
                 }
 
-                height = Math.round(height); // Snap to step for logic and flat surfaces
+                // height = Math.round(height); // Snap to step for logic and flat surfaces
                 if (!this.grid[x]) return; // Interrupted by dispose()
                 this.grid[x][z].height = height;
 
@@ -860,8 +860,8 @@ export class Terrain {
                     // If height is already non-integer, it might have been carved already
                     // This prevents double carving if generateRivers is called twice on same data
                     const currentH = this.grid[x][z].height;
-                    const baseH = Math.round(currentH);
-                    this.grid[x][z].height = Math.max(0, baseH - deductions[x * D + z]);
+                    // Math.round(height) removed to support smooth terrain
+                    this.grid[x][z].height = Math.max(0, currentH - deductions[x * D + z]);
                 }
             }
         }
@@ -1000,7 +1000,7 @@ export class Terrain {
         // Flatten HeightMap & MoistureMap
         const W = this.logicalWidth;
         const H = this.logicalDepth;
-        const data = new Int16Array(W * H);
+        const data = new Float32Array(W * H);
         const moistureData = new Float32Array(W * H); // Use Float for precision
 
         for (let z = 0; z < H; z++) {
