@@ -27,12 +27,17 @@ class MockUnit {
 
 class MockGame {
     constructor() {
-        this.units = [];
+        this.entityManager = {
+            units: [],
+            getAllUnits: function () { return this.units; },
+            register: function (u) { this.units.push(u); },
+            getAllGoblins: () => []
+        };
         this.terrain = { buildings: [] };
     }
     spawnUnit(x, z, role, homeBase) {
         const unit = new MockUnit(role, homeBase);
-        this.units.push(unit);
+        this.entityManager.register(unit);
         return unit;
     }
 }

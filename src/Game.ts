@@ -7,6 +7,7 @@ import { Warship } from './Warship';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SaveManager } from './SaveManager';
 import { FactionManager } from './FactionManager';
+import { WorldCycleManager } from './WorldCycleManager';
 
 import { CloudManager } from './CloudManager';
 import { BirdManager } from './BirdManager';
@@ -27,6 +28,7 @@ import { BuildingRenderer } from './BuildingRenderer';
 import { GoblinRenderer } from './GoblinRenderer';
 import { TreeRenderer } from './TreeRenderer.js';
 import { PerformanceMonitor } from './PerformanceMonitor';
+import { EntityManager } from './EntityManager';
 
 import { GameConfig, Levels } from './config/GameConfig'; // Direct Import
 import { EnemyAI } from './ai/EnemyAI';
@@ -156,11 +158,11 @@ export class Game {
     public renderer!: THREE.WebGLRenderer;
     public controls!: OrbitControls;
     public clock!: THREE.Clock;
-    // Array-based Queues
     public requestQueue: Request[] = []; // Unified queue
-    public goblins: any[];
-    public fishes: any[];
-    public sheeps: any[];
+    public entityManager: EntityManager;
+    get goblins(): any[] { return this.entityManager?.goblins || []; }
+    get fishes(): any[] { return this.entityManager?.fishes || []; }
+    get sheeps(): any[] { return this.entityManager?.sheeps || []; }
 
     // Managers
     public terrain!: Terrain;
@@ -179,7 +181,9 @@ export class Game {
     private smokeTimer: number = 0;
 
     // Entity Arrays (Mirroring Terrain for easy access)
-    public units: Unit[];
+    // Entity Arrays (Mirroring Terrain for easy access)
+    get units(): Unit[] { return this.entityManager?.units || []; }
+    get unitMap(): Map<number, Unit> { return (this.entityManager?.unitMap as Map<number, Unit>) || new Map(); }
     get buildings(): any[] { return (this.terrain && this.terrain.buildings) ? this.terrain.buildings : []; }
 
     // UI/Renderers
@@ -221,26 +225,41 @@ export class Game {
     public projScreenMatrix!: THREE.Matrix4;
 
     // Time & Cycle
-    public gameTime: number;
+    // Time & Cycle (Managed by WorldCycleManager)
+    public worldCycle: WorldCycleManager;
+
+    get gameTime(): number { return this.worldCycle ? this.worldCycle.gameTime : 8.0; }
+    set gameTime(v: number) { if (this.worldCycle) this.worldCycle.gameTime = v; }
+
+    get isNight(): boolean { return this.worldCycle ? this.worldCycle.isNight : false; }
+    set isNight(v: boolean) { if (this.worldCycle) this.worldCycle.isNight = v; }
+
+    get season(): string { return this.worldCycle ? this.worldCycle.season : 'Spring'; }
+    set season(v: string) { if (this.worldCycle) this.worldCycle.season = v; }
+
+    get daysPassed(): number { return this.worldCycle ? this.worldCycle.daysPassed : 0; }
+    set daysPassed(v: number) { if (this.worldCycle) this.worldCycle.daysPassed = v; }
+
+    get currentSeasonIndex(): number { return this.worldCycle ? this.worldCycle.currentSeasonIndex : 0; }
+    set currentSeasonIndex(v: number) { if (this.worldCycle) this.worldCycle.currentSeasonIndex = v; }
+
+    get dayNightSpeed(): number { return this.worldCycle ? this.worldCycle.dayNightSpeed : 0.05; }
+    set dayNightSpeed(v: number) { if (this.worldCycle) this.worldCycle.dayNightSpeed = v; }
+
+    get prevTimeOfDay(): number { return this.worldCycle ? this.worldCycle.prevTimeOfDay : 0; }
+    set prevTimeOfDay(v: number) { if (this.worldCycle) this.worldCycle.prevTimeOfDay = v; }
+
     public gameTotalTime: number;
     public simTotalTimeSec: number;
     public lastTime: number;
     public timeScale: number;
-    public dayNightSpeed: number;
-    public isNight: boolean;
-    public currentSeasonIndex: number;
     public swayIntensity: number = 1.0;
-    public season: string;
-    public daysPassed: number;
-    public prevTimeOfDay: number;
     public lastHeartbeat: number;
     // Missing Properties added for Type Safety
     public battleHotspots: { x: number, z: number, intensity: number, time: number, regionId?: number }[] = [];
     public squadMobilizationTimer: number = 0;
-    public unitMap: Map<number, Unit> = new Map();
-    public requestCheckIndex: number = 0;
-
     public enemyAI!: EnemyAI;
+    public requestCheckIndex: number = 0;
     private _tmpVec: THREE.Vector3;
     public markerTime: number;
     public projectiles: any[];
@@ -280,6 +299,7 @@ export class Game {
 
         this._tmpVec = new THREE.Vector3();
 
+        this.worldCycle = new WorldCycleManager(this);
         this.playerFaction = new FactionManager(this, 'player');
         this.enemyFaction = new FactionManager(this, 'enemy');
 
@@ -293,13 +313,9 @@ export class Game {
         this.isLoading = true;
         this.frameCounter = 0;
 
+        this.entityManager = new EntityManager(this);
         this.requestQueue = [];
-        this.goblins = [];
-        this.fishes = [];
-        this.sheeps = [];
-        this.units = [];
         this.squads = new Map();
-        this.unitMap = new Map();
         this.clippingPlanes = [];
         this.projectiles = [];
         this.raidPoints = [];
@@ -892,11 +908,12 @@ export class Game {
         unit.game = this;
         unit.homeBase = homeBase; // Link
 
-        this.units.push(unit);
-        if (unit.isNaval || role === 'warship') {
-            // console.log(`[Game] !!! WARSHIP SPAWNED !!! ID:${unit.id} at ${x.toFixed(2)},${z.toFixed(2)} Faction:${faction} isNaval:${unit.isNaval}`);
+        unit.homeBase = homeBase; // Link
+        if (this.entityManager) {
+            this.entityManager.register(unit);
+        } else if (Array.isArray(this.units)) {
+            if (!this.units.includes(unit)) this.units.push(unit);
         }
-        if (this.unitMap) this.unitMap.set(unit.id, unit);
 
         // TRIGGER: Newly spawned unit immediately checks for work!
         const canWork = unit.role === 'worker' || unit.role === 'hunter' || unit.role === 'fisher';
@@ -981,163 +998,15 @@ export class Game {
     }
 
     updateEnvironment(deltaTime: number) {
-        this.gameTime += deltaTime * (this.dayNightSpeed || 0.05);
-        if (this.gameTime >= 24) this.gameTime = 0;
-
-        // 1. Calculate Orb Positions (Sun & Moon)
-        const dayAngle = ((this.gameTime - 6) / 12) * Math.PI;
-        const radius = 80;
-        const sunX = Math.cos(dayAngle) * radius;
-        const sunY = Math.sin(dayAngle) * radius;
-        const sunZ = 30;
-
-        const moonAngle = dayAngle + Math.PI;
-        const moonX = Math.cos(moonAngle) * radius;
-        const moonY = Math.sin(moonAngle) * radius;
-        const moonZ = -30;
-
-        // 2. Determine Day/Night State
-        const isNight = (this.gameTime < 6 || this.gameTime >= 18);
-        this.isNight = isNight;
-
-        // 3. Dynamic Color Interpolation (Enhanced Vibe)
-        const nightSky = new THREE.Color(0x000015); // Deep space
-        const dawnSky = new THREE.Color(0xFF8C5A);  // Warm Orange
-        const daySky = new THREE.Color(0x87CEEB);   // Sky Blue
-        const duskSky = new THREE.Color(0x603080);  // Twilight Purple/Orange mix target
-
-        const sunMorning = new THREE.Color(1.0, 0.82, 0.63); // #FFD2A0
-        const sunNoon = new THREE.Color(1.0, 1.0, 0.94);    // #FFFFF0
-        const sunEvening = new THREE.Color(1.0, 0.55, 0.35);  // #FF8C5A
-        const moonColor = new THREE.Color(0xCCCCFF);
-
-        let skyColor = daySky.clone();
-        let lightColor = sunNoon.clone();
-        let lightIntensity = 1.0;
-        let ambientIntensity = 0.5;
-        let ambientColor = new THREE.Color(0xFFFFFF);
-        let targetPos = new THREE.Vector3(sunX, sunY, sunZ);
-
-        // Transition Logic
-        if (this.gameTime >= 4 && this.gameTime < 8) {
-            // Dawn (4:00 - 8:00) - Start earlier for pre-dawn glow
-            const t = (this.gameTime - 4) / 4;
-            skyColor.copy(nightSky).lerp(dawnSky, t);
-            if (t > 0.6) skyColor.lerp(daySky, (t - 0.6) * 2.5);
-
-            lightColor.copy(moonColor).lerp(sunMorning, t);
-            lightIntensity = 0.2 + t * 0.8;
-            ambientIntensity = 0.2 + t * 0.4;
-            ambientColor.lerp(new THREE.Color(0xFFDAB9), t); // Peach tint
-        } else if (this.gameTime >= 8 && this.gameTime < 16) {
-            // Day (8:00 - 16:00)
-            skyColor.copy(daySky);
-            if (this.gameTime < 11) {
-                const t = (this.gameTime - 8) / 3;
-                lightColor.copy(sunMorning).lerp(sunNoon, t);
-            } else if (this.gameTime < 13) {
-                lightColor.copy(sunNoon);
-            } else {
-                const t = (this.gameTime - 13) / 3;
-                lightColor.copy(sunNoon).lerp(sunEvening, t);
-            }
-            lightIntensity = 1.1; // Bright noon
-            ambientIntensity = 0.6;
-        } else if (this.gameTime >= 16 && this.gameTime < 20) {
-            // Dusk (16:00 - 20:00)
-            const t = (this.gameTime - 16) / 4;
-            skyColor.copy(daySky).lerp(new THREE.Color(0xFF4500), t); // Orange
-            if (t > 0.5) skyColor.lerp(nightSky, (t - 0.5) * 2);
-
-            lightColor.copy(sunEvening).lerp(moonColor, t);
-            lightIntensity = 1.0 - t * 0.8;
-            ambientIntensity = 0.6 - t * 0.2; // Smooth transition toward 0.4
-
-            const blueShadow = new THREE.Color(0x404080);
-            ambientColor.lerp(blueShadow, t);
-        } else {
-            // Night (20:00 - 4:00)
-            skyColor.copy(nightSky);
-            lightColor.copy(moonColor);
-
-            // Adjust Moon Intensity based on Height to avoid over-brightness at 23:00
-            // moonY peaks at ~23:50 (angle +PI)
-            const absMoonY = Math.abs(moonY);
-            lightIntensity = 0.35 - (absMoonY / radius) * 0.05; // Slightly lower when moon is high
-
-            ambientIntensity = 0.4; // Base ambient for visibility (was 0.35)
-            ambientColor.setHex(0x252550); // Slightly brighter/bluer night (was 0x202040)
-            targetPos.set(moonX, moonY, moonZ);
+        if (this.worldCycle) {
+            this.worldCycle.updateEnvironment(deltaTime);
         }
-
-        // --- NEW: Sub-horizon Light Inversion (Avoid "flat" look during pre-dawn/post-dusk) ---
-        // If the source is below the ground, mirror it UP but keep the low angle.
-        // This ensures buildings/terrain have shadows even when sun/moon is just below horizon.
-        if (targetPos.y < 5) {
-            // Lerp upward when passing horizon to maintain shading depth
-            const minY = 5.0;
-            if (targetPos.y < 0) targetPos.y = Math.abs(targetPos.y) + minY;
-            else targetPos.y = Math.max(minY, targetPos.y);
-        }
-
-        // Apply to Scene
-        if (this.scene.background instanceof THREE.Color) {
-            this.scene.background.copy(skyColor);
-        }
-        if (this.directionalLight) {
-            this.directionalLight.position.copy(targetPos);
-            this.directionalLight.color.copy(lightColor);
-            this.directionalLight.intensity = lightIntensity;
-        }
-        if (this.ambientLight) {
-            this.ambientLight.intensity = ambientIntensity;
-            // Mix ambient with sky color for atmospheric scattering effect
-            this.ambientLight.color.copy(ambientColor).lerp(skyColor, 0.2);
-        }
-
-        // 4. Sync with WeatherManager (Fog color)
-        if (this.weatherManager) {
-            this.weatherManager.updateSkyColor(skyColor);
-        }
-
-        return isNight;
+        return this.isNight;
     }
 
     updateSeasons(deltaTime) {
-        // Season Config
-        const SEASON_LENGTH_DAYS = 3; // 3 days per season
-        const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
-
-        if (this.currentSeasonIndex === undefined) this.currentSeasonIndex = 0;
-
-        // Detect Day Rollover (timeOfDay wraps 1.0 -> 0.0)
-        // updateEnvironment() runs BEFORE this and updates this.gameTime.
-        // gameTime 0..24 hrs.
-        const currentTimeOfDay = (this.gameTime / 24.0);
-
-        if (this.prevTimeOfDay === undefined) this.prevTimeOfDay = currentTimeOfDay;
-
-        if (currentTimeOfDay < this.prevTimeOfDay) {
-            // New Day
-            this.daysPassed = (this.daysPassed || 0) + 1;
-            console.log(`New Day! Day ${this.daysPassed}. Season: ${SEASONS[this.currentSeasonIndex]}`);
-
-            if (this.daysPassed % SEASON_LENGTH_DAYS === 0) {
-                this.currentSeasonIndex = (this.currentSeasonIndex + 1) % 4;
-                const newSeason = SEASONS[this.currentSeasonIndex];
-                console.log(`Season Changed to: ${newSeason}`);
-
-                // Notify Terrain
-                if (this.terrain) this.terrain.setSeason(newSeason);
-            }
-        }
-        this.prevTimeOfDay = currentTimeOfDay;
-
-        // Initial / Constant Sync
-        const currentSeason = SEASONS[this.currentSeasonIndex];
-        if (this.season !== currentSeason) {
-            this.season = currentSeason;
-            if (this.terrain) this.terrain.setSeason(this.season);
+        if (this.worldCycle) {
+            this.worldCycle.updateSeasons(deltaTime);
         }
     }
 
@@ -2680,8 +2549,7 @@ export class Game {
                         }
 
                         if (unit.isDead && unit.isFinished) {
-                            if (this.unitMap) this.unitMap.delete(unit.id);
-                            this.units.splice(i, 1);
+                            this.entityManager.remove(unit);
                         }
                     }
                 }
@@ -2972,10 +2840,8 @@ export class Game {
                 timestamp: Date.now(),
                 resources: resources,
                 mana: this.mana, // PERSIST MANA
-                gameTime: this.gameTime,
+                worldCycle: this.worldCycle.serialize(),
                 gameTotalTime: this.gameTotalTime,
-                currentSeasonIndex: this.currentSeasonIndex,
-                daysPassed: this.daysPassed,
                 terrain: terrainData,
                 units: unitData,
                 requests: requestData,
@@ -3040,7 +2906,7 @@ export class Game {
             this.simTotalTimeSec = 0;
             this.daysPassed = 0;
             this.isNight = false;
-            this.prevTimeOfDay = 8.0;
+            this.prevTimeOfDay = 8.0 / 24.0;
         }
 
         let preservedSeed: number | null = specificSeed;
@@ -3228,8 +3094,7 @@ export class Game {
                 }
                 if (u.crossMesh) this.scene.remove(u.crossMesh);
             });
-            this.units = [];
-            if (this.unitMap) this.unitMap.clear();
+            this.entityManager?.clear();
         }
 
         if (this.goblinManager) {
@@ -3499,10 +3364,17 @@ export class Game {
             // Level/Season Restoration
             this.currentLevelIndex = saveData.currentLevelIndex || 0;
             this.currentSeed = saveData.currentSeed || null;
-            this.gameTime = saveData.gameTime || 0;
+
+            if (saveData.worldCycle) {
+                this.worldCycle.deserialize(saveData.worldCycle);
+            } else if (saveData.gameTime !== undefined) {
+                // Legacy support
+                this.gameTime = saveData.gameTime;
+                this.currentSeasonIndex = saveData.currentSeasonIndex || 0;
+                this.daysPassed = saveData.daysPassed || 0;
+            }
+
             this.gameTotalTime = saveData.gameTotalTime || 0;
-            this.currentSeasonIndex = saveData.currentSeasonIndex || 0;
-            this.daysPassed = saveData.daysPassed || 0;
 
             // Resource Restoration
             if (saveData.playerFaction) {
@@ -3537,15 +3409,7 @@ export class Game {
             await checkYield();
 
             // Restore Units
-            if (this.units) {
-                this.units.forEach(u => {
-                    if (u.dispose) u.dispose();
-                    this.scene.remove(u.mesh);
-                    if (u.crossMesh) this.scene.remove(u.crossMesh);
-                });
-            }
-            this.units.length = 0; // Clear instead of replace reference
-            this.unitMap.clear();
+            this.entityManager?.clear();
 
             let maxUnitId = -1;
             if (saveData.units) {
@@ -3565,8 +3429,12 @@ export class Game {
                         const uData = saveData.units[i];
                         const u = Unit.deserialize(uData, this.scene, this.terrain);
                         if (u) {
-                            this.units.push(u);
-                            this.unitMap.set(u.id, u);
+                            if (this.entityManager) {
+            this.entityManager.register(u);
+        } else if (Array.isArray(this.units)) {
+            // This case handles manual mocks where .units is a plain array
+            this.units.push(u);
+        }
                             if (u.id > maxUnitId) maxUnitId = u.id;
                         }
                     }
@@ -3981,16 +3849,12 @@ export class Game {
         this.sheeps.forEach(s => { if (s.dispose) s.dispose(); });
         this.projectiles.forEach(p => { if (p.mesh && p.mesh.geometry) p.mesh.geometry.dispose(); });
 
-        this.units = [];
-        this.goblins = [];
-        this.fishes = [];
-        this.sheeps = [];
+        this.entityManager.clear();
         this.requestQueue = [];
         this.clippingPlanes = [];
         this.projectiles = [];
         this.raidPoints = [];
         this.battleHotspots = [];
-        if (this.unitMap) this.unitMap.clear();
         if (this.squads) this.squads.clear();
 
         // 2. Renderer-specific cleanups

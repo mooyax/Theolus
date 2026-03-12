@@ -64,8 +64,7 @@ describe('RequestProactiveManagement', () => {
         const mockScene = new THREE.Scene();
         unit = new Unit(mockScene, terrainMock, 10, 10, 'worker');
         unit.id = 1;
-        game.units = [unit];
-        game.unitMap.set(unit.id, unit);
+        game.entityManager.register(unit);
     });
 
     afterEach(() => {

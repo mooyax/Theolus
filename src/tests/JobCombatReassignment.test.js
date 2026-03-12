@@ -47,9 +47,8 @@ describe('Job Combat Reassignment', () => {
         workerB.id = 2;
         workerB.game = game;
 
-        game.units = [workerA, workerB];
-        game.unitMap.set(1, workerA);
-        game.unitMap.set(2, workerB);
+        game.entityManager.register(workerA);
+        game.entityManager.register(workerB);
     });
 
     it('should allow workerB to snatch a job from workerA if workerA is in Combat', () => {

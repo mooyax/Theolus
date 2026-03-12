@@ -11,9 +11,9 @@ export class GoblinManager {
         this.scene = scene;
         this.terrain = terrain;
         this.game = game; // Renamed from particleManager for clarity
-        this.goblins = [];
+        this.buildings = []; // Caves and Huts
         this.caves = [];
-        this.hutSpawnTimers = new Map(); // Map<Building, float>
+        this.clans = {}; // { clanId: { aggression, active, waveLevel, waveTimer, raidTarget } }
 
         const clips = clippingPlanes || terrain.clippingPlanes || [];
 
@@ -22,7 +22,7 @@ export class GoblinManager {
         this.plunderCount = 0; // Track successful raids
         this.MAX_GOBLINS = 20000; // InstancedMesh allows high count!
         this.clanMemory = {}; // { clanId: [ {x,z,weight,timestamp} ] }
-        this.clans = {}; // { clanId: { aggression, active, waveLevel, waveTimer, raidTarget } }
+        // this.clans = {}; // { clanId: { aggression, active, waveLevel, waveTimer, raidTarget } } // Now a Map
 
         // Initialize Goblin Assets (Renderer handles clipping application now)
         Goblin.initAssets();
@@ -39,23 +39,21 @@ export class GoblinManager {
             this.spawnGoblinAtCave(this.caves[0]);
         }
     }
+    
+    get goblins() {
+        return (this.game && this.game.entityManager) ? this.game.entityManager.goblins : [];
+    }
 
     reset() {
-        console.log("Resetting GoblinManager...");
-        // Clear all goblins
-        for (const g of this.goblins) {
-            if (g.mesh) this.scene.remove(g.mesh);
-            if (g.dispose) g.dispose();
-        }
-        this.goblins = [];
-        this.plunderCount = 0;
-        this.frameCount = 0;
+        // entityManager.clear() is called by Game.ts,
+        // but we might need to clear buildings managed here if they are not in terrain
+        this.clans = {};
+        this.caves = [];
 
         // Caves are managed partly by Terrain restoration.
         // We should clear our reference list. Terrain deserialization will restore 'cave' buildings.
         // But GoblinManager needs to re-link or re-scan?
         // Actually, Terrain treats caves as buildings.
-        // GoblinManager creates separate Cave meshes?
         // Line 26: this.caveGroup = new THREE.Group().
         this.caves.forEach(c => {
             if (c.mesh) this.caveGroup.remove(c.mesh);
@@ -74,6 +72,7 @@ export class GoblinManager {
 
     scanForCaves() {
         // Find existing caves in Terrain
+        if (!this.terrain || !this.terrain.buildings) return;
         this.terrain.buildings.forEach(b => {
             if (b.userData.type === 'cave') {
                 // Create visual/logic wrapper for GoblinManager
@@ -99,7 +98,7 @@ export class GoblinManager {
             clanId: `clan_${building.userData.gridX}_${building.userData.gridZ}`
         };
         building.userData.clanId = cave.clanId; // Ensure building knows its clan
-        // Visuals? 
+        // Visuals?
         // If Terrain renders cave, we don't need to add another mesh.
         // But let's keep logic compatible.
         this.caves.push(cave);
@@ -243,10 +242,10 @@ export class GoblinManager {
 
         // Stress Test Mode: Fast Spawn to 20k
         if (typeof window !== 'undefined' && window.location && window.location.search && window.location.search.includes('stressTest=true')) {
-            if (this.goblins.length < this.MAX_GOBLINS) {
+            if (this.game.goblins.length < this.MAX_GOBLINS) {
                 // Spawn 500 per frame
                 for (let i = 0; i < 500; i++) {
-                    if (this.goblins.length >= this.MAX_GOBLINS) break;
+                    if (this.game.goblins.length >= this.MAX_GOBLINS) break;
                     if (this.caves.length > 0) {
                         const randomCave = this.caves[Math.floor(Math.random() * this.caves.length)];
                         this.spawnGoblinAtCave(randomCave);
@@ -308,7 +307,7 @@ export class GoblinManager {
             cave.spawnCooldown -= deltaTime;
             if (cave.spawnCooldown <= 0) {
                 // Removed hard cap of 50. Use global limit if needed.
-                if (this.goblins.length < (this.MAX_GOBLINS || 20000)) {
+                if (this.game.goblins.length < (this.MAX_GOBLINS || 20000)) {
                     this.spawnGoblinAtCave(cave);
                     cave.spawnCooldown = this.spawnInterval + Math.random() * 5;
                 }
@@ -330,7 +329,7 @@ export class GoblinManager {
         const stagger = Math.max(1, Math.floor(2 / timeScale));
 
         // CULLING LOGIC REMOVED (User Request: Lifespan handles population control)
-        // if (this.goblins.length > (this.MAX_GOBLINS || 1000)) ...
+        // if (this.game.goblins.length > (this.MAX_GOBLINS || 1000)) ...
 
         if (this.frameCount === undefined) this.frameCount = 0;
         this.frameCount++;
@@ -358,7 +357,7 @@ export class GoblinManager {
                 if (!isUrgent) {
                     // FIX: If total goblin count is low (< 50), disable aggressive throttling
                     // so they don't freeze when FPS drops due to high Unit count (e.g. 1500 units).
-                    const lowPop = this.goblins.length < 50;
+                    const lowPop = this.game.goblins.length < 50;
 
                     let interval = 0;
                     // FIX: Relaxed throttling to match Game.js unit logic (Prevents stutter)
@@ -417,9 +416,9 @@ export class GoblinManager {
 
             // 1. Logic Update (Staggered or Throttled-Batch)
             // Note: If we just unthrottled, we run logic NOW regardless of original stagger?
-            // Or we respect stagger? 
+            // Or we respect stagger?
             // Better to decouple throttling from legacy stagger.
-            // If we are here, we are allowed to update. 
+            // If we are here, we are allowed to update.
             // BUT, original logic ran 1/2 frames via parity.
             // If we throttle to 1/30, we definitely want to run logic on that 30th frame.
 
@@ -440,7 +439,7 @@ export class GoblinManager {
             }
 
             if (goblin.isFinished) {
-                this.goblins.splice(i, 1);
+                if (this.game.entityManager) this.game.entityManager.remove(goblin);
             }
         }
         // this.frameCount++; // REMOVED DOUBLE INCREMENT
@@ -457,7 +456,7 @@ export class GoblinManager {
 
         if (!clanId) return;
         if (!this.clans) this.clans = {};
-
+        
         let clan = this.clans[clanId];
         if (!clan) {
             clan = {
@@ -500,7 +499,7 @@ export class GoblinManager {
             if (targetInput) {
                 // User Request: Trigger only after ~3 attacks.
                 clan.aggression = (clan.aggression || 0) + 1.0;
-                console.log(`[GoblinManager] Clan ${clanId} Aggression: ${clan.aggression.toFixed(1)} / 3.0`);
+                console.log(`[GoblinManager] Clan ${clanId} Aggression: ${clan.aggression.toFixed(1)} / 15.0`);
             }
 
             if (clan.aggression >= 15.0) { // Increased from 3.0 (User Request)
@@ -531,7 +530,7 @@ export class GoblinManager {
         const defenseRadius = 30.0; // Check range
         const defenseSq = defenseRadius * defenseRadius;
 
-        for (const goblin of this.goblins) {
+        for (const goblin of this.game.goblins) {
             if (goblin.isDead) continue;
 
             // Check distance to base being attacked
@@ -573,7 +572,6 @@ export class GoblinManager {
             // But aggression only decays if !active. So once active, we need a way to decay too?
             // User requested: "Raid state never leaves".
             // Logic: If active, we should also decay aggression (or separate "War Exhaustion")?
-            // Let's allow decay logic to run even if active, but maybe slower?
             // OR: If active, we check if we should STOP being active.
             if (clan.active) {
                 // Decay aggression while at war too (War Exhaustion)
@@ -625,7 +623,7 @@ export class GoblinManager {
 
         // Progression
         clan.waveLevel++;
-        // Caps logic: Soft cap at 20? 
+        // Caps logic: Soft cap at 20?
         if (clan.waveLevel > 20) clan.waveLevel = 20;
 
         // Reset Timer (Much slower Waves to give player breathing room)
@@ -672,7 +670,7 @@ export class GoblinManager {
         // Or better, passed arguments.
         // Since I cannot change signature easily across all calls without verify,
         // let's check if the caller is the Wave loop.
-        // Actually, we can just say "Waves don't care". 
+        // Actually, we can just say "Waves don't care".
         // But how do we know it is a wave?
         // We can check if `cave.spawnCooldown` is active? No.
 
@@ -728,7 +726,7 @@ export class GoblinManager {
         if (cave.building && cave.building.userData.type === 'cave') {
             neighbors = [
                 { x: 2, z: 0 }, { x: -2, z: 0 }, { x: 0, z: 2 }, { x: 0, z: -2 },
-                { x: 1, z: 1 }, { x: 1, z: -1 }, { x: -1, z: 1 }, { x: -1, z: -1 }, // Diagonals (dist 1.41) - still might be close? Radius 1.2 covers 1.41? 
+                { x: 1, z: 1 }, { x: 1, z: -1 }, { x: -1, z: 1 }, { x: -1, z: -1 }, // Diagonals (dist 1.41) - still might be close? Radius 1.2 covers 1.41?
                 // 1.2 is < 1.41. So diagonals are barely safe.
                 { x: 2, z: 1 }, { x: 2, z: -1 }, { x: -2, z: 1 }, { x: -2, z: -1 },
                 { x: 1, z: 2 }, { x: 1, z: -2 }, { x: -1, z: 2 }, { x: -1, z: -2 }
@@ -781,10 +779,10 @@ export class GoblinManager {
 
         // Create
         const goblin = new Goblin(this.scene, this.terrain, x, z, type, clanId, raidTarget);
-        this.goblins.push(goblin);
-
-        if (this.terrain.registerEntity) {
-            this.terrain.registerEntity(goblin, x, z, 'goblin');
+        if (this.game.entityManager) {
+            this.game.entityManager.register(goblin);
+        } else if (this.game.goblins) {
+            if (!this.game.goblins.includes(goblin)) this.game.goblins.push(goblin);
         }
 
         // console.log(`Goblin spawned at ${x},${z} Type:${type} Clan:${clanId} `);
@@ -807,8 +805,8 @@ export class GoblinManager {
                 // Spawn Threshold: population >= 10.0 (Raised from 5.0 per User Request to reduce normal density)
                 if (b.userData.population >= 10.0) {
                     // Check Global Cap
-                    if (this.goblins.length >= (this.MAX_GOBLINS || 20000)) {
-                        console.log(`[GoblinManager] MAX_GOBLINS reached: ${this.goblins.length}`);
+                    if (this.game.goblins.length >= (this.MAX_GOBLINS || 20000)) {
+                        console.log(`[GoblinManager] MAX_GOBLINS reached: ${this.game.goblins.length}`);
                         return;
                     }
 
@@ -824,7 +822,7 @@ export class GoblinManager {
                     b.userData.population = 0;
                     if (b.population !== undefined) b.population = 0;
 
-                    console.log(`[DEBUG] Goblin born from ${b.userData.type}! Total: ${this.goblins.length}, Remaining population: ${b.userData.population.toFixed(1)}`);
+                    console.log(`[DEBUG] Goblin born from ${b.userData.type}! Total: ${this.game.goblins.length}, Remaining population: ${b.userData.population.toFixed(1)}`);
                 }
             }
         });
@@ -893,7 +891,7 @@ export class GoblinManager {
 
         let count = 0;
         // Iterate all goblins
-        this.goblins.forEach(g => {
+        this.game.goblins.forEach(g => {
             const isIdle = (g.state instanceof Wander);
 
             if (g.clanId === clan.id && !g.isDead && isIdle) {
@@ -947,7 +945,7 @@ export class GoblinManager {
     serialize() {
         return {
             plunderCount: this.plunderCount,
-            goblins: this.goblins.filter(g => g && !g.isDead).map(g => {
+            goblins: this.game.goblins.filter(g => g && !g.isDead).map(g => {
                 if (typeof g.serialize === 'function') {
                     const base = g.serialize();
                     // Add extra context if raiding
@@ -976,14 +974,14 @@ export class GoblinManager {
                     };
                 }
             }),
-            clans: this.clans ? Object.values(this.clans).map(clan => ({
+            clans: Object.values(this.clans).map(clan => ({
                 id: clan.id,
                 active: clan.active,
                 waveLevel: clan.waveLevel,
                 waveTimer: clan.waveTimer,
                 raidTarget: clan.raidTarget,
                 aggression: clan.aggression
-            })) : [],
+            })),
             caves: this.caves.map(c => ({
                 x: c.gridX,
                 z: c.gridZ,
@@ -994,7 +992,7 @@ export class GoblinManager {
     }
 
     // New: Notify clan activity (e.g., a human unit attacked a goblin)
-    notifyClanActivity(clanId, target) {
+    notifyClanActivity(clanId, target = null) {
         if (!clanId) return;
 
         // Get or Create Clan State
@@ -1047,7 +1045,7 @@ export class GoblinManager {
                         id: cd.id,
                         active: cd.active,
                         waveLevel: cd.waveLevel || 1,
-                        waveTimer: cd.waveTimer || 150,
+                        waveTimer: cd.waveTimer || 30, // Changed from 150 to 30 for consistency
                         raidTarget: cd.raidTarget,
                         aggression: cd.aggression !== undefined ? cd.aggression : (cd.active ? 3.0 : 0)
                     };
@@ -1082,13 +1080,7 @@ export class GoblinManager {
             }
 
             // Also clear manager array (Redundant but safe)
-            if (this.goblins) {
-                this.goblins.forEach(g => {
-                    // Try dispose again just in case (though unregisterAll might have handled it)
-                    if (typeof g.dispose === 'function') g.dispose();
-                });
-            }
-            this.goblins = [];
+            // this.goblins = []; // Removed as goblins are managed by EntityManager
 
             if (data.goblins && Array.isArray(data.goblins)) {
                 console.log(`[GoblinLoadDebug] Found ${data.goblins.length} goblins in data.`);
@@ -1160,9 +1152,9 @@ export class GoblinManager {
                             goblin._restoredTargetBuildingPos = gd.tb;
                         }
 
-                        this.goblins.push(goblin);
-                        if (this.terrain && this.terrain.registerEntity) {
-                            this.terrain.registerEntity(goblin, x, z, 'goblin');
+                        // Register via game's EntityManager
+                        if (this.game && this.game.entityManager) {
+                            this.game.entityManager.register(goblin);
                         }
                     } catch (innerError) {
                         console.error(`GoblinManager: Error restoring Goblin ${gd.id}:`, innerError);

@@ -50,7 +50,13 @@ describe('Job Assignment & Continuation', () => {
         // Setup minimal Game environment
         game = Object.create(Game.prototype);
         game.requestQueue = [];
-        game.units = [];
+        game.entityManager = {
+            units: [],
+            getAllUnits: function () { return this.units; },
+            getAllGoblins: () => [],
+            register: function (u) { this.units.push(u); },
+            getById: (id) => game.entityManager.units.find(u => u.id === id)
+        };
         game.forceAssignRequest = vi.fn();
         game.assignRequestSync = vi.fn();
         game.completeRequest = vi.fn((u, req) => { req.status = 'completed'; });
@@ -73,7 +79,7 @@ describe('Job Assignment & Continuation', () => {
             lastPathTime: 0,
             game: game
         };
-        game.units.push(unit);
+        game.entityManager.register(unit);
 
         // Add claimRequest implementation manually if prototype is fully mocked, 
         // but here we want to test the REAL claimRequest in Game.js.
@@ -130,7 +136,7 @@ describe('Job Assignment & Continuation', () => {
             isMoving: true,
             game: game
         };
-        game.units.push(unit2);
+        game.entityManager.register(unit2);
 
         const req = { id: 10, type: 'raise', x: 60, z: 60, status: 'assigned', assignedTo: unit2.id };
         unit2.targetRequest = req;

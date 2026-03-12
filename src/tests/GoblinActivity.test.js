@@ -38,7 +38,7 @@ describe('Goblin Activity & Persistence', () => {
 
         mockGame.terrain = mockTerrain;
 
-        goblinManager = new GoblinManager(mockGame.scene, mockTerrain);
+        goblinManager = new GoblinManager(mockGame.scene, mockTerrain, mockGame);
         mockGame.goblinManager = goblinManager;
     });
 

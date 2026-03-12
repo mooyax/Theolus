@@ -37,7 +37,7 @@ describe('Counter Damage Nerf Verification', () => {
 
         game = new Game(null, mockTerrain, true);
         game.scene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
-        game.goblinManager = new GoblinManager(game.scene, mockTerrain, game.particleManager);
+        game.goblinManager = new GoblinManager(game.scene, mockTerrain, game, []);
     });
 
     afterEach(() => {

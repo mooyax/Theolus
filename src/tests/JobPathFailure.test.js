@@ -26,7 +26,7 @@ describe('Job Pathfinding Failure Handling', () => {
         job = { id: 101, x: 20, z: 0, type: 'build', status: 'assigned', assignedTo: unit.id };
         unit.targetRequest = job;
 
-        mockGame.units = [unit];
+        mockGame.entityManager.register(unit);
         window.game = mockGame;
     });
 

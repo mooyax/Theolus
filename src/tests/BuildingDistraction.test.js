@@ -5,7 +5,14 @@ import { Job, Wander } from '../ai/states/UnitStates.js';
 // Mock Global Window/Game
 const mockGame = {
     gameTime: 100,
-    units: [],
+    entityManager: {
+        units: [],
+        getAllUnits: function () { return this.units; },
+        register: function (u) { this.units.push(u); },
+        clear: function () { this.units = []; },
+        getAllGoblins: () => []
+    },
+    get units() { return this.entityManager.units; },
     buildings: [],
     requests: [],
     isNight: false,
@@ -54,11 +61,11 @@ describe('Building Distraction Bug', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockTerrain.buildings = [];
-        mockGame.units = [];
+        mockGame.entityManager.clear();
 
         // Create Worker Unit
         unit = new Unit(mockScene, mockTerrain, 10, 10, 'worker');
-        mockGame.units.push(unit);
+        mockGame.entityManager.register(unit);
 
     });
     it('should NOT build a house while in Job moving to target', () => {
@@ -74,16 +81,9 @@ describe('Building Distraction Bug', () => {
         unit.canBuildAt = vi.fn(() => true);
         unit.tryBuildStructure = vi.fn(() => true);
 
-        console.log('[Test] Simulating Job Movement...');
-
         // Update loop
         for (let i = 0; i < 60; i++) { // 1 second @ 60fps
             unit.updateLogic(i * 0.16, 0.16);
-
-            // Check if state changed
-            if (unit.state.constructor.name !== 'Job') {
-                console.log(`[Test] State changed to ${unit.state.constructor.name} at frame ${i}`);
-            }
         }
 
         // 3. Assetions
@@ -91,12 +91,6 @@ describe('Building Distraction Bug', () => {
 
         // It SHOULD NOT have called tryBuildStructure
         expect(unit.tryBuildStructure).not.toHaveBeenCalled();
-
-        if (unit.tryBuildStructure.mock.calls.length > 0) {
-            console.log('[Test] FAILED: Worker tried to build while working!');
-        } else {
-            console.log('[Test] PASSED: Worker stayed focused.');
-        }
 
     });
     it('should NOT build immediately after job abort (cooldown check)', () => {
@@ -106,7 +100,6 @@ describe('Building Distraction Bug', () => {
 
         // 2. Switch to WanderState
         unit.changeState(new Wander(unit));
-        console.log(`[Test] Switched to state: ${unit.state.constructor.name}`);
 
         // 3. Mock logic
         unit.canBuildAt = vi.fn(() => true);
@@ -117,20 +110,10 @@ describe('Building Distraction Bug', () => {
 
         // 5. Assert NO Build
         expect(unit.tryBuildStructure).not.toHaveBeenCalled();
-        console.log('[Test] Cooldown prevented building.');
 
         // 6. Fast Forward >> Cooldown (Offset > 5s)
         const futureTime = 12.0; // 12 - 5 = 7s > 5s
         unit.updateLogic(futureTime, 0.1);
 
-        // 7. Assert Build Triggered (Eventually)
-        // Note: This relies on logic that might be dependent on random state or precise timing not mocked perfectly.
-        // We verified the negative case (Cooldown blocked build), which is the fix.
-        /*
-        if (unit.tryBuildStructure.mock.calls.length > 0) {
-             console.log('[Test] Build attempted after cooldown.');
-        }
-        */
-
-});
+    });
 });

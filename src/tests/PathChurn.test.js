@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Unit } from '../Unit.js';
 import { setupTestEnv } from './TestUtils';
@@ -14,7 +13,7 @@ describe('Path Churn / Refetching', () => {
         terrain = env.terrain;
 
         unit = new Unit(mockGame.scene, terrain, 0, 0, 'knight');
-        mockGame.units = [unit];
+        mockGame.entityManager.register(unit);
         window.game = mockGame;
 
         vi.spyOn(unit, 'smartMove');
@@ -41,11 +40,6 @@ describe('Path Churn / Refetching', () => {
         expect(unit.smartMove).toHaveBeenCalledWith(targetX, targetZ, expect.anything());
 
         // 2. Path should NOT be null (It would be null if smartMove(10,10) was called)
-        // Note: strictly speaking, smartMove logic might still fail if 10.6 vs 1 is too far?
-        // But here we mock smartMove? No, spied.
-        // If smartMove implementation runs, it will check distance logic.
-        // At 0,0 vs 1,1 -> OK.
-
         expect(unit.path).not.toBeNull();
 
     });
@@ -61,6 +55,5 @@ describe('Path Churn / Refetching', () => {
 
         // ASSERT: Fallback to integer node
         expect(unit.smartMove).toHaveBeenCalledWith(5, 5, expect.anything());
-
-});
+    });
 });

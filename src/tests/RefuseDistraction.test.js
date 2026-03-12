@@ -30,7 +30,7 @@ describe('Refuse Distraction Reconstructed', () => {
         game = new Game(null, mockTerrain, true);
         unit = new Unit(null, mockTerrain, 10, 10, 'worker');
         unit.id = 1; // Explicit ID
-        game.units = [unit];
+        game.entityManager.register(unit);
         window.game = game;
 
     });
@@ -62,15 +62,12 @@ describe('Refuse Distraction Reconstructed', () => {
         unit.changeState(new Job(unit));
 
         const autoReq = game.addRequest('clear', 15, 15, false);
-        // console.log(`[DEBUG TEST] manualReq:${manualReq.id} manual:${manualReq.isManual} autoReq:${autoReq.id} manual:${autoReq.isManual}`);
 
         const picked = game.findBestRequest(unit);
-        // console.log(`[DEBUG TEST] picked:${picked?.id} manual:${picked?.isManual}`);
 
         if (picked?.id !== manualReq.id) {
             console.log(`[FAILURE] Picked ${picked?.id} instead of ${manualReq.id}`);
         }
         expect(picked?.id).toBe(manualReq.id);
-
-});
+    });
 });

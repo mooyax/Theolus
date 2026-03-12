@@ -37,7 +37,8 @@ describe('Manual Job Snatch Persistence', () => {
         workerB.faction = 'player';
         workerB.game = game;
 
-        game.units = [workerA, workerB];
+        game.entityManager.register(workerA);
+        game.entityManager.register(workerB);
     });
 
     it('should allow worker B to snatch a manual job when worker A is fighting ON TOP of the marker', () => {

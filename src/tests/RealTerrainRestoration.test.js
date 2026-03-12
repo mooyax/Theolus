@@ -91,7 +91,7 @@ describe('Real Terrain Restoration Logic', () => {
 
         const unit = new Unit(game.scene, game.terrain, 10, 10, 'worker');
         unit.id = 100;
-        game.units.push(unit);
+        game.entityManager.register(unit);
 
         const req = game.addRequest('raise', 15, 15, true);
         req.id = 'req_manual_persistent';
@@ -105,11 +105,11 @@ describe('Real Terrain Restoration Logic', () => {
         expect(unit.isMoving).toBe(true);
 
         game.saveGame(1);
-        game.units = [];
+        game.entityManager.clear();
         game.requestQueue = [];
 
         await game.loadGame(1);
-        const restoredUnit = game.units[0];
+        const restoredUnit = game.entityManager.getAllUnits()[0];
 
         expect(restoredUnit).toBeDefined();
         expect(restoredUnit.isMoving).toBe(true);

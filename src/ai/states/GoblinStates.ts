@@ -29,22 +29,27 @@ export class Combat extends CombatStateBase {
     }
 
     protected handleTargetLost() {
+        console.log(`[DEBUG] handleTargetLost called for Goblin ${this.actor.id}`);
         // --- CLAN ACTIVITY CHECK ---
         const manager = (window as any).game ? (window as any).game.goblinManager : null;
         if (manager && manager.clans) {
             const clan = manager.clans[this.actor.clanId];
+            console.log(`[DEBUG] Clan Status: ID=${this.actor.clanId}, Exists=${!!clan}, Active=${clan?.active}`);
             if (clan && !clan.active) {
                 // If clan is inactive, go back to Wander instead of Raid
+                console.log(`[DEBUG] Transitioning to Wander (Clan Inactive)`);
                 this.actor.changeState(new Wander(this.actor));
                 return;
             }
         }
         // Goblins default back to Raid when target is lost
+        console.log(`[DEBUG] Transitioning to Raid`);
         this.actor.changeState(new Raid(this.actor));
     }
 }
 
 export class Build extends State {
+    public name: string = 'Build';
     public buildX: number;
     public buildZ: number;
     public timer: number;
@@ -92,6 +97,7 @@ export class Build extends State {
 }
 
 export class Raid extends State {
+    public name: string = 'Raid';
     public scanTimer: number;
     constructor(actor: IAiActor) {
         super(actor);
@@ -204,6 +210,7 @@ export class Raid extends State {
 }
 
 export class Retreat extends State {
+    public name: string = 'Retreat';
     public cave: any;
     constructor(actor: IAiActor) {
         super(actor);
@@ -244,7 +251,7 @@ export class Retreat extends State {
 
 
 export class Wander extends WanderBase {
-
+    public name: string = 'Wander';
     public scanTimer: number;
     constructor(actor: IAiActor) {
         super(actor);

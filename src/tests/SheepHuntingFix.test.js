@@ -39,7 +39,7 @@ describe('Sheep Hunting Logic & Manager Update Fix', () => {
 
         // Mock SheepManager and setup
         game.sheepManager = new SheepManager(scene, terrain, []);
-        game.units = [];
+        game.entityManager.clear();
     });
 
     it('should remove dead sheep during manager update', () => {
@@ -92,7 +92,7 @@ describe('Sheep Hunting Logic & Manager Update Fix', () => {
 
         const hunter = new Unit(scene, terrain, 10, 10, 'player');
         hunter.role = 'hunter';
-        game.units.push(hunter);
+        game.entityManager.register(hunter);
 
         const deadSheep = new Sheep(scene, terrain, 11, 11);
         deadSheep.isDead = true;

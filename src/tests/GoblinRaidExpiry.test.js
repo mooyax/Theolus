@@ -2,76 +2,45 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GoblinManager } from '../GoblinManager.js';
 import { Goblin } from '../Goblin.js';
 import { Raid, Wander } from '../ai/states/GoblinStates.js';
+import { MockGame, MockTerrain } from './TestHelper';
 import * as THREE from 'three';
 
 describe('Goblin Raid Expiry Persistence', () => {
+    let game;
     let goblinManager;
     let mockTerrain;
     let mockScene;
 
     beforeEach(() => {
-        // Setup Mocks
-        mockScene = {
-            add: vi.fn(),
-            remove: vi.fn(),
-            getObjectByName: vi.fn()
-        };
-        mockTerrain = {
-            logicalWidth: 100,
-            logicalDepth: 100,
-            getTileHeight: vi.fn().mockReturnValue(5),
-            getVisualOffset: vi.fn().mockReturnValue({ x: 0, y: 0 }),
-            gridToWorld: (v) => v,
-            addBuilding: vi.fn().mockReturnValue({ userData: { gridX: 10, gridZ: 10 } }),
-            getBuildingAt: vi.fn(),
-            unregisterAll: vi.fn(),
-            registerEntity: vi.fn(),
-            grid: Array(100).fill(null).map(() => Array(100).fill({ hasBuilding: false })),
-            buildings: [],
-            clippingPlanes: []
-        };
+        game = new MockGame();
+        mockScene = game.scene;
+        mockTerrain = new MockTerrain(100, 100);
+        game.terrain = mockTerrain;
+        
+        window.game = game;
 
-        // Mock window.game for time checks and alert
-        // Avoid directly stubbing 'window' global, instead assign to window.game if it exists
-        if (typeof window !== 'undefined') {
-            window.game = {
-                simTotalTimeSec: 100,
-                terrain: mockTerrain,
-                units: [],
-                buildings: [],
-                requestQueue: [],
-                releaseRequest: vi.fn(),
-                checkExpiredRequests: vi.fn()
-            };
-        }
+        goblinManager = new GoblinManager(mockScene, mockTerrain, game, []);
+        // Clear any auto-generated caves/clans to start fresh
+        goblinManager.clans = {};
+        goblinManager.caves = [];
 
-        // Stub global alert to prevent ReferenceError in catch block
-        vi.stubGlobal('alert', vi.fn());
-
-        // Spy on console.error to see failures
-        vi.spyOn(console, 'error');
-
-        goblinManager = new GoblinManager(mockScene, mockTerrain, {});
-
+        game.goblinManager = goblinManager;
     });
+
     it('should serialize and deserialize raidGoal timestamp', () => {
         // 1. Create Goblin in RaidState with explicit Timestamp
         const goblin = new Goblin(mockScene, mockTerrain, 10, 10, 'normal');
         goblin.id = 1;
-        const raidGoal = { x: 50, z: 50, timestamp: 40.0 }; // Old timestamp (60s ago)
+        const raidGoal = { x: 50, z: 50, timestamp: 40.0 }; // Old timestamp
         goblin.raidGoal = raidGoal;
         goblin.changeState(new Raid(goblin));
-        goblinManager.goblins.push(goblin);
+        game.entityManager.register(goblin);
 
         // 2. Serialize
         const data = goblinManager.serialize();
 
-        // Verify manually first: did we even save it?
-        const serializedGoblin = data.goblins[0];
-        // FAIL CONDITION expectation: serializedGoblin.rg.timestamp is likely undefined currently
-
         // 3. Deserialize
-        const newManager = new GoblinManager(mockScene, mockTerrain, {});
+        const newManager = new GoblinManager(mockScene, mockTerrain, game, []);
         newManager.deserialize(data);
         const restoredGoblin = newManager.goblins[0];
 
@@ -80,17 +49,16 @@ describe('Goblin Raid Expiry Persistence', () => {
         expect(restoredGoblin.state.constructor.name).toBe('Raid');
         expect(restoredGoblin.raidGoal).toBeDefined();
         expect(restoredGoblin.raidGoal.x).toBe(50);
-
-        // This is the CRITICAL Assertion
         expect(restoredGoblin.raidGoal.timestamp).toBe(40.0);
-
     });
+
     it('should expire RaidState after load if timestamp is preserved', () => {
         // Setup serialized data with timestamp (simulating proper save)
         const savedData = {
+            clans: [],
             goblins: [{
-                id: 99, x: 10, z: 10, t: 'normal', s: 'Raid',
-                rg: { x: 50, z: 50, ts: 10.0 } // Use 'ts' as per implementation
+                id: 99, x: 10, z: 10, type: 'normal', state: 'Raid',
+                raidGoal: { x: 50, z: 50, timestamp: 10.0 } 
             }]
         };
 
@@ -101,13 +69,10 @@ describe('Goblin Raid Expiry Persistence', () => {
         expect(goblin.state.constructor.name).toBe('Raid');
 
         // Update
-        // goblin.updateLogic(time, deltaTime)
-        // We need to verify state.update handles the expiry.
-        // We can call state.update directly to bypass intervals
+        game.simTotalTimeSec = 100.0;
         goblin.state.update(100.0, 0.1, [], []);
 
         // Should switch to Wander because 100 - 10 > 60
         expect(goblin.state.constructor.name).toBe('Wander');
-
-});
+    });
 });

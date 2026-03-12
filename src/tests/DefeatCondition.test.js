@@ -6,7 +6,12 @@ import { describe, it, expect, beforeEach } from 'vitest';
 
 class TestableGame {
     constructor() {
-        this.units = [];
+        this.entityManager = {
+            units: [],
+            getAllUnits: function() { return this.units; },
+            register: function(u) { this.units.push(u); },
+            clear: function() { this.units = []; }
+        };
         this.terrain = { buildings: [] };
         this.goblinManager = { goblins: [], caves: [] };
     }
@@ -15,7 +20,8 @@ class TestableGame {
     evaluateWinLoss() {
         // 1. Check Defeat: Player Wiped Out
         // Player Units (Must be alive)
-        const playerUnits = this.units.filter(u => u.faction === 'player' && !u.isDead);
+        const allUnits = this.entityManager.getAllUnits();
+        const playerUnits = allUnits.filter(u => u.faction === 'player' && !u.isDead);
         // Player Buildings (Strictly 'player' faction and NOT destroyed, AND NOT FARM)
         const playerBuildings = this.terrain.buildings.filter(b => {
             const isAlive = (b.hp !== undefined) ? (b.hp > 0) : (b.userData.hp > 0);
@@ -40,13 +46,13 @@ describe('Defeat Condition Logic (Isolated)', () => {
     });
 
     it('Should NOT lose if Player Unit exists', () => {
-        game.units = [{ faction: 'player', isDead: false, id: 1 }];
+        game.entityManager.register({ faction: 'player', isDead: false, id: 1 });
         game.terrain.buildings = [];
         expect(game.evaluateWinLoss()).toBeNull();
     });
 
     it('Should NOT lose if Player House exists (No Units)', () => {
-        game.units = [];
+        game.entityManager.clear();
         game.terrain.buildings = [{
             type: 'house',
             userData: { faction: 'player', hp: 100, type: 'house' },
@@ -56,13 +62,13 @@ describe('Defeat Condition Logic (Isolated)', () => {
     });
 
     it('Should LOSE if No Units and No Buildings', () => {
-        game.units = [];
+        game.entityManager.clear();
         game.terrain.buildings = [];
         expect(game.evaluateWinLoss()).toBe('loss');
     });
 
     it('Should LOSE if No Units and Only Enemy Buildings', () => {
-        game.units = [];
+        game.entityManager.clear();
         game.terrain.buildings = [{
             type: 'house',
             userData: { faction: 'enemy', hp: 100 },
@@ -72,7 +78,7 @@ describe('Defeat Condition Logic (Isolated)', () => {
     });
 
     it('Should LOSE if No Units and Only Farms remain (The User Request)', () => {
-        game.units = [];
+        game.entityManager.clear();
         // Farm is present, but should be ignored by the loss check
         game.terrain.buildings = [{
             type: 'farm',
@@ -83,7 +89,7 @@ describe('Defeat Condition Logic (Isolated)', () => {
     });
 
     it('Should NOT lose if No Units but Barracks remain', () => {
-        game.units = [];
+        game.entityManager.clear();
         game.terrain.buildings = [{
             type: 'barracks',
             userData: { faction: 'player', hp: 100, type: 'barracks' },
@@ -91,4 +97,4 @@ describe('Defeat Condition Logic (Isolated)', () => {
         }];
         expect(game.evaluateWinLoss()).toBeNull();
     });
-});
+});

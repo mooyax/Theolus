@@ -1,4 +1,3 @@
-
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { Unit } from '../Unit.js';
 import { Job, Wander } from '../ai/states/UnitStates.js';
@@ -38,13 +37,13 @@ describe('Unit Interrupt and Resume', () => {
         unit = new Unit(game.scene, terrain, 10, 10, 'worker');
         unit.id = 1;
         unit.game = game;
-        game.units = [unit];
+        game.entityManager.register(unit);
 
     });
     afterEach(() => {
         vi.restoreAllMocks();
-
     });
+
     it('should return to previous movement target after finishing a job', async () => {
         // 1. Initial Move (Long distance)
         const initialTargetX = 80;
@@ -118,6 +117,5 @@ describe('Unit Interrupt and Resume', () => {
         expect(unit.action).toBe('Migrating');
         expect(unit.targetGridX).toBe(90);
         expect(unit.targetGridZ).toBe(90);
-
-});
+    });
 });

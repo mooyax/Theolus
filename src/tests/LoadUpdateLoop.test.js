@@ -106,7 +106,8 @@ describe('Load Update Loop Integration', () => {
 
         const val = localStorage.setItem.mock.calls[0][1];
 
-        game.units = [];
+        // ゲッター経由のため、EntityManager側をクリアする
+        game.entityManager.units.length = 0;
         game.requestQueue = [];
         localStorage.getItem.mockReturnValue(val);
         await game.loadGame(1);

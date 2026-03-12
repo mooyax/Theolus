@@ -34,11 +34,11 @@ describe('Combat Logic Correctness', () => {
         const soldier = new Unit(scene, terrain, 10, 10, 'soldier');
         const goblin = new Goblin(scene, terrain, 12, 10, 'normal');
 
-        game.units = [soldier];
-        game.goblinManager.goblins = [goblin];
+        game.entityManager.register(soldier);
+        game.entityManager.register(goblin);
 
         game.frameCount = 20;
-        soldier.updateLogic(100, 1.0, false, game.units, terrain.buildings, game.goblinManager.goblins);
+        soldier.updateLogic(100, 1.0, false, game.entityManager.getAllUnits(), terrain.buildings, game.entityManager.getAllGoblins());
 
         if (!soldier.targetGoblin) {
             soldier.targetGoblin = goblin;
@@ -58,10 +58,10 @@ describe('Combat Logic Correctness', () => {
         const goblin = new Goblin(scene, terrain, 17, 10, 'normal');
 
         terrain.buildings.push(farm);
-        game.goblinManager.goblins.push(goblin);
+        game.entityManager.register(goblin);
 
         game.frameCount = 14;
-        goblin.updateLogic(100, 1.0, false, game.units, terrain.buildings);
+        goblin.updateLogic(100, 1.0, false, game.entityManager.getAllUnits(), terrain.buildings);
 
         expect(goblin.targetBuilding).toBe(farm);
 

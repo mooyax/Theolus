@@ -70,20 +70,19 @@ describe('Comprehensive Save/Load Integration', () => {
             game.goblinManager.clans[clanId].aggression += 1.0;
         });
         game.goblinManager.clans = {};
-        game.goblinManager.goblins = [];
 
         game.goblinManager.deserialize = vi.fn().mockImplementation((data) => {
             if (data) {
                 if (data.clans) game.goblinManager.clans = data.clans;
                 if (data.goblins) {
-                    game.goblinManager.goblins = data.goblins.map(gd => {
+                    data.goblins.forEach(gd => {
                         const g = new Goblin(game.scene, game.terrain, gd.x || gd.gridX, gd.z || gd.gridZ, gd.type || 'normal', gd.clanId);
                         g.id = gd.id;
                         if (gd.raidGoal) g.raidGoal = gd.raidGoal;
                         if (gd.state && gd.state.includes('Raid')) {
                             g.changeState(new Raid(g));
                         }
-                        return g;
+                        game.entityManager.register(g);
                     });
                 }
             }
@@ -125,15 +124,15 @@ describe('Comprehensive Save/Load Integration', () => {
 
         const worker = new Unit(game.scene, game.terrain, 10, 10, 'worker');
         worker.id = 10;
-        game.units.push(worker);
+        game.entityManager.register(worker);
 
         const knight = new Unit(game.scene, game.terrain, 15, 15, 'knight');
         knight.id = 11;
-        game.units.push(knight);
+        game.entityManager.register(knight);
 
         const specialUnit = new Unit(game.scene, game.terrain, 18, 18, 'worker', true);
         specialUnit.id = 12;
-        game.units.push(specialUnit);
+        game.entityManager.register(specialUnit);
 
         const req = game.addRequest('raise', 20, 20, true);
         req.id = 'req_integrity_1';
@@ -154,7 +153,7 @@ describe('Comprehensive Save/Load Integration', () => {
         goblin.raidGoal = { x: 50, z: 50, timestamp: 100 };
         goblin.changeState(new Raid(goblin));
 
-        game.goblinManager.goblins.push(goblin);
+        game.entityManager.register(goblin);
         game.goblinManager.clans = { 'clan_A': { id: 'clan_A', active: true, aggression: 5.0 } };
 
         const house = {
@@ -167,8 +166,7 @@ describe('Comprehensive Save/Load Integration', () => {
         expect(saveResult).toBe(true);
         const saveString = localStorage.setItem.mock.calls[0][1];
 
-        game.units.length = 0;
-        game.goblinManager.goblins.length = 0;
+        game.entityManager.clear();
         game.requestQueue.length = 0;
         Unit.nextId = 0;
 
@@ -190,14 +188,14 @@ describe('Comprehensive Save/Load Integration', () => {
     it('should ignore unreachable jobs after load', async () => {
         const unit = new Unit(game.scene, game.terrain, 10, 10, 'worker');
         unit.id = 11;
-        game.units.push(unit);
+        game.entityManager.register(unit);
         unit.ignoredTargets.set('req_bad_1', 99999);
 
         game.saveGame(2);
         const setCall = localStorage.setItem.mock.calls.find(call => call[0] === 'god_game_save_2');
         const val = setCall[1];
 
-        game.units = [];
+        game.entityManager.clear();
         localStorage.getItem.mockImplementation((key) => key === 'god_game_save_2' ? val : null);
         await game.loadGame(2);
 

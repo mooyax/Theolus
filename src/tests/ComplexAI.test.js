@@ -49,7 +49,7 @@ describe('Complex AI Scenarios', () => {
             getRandomPointInRegion: () => ({ x: 50, z: 50 })
         };
 
-        game.units = [];
+        game.entityManager.clear();
         game.requestQueue = [];
         game.requestCounter = 0;
 

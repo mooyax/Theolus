@@ -27,6 +27,7 @@ describe('Stabilization Verified', () => {
         unit.id = 0;
 
     });
+
     it('should NOT overwrite Action: Moving with Idle during Wander state self-transition', () => {
         // Setup: Unit is wandering and starts moving
         const state = new Wander(unit);
@@ -42,65 +43,56 @@ describe('Stabilization Verified', () => {
         // Assertion: Action should remain 'Moving' because we added the guard
         expect(unit.action).toBe('Moving');
         expect(unit.isMoving).toBe(true);
-
     });
+
     it('should NOT build on slope (Strict Check)', () => {
         // Setup: Make 5,5 flat (10), but 5,6 slope (12)
         terrain.grid[5][5].height = 10;
         terrain.grid[5][6].height = 12; // 2.0 diff, used to be allowed by tolerance=2.0
 
-        // Mock Population 
-        // 10 Units, 0 Houses -> Needs House (because 10 >= 0 - 2 is true)
+        // Mock Population Need
         for (let i = 0; i < 10; i++) game.spawnUnit(0, 0, 'worker');
+        game.totalPopulation = 10;
 
         // Execute Build
         const built = unit.tryBuildStructure(100);
 
         expect(built).toBe(false); // Should fail due to slope
-
     });
+
     it('should build on flat ground', () => {
-        // Setup: All flat
+        // Setup: All flat ground (already set in beforeEach)
 
         // Mock Population Need (10 Units, 0 Houses)
         for (let i = 0; i < 10; i++) game.spawnUnit(0, 0, 'worker');
+        game.totalPopulation = 10;
 
         // Execute Build
         const built = unit.tryBuildStructure(100);
 
         expect(built).toBe(true);
         // Verify House added
-        const cell = terrain.grid[5][5];
         expect(terrain.buildings.length).toBeGreaterThan(0);
-
     });
+
     it('should NOT build infinite houses (Population Cap Logic)', () => {
-        // Setup: 5 Units, 1 House (Capacity 5)
-        // Rule: CurrentPop (5) >= Capacity (5) - 2 (3) -> True? 
-        // Wait, logic was: if (currentPop >= housingCapacity - 2)
-        // 5 >= 3 is True. So it will build buffer.
-
-        // Let's try: 5 Units, 2 Houses (Capacity 10)
-        // 5 >= 10 - 2 (8) -> False. Should NOT build.
-
+        // Setup: 5 Units
         for (let i = 0; i < 5; i++) game.spawnUnit(0, 0, 'worker');
-
-        // House 1
-        terrain.addBuilding('house', 0, 0);
-        // House 2
-        terrain.addBuilding('house', 2, 2);
+        game.totalPopulation = 5;
 
         // Satisfy Farm Requirement (Need 1 per 5 units = 1 farm)
         terrain.addBuilding('farm', 4, 4);
 
-        // Update capacity in mock? MockTerrain objects have userData
-        terrain.buildings[0].userData.capacity = 5;
-        terrain.buildings[1].userData.capacity = 5;
+        // Add 2 houses (Base 10 + 2*5 = 20 capacity)
+        terrain.addBuilding('house', 0, 0);
+        terrain.addBuilding('house', 2, 2);
 
-        const built = unit.tryBuildStructure(100);
+        // Update capacity values in mock data
+        terrain.buildings.filter(b => b.userData.type === 'house').forEach(h => h.userData.capacity = 5);
 
-        expect(built).toBe(false); // Population satisfaction met
+        const builtAgain = unit.tryBuildStructure(100);
 
-
-});
+        // Result: currentPop(5) + 3 buffer = 8. Capacity(20) is > 8. No build.
+        expect(builtAgain).toBe(false); 
+    });
 });

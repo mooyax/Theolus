@@ -35,13 +35,14 @@ describe('Complex Job Interaction and Cancellation', () => {
             getRandomPassablePointInRegion: vi.fn().mockReturnValue({ x: 5, z: 5 }),
             getRandomPointInRegion: vi.fn().mockReturnValue({ x: 5, z: 5 }),
             checkFlatArea: vi.fn().mockReturnValue(true),
+            generateRandomTerrain: vi.fn().mockResolvedValue(true),
             clippingPlanes: []
         };
 
         unit = new Unit(mockScene, mockTerrain, 0, 0, 'worker');
         unit.id = 1;
         mockGame = new Game(mockScene, mockTerrain);
-        mockGame.units = [unit];
+        mockGame.entityManager.register(unit);
         window.game = mockGame;
     });
 

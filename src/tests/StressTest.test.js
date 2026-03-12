@@ -93,7 +93,7 @@ describe('Large Scale Stress Testing (Phase 26)', () => {
 
         game = new Game(null, mockTerrain, true);
         window.game = game;
-        game.goblinManager = new GoblinManager(game.scene, game.terrain, game.particleManager);
+        game.goblinManager = new GoblinManager(game.scene, game.terrain, game, []);
     });
 
     afterEach(() => {
@@ -109,7 +109,7 @@ describe('Large Scale Stress Testing (Phase 26)', () => {
 
         for (let i = 0; i < UNIT_COUNT; i++) {
             const u = new Unit(game.scene, game.terrain, 10, 10, 'worker');
-            game.units.push(u);
+            game.entityManager.register(u);
         }
 
         for (let i = 0; i < GOBLIN_COUNT; i++) {
@@ -136,7 +136,7 @@ describe('Large Scale Stress Testing (Phase 26)', () => {
     });
 
     it('should complete a 60-second simulation with 100 colliding entities (Chaos Test)', async () => {
-        for (let i = 0; i < 50; i++) game.units.push(new Unit(game.scene, game.terrain, 50, 50, 'knight'));
+        for (let i = 0; i < 50; i++) game.entityManager.register(new Unit(game.scene, game.terrain, 50, 50, 'knight'));
         for (let i = 0; i < 50; i++) game.goblinManager.spawnGoblin(10 + i * 2, 10 + i * 2, 'clan_chaos');
 
         const CHUNK_MS = 1000;

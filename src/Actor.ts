@@ -916,10 +916,16 @@ export class Actor extends Entity {
         const h = this.terrain.getTileHeight(x, z);
         if (h <= 0) return false;
         const curH = this.terrain.getTileHeight(this.gridX, this.gridZ);
-        return Math.abs(h - curH) <= 3.0;
+        return Math.abs(h - curH) <= 6.0;
     }
 
     executeMove(tx: number, tz: number, time: number) {
+        if (this.terrain && typeof this.terrain.getMovementCost === 'function') {
+            const terrainCost = this.terrain.getMovementCost(tx, tz, this.gridX, this.gridZ, this.isNaval);
+            const envMultiplier = this.game?.worldCycle?.getMovementMultiplier() || 1.0;
+            // The cost is the duration to cross one tile. Lower multiplier = slower = higher duration.
+            this.moveDuration = terrainCost / envMultiplier;
+        }
         this.startMove(tx, tz, time);
     }
 

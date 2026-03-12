@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GoblinManager } from '../GoblinManager.js';
+import { MockGame, MockTerrain } from './TestHelper';
 
 describe('Goblin Raid Threshold', () => {
     let goblinManager;
@@ -7,22 +8,14 @@ describe('Goblin Raid Threshold', () => {
     let mockScene;
 
     beforeEach(() => {
-        mockScene = {
-            add: vi.fn(),
-            remove: vi.fn(),
-            getObjectByName: vi.fn()
-        };
-        mockTerrain = {
-            logicalWidth: 100,
-            logicalDepth: 100,
-            getTileHeight: vi.fn().mockReturnValue(5), // Valid height
-            addBuilding: vi.fn().mockReturnValue({ userData: { gridX: 10, gridZ: 10 } }), // Returns valid building
-            grid: Array(100).fill(null).map(() => Array(100).fill({ hasBuilding: false })),
-            buildings: [],
-            clippingPlanes: []
-        };
+        const game = new MockGame();
+        mockScene = game.scene;
+        mockTerrain = new MockTerrain(100, 100);
+        game.terrain = mockTerrain;
+        window.game = game;
 
-        goblinManager = new GoblinManager(mockScene, mockTerrain, {});
+        goblinManager = new GoblinManager(mockScene, mockTerrain, game);
+        game.goblinManager = goblinManager;
         // Clear any auto-generated caves/clans to start fresh
         goblinManager.clans = {};
         goblinManager.caves = [];

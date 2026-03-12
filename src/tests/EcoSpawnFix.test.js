@@ -83,7 +83,8 @@ describe('Economy and Spawning Fix Verification', () => {
         game.terrain.addBuilding('house', 10, 10, true, false, 'player');
 
         // 1. Setup a goblin hut
-        game.goblinManager.goblins = []; // Clear debug goblins
+        // ゲッター経由のため、EntityManager側をクリアする
+        game.entityManager.goblins.length = 0;
         game.terrain.addBuilding('goblin_hut', 20, 20, false, false, 'enemy');
         const hut = game.terrain.buildings.find(b => b.userData.type === 'goblin_hut');
         expect(hut).toBeDefined();

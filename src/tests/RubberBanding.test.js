@@ -33,7 +33,12 @@ describe('Rubber-banding and Chaining Verification', () => {
         mockGame = {
             simTotalTimeSec: 0,
             requestQueue: [],
-            units: [],
+            entityManager: {
+                units: [],
+                getAllUnits: function () { return this.units; },
+                register: function (u) { this.units.push(u); },
+                getAllGoblins: () => []
+            },
             claimRequest: vi.fn((u, req) => {
                 u.targetRequest = req;
                 u.changeState(new Job(u));
@@ -47,7 +52,7 @@ describe('Rubber-banding and Chaining Verification', () => {
 
         unit = new Unit({ add: vi.fn() }, terrain, 10, 10, 'worker');
         unit.game = mockGame;
-        mockGame.units = [unit];
+        mockGame.entityManager.register(unit);
         unit.workOnRequest = vi.fn((req) => { req.status = 'completed'; });
     });
 

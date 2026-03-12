@@ -25,7 +25,7 @@ vi.mock('../rendering/CloudManager.js', () => ({ CloudManager: class { construct
 vi.mock('../BirdManager.js', () => ({ BirdManager: class { constructor() { this.update = vi.fn(); } } }));
 vi.mock('../ai/BirdManager.js', () => ({ BirdManager: class { constructor() { this.update = vi.fn(); } } }));
 vi.mock('../ai/SheepManager.js', () => ({ SheepManager: class { constructor() { this.reset = vi.fn(); this.initSheeps = vi.fn(); this.update = vi.fn(); } } }));
-vi.mock('../ai/GoblinManager.js', () => ({ GoblinManager: class { constructor() { this.reset = vi.fn(); this.generateCaves = vi.fn(); this.update = vi.fn(); this.goblins = []; } } }));
+vi.mock('../ai/GoblinManager.js', () => ({ GoblinManager: class { constructor() { this.reset = vi.fn(); this.generateCaves = vi.fn(); this.update = vi.fn(); } } }));
 vi.mock('../ai/FishManager.js', () => ({ FishManager: class { constructor() { this.reset = vi.fn(); this.init = vi.fn(); this.update = vi.fn(); } } }));
 vi.mock('../ui/Minimap.js', () => ({ Minimap: class { constructor() { this.update = vi.fn(); } } }));
 vi.mock('../ui/Compass.js', () => ({ Compass: class { constructor() { this.update = vi.fn(); } } }));

@@ -28,7 +28,7 @@ describe('Win/Loss Condition Logic', () => {
     });
     it('should return "loss" when player units and buildings are all gone', () => {
         // Setup: No player units
-        game.units = [];
+        game.entityManager.clear();
 
         // Setup: Only enemy buildings (caves) exist
         const cave = new Building(scene, game.terrain, 'cave', 10, 10);
@@ -43,7 +43,7 @@ describe('Win/Loss Condition Logic', () => {
 
     });
     it('should NOT return "loss" if player still has a building', () => {
-        game.units = [];
+        game.entityManager.clear();
 
         const house = new Building(scene, game.terrain, 'house', 5, 5);
         house.userData.faction = 'player';
@@ -59,7 +59,7 @@ describe('Win/Loss Condition Logic', () => {
 
     });
     it('should return "loss" even if ancient ruins exist (they should be neutral)', () => {
-        game.units = [];
+        game.entityManager.clear();
 
         // Use addBuilding to reflect real bug (defaults to 'player')
         game.terrain.addBuilding('ancient_ruin', 2, 2);
@@ -104,17 +104,17 @@ describe('Win/Loss Condition Logic', () => {
     });
     it('should return "win" when all enemies (goblins, caves, huts, units) are gone', () => {
         // Player exists
-        const worker = { faction: 'player', isDead: false };
-        game.units = [worker];
+        const worker = { id: 1, type: 'unit', role: 'worker', faction: 'player', isDead: false };
+        game.entityManager.clear();
+        game.entityManager.register(worker);
 
         // No enemies in managers
-        if (game.goblinManager) {
-            game.goblinManager.goblins = [];
-            game.goblinManager.caves = [];
-        }
+        // ( g.e.clear() already cleared them if they were there )
 
-        // No enemy buildings/units
+        // No enemy buildings/units/caves
         game.terrain.buildings = [];
+        // GoblinManager のコンストラクタで生成された caves もクリアする
+        if (game.goblinManager) game.goblinManager.caves = [];
 
         const result = game.evaluateWinLoss();
         expect(result).toBe('win');

@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
@@ -35,7 +34,12 @@ class MockGame {
     constructor() {
         this.simTotalTimeSec = 100;
         this.frameCount = 0;
-        this.units = [];
+        this.entityManager = {
+            units: [],
+            getAllUnits: function () { return this.units; },
+            register: function (u) { this.units.push(u); },
+            getAllGoblins: () => []
+        };
         this.requestQueue = [];
     }
     findBestRequest(unit) {
@@ -64,7 +68,7 @@ class MockGame {
     }
 }
 
-describe('Worker Oscillation Debug', () => {
+describe('Worker Oscillation Stale Debug', () => {
     let unit, terrain, game;
 
     beforeEach(() => {
@@ -74,7 +78,7 @@ describe('Worker Oscillation Debug', () => {
         unit = new Unit(new THREE.Scene(), terrain, 10, 10, 'worker');
         unit.game = game;
         unit.id = 1;
-        game.units.push(unit);
+        game.entityManager.register(unit);
 
     });
     it('should clear isUnreachable flag when entering new job', async () => {
@@ -93,9 +97,6 @@ describe('Worker Oscillation Debug', () => {
         unit.updateLogic(game.simTotalTimeSec + 0.1, 0.1); // Process fail
 
         // Expect false because Job exit -> WanderState enter -> smartMove clears it!
-        // This confirms that the system naturally clears the flag, preventing oscillation loop.
-        // Flag remains true because we throttled and haven't started new pathfinding yet
-        // Flag is cleared by Job when handling the failure
         expect(unit.isUnreachable).toBe(false);
         expect(unit.targetRequest).toBeNull(); // Dropped
 
@@ -105,7 +106,6 @@ describe('Worker Oscillation Debug', () => {
         unit.changeState(new Job(unit));
 
         // CRITICAL CHECK: Entering Job should have cleared isUnreachable
-        // Should be false now.
         expect(unit.isUnreachable).toBe(false);
 
         // 3. Process Job B
@@ -113,6 +113,5 @@ describe('Worker Oscillation Debug', () => {
 
         // If flag was stale (true), it would be dropped here.
         expect(unit.targetRequest).toBe(reqB);
-
-});
+    });
 });

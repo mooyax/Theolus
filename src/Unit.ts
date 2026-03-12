@@ -1228,8 +1228,8 @@ export class Unit extends Actor implements IAiActor {
         }
 
         // Slope check
-        // Aligned with pathfindingWorker (3.0)
-        if (Math.abs(targetHeight - currentHeight) > 3.0) {
+        // Aligned with pathfindingWorker (6.0)
+        if (Math.abs(targetHeight - currentHeight) > 6.0) {
             // console.log(`[Unit ${this.id}] Blocked by Slope at ${checkX},${checkZ} H:${currentHeight}->${targetHeight}`); // Removed debug log
             return false;
         }
@@ -1362,8 +1362,9 @@ export class Unit extends Actor implements IAiActor {
                     if (!isInterfered) {
                         const amount = (economy && economy.fisherAmount) || 1.0;
                         const multiplier = (this.role === 'warship') ? 2.0 : 1.0;
-                        manager.addResources('fish', amount * multiplier);
-                        manager.addResources('food', amount * multiplier);
+                        const harvestMultiplier = (window as any).game?.worldCycle?.getHarvestMultiplier() || 1.0;
+                        manager.addResources('fish', amount * multiplier * harvestMultiplier);
+                        manager.addResources('food', amount * multiplier * harvestMultiplier);
                         this.lastGatherTime = time;
                     } else {
                         if (this.id === 0 || Math.random() < 0.05) {
@@ -1373,8 +1374,9 @@ export class Unit extends Actor implements IAiActor {
                 }
                 if (foundForest && this.role === 'hunter') {
                     const amount = (economy && economy.hunterAmount) || 4.0;
-                    manager.addResources('meat', amount);
-                    manager.addResources('food', amount);
+                    const harvestMultiplier = (window as any).game?.worldCycle?.getHarvestMultiplier() || 1.0;
+                    manager.addResources('meat', amount * harvestMultiplier);
+                    manager.addResources('food', amount * harvestMultiplier);
                     this.lastGatherTime = time;
                 }
             } else if (game.resources) {
@@ -1382,12 +1384,14 @@ export class Unit extends Actor implements IAiActor {
                 if (foundWater && (this.role === 'fisher' || this.role === 'warship') && !isInterfered) {
                     const amount = (economy && economy.fisherAmount) || 1.0;
                     const multiplier = (this.role === 'warship') ? 2.0 : 1.0;
-                    game.resources.fish = (game.resources.fish || 0) + amount * multiplier;
+                    const harvestMultiplier = (window as any).game?.worldCycle?.getHarvestMultiplier() || 1.0;
+                    game.resources.fish = (game.resources.fish || 0) + amount * multiplier * harvestMultiplier;
                     this.lastGatherTime = time;
                 }
                 if (foundForest && this.role === 'hunter') {
                     const amount = (economy && economy.hunterAmount) || 4.0;
-                    game.resources.meat = (game.resources.meat || 0) + amount;
+                    const harvestMultiplier = (window as any).game?.worldCycle?.getHarvestMultiplier() || 1.0;
+                    game.resources.meat = (game.resources.meat || 0) + amount * harvestMultiplier;
                     this.lastGatherTime = time;
                 }
             }

@@ -42,16 +42,16 @@ describe('Faction Persistence and Logic', () => {
         const call = localStorage.setItem.mock.calls.find(c => c[0] === 'god_game_save_1');
         const val = call[1];
 
-        game.units = [];
+        game.entityManager.clear();
         game.terrain.buildings = [];
         localStorage.getItem.mockReturnValue(val);
 
         const success = await game.loadGame(1);
         expect(success).toBe(true);
 
-        expect(game.units.length).toBe(2);
-        const restoredPlayerUnit = game.units.find(u => u.role === 'worker');
-        const restoredEnemyUnit = game.units.find(u => u.role === 'knight');
+        expect(game.entityManager.getAllUnits().length).toBe(2);
+        const restoredPlayerUnit = game.entityManager.getAllUnits().find(u => u.role === 'worker');
+        const restoredEnemyUnit = game.entityManager.getAllUnits().find(u => u.role === 'knight');
 
         expect(restoredPlayerUnit.faction).toBe('player');
         expect(restoredEnemyUnit.faction).toBe('enemy');

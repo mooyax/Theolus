@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as THREE from 'three';
 import { GoblinManager } from '../GoblinManager.js';
+import { MockGame } from './TestHelper.ts';
 
 vi.mock('../Goblin.js', () => {
     return {
@@ -54,7 +55,8 @@ describe('GoblinManager Cave Persistence', () => {
         }
 
         vi.spyOn(GoblinManager.prototype, 'generateCaves').mockImplementation(() => { });
-        manager = new GoblinManager(mockScene, mockTerrain, {}, []);
+        const mockGame = new MockGame();
+        manager = new GoblinManager(mockScene, mockTerrain, mockGame, []);
         manager.caves = [];
         manager.caveGroup = new THREE.Group();
     });

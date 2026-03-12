@@ -61,16 +61,37 @@ describe('Goblin Encounter Logic', () => {
             }))
         );
 
-        game = {
-            simTotalTimeSec: 0,
+        const entityManager = {
             units: [],
+            goblins: [],
+            register: vi.fn((e) => {
+                if (e.type === 'unit') entityManager.units.push(e);
+                if (e.type === 'goblin') entityManager.goblins.push(e);
+            }),
+            remove: vi.fn((e) => {
+                entityManager.units = entityManager.units.filter(u => u !== e);
+                entityManager.goblins = entityManager.goblins.filter(g => g !== e);
+            }),
+            clear: vi.fn(() => {
+                entityManager.units = [];
+                entityManager.goblins = [];
+            }),
+            getAllUnits: vi.fn(() => entityManager.units),
+            getAllGoblins: vi.fn(() => entityManager.goblins)
+        };
+
+        game = {
+            entityManager,
+            get units() { return entityManager.units; },
+            get goblins() { return entityManager.goblins; },
             buildings: [],
             goblinManager: {
-                goblins: [],
+                get goblins() { return entityManager.goblins; },
                 notifyClanActivity: vi.fn()
             },
             unitScanBudget: 1000,
-            frameCount: 0
+            frameCount: 0,
+            simTotalTimeSec: 0
         };
         window.game = game;
     });
@@ -84,8 +105,8 @@ describe('Goblin Encounter Logic', () => {
         worker.hp = 1000;
         worker.maxHp = 1000;
 
-        game.goblinManager.goblins.push(goblin);
-        game.units.push(worker);
+        game.entityManager.register(goblin);
+        game.entityManager.register(worker);
         goblin.game = game;
         worker.game = game;
 
@@ -117,13 +138,13 @@ describe('Goblin Encounter Logic', () => {
     it('Goblin should prioritize Worker if Building is far, or attack Building if close', () => {
         const goblin = new Goblin(scene, terrain, 20, 20, 'normal', 'clan1');
         goblin.id = 101;
-        game.goblinManager.goblins.push(goblin);
+        game.entityManager.register(goblin);
 
         const worker = new Unit(scene, terrain, 30, 20, 'worker');
         worker.id = 201;
         worker.hp = 1000;
         worker.maxHp = 1000;
-        game.units.push(worker);
+        game.entityManager.register(worker);
 
         const building = {
             userData: { type: 'house', hp: 100, population: 5, gridX: 50, gridZ: 20 },
@@ -152,7 +173,7 @@ describe('Goblin Encounter Logic', () => {
     it('Goblin should switch target to Worker if it encounters one while moving to a far Building', () => {
         const goblin = new Goblin(scene, terrain, 20, 20, 'normal', 'clan1');
         goblin.id = 102;
-        game.goblinManager.goblins.push(goblin);
+        game.entityManager.register(goblin);
 
         const building = { userData: { type: 'house', hp: 100, population: 5, gridX: 70, gridZ: 20 }, gridX: 70, gridZ: 20, id: 302, type: 'building' };
         terrain.registerEntity(building, 70, 20, 'building');
@@ -166,7 +187,7 @@ describe('Goblin Encounter Logic', () => {
         worker.id = 202;
         worker.hp = 1000;
         worker.maxHp = 1000;
-        game.units.push(worker);
+        game.entityManager.register(worker);
 
         const dt = 0.1;
         for (let i = 0; i < 20; i++) {

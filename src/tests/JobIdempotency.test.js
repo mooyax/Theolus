@@ -93,7 +93,7 @@ describe('Job Assignment Idempotency', () => {
         mockUnit.id = 1;
         mockJob = { id: 101, x: 20, z: 0, type: 'build', status: 'pending' };
         mockGame = new Game(mockScene, mockTerrain);
-        mockGame.units = [mockUnit];
+        mockGame.entityManager.register(mockUnit);
         mockGame.requestQueue = [mockJob];
 
         // Suppress alert in tests

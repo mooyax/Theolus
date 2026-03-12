@@ -1,9 +1,10 @@
-import * as THREE from 'three';
 import { vi } from 'vitest';
+import { EntityManager } from '../EntityManager';
 
 export class MockGame {
     public simTotalTimeSec: number;
-    public units: any[];
+    public entityManager: EntityManager;
+    get units(): any[] { return this.entityManager.units; }
     public requestQueue: any[];
     public squads: Map<number, any>;
     public playerFaction: any;
@@ -15,6 +16,8 @@ export class MockGame {
     get resources(): { grain: number, fish: number, meat: number, food: number } { return this.playerFaction.resources; }
     set resources(v: any) { this.playerFaction.resources = v; }
 
+    get goblins(): any[] { return this.entityManager.goblins; }
+    get unitMap(): Map<number, any> { return this.entityManager.unitMap; }
     get totalPopulation(): number { return this.playerFaction.totalPopulation; }
     set totalPopulation(v: number) { this.playerFaction.totalPopulation = v; }
 
@@ -26,9 +29,7 @@ export class MockGame {
     public terrain: any;
     public scene: any;
     public goblinManager: any;
-    public goblins: any[];
     public battleHotspots?: any[];
-    public unitMap: Map<number, any>;
     public buildings: any[];
     public handleBuildingSpawn: any;
     public minimal: boolean;
@@ -36,7 +37,7 @@ export class MockGame {
     constructor() {
         this.minimal = true;
         this.simTotalTimeSec = 100;
-        this.units = [];
+        this.entityManager = new EntityManager(this);
         this.requestQueue = [];
         this.squads = new Map();
 
@@ -70,9 +71,7 @@ export class MockGame {
 
         this.frameCount = 0;
         this.unitScanBudget = 1000;
-        this.unitMap = new Map();
         this.buildings = [];
-        this.goblins = [];
         this.terrain = null;
         this.scene = {
             add: vi.fn(),
@@ -95,15 +94,17 @@ export class MockGame {
             id: this.units.length,
             gridX: x,
             gridZ: z,
+            type: 'unit',
             role: roleOrSpecial || 'worker',
             isDead: false,
             targetRequest: null,
             action: 'Idle',
             faction: 'player',
-            ignoredTargets: new Map()
+            ignoredTargets: new Map(),
+            takeDamage: vi.fn(),
+            dispose: vi.fn()
         };
-        this.units.push(unit);
-        this.totalPopulation = this.units.length; // Sync pop for tests
+        this.entityManager.register(unit);
         return unit;
     }
 
@@ -325,7 +326,7 @@ export class MockTerrain {
         return b;
     }
 
-    async generateRandomTerrain(isPreview = false) { return; }
+    async generateRandomTerrain(isPreview = false) { return Promise.resolve(); }
     setHeight(x: number, z: number, h: number) {
         if (this.grid[x] && this.grid[x][z]) this.grid[x][z].height = h;
     }
@@ -357,11 +358,27 @@ export class MockTerrain {
         }
     }
 
-    getRegion(x: number, z: number) { return 1; }
+    getRegion(x: number, z: number) {
+        const lx = Math.round(x);
+        const lz = Math.round(z);
+        if (this.grid[lx] && this.grid[lx][lz]) return this.grid[lx][lz].regionId;
+        return 1;
+    }
     findPath(sx: number, sz: number, ex: number, ez: number) { return [{ x: ex, z: ez }]; }
     async findPathAsync(sx: number, sz: number, ex: number, ez: number) { return [{ x: ex, z: ez }]; }
     getInterpolatedHeight(x: number, z: number) { return this.getTileHeight(x, z); }
     isValidGrid(x: number, z: number) { return x >= 0 && x < this.logicalWidth && z >= 0 && z < this.logicalDepth; }
+    getMovementCost(tx: number, tz: number, sx: number, sz: number, isNaval: boolean) { return 1.0; }
+    isAdjacentToRegion(x: number, z: number, regionId: number, radius: number = 1) {
+        for (let dx = -radius; dx <= radius; dx++) {
+            for (let dz = -radius; dz <= radius; dz++) {
+                const nx = Math.round(x + dx);
+                const nz = Math.round(z + dz);
+                if (this.isValidGrid(nx, nz) && this.getRegion(nx, nz) === regionId) return true;
+            }
+        }
+        return false;
+    }
     initEntityGrid() { }
     checkFlatArea(x: number, z: number, size: number, tolerance: number = 0.1) {
         // Mock Implementation mirroring logic
@@ -382,4 +399,10 @@ export class MockTerrain {
     getRandomPassablePointInRegion(regionId: number, cx: number, cz: number, radius: number) { return { x: cx, z: cz }; }
     modifyMoisture(x: number, z: number, amount: number) { }
     getBuildingSize(type: string) { return 2; }
+    getBuildingAt(x: number, z: number) {
+        const lx = Math.round(x);
+        const lz = Math.round(z);
+        if (this.grid[lx] && this.grid[lx][lz]) return this.grid[lx][lz].building;
+        return null;
+    }
 }

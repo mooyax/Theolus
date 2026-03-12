@@ -29,7 +29,7 @@ describe('Building Logic', () => {
         // 5 >= 10 - 2 (8) => False.
 
         // Setup 5 Units
-        game.units = [];
+        game.entityManager.clear();
         for (let i = 0; i < 5; i++) {
             game.spawnUnit(0, 0, 'worker');
         }
@@ -48,13 +48,11 @@ describe('Building Logic', () => {
 
     });
     it('should build house if population > 8 (with Base Cap 10)', () => {
-        game.units = [];
+        game.entityManager.clear();
         for (let i = 0; i < 9; i++) game.spawnUnit(0, 0, 'worker'); // 9 Units
         terrain.buildings = []; // Base Cap 10
 
         const built = unit.tryBuildStructure(100);
         expect(built).toBe(true);
-
-
-});
+    });
 });

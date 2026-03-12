@@ -102,7 +102,13 @@ export class Building extends Entity {
     handleGrowth(deltaTime: number) {
         const config = GameConfig.buildings[this.type];
         if (!config || config.growthRate === undefined) return;
-        const rate = config.growthRate;
+        let rate = config.growthRate;
+        if (this.type === 'farm') {
+            const game = (window as any).game;
+            if (game && game.worldCycle) {
+                rate *= game.worldCycle.getHarvestMultiplier();
+            }
+        }
         const cap = (config.capacity !== undefined) ? config.capacity : 10;
         if (this.population < cap) {
             this.population = Math.min(cap, this.population + rate * deltaTime);

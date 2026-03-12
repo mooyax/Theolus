@@ -30,7 +30,7 @@ describe('Goblin Hut Spawning', () => {
         mockGame.terrain = mockTerrain;
         global.window.game = mockGame;
 
-        goblinManager = new GoblinManager(mockGame.scene, mockTerrain);
+        goblinManager = new GoblinManager(mockGame.scene, mockTerrain, mockGame);
         mockGame.goblinManager = goblinManager;
         vi.spyOn(Math, 'random').mockReturnValue(0.5);
     });
@@ -70,7 +70,9 @@ describe('Goblin Hut Spawning', () => {
             userData: { type: 'goblin_hut', population: 10.5, gridX: 10, gridZ: 10 }
         };
         mockTerrain.buildings = [hut];
-        goblinManager.goblins = Array(300).fill({});
+        for (let i = 0; i < 300; i++) {
+            mockGame.entityManager.register({ id: i, type: 'goblin' });
+        }
         goblinManager.MAX_GOBLINS = 300;
 
         const spawnSpy = vi.spyOn(goblinManager, 'spawnGoblinAtCave');

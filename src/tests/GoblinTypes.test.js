@@ -54,7 +54,7 @@ describe('Goblin Types & Stats', () => {
     });
 
     it('should correctly spawn types based on random probability', () => {
-        const gm = new GoblinManager(mockGame.scene, mockTerrain);
+        const gm = new GoblinManager(mockGame.scene, mockTerrain, mockGame);
         mockGame.goblinManager = gm;
         // Force King spawn (probKing ~0.01, so 0.0 should trigger King)
         vi.spyOn(Math, 'random').mockReturnValue(0.0);

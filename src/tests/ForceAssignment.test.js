@@ -28,7 +28,7 @@ describe('Force Assignment Integration', () => {
         worker = new Unit(game.scene, game.terrain, 10, 10, 'worker', false);
         worker.id = 1;
         worker.initAssets = vi.fn(); // Instance-level mock
-        game.units = [worker];
+        game.entityManager.register(worker);
     });
 
     afterEach(() => {

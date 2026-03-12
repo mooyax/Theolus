@@ -78,7 +78,7 @@ describe('Terrain Movement and Logic Tests', () => {
     });
 
     it('should increase Goblin Hut population and spawn goblin', () => {
-        const gm = new GoblinManager(mockGame.scene, mockTerrain);
+        const gm = new GoblinManager(mockGame.scene, mockTerrain, mockGame);
         mockGame.goblinManager = gm;
         vi.spyOn(gm, 'spawnGoblinAtCave');
 

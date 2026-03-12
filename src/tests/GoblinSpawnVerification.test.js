@@ -1,9 +1,5 @@
-
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Game } from '../Game';
-import { Terrain } from '../Terrain';
-import { GoblinManager } from '../GoblinManager';
-import * as THREE from 'three';
+import { MockGame, MockTerrain } from './TestHelper';
 
 describe('Goblin Spawn Verification', () => {
     let game;
@@ -11,22 +7,16 @@ describe('Goblin Spawn Verification', () => {
     let goblinManager;
 
     beforeEach(async () => {
-        const scene = new THREE.Scene();
-        // Use real Terrain with Land height
-        // Initialize Game First
-        game = new Game(undefined, undefined, true);
+        game = new MockGame();
+        const scene = game.scene;
         window.game = game;
 
-        // Use real Terrain with Land height
-        terrain = new Terrain(scene, [], 100, 100);
-        for (let x = 0; x < 100; x++) {
-            for (let z = 0; z < 100; z++) {
-                terrain.grid[x][z].height = 5;
-            }
-        }
+        // Use MockTerrain
+        terrain = new MockTerrain(100, 100);
         game.terrain = terrain;
 
         // Initialize GoblinManager
+        const { GoblinManager } = await import('../GoblinManager');
         goblinManager = new GoblinManager(scene, terrain, game, []);
         game.goblinManager = goblinManager;
 

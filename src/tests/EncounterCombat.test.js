@@ -33,13 +33,19 @@ describe('Encounter Combat Logic', () => {
         moveEntity() { }
         gridToWorld(v) { return v - 50 + 0.5; }
         worldToGrid(v) { return v + 50 - 0.5; }
+        getRegion(x, z) { return 1; }
+        getRandomPointInRegion(regionId, cx, cz, radius) { return { x: cx, z: cz }; }
+        getRandomPassablePointInRegion(regionId, cx, cz, radius) { return { x: cx, z: cz }; }
+        findClosestReachablePoint(x, z) { return { x, z }; }
         findPathAsync() { return Promise.resolve([]); }
         findPath() { return []; }
-        findBestTarget(type, x, z, range, costFn) {
-            let candidates = [];
-            if (type === 'goblin') candidates = game.goblinManager.goblins;
-            if (type === 'unit') candidates = game.units;
-            if (type === 'building') candidates = this.buildings;
+        findBestTarget(type, x, z, range, costFn, targetPool = null) {
+            let candidates = targetPool || [];
+            if (!targetPool) {
+                if (type === 'goblin') candidates = game.goblinManager.goblins;
+                if (type === 'unit') candidates = game.units;
+                if (type === 'building') candidates = this.buildings;
+            }
 
             let best = null;
             let bestScore = Infinity;
@@ -71,8 +77,23 @@ describe('Encounter Combat Logic', () => {
     beforeEach(() => {
         terrain = new MockTerrain();
         game = {
-            units: [],
-            goblinManager: { goblins: [] },
+            entityManager: {
+                units: [],
+                goblins: [],
+                getAllUnits: function () { return this.units; },
+                getAllGoblins: function () { return this.goblins; },
+                register: function (u) {
+                    if (u.type === 'goblin' || (u.role && u.role === 'goblin')) this.goblins.push(u);
+                    else this.units.push(u);
+                },
+                unregister: function (u) {
+                    const list = (u.type === 'goblin' || (u.role && u.role === 'goblin')) ? this.goblins : this.units;
+                    const idx = list.indexOf(u);
+                    if (idx > -1) list.splice(idx, 1);
+                }
+            },
+            get units() { return this.entityManager.units; },
+            get goblinManager() { return { goblins: this.entityManager.goblins }; },
             scene: {
                 add: () => { },
                 remove: () => { },
@@ -89,8 +110,8 @@ describe('Encounter Combat Logic', () => {
     it('Unit should switch target to nearby Goblin while moving to distant Building', () => {
         const unit = new Unit(game.scene, terrain, 10, 10, 'soldier');
         unit.id = 1;
+        game.entityManager.register(unit);
         unit.game = game;
-        game.units.push(unit);
 
         const building = { id: 99, gridX: 50, gridZ: 50, userData: { type: 'goblin_hut', hp: 100 }, takeDamage: () => 0 };
         terrain.buildings.push(building);
@@ -99,9 +120,10 @@ describe('Encounter Combat Logic', () => {
         goblin.id = 2;
         goblin.game = game;
         goblin.gridX = 20; goblin.gridZ = 20;
-        game.goblinManager.goblins.push(goblin);
+        game.entityManager.register(goblin);
 
         unit.targetBuilding = building;
+        unit.engageRange = 20;
         unit.changeState(new Combat(unit));
 
         unit.smartMove = vi.fn((x, z, t) => {
@@ -118,7 +140,6 @@ describe('Encounter Combat Logic', () => {
 
         unit.getVisualX = () => unit.gridX;
         unit.getVisualZ = () => unit.gridZ;
-        unit.game.units = [unit];
 
         let switched = false;
         for (let i = 0; i < 100; i++) {
@@ -139,7 +160,7 @@ describe('Encounter Combat Logic', () => {
         goblin.id = 3;
         goblin.game = game;
         goblin.gridX = 10; goblin.gridZ = 10;
-        game.goblinManager.goblins.push(goblin);
+        game.entityManager.register(goblin);
 
         const building = { id: 88, gridX: 50, gridZ: 50, userData: { type: 'castle', hp: 100 }, takeDamage: () => 0 };
         terrain.buildings.push(building);
@@ -148,7 +169,7 @@ describe('Encounter Combat Logic', () => {
         unit.id = 4;
         unit.game = game;
         unit.gridX = 20; unit.gridZ = 20;
-        game.units.push(unit);
+        game.entityManager.register(unit);
 
         goblin.targetBuilding = building;
         goblin.changeState(new GoblinCombat(goblin));

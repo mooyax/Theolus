@@ -82,7 +82,7 @@ describe('Combat Balance Verification', () => {
 
         game = new Game(null, mockTerrain, true);
         game.scene = { add: vi.fn(), remove: vi.fn(), getObjectByName: vi.fn() };
-        game.goblinManager = new GoblinManager(game.scene, mockTerrain);
+        game.goblinManager = new GoblinManager(game.scene, mockTerrain, game);
         game.goblinManager.notifyClanActivity = vi.fn();
         game.markerMaterial = {
             clone: function () {

@@ -24,7 +24,7 @@ describe('Unit Stuck Debugging', () => {
 
         // 1. Create a Slope Block
         terrain.grid[10][10].height = 2; // Start
-        terrain.grid[11][10].height = 6; // Target (Diff 4 > 2) -> Blocked by Slope
+        terrain.grid[11][10].height = 9; // Target (Diff 7 > 6) -> Blocked by Slope
 
         const unit = new Unit(1, terrain);
         unit.gridX = 10;

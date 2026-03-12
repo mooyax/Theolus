@@ -25,13 +25,24 @@ describe('Goblin Combat and Stagnation', () => {
 
         window.game = {
             simTotalTimeSec: 100,
-            units: [],
+            entityManager: {
+                units: [],
+                goblins: [],
+                getAllUnits: function () { return this.units; },
+                getAllGoblins: function () { return this.goblins; },
+                register: function (u) {
+                    if (u.type === 'goblin' || u.role === 'goblin') this.goblins.push(u);
+                    else this.units.push(u);
+                },
+                clear: function () { this.units = []; this.goblins = []; }
+            },
+            get units() { return this.entityManager.units; },
+            get goblins() { return this.entityManager.goblins; },
             buildings: [],
             goblinManager: {
                 getClanRaidTarget: vi.fn().mockReturnValue(null),
                 clans: { 0: { active: true } },
-                goblins: [],
-                notifyClanActivity: vi.fn() // Critical missing mock
+                notifyClanActivity: vi.fn()
             }
         };
 
@@ -65,7 +76,7 @@ describe('Goblin Combat and Stagnation', () => {
 
     it('should respect blacklist in findTarget', () => {
         const targetUnit = { id: 'blocked1', gridX: 12, gridZ: 12, type: 'unit' };
-        window.game.units = [targetUnit];
+        window.game.entityManager.register(targetUnit);
 
         goblin.ignoredTargets.set('blocked1', 105);
         window.game.simTotalTimeSec = 100;

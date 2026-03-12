@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { GoblinManager } from '../GoblinManager';
 import { Goblin } from '../Goblin';
 import { Building } from '../Building';
+import { MockGame } from './TestHelper';
 import * as THREE from 'three';
 
 // Mock Terrain that supports faction assignment in addBuilding
@@ -52,17 +53,16 @@ describe('Goblin Disappearance Bug Fix', () => {
     beforeEach(() => {
         scene = new THREE.Scene();
         terrain = new MockTerrain();
-        gm = new GoblinManager(scene, terrain);
+        const mockGame = new MockGame();
+        gm = new GoblinManager(scene, terrain, mockGame);
         gm.clans = {};
 
         // Mock window.game
         global.window = global.window || {};
-        global.window.game = {
-            goblinManager: gm,
-            simTotalTimeSec: 100,
-            reportGlobalBattle: vi.fn(),
-            registerSquad: vi.fn(() => 1)
-        };
+        global.window.game = mockGame;
+        mockGame.minimal = false; // Enable drowning/aging logic for tests
+        mockGame.reportGlobalBattle = vi.fn();
+        mockGame.registerSquad = vi.fn(() => 1);
     });
 
     it('should assign goblin faction to caves to prevent friendly fire', () => {
@@ -73,8 +73,12 @@ describe('Goblin Disappearance Bug Fix', () => {
         // FIX CHECK: Should be 'goblin', not 'enemy'
         expect(caveBuilding.userData.faction).toBe('goblin');
 
-        // 2. Spawn Goblin and check targeting
-        const goblin = new Goblin(scene, terrain, 11, 11, 'normal', caveBuilding.userData.clanId);
+        // 2. Spawn goblin
+        const cave = gm.caves[0]; // Get the actual cave object
+        gm.spawnGoblinAtCave(cave, 1, true);
+        const goblin = global.window.game.entityManager.getAllGoblins()[0];
+        const clanId = goblin.clanId;
+        gm.clans[clanId] = { id: clanId, active: false }; // Ensure clan is inactive
 
         // Since faction is 'goblin', it should NOT target the building
         goblin.updateCombatTarget(null, terrain.buildings, null);

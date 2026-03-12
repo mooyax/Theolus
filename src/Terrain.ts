@@ -4153,7 +4153,7 @@ export class Terrain {
                 }
 
                 const slope = Math.abs(nh - this.grid[current.x][current.z].height);
-                if (!isNaval && slope > 3.0) continue;
+                if (!isNaval && slope > 6.0) continue;
 
                 let moveCost = 0.8 * n.cost;
                 if (!isNaval) {
@@ -4223,6 +4223,51 @@ export class Terrain {
     getRegion(x, z) {
         if (!this.grid[x] || !this.grid[x][z]) return -1;
         return this.grid[x][z].regionId || 0;
+    }
+
+    /**
+     * 現在のタイルへの移動コストを計算します。
+     * @param tx 目標のX座標
+     * @param tz 目標のZ座標
+     * @param sx 現在のX座標 (勾配計算用)
+     * @param sz 現在のZ座標 (勾配計算用)
+     * @param isNaval 船舶かどうか
+     * @returns 移動コスト（基本 0.8、沼 2.0、山 6.0 など）
+     */
+    getMovementCost(tx: number, tz: number, sx: number, sz: number, isNaval: boolean): number {
+        if (!this.grid[tx] || !this.grid[tx][tz]) return 1.0;
+        const targetCell = this.grid[tx][tz];
+        const currentCell = this.grid[sx] ? this.grid[sx][sz] : null;
+
+        if (isNaval) {
+            // 水上なら 0.8、陸上なら通行不可(非常に高いコスト)
+            return (targetCell.height <= 0) ? 0.8 : 999;
+        }
+
+        // 陸上ユニットの速度ルール (design_spec.md より)
+        // Normal (0.8), Forest (0.8), Swamp (2.0), Slope (3.0), Rock (6.0)
+        let cost = 0.8;
+
+        // 1. 高度による判定 (岩山/Rock)
+        if (targetCell.height > 7.0) {
+            cost = 6.0;
+        } 
+        // 2. 勾配による判定 (急斜面/Slope)
+        else if (currentCell) {
+            const slope = Math.abs(targetCell.height - currentCell.height);
+            if (slope > 1.5) {
+                cost = 3.0;
+            }
+        }
+
+        // 3. バイオーム/属性による判定 (沼/Swamp)
+        if (targetCell.riverIntensity > 0.5) {
+            cost = Math.max(cost, 2.0);
+        } else if (targetCell.moisture > 0.8 && targetCell.height < 1.5) {
+            cost = Math.max(cost, 2.0);
+        }
+
+        return cost;
     }
 
     getRandomPointInRegion(regionId, centerX, centerZ, radius) {

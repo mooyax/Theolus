@@ -44,7 +44,8 @@ describe('Multi-Job Juggling Verification', () => {
         job3 = { id: 103, x: 10, z: 10, type: 'build', status: 'pending' };
 
         mockGame = new Game(mockScene, mockTerrain);
-        mockGame.units = [u1, u2];
+        mockGame.entityManager.register(u1);
+        mockGame.entityManager.register(u2);
         mockGame.requestQueue = [job1, job2];
         mockGame.simTotalTimeSec = 0;
         window.game = mockGame;

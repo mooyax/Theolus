@@ -38,8 +38,29 @@ describe('Request Responsiveness & Combat Handoff', () => {
             isReachable: vi.fn(() => true)
         };
 
-        mockGame = {
+        const entityManager = {
             units: [mockUnit1, mockUnit2],
+            goblins: [],
+            register: vi.fn((e) => {
+                if (e.type === 'unit') entityManager.units.push(e);
+                if (e.type === 'goblin') entityManager.goblins.push(e);
+            }),
+            remove: vi.fn((e) => {
+                entityManager.units = entityManager.units.filter(u => u !== e);
+                entityManager.goblins = entityManager.goblins.filter(g => g !== e);
+            }),
+            clear: vi.fn(() => {
+                entityManager.units = [];
+                entityManager.goblins = [];
+            }),
+            getAllUnits: vi.fn(() => entityManager.units),
+            getAllGoblins: vi.fn(() => entityManager.goblins)
+        };
+
+        mockGame = {
+            entityManager,
+            get units() { return entityManager.units; },
+            get goblins() { return entityManager.goblins; },
             requestQueue: [],
             terrain: mockTerrain,
             releaseRequest: vi.fn(),

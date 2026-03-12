@@ -1,10 +1,8 @@
-
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { Game } from '../Game';
 import { Unit } from '../Unit';
 import * as THREE from 'three';
 
-// Mocks
 // Mocks
 // Mock OrbitControls
 vi.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
@@ -77,11 +75,9 @@ describe('Manual Assignment Debugging', () => {
         vi.resetModules();
 
         // Re-instantiate Game
-        // Note: In a real app we might rely on a singleton or proper DI.
-        // Here we just want a fresh 'game' object.
         game = new Game();
         game.requestQueue = [];
-        game.units = [];
+        game.entityManager.clear();
         game.simTotalTimeSec = 0;
 
         // Ensure terrain is set (it's mocked via constructor but let's be safe)
@@ -99,7 +95,7 @@ describe('Manual Assignment Debugging', () => {
         u.id = 1;
         u.action = 'Idle';
         u.targetRequest = null;
-        game.units.push(u);
+        game.entityManager.register(u);
 
         const req = game.addRequest('build', 10, 10);
 
@@ -112,7 +108,7 @@ describe('Manual Assignment Debugging', () => {
         u.id = 1;
         u.action = 'Working';
         u.targetRequest = { id: 'req_existing' };
-        game.units.push(u);
+        game.entityManager.register(u);
 
         const req = game.addRequest('build', 10, 10);
 
@@ -124,7 +120,7 @@ describe('Manual Assignment Debugging', () => {
         u.id = 1;
         u.action = 'Wander'; // Wandering is "active" but low priority?
         u.targetRequest = null;
-        game.units.push(u);
+        game.entityManager.register(u);
 
         const req = game.addRequest('build', 10, 10);
 
@@ -138,7 +134,7 @@ describe('Manual Assignment Debugging', () => {
         u.id = 1;
         u.action = 'Moving'; // Moving could be wandering
         u.targetRequest = null;
-        game.units.push(u);
+        game.entityManager.register(u);
 
         const req = game.addRequest('build', 10, 10);
 
@@ -151,7 +147,7 @@ describe('Manual Assignment Debugging', () => {
         u.id = 10;
         u.action = 'Moving'; // e.g. walking to the first job
         u.targetRequest = { id: 'req_old', x: 50, z: 50, status: 'assigned', assignedTo: 10 }; // Already has a job
-        game.units.push(u);
+        game.entityManager.register(u);
 
         // Add a NEW manual request
         const req = { id: 'req_new', x: 10, z: 10, type: 'build', status: 'pending', isManual: true };
@@ -164,6 +160,5 @@ describe('Manual Assignment Debugging', () => {
         expect(u.targetRequest).toBe(req);
         expect(req.assignedTo).toBe(u.id);
         expect(req.status).toBe('assigned');
-
-});
+    });
 });

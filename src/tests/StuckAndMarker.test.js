@@ -96,7 +96,7 @@ describe('Stuck and Marker Debugging', () => {
         document.body.innerHTML = '<div id="stats"></div><div id="loading-screen"></div><div id="loading-bar"></div><div id="loading-text"></div>';
         vi.clearAllMocks();
         game = new Game();
-        game.units = [];
+        game.entityManager.clear();
         game.requestQueue = [];
     });
 
@@ -106,7 +106,7 @@ describe('Stuck and Marker Debugging', () => {
 
     it('should move IMMEDIATELY when assigned a job (no 3s delay)', async () => {
         const unit = new Unit(game.scene, game.terrain, 10, 10, 'worker');
-        game.units.push(unit);
+        game.entityManager.register(unit);
         unit.updateLogic(0, 0, false, []);
         expect(unit.state).toBeInstanceOf(Wander);
 

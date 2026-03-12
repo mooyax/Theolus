@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as THREE from 'three';
 import { Unit } from '../Unit.js';
@@ -46,7 +45,12 @@ class MockGame {
         this.simTotalTimeSec = 100;
         this.battleHotspots = [];
         this.squads = new Map();
-        this.units = [];
+        this.entityManager = {
+            units: [],
+            getAllUnits: function () { return this.units; },
+            register: function (u) { this.units.push(u); },
+            getAllGoblins: () => []
+        };
     }
 }
 
@@ -62,7 +66,7 @@ describe('Knight Mobilization Debug', () => {
         unit.game = game;
         unit.id = 1;
         unit.role = 'knight';
-        game.units.push(unit);
+        game.entityManager.register(unit);
 
     });
     it('should mobilize to global hotspot in SAME region', () => {
@@ -98,6 +102,5 @@ describe('Knight Mobilization Debug', () => {
         const res = unit.findRaidTarget();
         expect(res).toBe(true);
         expect(unit.targetRaidPoint).toEqual({ x: 55, z: 55 });
-
-});
+    });
 });

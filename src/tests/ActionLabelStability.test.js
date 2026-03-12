@@ -11,9 +11,15 @@ describe('Action Label Stability', () => {
     beforeEach(() => {
         vi.spyOn(document.body, 'appendChild').mockImplementation(() => { });
         game = new Game(null, null, true);
-        game.units = [];
+        game.entityManager.clear();
         game.requestQueue = [];
-        game.goblinManager = { update: vi.fn(), goblins: [] };
+        // Ensure goblinManager has a goblins property (getter or array) that works with the engine
+        if (!game.goblinManager) {
+            game.goblinManager = { update: vi.fn(), goblins: [] };
+        } else {
+            vi.spyOn(game.goblinManager, 'update').mockImplementation(vi.fn());
+            // game.entityManager.clear() already cleared the goblins list
+        }
         window.game = game;
         game.gameActive = true;
 
