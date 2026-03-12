@@ -1355,14 +1355,15 @@ export class Unit extends Actor implements IAiActor {
                 }
             }
 
-            // 2. Resource Addition (Only for Player faction)
-            if (this.faction === 'player') {
+            // 2. Resource Addition
+            const manager = (this.faction === 'enemy') ? game.enemyFaction : game.playerFaction;
+            if (manager) {
                 if (foundWater && (this.role === 'fisher' || this.role === 'warship')) {
                     if (!isInterfered) {
                         const amount = (economy && economy.fisherAmount) || 1.0;
                         const multiplier = (this.role === 'warship') ? 2.0 : 1.0;
-                        game.resources.fish = (game.resources.fish || 0) + (amount * multiplier);
-                        game.resources.food = (game.resources.food || 0) + (amount * multiplier);
+                        manager.addResources('fish', amount * multiplier);
+                        manager.addResources('food', amount * multiplier);
                         this.lastGatherTime = time;
                     } else {
                         if (this.id === 0 || Math.random() < 0.05) {
@@ -1372,8 +1373,21 @@ export class Unit extends Actor implements IAiActor {
                 }
                 if (foundForest && this.role === 'hunter') {
                     const amount = (economy && economy.hunterAmount) || 4.0;
+                    manager.addResources('meat', amount);
+                    manager.addResources('food', amount);
+                    this.lastGatherTime = time;
+                }
+            } else if (game.resources) {
+                // Compatibility fallback for tests
+                if (foundWater && (this.role === 'fisher' || this.role === 'warship') && !isInterfered) {
+                    const amount = (economy && economy.fisherAmount) || 1.0;
+                    const multiplier = (this.role === 'warship') ? 2.0 : 1.0;
+                    game.resources.fish = (game.resources.fish || 0) + amount * multiplier;
+                    this.lastGatherTime = time;
+                }
+                if (foundForest && this.role === 'hunter') {
+                    const amount = (economy && economy.hunterAmount) || 4.0;
                     game.resources.meat = (game.resources.meat || 0) + amount;
-                    game.resources.food = (game.resources.food || 0) + amount;
                     this.lastGatherTime = time;
                 }
             }

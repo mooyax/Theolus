@@ -23,6 +23,16 @@ describe('Warship Fishing Interference', () => {
             units: [],
             addMana: vi.fn(),
         };
+        mockGame.playerFaction = {
+            resources: mockGame.resources,
+            addResources: (type, amount) => {
+                mockGame.resources[type] = (mockGame.resources[type] || 0) + amount;
+            }
+        };
+        mockGame.enemyFaction = {
+            resources: { fish: 0, meat: 0 },
+            addResources: vi.fn()
+        };
         const w = (typeof window !== 'undefined') ? window : (typeof global !== 'undefined' ? global.window : {});
         w.game = mockGame;
     });

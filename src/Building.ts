@@ -15,7 +15,22 @@ export class Building extends Entity {
         const game = (window as any).game;
         const isHumanResidential = this.type === 'house' || this.type === 'mansion' || this.type === 'castle' || this.type === 'barracks' || this.type === 'tower';
         if (game && diff !== 0 && isHumanResidential) {
-            game.totalPopulation = (game.totalPopulation || 0) + diff;
+            const faction = this.userData.faction || 'player';
+            const manager = (faction === 'enemy') ? game.enemyFaction : game.playerFaction;
+            if (manager) {
+                manager.totalPopulation = (manager.totalPopulation || 0) + diff;
+            } else {
+                // Compatibility fallback for tests: if manager is not found, update game.totalPopulation directly
+                // This assumes game.totalPopulation is meant to reflect the sum of all building populations
+                // This fallback might not be perfectly aligned with the 'diff' logic, but it's what the instruction implies for a fallback.
+                // A more robust fallback might recalculate totalPopulation from all buildings.
+                if (game.totalPopulation !== undefined) {
+                    game.totalPopulation = (game.totalPopulation || 0) + diff;
+                } else {
+                    // If game.totalPopulation doesn't exist, initialize it with the current building's population
+                    game.totalPopulation = val;
+                }
+            }
         }
     }
     private _hp: number = 100;

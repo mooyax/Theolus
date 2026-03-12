@@ -6,6 +6,7 @@ import { Unit } from './Unit';
 import { Warship } from './Warship';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SaveManager } from './SaveManager';
+import { FactionManager } from './FactionManager';
 
 import { CloudManager } from './CloudManager';
 import { BirdManager } from './BirdManager';
@@ -193,10 +194,22 @@ export class Game {
     public unitScanBudget: number;
     public battleMemory: BattleMemory;
     public squads: Map<number, Squad>; // Squad Manager
-    public resources: GameResource;
+    public playerFaction: FactionManager;
+    public enemyFaction: FactionManager;
 
-    // Game State
-    public mana: number;
+    // Backward Compatibility Getters/Setters (Player focus)
+    get mana(): number { return this.playerFaction ? this.playerFaction.mana : 0; }
+    set mana(v: number) { if (this.playerFaction) this.playerFaction.mana = v; }
+
+    get resources(): GameResource { return this.playerFaction ? this.playerFaction.resources : { grain: 0, fish: 0, meat: 0 }; }
+    set resources(v: GameResource) { if (this.playerFaction) this.playerFaction.resources = v as any; }
+
+    get totalPopulation(): number { return this.playerFaction ? this.playerFaction.totalPopulation : 0; }
+    set totalPopulation(v: number) { if (this.playerFaction) this.playerFaction.totalPopulation = v; }
+
+    get manualWorkerSpawns(): number { return this.playerFaction ? this.playerFaction.manualWorkerSpawns : 0; }
+    set manualWorkerSpawns(v: number) { if (this.playerFaction) this.playerFaction.manualWorkerSpawns = v; }
+
     public gameActive: boolean;
 
     // Lights & Envirionment
@@ -229,13 +242,11 @@ export class Game {
 
     public enemyAI!: EnemyAI;
     private _tmpVec: THREE.Vector3;
-    public totalPopulation: number;
     public markerTime: number;
     public projectiles: any[];
     public stopped: boolean;
     public animationFrameId: number | null;
     public raidPoints: { x: number, z: number, time: number }[];
-    public manualWorkerSpawns: number;
 
     // Request System
     public requestIdCounter: number;
@@ -269,7 +280,9 @@ export class Game {
 
         this._tmpVec = new THREE.Vector3();
 
-        this.mana = 100;
+        this.playerFaction = new FactionManager(this, 'player');
+        this.enemyFaction = new FactionManager(this, 'enemy');
+
         this.gameActive = false;
         this.unitScanBudget = 1000;
         this.stopped = false;
@@ -287,16 +300,13 @@ export class Game {
         this.units = [];
         this.squads = new Map();
         this.unitMap = new Map();
-        this.resources = { grain: 0, fish: 0, meat: 0 };
         this.clippingPlanes = [];
         this.projectiles = [];
         this.raidPoints = [];
         this.battleHotspots = [];
         this.squadMobilizationTimer = 0;
-        this.totalPopulation = 0;
         this.markerTime = 0;
         this.animationFrameId = null;
-        this.manualWorkerSpawns = 0;
         this.requestCheckIndex = 0;
 
         this.gameTime = 8.0; // Start at 8:00
@@ -2974,6 +2984,8 @@ export class Game {
                 battleHotspots: this.battleHotspots || [], // PERSIST HOTSPOTS
                 raidPoints: this.raidPoints || [], // PERSIST RAID_POINTS
                 squads: Array.from(this.squads.entries()), // PERSIST SQUADS as Array
+                playerFaction: this.playerFaction.serialize(),
+                enemyFaction: this.enemyFaction.serialize(),
                 camera: {
                     position: { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z },
                     zoom: this.camera.zoom,
@@ -3493,10 +3505,19 @@ export class Game {
             this.daysPassed = saveData.daysPassed || 0;
 
             // Resource Restoration
-            if (saveData.resources) {
-                this.resources = { ...saveData.resources };
+            if (saveData.playerFaction) {
+                this.playerFaction.deserialize(saveData.playerFaction);
+            } else {
+                // Legacy support
+                if (saveData.resources) {
+                    this.playerFaction.resources = { ...saveData.resources };
+                }
+                this.playerFaction.mana = saveData.mana || 0;
             }
-            this.mana = saveData.mana || 0;
+
+            if (saveData.enemyFaction) {
+                this.enemyFaction.deserialize(saveData.enemyFaction);
+            }
 
             // Battle Statistics Restoration
             if (saveData.battleMemory && this.battleMemory && this.battleMemory.deserialize) {

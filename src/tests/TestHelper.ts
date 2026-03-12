@@ -6,9 +6,21 @@ export class MockGame {
     public units: any[];
     public requestQueue: any[];
     public squads: Map<number, any>;
-    public mana: number;
-    public resources: { grain: number, fish: number, meat: number };
-    public totalPopulation: number;
+    public playerFaction: any;
+    public enemyFaction: any;
+
+    get mana(): number { return this.playerFaction.mana; }
+    set mana(v: number) { this.playerFaction.mana = v; }
+
+    get resources(): { grain: number, fish: number, meat: number, food: number } { return this.playerFaction.resources; }
+    set resources(v: any) { this.playerFaction.resources = v; }
+
+    get totalPopulation(): number { return this.playerFaction.totalPopulation; }
+    set totalPopulation(v: number) { this.playerFaction.totalPopulation = v; }
+
+    get manualWorkerSpawns(): number { return this.playerFaction.manualWorkerSpawns; }
+    set manualWorkerSpawns(v: number) { this.playerFaction.manualWorkerSpawns = v; }
+
     public frameCount: number;
     public unitScanBudget: number;
     public terrain: any;
@@ -27,9 +39,35 @@ export class MockGame {
         this.units = [];
         this.requestQueue = [];
         this.squads = new Map();
-        this.mana = 1000;
-        this.resources = { grain: 0, fish: 0, meat: 0 };
-        this.totalPopulation = 10; // Default population for tests
+
+        // Initialize Factions
+        this.playerFaction = {
+            mana: 1000,
+            resources: { grain: 0, fish: 0, meat: 0, food: 0 },
+            totalPopulation: 10,
+            manualWorkerSpawns: 0,
+            consumeMana: vi.fn().mockImplementation((amt) => {
+                if (this.playerFaction.mana >= amt) {
+                    this.playerFaction.mana -= amt;
+                    return true;
+                }
+                return false;
+            }),
+            addResources: vi.fn().mockImplementation((type, amt) => {
+                this.playerFaction.resources[type] += amt;
+            }),
+            getBuildingCost: vi.fn().mockReturnValue(100)
+        };
+        this.enemyFaction = {
+            mana: 1000,
+            resources: { grain: 0, fish: 0, meat: 0, food: 0 },
+            totalPopulation: 0,
+            manualWorkerSpawns: 0,
+            consumeMana: vi.fn(),
+            addResources: vi.fn(),
+            getBuildingCost: vi.fn().mockReturnValue(100)
+        };
+
         this.frameCount = 0;
         this.unitScanBudget = 1000;
         this.unitMap = new Map();

@@ -401,8 +401,7 @@ export class InputManager {
         // 5. Port Cost
         const elPort = document.getElementById('cost-port');
         if (elPort) {
-            const count = this.game.terrain ? (this.game.terrain.buildings || []).filter(b => b.userData.type === 'port').length : 0;
-            const cost = 150 * (count + 1);
+            const cost = this.game.playerFaction.getBuildingCost('port');
             elPort.innerText = cost;
             elPort.style.backgroundColor = (this.game.mana < cost) ? '#f44336' : '#2196F3';
         }
@@ -592,7 +591,10 @@ export class InputManager {
                     if (this.checkActionValidity('spawn', gridX, gridZ)) {
                         if (this.spawnCallback) {
                             this.spawnCallback(gridX, gridZ, true, null, null, true);
-                            if (this.game) this.game.consumeMana(cost);
+                            if (this.game) {
+                                this.game.consumeMana(cost);
+                                this.game.playerFaction.manualWorkerSpawns++;
+                            }
                             console.log(`[Input] Manual Spawn: Cost ${cost} (Count: ${manualCount})`);
                         }
                     } else {
